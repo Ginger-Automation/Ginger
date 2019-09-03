@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using System.IO;
 
 namespace GingerCore.Actions.XML
 {
@@ -136,33 +137,41 @@ namespace GingerCore.Actions.XML
         public override void Execute()
         {
             string docTxt = String.Empty;
+            String FilePath = InputFile.ValueForDriver.ToString();
 
             if (ReqisFromFile == true)
             {
-                String FilePath = InputFile.ValueForDriver.ToString();
                 if (FilePath == null || FilePath == String.Empty)
                 {
-                    throw new System.ArgumentException("Please provide a valid file name");
-
+                    this.Error="Please provide a valid file name";
                 }
 
-                //if (FilePath.Contains("~\\"))
-                //{
-                //    FilePath = FilePath.Replace("~\\", SolutionFolder);
-                //}
                 if (FilePath.Contains("~"))
                 {
                     FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
                 }
                 
-
-                docTxt = System.IO.File.ReadAllText(FilePath);
+                if (FilePath.EndsWith(".XML",StringComparison.OrdinalIgnoreCase) ||FilePath.EndsWith(".JSON",StringComparison.OrdinalIgnoreCase))
+                {
+                    docTxt = System.IO.File.ReadAllText(FilePath);
+                }
+                else
+                {
+                    this.Error = "Please provide a valid file path";
+                    return;
+                }
             }
-
-
             else
             {
-                docTxt = InputFile.ValueForDriver.ToString();
+                if (!FilePath.EndsWith(".XML",StringComparison.OrdinalIgnoreCase) && !FilePath.EndsWith(".JSON", StringComparison.OrdinalIgnoreCase))
+                {
+                    docTxt = InputFile.ValueForDriver.ToString();
+                }
+                else
+                {
+                    this.Error = "Please provide a valid file content";
+                    return;
+                }
             }
 
             if (DocumentType == eDocumentType.XML)
@@ -170,7 +179,6 @@ namespace GingerCore.Actions.XML
             else if (DocumentType == eDocumentType.JSON)
                 JSONValidation(docTxt);
         }
-
         private void JSONValidation(string json)
         {
             JToken jo = null;

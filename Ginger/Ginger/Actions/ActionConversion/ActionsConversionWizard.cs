@@ -16,25 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
 using Ginger.WizardLib;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Actions.Common;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -43,132 +32,178 @@ namespace Ginger.Actions.ActionConversion
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
+        public ObservableList<ConvertableTargetApplicationDetails> ConvertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
+        public ObservableList<Guid> SelectedPOMs = new ObservableList<Guid>();
 
         public bool NewActivityChecked { get; set; }
 
-        private bool mSameActivityChecked = true;
-        public bool SameActivityChecked
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
+        ActionConversionUtils mConversionUtils = new ActionConversionUtils();
+
+        public enum eActionConversionType
         {
-            get {
-                return mSameActivityChecked;
-            }
-            set
-            {
-                mSameActivityChecked = value;
-                NewActivityChecked = !value;
-            }
+            SingleBusinessFlow,
+            MultipleBusinessFlow
         }
 
-        public bool DefaultTargetAppChecked { get; set; }
-
-        public string SelectedTargetApp { get; set; }
-
+        public eActionConversionType ConversionType { get; set; }
+                
         public bool ConvertToPOMAction { get; set; }
 
-        private string mSelectedPOMObjectName = string.Empty;
-        public string SelectedPOMObjectName
-        {
-            get
-            {
-                return mSelectedPOMObjectName;
-            }
-            set
-            {
-                mSelectedPOMObjectName = value;
-            }
-        }
+        ConversionStatusReportPage mReportPage = null;
 
-        public ActionsConversionWizard(Context context)
+        public ActionsConversionWizard(eActionConversionType conversionType, Context context, ObservableList<BusinessFlow> businessFlows)
         {
             Context = context;
-
+            ConversionType = conversionType;
+            ListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);
+            
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
-            AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
+            if (ConversionType == eActionConversionType.MultipleBusinessFlow)
+            {
+                AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, Context));
+            }
+            else if (ConversionType == eActionConversionType.SingleBusinessFlow)
+            {
+                AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
+            }
 
             AddPage(Name: "Select Legacy Actions Type for Conversion", Title: "Select Legacy Actions Type for Conversion", SubTitle: "Select Legacy Actions Type for Conversion", Page: new SelectActionWzardPage());
 
             AddPage(Name: "Conversion Configurations", Title: "Conversion Configurations", SubTitle: "Conversion Configurations", Page: new ConversionConfigurationWzardPage());
+
+            if (ConversionType == eActionConversionType.MultipleBusinessFlow)
+            {
+                mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
+                AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage); 
+            }
         }
-        
+
+        /// <summary>
+        /// This method is used to ge the businessflows to convert
+        /// </summary>
+        /// <param name="businessFlows"></param>
+        /// <returns></returns>
+        private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert(ObservableList<BusinessFlow> businessFlows)
+        {
+            ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
+            foreach (BusinessFlow bf in businessFlows)
+            {
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
+                flowToConvert.BusinessFlow = bf;
+                lst.Add(flowToConvert);
+            }
+            return lst;
+        }
+
+        /// <summary>
+        /// This is finish method which does the finish the wizard functionality
+        /// </summary>
         public override void Finish()
         {
-            ConverToActions();
+            if (ConversionType == eActionConversionType.SingleBusinessFlow)
+            {               
+                BusinessFlowsActionsConversion(ListOfBusinessFlow);
+            }
         }
 
-        private void ConverToActions()
+        /// <summary>
+        /// This method is used to Stop the conversion process in between conversion process
+        /// </summary>
+        public void StopConversion()
         {
-            if (!DoExistingPlatformCheck(ActionToBeConverted))
-            {
-                //missing target application so stop the conversion
-                return;
-            }
-            else
-            {
-                try
-                {
-                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                    Reporter.ToStatus(eStatusMsgKey.BusinessFlowConversion, null, Context.BusinessFlow.Name);
+            mConversionUtils.StopConversion();
+        }
 
-                    // create a new converted activity
-                    ActionConversionUtils utils = new ActionConversionUtils();
-                    utils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
-                    utils.ActUIElementLocateValueField = nameof(ActUIElement.LocateValue);
-                    utils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
-                    utils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
-                    utils.ActUIElementClassName = nameof(ActUIElement);
-                    utils.ConvertToActions(NewActivityChecked, Context.BusinessFlow, ActionToBeConverted, DefaultTargetAppChecked, SelectedTargetApp, ConvertToPOMAction, SelectedPOMObjectName);                    
-                }
-                catch (Exception ex)
+        /// <summary>
+        /// This method is used to convert the action in case of Continue & Re-Convert
+        /// </summary>
+        /// <param name="lst"></param>
+        /// <param name="isReConvert"></param>
+        public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
+        {
+            ProcessStarted();
+            try
+            {
+                if (isReConvert)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
-                    Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+                    ObservableList<BusinessFlowToConvert> selectedLst = new ObservableList<BusinessFlowToConvert>();
+                    foreach (var bf in lst)
+                    {
+                        if (bf.IsSelected)
+                        {
+                            bf.BusinessFlow.RestoreFromBackup(true);
+                            bf.ConversionStatus = eConversionStatus.Pending;
+                            bf.SaveStatus = eConversionSaveStatus.Pending;
+                            selectedLst.Add(bf);
+                        }
+                    }
+                    mConversionUtils.ListOfBusinessFlowsToConvert = selectedLst;
                 }
-                finally
+                else
                 {
-                    Reporter.HideStatusMessage();
-                    Mouse.OverrideCursor = null;
+                    mConversionUtils.ListOfBusinessFlowsToConvert = lst;
                 }
+
+                if (mConversionUtils.ListOfBusinessFlowsToConvert.Count > 0)
+                {
+                    await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                }
+                mReportPage.SetButtonsVisibility(true);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+            }
+            finally
+            {
+                ProcessEnded();
             }
         }
 
+        /// <summary>
+        /// This method is used to convert the actions
+        /// </summary>
+        /// <param name="lst"></param>
+        public async void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
+        {
+            try
+            {
+                ProcessStarted();
+
+                mConversionUtils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
+                mConversionUtils.ActUIElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
+                mConversionUtils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
+                mConversionUtils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
+                mConversionUtils.ActUIElementClassName = nameof(ActUIElement);
+                mConversionUtils.ListOfBusinessFlowsToConvert = lst;
+
+                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+
+                if (ConversionType == eActionConversionType.MultipleBusinessFlow)
+                {
+                    mReportPage.SetButtonsVisibility(true);
+                    ProcessEnded();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+                Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();               
+            }
+        }
+
+        /// <summary>
+        /// This method is used to cancle the wizard
+        /// </summary>
         public override void Cancel()
         {
             base.Cancel();
-        }
-
-        private bool DoExistingPlatformCheck(ObservableList<ConvertableActionDetails> lstActionToBeConverted)
-        {
-            // fetch list of existing platforms in the business flow
-            List<ePlatformType> lstExistingPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms
-                                                      .Where(x => Context.BusinessFlow.TargetApplications
-                                                      .Any(a => a.Name == x.AppName))
-                                                      .Select(x => x.Platform).ToList();
-
-            Dictionary<ePlatformType, string> lstMissingPlatform = new Dictionary<ePlatformType, string>();
-            // create list of missing platforms
-            foreach (ConvertableActionDetails ACH in lstActionToBeConverted)
-            {
-                if (ACH.Selected && !lstExistingPlatform.Contains(ACH.TargetPlatform)
-                    && !lstMissingPlatform.ContainsKey(ACH.TargetPlatform))
-                {
-                    lstMissingPlatform.Add(ACH.TargetPlatform, ACH.TargetActionTypeName);
-                }
-            }
-
-            // if there are any missing platforms
-            if (lstMissingPlatform.Count > 0)
-            {
-                foreach (var item in lstMissingPlatform)
-                {
-                    // ask the user if he wants to continue with the conversion, if there are missing target platforms
-                    if (Reporter.ToUser(eUserMsgKey.MissingTargetPlatformForConversion, item.Value, item.Key) == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
     }
 }

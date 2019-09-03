@@ -5,6 +5,7 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -125,6 +126,16 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetLatest(string path, SourceControlBase SourceControl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SourceControlBase GetNewSVnRepo()
         {
             throw new NotImplementedException();
         }

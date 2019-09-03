@@ -106,7 +106,7 @@ namespace Ginger.Run
         public Guid ItemGuid { get; set; }
 
         ObservableList<RunnerItemPage> mItemChilds = null;
-        public ObservableList<RunnerItemPage> ItemChilds
+        public ObservableList<RunnerItemPage> ChildItemPages
         {
             get
             {
@@ -144,6 +144,7 @@ namespace Ginger.Run
                 for (int i = 0; i < mItemChilds.Count; i++)
                 {
                     RunnerItemPage page = (RunnerItemPage)mItemChilds[i];
+                    page.ClearBindings();
                     page = null;
                 }
                 //to make sure memory gets free
@@ -202,6 +203,10 @@ namespace Ginger.Run
         public RunnerItemPage(object Runnerobj = null, bool ViewMode= false)
         {
             InitializeComponent();
+
+            //ItemsTotalCount++;
+            //ItemsCount++;
+
             ItemObject = Runnerobj;
             if (ItemObject != null)
             {
@@ -209,7 +214,7 @@ namespace Ginger.Run
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus),  bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active),  bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active), bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
                     ((BusinessFlow)ItemObject).PropertyChanged += RunnerItem_BusinessflowPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
@@ -232,7 +237,7 @@ namespace Ginger.Run
                     xViewRunnerItem.ToolTip = "View Action";
                     xRunnerItemMenu.Visibility = Visibility.Collapsed;
                 }
-                if(ViewMode)
+                if (ViewMode)
                 {
                     pageGrid.IsEnabled = false;
                 }
@@ -243,8 +248,15 @@ namespace Ginger.Run
                 xRunnerItemButtons.Visibility = Visibility.Collapsed;
                 xRunnerItemMenu.Visibility = Visibility.Collapsed;
             }
+
         }
 
+        //static int ItemsCount = 0;
+        //static int ItemsTotalCount = 0;
+        //~RunnerItemPage()
+        //{
+        //    ItemsCount--;
+        //}
         private void RunnerItem_ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Act.Status))
@@ -399,8 +411,77 @@ namespace Ginger.Run
                 ResetBusinessFlowStatus(this, e);
             }
         }
+        public void ClearBindings()
+        {
+            if (ItemObject is BusinessFlow)
+            {
+                ((BusinessFlow)ItemObject).PropertyChanged -= RunnerItem_BusinessflowPropertyChanged;
+            }
+            else if (ItemObject is Activity)
+            {
+                ((Activity)ItemObject).PropertyChanged -= RunnerItem_ActivityPropertyChanged;
+            }
+            else
+            {
+                ((Act)ItemObject).PropertyChanged -= RunnerItem_ActionPropertyChanged;
+            }
+            this.xDetailView.Click -= xDetailView_Click;
+            this.MouseDoubleClick -= UserControl_MouseDoubleClick;
+            this.xRunnerItemContinue.Click -= xRunnerItemContinue_Click;
+            this.xDuplicateBusinessflow.Click -= xDuplicateBusinessflow_Click;
+            this.xautomateBusinessflow.Click -= xautomateBusinessflow_Click;
+            this.xGenerateReport.Click -= xGenerateReport_Click;
+            this.xExportToAlm.Click -= xExportToAlm_Click;
+            this.xResetStatus_Buss_Flow_Actions.Click -= xResetStatus_Buss_Flow_Actions_Click;
+            this.xViewRunnerItem.Click -= xViewRunnerItem_Click;
+            this.xconfig.Click -= xconfig_Click;
+            this.xremoveBusinessflow.Click -= xremoveBusinessflow_Click;
+            this.xBusinessflowActive.Click -= xBusinessflowActive_Click;
+
+
+            this.DuplicateClick -= xDuplicateBusinessflow_Click;
+            this.ClickAutomate -= xautomateBusinessflow_Click;
+            this.ClickGenerateReport -= xGenerateReport_Click;          
+            this.ResetBusinessFlowStatus -= xResetStatus_Buss_Flow_Actions_Click;
+            this.Click -= xconfig_Click;
+            this.RemoveClick -= xremoveBusinessflow_Click;
+            this.ClickActive -= xBusinessflowActive_Click;
+
+
+            BindingOperations.ClearAllBindings(NormalBorder);
+            BindingOperations.ClearAllBindings(xDetailView);
+
+            BindingOperations.ClearAllBindings(xStatus);
+            BindingOperations.ClearAllBindings(xStatusIcon);
+            BindingOperations.ClearAllBindings(xItemName);
+            BindingOperations.ClearAllBindings(xItemDescription);
+            BindingOperations.ClearAllBindings(xItemSeparator);
+                   
+
+            BindingOperations.ClearAllBindings(xRunnerItemContinue);
+            BindingOperations.ClearAllBindings(xViewRunnerItem);
+            BindingOperations.ClearAllBindings(xconfig);
+            BindingOperations.ClearAllBindings(xremoveBusinessflow);
+            BindingOperations.ClearAllBindings(xBusinessflowActive);
+            BindingOperations.ClearAllBindings(xBorder);
+            BindingOperations.ClearAllBindings(xItemSeparator);
+            BindingOperations.ClearAllBindings(pageGrid);
+            foreach (MenuItem extraOperation in xRunnerItemMenu.Items)
+            {
+                BindingOperations.ClearAllBindings(extraOperation);
+            }
+            //or
+            BindingOperations.ClearAllBindings(xDuplicateBusinessflow);
+            BindingOperations.ClearAllBindings(xautomateBusinessflow);
+            BindingOperations.ClearAllBindings(xGenerateReport);
+            BindingOperations.ClearAllBindings(xExportToAlm);
+            BindingOperations.ClearAllBindings(xResetStatus_Buss_Flow_Actions);
+
+            this.ClearControlsBindings();
+        }
+
     }
-        public class RunnerItemEventArgs
+    public class RunnerItemEventArgs
         {
             public enum eEventType
             {
@@ -408,7 +489,8 @@ namespace Ginger.Run
                 ContinueRunRequired,
                 SetAsSelectedRequired,
                 ViewRunnerItemRequired,
-                ViewConfiguration,          
+                ViewConfiguration
+              
             }
 
             public eEventType EventType;

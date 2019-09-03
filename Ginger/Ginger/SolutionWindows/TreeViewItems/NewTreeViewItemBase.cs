@@ -438,7 +438,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (string.IsNullOrEmpty(this.NodePath()))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(this.NodePath(), WorkSpace.Instance.Solution.SourceControl);
+                SourceControlUI.GetLatest(this.NodePath(), WorkSpace.Instance.Solution.SourceControl);
             Reporter.HideStatusMessage();
         }
 

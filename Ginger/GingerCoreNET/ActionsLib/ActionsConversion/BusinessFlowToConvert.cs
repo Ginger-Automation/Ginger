@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common.Enums;
 using GingerCore;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -9,6 +10,7 @@ namespace Amdocs.Ginger.CoreNET
     /// </summary>
     public enum eConversionStatus
     {
+        NA,
         Pending,
         Running,
         Stopped,
@@ -21,6 +23,7 @@ namespace Amdocs.Ginger.CoreNET
     /// </summary>
     public enum eConversionSaveStatus
     {
+        NA,
         Saved,
         Saving,
         Pending,
@@ -31,18 +34,16 @@ namespace Amdocs.Ginger.CoreNET
     /// This class is used to hold the wrapper for businessflow conversion status
     /// </summary>
     public class BusinessFlowToConvert : INotifyPropertyChanged
-    {
+    {     
         public event PropertyChangedEventHandler PropertyChanged;
 
         BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
         {
-            get
-            {
+            get {
                 return mBusinessFlow;
             }
-            set
-            {
+            set {
                 if (mBusinessFlow != value)
                 {
                     mBusinessFlow = value;
@@ -72,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        eConversionSaveStatus mSaveStatus = eConversionSaveStatus.Pending;
+        eConversionSaveStatus mSaveStatus = eConversionSaveStatus.Pending; 
         public eConversionSaveStatus SaveStatus
         {
             get
@@ -124,6 +125,19 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        int mConvertedActionsCount = 0;
+        public int ConvertedActionsCount
+        {
+            get {
+                return mConvertedActionsCount;
+            }
+            set
+            {
+                mConvertedActionsCount = value;
+                OnPropertyChanged(nameof(ConvertedActionsCount));
+            }
+        }
+
         /// <summary>
         /// This method is used to set the status icon
         /// </summary>
@@ -131,6 +145,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (mConversionStatus)
             {
+                case eConversionStatus.NA:
+                    StatusIcon = eImageType.Skipped;
+                    break;
                 case eConversionStatus.Finish:
                     StatusIcon = eImageType.Passed;
                     break;
@@ -156,12 +173,15 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (mSaveStatus)
             {
+                case eConversionSaveStatus.NA:
+                    SaveStatusIcon = eImageType.Skipped;
+                    break;
                 case eConversionSaveStatus.Pending:
                     SaveStatusIcon = eImageType.Pending;
                     break;
                 case eConversionSaveStatus.Saved:
                     SaveStatusIcon = eImageType.Passed;
-                    break;
+                    break;                
                 case eConversionSaveStatus.Saving:
                     SaveStatusIcon = eImageType.Running;
                     break;
@@ -174,13 +194,11 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsSelected = false;
         public bool IsSelected
         {
-            get
-            {
+            get {
                 return mIsSelected;
             }
-            set
-            {
-                if (mIsSelected != value)
+            set {
+                if(mIsSelected != value)
                 {
                     mIsSelected = value;
                     OnPropertyChanged(nameof(IsSelected));
@@ -193,6 +211,8 @@ namespace Amdocs.Ginger.CoreNET
         public string BusinessFlowName { get; set; }
 
         public string Description { get; set; }
+
+        public int ConvertableActionsCount { get; set; }
 
         public void OnPropertyChanged(string name)
         {

@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
-using Ginger.Actions.ApiActionsConversion;
 using Ginger.UserControls;
 using GingerWPF.WizardLib;
 using System;
@@ -34,7 +33,7 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class ConversionStatusReportPage : Page, IWizardPage
     {
-        ApiActionsConversionWizard mWizard;
+        ActionsConversionWizard mWizard;
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
 
         /// <summary>
@@ -56,7 +55,7 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (ApiActionsConversionWizard)WizardEventArgs.Wizard;
+                    mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
                     Init(WizardEventArgs);
@@ -92,8 +91,9 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView = new ObservableList<GridColView>();
 
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 20, ReadOnly = true, Header = "Folder" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, ReadOnly = true, Header = "Name" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 15, ReadOnly = true, Header = "Folder" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 20, ReadOnly = true, Header = "Name" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment= HorizontalAlignment.Center, Header = "Converted Actions" });
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.StatusIcon),
@@ -106,7 +106,7 @@ namespace Ginger.Actions.ActionConversion
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.SaveStatusIcon),
-                    WidthWeight = 15,
+                    WidthWeight = 10,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = (DataTemplate)this.PageGrid.Resources["xTestSaveStatusIconTemplate"],
                     ReadOnly = true,
@@ -152,7 +152,7 @@ namespace Ginger.Actions.ActionConversion
         private void StopButtonClicked(object sender, RoutedEventArgs e)
         {
             SetButtonsVisibility(true);
-            //mWizard.StopConversion();
+            mWizard.StopConversion();
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Ginger.Actions.ActionConversion
             Dispatcher.Invoke(() =>
             {
                 SetButtonsVisibility(false);
-                //mWizard.ProcessConversion(ListOfBusinessFlow, false);
+                mWizard.ProcessConversion(ListOfBusinessFlow, false);
             });
         }
 
@@ -180,7 +180,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 SetButtonsVisibility(false);
                 ObservableList<BusinessFlowToConvert> lst = GetListToReConvert(ListOfBusinessFlow);
-                //mWizard.ProcessConversion(lst, true);
+                mWizard.ProcessConversion(lst, true);
             });
         }
 
@@ -218,11 +218,18 @@ namespace Ginger.Actions.ActionConversion
                 {
                     try
                     {
-                        if (bf.IsSelected)
+                        if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
                         {
-                            bf.SaveStatus = eConversionSaveStatus.Saving;
-                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
-                            bf.SaveStatus = eConversionSaveStatus.Saved;
+                            if (bf.ConvertedActionsCount > 0)
+                            {
+                                bf.SaveStatus = eConversionSaveStatus.Saving;
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
+                                bf.SaveStatus = eConversionSaveStatus.Saved; 
+                            }
+                            else
+                            {
+                                bf.SaveStatus = eConversionSaveStatus.NA;
+                            }
                         }
                     }
                     catch (Exception ex)

@@ -28,6 +28,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -38,6 +39,7 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class SelectBusinessFlowWzardPage : Page, IWizardPage
     {
+        ActionsConversionWizard mWizard;
         public object BusinessFlowFolder { get; set; }
         SingleItemTreeViewSelectionPage mBFSelectionPage = null;
         ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
@@ -56,6 +58,7 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
+                    mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
@@ -139,7 +142,7 @@ namespace Ginger.Actions.ActionConversion
                                                                                         SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
                 mBFSelectionPage.SelectionDone += MBFSelectionPage_SelectionDone;
             }
-            List<object> selectedBFs = mBFSelectionPage.ShowAsWindow();
+            List<object> selectedBFs = mBFSelectionPage.ShowAsWindow(ownerWindow: ((WizardWindow)mWizard.mWizardWindow));
             AddSelectedBF(selectedBFs);
         }
 
@@ -153,13 +156,27 @@ namespace Ginger.Actions.ActionConversion
             {                
                 foreach (var bf in selectedBFs)
                 {
-                    BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
-                    flowToConversion.BusinessFlow = (BusinessFlow)bf;
-                    flowToConversion.ConversionStatus = eConversionStatus.Pending;
-                    flowToConversion.IsSelected = true;
-                    ListOfBusinessFlow.Add(flowToConversion);
+                    if (!IsBusinessFlowAdded(((BusinessFlow)bf).Guid))
+                    {
+                        BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
+                        flowToConversion.BusinessFlow = (BusinessFlow)bf;
+                        flowToConversion.ConversionStatus = eConversionStatus.Pending;
+                        flowToConversion.IsSelected = true;
+                        ListOfBusinessFlow.Add(flowToConversion); 
+                    }
                 } 
             }
+        }
+
+        /// <summary>
+        /// This method checks the businessFlow already exists
+        /// </summary>
+        /// <param name="bfGuid"></param>
+        /// <returns></returns>
+        private bool IsBusinessFlowAdded(Guid bfGuid)
+        {
+            bool isExists = ListOfBusinessFlow.Where(x => x.BusinessFlow.Guid == bfGuid).FirstOrDefault() == null ? false : true;
+            return isExists;
         }
 
         /// <summary>

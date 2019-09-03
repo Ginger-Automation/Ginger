@@ -26,22 +26,19 @@ using System.Threading;
 
 namespace GingerTest
 {
-    [Ignore]  // temp
+    [Ignore]  // temp fail on Azure on class init
     [TestClass]
     [Level3]
     
     public class EnvsTest
-    {
-        static TestContext mTC;
+    {        
         static GingerAutomator mGingerAutomator; 
         static string SolutionFolder;
         static Mutex mutex = new Mutex();
 
         [ClassInitialize]
         public static void ClassInit(TestContext TC)
-        {
-            
-            mTC = TC;            
+        {     
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
             SolutionFolder = TestResources.GetTestTempFolder(@"Solutions\EnvsTest");
             if (Directory.Exists(SolutionFolder))
@@ -65,8 +62,7 @@ namespace GingerTest
         [TestInitialize]
         public void TestInitialize()
         {
-            mutex.WaitOne();
-            
+            mutex.WaitOne();            
         }
 
         [TestCleanup]
@@ -132,7 +128,7 @@ namespace GingerTest
         }
 
 
-        [Ignore]
+
         [TestMethod]  [Timeout(60000)]
         public void DeleteEnvFromFileSystem()
         {
@@ -147,15 +143,15 @@ namespace GingerTest
             File.Delete(fileName);
 
             // Verify it is not in treeview - FileWatcher should detect the delete on disk
-            bool b = EnvsPOM.EnvironmentsTree.IsItemExist(envName);
+            bool envNotExist = EnvsPOM.EnvironmentsTree.IsItemNotExist(envName);
 
             //Assert
-            Assert.AreEqual(false, b);
+            Assert.AreEqual(true, envNotExist);
 
 
         }
 
-        [Ignore] // TODO: FIXME not shwoing in tree b is false
+        [Ignore] // TODO: FIXME not showing in tree b is false
         [TestMethod]  [Timeout(60000)]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
@@ -177,7 +173,7 @@ namespace GingerTest
             Assert.IsTrue(b);
         }
 
-        [Ignore]
+       
         [Level3]
         [TestMethod]  [Timeout(60000)]
         public void AddEnvFolderShowinTree()
@@ -197,7 +193,7 @@ namespace GingerTest
         }
 
 
-        [Ignore]
+
         [Level3]
         [TestMethod]  [Timeout(60000)]
         public void DeleteEnvFolderRemovedfromTree()
@@ -213,14 +209,14 @@ namespace GingerTest
             bool existBeforeDelete = EnvsPOM.EnvironmentsTree.IsItemExist(folderName);
             Directory.Delete(subFolder);
             Thread.Sleep(2000);
-            bool existAfterDelete = EnvsPOM.EnvironmentsTree.IsItemNotExist(folderName);
+            bool notExistAfterDelete = EnvsPOM.EnvironmentsTree.IsItemNotExist(folderName);
 
             // assert            
             Assert.IsTrue(existBeforeDelete);
-            Assert.IsFalse(existAfterDelete);
+            Assert.IsTrue(notExistAfterDelete);
         }
 
-        [Ignore] //TODO: FIXME
+        [Ignore] //TODO: FIXME 2nd assert fail
         [TestMethod]  [Timeout(60000)]
         public void RenameEnvFolderSyncWithTree()
         {
