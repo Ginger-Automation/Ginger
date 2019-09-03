@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //    icon = "@FeatureFile_16X16.png";
             //else
             //    icon = "@Documents_16x16.png";
-            //StackPanel SP =  TreeViewUtils.CreateItemHeader(FileName, icon, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            //StackPanel SP =  TreeViewUtils.CreateItemHeader(FileName, icon, Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
             //return SP;
 
             return TreeViewUtils.NewRepositoryItemTreeHeader(null, FileName, eImageType.File, GetSourceControlImageByPath(Path), false);

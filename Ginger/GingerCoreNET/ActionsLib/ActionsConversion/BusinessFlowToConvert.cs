@@ -10,6 +10,7 @@ namespace Amdocs.Ginger.CoreNET
     /// </summary>
     public enum eConversionStatus
     {
+        NA,
         Pending,
         Running,
         Stopped,
@@ -22,6 +23,7 @@ namespace Amdocs.Ginger.CoreNET
     /// </summary>
     public enum eConversionSaveStatus
     {
+        NA,
         Saved,
         Saving,
         Pending,
@@ -123,6 +125,19 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        int mConvertedActionsCount = 0;
+        public int ConvertedActionsCount
+        {
+            get {
+                return mConvertedActionsCount;
+            }
+            set
+            {
+                mConvertedActionsCount = value;
+                OnPropertyChanged(nameof(ConvertedActionsCount));
+            }
+        }
+
         /// <summary>
         /// This method is used to set the status icon
         /// </summary>
@@ -130,6 +145,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (mConversionStatus)
             {
+                case eConversionStatus.NA:
+                    StatusIcon = eImageType.Skipped;
+                    break;
                 case eConversionStatus.Finish:
                     StatusIcon = eImageType.Passed;
                     break;
@@ -155,6 +173,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (mSaveStatus)
             {
+                case eConversionSaveStatus.NA:
+                    SaveStatusIcon = eImageType.Skipped;
+                    break;
                 case eConversionSaveStatus.Pending:
                     SaveStatusIcon = eImageType.Pending;
                     break;
@@ -190,6 +211,8 @@ namespace Amdocs.Ginger.CoreNET
         public string BusinessFlowName { get; set; }
 
         public string Description { get; set; }
+
+        public int ConvertableActionsCount { get; set; }
 
         public void OnPropertyChanged(string name)
         {

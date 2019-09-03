@@ -119,13 +119,8 @@ namespace Ginger.Agents.AddAgentWizardLib
                 
                 if (xDriverTypeComboBox.SelectedItem is DriverInfo DI)
                 {
-                  mWizard.Agent.DriverInfo = DI;
-                    foreach (var service in mWizard.Agent.DriverInfo.services)
-                    {
-                        xDriverSubTypeComboBox.Items.Add(service);
-                    }
-                        xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
-                    xDriverSubTypeComboBox.SelectedItem = xDriverSubTypeComboBox.Items[0];
+                    mWizard.Agent.DriverInfo = DI;
+
                     if (DI.isDriverPlugin)
                     {
                         mWizard.Agent.AgentType = Agent.eAgentType.Service;
@@ -136,6 +131,15 @@ namespace Ginger.Agents.AddAgentWizardLib
                         mWizard.Agent.AgentType = Agent.eAgentType.Driver;
                     }
 
+                    foreach (var service in mWizard.Agent.DriverInfo.services)
+                    {
+                        xDriverSubTypeComboBox.Items.Add(service);
+                    }
+
+
+                    xDriverSubTypeComboBox.SelectionChanged += XDriverSubTypeComboBox_SelectionChanged;
+                    xDriverSubTypeComboBox.SelectedItem = xDriverSubTypeComboBox.Items[0];
+                
           
                    if(DI.services.Count==0)
                     {

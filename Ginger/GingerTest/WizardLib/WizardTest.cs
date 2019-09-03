@@ -100,7 +100,7 @@ namespace GingerTest
             bool finishButtonEnabled = mWizard.FinishButton.IsEnabled;            
             mWizard.CancelButton.Click();
             bool WizardOpen = WizardPOM.IsWizardOpen;
-            mGingerAutomator.TakeScreenShot(mTestHelper.GetTempFileName("Wizard Screen Shot.png"));
+            mGingerAutomator.MainWindowPOM.TakeScreenShot(mTestHelper.GetTempFileName("Wizard Screen Shot.png"));
             //Artifacts
 
 

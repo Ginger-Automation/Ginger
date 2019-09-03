@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
@@ -139,11 +140,18 @@ namespace Ginger.BusinessFlowPages
 
         private void ActivitiesListView_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(Activity))
-                || DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(Activity), true)
+                || DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ActivitiesGroup), true))
             {
-                // OK to drop
-                DragDrop2.SetDragIcon(true);
+                if (DragDrop2.DrgInfo.Data is ObservableList<RepositoryItemBase>)
+                {
+                    DragDrop2.SetDragIcon(true, true);
+                }
+                else
+                {
+                    // OK to drop
+                    DragDrop2.SetDragIcon(true);
+                }
             }
             else
             {

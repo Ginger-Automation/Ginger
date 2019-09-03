@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.ListHelpers;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -46,7 +47,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for ActionsLibraryNavAction.xaml
     /// </summary>
-    public partial class ActionsLibraryNavPage : Page
+    public partial class ActionsLibraryNavPage : Page, INavPanelPage
     {
         //GenericWindow pageGenericWin = null;
         ObservableList<IAct> mActionsList;
@@ -72,9 +73,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                FillActionsList();
+                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                {
+                    FillActionsList();
+                }
             }
         }
 
@@ -412,6 +416,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 AllActionType = subclasses.ToList();
             }
             return AllActionType;
+        }
+
+        public void ReLoadPageItems()
+        {
+            FillActionsList();
         }
     }
 }

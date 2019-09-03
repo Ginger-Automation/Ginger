@@ -405,21 +405,20 @@ namespace Ginger.Actions
                     ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
                 }
             }
-            else if (a.GetType() == typeof(ActGenElement))
+            else if (a.GetType() == typeof(ActGenElement)|| a.GetType() == typeof(ActTableElement))
             {
-                if (a.InputValues.Count == 0)
+
+                ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+
+                if(inputValue==null)
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
                     a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    inputValue= a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
                 }
-                else
-                {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), nameof(ActInputValue.Value));
-                }
+                ValueGridPanel.Visibility = Visibility.Collapsed;
+                ValueBoxPanel.Visibility = Visibility.Visible;
+                ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
+
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
@@ -433,23 +432,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Visible;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                 }
-            }
-            else if (a.GetType() == typeof(ActTableElement))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
-            {
-                if (a.InputValues.Count == 0)
-                {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
-                }
-                else
-                {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), nameof(ActInputValue.Value));
-                }
-            }
+            }    
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
