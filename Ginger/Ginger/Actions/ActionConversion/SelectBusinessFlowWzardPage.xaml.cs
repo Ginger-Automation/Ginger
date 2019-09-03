@@ -28,6 +28,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -155,13 +156,27 @@ namespace Ginger.Actions.ActionConversion
             {                
                 foreach (var bf in selectedBFs)
                 {
-                    BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
-                    flowToConversion.BusinessFlow = (BusinessFlow)bf;
-                    flowToConversion.ConversionStatus = eConversionStatus.Pending;
-                    flowToConversion.IsSelected = true;
-                    ListOfBusinessFlow.Add(flowToConversion);
+                    if (!IsBusinessFlowAdded(((BusinessFlow)bf).Guid))
+                    {
+                        BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
+                        flowToConversion.BusinessFlow = (BusinessFlow)bf;
+                        flowToConversion.ConversionStatus = eConversionStatus.Pending;
+                        flowToConversion.IsSelected = true;
+                        ListOfBusinessFlow.Add(flowToConversion); 
+                    }
                 } 
             }
+        }
+
+        /// <summary>
+        /// This method checks the businessFlow already exists
+        /// </summary>
+        /// <param name="bfGuid"></param>
+        /// <returns></returns>
+        private bool IsBusinessFlowAdded(Guid bfGuid)
+        {
+            bool isExists = ListOfBusinessFlow.Where(x => x.BusinessFlow.Guid == bfGuid).FirstOrDefault() == null ? false : true;
+            return isExists;
         }
 
         /// <summary>
