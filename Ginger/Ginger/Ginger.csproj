@@ -426,9 +426,6 @@
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
-    <Compile Include="Actions\ActionConversion\ConversionStatusReportPage.xaml.cs">
-      <DependentUpon>ConversionStatusReportPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
@@ -731,9 +728,6 @@
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SourceControl\SourceControlUI.cs" />
-    <Compile Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml.cs">
-      <DependentUpon>SelectBusinessFlowWzardPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -2872,10 +2866,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActionConversion\ConversionStatusReportPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Actions\ActionConversion\SelectActionWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3303,10 +3293,6 @@
     <Page Include="DataSource\ImportExcelWizardLib\ImportDataSourceBrowseFile.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TimeLineLib\TimeLinePage.xaml">
       <SubType>Designer</SubType>
