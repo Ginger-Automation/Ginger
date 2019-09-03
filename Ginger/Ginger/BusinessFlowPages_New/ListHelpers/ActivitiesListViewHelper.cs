@@ -214,12 +214,30 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             cutAllList.OperationHandler = CutAllListHandler;
             extraOperationsList.Add(cutAllList);
 
+            ListItemOperation copySelected = new ListItemOperation();
+            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copySelected.AutomationID = "copySelected";
+            copySelected.Group = "Clipboard";
+            copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
+            copySelected.Header = "Copy Selected Items";
+            copySelected.OperationHandler = CopySelectedHandler;
+            extraOperationsList.Add(copySelected);
+
+            ListItemOperation cutSelected = new ListItemOperation();
+            cutSelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            cutSelected.AutomationID = "cutSelected";
+            cutSelected.Group = "Clipboard";
+            cutSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
+            cutSelected.Header = "Cut Selected Items";
+            cutSelected.OperationHandler = CutSelectedHandler;
+            extraOperationsList.Add(cutSelected);
+
             ListItemOperation pasteInList = new ListItemOperation();
             pasteInList.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             pasteInList.AutomationID = "pasteInList";
             pasteInList.Group = "Clipboard";
             pasteInList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasteInList.Header = "Paste in Selected Group";
+            pasteInList.Header = "Paste";
             pasteInList.OperationHandler = PasteInListHandler;
             extraOperationsList.Add(pasteInList);
 
@@ -786,6 +804,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             foreach (Activity activity in mContext.BusinessFlow.Activities)
             {
                 list.Add(activity);
+            }
+            ClipboardOperationsHandler.SetCutItems(ListView, list);
+        }
+
+        private void CopySelectedHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (Activity act in ListView.List.SelectedItems)
+            {
+                list.Add(act);
+            }
+            ClipboardOperationsHandler.SetCopyItems(list);
+        }
+
+        private void CutSelectedHandler(object sender, RoutedEventArgs e)
+        {
+            ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
+            foreach (Activity act in ListView.List.SelectedItems)
+            {
+                list.Add(act);
             }
             ClipboardOperationsHandler.SetCutItems(ListView, list);
         }

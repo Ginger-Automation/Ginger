@@ -60,18 +60,21 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         private void SetSelectedActionsForConversion()
         {
-            foreach (ConvertableActionDetails act in xGridConvertibleActions.DataSourceList)
+            if (xGridConvertibleActions.DataSourceList != null)
             {
-                if(act.Selected)
+                foreach (ConvertableActionDetails act in xGridConvertibleActions.DataSourceList)
                 {
-                    foreach (var convertableAction in mWizard.ActionToBeConverted)
+                    if (act.Selected)
                     {
-                        if(act.SourceActionTypeName == convertableAction.SourceActionTypeName && act.TargetActionTypeName == convertableAction.TargetActionTypeName)
+                        foreach (var convertableAction in mWizard.ActionToBeConverted)
                         {
-                            convertableAction.Selected = act.Selected;
+                            if (act.SourceActionTypeName == convertableAction.SourceActionTypeName && act.TargetActionTypeName == convertableAction.TargetActionTypeName)
+                            {
+                                convertableAction.Selected = act.Selected;
+                            }
                         }
                     }
-                }
+                } 
             }
         }
 
@@ -93,6 +96,11 @@ namespace Ginger.Actions.ActionConversion
 
             if (lstSelectedActivities.Count != 0)
             {
+                xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
+                {
+                    ucGrid.eUcGridValidationRules.CheckedRowCount
+                };
+
                 ActionConversionUtils utils = new ActionConversionUtils();
                 mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
                 if (mWizard.ActionToBeConverted.Count != 0)
@@ -102,8 +110,8 @@ namespace Ginger.Actions.ActionConversion
                     return;
                 }
                 else
-                {
-                    Reporter.ToUser(eUserMsgKey.NoConvertibleActionsFound);
+                {                    
+                    Reporter.ToLog(eLogLevel.INFO, "No Convertible Actions Found");
                     return;
                 }
             }
@@ -147,7 +155,7 @@ namespace Ginger.Actions.ActionConversion
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.TargetActionTypeName), WidthWeight = 15, Header = "Target Action Type" });
             if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.ActionCount), WidthWeight = 15, Header = "Actions Count" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableActionDetails.ActionCount), WidthWeight = 15, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, Header = "Instances Count" });
             }
             xGridConvertibleActions.SetAllColumnsDefaultView(view);
             xGridConvertibleActions.InitViewItems();
@@ -156,10 +164,6 @@ namespace Ginger.Actions.ActionConversion
             xGridConvertibleActions.SetBtnImage(xGridConvertibleActions.btnMarkAll, "@CheckAllColumn_16x16.png");
             xGridConvertibleActions.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
             xGridConvertibleActions.MarkUnMarkAllActive += MarkUnMarkAllActions;
-            xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
-            {
-                ucGrid.eUcGridValidationRules.CheckedRowCount
-            };
             xGridConvertibleActions.ActiveStatus = true;
         }
 

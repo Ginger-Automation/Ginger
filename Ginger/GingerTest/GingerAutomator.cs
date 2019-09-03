@@ -115,7 +115,7 @@ namespace GingerTest
             mGingerThread.IsBackground = true;
             mGingerThread.Start();
 
-            //max 60 seconds for Mainwindow to be ready
+            //max 60 seconds for Main window to be ready
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
@@ -128,10 +128,7 @@ namespace GingerTest
             isReady = true;
         }
 
-        internal void TakeScreenShot(string fileName)
-        {
-            // TODO:
-        }
+        
 
         void CloseGinger()
         {
