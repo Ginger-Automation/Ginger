@@ -109,7 +109,7 @@ namespace Ginger.SourceControl
 
         public bool TestSourceControlConnection()
         {
-            bool result = SourceControlIntegration.TestConnection( WorkSpace.Instance.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
+            bool result = SourceControlUI.TestConnection( WorkSpace.Instance.Solution.SourceControl, eSourceControlContext.ConnectionDetailsPage, false);
             Mouse.OverrideCursor = null;
             return result;
         }

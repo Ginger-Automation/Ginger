@@ -139,14 +139,14 @@ namespace Ginger.Actions.ActionConversion
                             selectedLst.Add(bf);
                         }
                     }
-                    mConversionUtils.ListOfBusinessFlow = selectedLst;
+                    mConversionUtils.ListOfBusinessFlowsToConvert = selectedLst;
                 }
                 else
                 {
-                    mConversionUtils.ListOfBusinessFlow = lst;
+                    mConversionUtils.ListOfBusinessFlowsToConvert = lst;
                 }
 
-                if (mConversionUtils.ListOfBusinessFlow.Count > 0)
+                if (mConversionUtils.ListOfBusinessFlowsToConvert.Count > 0)
                 {
                     await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
                 }
@@ -177,7 +177,7 @@ namespace Ginger.Actions.ActionConversion
                 mConversionUtils.ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue);
                 mConversionUtils.ActUIElementElementTypeField = nameof(ActUIElement.ElementType);
                 mConversionUtils.ActUIElementClassName = nameof(ActUIElement);
-                mConversionUtils.ListOfBusinessFlow = lst;
+                mConversionUtils.ListOfBusinessFlowsToConvert = lst;
 
                 await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
 

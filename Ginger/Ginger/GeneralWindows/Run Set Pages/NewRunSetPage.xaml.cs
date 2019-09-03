@@ -137,8 +137,8 @@ namespace Ginger.Run
                     if (xActivitiesRunnerItemsListView.SelectedItem == null)
                     {
                         xActivitiesRunnerItemsListView.SelectedIndex = 0;
-                    }
-
+                    }    
+                    
                     return (RunnerItemPage)xActivitiesRunnerItemsListView.SelectedItem;
                 }
                 else
@@ -147,7 +147,7 @@ namespace Ginger.Run
                 }
             }
         }
-
+        
         Activity mCurrentActivityRunnerItemObject
         {
             get
@@ -265,7 +265,7 @@ namespace Ginger.Run
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
 
-            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;
+            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;            
             xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
 
             xActivitiesRunnerItemsListView.SelectionChanged -= xActionsListView_SelectionChanged;
@@ -503,6 +503,7 @@ namespace Ginger.Run
                             break;                      
                     }
                     break;
+                
             }
         }
         
@@ -846,7 +847,7 @@ namespace Ginger.Run
                     if (mCurrentBusinessFlowRunnerItem.ItemObject == changedBusinessflow)
                     {
                         mCurrentBusinessFlowRunnerItem.LoadChildRunnerItems();//reloading activities to make sure include dynamically added/removed activities.
-                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ItemChilds;
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
                     }
                 }
             });             
@@ -1008,7 +1009,7 @@ namespace Ginger.Run
             });
 
             RunnerPage firstRunnerPage = null;
-            foreach (GingerRunner GR in mRunSetConfig.GingerRunners)
+            foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
             {
                 if (runAsync)
                 {
@@ -1384,6 +1385,17 @@ namespace Ginger.Run
         {           
             try
             {
+                //if (mRunSetConfig.DirtyStatus == eDirtyStatus.Modified)
+                //{
+                //    if (Reporter.ToUser(eUserMsgKey.SaveRunsetChanges) == eUserMsgSelection.Yes)
+                //    {                        
+                //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
+                //    }
+                //    else
+                //    {
+                //        return;
+                //    }                    
+                //}                
                 UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
@@ -1395,6 +1407,7 @@ namespace Ginger.Run
                     if (analyzeRes == 1) return;//cancel run because issues found
                 }
 
+                WorkSpace.Instance.AppSolutionAutoSave.StopSolutionAutoSave();
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
@@ -1409,8 +1422,13 @@ namespace Ginger.Run
                     });
                 }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed: ", ex);
+            }
             finally
-            {                
+            {
+                WorkSpace.Instance.AppSolutionAutoSave.ResumeSolutionAutoSave();                
                 UpdateRunButtonIcon();
             }            
         }
@@ -1735,7 +1753,7 @@ namespace Ginger.Run
             ALMDefectsBorder.BorderBrush = null;
         }
         private void xRunsetSaveBtn_Click(object sender, RoutedEventArgs e)
-        {                        
+        {            
             SaveRunSetConfig();           
         }
         
@@ -1779,6 +1797,14 @@ namespace Ginger.Run
                     currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
                 }                
             }
+
+            if (e.RemovedItems != null && e.RemovedItems.Count != 0)
+            {
+                RunnerItemPage previousBusinessFlowPage = (RunnerItemPage)e.RemovedItems[0];
+                previousBusinessFlowPage.ClearItemChilds();       
+                //GC.Collect();
+            }
+
             if (mCurrentBusinessFlowRunnerItem != null)
             {
                 try
@@ -1787,18 +1813,8 @@ namespace Ginger.Run
                     xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
                     General.DoEvents();//for seeing the processing icon better to do with Async
 
-                    //load needes Activities and clear other BF's Activities pages to save memory                 
-                    foreach (RunnerItemPage bfPage in mCurrentSelectedRunner.BusinessflowRunnerItems)
-                    {
-                        if (bfPage == null) continue;
-
-                        if (bfPage == mCurrentBusinessFlowRunnerItem)
-                            //load Activities
-                            xActivitiesRunnerItemsListView.ItemsSource = bfPage.ItemChilds;
-                        else
-                            bfPage.ClearItemChilds();
-                    }
-                    GC.Collect();//to help with memory free
+                    xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
+                    
                 }
                 finally
                 {
@@ -1828,8 +1844,16 @@ namespace Ginger.Run
             this.Dispatcher.Invoke(() =>
             {
                 ListView view = sender as ListView;
-                view.ScrollIntoView(view.SelectedItem);
+                view.ScrollIntoView(view.SelectedItem);                
             });
+
+
+            if (e.RemovedItems != null && e.RemovedItems.Count != 0)
+            {
+                RunnerItemPage previousActivityPage = (RunnerItemPage)e.RemovedItems[0];
+                previousActivityPage.ClearItemChilds();    
+                //GC.Collect();
+            }
 
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
@@ -1843,7 +1867,7 @@ namespace Ginger.Run
                     xActionsRunnerItemsListView.Visibility = Visibility.Collapsed;
                     General.DoEvents();//for seeing the processing icon better to it with Async
                     //load items
-                    xActionsRunnerItemsListView.ItemsSource = mCurrentActivityRunnerItem.ItemChilds;
+                    xActionsRunnerItemsListView.ItemsSource = mCurrentActivityRunnerItem.ChildItemPages;
                 }
                 finally
                 {

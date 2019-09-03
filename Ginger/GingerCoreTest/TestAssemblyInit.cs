@@ -50,7 +50,7 @@ namespace GingerAutoPilotTest
             string PBAppZip = TestResources.GetTestResourcesFile("PBTestApp.zip");
             string targetFolder = PBAppZip.Replace("PBTestApp.zip", "");
 
-            string appFolder = targetFolder + Path.DirectorySeparatorChar + "PBTestApp";
+            string appFolder = Path.Combine(targetFolder , "PBTestApp");
             if (Directory.Exists(appFolder))
             {
                 Directory.Delete(appFolder, true);

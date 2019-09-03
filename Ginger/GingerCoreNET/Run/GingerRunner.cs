@@ -41,7 +41,6 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
-using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
 using System;
@@ -2590,7 +2589,7 @@ namespace Ginger.Run
                 if (string.IsNullOrEmpty(ARC.Actual) && !string.IsNullOrEmpty(ARC.ExpectedCalculated) && ARC.Operator != eOperator.Evaluate)
                 {
                     ARC.Status = ActReturnValue.eStatus.Failed;
-                    ErrorInfo = "Actual or Expected is empty.";
+                    return "Actual or Expected is empty.";
                 }
 
                 bool? status = null;
