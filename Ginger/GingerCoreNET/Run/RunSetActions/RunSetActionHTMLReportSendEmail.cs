@@ -36,6 +36,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Ginger.Run.RunSetActions
@@ -498,7 +499,17 @@ namespace Ginger.Run.RunSetActions
             {
                 return;
             }
-            string ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
+
+            string ReportHTML;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
+            }
+            else
+            {
+                ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReportOnLinux.html", TemplatesFolder);
+            }
+           
             List<KeyValuePair<int, int>> chartData = null;
             StringBuilder fieldsNamesHTMLTableCells = new StringBuilder();
             StringBuilder fieldsValuesHTMLTableCells = new StringBuilder();
