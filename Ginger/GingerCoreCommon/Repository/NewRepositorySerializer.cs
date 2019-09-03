@@ -779,8 +779,7 @@ namespace Amdocs.Ginger.Repository
             }
 
             object obj;
-            Type t;
-            //             bool b = mClassDictionary.TryGetValue(name, out t);
+            Type t;            
             bool b = mClassDictionary.TryGetValue(name, out t);
             if (b)
             {
