@@ -303,7 +303,7 @@ GingerPayLoad.prototype.GetListPayLoad = function()
     var b = this.ReadValueType();
 
     //Verify it is List Payload  = 6
-    if (b == 6) {
+    if (b === 6) {
         // How many Payload we have
         var count = this.ReadLen(); 
 

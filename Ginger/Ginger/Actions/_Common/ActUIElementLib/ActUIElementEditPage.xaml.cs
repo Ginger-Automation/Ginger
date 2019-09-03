@@ -259,7 +259,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
 
                 case eElementAction.DragDrop:
-                    pageContent = new UIElementDragAndDropEditPage(mAction, mPlatform); ;
+                    pageContent = new UIElementDragAndDropEditPage(mAction, mPlatform);
                     break;
 
                 case eElementAction.DoubleClick:
@@ -403,7 +403,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
 
                 default:
-                   break;
+                    Reporter.ToLog(eLogLevel.DEBUG, mAction.ElementAction.ToString() + "not required config page.");
+                    break;
             }
             Page elementEditPage = null;
             if (elementList.Count != 0)
