@@ -1183,19 +1183,19 @@ namespace Ginger.Run.RunSetActions
                 //Create the Zip file if file not exists otherwise delete existing one and then create new.
                 try
                 {
-                    if (File.Exists(tempFolder + @"\" + ZipFileName))
+                    if (File.Exists(Path.Combine(tempFolder,ZipFileName)))
                     {
-                        File.Delete(tempFolder + @"\" + ZipFileName);
+                        File.Delete(Path.Combine(tempFolder,ZipFileName));
                     }
-                    ZipFile.CreateFromDirectory(FileName, tempFolder + @"\" + ZipFileName);
+                    ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder,ZipFileName));
                 }
                 catch (Exception ex)
                 {
                     ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
-                    ZipFile.CreateFromDirectory(FileName, tempFolder + @"\" + ZipFileName);
+                    ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
-                e.Attachments.Add(tempFolder + @"\" + ZipFileName);
+                e.Attachments.Add(Path.Combine(tempFolder, ZipFileName));
             }
             else
             {
