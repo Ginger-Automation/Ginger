@@ -253,7 +253,7 @@ namespace Ginger.SourceControl
                 //Path.get
                 if (Directory.Exists(SourceControlRootFolder + Path.DirectorySeparatorChar + ".git"))
                 {
-                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + Path.PathSeparator + ".git");
+                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + Path.DirectorySeparatorChar + ".git");
                     if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                     {
                         ReposiytoryRootFolder = Path.GetFullPath(SourceControlRootFolder);
