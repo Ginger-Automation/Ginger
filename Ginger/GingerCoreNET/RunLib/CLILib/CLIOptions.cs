@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using CommandLine;
+using GingerCoreNET.SourceControl;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -52,6 +53,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('w', "showAutoRunWindow", Required = false, Default = true, HelpText = "showAutoRunWindow")]
         public bool ShowAutoRunWindow { get; set; }
     }
+
+    [Verb("scm", HelpText = "Execute source control management operations")]
+    public class SCMOptions
+    {
+        public static string Verb =>  CLIOptionClassHelper.GetClassVerb<SCMOptions>(); 
+
+        [Option('t', "type", Required = true, HelpText = "Source Control Management type i.e: GIT, SVN")]
+        public SourceControlBase.eSourceControlType SCMType { get; set; }
+
+        [Option('l', "url", Required = true, HelpText = "Source Control URL")]
+        public string URL { get; set; }
+
+        [Option('u', "user", Required = true, HelpText = "Source Control User")]
+        public string User { get; set; }
+
+        [Option('p', "pass", Required = true, HelpText = "Source Control Pass")]
+        public string Pass { get; set; }
+
+        [Option('e', "encrypted", Required = false, HelpText = "password is encrypted")]
+        public bool Encrypted { get; set; }
+
+        [Option('m', "encrypted-mechanism", Required = false, HelpText = "password decryption mechanism")]
+        public bool DecryptMechanism { get; set; }
+
+        public enum SCMOperation
+        {
+            Download,   // lower case!!!
+            GetLatest
+        }
+
+        [Option('o', "operation", Required = true, HelpText = "SCM Operation")]
+        public SCMOperation Operation { get; set; }
+
+    }
+
 
     [Verb("grid", HelpText = "Start Service Grid")]
     public class GridOptions

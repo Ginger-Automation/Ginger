@@ -24,16 +24,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIArgs : ICLI
     {
-        bool ICLI.IsFileBasedConfig { get { return false; } }
+        bool ICLI.IsFileBasedConfig => false;
 
-        string ICLI.Verb
-        {
-            get
-            {
-                //TODO: remove !!!!!!!!!!!!
-                return "run";
-            }
-        }
+        string ICLI.Verb => RunOptions.Verb;
+        
 
         string ICLI.FileExtension
         {

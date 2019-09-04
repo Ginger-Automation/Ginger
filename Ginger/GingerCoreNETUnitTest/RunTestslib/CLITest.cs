@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace WorkspaceHold
 {
@@ -54,7 +55,7 @@ namespace WorkspaceHold
 
 
         [TestMethod]
-        public void CLIConfigTest()
+        public void OLDCLIConfigTest()
         {
             
             // Arrange
@@ -72,7 +73,7 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Verb + "=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
 
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
@@ -245,12 +246,18 @@ namespace WorkspaceHold
 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(runSetAutoRunConfiguration.CLIContent);
+                string[] args = CommandLineToStringArray(runSetAutoRunConfiguration.CLIContent).ToArray();
+                CLI.ExecuteArgs(args);
 
                 // Assert            
                 Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
             //}
         }
+
+
+        
+
+
 
         [TestMethod]
         public void CLIArgsWithAnalyzeTest()
@@ -491,9 +498,8 @@ namespace WorkspaceHold
             //Arrange
             string s = @"run -s c:\123 -e env1";
 
-
             // Act            
-            var arguments = CLIProcessor.ParseArguments(s);
+            var arguments = CommandLineToStringArray(s);
 
             // Assert            
             Assert.IsTrue(arguments.First() == "run");
@@ -503,6 +509,40 @@ namespace WorkspaceHold
             Assert.IsTrue(arguments.Contains("env1"), "arguments Contains env1");
         }
 
+        // Parse a command line with multiple switches to string list - used for test only!
+        public static IEnumerable<string> CommandLineToStringArray(string commandLine)
+        {
+            if (string.IsNullOrWhiteSpace(commandLine))
+                yield break;
+
+            var sb = new StringBuilder();
+            bool inQuote = false;
+            foreach (char c in commandLine)
+            {
+                if (c == '"' && !inQuote)
+                {
+                    inQuote = true;
+                    continue;
+                }
+
+                if (c != '"' && !(char.IsWhiteSpace(c) && !inQuote))
+                {
+                    sb.Append(c);
+                    continue;
+                }
+
+                if (sb.Length > 0)
+                {
+                    var result = sb.ToString();
+                    sb.Clear();
+                    inQuote = false;
+                    yield return result;
+                }
+            }
+
+            if (sb.Length > 0)
+                yield return sb.ToString();
+        }
 
 
     }

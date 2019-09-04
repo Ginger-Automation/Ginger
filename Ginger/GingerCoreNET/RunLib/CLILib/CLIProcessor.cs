@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             // auto convert old args if detected to new args then run unified processing
             // Support backward compatibility 
-            if (args[0].StartsWith("ConfigFile=")  || args[0] == "Dynamic=" || args[0] == "Script=")
+            if (args[0].StartsWith("ConfigFile=") || args[0].StartsWith("Dynamic=") || args[0].StartsWith("Script="))
             {                                
                 string[] newArgs = ConvertOldArgs(args);
                 ShowOLDCLIArgsWarning(args, newArgs);
@@ -52,48 +52,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             
             ParseArgs(args);                            
-        }
-
-        public void ExecuteArgs(string commandLine)
-        {
-            string[] args = ParseArguments(commandLine).ToArray();
-            ExecuteArgs(args);
-        }
-
-
-        // Parse a command line with multiple switches to string list
-        public static IEnumerable<string> ParseArguments(string commandLine)
-        {
-            if (string.IsNullOrWhiteSpace(commandLine))
-                yield break;
-
-            var sb = new StringBuilder();
-            bool inQuote = false;
-            foreach (char c in commandLine)
-            {
-                if (c == '"' && !inQuote)
-                {
-                    inQuote = true;
-                    continue;
-                }
-
-                if (c != '"' && !(char.IsWhiteSpace(c) && !inQuote))
-                {
-                    sb.Append(c);
-                    continue;
-                }
-
-                if (sb.Length > 0)
-                {
-                    var result = sb.ToString();
-                    sb.Clear();
-                    inQuote = false;
-                    yield return result;
-                }
-            }
-
-            if (sb.Length > 0)
-                yield return sb.ToString();
         }
 
 
@@ -133,7 +91,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     return null;
             }
             
-            return new string[] { verb, CLIOptionClassHelper.FILENAME, value};            
+            return new string[] { verb, "--" + CLIOptionClassHelper.FILENAME, value};            
         }
 
 
@@ -155,10 +113,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             //}
             //else
             //{
-                Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions>(args)                        
+                Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions>(args)                        
                        .WithParsed<RunOptions>(runOptions =>
                        {
-                           mCLIHandler = new CLIArgs();
                            HandleRunOptions(runOptions);
                        })
                        .WithParsed<GridOptions>(gridOptions =>
@@ -177,7 +134,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                        {
                            HandleScriptOptions(scriptOptions);
                        })
-                       
+                       .WithParsed<SCMOptions>(sCMOptions =>
+                       {
+                           HandleSCMOptions(sCMOptions);
+                       })
+                
+
 
                        .WithNotParsed(errs =>
                        {
@@ -185,6 +147,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             HandleCLIParseError(errs);
                        });
             //}
+        }
+
+        private void HandleSCMOptions(SCMOptions sCmOptions)
+        {
+            Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
+
+            mCLIHandler = new CLISCM();
+            mCLIHelper.SourceControlURL = sCmOptions.URL;
+            
+            // do the rest !!!
+
+            CLILoadAndPrepare();
+            ExecuteRunSet();
         }
 
         private void HandleScriptOptions(ScriptOptions scriptOptions)
@@ -236,13 +211,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-
             Reporter.ToLog(eLogLevel.INFO, $"Solution: {runOptions.Solution}");
             Reporter.ToLog(eLogLevel.INFO, $"Runset: {runOptions.Runset}");
-                        
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
-            // mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-
+            
+            mCLIHandler = new CLIArgs();
             mCLIHelper.Solution = runOptions.Solution;
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
