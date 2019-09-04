@@ -1008,6 +1008,16 @@ namespace Ginger.Run
                 InitFlowDiagram();
             });
 
+            System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+            st.Start();
+            while (WorkSpace.Instance.AppSolutionAutoSave.WaitForAutoSave)
+            {
+                await Task.Delay(20);
+                if (st.ElapsedMilliseconds > 5000)
+                {
+                    break;
+                }
+            }
             RunnerPage firstRunnerPage = null;
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
             {
@@ -1187,6 +1197,7 @@ namespace Ginger.Run
                     runSetConfig.StartDirtyTracking();
 
                     mRunSetConfig = runSetConfig;
+                    mRunSetConfig.AllowAutoSave = false;
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig = RunSetConfig;
                     
                     //Init Run Set Details Section
@@ -1219,6 +1230,7 @@ namespace Ginger.Run
             {
                 this.Dispatcher.Invoke(() =>
                 {
+                    mRunSetConfig.AllowAutoSave = true;
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
                 });
@@ -1279,11 +1291,13 @@ namespace Ginger.Run
         {
             try
             {
+                mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
             finally
             {
+                mRunSetConfig.AllowAutoSave = true;
                 Reporter.HideStatusMessage();
             }
         }
@@ -1384,18 +1398,7 @@ namespace Ginger.Run
         private async void xRunRunsetBtn_Click(object sender, RoutedEventArgs e)
         {           
             try
-            {
-                //if (mRunSetConfig.DirtyStatus == eDirtyStatus.Modified)
-                //{
-                //    if (Reporter.ToUser(eUserMsgKey.SaveRunsetChanges) == eUserMsgSelection.Yes)
-                //    {                        
-                //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
-                //    }
-                //    else
-                //    {
-                //        return;
-                //    }                    
-                //}                
+            {                         
                 UpdateRunButtonIcon(true);                
 
                 ResetALMDefectsSuggestions();
@@ -1406,8 +1409,7 @@ namespace Ginger.Run
                     int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
                     if (analyzeRes == 1) return;//cancel run because issues found
                 }
-
-                WorkSpace.Instance.AppSolutionAutoSave.StopSolutionAutoSave();
+               
                 //run             
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
@@ -1427,8 +1429,7 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed: ", ex);
             }
             finally
-            {
-                WorkSpace.Instance.AppSolutionAutoSave.ResumeSolutionAutoSave();                
+            {             
                 UpdateRunButtonIcon();
             }            
         }

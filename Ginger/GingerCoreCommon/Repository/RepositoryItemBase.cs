@@ -153,7 +153,19 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
+        bool mAllowAutoSave = true;
+        public bool AllowAutoSave
+        {
+            get
+            {
+                return mAllowAutoSave;
+            }
+            set
+            {
+                mAllowAutoSave = value;
+                OnPropertyChanged(nameof(AllowAutoSave));
+            }
+        }
 
         Guid mGuid = Guid.Empty;
         [IsSerializedForLocalRepository]
