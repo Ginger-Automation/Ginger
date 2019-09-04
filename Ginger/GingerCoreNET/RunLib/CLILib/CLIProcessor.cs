@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -55,101 +54,44 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        private string[] ConvertOldArgs(string[] oldArgs)
-        {                        
-            string param;
-            string value = null;            
-            if (oldArgs[0].Contains("="))
-            {
-                string[] arg1 = oldArgs[0].Split(new[] { '=' }, 2);
-                param = arg1[0].Trim();
-                value = arg1[1].Trim();
-            }
-            else
-            {
-                param = oldArgs[0].Trim();
-                if (oldArgs.Length > 1)
-                {
-                    value = oldArgs[1].Trim();
-                }
-            }
-
-            string verb;
-            switch (param)
-            {                
-                case "ConfigFile":
-                    verb = ConfigFileOptions.Verb;                    
-                    break;
-                case "Script":
-                    verb = ScriptOptions.Verb;                    
-                    break;
-                case "Dynamic":
-                    verb = DynamicOptions.Verb;                    
-                    break;
-                default:
-                    Reporter.ToConsole(eLogLevel.ERROR, "Error - Unknown Command Line Argument(s): " + param);
-                    return null;
-            }
-            
-            return new string[] { verb, "--" + CLIOptionClassHelper.FILENAME, value};            
-        }
-
-
 
         private void ParseArgs(string[] args)
         {
-            //if (args[0].StartsWith("-"))
-            //{
-            //    Parser.Default.ParseArguments<BasicOptions>(args)
-            //            .WithParsed<BasicOptions>(basicOptions =>
-            //            {
-            //                HandleBasicOptions(basicOptions);
-            //            })                       
-            //           .WithNotParsed(errs =>
-            //           {
-            //               // handle args parsing errors
-            //               HandleCLIParseError(errs);
-            //           });
-            //}
-            //else
-            //{
-                Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions>(args)                        
-                       .WithParsed<RunOptions>(runOptions =>
-                       {
-                           HandleRunOptions(runOptions);
-                       })
-                       .WithParsed<GridOptions>(gridOptions =>
-                       {
-                           HanldeGridOption(gridOptions);
-                       })
-                       .WithParsed<ConfigFileOptions>(configFileOptions =>
-                       {
-                           HandleConfigFileOptions(configFileOptions);
-                       })
-                       .WithParsed<DynamicOptions>(dynamicOptions =>
-                       {
-                           HandleDynamicOptions(dynamicOptions);
-                       })
-                       .WithParsed<ScriptOptions>(scriptOptions =>
-                       {
-                           HandleScriptOptions(scriptOptions);
-                       })
-                       .WithParsed<SCMOptions>(sCMOptions =>
-                       {
-                           HandleSCMOptions(sCMOptions);
-                       })
-                
+            int result;
+            // Basic options without verb - start with '-' or '--'
+            if (args[0].StartsWith("-"))
+            {
+                result = Parser.Default.ParseArguments<BasicOptions>(args).MapResult(
+                    (BasicOptions opts) => HandleBasicOptions(opts),
+                    errs => HandleCLIParseError(errs)
+                );
+            }
+            else
+            {
+                result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions>(args).MapResult(
+                    (RunOptions opts) => HandleRunOptions(opts),
+                        (GridOptions opts) => HanldeGridOption(opts),
+                        (ConfigFileOptions opts) => HandleConfigFileOptions(opts),
+                        (DynamicOptions opts) => HandleDynamicOptions(opts),
+                        (ScriptOptions opts) => HandleScriptOptions(opts),
+                        (SCMOptions opts) => HandleSCMOptions(opts),
+                        errs => HandleCLIParseError(errs)
+                );
+            }
 
+            // TODO: exit with result
 
-                       .WithNotParsed(errs =>
-                       {
-                            // handle args parsing errors
-                            HandleCLIParseError(errs);
-                       });
-            //}
         }
 
-        private void HandleSCMOptions(SCMOptions sCmOptions)
+        private int HandleBasicOptions(BasicOptions basicOptions)
+        {
+            Reporter.ToLog(eLogLevel.INFO, "Running basic options");
+            
+            // basicOptions.ShowVersion
+            return 0;
+        }
+
+        private int HandleSCMOptions(SCMOptions sCmOptions)
         {
             Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
 
@@ -160,30 +102,32 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             CLILoadAndPrepare();
             ExecuteRunSet();
+
+            return 0;
         }
 
-        private void HandleScriptOptions(ScriptOptions scriptOptions)
+        private int HandleScriptOptions(ScriptOptions scriptOptions)
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", scriptOptions.FileName));
             mCLIHandler = new CLIScriptFile();
             mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
             CLILoadAndPrepare();
             ExecuteRunSet();
+
+            return 0;
         }
 
-        private void HandleBasicOptions(BasicOptions basicOptions)
-        {
-            Console.WriteLine("Basic options !!!!!!!!!!!!");
-            // basicOptions.ShowVersion
-        }
+        
 
-        private void HandleDynamicOptions(DynamicOptions dynamicOptions)
+        private int HandleDynamicOptions(DynamicOptions dynamicOptions)
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", dynamicOptions.FileName));
             mCLIHandler = new CLIDynamicXML();
             mCLIHandler.LoadContent(ReadFile(dynamicOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
             CLILoadAndPrepare();
             ExecuteRunSet();
+
+            return 0;
         }
 
         private void HanldeCLIOption(BasicOptions cliOptions)
@@ -191,23 +135,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             throw new NotImplementedException();
         }
 
-        private void HandleConfigFileOptions(ConfigFileOptions configFileOptions)
+        private int HandleConfigFileOptions(ConfigFileOptions configFileOptions)
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", configFileOptions.FileName));
             mCLIHandler = new CLIConfigFile();
             mCLIHandler.LoadContent(ReadFile(configFileOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
             CLILoadAndPrepare();
             ExecuteRunSet();
+
+            return 0;
         }
 
-        private void HanldeGridOption(GridOptions gridOptions)
+        private int HanldeGridOption(GridOptions gridOptions)
         {
             Reporter.ToConsole(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
+
+            return 0;
         }
 
-        private void HandleRunOptions(RunOptions runOptions)
+        private int HandleRunOptions(RunOptions runOptions)
         {
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
@@ -222,6 +170,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             CLILoadAndPrepare();
             ExecuteRunSet();
+
+            return 0;
         }
 
         private void CLILoadAndPrepare()
@@ -238,15 +188,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (!mCLIHelper.PrepareRunsetForExecution())
             {
-                return; //Failed to perform execution perpetrations
+                return; //Failed to perform execution preparations
             }
 
             mCLIHelper.SetTestArtifactsFolder();
         }
 
-        private void HandleCLIParseError(IEnumerable<Error> errs)
-        {                        
-            Reporter.ToConsole(eLogLevel.ERROR, "Please fix the arguments and try again");
+        private int HandleCLIParseError(IEnumerable<Error> errs)
+        {
+            if (errs.Count() == 1 && errs.First() is HelpVerbRequestedError)
+            {
+                // User requested help 
+                PrintGingerCLIHelp();
+                return 0;
+            }
+            else
+            {
+                Reporter.ToConsole(eLogLevel.ERROR, "Please fix the arguments and try again");
+                return 1;
+            }
+            
+        }
+
+        private void PrintGingerCLIHelp()
+        {
+            Reporter.ToConsole(eLogLevel.INFO, "Ginger support command line arguments and verbs");
         }
 
         //private void HandleArg(string param, string value)
@@ -347,7 +313,47 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();
         }
 
-        
+
+        private string[] ConvertOldArgs(string[] oldArgs)
+        {
+            string param;
+            string value = null;
+            if (oldArgs[0].Contains("="))
+            {
+                string[] arg1 = oldArgs[0].Split(new[] { '=' }, 2);
+                param = arg1[0].Trim();
+                value = arg1[1].Trim();
+            }
+            else
+            {
+                param = oldArgs[0].Trim();
+                if (oldArgs.Length > 1)
+                {
+                    value = oldArgs[1].Trim();
+                }
+            }
+
+            string verb;
+            switch (param)
+            {
+                case "ConfigFile":
+                    verb = ConfigFileOptions.Verb;
+                    break;
+                case "Script":
+                    verb = ScriptOptions.Verb;
+                    break;
+                case "Dynamic":
+                    verb = DynamicOptions.Verb;
+                    break;
+                default:
+                    Reporter.ToConsole(eLogLevel.ERROR, "Error - Unknown Command Line Argument(s): " + param);
+                    return null;
+            }
+
+            return new string[] { verb, "--" + CLIOptionClassHelper.FILENAME, value };
+        }
+
+
         private void ShowOLDCLIArgsWarning(string[] oldArgs, string[] newArgs)
         {
             // TODO:            

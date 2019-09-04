@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Amdocs.Ginger.Common;
 
 namespace WorkspaceHold
 {
@@ -81,7 +82,7 @@ namespace WorkspaceHold
         }
 
         [TestMethod]
-        public void CLIConfigRegressionTest()
+        public void OLDCLIConfigRegressionTest()
         {
             
             //Arrange                
@@ -105,21 +106,39 @@ namespace WorkspaceHold
         }
 
 
-        //[TestMethod]
-        //public void CLIVersion()
-        //{
+        [TestMethod]
+        public void CLIVersion()
+        {
 
-        //    //Arrange                            
-        //    PrepareForCLICreationAndExecution();            
+            //Arrange                            
+            PrepareForCLICreationAndExecution();
 
-        //    // Act            
-        //    CLIProcessor CLI = new CLIProcessor();
-        //    CLI.ExecuteArgs(new string[] { "-t"});
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "-t" });
 
-        //    // Assert            
-        //    Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+            // Assert            
+            // ????
 
-        //}
+        }
+
+        [TestMethod]
+        public void CLIHelp()
+        {
+
+            ////Arrange                            
+            //// PrepareForCLICreationAndExecution();
+            //Reporter.zzz
+
+            //// Act            
+            //CLIProcessor CLI = new CLIProcessor();
+            //CLI.ExecuteArgs(new string[] { "--help" });
+
+            //// Assert            
+            //// ????
+
+        }
+
 
         [TestMethod]
         public void CLIDynamicTest()
@@ -149,7 +168,7 @@ namespace WorkspaceHold
         }
 
         [TestMethod]
-        public void CLIDynamicRegressionTest()
+        public void OLDCLIDynamicRegressionTest()
         {
             //lock (WorkSpace.Instance)
             //{
@@ -279,68 +298,6 @@ namespace WorkspaceHold
             // TODO: test analyze was run !!!!
             //}
         }
-
-
-        //[TestMethod]
-        //public void ArgSplit1()
-        //{
-        //    // Arrange
-        //    CLIArgs CLIArgs = new CLIArgs();
-
-        //    // Act
-        //    List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1");
-
-        //    Assert.AreEqual(args[0].ArgName, "--solution");
-        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
-        //}
-
-        //[TestMethod]
-        //public void ArgSplit2()
-        //{
-        //    // Arrange
-        //    CLIArgs CLIArgs = new CLIArgs();
-
-        //    // Act
-        //    List<Arg> args = CLIArgs.SplitArgs(@"--solution c:\abc\def\sol1 --environment Env1");
-
-        //    Assert.AreEqual(args[0].ArgName, "--solution");
-        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
-
-        //    Assert.AreEqual(args[1].ArgName, "--environment");
-        //    Assert.AreEqual(args[1].ArgValue, "Env1");
-        //}
-
-        //[TestMethod]
-        //public void ArgSplit2WithSpaces()
-        //{
-        //    // Arrange
-        //    CLIArgs CLIArgs = new CLIArgs();
-
-        //    // Act
-        //    List<Arg> args = CLIArgs.SplitArgs(@"  --solution  c:\abc\def\sol1    --environment  Env1");
-
-        //    Assert.AreEqual(args[0].ArgName, "--solution");
-        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
-
-        //    Assert.AreEqual(args[1].ArgName, "--environment");
-        //    Assert.AreEqual(args[1].ArgValue, "Env1");
-        //}
-
-        //[TestMethod]
-        //public void ArgsMixStyle()
-        //{
-        //    // Arrange
-        //    CLIArgs CLIArgs = new CLIArgs();
-
-        //    // Act
-        //    List<Arg> args = CLIArgs.SplitArgs(@"-s c:\abc\def\sol1 --environment Env1");
-
-        //    Assert.AreEqual(args[0].ArgName, "-s");
-        //    Assert.AreEqual(args[0].ArgValue, @"c:\abc\def\sol1");
-
-        //    Assert.AreEqual(args[1].ArgName, "--environment");
-        //    Assert.AreEqual(args[1].ArgValue, "Env1");
-        //}
 
 
         private void PrepareForCLICreationAndExecution()
