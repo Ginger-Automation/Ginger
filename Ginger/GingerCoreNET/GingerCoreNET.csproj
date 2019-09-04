@@ -105,6 +105,7 @@
     <None Remove="Reports\GingerExecutionReport\assets\js\react-with-addons.min.js" />
     <None Remove="Reports\GingerExecutionReport\assets\js\Recharts.min.js" />
     <None Remove="Reports\GingerExecutionReport\EmailExecutionReport.html" />
+    <None Remove="Reports\GingerExecutionReport\EmailExecutionReportOnLinux.html" />
     <None Remove="Reports\GingerExecutionReport\Images\GingerLogo.png" />
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
@@ -298,6 +299,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GingerExecutionReport\EmailExecutionReportOnLinux.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Reports\GingerExecutionReport\EmailExecutionReport.html">

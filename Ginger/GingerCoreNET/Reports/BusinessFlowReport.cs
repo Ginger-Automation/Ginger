@@ -27,6 +27,7 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Run;
 using GingerCore;
 using Amdocs.Ginger.Run;
+using System.IO;
 
 namespace Ginger.Reports
 {
@@ -224,7 +225,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                ActivityReport AR = (ActivityReport)JsonLib.LoadObjFromJSonFile(folder + @"\Activity.txt", typeof(ActivityReport));
+                                ActivityReport AR = (ActivityReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"Activity.txt"), typeof(ActivityReport));
                                 AR.LogFolder = folder;
                                 if (ActivitiesGroupReports != null)    // !!!!!!!!!!!!!!!!!!!!!!!!
                                 {
