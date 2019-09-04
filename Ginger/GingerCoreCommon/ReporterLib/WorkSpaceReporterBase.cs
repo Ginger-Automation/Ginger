@@ -24,7 +24,7 @@ namespace Amdocs.Ginger.Common
     /// <summary>
     /// Base class for implementation of WorkSpace reporter
     /// For Ginger WPF it will be implemented with MessageBox, write to log and console
-    /// For GingerConsole, the message will apear in console
+    /// For GingerConsole, the message will appear in console
     /// For Unit Test there is no UI all goes to console with default response
     /// </summary>
     public abstract class WorkSpaceReporterBase

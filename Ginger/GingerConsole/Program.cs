@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.GingerConsole
                   
             // TODO: Console.SetOut      
             Console.ForegroundColor = ConsoleColor.Yellow;            
-            Console.WriteLine("Ginger Console v3.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
+            Console.WriteLine("Ginger Console v3.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET !!!
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
@@ -74,15 +74,12 @@ namespace Amdocs.Ginger.GingerConsole
                 {
                     ProcessArgs(args);
             
-                    Console.WriteLine("Closing");
+                    Console.WriteLine("Proccessing commnad line arguments completed");
                     Thread.Sleep(1000);
                 }
                 else
                 {
-                    InitWorkSpace();
-
-                    Console.WriteLine("Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
-
+                    InitWorkSpace(true);
                     InitMenu();
                     Keepalive = true;
                     while (Keepalive)
@@ -130,15 +127,15 @@ namespace Amdocs.Ginger.GingerConsole
         }
         
 
-        private static void InitWorkSpace()
+        private static void InitWorkSpace(bool startLocalGrid)
         {
             GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();  
-            WorkSpace.Init(ws);
+            WorkSpace.Init(ws, startLocalGrid);
         }
 
         private static void ProcessArgs(string[] args)
         {
-            InitWorkSpace();                 
+            InitWorkSpace(false);                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
             CLI.ExecuteArgs(args);

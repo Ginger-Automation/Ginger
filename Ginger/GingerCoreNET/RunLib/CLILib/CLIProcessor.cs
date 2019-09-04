@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleBasicOptions(BasicOptions basicOptions)
         {
-            Reporter.ToLog(eLogLevel.INFO, "Running basic options");
+            Reporter.ToConsole(eLogLevel.INFO, "Running basic options");
             
             // basicOptions.ShowVersion
             return 0;

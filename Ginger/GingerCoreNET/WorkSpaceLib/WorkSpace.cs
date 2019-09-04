@@ -88,12 +88,15 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
+        public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
             mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-            mWorkSpace.InitLocalGrid();
+            if (startLocalGrid)
+            {
+                mWorkSpace.InitLocalGrid();
+            }
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
         }
@@ -228,6 +231,11 @@ namespace amdocs.ginger.GingerCoreNET
             UserProfile.LoadUserTypeHelper();            
                         
             CheckWebReportFolder();
+
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                Reporter.ToConsole(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
+            }
         }
 
         private void CheckWebReportFolder()

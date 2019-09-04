@@ -265,6 +265,9 @@ namespace Amdocs.Ginger.Common
                 }
 
                 WorkSpaceReporter.ToConsole(logLevel, msg);
+
+                // if we have log to console event listener send the message 
+                logToConsoleEvent?.Invoke(logLevel, msg);
             }
             catch (Exception ex)
             {
@@ -273,7 +276,9 @@ namespace Amdocs.Ginger.Common
         }
         #endregion ToConsole
 
-
+        // in case we want to listen to console write events - used for unit tests
+        public static event RunnerPageEventHandler logToConsoleEvent;
+        public delegate void RunnerPageEventHandler(eLogLevel logLevel, string messageToConsole);
 
     }
 }

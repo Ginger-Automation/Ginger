@@ -40,8 +40,6 @@ namespace WorkspaceHold
         }
 
 
-        
-
         [TestInitialize]
         public void TestInitialize()
         {
@@ -123,22 +121,45 @@ namespace WorkspaceHold
         }
 
         [TestMethod]
-        public void CLIHelp()
+        public void CLIBadParams()
         {
 
-            ////Arrange                            
-            //// PrepareForCLICreationAndExecution();
-            //Reporter.zzz
+            //Arrange                            
+            // PrepareForCLICreationAndExecution();
+            lock (ll)
+            {
+                Reporter.logToConsoleEvent += ConsoleMessageEvent;
 
-            //// Act            
-            //CLIProcessor CLI = new CLIProcessor();
-            //CLI.ExecuteArgs(new string[] { "--help" });
+                // Act            
+                CLIProcessor CLI = new CLIProcessor();
+                CLI.ExecuteArgs(new string[] { "--blabla" });
 
-            //// Assert            
-            //// ????
+                Reporter.logToConsoleEvent -= ConsoleMessageEvent;
+
+                // Assert            
+
+                Assert.AreEqual(1, ll.Count, "There is one console message");
+                Assert.AreEqual(eLogLevel.ERROR, ll[0].LogLevel, "message loglevel is ERROR");
+                Assert.AreEqual("Please fix the arguments and try again", ll[0].MessageToConsole, "console message");
+
+                ll.Clear();
+            }
 
         }
 
+        class ConsoleMessage
+        {
+            public eLogLevel LogLevel;
+            public string MessageToConsole;
+        }
+
+        List<ConsoleMessage> ll = new List<ConsoleMessage>();
+        public void ConsoleMessageEvent(eLogLevel logLevel, string messageToConsole)
+        {
+            ll.Add(new ConsoleMessage(){LogLevel = logLevel, MessageToConsole = messageToConsole});
+        }
+
+        
 
         [TestMethod]
         public void CLIDynamicTest()
