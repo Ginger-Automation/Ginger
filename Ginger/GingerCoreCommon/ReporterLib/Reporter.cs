@@ -277,8 +277,8 @@ namespace Amdocs.Ginger.Common
         #endregion ToConsole
 
         // in case we want to listen to console write events - used for unit tests
-        public static event RunnerPageEventHandler logToConsoleEvent;
-        public delegate void RunnerPageEventHandler(eLogLevel logLevel, string messageToConsole);
+        public static event LogToConsoleEventHandler logToConsoleEvent;
+        public delegate void LogToConsoleEventHandler(eLogLevel logLevel, string messageToConsole);
 
     }
 }

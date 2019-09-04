@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.GingerConsole
 {
@@ -46,8 +47,8 @@ namespace Amdocs.Ginger.GingerConsole
         {
                   
             // TODO: Console.SetOut      
-            Console.ForegroundColor = ConsoleColor.Yellow;            
-            Console.WriteLine("Ginger Console v3.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET !!!
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Ginger Console " + ApplicationInfo.ApplicationVersion); 
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
