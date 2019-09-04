@@ -17,9 +17,13 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -254,6 +258,111 @@ namespace Amdocs.Ginger.Common.GeneralLib
             //TODO: add more chars remove - see https://blog.josephscott.org/2007/02/12/things-that-shouldnt-be-in-file-names-for-1000-alex/
 
             return fileName;
+        }
+
+        public class XmlNodeItem
+        {
+            public XmlNodeItem(string p, string v, string xp)
+            {
+                param = p;
+                value = v;
+                path = xp;
+            }
+
+            public static class Fields
+            {
+                public static string param = "param";
+                public static string value = "value";
+                public static string path = "path";
+            }
+
+            public override String ToString()
+            {
+                return "Param:" + param + Environment.NewLine + "value:" + value + Environment.NewLine + "path:" + path;
+            }
+
+            public string param { get; set; }
+            public string value { get; set; }
+            public string path { get; set; }
+        }
+
+        public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
+        {
+            List<XmlNodeItem> returnDict = new List<XmlNodeItem>();
+            XmlReader rdr1 = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
+            XmlReader rdr = null;
+            if (DisableProhibitDtd)
+            {
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.DtdProcessing = DtdProcessing.Parse;
+
+                rdr = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml), settings);
+            }
+            else
+            {
+                rdr = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
+            }
+
+            XmlReader subrdr = null;
+            string Elm = "";
+
+            ArrayList ls = new ArrayList();
+            Dictionary<string, int> lspath = new Dictionary<string, int>();
+            List<string> DeParams = new List<string>();
+            while (rdr.Read())
+            {
+                if (rdr.NodeType == XmlNodeType.Element)
+                {
+                    Elm = rdr.Name;
+                    if (ls.Count <= rdr.Depth)
+                        ls.Add(Elm);
+                    else
+                        ls[rdr.Depth] = Elm;
+                    foreach (var p in DeParams)
+                    {
+                        if (p == rdr.Name)
+                        {
+                            subrdr = rdr.ReadSubtree();
+                            subrdr.ReadToFollowing(p);
+                            returnDict.Add(new XmlNodeItem("AllDescOf" + p, subrdr.ReadInnerXml(), "/" + string.Join("/", ls.ToArray().Take(rdr.Depth))));
+                            subrdr = null;
+                        }
+                    }
+                }
+
+                if (rdr.NodeType == XmlNodeType.Text)
+                {
+                    // soup req contains sub xml, so parse them 
+                    if (rdr.Value.StartsWith("<?xml"))
+                    {
+                        XmlDocument xmlnDoc = new XmlDocument();
+                        xmlnDoc.LoadXml(rdr.Value);
+                        GetXMLNodesItems(xmlnDoc);
+                    }
+                    else
+                    {
+                        if (!lspath.Keys.Contains("/" + string.Join("/", ls.ToArray().Take(rdr.Depth)) + "/" + Elm))
+                        {
+                            returnDict.Add(new XmlNodeItem(Elm, rdr.Value, "/" + string.Join("/", ls.ToArray().Take(rdr.Depth))));
+                            lspath.Add("/" + string.Join("/", ls.ToArray().Take(rdr.Depth)) + "/" + Elm, 0);
+                        }
+                        else if (lspath.Keys.Contains("/" + string.Join("/", ls.ToArray().Take(rdr.Depth)) + "/" + Elm))
+                        {
+                            returnDict.Add(new XmlNodeItem(Elm + "_" + lspath["/" + string.Join("/", ls.ToArray().Take(rdr.Depth)) + "/" + Elm], rdr.Value, "/" + string.Join("/", ls.ToArray().Take(rdr.Depth))));
+                            lspath["/" + string.Join("/", ls.ToArray().Take(rdr.Depth)) + "/" + Elm]++;
+                        }
+                    }
+                }
+            }
+            return returnDict;
+        }
+
+        public static string CorrectJSON(string WrongJson)
+        {
+            string CleanJson = WrongJson.Replace("\\", "");
+            string CleanJson1 = CleanJson.Substring(CleanJson.IndexOf("{"));
+            string CleanJson2 = CleanJson1.Substring(0, CleanJson1.LastIndexOf("}") + 1);
+            return CleanJson2;
         }
     }
 }

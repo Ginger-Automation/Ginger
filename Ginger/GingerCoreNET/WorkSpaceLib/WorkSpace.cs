@@ -115,7 +115,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void Close()
         {
-            AppSolutionAutoSave.SolutionAutoSaveStop();
+            AppSolutionAutoSave.StopSolutionAutoSave();
             if (SolutionRepository != null)
             {
                 CloseAllRunningAgents();

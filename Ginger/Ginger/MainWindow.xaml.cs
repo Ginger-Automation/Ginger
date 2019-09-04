@@ -365,6 +365,8 @@ namespace Ginger
 
         private void AppCleanUp()
         {
+            Telemetry.eventHandler -= TelemetryEventHandler;
+
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
@@ -566,7 +568,7 @@ namespace Ginger
             if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.Folder))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest( WorkSpace.Instance.Solution.Folder,  WorkSpace.Instance.Solution.SourceControl);
+                SourceControlUI.GetLatest( WorkSpace.Instance.Solution.Folder,  WorkSpace.Instance.Solution.SourceControl);
 
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();

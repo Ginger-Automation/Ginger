@@ -230,7 +230,7 @@ namespace Ginger.Activities
 
         private void grdGroups_PreviewDragItem(object sender, EventArgs e)
         {
-            if (DragDrop2.DragInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
+            if (DragDrop2.DrgInfo.DataIsAssignableToType(typeof(ActivitiesGroup)))
             {
                 // OK to drop
                 DragDrop2.SetDragIcon(true);

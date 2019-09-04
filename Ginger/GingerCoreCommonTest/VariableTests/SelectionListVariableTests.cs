@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.Enums;
+using GingerCore;
 using GingerCore.Variables;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +33,7 @@ namespace GingerCoreCommonTest.VariableTests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            //
+            
         }
 
         [ClassCleanup]
@@ -74,6 +75,7 @@ namespace GingerCoreCommonTest.VariableTests
             VariableSelectionList variableSelectionList = new VariableSelectionList();
 
             //Act
+            GingerTerminology.TERMINOLOGY_TYPE = eTerminologyType.Default;
             string varType = variableSelectionList.VariableUIType;
 
             //Assert

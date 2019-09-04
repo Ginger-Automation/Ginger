@@ -17,19 +17,18 @@ limitations under the License.
 #endregion
 
 using Ginger.GeneralWindows;
-using Ginger.MoveToGingerWPF;
 using Ginger.TwoLevelMenuLib;
 using Ginger.Variables;
 using GingerTest.POMs;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Controls.Ribbon;
-using System.Linq;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GingerWPFUnitTest.POMs
 {
@@ -236,20 +235,38 @@ namespace GingerWPFUnitTest.POMs
         }
 
 
-        public List<string> GetVisibleRibbonTabs()
+        public List<string> GetMenus()
         {
             List<string> list = new List<string>();
             Execute(() => {
-                Ribbon rc = (Ribbon)mMainWindow.FindName("MainRibbon");
-                foreach (RibbonTab RT in rc.Items)
-                {
-                    if (RT.Visibility == Visibility.Visible)
-                    {
-                        list.Add(RT.Name);
-                    }
+                foreach (Menu menu in FindVisualChildren<Menu>(mMainWindow))
+                {                    
+                    list.Add(menu.Name);                    
                 }                
             });
             return list;
+        }
+
+
+        // TODO: move to more generic place
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
         }
 
 
@@ -362,6 +379,24 @@ namespace GingerWPFUnitTest.POMs
 
             return GlobalVariables;
 
+        }
+
+        // TODO: move to generic UI utils
+        internal void TakeScreenShot(string fileName)
+        {
+            Execute(() =>
+            {
+                int width = 1200;
+                int height = 800;
+                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                renderTargetBitmap.Render(mMainWindow);
+                PngBitmapEncoder pngImage = new PngBitmapEncoder();
+                pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                using (Stream fileStream = File.Create(fileName))
+                {
+                    pngImage.Save(fileStream);
+                }
+            });
         }
 
     }

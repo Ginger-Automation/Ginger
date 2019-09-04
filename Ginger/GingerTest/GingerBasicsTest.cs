@@ -17,101 +17,79 @@ limitations under the License.
 #endregion
 
 
-//using GingerCore.Environments;
-//using GingerTestHelper;
-//using GingerWPFUnitTest.GeneralLib;
-//using GingerWPFUnitTest.POMs;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using System.Collections.Generic;
-//using System.IO;
-//using System.Linq;
-//using System.Threading;
+using GingerTest;
+using GingerTestHelper;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
-//namespace GingerWPFUnitTest
-//{
-//    [TestClass]
-//    [Level3]
-//    public class GingerBasicsTest
-//    {        
-//        static TestContext mTC;
-//        static GingerAutomator mGingerAutomator = GingerAutomator.Instance; // TestAssemblyInit.mGingerAutomator; //. new GingerAutomator();
-//        static string SolutionFolder;
-//        // Mutex mutex = new Mutex();
+namespace GingerWPFUnitTest
+{
+    [TestClass]
+    [Level3]
+    public class GingerBasicsTest
+    {
+        static TestContext mTC;
+        static GingerAutomator mGingerAutomator; 
+        static string SolutionFolder;
+        static Mutex mutex = new Mutex();
 
-//        [ClassInitialize]
-//        public static void ClassInit(TestContext TC)
-//        {            
-//            mTC = TC;
-//            // mGingerAutomator.StartGinger();
-//            //string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
-//            //SolutionFolder = TestResources.getGingerUnitTesterTempFolder(@"Solutions\EnvsTest22222");
-//            //if (Directory.Exists(SolutionFolder))
-//            //{
-//            //    Directory.Delete(SolutionFolder,true);
-//            //}
+        [ClassInitialize]
+        public static void ClassInit(TestContext TC)
+        {
+            mTC = TC;
+            mGingerAutomator = GingerAutomator.StartSession();
+            string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\EnvsTest");
+            SolutionFolder = TestResources.GetTempFolder(@"Solutions\EnvsTest22222");
+            if (Directory.Exists(SolutionFolder))
+            {
+                Directory.Delete(SolutionFolder, true);
+            }
 
-//            //CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
-            
-//            //mGingerAutomator.OpenSolution(SolutionFolder);            
-//        }
+            CopyDir.Copy(sampleSolutionFolder, SolutionFolder);
+
+            mGingerAutomator.OpenSolution(SolutionFolder);
+        }
 
 
-//        [ClassCleanup]        
-//        public static void ClassCleanup()
-//        {
-//            //mGingerAutomator.CloseGinger();
-//            //mGingerAutomator = null;
-//        }
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            GingerAutomator.EndSession();            
+        }
 
-//        // Run before each test
-//        [TestInitialize]
-//        public void TestInitialize()
-//        {            
-//             // mutex.WaitOne();
-//            //GingerAutomator.TestMutex.WaitOne();
-//        }
+        // Run before each test
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mutex.WaitOne();
+        }
 
-//        [TestCleanup]
-//        public void TestCleanUp()
-//        {                  
-//             // mutex.ReleaseMutex();
-//            //GingerAutomator.TestMutex.ReleaseMutex();
-//        }
+        [TestCleanup]
+        public void TestCleanUp()
+        {
+            mutex.ReleaseMutex();
+        }
 
-        
-//        [TestMethod]  [Timeout(60000)]  
-//        [Ignore]
-//        public void CheckTabsWhenSolutionClosed()
-//        {
-//            //Arrange
 
-//            //Act            
-//            mGingerAutomator.CloseSolution();
-//            List<string> visibileTabs = mGingerAutomator.MainWindowPOM.GetVisibleRibbonTabs();
-//            string tabs = string.Join(",", visibileTabs);
+        [TestMethod]
+        [Timeout(60000)]        
+        public void CheckTabsWhenSolutionClosed()
+        {
+            //Arrange
 
-//            //Assert
-//            Assert.AreEqual("HomeRibbon,SolutionRibbon,SupportRibbon", tabs);
-//        }
-        
-//        [TestMethod]  [Timeout(60000)]
-//        [Ignore]
-//        public void CheckTabsWhenSolutionOpen()
-//        {
-//            //Arrange
+            //Act            
+            mGingerAutomator.CloseSolution();
+            List<string> visibileTabs = mGingerAutomator.MainWindowPOM.GetMenus();
+            string tabs = string.Join(",", visibileTabs);
 
-//            //Act            
-//            mGingerAutomator.OpenSolution(SolutionFolder);
-//            List<string> visibileTabs = mGingerAutomator.MainWindowPOM.GetVisibleRibbonTabs();
-//            string tabs = string.Join(",", visibileTabs);
-
-//            //Assert
-//            Assert.AreEqual("HomeRibbon,SolutionRibbon,AutomateRibbon,RunRibbon,xConfigurations,xResources,SupportRibbon", tabs);
-//        }
-
+            //Assert
+            Assert.AreEqual("xSolutionSelectionMenu,xExtraSolutionOperationsMenu,xSolutionALMMenu,xSolutionSourceControlMenu,xUserOperationsMenu,xExtraOperationsMenu", tabs);
+        }
 
         
-      
 
-//    }
-//}
+
+    }
+}
