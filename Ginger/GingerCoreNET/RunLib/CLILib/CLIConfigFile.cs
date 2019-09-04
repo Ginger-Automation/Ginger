@@ -33,8 +33,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public string Verb
         {
             get
-            {
-                return "ConfigFile";
+            {                
+                return ConfigFileOptions.Verb;
             }
         }
 

@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -115,26 +114,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     value = oldArgs[1].Trim();
                 }
-            }            
-            
-            VerbAttribute verb;  // Get the correct verb using reflection
+            }
+
+            string verb;
             switch (param)
             {                
                 case "ConfigFile":
-                    verb = typeof(ConfigFileOptions).GetCustomAttribute<VerbAttribute>();                    
+                    verb = ConfigFileOptions.Verb;                    
                     break;
                 case "Script":
-                    verb = typeof(ScriptOptions).GetCustomAttribute<VerbAttribute>();                    
+                    verb = ScriptOptions.Verb;                    
                     break;
                 case "Dynamic":
-                    verb = typeof(DynamicOptions).GetCustomAttribute<VerbAttribute>();
+                    verb = DynamicOptions.Verb;                    
                     break;
                 default:
                     Reporter.ToConsole(eLogLevel.ERROR, "Error - Unknown Command Line Argument(s): " + param);
                     return null;
             }
             
-            return new string[] { verb.Name, "-f", value};            
+            return new string[] { verb, CLIOptionClassHelper.FILENAME, value};            
         }
 
 
@@ -340,37 +339,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         //    }
         //}
 
-        //private void PerformLoadAndExecution(string configurations)
-        //{
-        //    Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
-        //    mCLIHandler.LoadContent(configurations, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-
-        //    if (mCLIHelper.CLIType != eCLIType.Script)
-        //    {
-        //        if (!mCLIHelper.LoadSolution())
-        //        {
-        //            return;//failed to load Solution;
-        //        }
-
-        //        if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
-        //        {
-        //            return;//failed to load Run set
-        //        }
-
-        //        if (!mCLIHelper.PrepareRunsetForExecution())
-        //        {
-        //            return; //Failed to perform execution preparations
-        //        }
-
-        //        mCLIHelper.SetTestArtifactsFolder();                
-        //    }
-
-        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));
-        //    Execute();
-
-        //    Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
-        //    mCLIHelper.CloseSolution();
-        //}
+       
 
         void ExecuteRunSet()
         {

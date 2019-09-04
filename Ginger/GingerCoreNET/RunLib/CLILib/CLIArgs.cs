@@ -42,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 return null;
             }
         }
-
+        
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             RunOptions options = new RunOptions();
@@ -81,6 +81,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             //        Args += string.Format(" --sourceControlProxyPort {0}" , solution.SourceControl.SourceControlProxyPort.ToString());
             //    }
             //}
+
             return args;
         }
 
@@ -88,10 +89,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             runsetExecutor.RunRunset();
         }
-        
+       
 
         public void LoadContent(string args, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {           
+        {      
+            // NA
+
         //    //TODO: make -s --solution  work  but not -solution or -Solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         //    List<Arg> argsList = SplitArgs(args);
@@ -155,36 +158,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         //    }                
         }
        
-        //public struct Arg
-        //{            
-        //    public string ArgName;
-        //    public string ArgValue;
-        //}
-
-
-        //// Handle args which are passed as -- (long) or - (short)
-        //public List<Arg> SplitArgs(string sArgs)
-        //{
-        //    List<Arg> args = new List<Arg>();            
-        //    string[] argsList = sArgs.Split('-');//sArgs.Split(new[] { "--" }, StringSplitOptions.RemoveEmptyEntries);
-
-        //    string parampref = "";
-        //    foreach (string argval in argsList)
-        //    {                
-        //        if (string.IsNullOrEmpty(argval.Trim()))
-        //        {
-        //            parampref += "-";
-        //            continue;
-        //        }
-        //        string[] aargval = argval.Split(new[] { ' ' }, 2);  // split on the first space
-        //        string arg = parampref + aargval[0].Trim();
-        //        string value = aargval[1].Trim();
-
-        //        args.Add(new Arg() { ArgName = arg, ArgValue = value  });
-        //        parampref = "-";
-        //    }
-
-        //    return args;
-        //}
+      
     }
 }
