@@ -20,6 +20,7 @@ using Ginger;
 using Ginger.SolutionGeneral;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace GingerCoreNETUnitTest.WorkSpaceLib
@@ -50,7 +51,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
 
         [Ignore]
         [TestMethod]
-         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects 
+         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects causin exception
         public void NewProfileSaveLoad()
         {
             //Arrange                        
@@ -75,30 +76,20 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             //Assert
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
         }
-
-        [Ignore] // Fail on all platforms need to find user folder somwhow...
+        
         [TestMethod]
         [Timeout(60000)]
         public void CreateUserProfileFileName()
         {
-            // Arrange            
+            // Arrange                                    
+            string UserAppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string expected = Path.Combine(UserAppDataFolder, "amdocs", "Ginger", "Ginger.UserProfile.xml");
 
             //Act
             string userProfileFilePath = UserProfile.UserProfileFilePath;
 
-            string expected;
-            // if windows            
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                expected = @"C:\Users\" + Environment.UserName.ToLower() + @"\AppData\Roaming\Amdocs\Ginger\" + "Ginger.UserProfile.xml";
-            }
-            else  // Linux /Mac
-            {
-                expected = @"/Users/vsts/.config/Amdocs/Ginger/Ginger.UserProfile.xml";
-            }
 
             //Assert
-
             Assert.AreEqual(expected, userProfileFilePath, "UserProfileFilePath");   
         }
 
