@@ -178,7 +178,8 @@
                         </MenuItem>
                     </Menu>
 
-                    <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="20,0,5,0"/>
+                    <usercontrols:ucButton x:Name="xFindAndReplaceBtn" ButtonType="ImageButton" ToolTip="Find and Replace in Solution"  ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Search" Click="xFindAndReplaceSolutionButton_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <usercontrols:ucButton x:Name="xSaveAll" ButtonType="ImageButton" ToolTip="Save All Solution Changes"  ButtonFontImageSize="22" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Save" Click="xSaveAll_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Menu}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"/>
                 </DockPanel>
             </DockPanel>
 

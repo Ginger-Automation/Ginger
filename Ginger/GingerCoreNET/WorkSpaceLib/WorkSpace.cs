@@ -709,5 +709,32 @@ namespace amdocs.ginger.GingerCoreNET
 
         public Telemetry Telemetry { get; internal set; }
         public string TestArtifactsFolder { get; internal set; }
+
+        public void SaveAllSolution()
+        {
+            foreach (string repoItemFilePath in SolutionRepository.DirtyRepoItemsFilePath)
+            {
+                if (!string.IsNullOrEmpty(repoItemFilePath) && File.Exists(repoItemFilePath))
+                {
+                    RepositoryItemBase RI = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(repoItemFilePath);
+                    if (RI != null)//for all xml except the solution changes
+                    {
+                        if (RI.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(RI);
+                        }
+                    }
+                    else// for solution changes
+                    {
+                        //repoItem.RepositorySerializer.SaveToFile(repoItem, repoItem.FilePath);
+                        //repoItem.SetDirtyStatusToNoChange();
+                        WorkSpace.Instance.Solution.SaveSolution();
+                    }
+                }
+            }
+            SolutionRepository.DirtyRepoItemsFilePath.Clear();
+            
+        }
+
     }
 }

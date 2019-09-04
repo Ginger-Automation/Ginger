@@ -206,18 +206,35 @@ namespace GingerWPF.TreeViewItemsLib
         public override void SaveAllTreeFolderItems()
         {
             //GetAllDirtyItems only
-            foreach (KeyValuePair<Guid, Type> dirtyRepositoryItem in SolutionRepository.DirtyRepositoryItems)
-            {
-                Type type = dirtyRepositoryItem.Value;//type
+            //foreach (KeyValuePair<Guid, Type> dirtyRepositoryItem in SolutionRepository.DirtyRepositoryItems)
+            //{
+            //    Type type = dirtyRepositoryItem.Value;//type
 
-                MethodInfo method = typeof(SolutionRepository).GetMethod("GetRepositoryItemByGuid");
-                MethodInfo generic = method.MakeGenericMethod(type);
+            //    MethodInfo method = typeof(SolutionRepository).GetMethod("GetRepositoryItemByGuid");
+            //    MethodInfo generic = method.MakeGenericMethod(type);
 
-                var returnValue = generic.Invoke(WorkSpace.Instance.SolutionRepository, new object[] { dirtyRepositoryItem.Key });
-                //need to check for solution.xml
-                //RepositoryItemBase RI = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<typeof(name)>(tmepObj.guid);
+            //    var returnValue = generic.Invoke(WorkSpace.Instance.SolutionRepository, new object[] { dirtyRepositoryItem.Key });
+            //    //need to check for solution.xml
+            //    //RepositoryItemBase RI = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<typeof(name)>(tmepObj.guid);
 
-            }
+            //}
+
+            //foreach (RepositoryItemBase repoItem in SolutionRepository.DirtyRepoItems)
+            //{
+            //    if (!string.IsNullOrEmpty(repoItem.FilePath) && File.Exists(repoItem.FilePath))
+            //    {
+            //        //RepositoryItemBase RI = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByPath(repoItem.FilePath);
+            //        if (repoItem != null)
+            //        {
+            //            if (repoItem.DirtyStatus == eDirtyStatus.Modified)
+            //            {
+            //                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repoItem);
+            //            }
+            //        }
+            //    }
+            //}
+            //SolutionRepository.DirtyRepoItems.Clear();
+
             ///////
 
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);

@@ -64,6 +64,9 @@ namespace Ginger
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSaveAll, ucButton.IsEnabledProperty,WorkSpace.Instance.SolutionRepository, nameof(Amdocs.Ginger.Repository.SolutionRepository.Count), bindingConvertor: new MoveToGingerWPF.Run_Set_Pages.ButtonEnablePropertyConverter(), System.Windows.Data.BindingMode.TwoWay);
+
+
             Telemetry.eventHandler += TelemetryEventHandler;
             GingerCore.General.DoEvents();
         }
@@ -711,7 +714,11 @@ namespace Ginger
             xLogErrorsPnl.Visibility = Visibility.Collapsed;            
             Reporter.ReporterData.ResetErrorCounter();
         }
-
+        private void xSaveAll_Click(object sender, RoutedEventArgs e)
+        {
+            //User msg
+            WorkSpace.Instance.SaveAllSolution();
+        }
         private void xFindAndReplaceSolutionButton_Click(object sender, RoutedEventArgs e)
         {
             SolutionFindAndReplace();

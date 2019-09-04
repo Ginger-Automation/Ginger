@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Common.GeneralLib;
+using System.ComponentModel;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -102,7 +103,51 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public static Dictionary<Guid, Type> DirtyRepositoryItems = new Dictionary<Guid, Type>();
+        public static List<string> DirtyRepoItemsFilePath = new List<string>();
+
+        int mCount;
+        public int Count
+        {
+            get
+            {                
+                return mCount;
+            } 
+            set
+            {
+                mCount = value;
+                OnPropertyChanged(nameof(Count));
+            }
+        }
+
+        List<string> mDirtyRepositoryItemsFilePath = new List<string>();
+
+        public List<string> DirtyRepositoryItemsFilePath 
+        {
+            get
+            {
+                return mDirtyRepositoryItemsFilePath;
+            }
+            set
+            {
+                mDirtyRepositoryItemsFilePath = value;
+                OnPropertyChanged(nameof(DirtyRepositoryItemsFilePath));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
+        private void mDirtyRepositoryItemsFilePath_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+
+        }
         #region Public Functions         
         // ------------------------------------------------------------------------------------------------
         // All Public function to use across
@@ -167,8 +212,7 @@ namespace Amdocs.Ginger.Repository
 
         public void Close()
         {
-            StopAllRepositoryFolderWatchers();
-
+            StopAllRepositoryFolderWatchers();            
             mRepositorySerializer = null;
             mSolutionFolderPath = null;
             mSolutionRootFolders = null;

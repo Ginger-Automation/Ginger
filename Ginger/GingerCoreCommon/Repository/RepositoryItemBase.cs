@@ -819,8 +819,11 @@ namespace Amdocs.Ginger.Repository
                     mDirtyStatus = value;
                     if (value == eDirtyStatus.Modified)
                     {
-                        if (!SolutionRepository.DirtyRepositoryItems.ContainsKey(this.Guid))
-                            SolutionRepository.DirtyRepositoryItems.Add(this.Guid, this.GetType());
+                        if (!string.IsNullOrEmpty(this.FilePath))
+                        {
+                            SolutionRepository.DirtyRepoItemsFilePath.Add(this.FilePath);                           
+                        }
+                        //EnableSaveAllButton();
                         RaiseDirtyChangedEvent();
                     }
                     OnPropertyChanged(nameof(DirtyStatus));
