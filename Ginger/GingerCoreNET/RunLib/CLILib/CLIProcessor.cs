@@ -53,6 +53,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             
             ParseArgs(args);                            
+            
+
         }
 
 
@@ -61,6 +63,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             int result;
             // Basic options without verb - start with '-' or '--'
+
+            // remove basic !!!!!!!!!!!!
+
             if (args[0].StartsWith("-"))
             {
                 result = Parser.Default.ParseArguments<BasicOptions>(args).MapResult(
@@ -81,7 +86,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 );
             }
 
-            // TODO: exit with result
+            if (result != 0)
+            {
+                Reporter.ToConsole(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
+            }
+            
 
         }
 
@@ -215,7 +224,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             CLILoadAndPrepare();
             ExecuteRunSet();
 
-            return 0;
+            return Environment.ExitCode;
         }
 
         private int HandleScriptOptions(ScriptOptions scriptOptions)
@@ -225,8 +234,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
             CLILoadAndPrepare();
             ExecuteRunSet();
-
-            return 0;
+            
+            return Environment.ExitCode;
         }
 
         
@@ -239,7 +248,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             CLILoadAndPrepare();
             ExecuteRunSet();
 
-            return 0;
+            return Environment.ExitCode;
         }
 
         private void HanldeCLIOption(BasicOptions cliOptions)
@@ -255,7 +264,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             CLILoadAndPrepare();
             ExecuteRunSet();
 
-            return 0;
+            return Environment.ExitCode;
         }
 
         private int HanldeGridOption(GridOptions gridOptions)
@@ -282,7 +291,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 }
             }
 
-            return 0;
+            return 0; 
         }
 
         private int HandleRunOptions(RunOptions runOptions)
@@ -298,10 +307,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
 
+            // do all the rest !!!!!!!!
+
             CLILoadAndPrepare();
             ExecuteRunSet();
 
-            return 0;
+            return Environment.ExitCode;
         }
 
         private void CLILoadAndPrepare()
