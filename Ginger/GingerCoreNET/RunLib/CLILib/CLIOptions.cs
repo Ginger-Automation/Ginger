@@ -48,6 +48,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('e', "environment",  Required = true, HelpText = "Set environment name")]
         public string Environment { get; set; }
 
+        [Option(longName: "env", Required = false, HelpText = "Set environment name same like using --environment")]
+        public string Env { get { return Environment;  } set { Environment = value; } }
+
 
         [Option('a', "analyze", Required = false, HelpText = "runAnalyzer")]
         public bool RunAnalyzer { get; set; }
