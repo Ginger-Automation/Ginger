@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCoreNET.RosLynLib;

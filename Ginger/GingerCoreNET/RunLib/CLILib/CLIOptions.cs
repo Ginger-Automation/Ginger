@@ -23,7 +23,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
     }
 
-    public class BasicOptions  // without verb
+    public class BasicOptions  // without verb for example 'ginger -e' display CLI examples
     {
         //[Option('v', "version", Required = false, HelpText = "Display version information")]
         //public bool ShowVersion { get; set; }

@@ -156,7 +156,8 @@ namespace WorkspaceHold
                 CLI.ExecuteArgs(new string[] { "help" });
 
                 // Assert            
-                Assert.AreEqual(5, mConsoleMessages.Count, "There are 5 lines of help");
+                Assert.AreEqual(1, mConsoleMessages.Count, "message count");
+                Assert.IsTrue(mConsoleMessages[0].MessageToConsole.Contains("Ginger support"), "help message");
             }
         }
 

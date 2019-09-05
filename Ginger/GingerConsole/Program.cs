@@ -60,10 +60,7 @@ namespace Amdocs.Ginger.GingerConsole
                 Keepalive = false;                      
             };
 
-            Console.WriteLine();
-            Console.WriteLine("---------------------------------------------------");
-            Console.WriteLine("-            Press CTRL+C to exit                 -");
-            Console.WriteLine("---------------------------------------------------");
+            
 
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
 
@@ -74,12 +71,18 @@ namespace Amdocs.Ginger.GingerConsole
                 if (args.Count() > 0)
                 {
                     ProcessArgs(args);
-            
-                    Console.WriteLine("Proccessing commnad line arguments completed");
+
+                    Console.WriteLine(Environment.NewLine);
+                    Console.WriteLine("Processing command line arguments completed");
                     Thread.Sleep(1000);
                 }
                 else
                 {
+                    Console.WriteLine();
+                    Console.WriteLine("---------------------------------------------------");
+                    Console.WriteLine("-            Press CTRL+C to exit                 -");
+                    Console.WriteLine("---------------------------------------------------");
+
                     InitWorkSpace(true);
                     InitMenu();
                     Keepalive = true;

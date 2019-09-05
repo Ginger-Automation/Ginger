@@ -91,43 +91,65 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (basicOptions.ShowExamples)
             {
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("* Note when argument value contain space(s) wrap it with '\"' before and after, see examples below").Append(Environment.NewLine);
-                sb.Append("* Note when running on Linux it is recommended to avoid using spaces in directories names, however it is supported").Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                
-                string solution;
-                string solutionWithSpaces;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    solution = @"c:\GingerSolutions\Sol1";
-                    solutionWithSpaces = @"c:\GingerSolutions\Ginger Sol 1";
-                }
-                else
-                {
-                    // for Linux show env.sep 
-                    solution = @"/user/GingerSolutions/Sol1";
-                    solutionWithSpaces = @"/user/GingerSolutions/Ginger Sol 1";  
-                }
-
-                sb.Append("Run set examples:").Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-
-                sb.Append("Example #1: ");
-                sb.Append(CreateExample(solution));
-
-                sb.Append("Example #2: ");
-                sb.Append(CreateExample(solution, "UAT", "Runset1"));
-
-                sb.Append("Example #3: ");
-                sb.Append(CreateExample(solutionWithSpaces, "UAT", "Default Run Set"));
-
-                Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
+                ShowExamples();                
             }
+
+            //if (basicOptions.ShowVersion)
+            //{
+            //    ShowVersion();
+            //}
             return 0;
+        }
+
+        private void ShowVersion()
+        {
+            //StringBuilder sb = new StringBuilder();
+
+            //sb.Append(Environment.NewLine);            
+            //sb.Append("Ginger version is" + AppInfo.Vesion).Append(Environment.NewLine);
+            //sb.Append("*****").Append(Environment.NewLine);
+            //sb.Append(Environment.NewLine);
+            
+            //Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
+        }
+
+        private void ShowExamples()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+            sb.Append("* Note when argument value contain space(s) wrap it with '\"' before and after, see examples below").Append(Environment.NewLine);
+            sb.Append("* Note when running on Linux it is recommended to avoid using spaces in directories names, however it is supported").Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+
+            string solution;
+            string solutionWithSpaces;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                solution = @"c:\GingerSolutions\Sol1";
+                solutionWithSpaces = @"c:\GingerSolutions\Ginger Sol 1";
+            }
+            else
+            {
+                // for Linux show env.sep 
+                solution = @"/user/GingerSolutions/Sol1";
+                solutionWithSpaces = @"/user/GingerSolutions/Ginger Sol 1";
+            }
+
+            sb.Append("Run set examples:").Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+
+            sb.Append("Example #1: ");
+            sb.Append(CreateExample(solution));
+
+            sb.Append("Example #2: ");
+            sb.Append(CreateExample(solution, "UAT", "Runset1"));
+
+            sb.Append("Example #3: ");
+            sb.Append(CreateExample(solutionWithSpaces, "UAT", "Default Run Set"));
+
+            Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
         }
 
         private string CreateExample(string solution, string env = null, string runset = null)
@@ -242,6 +264,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
 
+            // if flag !!!!!!!!!!!!
+            ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------");
+            Console.WriteLine("-               Press 'q' exit                    -");
+            Console.WriteLine("---------------------------------------------------");
+
+            ConsoleKey consoleKey = ConsoleKey.A;
+            while (consoleKey != ConsoleKey.Q)
+            {
+                ConsoleKeyInfo key = Console.ReadKey();
+                consoleKey = key.Key;
+            }            
+
             return 0;
         }
 
@@ -312,71 +349,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             stringBuilder.Append(Environment.NewLine);
             Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
         }
-
-        //private void HandleArg(string param, string value)
-        //{
-        //    // TODO: get all classes impl ICLI and check Identifier then set
-
-        //    switch (param)
-        //    {
-        //        case "--version":
-        //            Console.WriteLine(string.Format("{0} Version: {1}", ApplicationInfo.ApplicationName, ApplicationInfo.ApplicationVersionWithInfo));
-        //            break;
-        //        case "--help":
-        //        case "-h":
-        //            ShowCLIHelp();
-        //            break;
-        //        case "ConfigFile":
-        //        case "--configfile":
-        //            mCLIHelper.CLIType = eCLIType.Config;
-        //            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", value));
-        //            mCLIHandler = new CLIConfigFile();                   
-        //            PerformLoadAndExecution(ReadFile(value));
-        //            break;
-        //        case "Script":
-        //        case "--scriptfile":
-        //            mCLIHelper.CLIType = eCLIType.Script;
-        //            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", value));
-        //            mCLIHandler = new CLIScriptFile();
-        //            PerformLoadAndExecution(ReadFile(value));
-        //            break;
-        //        case "--dynamicfile":
-        //        case "Dynamic":
-        //            mCLIHelper.CLIType = eCLIType.Dynamic;
-        //            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", value));
-        //            mCLIHandler = new CLIDynamicXML();
-        //            PerformLoadAndExecution(ReadFile(value));
-        //            break;                                
-        //        //case "--args":
-        //        //    mCLIHelper.CLIType = eCLIType.Arguments;
-        //        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with Command Args= '{0}'", value));
-        //        //    mCLIHandler = new CLIArgs();
-        //        //    PerformLoadAndExecution(value);
-        //        //    break;
-
-        //            // Removing unpublished options 
-        //        //case "--excel":
-        //        //    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with CLI Excel= '{0}'", value));
-        //        //    mCLIHandler = new CLIExcel();
-        //        //    PerformLoadAndExecution(value);
-        //        //    break;                
-        //        //case "--servicegrid":
-        //        //    int port = 15555;
-        //        //    Console.WriteLine("Starting Ginger Grid at port: " + port);
-        //        //    GingerGrid gingerGrid = new GingerGrid(15555);   // TODO: get port from CLI arg
-        //        //    gingerGrid.Start();
-
-        //        //    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
-
-        //        //    Console.ReadKey();
-        //        //    break;                
-        //        default:
-        //            Console.WriteLine("Error - Unknown Command Line Argument(s): " + param);
-        //            break;
-        //    }
-        //}
-
-       
+        
 
         void ExecuteRunSet()
         {
