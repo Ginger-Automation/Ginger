@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -86,9 +88,97 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private int HandleBasicOptions(BasicOptions basicOptions)
         {
             Reporter.ToConsole(eLogLevel.INFO, "Running basic options");
-            
-            // basicOptions.ShowVersion
+
+            if (basicOptions.ShowExamples)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append(Environment.NewLine);
+                sb.Append(Environment.NewLine);
+                sb.Append("* Note when argument value contain space(s) wrap it with '\"' before and after, see examples below").Append(Environment.NewLine);
+                sb.Append("* Note when running on Linux it is recommended to avoid using spaces in directories names, however it is supported").Append(Environment.NewLine);
+                sb.Append(Environment.NewLine);
+                
+                string solution;
+                string solutionWithSpaces;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    solution = @"c:\GingerSolutions\Sol1";
+                    solutionWithSpaces = @"c:\GingerSolutions\Ginger Sol 1";
+                }
+                else
+                {
+                    // for Linux show env.sep 
+                    solution = @"/user/GingerSolutions/Sol1";
+                    solutionWithSpaces = @"/user/GingerSolutions/Ginger Sol 1";  
+                }
+
+                sb.Append("Run set examples:").Append(Environment.NewLine);
+                sb.Append(Environment.NewLine);
+
+                sb.Append("Example #1: ");
+                sb.Append(CreateExample(solution));
+
+                sb.Append("Example #2: ");
+                sb.Append(CreateExample(solution, "UAT", "Runset1"));
+
+                sb.Append("Example #3: ");
+                sb.Append(CreateExample(solutionWithSpaces, "UAT", "Default Run Set"));
+
+                Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
+            }
             return 0;
+        }
+
+        private string CreateExample(string solution, string env = null, string runset = null)
+        {
+            StringBuilder sb = new StringBuilder();
+            RunOptions runOptions = new RunOptions();
+            runOptions.Solution = solution;
+            if (env != null)
+            {
+                runOptions.Environment = env;
+            }
+
+            if (runset != null)
+            {
+                runOptions.Runset = runset;
+            }
+
+            var arguments = Parser.Default.FormatCommandLine<RunOptions>(runOptions);
+
+            string exe = "dotnet GingerConsole.dll ";
+
+            sb.Append(@"Open solution at '" + runOptions.Solution + "' select environment '" + runOptions.Environment + "' and execute run set '" + runOptions.Runset + "'").Append(Environment.NewLine);
+            sb.Append("Long form : ").Append("'" + exe + arguments + "'").Append(Environment.NewLine);
+            sb.Append("Short form: ").Append("'" + exe + "run");
+            sb.Append(" -").Append(CLIOptionClassHelper.GetAttrShorName<RunOptions>(nameof(RunOptions.Solution))).Append(" ").Append(WrapTextIfNeeded(runOptions.Solution));
+            if (env != null)
+            {
+                sb.Append(" -").Append(CLIOptionClassHelper.GetAttrShorName<RunOptions>(nameof(RunOptions.Environment))).Append(" ").Append(WrapTextIfNeeded(runOptions.Environment));
+            }
+
+            if (runset != null)
+            {
+                sb.Append(" -").Append(CLIOptionClassHelper.GetAttrShorName<RunOptions>(nameof(RunOptions.Runset))).Append(" ").Append(WrapTextIfNeeded(runOptions.Runset));
+            }
+
+            sb.Append("'");
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine);
+            return sb.ToString();
+        }
+
+        string WrapTextIfNeeded(string val)
+        {
+            if (val.IndexOf(' ') > 0)
+            {
+                return "\"" + val + "\"";
+            }
+            else
+            {
+                return val;
+            }
         }
 
         private int HandleSCMOptions(SCMOptions sCmOptions)
@@ -213,6 +303,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private void PrintGingerCLIHelp()
         {
             Reporter.ToConsole(eLogLevel.INFO, "Ginger support command line arguments and verbs");
+            Reporter.ToConsole(eLogLevel.INFO, "'-h' for basic arguments list");
+            Reporter.ToConsole(eLogLevel.INFO, "'help' for verb list");
+            Reporter.ToConsole(eLogLevel.INFO, "'help {verb}' for help on specific verb options, for example: 'help run'");
+            Reporter.ToConsole(eLogLevel.INFO, "'-e' for list of examples");
         }
 
         //private void HandleArg(string param, string value)

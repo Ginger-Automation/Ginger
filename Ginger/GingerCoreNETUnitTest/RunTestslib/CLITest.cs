@@ -31,6 +31,9 @@ namespace WorkspaceHold
         {
             mTempFolder = TestResources.GetTempFolder(nameof(CLITest));
             mSolutionFolder = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "CLI");
+
+            // Hook console message
+            Reporter.logToConsoleEvent += ConsoleMessageEvent;
         }
 
         [ClassCleanup]
@@ -123,26 +126,56 @@ namespace WorkspaceHold
         [TestMethod]
         public void CLIBadParams()
         {
-
-            //Arrange                            
-            // PrepareForCLICreationAndExecution();
-            lock (ll)
+            lock (mConsoleMessages)
             {
-                Reporter.logToConsoleEvent += ConsoleMessageEvent;
+                //Arrange                            
+                mConsoleMessages.Clear();
+                CLIProcessor CLI = new CLIProcessor();
 
                 // Act            
-                CLIProcessor CLI = new CLIProcessor();
                 CLI.ExecuteArgs(new string[] { "--blabla" });
 
-                Reporter.logToConsoleEvent -= ConsoleMessageEvent;
+                // Assert            
+                Assert.AreEqual(1, mConsoleMessages.Count, "There is one console message");
+                Assert.AreEqual(eLogLevel.ERROR, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
+                Assert.AreEqual("Please fix the arguments and try again", mConsoleMessages[0].MessageToConsole, "console message");
+            }
+
+        }
+
+        [TestMethod]
+        public void CLIHelp()
+        {
+            lock (mConsoleMessages)
+            {
+                //Arrange                            
+                mConsoleMessages.Clear();
+                CLIProcessor CLI = new CLIProcessor();
+
+                // Act            
+                CLI.ExecuteArgs(new string[] { "help" });
 
                 // Assert            
+                Assert.AreEqual(5, mConsoleMessages.Count, "There are 5 lines of help");
+            }
+        }
 
-                Assert.AreEqual(1, ll.Count, "There is one console message");
-                Assert.AreEqual(eLogLevel.ERROR, ll[0].LogLevel, "message loglevel is ERROR");
-                Assert.AreEqual("Please fix the arguments and try again", ll[0].MessageToConsole, "console message");
+        [TestMethod]
+        public void CLIGridWithoutParams()
+        {
+            lock (mConsoleMessages)
+            {
+                //Arrange                            
+                mConsoleMessages.Clear();
+                CLIProcessor CLI = new CLIProcessor();
 
-                ll.Clear();
+                // Act            
+                CLI.ExecuteArgs(new string[] { "grid" });
+
+                // Assert            
+                Assert.AreEqual(1, mConsoleMessages.Count, "There are 5 lines of help");
+                Assert.AreEqual(eLogLevel.INFO, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
+                Assert.AreEqual("Starting Ginger Grid at port: 15001", mConsoleMessages[0].MessageToConsole, "console message");
             }
 
         }
@@ -153,10 +186,10 @@ namespace WorkspaceHold
             public string MessageToConsole;
         }
 
-        List<ConsoleMessage> ll = new List<ConsoleMessage>();
-        public void ConsoleMessageEvent(eLogLevel logLevel, string messageToConsole)
+        static List<ConsoleMessage> mConsoleMessages = new List<ConsoleMessage>();
+        public static void ConsoleMessageEvent(eLogLevel logLevel, string messageToConsole)
         {
-            ll.Add(new ConsoleMessage(){LogLevel = logLevel, MessageToConsole = messageToConsole});
+            mConsoleMessages.Add(new ConsoleMessage(){LogLevel = logLevel, MessageToConsole = messageToConsole});
         }
 
         

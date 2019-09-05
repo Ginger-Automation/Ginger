@@ -15,34 +15,37 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             VerbAttribute verbAttr = typeof(T).GetCustomAttribute<VerbAttribute>();
             return verbAttr.Name;
         }
+
+        public static string GetAttrShorName<T>(string name)
+        {
+            OptionAttribute attrOption = typeof(T).GetProperty(name).GetCustomAttribute<OptionAttribute>();
+            return attrOption.ShortName;
+        }
     }
 
     public class BasicOptions  // without verb
-    {        
-
+    {
         //[Option('v', "version", Required = false, HelpText = "Display version information")]
         //public bool ShowVersion { get; set; }
 
-
-        // !!!!!!!!!!!!!!!!!!!!!!!
-        [Option('t', "test", Required = false, HelpText = "Test 123")]
-        public bool Test { get; set; }
+        [Option('e', "examples", Required = false, HelpText = "Display example list of Command Line arguments")]
+        public bool ShowExamples { get; set; }
     }
 
 
     [Verb("run", HelpText = "execute run set")]
     public class RunOptions
     {
-        public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<RunOptions>(); } }
+        public static string Verb => CLIOptionClassHelper.GetClassVerb<RunOptions>();
 
         [Option('s', "solution", Required = true, HelpText = "Set solution folder")]
         public string Solution { get; set; }
 
 
-        [Option('r', "runset", Required = true, HelpText = "Set runset name")]
+        [Option('r', "runset", Default = "Default Run Set", Required = true, HelpText = "Set runset name")]
         public string Runset { get; set; }
 
-        [Option('e', "environment", Required = true, HelpText = "Set environment name")]
+        [Option('e', "environment",  Required = true, HelpText = "Set environment name")]
         public string Environment { get; set; }
 
 
