@@ -1012,8 +1012,8 @@ namespace Ginger.Run
             st.Start();
             while (WorkSpace.Instance.AppSolutionAutoSave.WaitForAutoSave)
             {
-                await Task.Delay(20);
-                if (st.ElapsedMilliseconds > 5000)
+                await Task.Delay(500);
+                if (st.ElapsedMilliseconds > 60000)
                 {
                     break;
                 }
