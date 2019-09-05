@@ -46,7 +46,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.RunAnalyzer = cliHelper.RunAnalyzer;
             options.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
 
-
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
 
             // !!!!!!!!!!!!!!!!!!!
@@ -87,69 +86,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public void LoadContent(string args, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {      
-            // NA
-
-        //    //TODO: make -s --solution  work  but not -solution or -Solution !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        //    List<Arg> argsList = SplitArgs(args);
             
-
-        //    // - SeekOrigin -- split keep -
-
-        //    foreach(Arg arg in argsList)
-        //    {                             
-        //        switch (arg.ArgName)
-        //        {
-        //            case "--sourceControlType":
-        //                cliHelper.SetSourceControlType(arg.ArgValue);
-        //                break;
-        //            case "--sourceControlUrl":
-        //                cliHelper.SetSourceControlURL(arg.ArgValue);
-        //                break;
-        //            case "--sourceControlUser":
-        //                cliHelper.SetSourceControlUser(arg.ArgValue);
-        //                break;
-        //            case "--sourceControlPassword":
-        //                cliHelper.SetSourceControlPassword(arg.ArgValue);
-        //                break;
-        //            case "--sourceControlPasswordEncrypted":
-        //                cliHelper.PasswordEncrypted(arg.ArgValue);
-        //                break;
-        //            case "--sourceControlProxyServer":
-        //                cliHelper.SourceControlProxyServer(arg.ArgValue);
-        //                break;
-        //            case "--sourceControlProxyPort":
-        //                cliHelper.SourceControlProxyPort(arg.ArgValue);
-        //                break;
-        //            case "-s":
-        //            case "--solution":
-        //                cliHelper.Solution = arg.ArgValue;
-        //                break;                     
-        //            case "-e":
-        //            case "--env":
-        //            case "--environment":
-        //                cliHelper.Env = arg.ArgValue;
-        //                break;                        
-        //            case "-r":
-        //            case "--runset":
-        //                cliHelper.Runset = arg.ArgValue;
-        //                break;
-        //            case "--runAnalyzer":
-        //            case "--analyzer":
-        //                cliHelper.RunAnalyzer = bool.Parse(arg.ArgValue);                        
-        //                break;
-        //            case "--showAutoRunWindow":
-        //            case "--autoRunWindow":
-        //                cliHelper.ShowAutoRunWindow = bool.Parse(arg.ArgValue);
-        //                break;
-        //            case "--testArtifactsFolder":
-        //                cliHelper.TestArtifactsFolder = arg.ArgValue;
-        //                break;
-        //            default:
-        //                Reporter.ToLog(eLogLevel.ERROR, "Unknown argument with '-' prefix: '" + arg + "'");
-        //                throw new ArgumentException("Unknown argument: ", arg.ArgName);
-        //        }
-        //    }                
         }
        
       

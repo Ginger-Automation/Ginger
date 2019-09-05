@@ -32,8 +32,7 @@ namespace Amdocs.Ginger.Common
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
                 
         public void ToConsole(eLogLevel logLevel, string message)
-        {
-            ConsoleColor originalConsoleColor = Console.ForegroundColor;
+        {            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[").Append(logLevel).Append("]").Append(message).Append(Environment.NewLine);
 
@@ -57,7 +56,7 @@ namespace Amdocs.Ginger.Common
                
             }
             Console.WriteLine(stringBuilder.ToString());
-            Console.ForegroundColor = originalConsoleColor;
+            Console.ResetColor();
         }
 
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);

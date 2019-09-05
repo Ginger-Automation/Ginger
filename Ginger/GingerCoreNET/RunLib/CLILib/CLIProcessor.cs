@@ -272,12 +272,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Console.WriteLine("-               Press 'q' exit                    -");
             Console.WriteLine("---------------------------------------------------");
 
-            ConsoleKey consoleKey = ConsoleKey.A;
-            while (consoleKey != ConsoleKey.Q)
+            if (!Console.IsInputRedirected)  // for example unit test redirect input, or we can run without input like from Jenkins
             {
-                ConsoleKeyInfo key = Console.ReadKey();
-                consoleKey = key.Key;
-            }            
+                ConsoleKey consoleKey = ConsoleKey.A;
+                while (consoleKey != ConsoleKey.Q)
+                {
+                    ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
+                    consoleKey = consoleKeyInfo.Key;
+                }
+            }
 
             return 0;
         }

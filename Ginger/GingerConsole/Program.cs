@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerConsole.ReporterLib;
@@ -25,9 +26,7 @@ using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-using Amdocs.Ginger.Common.GeneralLib;
 
 namespace Amdocs.Ginger.GingerConsole
 {
@@ -145,14 +144,6 @@ namespace Amdocs.Ginger.GingerConsole
             CLI.ExecuteArgs(args);
         }
 
-        private static Module A_ModuleResolve1(object sender, ResolveEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static Module A_ModuleResolve(object sender, ResolveEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }
