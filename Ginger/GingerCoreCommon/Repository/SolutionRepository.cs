@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Common.GeneralLib;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -103,7 +104,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public static List<string> DirtyRepoItemsFilePath = new List<string>();
+        public static List<string> DirtyRepositoryItemsFilePath = new List<string>();
 
         int mCount;
         public int Count
@@ -118,22 +119,7 @@ namespace Amdocs.Ginger.Repository
                 OnPropertyChanged(nameof(Count));
             }
         }
-
-        List<string> mDirtyRepositoryItemsFilePath = new List<string>();
-
-        public List<string> DirtyRepositoryItemsFilePath 
-        {
-            get
-            {
-                return mDirtyRepositoryItemsFilePath;
-            }
-            set
-            {
-                mDirtyRepositoryItemsFilePath = value;
-                OnPropertyChanged(nameof(DirtyRepositoryItemsFilePath));
-            }
-        }
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {

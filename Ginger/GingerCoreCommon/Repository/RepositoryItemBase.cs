@@ -820,7 +820,8 @@ namespace Amdocs.Ginger.Repository
                     {
                         if (!string.IsNullOrEmpty(this.FilePath))
                         {
-                            SolutionRepository.DirtyRepoItemsFilePath.Add(this.FilePath);                           
+                            SolutionRepository.DirtyRepositoryItemsFilePath.Add(this.FilePath);
+
                         }
                         //EnableSaveAllButton();
                         RaiseDirtyChangedEvent();

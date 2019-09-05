@@ -712,7 +712,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void SaveAllSolution()
         {
-            foreach (string repoItemFilePath in SolutionRepository.DirtyRepoItemsFilePath)
+            foreach (string repoItemFilePath in SolutionRepository.DirtyRepositoryItemsFilePath)
             {
                 if (!string.IsNullOrEmpty(repoItemFilePath) && File.Exists(repoItemFilePath))
                 {
@@ -726,13 +726,11 @@ namespace amdocs.ginger.GingerCoreNET
                     }
                     else// for solution changes
                     {
-                        //repoItem.RepositorySerializer.SaveToFile(repoItem, repoItem.FilePath);
-                        //repoItem.SetDirtyStatusToNoChange();
                         WorkSpace.Instance.Solution.SaveSolution();
                     }
                 }
             }
-            SolutionRepository.DirtyRepoItemsFilePath.Clear();
+            SolutionRepository.DirtyRepositoryItemsFilePath.Clear();
             
         }
 
