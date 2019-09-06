@@ -17,7 +17,7 @@ Compress-Archive -Path '/home/vsts/work/1/s/Ginger/GingerCoreNETUnitTest/bin/Rel
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Package GingerConsole                  -"
 Write-Host "-------------------------------------------------------------"
-Compress-Archive -Path '/home/vsts/work/1/s/Ginger/GingerCoonsole/bin/Release/netcoreapp2.2/publish' -DestinationPath '/home/vsts/work/1/a/GingerConsole'
+Compress-Archive -Path '/home/vsts/work/1/s/Ginger/GingerConsole/bin/Release/netcoreapp2.2/publish' -DestinationPath '/home/vsts/work/1/a/GingerConsole'
 
 
 Write-Host "-------------------------------------------------------------"
