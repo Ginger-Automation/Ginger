@@ -76,16 +76,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ShowWidgetsElementCheckBox()
         {
-            xWidgetsElementType.Visibility = Visibility.Visible;
-            var isWidgetElement = mAction.GetOrCreateInputParam(Fields.WidgetsElement, "false");
-            if (isWidgetElement.Value.Equals("true"))
-            {
-                xWidgetsElementType.IsChecked = true;
-            }
-            else
-            {
-                xWidgetsElementType.IsChecked = false;
-            }
+            xWidgetElementCheckBox.Visibility = Visibility.Visible;
+            BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());
         }
 
         private ePlatformType GetActionPlatform()
@@ -201,14 +193,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         void ShowPlatformSpecificPage()
         {
-            //if widgets then no need to load platform specfic page
-            if (Convert.ToBoolean(mAction.GetInputParamValue(ActUIElement.Fields.WidgetsElement)) && mAction.Platform.Equals(ePlatformType.Java))
-            {
-                PlatformSpecificFrame.Content = null;
-                PlatformSpecificFrame.Visibility = System.Windows.Visibility.Collapsed;
-                return;
-            }
-
             Page platformEditPage = GetPlatformEditPage();
             if (platformEditPage == null)
             {
@@ -679,14 +663,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void XWidgetsElementType_Click(object sender, RoutedEventArgs e)
         {
-            if(xWidgetsElementType.IsChecked == true)
-            {
-                mAction.AddOrUpdateInputParamValue(Fields.WidgetsElement, "true");
-            }
-            else
-            {
-                mAction.AddOrUpdateInputParamValue(Fields.WidgetsElement, "false");
-            }
             ShowPlatformSpecificPage();
         }
     }

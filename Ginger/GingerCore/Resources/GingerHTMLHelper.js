@@ -125,7 +125,22 @@ function define_GingerLib() {
            var ElementAction = inputValues["ElementAction"];
            var ElementLocateBy = inputValues["ElementLocateBy"];
            var ElementLocateValue = inputValues["ElementLocateValue"];
-           var Value = inputValues["Value"];
+            var Value = inputValues["Value"];
+
+            //if (ElementAction == "TriggerJavaEvent")
+            //{
+            //    el=fi
+            
+            //if (ismouse) {
+                   
+            //        return GingerLib.fireMouseEvent(el, Value);               
+              
+            //}
+            //else {
+            //    return GingerLib.fireSpecialEvent(el, Value);
+            //    }
+            //}
+
            return GingerLib.HandleHTMLControlAction(ElementAction, ElementLocateBy, ElementLocateValue, Value);
         }
         else if (Command == "HTMLElementAction") {

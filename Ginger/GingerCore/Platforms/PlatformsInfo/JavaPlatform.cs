@@ -310,6 +310,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
                     break;
             }
+
+            //common action type for all elementType
+            javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+
             return javaPlatformElementActionslist;
         }
 
