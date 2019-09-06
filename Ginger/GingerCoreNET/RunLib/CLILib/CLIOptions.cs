@@ -51,14 +51,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string Environment { get; set; }
 
         // causing issues so removing
-        //[Option(longName: "env", Required = false, HelpText = "Set environment name same like using --environment")]
+        //[Opton(longName: "env", Required = false, HelpText = "Set environment name same like using --environment")]
         //public string Env { get { return Environment;  } set { Environment = value; } }
 
 
         [Option('a', "analyze", Required = false, HelpText = "runAnalyzer")]
         public bool RunAnalyzer { get; set; }
         
-        [Option('u', "show-ui", Required = false, Default = false, HelpText = "Show ui - Windows only")]
+        [Option('u', "showui", Required = false, Default = false, HelpText = "Show Auto Run Window UI - Windows only")]
         public bool ShowAutoRunWindow { get; set; }
     }
 
@@ -132,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
     }
 
-    [Verb("dynamic", HelpText = "Run dynmaic xml")]
+    [Verb("dynamic", HelpText = "Run dynamic xml")]
     public class DynamicOptions
     {
         public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<DynamicOptions>(); } }

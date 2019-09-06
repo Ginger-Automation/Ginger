@@ -135,8 +135,7 @@ namespace WorkspaceHold
                 // Act            
                 CLI.ExecuteArgs(new string[] { "--blabla" });
 
-                // Assert            
-                Assert.AreEqual(1, mConsoleMessages.Count, "There is one console message");
+                // Assert                            
                 Assert.AreEqual(eLogLevel.ERROR, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
                 Assert.AreEqual("Please fix the arguments and try again", mConsoleMessages[0].MessageToConsole, "console message");
             }
@@ -341,7 +340,7 @@ namespace WorkspaceHold
                 //Arrange
                 PrepareForCLICreationAndExecution();
                 // Create args
-                string[] args = { "run", "--solution", mSolutionFolder, "--environment", "Default", "--runset", "Default Run Set", "--analyze"};
+                string[] args = { "run", "--solution", mSolutionFolder, "--env", "Default", "--runset", "Default Run Set", "--analyze"};
                 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
@@ -468,7 +467,7 @@ namespace WorkspaceHold
             args.Add("--solution");
             args.Add(mSolutionFolder);
 
-            args.Add("--environment");
+            args.Add("--env");
             args.Add("Default");
 
             args.Add("--runset");
@@ -476,7 +475,7 @@ namespace WorkspaceHold
 
             args.Add("--analyze");
 
-            args.Add("--showAutoRunWindow");            
+            args.Add("--showui");            
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
@@ -500,7 +499,7 @@ namespace WorkspaceHold
 
             // Assert            
             Assert.IsTrue(arguments.StartsWith("run"), "arguments Starts With run");
-            Assert.IsTrue(arguments.Contains("--environment env1"), "arguments Contains --environment env1");
+            Assert.IsTrue(arguments.Contains("--env env1"), "arguments Contains --env env1");
             Assert.IsTrue(arguments.Contains("--runset rs1"), "arguments Contains --runset rs1");
             Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");                   
         }
