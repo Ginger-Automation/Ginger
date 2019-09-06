@@ -23,20 +23,37 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
     }
 
+    public class OptionsBase  // ' Base class for Options whihc execute run set
+    {
+        public enum eVerboseLevel
+        {
+            Debug,
+            Info,
+            Warning
+        }
 
-    //[Option('v', "version", Required = false, HelpText = "Display version information")]
-    //public bool ShowVersion { get; set; }
+        [Option('v', "verbose", Required = false, HelpText = "Select Verbose level: Debug, Info, Warning")]
+        public eVerboseLevel VerboseLevel { get; set; }
+    }
+
+        
 
     [Verb("example", HelpText = "Show example")]
-    public class ExampleOptions  // 'ginger -e run' display CLI examples for run
+    public class ExampleOptions  // 'ginger example -v run' display CLI examples for run
     {        
-        [Option('v', "verb", Required = true, HelpText = "Select Verb to show example")]
+        [Option('b', "verb", Required = true, HelpText = "Select Verb to show example")]
         public string verb { get; set; }
+    }
+
+    [Verb("version", HelpText = "Show version information")]
+    public class VersionOptions  // 'ginger version
+    {
+        
     }
 
 
     [Verb("run", HelpText = "execute run set")]
-    public class RunOptions
+    public class RunOptions : OptionsBase
     {
         public static string Verb => CLIOptionClassHelper.GetClassVerb<RunOptions>();
 
@@ -63,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     }
 
     [Verb("scm", HelpText = "Execute source control management operations")]
-    public class SCMOptions
+    public class SCMOptions : OptionsBase
     {
         public static string Verb =>  CLIOptionClassHelper.GetClassVerb<SCMOptions>(); 
 
@@ -98,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
 
     [Verb("grid", HelpText = "Start Service Grid")]
-    public class GridOptions
+    public class GridOptions : OptionsBase
     {
         public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<GridOptions>(); } }
 
@@ -112,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     }
 
     [Verb("configfile", HelpText = "Use config file")]
-    public class ConfigFileOptions
+    public class ConfigFileOptions : OptionsBase
     {
         public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<ConfigFileOptions>(); } }        
 
@@ -123,7 +140,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     
 
     [Verb("script", HelpText = "Run script file")]
-    public class ScriptOptions
+    public class ScriptOptions : OptionsBase
     {
         public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<ScriptOptions>(); } }
 
@@ -133,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     }
 
     [Verb("dynamic", HelpText = "Run dynamic xml")]
-    public class DynamicOptions
+    public class DynamicOptions : OptionsBase
     {
         public static string Verb { get { return CLIOptionClassHelper.GetClassVerb<DynamicOptions>(); } }
 

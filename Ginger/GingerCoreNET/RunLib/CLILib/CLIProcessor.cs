@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -59,31 +60,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private void ParseArgs(string[] args)
         {
-            int result;
-            // Basic options without verb - start with '-' or '--'
 
-            // remove basic !!!!!!!!!!!!
+            // failing fix me - so will not show default version
+            // Parser.Default.Settings.AutoVersion = false;
+            
 
-            //if (args[0].StartsWith("-"))
-            //{
-            //    result = Parser.Default.ParseArguments<BasicOptions>(args).MapResult(
-            //        (BasicOptions opts) => HandleBasicOptions(opts),
-            //        errs => HandleCLIParseError(errs)
-            //    );
-            //}
-            //else
-            //{
-                result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, ExampleOptions>(args).MapResult(
-                        (RunOptions opts) => HandleRunOptions(opts),
-                        (GridOptions opts) => HanldeGridOption(opts),
-                        (ConfigFileOptions opts) => HandleConfigFileOptions(opts),
-                        (DynamicOptions opts) => HandleDynamicOptions(opts),
-                        (ScriptOptions opts) => HandleScriptOptions(opts),
-                        (SCMOptions opts) => HandleSCMOptions(opts),
-                        (ExampleOptions opts) => HandleExampleOptions(opts),
-                        errs => HandleCLIParseError(errs)
-                );
-            // }
+            int result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions>(args).MapResult(
+                    (RunOptions opts) => HandleRunOptions(opts),
+                    (GridOptions opts) => HanldeGridOption(opts),
+                    (ConfigFileOptions opts) => HandleConfigFileOptions(opts),
+                    (DynamicOptions opts) => HandleDynamicOptions(opts),
+                    (ScriptOptions opts) => HandleScriptOptions(opts),
+                    (SCMOptions opts) => HandleSCMOptions(opts),
+                    (VersionOptions opts) => HandleVersionOptions(opts),                        
+                    (ExampleOptions opts) => HandleExampleOptions(opts),
+
+                    errs => HandleCLIParseError(errs)
+            );
+          
 
             if (result != 0)
             {
@@ -91,6 +85,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             
 
+        }
+
+        private int HandleVersionOptions(VersionOptions opts)
+        {
+            PrintGingerVersionInfo();
+            return 0;
         }
 
         private int HandleExampleOptions(ExampleOptions exampleOptions)
@@ -113,17 +113,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return 0;
         }
 
-        private void ShowVersion()
-        {
-            //StringBuilder sb = new StringBuilder();
-
-            //sb.Append(Environment.NewLine);            
-            //sb.Append("Ginger version is" + AppInfo.Vesion).Append(Environment.NewLine);
-            //sb.Append("*****").Append(Environment.NewLine);
-            //sb.Append(Environment.NewLine);
-            
-            //Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
-        }
+      
 
         private void ShowExamples()
         {
@@ -228,6 +218,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleSCMOptions(SCMOptions sCmOptions)
         {
+            SetVerboseLevel(runOptions.VerboseLevel);
             Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
 
             mCLIHandler = new CLISCM();
@@ -241,7 +232,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
         private int HandleScriptOptions(ScriptOptions scriptOptions)
-        {            
+        {
+            SetVerboseLevel(runOptions.VerboseLevel);
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", scriptOptions.FileName));
             mCLIHandler = new CLIScriptFile();
             mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);                        
@@ -253,7 +246,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         
 
         private int HandleDynamicOptions(DynamicOptions dynamicOptions)
-        {            
+        {
+            SetVerboseLevel(runOptions.VerboseLevel);
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", dynamicOptions.FileName));
             mCLIHandler = new CLIDynamicXML();
             mCLIHandler.LoadContent(ReadFile(dynamicOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
@@ -262,13 +257,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return Environment.ExitCode;
         }
 
-        private void HanldeCLIOption(ExampleOptions cliOptions)
-        {
-            throw new NotImplementedException();
-        }
-
+       
         private int HandleConfigFileOptions(ConfigFileOptions configFileOptions)
-        {            
+        {
+            SetVerboseLevel(runOptions.VerboseLevel);
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", configFileOptions.FileName));
             mCLIHandler = new CLIConfigFile();
             mCLIHandler.LoadContent(ReadFile(configFileOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);                        
@@ -279,6 +272,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HanldeGridOption(GridOptions gridOptions)
         {
+            SetVerboseLevel(runOptions.VerboseLevel);
+
             Reporter.ToConsole(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
@@ -306,6 +301,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleRunOptions(RunOptions runOptions)
         {
+            SetVerboseLevel(runOptions.VerboseLevel);
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.INFO, $"Solution: {runOptions.Solution}");
@@ -327,7 +324,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return Environment.ExitCode;
         }
 
-        
+        private void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
+        {
+            // !!!!!!!!!!!!
+            Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Debug;
+        }
 
         private int HandleCLIParseError(IEnumerable<Error> errs)
         {
@@ -337,12 +338,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 PrintGingerCLIHelp();
                 return 0;
             }
+            else if (errs.Count() == 1 && errs.First() is VersionRequestedError)
+            {
+                // User requested version
+                PrintGingerVersionInfo();
+                return 0;
+            }
             else
             {
                 Reporter.ToConsole(eLogLevel.ERROR, "Please fix the arguments and try again");
                 return 1;
             }
             
+        }
+
+        private void PrintGingerVersionInfo()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(Environment.NewLine);
+            stringBuilder.Append("Ginger Executor: ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);            
+            stringBuilder.Append(Environment.NewLine);
+            Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
         }
 
         private void PrintGingerCLIHelp()
