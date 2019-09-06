@@ -60,10 +60,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private void ParseArgs(string[] args)
         {
-
-            // failing fix me - so will not show default version
-            // Parser.Default.Settings.AutoVersion = false;
-            
+            // FIXME: failing with exc of obj state
+            // Do not show default version
+            // Parser.Default.Settings.AutoVersion = false;            
 
             int result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions>(args).MapResult(
                     (RunOptions opts) => HandleRunOptions(opts),
@@ -76,15 +75,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     (ExampleOptions opts) => HandleExampleOptions(opts),
 
                     errs => HandleCLIParseError(errs)
-            );
-          
+            );          
 
             if (result != 0)
             {
                 Reporter.ToConsole(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
-            }
-            
-
+            }            
         }
 
         private int HandleVersionOptions(VersionOptions opts)
@@ -218,7 +214,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleSCMOptions(SCMOptions sCmOptions)
         {
-            SetVerboseLevel(runOptions.VerboseLevel);
+            SetVerboseLevel(sCmOptions.VerboseLevel);
             Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
 
             mCLIHandler = new CLISCM();
@@ -233,7 +229,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleScriptOptions(ScriptOptions scriptOptions)
         {
-            SetVerboseLevel(runOptions.VerboseLevel);
+            SetVerboseLevel(scriptOptions.VerboseLevel);
 
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", scriptOptions.FileName));
             mCLIHandler = new CLIScriptFile();
@@ -247,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleDynamicOptions(DynamicOptions dynamicOptions)
         {
-            SetVerboseLevel(runOptions.VerboseLevel);
+            SetVerboseLevel(dynamicOptions.VerboseLevel);
 
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", dynamicOptions.FileName));
             mCLIHandler = new CLIDynamicXML();
@@ -260,7 +256,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
        
         private int HandleConfigFileOptions(ConfigFileOptions configFileOptions)
         {
-            SetVerboseLevel(runOptions.VerboseLevel);
+            SetVerboseLevel(configFileOptions.VerboseLevel);
 
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", configFileOptions.FileName));
             mCLIHandler = new CLIConfigFile();
@@ -272,7 +268,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HanldeGridOption(GridOptions gridOptions)
         {
-            SetVerboseLevel(runOptions.VerboseLevel);
+            SetVerboseLevel(gridOptions.VerboseLevel);
 
             Reporter.ToConsole(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
