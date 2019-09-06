@@ -77,6 +77,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         
         [Option('u', "showui", Required = false, Default = false, HelpText = "Show Auto Run Window UI - Windows only")]
         public bool ShowAutoRunWindow { get; set; }
+
+        [Option('t', "artifacts-path", Required = false, HelpText = "Select Artifacts output directory")]
+        public string TestArtifactsPath { get; set; }
     }
 
     [Verb("scm", HelpText = "Execute source control management operations")]
