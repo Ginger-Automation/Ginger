@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="cb844434-7e14-480a-b310-300898c0a7ca" ItemType="Solution" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.2.0.0" Version="1" LastUpdateBy="YARONWE" LastUpdate="201904012027" />
+<GingerRepositoryItem><Header ItemGuid="cb844434-7e14-480a-b310-300898c0a7ca" ItemType="Solution" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.4.0.0" Version="2" LastUpdateBy="YARONWE" LastUpdate="201909061518" />
 <Solution AlmType="QC" Guid="cb844434-7e14-480a-b310-300898c0a7ca" Name="CLI" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="app1" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="e514fcc7-9e32-40c4-badf-845930479277" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 </ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<ExecutionLoggerConfiguration ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="ae0a3f8d-0e03-4d59-8bc5-adbd61038667" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<HTMLReportsConfigurationSetList>
+<HTMLReportsConfiguration Guid="728325d6-ca8a-46e5-98cc-be172c57214c" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
+</HTMLReportsConfigurationSetList>
 </Solution></GingerRepositoryItem>
