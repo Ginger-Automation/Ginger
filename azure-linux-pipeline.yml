@@ -41,7 +41,7 @@ jobs:
 # Publish GingerConsole
 # ------------------------------------------------------------------------------------------------------
 
-  - script: dotnet publish  Ginger\GingerConsole -c Release
+  - script: dotnet publish  Ginger/GingerConsole -c Release
     displayName: 'Publish GingerConsole'
     
 # ------------------------------------------------------------------------------------------------------
