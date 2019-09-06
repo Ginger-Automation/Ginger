@@ -54,9 +54,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option('a', "analyze", Required = false, HelpText = "runAnalyzer")]
         public bool RunAnalyzer { get; set; }
-
-        // !!!! long switch not ok
-        [Option('w', "showAutoRunWindow", Required = false, Default = true, HelpText = "showAutoRunWindow")]
+        
+        [Option('u', "show-ui", Required = false, Default = false, HelpText = "Show ui - Windows only")]
         public bool ShowAutoRunWindow { get; set; }
     }
 

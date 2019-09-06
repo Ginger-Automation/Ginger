@@ -52,9 +52,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
             
-            ParseArgs(args);                            
-            
-
+            ParseArgs(args);                                        
         }
 
 
@@ -76,7 +74,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             else
             {
                 result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions>(args).MapResult(
-                    (RunOptions opts) => HandleRunOptions(opts),
+                        (RunOptions opts) => HandleRunOptions(opts),
                         (GridOptions opts) => HanldeGridOption(opts),
                         (ConfigFileOptions opts) => HandleConfigFileOptions(opts),
                         (DynamicOptions opts) => HandleDynamicOptions(opts),
@@ -220,8 +218,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SourceControlURL = sCmOptions.URL;
             
             // do the rest !!!
-
-            CLILoadAndPrepare();
+            
             ExecuteRunSet();
 
             return Environment.ExitCode;
@@ -231,8 +228,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", scriptOptions.FileName));
             mCLIHandler = new CLIScriptFile();
-            mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
-            CLILoadAndPrepare();
+            mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);                        
             ExecuteRunSet();
             
             return Environment.ExitCode;
@@ -244,8 +240,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", dynamicOptions.FileName));
             mCLIHandler = new CLIDynamicXML();
-            mCLIHandler.LoadContent(ReadFile(dynamicOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-            CLILoadAndPrepare();
+            mCLIHandler.LoadContent(ReadFile(dynamicOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
             ExecuteRunSet();
 
             return Environment.ExitCode;
@@ -260,8 +255,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", configFileOptions.FileName));
             mCLIHandler = new CLIConfigFile();
-            mCLIHandler.LoadContent(ReadFile(configFileOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
-            CLILoadAndPrepare();
+            mCLIHandler.LoadContent(ReadFile(configFileOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);                        
             ExecuteRunSet();
 
             return Environment.ExitCode;
@@ -300,40 +294,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.INFO, $"Solution: {runOptions.Solution}");
             Reporter.ToLog(eLogLevel.INFO, $"Runset: {runOptions.Runset}");
+            Reporter.ToLog(eLogLevel.INFO, $"Environment: {runOptions.Environment}");
             Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
             
             mCLIHandler = new CLIArgs();
             mCLIHelper.Solution = runOptions.Solution;
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
+            mCLIHelper.RunAnalyzer = runOptions.RunAnalyzer;
+            mCLIHelper.ShowAutoRunWindow = runOptions.ShowAutoRunWindow;
 
             // do all the rest !!!!!!!!
-
-            CLILoadAndPrepare();
+            
             ExecuteRunSet();
 
             return Environment.ExitCode;
         }
 
-        private void CLILoadAndPrepare()
-        {
-            if (!mCLIHelper.LoadSolution())
-            {
-                return;//failed to load Solution;
-            }
-
-            if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
-            {
-                return;//failed to load Run set
-            }
-
-            if (!mCLIHelper.PrepareRunsetForExecution())
-            {
-                return; //Failed to perform execution preparations
-            }
-
-            mCLIHelper.SetTestArtifactsFolder();
-        }
+        
 
         private int HandleCLIParseError(IEnumerable<Error> errs)
         {
@@ -367,6 +345,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         void ExecuteRunSet()
         {
+            CLILoadAndPrepare();
+
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));            
             try
             {
@@ -398,6 +378,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();
         }
 
+        private void CLILoadAndPrepare()
+        {
+            if (!mCLIHelper.LoadSolution())
+            {
+                return;//failed to load Solution;
+            }
+
+            if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+            {
+                return;//failed to load Run set
+            }
+
+            if (!mCLIHelper.PrepareRunsetForExecution())
+            {
+                return; //Failed to perform execution preparations
+            }
+
+            mCLIHelper.SetTestArtifactsFolder();
+            WorkSpace.Instance.StartLocalGrid();
+        }
 
         private string[] ConvertOldArgs(string[] oldArgs)
         {

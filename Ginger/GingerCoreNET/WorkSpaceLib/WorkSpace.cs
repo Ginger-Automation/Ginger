@@ -101,6 +101,19 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace.Telemetry.SessionStarted();
         }
       
+
+        public void StartLocalGrid()
+        {
+            if (LocalGingerGrid == null)
+            {
+                InitLocalGrid();
+            }
+            else
+            {
+                Reporter.ToConsole(eLogLevel.ERROR, "StartLocalGrid requested but grid is already running");
+            }
+        }
+
         public void CloseWorkspace()
         {
             try
@@ -140,6 +153,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         private void InitLocalGrid()
         {
+            Reporter.ToConsole(eLogLevel.DEBUG, "Starting local Ginger Services Grid");
             mLocalGingerGrid = new GingerGrid();
             mLocalGingerGrid.Start();
         }

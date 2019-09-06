@@ -218,7 +218,8 @@ namespace Amdocs.Ginger.Repository
         }
 
         public void CloseAllRunningPluginProcesses()
-        {
+        {            
+            Reporter.ToConsole(eLogLevel.DEBUG, "Closing all Running Plugin Processes");            
             WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
             foreach (PluginProcessWrapper process in mProcesses)
             {

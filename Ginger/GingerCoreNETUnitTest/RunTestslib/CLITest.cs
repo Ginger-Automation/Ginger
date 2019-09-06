@@ -459,6 +459,7 @@ namespace WorkspaceHold
         {            
             //Arrange
             PrepareForCLICreationAndExecution();
+
             // Create args
             List<string> args = new List<string>();
 

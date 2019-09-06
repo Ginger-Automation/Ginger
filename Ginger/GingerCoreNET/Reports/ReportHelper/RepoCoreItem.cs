@@ -14,8 +14,6 @@ using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using static Ginger.Reports.GingerExecutionReport.ExtensionMethods;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
@@ -122,8 +120,8 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
 
         public void ShowAutoRunWindow()
-        {
-            throw new NotImplementedException();
+        {            
+            Reporter.ToConsole(eLogLevel.INFO, "Show UI is set to true but not supported when running with GingerConsole");
         }
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)

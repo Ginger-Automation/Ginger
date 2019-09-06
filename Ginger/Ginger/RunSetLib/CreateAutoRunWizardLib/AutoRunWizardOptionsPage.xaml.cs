@@ -17,11 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
