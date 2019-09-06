@@ -27,4 +27,12 @@ cd /home/vsts/work/1/a/
 dir
 
 
+Write-Host "-------------------------------------------------------------"
+Write-Host "-                         Run CLI Tests                     -"
+Write-Host "-------------------------------------------------------------"
+
+cd /home/vsts/work/1/s/Ginger/GingerConsole/bin/Release/netcoreapp2.2/publish/
+dotnet GingerConsole.dll help run
+
+
 exit $exitcode
