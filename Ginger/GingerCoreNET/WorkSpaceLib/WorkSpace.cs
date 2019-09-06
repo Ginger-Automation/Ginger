@@ -152,8 +152,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         private void InitLocalGrid()
-        {
-            Reporter.ToConsole(eLogLevel.DEBUG, "Starting local Ginger Services Grid");
+        {            
             mLocalGingerGrid = new GingerGrid();
             mLocalGingerGrid.Start();
         }
@@ -248,7 +247,7 @@ namespace amdocs.ginger.GingerCoreNET
 
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
-                Reporter.ToConsole(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
+                Reporter.ToConsole(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
             }
         }
 

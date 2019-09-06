@@ -64,25 +64,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             // remove basic !!!!!!!!!!!!
 
-            if (args[0].StartsWith("-"))
-            {
-                result = Parser.Default.ParseArguments<BasicOptions>(args).MapResult(
-                    (BasicOptions opts) => HandleBasicOptions(opts),
-                    errs => HandleCLIParseError(errs)
-                );
-            }
-            else
-            {
-                result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions>(args).MapResult(
+            //if (args[0].StartsWith("-"))
+            //{
+            //    result = Parser.Default.ParseArguments<BasicOptions>(args).MapResult(
+            //        (BasicOptions opts) => HandleBasicOptions(opts),
+            //        errs => HandleCLIParseError(errs)
+            //    );
+            //}
+            //else
+            //{
+                result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, ExampleOptions>(args).MapResult(
                         (RunOptions opts) => HandleRunOptions(opts),
                         (GridOptions opts) => HanldeGridOption(opts),
                         (ConfigFileOptions opts) => HandleConfigFileOptions(opts),
                         (DynamicOptions opts) => HandleDynamicOptions(opts),
                         (ScriptOptions opts) => HandleScriptOptions(opts),
                         (SCMOptions opts) => HandleSCMOptions(opts),
+                        (ExampleOptions opts) => HandleExampleOptions(opts),
                         errs => HandleCLIParseError(errs)
                 );
-            }
+            // }
 
             if (result != 0)
             {
@@ -92,19 +93,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         }
 
-        private int HandleBasicOptions(BasicOptions basicOptions)
+        private int HandleExampleOptions(ExampleOptions exampleOptions)
         {
-            Reporter.ToConsole(eLogLevel.INFO, "Running basic options");
+            Reporter.ToConsole(eLogLevel.DEBUG, "Running example options");
 
-            if (basicOptions.ShowExamples)
+            switch (exampleOptions.verb)
             {
-                ShowExamples();                
+                case "all":
+                    ShowExamples();
+                    break;
+                case "run":
+                    ShowExamples();
+                    break;
+                default:
+                    Reporter.ToConsole(eLogLevel.ERROR, "Unknown verb '" + exampleOptions.verb + "' ");
+                    return 1;                    
             }
-
-            //if (basicOptions.ShowVersion)
-            //{
-            //    ShowVersion();
-            //}
+            
             return 0;
         }
 
@@ -148,18 +153,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sb.Append(Environment.NewLine);
 
             sb.Append("Example #1: ");
-            sb.Append(CreateExample(solution));
+            sb.Append(CreateExample(solution, "Runset1"));
 
             sb.Append("Example #2: ");
-            sb.Append(CreateExample(solution, "UAT", "Runset1"));
+            sb.Append(CreateExample(solution, "Runset1", "UAT"));
 
             sb.Append("Example #3: ");
-            sb.Append(CreateExample(solutionWithSpaces, "UAT", "Default Run Set"));
+            sb.Append(CreateExample(solutionWithSpaces, "Default Run Set", "UAT"));
 
             Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
         }
 
-        private string CreateExample(string solution, string env = null, string runset = null)
+        private string CreateExample(string solution, string runset, string env = null)
         {
             StringBuilder sb = new StringBuilder();
             RunOptions runOptions = new RunOptions();
@@ -178,7 +183,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             string exe = "dotnet GingerConsole.dll ";
 
-            sb.Append(@"Open solution at '" + runOptions.Solution + "' select environment '" + runOptions.Environment + "' and execute run set '" + runOptions.Runset + "'").Append(Environment.NewLine);
+            sb.Append(@"Open solution at '" + runOptions.Solution + "'");
+            if (runOptions.Environment == null)
+            {
+                sb.Append(" auto select environment (assuming only one exist)");
+            }
+            else
+            {
+                sb.Append(" select environment '" + runOptions.Environment + "'");
+            }
+                            
+            sb.Append(" and execute run set '").Append(runOptions.Runset).Append("'");
+            sb.Append(Environment.NewLine);
             sb.Append("Long form : ").Append("'" + exe + arguments + "'").Append(Environment.NewLine);
             sb.Append("Short form: ").Append("'" + exe + "run");
             sb.Append(" -").Append(CLIOptionClassHelper.GetAttrShorName<RunOptions>(nameof(RunOptions.Solution))).Append(" ").Append(WrapTextIfNeeded(runOptions.Solution));
@@ -246,7 +262,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return Environment.ExitCode;
         }
 
-        private void HanldeCLIOption(BasicOptions cliOptions)
+        private void HanldeCLIOption(ExampleOptions cliOptions)
         {
             throw new NotImplementedException();
         }

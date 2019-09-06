@@ -23,13 +23,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
     }
 
-    public class BasicOptions  // without verb for example 'ginger -e' display CLI examples
-    {
-        //[Option('v', "version", Required = false, HelpText = "Display version information")]
-        //public bool ShowVersion { get; set; }
 
-        [Option('e', "examples", Required = false, HelpText = "Display example list of Command Line arguments")]
-        public bool ShowExamples { get; set; }
+    //[Option('v', "version", Required = false, HelpText = "Display version information")]
+    //public bool ShowVersion { get; set; }
+
+    [Verb("example", HelpText = "Show example")]
+    public class ExampleOptions  // 'ginger -e run' display CLI examples for run
+    {        
+        [Option('v', "verb", Required = true, HelpText = "Select Verb to show example")]
+        public string verb { get; set; }
     }
 
 
@@ -45,11 +47,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('r', "runset", Default = "Default Run Set", Required = true, HelpText = "Set runset name")]
         public string Runset { get; set; }
 
-        [Option('e', "environment",  Required = true, HelpText = "Set environment name")]
+        [Option('e', "env",  Required = true, HelpText = "Set environment name")]
         public string Environment { get; set; }
 
-        [Option(longName: "env", Required = false, HelpText = "Set environment name same like using --environment")]
-        public string Env { get { return Environment;  } set { Environment = value; } }
+        // causing issues so removing
+        //[Option(longName: "env", Required = false, HelpText = "Set environment name same like using --environment")]
+        //public string Env { get { return Environment;  } set { Environment = value; } }
 
 
         [Option('a', "analyze", Required = false, HelpText = "runAnalyzer")]
