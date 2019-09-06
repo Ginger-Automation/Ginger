@@ -320,9 +320,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
         private void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
-        {
-            // !!!!!!!!!!!!
-            Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Debug;
+        {            
+            if (verboseLevel == OptionsBase.eVerboseLevel.debug)
+            {
+                Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Debug;
+            }
+            else
+            {
+                Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Normal;
+            }
+            
         }
 
         private int HandleCLIParseError(IEnumerable<Error> errs)

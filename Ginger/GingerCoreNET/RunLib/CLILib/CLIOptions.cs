@@ -27,12 +27,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         public enum eVerboseLevel
         {
-            Debug,
-            Info,
-            Warning
+            normal,
+            debug            
         }
 
-        [Option('v', "verbose", Required = false, HelpText = "Select Verbose level: Debug, Info, Warning")]
+        [Option('v', "verbose", Required = false,Default = eVerboseLevel.normal,  HelpText = "Select Verbose level: normal, debug")]
         public eVerboseLevel VerboseLevel { get; set; }
     }
 
