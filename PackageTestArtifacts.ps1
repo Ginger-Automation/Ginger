@@ -13,6 +13,13 @@ Compress-Archive -Path '/home/vsts/work/1/s/Ginger/GingerCoreNETUnitTest/bin/Rel
 # Compress-Archive -Path '/home/vsts/work/1/s/GingerCoreTest/bin/Release/netcoreapp2.2/TestArtifacts' -DestinationPath '/home/vsts/work/1/a/GingerCoreTestTestArtifacts'
 # Compress-Archive -Path '/home/vsts/work/1/s/GingerTest/bin/Release/netcoreapp2.2/TestArtifacts' -DestinationPath '/home/vsts/work/1/a/GingerTestArtifacts'
 
+
+Write-Host "-------------------------------------------------------------"
+Write-Host "-                    Package GingerConsole                  -"
+Write-Host "-------------------------------------------------------------"
+Compress-Archive -Path '/home/vsts/work/1/s/Ginger/GingerCoonsole/bin/Release/netcoreapp2.2/publish' -DestinationPath '/home/vsts/work/1/a/GingerConsole'
+
+
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                         Artifacts List                    -"
 Write-Host "-------------------------------------------------------------"
