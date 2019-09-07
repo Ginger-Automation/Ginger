@@ -30,7 +30,7 @@ using System.Threading;
 
 namespace Amdocs.Ginger.GingerConsole
 {
-    class Program
+    public class Program
     {
         static SolutionMenu mSolutionMenu;
         
@@ -42,7 +42,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         static GingerGridMenu gingerGridMenu;
         
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
                   
             // TODO: Console.SetOut      
