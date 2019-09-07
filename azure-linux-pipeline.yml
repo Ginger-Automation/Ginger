@@ -60,7 +60,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
-    displayName: Package test artifacts
+    displayName: Run Standalone CLI Test
     inputs:
       filePath: CLITests.ps1
     condition: succeededOrFailed()
