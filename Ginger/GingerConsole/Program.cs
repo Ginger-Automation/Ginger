@@ -115,7 +115,7 @@ namespace Amdocs.Ginger.GingerConsole
             doc.LoadXml(xmltext);                        
             XmlConfigurator.Configure(logRepository, doc.DocumentElement);
 
-            Reporter.ToConsole(eLogLevel.INFO, "Ginger Log File located at: " + appdata);
+            Console.WriteLine(">>>>>>>>>>>>>>>>>> Ginger Log File located at: " + appdata); // !!!!!!!!!!!!!!!!!!!! + ????
         }
 
         private static void InitMenu()
