@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.GingerConsole
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlDocument doc = new XmlDocument();
             string xmltext = System.IO.File.ReadAllText(new FileInfo("log4net.config").FullName);
-            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
             xmltext = xmltext.Replace("${AppData}", appdata);
             doc.LoadXml(xmltext);                        
             XmlConfigurator.Configure(logRepository, doc.DocumentElement);
