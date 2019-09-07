@@ -275,8 +275,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
 
-            // if flag !!!!!!!!!!!!
-            ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+            if (gridOptions.Tracker)
+            {
+                ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
+            }
 
             Console.WriteLine();
             Console.WriteLine("---------------------------------------------------");

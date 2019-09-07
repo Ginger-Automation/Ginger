@@ -127,7 +127,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
 
         [Option('t', "tracker", HelpText = "Show nodes tracker window")]
-        public bool ShowAutoRunWindow { get; set; }
+        public bool Tracker { get; set; }
     }
 
     [Verb("configfile", HelpText = "Use config file")]
