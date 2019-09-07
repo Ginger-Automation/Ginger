@@ -65,11 +65,16 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        static string mGingerLogFile = null;
         public static string GingerLogFile
         {
             get
             {
-                return Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
+                if (mGingerLogFile == null)
+                {
+                    mGingerLogFile = Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
+                }
+                return mGingerLogFile;
             }
         }
 

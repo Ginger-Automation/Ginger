@@ -23,10 +23,15 @@ using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
+using log4net;
+using log4net.Config;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
+using System.Xml;
 
 namespace Amdocs.Ginger.GingerConsole
 {
@@ -59,7 +64,8 @@ namespace Amdocs.Ginger.GingerConsole
                 Keepalive = false;                      
             };
 
-            
+
+            InitLog4Net();
 
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
 
@@ -97,6 +103,19 @@ namespace Amdocs.Ginger.GingerConsole
                 Console.WriteLine("Exception: " + ex.Message);
                 Thread.Sleep(3000);
             }
+        }
+
+        private static void InitLog4Net()
+        {            
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlDocument doc = new XmlDocument();
+            string xmltext = System.IO.File.ReadAllText(new FileInfo("log4net.config").FullName);
+            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            xmltext = xmltext.Replace("${AppData}", appdata);
+            doc.LoadXml(xmltext);                        
+            XmlConfigurator.Configure(logRepository, doc.DocumentElement);
+
+            Reporter.ToConsole(eLogLevel.INFO, "Ginger Log File located at: " + appdata);
         }
 
         private static void InitMenu()
