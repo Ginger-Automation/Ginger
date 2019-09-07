@@ -26,18 +26,4 @@ Write-Host "-------------------------------------------------------------"
 cd /home/vsts/work/1/a/
 dir
 
-
-Write-Host "-------------------------------------------------------------"
-Write-Host "-                         Run CLI Tests                     -"
-Write-Host "-------------------------------------------------------------"
-
-cd /home/vsts/work/1/s/Ginger/GingerConsole/bin/Release/netcoreapp2.2/publish/
-
-dotnet GingerConsole.dll help run
-
-dotnet GingerConsole.dll help version
-
-dotnet GingerConsole.dll run -s "/home/vsts/work/1/s/Ginger/GingerCoreNETUnitTest/TestResources/Solutions/CLI" -e "Default" -r "Default Run Set"
-
-
 exit $exitcode

@@ -367,11 +367,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(Environment.NewLine);
-            stringBuilder.Append("Ginger support many command line arguments and verbs").Append(Environment.NewLine);
-            stringBuilder.Append("'-h' for basic arguments list").Append(Environment.NewLine);
+            stringBuilder.Append("Ginger support many command line arguments and verbs").Append(Environment.NewLine);            
             stringBuilder.Append("'help' for verb list").Append(Environment.NewLine);
-            stringBuilder.Append("'help {verb}' for help on specific verb options, for example: 'help run'").Append(Environment.NewLine);
-            stringBuilder.Append("'-e' for list of examples").Append(Environment.NewLine);
+            stringBuilder.Append("'help {verb}' for help on specific verb options, for example: 'help run'").Append(Environment.NewLine);            
             stringBuilder.Append(Environment.NewLine);
             Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
         }
