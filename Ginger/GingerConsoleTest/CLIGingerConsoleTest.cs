@@ -40,6 +40,7 @@ namespace GingerConsoleTest
             mTestHelper.TestCleanup();
         }
 
+        [Ignore]
         [TestMethod]
         public void RunCLI()
         {
@@ -55,6 +56,7 @@ namespace GingerConsoleTest
 
         }
 
+        [Ignore]
         [TestMethod]
         public void BadCLIArg()
         {
