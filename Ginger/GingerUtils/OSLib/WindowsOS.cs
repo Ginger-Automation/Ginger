@@ -29,8 +29,7 @@ namespace GingerUtils.OSLib
                 LocalHostIP = IPList[0].ToString();
             }
             else if (IPList.Count() > 1)
-            {
-                int i = 0;
+            {                
                 foreach (IPAddress ip in IPList)
                 {                    
                     if (ip.AddressFamily == AddressFamily.InterNetwork)
