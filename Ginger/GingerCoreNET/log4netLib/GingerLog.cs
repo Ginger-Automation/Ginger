@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
-        // TODO: verify it is done once !!!!!!!!!!!!!!!!!!
+        
         public static void InitLog4Net()
         {
           var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());            

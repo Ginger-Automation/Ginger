@@ -49,10 +49,9 @@ namespace Amdocs.Ginger.GingerConsole
         
         public static void Main(string[] args)
         {
-                  
-            // TODO: Console.SetOut      
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Ginger Console " + ApplicationInfo.ApplicationVersion); 
+            Reporter.ToLog( eLogLevel.INFO, "Ginger Console " + ApplicationInfo.ApplicationVersion); 
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
@@ -65,7 +64,7 @@ namespace Amdocs.Ginger.GingerConsole
             };
 
 
-            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
+            
 
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
 
