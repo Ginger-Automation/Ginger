@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.GingerConsole
             };
 
 
-            InitLog4Net();
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
 
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
 
@@ -105,18 +105,7 @@ namespace Amdocs.Ginger.GingerConsole
             }
         }
 
-        private static void InitLog4Net()
-        {            
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            XmlDocument doc = new XmlDocument();
-            string xmltext = System.IO.File.ReadAllText(new FileInfo("log4net.config").FullName);
-            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
-            xmltext = xmltext.Replace("${AppData}", appdata);
-            doc.LoadXml(xmltext);                        
-            XmlConfigurator.Configure(logRepository, doc.DocumentElement);
-
-            Console.WriteLine(">>>>>>>>>>>>>>>>>> Ginger Log File located at: " + appdata); // !!!!!!!!!!!!!!!!!!!! + ????
-        }
+       
 
         private static void InitMenu()
         {

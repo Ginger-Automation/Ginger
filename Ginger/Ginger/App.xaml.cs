@@ -34,7 +34,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 
-[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace Ginger
 {
@@ -43,9 +42,7 @@ namespace Ginger
     /// </summary>
     public partial class App : Application
     {
-        //DO NOT REMOVE- Needed for Log to work
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-                                       (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        
         
         public new static MainWindow MainWindow { get; set; }
 
@@ -242,9 +239,11 @@ namespace Ginger
         {
             Console.WriteLine("Starting Ginger");
             Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
+
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
             WorkSpace.Init(new WorkSpaceEventHandler());
 
-            // add additional classed from Ginger and GingerCore
+            // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
 
             WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
