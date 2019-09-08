@@ -39,6 +39,12 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 {
                     // DoNotVerify so on Linux it will not return empty
                     string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
+
+                    if (!Directory.Exists(appDataFolder))  // on Linux it sometimes not exist like on Azure build
+                    {
+                        Directory.CreateDirectory(appDataFolder);
+                    }
+
                     appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
 
                     if (!Directory.Exists(appDataFolder))

@@ -21,8 +21,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             get
             {
                 if (mGingerLogFile == null)
-                {
-                 // Replace with log file name calc !!!!!!!!!!!!!!!!!!!!!!!!   
+                {                 
                     mGingerLogFile = Path.Combine(Common.GeneralLib.General.LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
                 }
                 return mGingerLogFile;
@@ -32,24 +31,13 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         // TODO: verify it is done once !!!!!!!!!!!!!!!!!!
         public static void InitLog4Net()
         {
-          var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+          var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());            
+            string xmltext = Getlog4netConfig();            
+            xmltext = xmltext.Replace("${filename}", GingerLogFile);  // replace with full log path and filename
             XmlDocument doc = new XmlDocument();
-            //  string xmltext = System.IO.File.ReadAllText(new FileInfo("log4net.config").FullName);
-
-            // Adding 'DoNotVerify' - else for Linux it will return empty string
-            string appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
-
-            if (!Directory.Exists(appdata))  // on Linux it sometimes not exist like on Azure build
-            {
-                Directory.CreateDirectory(appdata);
-            }
-
-            string xmltext = Getlog4netConfig();
-            xmltext = xmltext.Replace("${AppData}", appdata);  // replace with full log name
             doc.LoadXml(xmltext);
             XmlConfigurator.Configure(logRepository, doc.DocumentElement);
-
-            Console.WriteLine(">>>>>>>>>>>>>>>>>> Ginger Log File located at: " + appdata); // !!!!!!!!!!!!!!!!!!!! + ????
+            Console.WriteLine("Ginger log File located at: " + GingerLogFile); 
         }
 
         static string Getlog4netConfig()
