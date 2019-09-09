@@ -122,24 +122,36 @@ function define_GingerLib() {
         {
            var list = PayLoad.GetListPayLoad();
            var inputValues = PayLoad.GetInputValues(list);
+
            var ElementAction = inputValues["ElementAction"];
            var ElementLocateBy = inputValues["ElementLocateBy"];
            var ElementLocateValue = inputValues["ElementLocateValue"];
-            var Value = inputValues["Value"];
+           var Value = inputValues["Value"];
 
-            //if (ElementAction == "TriggerJavaEvent")
-            //{
-            //    el=fi
-            
-            //if (ismouse) {
-                   
-            //        return GingerLib.fireMouseEvent(el, Value);               
-              
-            //}
-            //else {
-            //    return GingerLib.fireSpecialEvent(el, Value);
-            //    }
-            //}
+            if (ElementAction == "TriggerJavaScriptEvent")
+            {
+                var IsMouseEvent = inputValues["IsMouseEvent"];
+
+                var element = GingerLib.GetElement(ElementLocateBy, ElementLocateValue);
+
+                if (IsMouseEvent.toLowerCase() == "true")
+                {
+                    return GingerLib.fireMouseEvent(element, Value);               
+                }
+                else
+                {
+                    return GingerLib.fireSpecialEvent(element, Value);
+                }
+            }
+
+            if (ElementAction === "IsVisible")
+            {
+                ElementAction = "Visible";
+            }
+            if (ElementAction === "IsEnabled")
+            {
+                ElementAction = "Enabled";
+            }
 
            return GingerLib.HandleHTMLControlAction(ElementAction, ElementLocateBy, ElementLocateValue, Value);
         }

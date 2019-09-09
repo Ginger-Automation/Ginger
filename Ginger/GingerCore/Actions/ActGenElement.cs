@@ -108,8 +108,6 @@ namespace GingerCore.Actions
         }
         Act IObsoleteAction.GetNewAction()
         {
-
-
             Act convertedUIElementAction = null;
             switch(this.Platform)
             {
@@ -145,7 +143,6 @@ namespace GingerCore.Actions
                 newActUIElement.ElementLocateValue = this.LocateValue;
 
                 newActUIElement.ElementAction = MapJavaElementAction(GenElementAction);
-                newActUIElement.Value = this.Value;
                 newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, this.Value);
 
                 return newActUIElement;
@@ -177,7 +174,6 @@ namespace GingerCore.Actions
                 case eGenElementAction.GetValue:
                 case eGenElementAction.Click:
                 case eGenElementAction.AsyncClick:
-                case eGenElementAction.Visible:
                 case eGenElementAction.RunJavaScript:
                 case eGenElementAction.ScrollDown:
                 case eGenElementAction.ScrollUp:
@@ -186,6 +182,9 @@ namespace GingerCore.Actions
 
                 case eGenElementAction.Enabled:
                     elementAction = ActUIElement.eElementAction.IsEnabled;
+                    break;
+                case eGenElementAction.Visible:
+                    elementAction = ActUIElement.eElementAction.IsVisible;
                     break;
 
                 case eGenElementAction.SelectFromDropDownByIndex:

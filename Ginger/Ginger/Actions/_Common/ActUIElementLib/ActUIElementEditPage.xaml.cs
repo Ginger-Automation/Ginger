@@ -60,7 +60,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
             ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
-            ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
 
             //if widgets element, only supported to java platform now.
             if (act.Platform.Equals(ePlatformType.Java))
@@ -68,10 +67,25 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 ShowWidgetsElementCheckBox();
             }
 
+            BindElementTypeComboBox();
+
             SetLocateValueFrame();
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+        }
+
+        private void BindElementTypeComboBox()
+        {
+            ElementTypeComboBox.Items.Clear();
+            if (Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
+            {
+                ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformWidgetsUIElementsType());
+            }
+            else
+            {
+                ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
+            }
         }
 
         private void ShowWidgetsElementCheckBox()
@@ -134,7 +148,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+            if (Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
+            {
+                mElementActionsList = mPlatform.GetPlatformWidgetsUIActionsList(mAction.ElementType);
+            }
+            else
+            {
+                mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+            }
 
             ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
             ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
@@ -343,6 +364,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     }
                     break;
 
+                //added for Widgets
+                case eElementAction.TriggerJavaScriptEvent:
+                    possibleValues = GetJavaScriptEventList();
+                    elementList.Add(GetElementConfigControl("Event", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
+                    break;
+
                 case eElementAction.SelectByIndex:
                 case eElementAction.SetSelectedValueByIndex:
                     if (mAction.ElementType != eElementType.RadioButton)
@@ -390,12 +417,53 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     Reporter.ToLog(eLogLevel.DEBUG, mAction.ElementAction.ToString() + "not required config page.");
                     break;
             }
+
+            //if widgets and element action is TriggerJavaScriptEvent
+            if (mAction.ElementAction.Equals(eElementAction.TriggerJavaScriptEvent))
+            {
+                BindAndShowMouseEventCheckBox();
+            }
+            else
+            {
+                xMouseEventCheckBox.Visibility = Visibility.Collapsed;
+            }
+
             Page elementEditPage = null;
             if (elementList.Count != 0)
             {
                 elementEditPage = GetConfigPage(elementList);
             }
             return elementEditPage;
+        }
+
+        private void BindAndShowMouseEventCheckBox()
+        {
+            xMouseEventCheckBox.Visibility = Visibility.Visible;
+            BindingHandler.ActInputValueBinding(xMouseEventCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsMouseEvent, "false"), new InputValueToBoolConverter());
+        }
+
+        private List<string> GetJavaScriptEventList()
+        {
+            var eventList = new List<string>();
+            
+            if (Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsMouseEvent)))
+            {
+                eventList.Add("onmousedown");
+                eventList.Add("onmouseleave");
+                eventList.Add("onmouseout");
+                eventList.Add("onmouseover");
+                eventList.Add("onmouseup");
+            }
+            else
+            {
+                eventList.Add("onkeydown");
+                eventList.Add("onkeyup");
+                eventList.Add("onblur");
+                eventList.Add("onfocus");
+                eventList.Add("onchange");
+            }
+ 
+            return eventList;
         }
 
         public Page GetConfigPage(List<ElementConfigControl> configControlsList)
@@ -663,7 +731,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void XWidgetsElementType_Click(object sender, RoutedEventArgs e)
         {
+            BindElementTypeComboBox();
             ShowPlatformSpecificPage();
+        }
+
+        private void XMouseEventCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            mAction.AddOrUpdateInputParamValue(Fields.ValueToSelect, "");
+            GetDefaultPageContent();
         }
     }
 }

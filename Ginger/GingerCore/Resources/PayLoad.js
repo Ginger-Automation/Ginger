@@ -325,13 +325,18 @@ GingerPayLoad.prototype.ReadPayLoad = function ()
     this.mBufferIndex -= 4;
 
     var byteArray = new Uint8Array(this.mBuffer);
+
+    //create array with size = len + 4
     var Bytes = new Uint8Array(len + 4);
 
+    //copy data from byteArray to Bytes
     for (var i = 0, j = this.mBufferIndex; i < len + 4; i++ , j++) {
         Bytes[i] = byteArray[j];
     }
+
     this.mBufferIndex += len + 4;
     var PLResp = new GingerPayLoadFromBytes(Bytes);
+
     return PLResp;
 }
 GingerPayLoad.prototype.GetInputValues = function (paramList)
