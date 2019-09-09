@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public void ShowAutoRunWindow()
         {            
-            Reporter.ToConsole(eLogLevel.INFO, "Show UI is set to true but not supported when running with GingerConsole");
+            Reporter.ToLog(eLogLevel.WARN, "Show UI is set to true but not supported when running with GingerConsole");
         }
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
