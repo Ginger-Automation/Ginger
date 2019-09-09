@@ -81,7 +81,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Excel\ExportedDS.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Plugins\PluginDriverExample4\Ginger.PluginPackage.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

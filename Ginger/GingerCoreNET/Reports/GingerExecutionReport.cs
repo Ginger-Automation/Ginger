@@ -200,7 +200,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
             ReportHTML = ReportHTML.Replace("{RunSetGingerRunners_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{RunSetGingerRunners_Data}", fieldsValuesHTMLTableCells.ToString());
-            System.IO.File.WriteAllText(HTMLReportMainFolder + "\\" + "GingerExecutionReport.html", ReportHTML);
+            System.IO.File.WriteAllText(HTMLReportMainFolder + Path.DirectorySeparatorChar + "GingerExecutionReport.html", ReportHTML);
 
             RI = null;
             ReportHTML = null;

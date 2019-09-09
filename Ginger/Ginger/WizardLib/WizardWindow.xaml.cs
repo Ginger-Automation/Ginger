@@ -386,12 +386,18 @@ namespace GingerWPF.WizardLib
 
         public void ProcessStarted()
         {
-            xProcessingImage.Visibility = Visibility.Visible;
+            Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Visible;
+            });
         }
 
         public void ProcessEnded()
         {
-            xProcessingImage.Visibility = Visibility.Collapsed;
+            Dispatcher.Invoke(() =>
+            {
+                xProcessingImage.Visibility = Visibility.Collapsed;
+            });
         }
 
 

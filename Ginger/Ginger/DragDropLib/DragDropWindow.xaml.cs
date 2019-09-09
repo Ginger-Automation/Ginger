@@ -90,6 +90,11 @@ namespace GingerWPF.DragDropLib
                     xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
                     xDragOperationImage.ImageType = eImageType.MoveUpDown;
                     break;
+
+                case DragInfo.eDragIcon.MultiAdd:
+                    xDragOperationImage.ImageForeground = new SolidColorBrush(Colors.Green);
+                    xDragOperationImage.ImageType = eImageType.WindowRestore;
+                    break;
             }
         }
     }

@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore.Platforms.PlatformsInfo;
@@ -39,7 +40,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     /// <summary>
     /// Interaction logic for RecordNavAction.xaml
     /// </summary>
-    public partial class RecordNavPage : Page
+    public partial class RecordNavPage : Page, INavPanelPage
     {
         public bool IsRecording = false;
         IWindowExplorer mDriver;
@@ -58,7 +59,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
             context.PropertyChanged += Context_PropertyChanged;
 
-            SetDriver();          
+            SetDriver();
             SetRecordingControls();
             SetSelectedPOMsGridView();
         }
@@ -70,20 +71,24 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// <param name="e"></param>
         private void Context_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e != null &&  e.PropertyName == nameof(Context.Agent) ||  e.PropertyName == nameof(Context.AgentStatus))
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
             {
-                if (IsRecording)
+
+                if (e != null && e.PropertyName == nameof(Context.Agent) || e.PropertyName == nameof(Context.AgentStatus))
                 {
-                    IsRecording = false;
-                    StopRecording();
+                    if (IsRecording)
+                    {
+                        IsRecording = false;
+                        StopRecording();
+                    }
+                    SetDriver();
+                    SetRecordingControls();
                 }
-                SetDriver();
-                SetRecordingControls();
-            }
-            else if(e != null && e.PropertyName == nameof(Context.Target))
-            {
-                SetSelectedPOMsGridView();
-                mApplicationPOMSelectionPage = null;
+                else if (e != null && e.PropertyName == nameof(Context.Target))
+                {
+                    SetSelectedPOMsGridView();
+                    mApplicationPOMSelectionPage = null;
+                }
             }
         }
 
@@ -165,7 +170,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
                 IsRecording = false;
-                SetRecordingControls();              
+                SetRecordingControls();
             }
         }
 
@@ -178,7 +183,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         private void StartRecording()
         {
-            IRecord record = (IRecord)mDriver;            
+            IRecord record = (IRecord)mDriver;
             IPlatformInfo platformInfo = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
 
             if (xIntegratePOM.IsChecked == true)
@@ -233,7 +238,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
 
         ObservableList<ApplicationPOMModel> mPomModels = new ObservableList<ApplicationPOMModel>();
-        
+
         private void MAppModelSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
         {
             AddSelectedPOM(e.SelectedItems);
@@ -264,5 +269,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             xSelectedPOMsGrid.Visibility = (bool)xIntegratePOM.IsChecked ? Visibility.Visible : Visibility.Collapsed;
         }
-    }    
+
+        public void ReLoadPageItems()
+        {
+            if (IsRecording)
+            {
+                IsRecording = false;
+                StopRecording();
+            }
+            SetDriver();
+            SetRecordingControls();
+
+            SetSelectedPOMsGridView();
+            mApplicationPOMSelectionPage = null;
+        }
+    }
 }
