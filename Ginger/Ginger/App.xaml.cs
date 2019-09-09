@@ -246,17 +246,16 @@ namespace Ginger
             // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
 
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());            
+
             if (e.Args.Length != 0)
             {
                 WorkSpace.Instance.RunningInExecutionMode = true;
                 Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             }
 
-            //write Ginger start to log + console
-            Reporter.ToLog(eLogLevel.INFO, Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + " Started");
-            Reporter.ToLog(eLogLevel.INFO, "Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-            
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();            
+
             if (e.Args.Length == 0)
             {
                 HideConsoleWindow();                

@@ -1,15 +1,15 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using log4net;
 using log4net.Config;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
 
 namespace Amdocs.Ginger.CoreNET.log4netLib
-{   
+{
 
     public class GingerLog
     {
@@ -54,8 +54,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         }
 
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
-        {
-            
+        {            
             try
             {
                 switch (logLevel)
@@ -87,5 +86,16 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
+        public static void PrintStartUpInfo()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
+            stringBuilder.Append("Ginger : ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
+            stringBuilder.Append(ApplicationInfo.ApplicationName + " Started");
+            stringBuilder.Append("Version: " + ApplicationInfo.ApplicationVersion).Append(Environment.NewLine);
+            stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
+            
+            Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+        }
     }
 }

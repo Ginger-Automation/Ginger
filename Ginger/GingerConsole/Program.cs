@@ -63,8 +63,9 @@ namespace Amdocs.Ginger.GingerConsole
             };
 
             
-            Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
-            Reporter.ToLog(eLogLevel.INFO, "Ginger Console " + ApplicationInfo.ApplicationVersion);
+            Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();            
+
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 
             // Init RepositorySerializer to use new Ginger classes
             NewRepositorySerializer RS = new NewRepositorySerializer();
