@@ -487,6 +487,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\APIModelActionConversion\ApiActionConversionUtils.cs" />
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />

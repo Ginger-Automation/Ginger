@@ -32,12 +32,24 @@ namespace Ginger.Actions.ApiActionsConversion
     /// <summary>
     /// This class is used to ApiActionsConversionWizard 
     /// </summary>
-    public class ApiActionsConversionWizard : WizardBase
+    public class ApiActionsConversionWizard : WizardBase, IConversionProcess
     {
         public override string Title { get { return "Convert Webservices Actions"; } }
+
+        private ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
+        {
+            get {
+                return mListOfBusinessFlow;
+            }
+            set
+            {
+                mListOfBusinessFlow = value;
+            }
+        }
+
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         ConversionStatusReportPage mReportPage = null;
         ApiActionConversionUtils mConversionUtils = new ApiActionConversionUtils();
 
@@ -169,6 +181,16 @@ namespace Ginger.Actions.ApiActionsConversion
         public override void Cancel()
         {
             base.Cancel();
+        }
+
+        public void ConversionProcessEnded()
+        {
+            ProcessStarted();
+        }
+
+        public void ConversionProcessStarted()
+        {
+            ProcessEnded();
         }
     }
 }

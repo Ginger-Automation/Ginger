@@ -33,7 +33,7 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class ConversionStatusReportPage : Page, IWizardPage
     {
-        ActionsConversionWizard mWizard;
+        IConversionProcess mConversionProcess;
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
 
         /// <summary>
@@ -55,10 +55,10 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
+                    mConversionProcess = (IConversionProcess)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
-                    Init(WizardEventArgs);
+                    Init();
                     break;
             }
         }
@@ -66,15 +66,13 @@ namespace Ginger.Actions.ActionConversion
         /// <summary>
         /// This method is used to init the configuration settings page
         /// </summary>
-        /// <param name="WizardEventArgs"></param>
-        private void Init(WizardEventArgs WizardEventArgs)
+        private void Init()
         {
             Dispatcher.Invoke(() =>
             {
-                DataContext = mWizard;
                 SetBusinessFlowConversionStatusGridView();
                 SetButtonsVisibility(false);
-                mWizard.BusinessFlowsActionsConversion(ListOfBusinessFlow);
+                mConversionProcess.BusinessFlowsActionsConversion(ListOfBusinessFlow);
             });
         }
 
@@ -130,7 +128,7 @@ namespace Ginger.Actions.ActionConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowList()
         {
             ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
-            foreach (BusinessFlowToConvert bf in mWizard.ListOfBusinessFlow)
+            foreach (BusinessFlowToConvert bf in mConversionProcess.ListOfBusinessFlow)
             {
                 if (bf.IsSelected)
                 {
@@ -152,7 +150,7 @@ namespace Ginger.Actions.ActionConversion
         private void StopButtonClicked(object sender, RoutedEventArgs e)
         {
             SetButtonsVisibility(true);
-            mWizard.StopConversion();
+            mConversionProcess.StopConversion();
         }
 
         /// <summary>
@@ -165,7 +163,7 @@ namespace Ginger.Actions.ActionConversion
             Dispatcher.Invoke(() =>
             {
                 SetButtonsVisibility(false);
-                mWizard.ProcessConversion(ListOfBusinessFlow, false);
+                mConversionProcess.ProcessConversion(ListOfBusinessFlow, false);
             });
         }
 
@@ -180,7 +178,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 SetButtonsVisibility(false);
                 ObservableList<BusinessFlowToConvert> lst = GetListToReConvert(ListOfBusinessFlow);
-                mWizard.ProcessConversion(lst, true);
+                mConversionProcess.ProcessConversion(lst, true);
             });
         }
 
@@ -210,7 +208,7 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="e"></param>
         private async void SaveButtonClicked(object sender, RoutedEventArgs e)
         {
-            mWizard.ProcessStarted();
+            mConversionProcess.ConversionProcessStarted();
 
             await Task.Run(() =>
             {
@@ -218,19 +216,19 @@ namespace Ginger.Actions.ActionConversion
                 {
                     try
                     {
-                        if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
-                        {
-                            if (bf.ConvertedActionsCount > 0)
-                            {
-                                bf.SaveStatus = eConversionSaveStatus.Saving;
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
-                                bf.SaveStatus = eConversionSaveStatus.Saved; 
-                            }
-                            else
-                            {
-                                bf.SaveStatus = eConversionSaveStatus.NA;
-                            }
-                        }
+                        //if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
+                        //{
+                        //    if (bf.ConvertedActionsCount > 0)
+                        //    {
+                        //        bf.SaveStatus = eConversionSaveStatus.Saving;
+                        //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
+                        //        bf.SaveStatus = eConversionSaveStatus.Saved; 
+                        //    }
+                        //    else
+                        //    {
+                        //        bf.SaveStatus = eConversionSaveStatus.NA;
+                        //    }
+                        //}
                     }
                     catch (Exception ex)
                     {
@@ -240,7 +238,7 @@ namespace Ginger.Actions.ActionConversion
                 }
             });
 
-            mWizard.ProcessEnded();
+            mConversionProcess.ConversionProcessEnded();
         }
 
         private void MarkUnMarkAllActions(bool status)

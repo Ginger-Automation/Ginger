@@ -426,6 +426,7 @@
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
+    <Compile Include="Actions\ActionConversion\IConversionProcess.cs" />
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
@@ -471,7 +472,6 @@
     <Compile Include="Actions\ActDemoPageEditPage.xaml.cs">
       <DependentUpon>ActDemoPageEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ApiActionsConversion\ApiActionConversionUtils.cs" />
     <Compile Include="Actions\RobotFramework\ActRobotEditPage.xaml.cs">
       <DependentUpon>ActRobotEditPage.xaml</DependentUpon>
     </Compile>
