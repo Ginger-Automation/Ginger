@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
-                return "Script";
+                return ScriptOptions.Verb;
             }
         }
 
