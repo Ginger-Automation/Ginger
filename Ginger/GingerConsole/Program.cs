@@ -50,8 +50,7 @@ namespace Amdocs.Ginger.GingerConsole
         public static void Main(string[] args)
         {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Reporter.ToLog( eLogLevel.INFO, "Ginger Console " + ApplicationInfo.ApplicationVersion); 
+            Console.ForegroundColor = ConsoleColor.Yellow;            
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
@@ -63,10 +62,9 @@ namespace Amdocs.Ginger.GingerConsole
                 Keepalive = false;                      
             };
 
-
             
-
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
+            Reporter.ToLog(eLogLevel.INFO, "Ginger Console " + ApplicationInfo.ApplicationVersion);
 
             // Init RepositorySerializer to use new Ginger classes
             NewRepositorySerializer RS = new NewRepositorySerializer();
@@ -74,11 +72,8 @@ namespace Amdocs.Ginger.GingerConsole
             {
                 if (args.Count() > 0)
                 {
-                    ProcessArgs(args);
-
-                    Console.WriteLine(Environment.NewLine);
-                    Console.WriteLine("Processing command line arguments completed");
-                    Thread.Sleep(1000);
+                    ProcessArgs(args);                    
+                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments completed");
                 }
                 else
                 {
