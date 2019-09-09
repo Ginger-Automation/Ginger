@@ -13,4 +13,10 @@
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="OracleConnection.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
 </Project>

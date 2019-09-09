@@ -16,7 +16,7 @@ namespace Oracle
 {
     public class GingerOracleConnection : IDatabase
     {
-        private DbConnection oConn = null;
+        private DbConnection Oconn = null;
         private DbTransaction tran = null;
         public Dictionary<string, string> KeyvalParamatersList = new Dictionary<string, string>();
        
@@ -25,7 +25,7 @@ namespace Oracle
         string TNS = null;
         private IReporter mReporter;
         public string Name => throw new NotImplementedException();
-
+        public OracleConnection conn = new OracleConnection();
         string mConnectionString;
         public string ConnectionString { get => mConnectionString; set => mConnectionString = value; }
 
@@ -71,7 +71,7 @@ namespace Oracle
 
         public bool TestConnection()
         {
-            OracleConnection conn = new OracleConnection();
+            conn = new OracleConnection();
             conn.ConnectionString = ConnectionString;
             conn.Open();
             return true;
@@ -81,13 +81,22 @@ namespace Oracle
             DbProviderFactory factory;
             try
             {
-                var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll");
-                var class1Type = DLL.GetType("Oracle.ManagedDataAccess.Client.OracleConnection");
-                object[] param = new object[1];
-                param[0] = ConnectionString;
-                dynamic c = Activator.CreateInstance(class1Type, param);
-                oConn = (DbConnection)c;
-                oConn.Open();
+                GetConnectionString(KeyvalParamatersList);
+                //var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll");
+                //var class1Type = DLL.GetType("Oracle.ManagedDataAccess.Client.OracleConnection");
+                //object[] param = new object[1];
+                //param[0] = ConnectionString;
+                //dynamic c = Activator.CreateInstance(class1Type, param);
+                //conn = (DbConnection)c;
+
+                conn.ConnectionString = ConnectionString;
+               
+                conn.Open();
+               
+                
+                return true;
+
+
             }
             catch (Exception e)
             {
@@ -96,9 +105,9 @@ namespace Oracle
                 //if (Temp.Contains("ORA-03111") || Temp.Contains("ORA-01017"))
                 //{
                 //    factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-                //    oConn = factory.CreateConnection();
-                //    oConn.ConnectionString = "Provider=msdaora;" + ConnectionString;
-                //    oConn.Open();
+                //    conn = factory.CreateConnection();
+                //    conn.ConnectionString = "Provider=msdaora;" + ConnectionString;
+                //    conn.Open();
                 //}
                 //else if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll"))
                 //{
@@ -116,9 +125,9 @@ namespace Oracle
         {
             try
             {
-                if (oConn != null)
+                if (conn != null)
                 {
-                    oConn.Close();
+                    conn.Close();
                 }
             }
             catch (Exception e)
@@ -128,7 +137,7 @@ namespace Oracle
             }
             finally
             {
-                oConn?.Dispose();
+                conn?.Dispose();
             }
         }
 
@@ -142,13 +151,13 @@ namespace Oracle
             DbDataReader reader = null;
             try
             {
-                if (oConn == null)
+                if (conn == null)
                 {
                     IsConnected = OpenConnection(KeyvalParamatersList);
                 }
-                if (IsConnected || oConn != null)
+                if (IsConnected || conn != null)
                 {
-                    DbCommand command = oConn.CreateCommand();
+                    DbCommand command = conn.CreateCommand();
                     command.CommandText = Query;
                     command.CommandType = CommandType.Text;
 
@@ -203,7 +212,7 @@ namespace Oracle
             {
                 try
                 {
-                    DbCommand command = oConn.CreateCommand();
+                    DbCommand command = conn.CreateCommand();
                     command.CommandText = sql;
 
                     // Retrieve the data.
@@ -238,7 +247,7 @@ namespace Oracle
             {
                 try
                 {
-                    DbCommand command = oConn.CreateCommand();
+                    DbCommand command = conn.CreateCommand();
                     command.CommandText = sql;
 
                     // Retrieve the data.
@@ -265,13 +274,13 @@ namespace Oracle
         {
             DbDataReader reader = null;
             List<string> rc = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table)))
+            if ((conn == null || string.IsNullOrEmpty(table)))
             {
                 return rc;
             }
             try
             {
-                DbCommand command = oConn.CreateCommand();
+                DbCommand command = conn.CreateCommand();
                 // Do select with zero records
                 command.CommandText = "select * from " + table + " where 1 = 0";
                 command.CommandType = CommandType.Text;
@@ -300,8 +309,14 @@ namespace Oracle
 
         public List<string> GetTablesList(string Name = null)
         {
+            if (conn.State== ConnectionState.Closed)
+            {
+                GetConnectionString(KeyvalParamatersList);
+                OpenConnection(KeyvalParamatersList);
+                conn.Open();
+            }
             List<string> rc = new List<string>() { "" };
-            DataTable table = oConn.GetSchema("Tables");
+            DataTable table = conn.GetSchema("Tables");
             string tableName = "";
             foreach (DataRow row in table.Rows)
             {
@@ -315,15 +330,15 @@ namespace Oracle
         {
             string result = "";
 
-            using (DbCommand command = oConn.CreateCommand())
+            using (DbCommand command = conn.CreateCommand())
             {
                 try
                 {
                     if (commit)
                     {
-                        tran = oConn.BeginTransaction();
+                        tran = conn.BeginTransaction();
                         // to Command object for a pending local transaction
-                        command.Connection = oConn;
+                        command.Connection = conn;
                         command.Transaction = tran;
                     }
                     command.CommandText = updateCmd;

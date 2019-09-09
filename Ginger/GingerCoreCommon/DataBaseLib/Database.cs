@@ -320,6 +320,8 @@ namespace GingerCore.Environments
         }
 
 
+
+
         public Boolean TestConnection()
         {
             LoadDBAssembly();            
@@ -341,7 +343,23 @@ namespace GingerCore.Environments
                     //database.InitReporter();
                     database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
-               
+
+                case eDBTypes.Oracle:
+                    // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\GingerOracleDB\bin\Debug\netstandard2.0\GingerOracleDB.dll");
+                    database = (IDatabase)assembly.CreateInstance("Oracle.GingerOracleConnection");
+                    
+                    //database.InitReporter();
+                    database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
+                    break;
+                case eDBTypes.MongoDb:
+                    // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\MongoDB\bin\Debug\netcoreapp2.0\GingerMongoDB.dll");
+                    database = (IDatabase)assembly.CreateInstance("MongoDB.MongoDbConnection");
+
+                    //database.InitReporter();
+                    database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
+                    break;
                 // TODO: add the rest DBs
                 case eDBTypes.Cassandra:
                     break;
@@ -691,40 +709,44 @@ namespace GingerCore.Environments
         }
         
         public string fUpdateDB(string updateCmd, bool commit)
-        {            
-            string result = "";
-            //if (oConn == null) Connect();
-            if(MakeSureConnectionIsOpen())
-            {
-                using (DbCommand command = oConn.CreateCommand())
-                {
-                    try
-                    {
-                        if (commit)
-                        {
-                            tran = oConn.BeginTransaction();
-                            // to Command object for a pending local transaction
-                            command.Connection = oConn;
-                            command.Transaction = tran;
-                        }
-                        command.CommandText = updateCmd;
-                        command.CommandType = CommandType.Text;
+        {
 
-                        result = command.ExecuteNonQuery().ToString();
-                        if (commit)
-                        {
-                            tran.Commit();
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        tran.Rollback();
-                        Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
-                        throw e;
-                    }
-                }
-            }            
-            return result;
+            LoadDBAssembly();
+            string dataTable = database.RunUpdateCommand(updateCmd, commit);
+            return dataTable;
+            //string result = "";
+            ////if (oConn == null) Connect();
+            //if(MakeSureConnectionIsOpen())
+            //{
+            //    using (DbCommand command = oConn.CreateCommand())
+            //    {
+            //        try
+            //        {
+            //            if (commit)
+            //            {
+            //                tran = oConn.BeginTransaction();
+            //                // to Command object for a pending local transaction
+            //                command.Connection = oConn;
+            //                command.Transaction = tran;
+            //            }
+            //            command.CommandText = updateCmd;
+            //            command.CommandType = CommandType.Text;
+
+            //            result = command.ExecuteNonQuery().ToString();
+            //            if (commit)
+            //            {
+            //                tran.Commit();
+            //            }
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            tran.Rollback();
+            //            Reporter.ToLog(eLogLevel.ERROR,"Commit failed for:"+updateCmd, e);
+            //            throw e;
+            //        }
+            //    }
+            //}            
+            //return result;
         }
 
         public string GetSingleValue(string Table, string Column, string Where)

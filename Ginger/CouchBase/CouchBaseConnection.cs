@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
+
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.Plugin.Core.Database;
+using Amdocs.Ginger.Plugin.Core.Reporter;
 using Couchbase;
 using Couchbase.Authentication;
 using Couchbase.Configuration.Client;

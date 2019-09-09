@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using GingerCore;
 
 using Amdocs.Ginger.Plugin.Core.Database;
 using Amdocs.Ginger.Plugin.Core.Reporter;

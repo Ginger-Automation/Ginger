@@ -371,8 +371,9 @@ namespace Ginger.Actions
                     }
                     else
                     {
+                        
                         SqlFile.Visibility = System.Windows.Visibility.Visible;
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
 
                         if(mAct.QueryParams != null)
                         {
