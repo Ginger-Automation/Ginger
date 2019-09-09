@@ -142,7 +142,7 @@ namespace GingerCore.Actions
                 newActUIElement.ElementLocateBy = this.LocateBy;
                 newActUIElement.ElementLocateValue = this.LocateValue;
 
-                newActUIElement.ElementAction = MapJavaElementAction(GenElementAction);
+                newActUIElement.ElementAction = MapJavaGenericElementAction(GenElementAction);
                 newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, this.Value);
 
                 return newActUIElement;
@@ -165,9 +165,9 @@ namespace GingerCore.Actions
             return NewActBrowserElement;
         }
 
-        private ActUIElement.eElementAction MapJavaElementAction(eGenElementAction genElementAction)
+        private ActUIElement.eElementAction MapJavaGenericElementAction(eGenElementAction genElementAction)
         {
-            ActUIElement.eElementAction elementAction = ActUIElement.eElementAction.NotExist;
+            ActUIElement.eElementAction elementAction;
             switch (genElementAction)
             {
                 case eGenElementAction.SetValue:
