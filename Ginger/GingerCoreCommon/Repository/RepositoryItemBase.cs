@@ -152,9 +152,9 @@ namespace Amdocs.Ginger.Repository
                 DirtyCheck(name);
             }
         }
-
-
-
+        
+        public bool AllowAutoSave { get; set; }
+        
         Guid mGuid = Guid.Empty;
         [IsSerializedForLocalRepository]
         public Guid Guid
