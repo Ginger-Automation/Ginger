@@ -237,16 +237,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 case "config":
                     mCLIHandler = new CLIConfigFile();
-                    CLILoadAndPrepare();
+                    
                     break;
                 case "dynamic":
                     mCLIHandler = new CLIDynamicXML();
+                    // CLILoadAndPrepare();
                     break;
                 case "script":
                     mCLIHandler = new CLIScriptFile();
                     break;
             }            
             mCLIHandler.LoadContent(ReadFile(fileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+            CLILoadAndPrepare();  // not needed for script
             ExecuteRunSet();
 
             return Environment.ExitCode;

@@ -173,7 +173,7 @@ namespace WorkspaceHold
                 CLI.ExecuteArgs(new string[] { "grid" });
 
                 // Assert            
-                Assert.AreEqual(1, mConsoleMessages.Count, "There are 5 lines of help");
+                Assert.AreEqual(1, mConsoleMessages.Count, "There is 1 line of help");
                 Assert.AreEqual(eLogLevel.INFO, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
                 Assert.AreEqual("Starting Ginger Grid at port: 15001", mConsoleMessages[0].MessageToConsole, "console message");
             }
