@@ -68,13 +68,12 @@ namespace Amdocs.Ginger.Common
             eUserMsgIcon messageImage = eUserMsgIcon.None;
 
             try
-            {
-                //get the message from pool
-                // FIXME improve if as already found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            {                
                 if ((UserMsgsPool != null) && UserMsgsPool.Keys.Contains(messageKey))
-                {
+                {             
                     messageToShow = UserMsgsPool[messageKey];
                 }
+
                 if (messageToShow == null) // Message not found in message pool
                 {
                     // We do want to pop the error message so below is just in case...
