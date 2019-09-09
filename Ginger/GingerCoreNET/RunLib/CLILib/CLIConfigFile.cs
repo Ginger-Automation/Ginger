@@ -135,7 +135,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "RunSet":
                             cliHelper.Runset = value;                            
                             break;
-                        case "ShowAutoRunWindow":
+                        case "ShowAutoRunWindow": // Support old style
+                        case "showui": // TODO: use CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)):
                             cliHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
