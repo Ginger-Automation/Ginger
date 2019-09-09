@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.Runset = runsetExecutor.RunSetConfig.Name;
             options.Environment = runsetExecutor.RunsetExecutionEnvironment.Name;
             options.RunAnalyzer = cliHelper.RunAnalyzer;
-            options.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
+            options.ShowUI = cliHelper.ShowAutoRunWindow;
 
             var args = CommandLine.Parser.Default.FormatCommandLine<RunOptions>(options);
 

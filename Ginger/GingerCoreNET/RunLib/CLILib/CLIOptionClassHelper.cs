@@ -21,5 +21,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             OptionAttribute attrOption = typeof(T).GetProperty(name).GetCustomAttribute<OptionAttribute>();
             return attrOption.ShortName;
         }
+
+        public static string GetAttrLongName<T>(string name)
+        {
+            OptionAttribute attrOption = typeof(T).GetProperty(name).GetCustomAttribute<OptionAttribute>();
+            return attrOption.LongName;
+        }
     }
 }

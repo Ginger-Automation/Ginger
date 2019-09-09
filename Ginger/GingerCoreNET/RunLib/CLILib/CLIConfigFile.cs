@@ -85,7 +85,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
             sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
             sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
-            sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
+            //OLD sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
+            sConfig += CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)) + "=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             return sConfig;
         }

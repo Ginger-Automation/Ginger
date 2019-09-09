@@ -301,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
             mCLIHelper.RunAnalyzer = runOptions.RunAnalyzer;
-            mCLIHelper.ShowAutoRunWindow = runOptions.ShowAutoRunWindow;
+            mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
 
             ExecuteRunSet();
@@ -371,7 +371,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
-
+                
                 mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
 
                 stopwatch.Stop();
