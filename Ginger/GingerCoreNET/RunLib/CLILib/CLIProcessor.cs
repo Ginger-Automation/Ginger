@@ -304,6 +304,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
 
+            CLILoadAndPrepare();
             ExecuteRunSet();
 
             return Environment.ExitCode;
