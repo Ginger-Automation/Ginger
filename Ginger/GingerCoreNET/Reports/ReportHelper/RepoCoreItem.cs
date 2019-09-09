@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                         false,
                                                                                                                         HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
-                                                                                                                        extraInformationCalculated + System.IO.Path.PathSeparator + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+                                                                                                                        extraInformationCalculated + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
             
         }
 
