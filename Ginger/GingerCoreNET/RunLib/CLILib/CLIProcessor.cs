@@ -30,6 +30,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using static Amdocs.Ginger.CoreNET.RunLib.CLILib.OptionsBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -67,9 +68,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             int result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions>(args).MapResult(
                     (RunOptions opts) => HandleRunOptions(opts),
                     (GridOptions opts) => HanldeGridOption(opts),
-                    (ConfigFileOptions opts) => HandleConfigFileOptions(opts),
-                    (DynamicOptions opts) => HandleDynamicOptions(opts),
-                    (ScriptOptions opts) => HandleScriptOptions(opts),
+                    (ConfigFileOptions opts) => HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
+                    (DynamicOptions opts) => HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
+                    (ScriptOptions opts) => HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
                     (SCMOptions opts) => HandleSCMOptions(opts),
                     (VersionOptions opts) => HandleVersionOptions(opts),                        
                     (ExampleOptions opts) => HandleExampleOptions(opts),
@@ -228,44 +229,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return Environment.ExitCode;
         }
 
-        private int HandleScriptOptions(ScriptOptions scriptOptions)
+        private int HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
         {
-            SetVerboseLevel(scriptOptions.VerboseLevel);
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ScriptFile= '{0}'", scriptOptions.FileName));
-            mCLIHandler = new CLIScriptFile();
-            mCLIHandler.LoadContent(ReadFile(scriptOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);                        
-            ExecuteRunSet();
-            
-            return Environment.ExitCode;
-        }
-
-        
-
-        private int HandleDynamicOptions(DynamicOptions dynamicOptions)
-        {
-            SetVerboseLevel(dynamicOptions.VerboseLevel);
-
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with DynamicXML= '{0}'", dynamicOptions.FileName));
-            mCLIHandler = new CLIDynamicXML();
-            mCLIHandler.LoadContent(ReadFile(dynamicOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);            
+            SetVerboseLevel(verboseLevel);
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with " + fileType + " file = '{0}'", fileName));
+            switch (fileType)
+            {
+                case "config":
+                    mCLIHandler = new CLIConfigFile();
+                    CLILoadAndPrepare();
+                    break;
+                case "dynamic":
+                    mCLIHandler = new CLIDynamicXML();
+                    break;
+                case "script":
+                    mCLIHandler = new CLIScriptFile();
+                    break;
+            }            
+            mCLIHandler.LoadContent(ReadFile(fileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
             ExecuteRunSet();
 
             return Environment.ExitCode;
         }
 
-       
-        private int HandleConfigFileOptions(ConfigFileOptions configFileOptions)
-        {
-            SetVerboseLevel(configFileOptions.VerboseLevel);
 
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with ConfigFile= '{0}'", configFileOptions.FileName));
-            mCLIHandler = new CLIConfigFile();
-            mCLIHandler.LoadContent(ReadFile(configFileOptions.FileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);                        
-            ExecuteRunSet();
-
-            return Environment.ExitCode;
-        }
 
         private int HanldeGridOption(GridOptions gridOptions)
         {
@@ -379,9 +366,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         
 
         void ExecuteRunSet()
-        {
-            CLILoadAndPrepare();
-
+        {            
             Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));            
             try
             {
