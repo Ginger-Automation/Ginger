@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Ginger.Plugin.Platform.WebService
 {
-    public interface IRestClient
+    public interface IHTTPClient
     {
 
         GingerHttpResponseMessage PerformHttpOperation(GingerHttpRequestMessage GingerRequestMessageRequestMessage);

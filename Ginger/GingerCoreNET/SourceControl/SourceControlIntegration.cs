@@ -251,18 +251,18 @@ namespace Ginger.SourceControl
             while (SourceControlRootFolder != Path.GetPathRoot(SolutionFolder))
             {
                 //Path.get
-                if (Directory.Exists(SourceControlRootFolder + Path.PathSeparator + ".git"))
+                if (Directory.Exists(SourceControlRootFolder + Path.DirectorySeparatorChar + ".git"))
                 {
-                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + Path.PathSeparator + ".git");
+                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder + Path.DirectorySeparatorChar + ".git");
                     if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                     {
                         ReposiytoryRootFolder = Path.GetFullPath(SourceControlRootFolder);
                         return SourceControlBase.eSourceControlType.GIT;
                     }
                 }
-                if (Directory.Exists(SourceControlRootFolder + Path.PathSeparator + ".svn"))
+                if (Directory.Exists(SourceControlRootFolder + Path.DirectorySeparatorChar + ".svn"))
                 {
-                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder+ Path.PathSeparator + ".svn");
+                    FileAttributes attributes = File.GetAttributes(SourceControlRootFolder+ Path.DirectorySeparatorChar + ".svn");
                     if ((attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
                     {
                         ReposiytoryRootFolder = Path.GetFullPath(SourceControlRootFolder);
