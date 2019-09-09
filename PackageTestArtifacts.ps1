@@ -24,7 +24,7 @@ Compress-Archive -Path '/home/vsts/work/1/s/Ginger/GingerConsole/bin/Release/net
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Package Ginger.log                      "
 Write-Host "-------------------------------------------------------------"
-Compress-Archive -Path '$env:APPDATA/amdocs/Ginger/WorkingFolder/Logs/Ginger_Log.txt" -DestinationPath '/home/vsts/work/1/a/GingerLog'
+Compress-Archive -Path '$env:APPDATA/amdocs/Ginger/WorkingFolder/Logs/Ginger_Log.txt' -DestinationPath '/home/vsts/work/1/a/GingerLog'
 
 
 Write-Host "-------------------------------------------------------------"
