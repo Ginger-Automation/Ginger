@@ -95,14 +95,21 @@ namespace Ginger.Functionalties
 
                     foreach (FileInfo file in files)
                     {
-                        RecoveredItem recoveredItem = new RecoveredItem();
-                        recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
-                        recoveredItem.RecoverDate = timestamp;
-                        recoveredItem.RecoveredItemObject.FileName = file.FullName;
-                        recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
-                        recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
-                        recovredItems.Add(recoveredItem);
-                    }
+                        try
+                        {
+                            RecoveredItem recoveredItem = new RecoveredItem();
+                            recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
+                            recoveredItem.RecoverDate = timestamp;
+                            recoveredItem.RecoveredItemObject.FileName = file.FullName;
+                            recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
+                            recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
+                            recovredItems.Add(recoveredItem);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch recover item : " + file.FullName, ex);
+                        }
+                    }                    
                 }
               
                 if(recovredItems.Count == 0)
