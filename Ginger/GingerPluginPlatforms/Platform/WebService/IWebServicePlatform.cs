@@ -9,6 +9,6 @@ namespace Ginger.Plugin.Platform.WebService
     [GingerInterface("IWebServicePlatform", "WebService Platform driver")]
     public interface IWebServicePlatform: IPlatformService
     {
-        IRestClient RestClient { get; set; }
+        IHTTPClient RestClient { get; set; }
     }
 }
