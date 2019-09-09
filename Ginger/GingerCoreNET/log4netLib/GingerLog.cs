@@ -36,8 +36,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             xmltext = xmltext.Replace("${filename}", GingerLogFile);  // replace with full log path and filename
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmltext);
-            XmlConfigurator.Configure(logRepository, doc.DocumentElement);
-            Console.WriteLine("Ginger log File located at: " + GingerLogFile); 
+            XmlConfigurator.Configure(logRepository, doc.DocumentElement);            
         }
 
         static string Getlog4netConfig()
@@ -89,12 +88,15 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         public static void PrintStartUpInfo()
         {
             StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(Environment.NewLine);
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
-            stringBuilder.Append("Ginger : ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
-            stringBuilder.Append(ApplicationInfo.ApplicationName + " Started");
-            stringBuilder.Append("Version: " + ApplicationInfo.ApplicationVersion).Append(Environment.NewLine);
+            stringBuilder.Append("Ginger  : ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
+            stringBuilder.Append(ApplicationInfo.ApplicationName + " Started").Append(Environment.NewLine);
+            stringBuilder.Append("Version : " + ApplicationInfo.ApplicationVersion).Append(Environment.NewLine);
+            stringBuilder.Append("Log File: " + GingerLogFile).Append(Environment.NewLine);            
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
-            
+            stringBuilder.Append(Environment.NewLine);
+
             Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
     }

@@ -236,12 +236,11 @@ namespace Ginger
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            Console.WriteLine("Starting Ginger");
-            Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-
+        {            
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
-            WorkSpace.Init(new WorkSpaceEventHandler());
+
+            bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
+            WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
 
             // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
@@ -295,7 +294,7 @@ namespace Ginger
             cLIProcessor.ExecuteArgs(args);
 
             // do proper close !!!         
-            System.Windows.Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown(Environment.ExitCode);
         }
 
         public void StartGingerUI()
