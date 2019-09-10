@@ -155,7 +155,7 @@ namespace GingerTest
             Activity pbActivity = new Activity();
             pbActivity.Active = true;
             pbActivity.SelectedForConversion = true;
-            winActivity.TargetApplication = "Web-App";
+            pbActivity.TargetApplication = "Web-App";
             ActGenElement gen3 = new ActGenElement();
             gen3.Active = true;
             gen3.Description = "Set Value : email input";
