@@ -729,6 +729,42 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public Telemetry Telemetry { get; internal set; }
-        public string TestArtifactsFolder { get; internal set; }
+
+        // Unified ;location to get the ExecutionResults Folder
+        // Enable to redirect all test artifacts to another folder used in CLI, include json summary, report, execution results
+        private string mTestArtifactsFolder;
+
+        /// <summary>
+        /// Return full path for folder to save execution results and any test artifacts like json summary, if folder do not exist it will be created
+        /// </summary>
+        public string TestArtifactsFolder
+        {
+            get
+            {
+                string folder;
+
+                if (string.IsNullOrEmpty(mTestArtifactsFolder))
+                {
+                    folder =  Path.Combine(WorkSpace.Instance.Solution.Folder, "ExecutionResults");
+                }
+                else
+                {
+                    folder = mTestArtifactsFolder;
+                }
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                return folder;
+            }
+            set
+            {
+                mTestArtifactsFolder = value;
+            }
+        }
+
+        
+
     }
 }
