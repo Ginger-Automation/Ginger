@@ -421,9 +421,9 @@ namespace Ginger.Run.RunSetActions
                 }
                 else
                 {
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder,"assets","img","BeatLogo.png"), "beat"));
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "Ginger.png"), "ginger"));
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder,"CustomerLogo.png") + @"\CustomerLogo.png", "customer"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder,"assets","img","@BeatLogo.png"), "beat"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png"), "ginger"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder,"CustomerLogo.png"), "customer"));
                     if (!string.IsNullOrEmpty(Comments))
                     {
                         Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\comments-icon.jpg", "comment"));
