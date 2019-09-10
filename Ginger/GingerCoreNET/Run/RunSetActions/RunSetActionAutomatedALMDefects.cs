@@ -95,12 +95,20 @@ namespace Ginger.Run.RunSetActions
                 {
                     foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.AutomatedOpeningFlag == true).ToList())
                     {
-                        Dictionary<string, string> currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
-                                                                                                                                             z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
-                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
-                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
-
+                        Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
+                        try
+                        {
+                            currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
+                                                                                                                                                 z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
+                        }
+                        catch (Exception ex)
+                        {
+                            currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
+                            currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
+                        }
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }
@@ -108,12 +116,20 @@ namespace Ginger.Run.RunSetActions
                 {
                     foreach (DefectSuggestion defectSuggestion in WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList)
                     {
-                        Dictionary<string, string> currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
-                                                                                                                                             z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
-                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
-                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
-
+                        Dictionary<string, string> currentALMDefectFieldsValues = new Dictionary<string, string>();
+                        try
+                        {
+                            currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
+                                                                                                                                                 z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
+                        }
+                        catch (Exception ex)
+                        {
+                            currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
+                            currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
+                        }
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }
