@@ -63,8 +63,9 @@ namespace Amdocs.Ginger.GingerConsole
             };
 
             
-            Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();            
+            Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
 
+            Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 
             // Init RepositorySerializer to use new Ginger classes
