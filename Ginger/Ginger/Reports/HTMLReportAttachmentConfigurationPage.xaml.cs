@@ -107,18 +107,15 @@ namespace Ginger.Reports
                 }                
                 else
                 {
-                    if (!Directory.Exists(extraInformationCalculated))
+                    //if (!Directory.Exists(extraInformationCalculated))
+                    //{
+                    //    Reporter.ToUser(eUserMsgKey.FolderNotExistOrNotAvailible);
+                    //    return;
+                    //}
+                    if (!HasWritePermission(extraInformationCalculated))
                     {
-                        Reporter.ToUser(eUserMsgKey.FolderNotExistOrNotAvailible);
-                        return;
-                    }
-                    else
-                    {
-                        if (!HasWritePermission(extraInformationCalculated))
-                        {
-                            Reporter.ToUser(eUserMsgKey.UserHaveNoWritePermission);
-                            // return;
-                        }
+                        Reporter.ToUser(eUserMsgKey.UserHaveNoWritePermission);
+                        // return;
                     }
                 }
             }
