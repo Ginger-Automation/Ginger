@@ -321,9 +321,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            if (runSetReport.LogFolder != null && System.IO.Directory.Exists(runSetReport.LogFolder))
+            string LogFolder = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, WorkSpace.Instance.RunsetExecutor.Runners[0].ExecutionLoggerManager.CurrentLoggerFolderName);
+            if (Directory.Exists(LogFolder))
             {
-                System.IO.Directory.Delete(runSetReport.LogFolder, true);
+                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder exist deleting folder: " + LogFolder);
+                Directory.Delete(LogFolder, true);
             }
             ClearSeq();
         }
