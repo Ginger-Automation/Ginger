@@ -1336,7 +1336,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void SmartSyncHandler(ActSmartSync act)
+        public void SmartSyncHandler(ActSmartSync act)
         {
             IWebElement e = LocateElement(act, true);
             Stopwatch st = new Stopwatch();
