@@ -183,7 +183,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(folder + @"\Ginger.txt", typeof(GingerReport));
+                                GingerReport gr = (GingerReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"Ginger.txt"), typeof(GingerReport));
                                 gr.LogFolder = folder;
                                 gingerReports.Add(gr);
                             }

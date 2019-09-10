@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
-using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.UserControls;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Linq;
@@ -83,6 +85,30 @@ namespace Ginger.Actions.ActionConversion
             DataContext = mWizard;
             xRadSameActivity.IsChecked = true;
             SetTargetApplicationGridView();
+             
+            xChkPOM.Visibility = IsPOMSupportedFromSelectedTargetApplications() ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        /// <summary>
+        /// This method is used to check if the single target application supports POM or not?
+        /// </summary>
+        /// <returns></returns>
+        private bool IsPOMSupportedFromSelectedTargetApplications()
+        {
+            bool isSupported = false;
+            foreach (string targetapp in TargetAppList)
+            {                
+                ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                if (platform != ePlatformType.NA)
+                {
+                    isSupported = PlatformInfoBase.GetPlatformImpl(platform).IsPlatformSupportPOM();
+                    if (isSupported)
+                    {
+                        break;
+                    } 
+                }
+            }
+            return isSupported;
         }
 
         /// <summary>

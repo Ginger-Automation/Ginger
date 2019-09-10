@@ -23,13 +23,13 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Environments;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using static Amdocs.Ginger.CoreNET.BusinessFlowToConvert;
 
 namespace GingerTest
 {
@@ -61,6 +61,15 @@ namespace GingerTest
             Ginger.App.InitClassTypesDictionary();
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\" + solutionName);
             mSolutionRepository.Open(TempRepositoryFolder);
+
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
+            sol.ApplicationPlatforms = new ObservableList<GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform>();
+            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            {
+                AppName = "Web-App",
+                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web
+            });
+            WorkSpace.Instance.Solution = sol;
         }
 
         private static void CreateTestSolution()
@@ -75,6 +84,9 @@ namespace GingerTest
 
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(TempRepositoryFolder);
+
+            ProjEnvironment E1 = new ProjEnvironment() { Name = "E1" };
+            SR.AddRepositoryItem(E1);
 
             SR.Close();
         }
@@ -113,6 +125,7 @@ namespace GingerTest
             Activity webActivity = new Activity();
             webActivity.Active = true;
             webActivity.SelectedForConversion = true;
+            webActivity.TargetApplication = "Web-App";
             ActGenElement gen1 = new ActGenElement();
             gen1.Active = true;
             gen1.Description = "Set Value : first_name input";
@@ -127,6 +140,7 @@ namespace GingerTest
             Activity winActivity = new Activity();
             winActivity.Active = true;
             winActivity.SelectedForConversion = true;
+            winActivity.TargetApplication = "Web-App";
             ActGenElement gen2 = new ActGenElement();
             gen2.Active = true;
             gen2.Description = "Set Value : last_name input";
@@ -141,6 +155,7 @@ namespace GingerTest
             Activity pbActivity = new Activity();
             pbActivity.Active = true;
             pbActivity.SelectedForConversion = true;
+            winActivity.TargetApplication = "Web-App";
             ActGenElement gen3 = new ActGenElement();
             gen3.Active = true;
             gen3.Description = "Set Value : email input";
@@ -206,7 +221,7 @@ namespace GingerTest
         private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
                                                                  bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
-            ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = new ObservableList<BusinessFlowToConvert>();
+            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<ConvertableActionDetails> lstCad = new ObservableList<ConvertableActionDetails>();
             foreach (var bf in mListBF)
@@ -222,7 +237,7 @@ namespace GingerTest
                 BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                 flowConversion.BusinessFlow = bf;
                 flowConversion.ConversionStatus = eConversionStatus.Pending;
-                ListOfBusinessFlow.Add(flowConversion);
+                ListOfBusinessFlowToConvert.Add(flowConversion);
             }
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
                         
@@ -245,7 +260,7 @@ namespace GingerTest
                 } 
             }
 
-            utils.ListOfBusinessFlow = ListOfBusinessFlow;
+            utils.ListOfBusinessFlowsToConvert = ListOfBusinessFlowToConvert;
             utils.ConvertActionsOfMultipleBusinessFlows(lstCad, addNewActivity, convertableTargetApplications, convertToPOMAction, poms);
         }
         

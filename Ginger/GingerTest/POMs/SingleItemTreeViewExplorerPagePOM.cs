@@ -255,7 +255,7 @@ namespace GingerWPFUnitTest.POMs
                     
                 } 
             });
-            return bFound;
+            return !bFound;
         }
 
 

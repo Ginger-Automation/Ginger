@@ -36,6 +36,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Ginger.Run.RunSetActions
@@ -420,9 +421,9 @@ namespace Ginger.Run.RunSetActions
                 }
                 else
                 {
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder,"assets","img","BeatLogo.png"), "beat"));
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "Ginger.png"), "ginger"));
-                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder,"CustomerLogo.png") + @"\CustomerLogo.png", "customer"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder,"assets","img","@BeatLogo.png"), "beat"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png"), "ginger"));
+                    Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder,"CustomerLogo.png"), "customer"));
                     if (!string.IsNullOrEmpty(Comments))
                     {
                         Email.EmbededAttachment.Add(new KeyValuePair<string, string>(TemplatesFolder + @"\assets\\img\comments-icon.jpg", "comment"));
@@ -498,7 +499,17 @@ namespace Ginger.Run.RunSetActions
             {
                 return;
             }
-            string ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
+
+            string ReportHTML;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
+            }
+            else
+            {
+                ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReportOnLinux.html", TemplatesFolder);
+            }
+           
             List<KeyValuePair<int, int>> chartData = null;
             StringBuilder fieldsNamesHTMLTableCells = new StringBuilder();
             StringBuilder fieldsValuesHTMLTableCells = new StringBuilder();
@@ -1183,19 +1194,19 @@ namespace Ginger.Run.RunSetActions
                 //Create the Zip file if file not exists otherwise delete existing one and then create new.
                 try
                 {
-                    if (File.Exists(tempFolder + @"\" + ZipFileName))
+                    if (File.Exists(Path.Combine(tempFolder,ZipFileName)))
                     {
-                        File.Delete(tempFolder + @"\" + ZipFileName);
+                        File.Delete(Path.Combine(tempFolder,ZipFileName));
                     }
-                    ZipFile.CreateFromDirectory(FileName, tempFolder + @"\" + ZipFileName);
+                    ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder,ZipFileName));
                 }
                 catch (Exception ex)
                 {
                     ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
-                    ZipFile.CreateFromDirectory(FileName, tempFolder + @"\" + ZipFileName);
+                    ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
                     Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
-                e.Attachments.Add(tempFolder + @"\" + ZipFileName);
+                e.Attachments.Add(Path.Combine(tempFolder, ZipFileName));
             }
             else
             {

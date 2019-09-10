@@ -362,6 +362,8 @@ namespace Ginger
 
         private void AppCleanUp()
         {
+            Telemetry.eventHandler -= TelemetryEventHandler;
+
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
