@@ -57,5 +57,8 @@
       <Name>GingerPluginCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Ginger.PluginPackage.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
