@@ -651,6 +651,29 @@
         </Grid>
     </ControlTemplate>
 
+    <Style TargetType="Label" x:Key="$VerticalExpanderLabelStyle" >
+        <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <RotateTransform Angle="90"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="$HorizontalExpanderLabelStyle" >
+        <Setter Property="Foreground" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
     <Style TargetType="ListBox" x:Key="$ListBoxStyle" >
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="FontSize" Value="12"/>
@@ -750,6 +773,12 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="Expander" x:Key="$ExpanderStyle" >
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
     <Style TargetType="ComboBox" x:Key="$FlatEditInputComboBoxStyle" >
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
