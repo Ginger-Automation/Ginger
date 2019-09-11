@@ -10,9 +10,8 @@ Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Run CLI tests                           "
 Write-Host "-------------------------------------------------------------"
 cd D:\a\1\s\Ginger\Ginger\bin\Release
-$p = Start-Process Ginger.exe help
-$p.HasExited
-$p.ExitCode
+Start-Process Ginger.exe help
+
 
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Package Ginger.log                      "
