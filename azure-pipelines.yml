@@ -114,3 +114,12 @@ jobs:
     condition: succeededOrFailed()
 
 
+# ------------------------------------------------------------------------------------------------------
+# Package Ginger EXE
+# ------------------------------------------------------------------------------------------------------
+
+  - task: PowerShell@2
+    displayName: Package Ginger EXE
+    inputs:
+      filePath: PackageGingerEXE.ps1
+    condition: succeededOrFailed()
