@@ -123,15 +123,7 @@ namespace UnitTests.NonUITests
 
 
         }
-
-        //[Ignore]
-        //[TestMethod]
-        //public void ValidateLegacyOutPutValidationInBusinessflow()
-        //{
-
-        //    Assert.AreEqual(3, ABF.ReturnValues.Count);
-
-        //}
+        
 
         [TestMethod]
         public void ValidateOutPutValidationPostFixeValues()

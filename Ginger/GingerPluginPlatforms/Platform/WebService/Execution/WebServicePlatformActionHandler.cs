@@ -31,7 +31,7 @@ namespace Ginger.Plugin.Platform.WebService.Execution
 
 
         }
-        IRestClient RestClient = null;
+        IHTTPClient RestClient = null;
         IWebServicePlatform Platformservice;
 
 

@@ -332,7 +332,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                ActionReport actrR = (ActionReport)JsonLib.LoadObjFromJSonFile(folder + @"\Action.txt", typeof(ActionReport));
+                                ActionReport actrR = (ActionReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"Action.txt"), typeof(ActionReport));
                                 actrR.LogFolder = folder;
                                 actionReports.Add(actrR);
                             }
