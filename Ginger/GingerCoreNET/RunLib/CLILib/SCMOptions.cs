@@ -26,6 +26,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('m', "encrypted-mechanism", Required = false, HelpText = "password decryption mechanism")]
         public bool DecryptMechanism { get; set; }
 
+        [Option('s', "solution", Required = true, HelpText = "Local solution folder")]
+        public string Solution { get; set; }
+
         public enum SCMOperation
         {
             Download,   // lower case!!!

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -64,9 +63,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return args;
         }
 
+        public void Download(SCMOptions scmOptions)
+        {
+            WorkSpace.Instance.UserProfile.SourceControlURL = scmOptions.URL;
+
+            // TODO: need to update all other options but the download below use userprofile... TBD
+            // SourceControlIntegration.DownloadSolution(scmOptions.Solution);
+
+            Reporter.ToLog(eLogLevel.ERROR, "SCM options are not implemented yet");
+        }
+
         public void Execute(RunsetExecutor runsetExecutor)
         {
-            // runsetExecutor.RunRunset();
+            // NA            
         }
 
 

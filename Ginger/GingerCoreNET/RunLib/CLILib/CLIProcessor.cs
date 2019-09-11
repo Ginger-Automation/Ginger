@@ -218,14 +218,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             SetVerboseLevel(sCmOptions.VerboseLevel);
             Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
-
-            mCLIHandler = new CLISCM();
-            mCLIHelper.SourceControlURL = sCmOptions.URL;
-            
-            // do the rest !!!
-            
-            ExecuteRunSet();
-
+            CLISCM cliSCM = new CLISCM();
+            cliSCM.Download(sCmOptions);
             return Environment.ExitCode;
         }
 

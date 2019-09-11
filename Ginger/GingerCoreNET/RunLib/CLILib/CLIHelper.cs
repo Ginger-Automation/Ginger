@@ -248,18 +248,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                if (SourceControlURL.IndexOf(".git") != -1)
-                {
-                    // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    SourceControlIntegration.DownloadSolution(Solution);
-                }
-                else
-                {
-                    // App.DownloadSolution(value);
-                    //RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL);
-
-                    SourceControlIntegration.DownloadSolution(Solution);
-                }
+                SourceControlIntegration.DownloadSolution(Solution);                
             }
         }
 
