@@ -92,9 +92,20 @@ namespace Ginger.Actions.ActionConversion
             {
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
                 flowToConvert.BusinessFlow = bf;
+                flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
                 lst.Add(flowToConvert);
             }
             return lst;
+        }
+
+        /// <summary>
+        /// This method is used to get the Convertible Actions Count From BusinessFlow
+        /// </summary>
+        /// <param name="bf"></param>
+        /// <returns></returns>
+        public int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf)
+        {
+            return mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
         }
 
         /// <summary>
@@ -197,7 +208,7 @@ namespace Ginger.Actions.ActionConversion
                 Reporter.HideStatusMessage();               
             }
         }
-
+        
         /// <summary>
         /// This method is used to cancle the wizard
         /// </summary>

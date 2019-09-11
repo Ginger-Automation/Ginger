@@ -99,7 +99,7 @@ namespace Ginger.Actions.ActionConversion
             foreach (string targetapp in TargetAppList)
             {                
                 ePlatformType platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-                if (platform != ePlatformType.NA)
+                if (platform != ePlatformType.NA && PlatformInfoBase.GetPlatformImpl(platform) != null)
                 {
                     isSupported = PlatformInfoBase.GetPlatformImpl(platform).IsPlatformSupportPOM();
                     if (isSupported)

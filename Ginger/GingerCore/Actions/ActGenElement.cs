@@ -106,8 +106,19 @@ namespace GingerCore.Actions
                     case eGenElementAction.CloseBrowser:
                         NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.Close;
                         break;
+                    case eGenElementAction.StartBrowser:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
+                        break;
                     default:
-                        NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
+                        try
+                        {
+                            NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the operation to action while conversion", ex);
+                            throw (ex);
+                        }
                         break;
                 }
             }
@@ -178,8 +189,18 @@ namespace GingerCore.Actions
                     case eGenElementAction.RunJavaScript:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
                         break;
+                    case eGenElementAction.SetAttributeUsingJs:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
+                        break;
                     default:
-                        NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
+                        try
+                        {
+                            NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the operation to action while conversion", ex);
+                        }
                         break;
                 }
             }
@@ -188,9 +209,17 @@ namespace GingerCore.Actions
             {
                 NewActUIElement.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
                 if (!string.IsNullOrEmpty(this.LocateValue))
-                    NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue);
+                {
+                    if (GenElementAction == eGenElementAction.SetAttributeUsingJs)
+                    {
+                        NewActUIElement.Value = string.Format("arguments[0].{0}", this.Value);
+                    }
+                    else
+                    {
+                        NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue); 
+                    }
+                }
                
-                    
                 if (!uIElementTypeAssigned)
                     NewActUIElement.ElementType = eElementType.Unknown;
                 if (!NewActUIElement.Platforms.Contains(this.Platform))
