@@ -146,7 +146,7 @@ namespace Ginger.Actions
             if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 xRetryExpander.IsEnabled = false;
-                ScreenShotTab.IsEnabled = false;
+                xScreenShotTab.IsEnabled = false;
             }
             //Binding            
             xDescriptionTextBox.BindControl(mAction, Act.Fields.Description);
@@ -155,16 +155,16 @@ namespace Ginger.Actions
             {
                 //List<eLocateBy> locateByList = act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList();
                 //cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy());
-                cboLocateBy.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList());
-                txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
+                xLocateByCombo.BindControl(mAction, Act.Fields.LocateBy, act.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList());
+                xLocateValueVE.BindControl(mContext, mAction, Act.Fields.LocateValue);
             }
-            comboWindowsToCapture.BindControl(mAction, Act.Fields.WindowsToCapture);
+            xWindowsToCaptureCombo.BindControl(mAction, Act.Fields.WindowsToCapture);
 
             //Run Details binding
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTStatusLabel, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTElapsedLabel, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTErrorLabel, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RTExInfoLabel, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionErrorDetailsText, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
 
             //TODO: add tooltip on class level 
             //TODO: Add BindToolTip or use BindControl and supply DependecyProperty
@@ -173,13 +173,13 @@ namespace Ginger.Actions
             // !!!!!!!!!!!!!!!!!!!!!???????????????????????????????????
             if (mAction.ObjectLocatorConfigsNeeded)
             {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtLocateValue, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xLocateValueVE, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
             }
             // TODO: create BindControl for 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
 
-            comboFinalStatus.BindControl(mAction, Act.Fields.StatusConverter);
+            xStatusConvertorCombo.BindControl(mAction, Act.Fields.StatusConverter);
             xWaitVeUC.BindControl(mContext, mAction, nameof(Act.WaitVE));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTimeoutTextBox, TextBox.TextProperty, mAction, Act.Fields.Timeout);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
@@ -191,13 +191,13 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
 
             // Why we bind twice??
             if (mAction.ObjectLocatorConfigsNeeded)
             {
-                txtLocateValue.BindControl(mContext, mAction, Act.Fields.LocateValue);
-                txtLocateValue.ValueTextBox.Text = mAction.LocateValue;  // Why ?
+                xLocateValueVE.BindControl(mContext, mAction, Act.Fields.LocateValue);
+                xLocateValueVE.ValueTextBox.Text = mAction.LocateValue;  // Why ?
             }
 
             SwitchingInputValueBoxAndGrid(mAction);
@@ -224,7 +224,7 @@ namespace Ginger.Actions
             SetActInputValuesGrid();
 
             xOutputValuesGrid.DataSourceList = mAction.ReturnValues;
-            InputValuesGrid.DataSourceList = mAction.InputValues;
+            xInputValuesGrid.DataSourceList = mAction.InputValues;
             mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
             mAction.InputValues.CollectionChanged += InputValues_CollectionChanged;
 
@@ -273,10 +273,10 @@ namespace Ginger.Actions
                 AFCP.FlowControlGrid.Grid.CommitEdit();
                 AFCP.FlowControlGrid.Grid.CancelEdit();
             }
-            if (InputValuesGrid != null)
+            if (xInputValuesGrid != null)
             {
-                InputValuesGrid.Grid.CommitEdit();
-                InputValuesGrid.Grid.CancelEdit();
+                xInputValuesGrid.Grid.CommitEdit();
+                xInputValuesGrid.Grid.CancelEdit();
             }
             if (xDataSourceConfigGrid != null)
             {
@@ -352,7 +352,7 @@ namespace Ginger.Actions
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    InputValuesEditControls.Visibility = System.Windows.Visibility.Collapsed;
+                    xInputValuesEditControlsPnl.Visibility = System.Windows.Visibility.Collapsed;
                 });
                 return;
             }
@@ -371,29 +371,29 @@ namespace Ginger.Actions
             {
                 if (a.InputValues.Count > minimumInputValuesToHideGrid)
                 {
-                    ValueGridPanel.Visibility = Visibility.Visible;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    xInputValuesGrid.Visibility = Visibility.Visible;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
                 else if (a.InputValues.Count == minimumInputValuesToHideGrid)
                 {
 
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Visible;
                     ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
                     if (inputValue != null)
                     {
-                        ValueUC.Init(mContext, inputValue, nameof(ActInputValue.Value));
-                        ValueUC.ValueTextBox.Text = inputValue.Value;
-                        ValueLabel.Content = inputValue.Param;
+                        xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
+                        xValueVE.ValueTextBox.Text = inputValue.Value;
+                        xValueLbl.Content = inputValue.Param;
                     }
                 }
                 else
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Visible;
                     a.Value = "";
                     ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
-                    ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
+                    xValueVE.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
                 }
             }
             else if (a.GetType() == typeof(ActGenElement) || a.GetType() == typeof(ActTableElement))
@@ -406,76 +406,76 @@ namespace Ginger.Actions
                     a.AddOrUpdateInputParamValue("Value", "");
                     inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
                 }
-                ValueGridPanel.Visibility = Visibility.Collapsed;
-                ValueBoxPanel.Visibility = Visibility.Visible;
-                ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
+                xInputValuesGrid.Visibility = Visibility.Collapsed;
+                xValueBoxPnl.Visibility = Visibility.Visible;
+                xValueVE.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
 
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count <= 1)
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
                 else if (a.InputValues.Count >= 2)
                 {
-                    ValueGridPanel.Visibility = Visibility.Visible;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    xInputValuesGrid.Visibility = Visibility.Visible;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
-                    ValueUC.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
-                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                    xValueVE.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
+                    xValueVE.ValueTextBox.Text = mAction.InputValues.FirstOrDefault().Value;
+                    xValueLbl.Content = a.InputValues.FirstOrDefault().Param;
                 }
                 else
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
-                    ValueUC.Init(mContext, a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
+                    xValueVE.Init(mContext, a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
                 }
             }
             else if (a.GetType() == typeof(ActScript))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count > 1)
                 {
-                    ValueGridPanel.Visibility = Visibility.Visible;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    xInputValuesGrid.Visibility = Visibility.Visible;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
                 else if (a.InputValues.Count == 1)
                 {
-                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
-                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                    xValueVE.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Visible;
+                    xValueVE.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
+                    xValueLbl.Content = a.InputValues.FirstOrDefault().Param;
                 }
             }
             else if (a.GetType() == typeof(ActConsoleCommand))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
-                    ValueUC.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
-                    ValueLabel.Content = a.InputValues.FirstOrDefault().Param;
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Visible;
+                    xValueVE.Init(mContext, mAction.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    xValueVE.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
+                    xValueLbl.Content = a.InputValues.FirstOrDefault().Param;
                 }
                 else if (a.InputValues.Count > 1)
                 {
-                    ValueGridPanel.Visibility = Visibility.Visible;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    xInputValuesGrid.Visibility = Visibility.Visible;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Collapsed;
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -584,11 +584,11 @@ namespace Ginger.Actions
         private void SetActInputValuesGrid()
         {
             //Show/hide if needed
-            InputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
+            xInputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
 
-            InputValuesGrid.SetTitleLightStyle = true;
-            InputValuesGrid.ClearTools();
-            InputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
+            xInputValuesGrid.SetTitleLightStyle = true;
+            xInputValuesGrid.ClearTools();
+            xInputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
 
             //List<GridColView> view = new List<GridColView>();
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -599,8 +599,8 @@ namespace Ginger.Actions
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["InputValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Value ForDriver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
-            InputValuesGrid.SetAllColumnsDefaultView(view);
-            InputValuesGrid.InitViewItems();
+            xInputValuesGrid.SetAllColumnsDefaultView(view);
+            xInputValuesGrid.InitViewItems();
         }
 
         private void LoadActionInfoPage(Act a)
@@ -631,13 +631,13 @@ namespace Ginger.Actions
                     }
 
                     // Load the page
-                    ActionPrivateConfigsFrame.SetContent(p);
-                    ActionPrivateConfigsPanel.Visibility = System.Windows.Visibility.Visible;
+                    xActionPrivateConfigsFrame.SetContent(p);
+                    xActionPrivateConfigsFrame.Visibility = System.Windows.Visibility.Visible;
                 }
             }
             else
             {
-                ActionPrivateConfigsPanel.Visibility = System.Windows.Visibility.Collapsed;
+                xActionPrivateConfigsFrame.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
@@ -781,7 +781,7 @@ namespace Ginger.Actions
         }
         private void InputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ActInputValue AIV = (ActInputValue)InputValuesGrid.CurrentItem;
+            ActInputValue AIV = (ActInputValue)xInputValuesGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mContext);
             VEEW.ShowAsWindow();
         }
@@ -905,10 +905,10 @@ namespace Ginger.Actions
             
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Collapsed;
             xOutputValuesGrid.DisableGridColoumns();
-            xScreenshotsSetting.IsEnabled = false;
-            xActionRunDetails.IsEnabled = false;
+            xScreenshotsPnl.IsEnabled = false;
+            xActionRunDetailsPnl.IsEnabled = false;
             xActionsDetailsPnl.IsEnabled = false;
-            xActionConfiguration.IsEnabled = false;
+            xConfigurationsPnl.IsEnabled = false;
         }
 
         private void UndoChangesAndClose()
@@ -992,32 +992,32 @@ namespace Ginger.Actions
 
         private void cboLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cboLocateBy.SelectedItem.ToString() == "ByMulitpleProperties")
+            if (xLocateByCombo.SelectedItem.ToString() == "ByMulitpleProperties")
             {
-                sMultiLocatorVals = txtLocateValue.ValueTextBox.Text;
-                txtLocateValue.Background = System.Windows.Media.Brushes.LightGray;
-                btnEditLocator.Width = 30;
+                sMultiLocatorVals = xLocateValueVE.ValueTextBox.Text;
+                xLocateValueVE.Background = System.Windows.Media.Brushes.LightGray;
+                xEditLocatorBtn.Width = 30;
                 if (mAction.LocateBy != eLocateBy.ByMulitpleProperties)
                 {
-                    EditLocatorsWindow.sMultiLocatorVals = txtLocateValue.ValueTextBox.Text;
+                    EditLocatorsWindow.sMultiLocatorVals = xLocateValueVE.ValueTextBox.Text;
                     EditLocatorsWindow ELW = new EditLocatorsWindow(mActParentBusinessFlow);
                     ELW.ShowDialog();
-                    txtLocateValue.ValueTextBox.Text = EditLocatorsWindow.sMultiLocatorVals;
+                    xLocateValueVE.ValueTextBox.Text = EditLocatorsWindow.sMultiLocatorVals;
                 }
             }
             else
             {
-                txtLocateValue.Background = System.Windows.Media.Brushes.White;
-                btnEditLocator.Width = 0;
+                xLocateValueVE.Background = System.Windows.Media.Brushes.White;
+                xEditLocatorBtn.Width = 0;
             }
         }
 
         private void btnEditLocator_Click(object sender, RoutedEventArgs e)
         {
-            EditLocatorsWindow.sMultiLocatorVals = txtLocateValue.ValueTextBox.Text;
+            EditLocatorsWindow.sMultiLocatorVals = xLocateValueVE.ValueTextBox.Text;
             EditLocatorsWindow ELW = new EditLocatorsWindow(mActParentBusinessFlow);
             ELW.ShowDialog();
-            txtLocateValue.ValueTextBox.Text = EditLocatorsWindow.sMultiLocatorVals;
+            xLocateValueVE.ValueTextBox.Text = EditLocatorsWindow.sMultiLocatorVals;
         }
 
         private void GridParamVEButton_Click(object sender, RoutedEventArgs e)
@@ -1044,15 +1044,15 @@ namespace Ginger.Actions
             //set the selected tab text style
             try
             {
-                if (ActionTab.SelectedItem != null)
+                if (xActionTabs.SelectedItem != null)
                 {
-                    foreach (TabItem tab in ActionTab.Items)
+                    foreach (TabItem tab in xActionTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
 
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
-                                if (ActionTab.SelectedItem == tab)
+                                if (xActionTabs.SelectedItem == tab)
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                                 else
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
@@ -1067,12 +1067,12 @@ namespace Ginger.Actions
                 Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
             }
 
-            if (ActionTab.SelectedItem == ScreenShotTab)
+            if (xActionTabs.SelectedItem == xScreenShotTab)
             {
                 UpdateScreenShotPage();
                 return;
             }
-            else if (ActionTab.SelectedItem == HelpTab)
+            else if (xActionTabs.SelectedItem == xHelpTab)
             {
                 General.ShowGingerHelpWindow(mAction.ActionDescription);
             }
@@ -1246,17 +1246,17 @@ namespace Ginger.Actions
                 int count = mAction.ReturnValues.Count();
                 if (count > 0)
                 {
-                    SetTabOnOffSign(OutputTab, true);
+                    SetTabOnOffSign(xOutputValuesTab, true);
                     OutputCount.Text = "(" + count + ")";
                 }
                 else
                 {
-                    SetTabOnOffSign(OutputTab, false);
+                    SetTabOnOffSign(xOutputValuesTab, false);
                     OutputCount.Text = "";
                 }
 
                 if (mAction.ConfigOutputDS)
-                    SetTabOnOffSign(OutputTab, true);
+                    SetTabOnOffSign(xOutputValuesTab, true);
             });
         }
 
@@ -1285,7 +1285,7 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                SetTabOnOffSign(ScreenShotTab, mAction.TakeScreenShot);
+                SetTabOnOffSign(xScreenShotTab, mAction.TakeScreenShot);
 
                 int count = mAction.ScreenShots.Count;
                 if (count > 0)
@@ -1314,7 +1314,7 @@ namespace Ginger.Actions
             this.Dispatcher.Invoke(() =>
             {
                 bool b = mAction.FlowControls.Count() > 0;
-                SetTabOnOffSign(FlowControlTab, b);
+                SetTabOnOffSign(xFlowControlTab, b);
                 if (b)
                 {
                     FlowControlCountLabel.Text = "(" + mAction.FlowControls.Count() + ")";
@@ -1329,7 +1329,7 @@ namespace Ginger.Actions
         private void UpdateHelpTab()
         {
             ActDescriptionPage desPage = new ActDescriptionPage(mAction);
-            ActDescriptionFrm.SetContent(desPage);
+            xActionHelpDetailsFram.SetContent(desPage);
         }
 
         void SetTabOnOffSign(TabItem tab, bool indicatorToShow)
@@ -1628,8 +1628,7 @@ namespace Ginger.Actions
             {
                 mAction.ActionLogConfig = new ActionLogConfig();
             }
-            ActionLogConfigFrame.SetContent(new ActionLogConfigPage(mAction.ActionLogConfig));
-            ActionLogConfigExpander.IsExpanded = true;
+            xActionLogConfigFrame.SetContent(new ActionLogConfigPage(mAction.ActionLogConfig));
         }
 
         private void EnableActionLogConfigCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -1665,7 +1664,7 @@ namespace Ginger.Actions
             }
             else
             {
-                ActionLogConfigFrame.SetContent(null);
+                xActionLogConfigFrame.SetContent(null);
             }
         }
 
@@ -1685,14 +1684,14 @@ namespace Ginger.Actions
             //else
             //    ActionLogRow.Height = new GridLength(32);
 
-            if (mAction.EnableActionLogConfig)
-            {
-                ActionLogDetailsStackPanel.IsEnabled = true;
-            }
-            else
-            {
-                ActionLogDetailsStackPanel.IsEnabled = false;
-            }
+            //if (mAction.EnableActionLogConfig)
+            //{
+            //    ActionLogDetailsStackPanel.IsEnabled = true;
+            //}
+            //else
+            //{
+            //    ActionLogDetailsStackPanel.IsEnabled = false;
+            //}
         }
 
         private void GridClearExpectedValueBtn_Click(object sender, RoutedEventArgs e)
@@ -1707,17 +1706,17 @@ namespace Ginger.Actions
         {
             StopEdit();
             BindingOperations.ClearAllBindings(xDescriptionTextBox);
-            BindingOperations.ClearAllBindings(cboLocateBy);
-            BindingOperations.ClearAllBindings(comboWindowsToCapture);
-            BindingOperations.ClearAllBindings(txtLocateValue);
-            BindingOperations.ClearAllBindings(RTStatusLabel);
-            BindingOperations.ClearAllBindings(RTElapsedLabel);
-            BindingOperations.ClearAllBindings(RTErrorLabel);
-            BindingOperations.ClearAllBindings(RTExInfoLabel);
-            BindingOperations.ClearAllBindings(txtLocateValue);
-            BindingOperations.ClearAllBindings(TakeScreenShotCheckBox);
-            BindingOperations.ClearAllBindings(FailIgnoreCheckBox);
-            BindingOperations.ClearAllBindings(comboFinalStatus);
+            BindingOperations.ClearAllBindings(xLocateByCombo);
+            BindingOperations.ClearAllBindings(xWindowsToCaptureCombo);
+            BindingOperations.ClearAllBindings(xLocateValueVE);
+            BindingOperations.ClearAllBindings(xExecutionStatusLbl);
+            BindingOperations.ClearAllBindings(xExecutionTimeLbl);
+            BindingOperations.ClearAllBindings(xExecutionErrorDetailsText);
+            BindingOperations.ClearAllBindings(xExecutionExtraInfoText);
+            BindingOperations.ClearAllBindings(xLocateValueVE);
+            BindingOperations.ClearAllBindings(xTakeScreenShotCheckBox);
+            BindingOperations.ClearAllBindings(xFailIgnoreCheckBox);
+            BindingOperations.ClearAllBindings(xStatusConvertorCombo);
             BindingOperations.ClearAllBindings(xWaitVeUC);
             BindingOperations.ClearAllBindings(xTimeoutTextBox);
             BindingOperations.ClearAllBindings(xEnableRetryMechanismCheckBox);
@@ -1728,8 +1727,8 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xDataSourceNameCombo);
             BindingOperations.ClearAllBindings(xDataSourceTableNameCombo);
             BindingOperations.ClearAllBindings(dsOutputParamMapType);
-            BindingOperations.ClearAllBindings(EnableActionLogConfigCheckBox);
-            BindingOperations.ClearAllBindings(txtLocateValue);
+            BindingOperations.ClearAllBindings(xEnableActionLogConfigCheckBox);
+            BindingOperations.ClearAllBindings(xLocateValueVE);
             xTagsViewer.ClearBinding();
             //this.ClearControlsBindings();
             if (mAction != null)
@@ -1741,9 +1740,9 @@ namespace Ginger.Actions
                 mAction = null;
             }
             xFlowControlConditionsFrame.NavigationService.RemoveBackEntry();
-            ActionPrivateConfigsFrame.NavigationService.RemoveBackEntry();
-            ActDescriptionFrm.NavigationService.RemoveBackEntry();
-            ActionLogConfigFrame.NavigationService.RemoveBackEntry();
+            xActionPrivateConfigsFrame.NavigationService.RemoveBackEntry();
+            xActionHelpDetailsFram.NavigationService.RemoveBackEntry();
+            xActionLogConfigFrame.NavigationService.RemoveBackEntry();
         }
 
 
