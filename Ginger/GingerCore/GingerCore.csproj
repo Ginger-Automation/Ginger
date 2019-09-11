@@ -126,14 +126,6 @@
     <Reference Include="Eyes.Sdk.DotNet, Version=2.22.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
     </Reference>
-    <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.UIA3, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.UIA3.dll</HintPath>
-    </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\GingerExternal.dll</HintPath>
@@ -701,7 +693,6 @@
     <Compile Include="Drivers\Mobile\Perfecto\PerfectoDriver.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
-    <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
