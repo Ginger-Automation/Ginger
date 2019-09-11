@@ -54,7 +54,7 @@
                         <Label Content="General Details" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                     </Expander.Header>
                     <Expander.Content>
-                        <Grid x:Name="xActionsDetailsPnl">
+                        <Grid x:Name="xActionsDetailsPnl" Margin="5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition x:Name="xSharedRepoInstanceUCCol" Width="50"/>
@@ -72,7 +72,7 @@
                 </Expander>
 
                 <!--Tabs Area-->
-                <TabControl x:Name="ActionTab" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabControl x:Name="ActionTab" DockPanel.Dock="Top" Margin="0,10,0,0" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
                     <TabControl.Resources>
                         <Style TargetType="{x:Type TabItem}">
                             <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -154,8 +154,6 @@
                         </Grid>
                     </TabItem>
 
-
-
                     <TabItem x:Name="FlowControlTab" Margin="8,0,-12,0" >
                         <TabItem.Header>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
@@ -169,33 +167,40 @@
                             </StackPanel>
                         </TabItem.Header>
                         <DockPanel Margin="5">
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
                                 <Label Content="Wait:" Style="{StaticResource $LabelStyle}" />
                                 <Actions:UCValueExpression x:Name="xWaitVeUC" ToolTip="Action will wait this seconds long before start to run" HorizontalAlignment="Stretch" Width="80" />
                                 <Label Content="Timeout:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
-                                <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout is been used to configure the MAXIMUM allowed time (Action can finish before) for the Action to run. If action running longer than the timeout time (seconds), the action will stop and mark as Failed" Style="{StaticResource @TextBoxStyle}" Width="55" HorizontalAlignment="Left" />
+                                <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout is been used to configure the MAXIMUM allowed time (Action can finish before) for the Action to run. If action running longer than the timeout time (seconds), the action will stop and mark as Failed" Style="{StaticResource @TextBoxStyle}" Width="50" TextAlignment="Center"  HorizontalAlignment="Left" />
                             </StackPanel>
-                            <Expander x:Name="xRetryExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
+
+                            <Expander x:Name="xRetryExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
                                 <Expander.Header>
                                     <Label Content="Retry Mechanism" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                 </Expander.Header>
                                 <Expander.Content>
-                                    <StackPanel x:Name="xRetryMechanismPnl" Margin="5,5,0,0" >
+                                    <StackPanel x:Name="xRetryMechanismPnl" Margin="5" >
                                         <CheckBox x:Name="xEnableRetryMechanismCheckBox" Content="Enable Retry Mechanism" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}" Checked="EnableRetryMechanismCheckBox_CheckedUnChecked" Unchecked="EnableRetryMechanismCheckBox_CheckedUnChecked"/>
                                         <StackPanel x:Name="xRetryMechConfigsPnl" Orientation="Horizontal" Margin="0,5,0,0">
                                             <Label Style="{StaticResource $LabelStyle}">Interval (seconds):</Label>
-                                            <TextBox x:Name="xRetryMechanismIntervalTextBox" Style="{StaticResource @TextBoxStyle}" ToolTip="Number of seconds to wait before re-run" Width="50" Text="5" Margin="19,0,0,0" ></TextBox>
-                                            <Label Style="{StaticResource @InputFieldLabelStyle}">Max Retries Number:</Label>
-                                            <TextBox x:Name="xRetryMechanismMaxRetriesTextBox" Style="{StaticResource @TextBoxStyle}" ToolTip="Max number of retries before finally failing the action" Width="50" Text="3"></TextBox>
+                                            <TextBox x:Name="xRetryMechanismIntervalTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Number of seconds to wait before re-run" Width="50" Text="5" TextAlignment="Center" Margin="0,0,0,0" />
+                                            <Label Style="{StaticResource $LabelStyle}" Margin="10,0,0,0">Max Retries Number:</Label>
+                                            <TextBox x:Name="xRetryMechanismMaxRetriesTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Max number of retries before finally failing the action" Width="50" TextAlignment="Center" Text="3"></TextBox>
                                         </StackPanel>
-                                        <Label HorizontalAlignment="Left" Margin="0,20,0,0" Style="{StaticResource @LabelStyle}">Note: Retry mechanism is executed after error handler and before flow control.</Label>
+                                        <Label HorizontalAlignment="Left" FontSize="10" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: Retry mechanism is executed after error handler and before flow control.</Label>
                                     </StackPanel>
                                 </Expander.Content>
                             </Expander>
 
-                            <Frame x:Name="FlowControlFrame" Content="Flow Control Frame" DockPanel.Dock="Top"/>
+                            <Expander x:Name="xFlowControlConditionsExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
+                                <Expander.Header>
+                                    <Label Content="Flow Control Conditions" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                </Expander.Header>
+                                <Expander.Content>
+                                    <Frame x:Name="xFlowControlConditionsFrame" Margin="5" Content="Flow Control Conditions Frame" NavigationUIVisibility="Hidden"/>
+                                </Expander.Content>
+                            </Expander>
                         </DockPanel>
-
                     </TabItem>
 
                     <TabItem x:Name="OutputTab" Margin="14,0,-18,0">
@@ -210,80 +215,40 @@
                                 </TextBlock>
                             </StackPanel>
                         </TabItem.Header>
-
-                        <Grid   x:Name="xActionOutputGrid" Background="{StaticResource $BackgroundColor_LightGray}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="30" Name="DataSourceRow"/>
-                                <RowDefinition Height="33" Name="ActionLogRow"/>
-                                <RowDefinition Height="30*"/>
-                            </Grid.RowDefinitions>
-                            <Expander  x:Name="xDataSourceExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource @ExpanderLightStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
+                        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                            <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
                                 <Expander.Header>
-                                    <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                                    <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource $HorizontalExpanderLabelStyle}">
                                         <Label.Content>
-                                            <GingerCore:ucTextDicResource Text="Outputs To Data Source" Width="585"/>
+                                            <GingerCore:ucTextDicResource Text="Outputs to Data Source"/>
                                         </Label.Content>
                                     </Label>
                                 </Expander.Header>
                                 <Expander.Content>
-                                    <Grid x:Name="DataSourceGrid" Background="{StaticResource $BackgroundColor_LightGray}">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="69*"/>
-                                            <ColumnDefinition Width="1019*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="25"/>
-                                            <RowDefinition Height="35" Name="DataSourceDetailsRow"/>
-                                            <RowDefinition Height="180" Name="DataSourceConfigRow"/>
-                                        </Grid.RowDefinitions>
-
-                                        <StackPanel Name="ConfigDS"  Grid.Row="0" Margin="5,5,0,0" Grid.ColumnSpan="2">
-                                            <CheckBox Name="AddOutDS" Content="Add Output Value/s to Data Source" Checked="AddOutDS_Checked"  Unchecked="AddOutDS_Unchecked" HorizontalAlignment="Left" Style="{StaticResource @CheckBoxStyle}" FontWeight="Bold"/>
-                                        </StackPanel>
-                                        <StackPanel x:Name="OutputsToDsConfig" Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource @LabelStyle}">Data Source:</Label>
-                                                <ComboBox Name="cmbDataSourceName" Height="25" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource @InputComboBoxStyle}" Margin="5,0,0,0" Width="210" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+                                    <StackPanel x:Name="xAddOutputToDataSourcePnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
+                                        <CheckBox Name="xAddOutToDSCheckbox" Content="Add Output Value/s to Data Source" Checked="AddOutDS_Checked"  Unchecked="AddOutDS_Unchecked" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" FontWeight="Bold"/>
+                                        <DockPanel x:Name="xAddOutputToDataSourceConfigPnl" >
+                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,5">
+                                                <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource $LabelStyle}">Data Source:</Label>
+                                                <ComboBox Name="xDataSourceNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}"  Width="200" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+                                                <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
+                                                <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
                                             </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                                                <Label HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @LabelStyle}">Data Source Table:</Label>
-                                                <ComboBox Name="cmbDataSourceTableName" Height="25" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource @InputComboBoxStyle}" Margin="5,0,0,0" Width="210" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
-                                            </StackPanel>
-                                        </StackPanel>
-                                        <Ginger:ucGrid x:Name="DataSourceConfigGrid" Grid.Row="2"  Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" Grid.ColumnSpan="2"/>
-                                    </Grid>
+                                            <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" />
+                                        </DockPanel>
+                                    </StackPanel>
                                 </Expander.Content>
                             </Expander>
 
-                            <Expander  x:Name="ActionLogConfigExpander" ExpandDirection="Down" IsExpanded="False" Grid.Row="1" Style="{StaticResource @ExpanderLightStyle}" Expanded="ActionLogConfigExpander_Expanded"  Collapsed="ActionLogConfigExpander_Collapsed">
+                            <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
                                 <Expander.Header>
-                                    <Label x:Name="ActionLogConfigExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
-                                        <Label.Content>
-                                            <GingerCore:ucTextDicResource Text="Action Log" Width="585"/>
-                                        </Label.Content>
-                                    </Label>
+                                    <Label Content="Execution Output Values" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                 </Expander.Header>
                                 <Expander.Content>
-                                    <Grid x:Name="ActionLogGrid" Background="{StaticResource $BackgroundColor_LightGray}">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="30"/>
-                                            <RowDefinition Height="170" Name="ActionLogConfigRow"/>
-                                        </Grid.RowDefinitions>
-
-                                        <StackPanel Name="ActionLogStackPanel"  Grid.Row="0" Margin="5,5,0,0">
-                                            <CheckBox x:Name="EnableActionLogConfigCheckBox" Content="Enable Action Log" HorizontalAlignment="Left" FontWeight="Bold" Style="{StaticResource @CheckBoxStyle}" Checked="EnableActionLogConfigCheckBox_Checked" Unchecked="EnableActionLogConfigCheckBox_UnChecked"/>
-                                        </StackPanel>
-                                        <StackPanel x:Name="ActionLogDetailsStackPanel" Grid.Row="1" Margin="5,5,0,0">
-                                            <Frame x:Name="ActionLogConfigFrame">
-                                            </Frame>
-                                        </StackPanel>
-                                    </Grid>
+                                    <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5" ShowTitle="Collapsed" />
                                 </Expander.Content>
                             </Expander>
-
-                            <Ginger:ucGrid x:Name="OutputValuesGrid" Grid.Row="3" Margin="0,10,0,0" Title="Output Value(s)" ShowTitle="Collapsed" />
-
-                        </Grid>
+                        </DockPanel>
                     </TabItem>
 
                     <TabItem x:Name="ScreenShotTab" Margin="20,0,-24,0">
@@ -331,6 +296,33 @@
                                 <ComboBox x:Name="comboFinalStatus"  Margin="0,0,0,0" Style="{StaticResource @InputComboBoxStyle}" Width="150" HorizontalAlignment="Left"/>
                             </StackPanel>
                             <CheckBox x:Name="FailIgnoreCheckBox" DockPanel.Dock="Top" Content="Ignore on Fail" Visibility="Collapsed" ToolTip="If the action fails change status to Ignore Fail" Margin="20,0,0,0" Style="{StaticResource @CheckBoxStyle}" FontSize="14" Height="18"/>
+
+                            <Expander  x:Name="ActionLogConfigExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="1" Style="{StaticResource @ExpanderLightStyle}" Expanded="ActionLogConfigExpander_Expanded">
+                                <Expander.Header>
+                                    <Label x:Name="ActionLogConfigExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                                        <Label.Content>
+                                            <GingerCore:ucTextDicResource Text="Action Log" Width="585"/>
+                                        </Label.Content>
+                                    </Label>
+                                </Expander.Header>
+                                <Expander.Content>
+                                    <Grid x:Name="ActionLogGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="170" Name="ActionLogConfigRow"/>
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel Name="ActionLogStackPanel"  Grid.Row="0" Margin="5,5,0,0">
+                                            <CheckBox x:Name="EnableActionLogConfigCheckBox" Content="Enable Action Log" HorizontalAlignment="Left" FontWeight="Bold" Style="{StaticResource @CheckBoxStyle}" Checked="EnableActionLogConfigCheckBox_Checked" Unchecked="EnableActionLogConfigCheckBox_UnChecked"/>
+                                        </StackPanel>
+                                        <StackPanel x:Name="ActionLogDetailsStackPanel" Grid.Row="1" Margin="5,5,0,0">
+                                            <Frame x:Name="ActionLogConfigFrame">
+                                            </Frame>
+                                        </StackPanel>
+                                    </Grid>
+                                </Expander.Content>
+                            </Expander>
+
                             <Grid  x:Name="xActionRunDetails" Margin="10" DockPanel.Dock="Top">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="120"/>
