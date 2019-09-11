@@ -1,0 +1,12 @@
+[
+  {
+    "ServiceId": "MSAccessService",
+    "Description": null,
+    "IsSession": false,
+    "Interfaces": [
+      "IDatabase"
+    ],
+    "Actions": [],
+    "Configs": []
+  }
+]

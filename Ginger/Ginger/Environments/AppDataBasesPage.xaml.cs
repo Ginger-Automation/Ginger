@@ -237,9 +237,15 @@ namespace Ginger.Environments
         }
         private void AddNewDB(object sender, RoutedEventArgs e)
         {
-            Database db = new Database();
-            db.Name = "New";
-            grdAppDbs.DataSourceList.Add(db);
+            //Database db = new Database();
+            //db.Name = "New";
+            //grdAppDbs.DataSourceList.Add(db);
+
+            // Prep for getting list of DBs from installed plugins
+
+            //TODO: Open wizard !!!
+            var v = WorkSpace.Instance.PlugInsManager.GetDatabase();
+
         }
 
         private void SetGridData()

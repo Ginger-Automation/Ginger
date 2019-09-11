@@ -384,9 +384,9 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public List<IDatabase> GetDatabase()
+        public List<string> GetDatabase()
         {
-            List<IDatabase> DBConnectors = new List<IDatabase>();
+            List<string> DBs = new List<string>();
             foreach (PluginPackage pluginPackage in mPluginPackages)
             {
                 foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
@@ -394,13 +394,12 @@ namespace Amdocs.Ginger.Repository
                     if (pluginServiceInfo.Interfaces.Contains(nameof(IDatabase)))
                     {
 
-                        // DBConnectors.Add
+                        DBs.Add(pluginServiceInfo.ServiceId);
                     }
-                    
                 }
             }
 
-            return DBConnectors;
+            return DBs;
         }
 
 

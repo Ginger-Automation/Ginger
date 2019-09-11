@@ -4,5 +4,5 @@
   "ProjectUrl": "git\\Pluginex1...",
   "Description": "MSAccess Database Plugin",
   "Summary": "MSAccess Database Plugin",
-  "StartupDll": "MSAccessDB.exe"
+  "StartupDll": "GingerMSAccessDB.exe"
 }
