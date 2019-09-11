@@ -11,7 +11,10 @@ Write-Host "-------------------------------------------------------------"
 
 cd D:\a\1\s\Ginger\Ginger\bin\Release
 dir
-Ginger.exe help
+cmd /c Ginger.exe help
+$p = Start-Process Ginger.exe help
+$p.HasExited
+$p.ExitCode
 # Compress-Archive -Path /home/vsts/.config/amdocs/Ginger/WorkingFolder/Logs/Ginger_Log.txt -DestinationPath '/home/vsts/work/1/a/GingerLog'
 
 
