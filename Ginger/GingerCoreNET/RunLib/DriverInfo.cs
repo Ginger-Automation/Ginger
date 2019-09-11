@@ -159,13 +159,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else if (platformType == ePlatformType.Windows.ToString())
             {
-                DI.services.Add(Agent.eDriverType.WindowsAutomation);
-                DI.services.Add(Agent.eDriverType.FlaUIWindow);
+                DI.services.Add(Agent.eDriverType.WindowsAutomation);                
             }
             else if (platformType == ePlatformType.PowerBuilder.ToString())
             {
                 DI.services.Add(Agent.eDriverType.PowerBuilder);
-                DI.services.Add(Agent.eDriverType.FlaUIPB);
             }
 
             else if (platformType == ePlatformType.Unix.ToString())
