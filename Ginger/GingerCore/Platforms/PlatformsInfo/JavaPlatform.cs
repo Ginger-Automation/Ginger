@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Platforms.PlatformsInfo
@@ -51,6 +52,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.RunJavaScript);
             return browserActElementList;
         }
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()
@@ -73,6 +75,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
+            if (elementInfo.GetType() == typeof(HTMLElementInfo))
+            {
+                return CreateWidgetUIElementList(elementInfo);
+            }
+
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
             eElementType elementType = GetElementType(elementInfo.ElementType);
 
@@ -123,14 +130,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     foreach (var action in actionList)
                     {
-                        UIElementsActionsList.Add(
-                            new ActUIElement()
-                            {
-                                Description = action + " : " + elementInfo.ElementTitle,
-                                ElementAction = (ActUIElement.eElementAction)action,
-                                ElementType = elementType,
-                            }
-                            );
+                        UIElementsActionsList.Add(CreateUIElementAction(elementInfo, elementType, action));
                     }
                 }
             }
@@ -138,6 +138,36 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
+        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo, eElementType elementType, ActUIElement.eElementAction action)
+        {
+            return new ActUIElement()
+            {
+                Description = action + " : " + elementInfo.ElementTitle,
+                ElementAction = action,
+                ElementType = elementType,
+            };
+        }
+
+        private ObservableList<Act> CreateWidgetUIElementList(ElementInfo elementInfo)
+        {
+            var widgetsActionList = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
+
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
+
+            if (widgetsActionList.Count > 0)
+            {
+                foreach (var action in widgetsActionList)
+                {
+                    var widgetsAction = CreateUIElementAction(elementInfo, elementInfo.ElementTypeEnum, action);
+
+                    widgetsAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
+
+                    UIElementsActionsList.Add(widgetsAction);
+                }
+            }
+
+            return UIElementsActionsList;
+        }
 
         private eElementType GetElementType(string elementType)
         {
@@ -353,6 +383,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 case eElementType.RadioButton:
                 case eElementType.CheckBox:
+                case eElementType.Span:
                     widgetsActionslist.Add(ActUIElement.eElementAction.Click);
                     widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
@@ -390,6 +421,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             mWidgetsElementsTypeList.Add(eElementType.TextBox);
             mWidgetsElementsTypeList.Add(eElementType.CheckBox);
             mWidgetsElementsTypeList.Add(eElementType.Label);
+            mWidgetsElementsTypeList.Add(eElementType.Span);
 
             return mWidgetsElementsTypeList;
         }

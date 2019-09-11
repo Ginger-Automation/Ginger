@@ -126,11 +126,18 @@ namespace GingerCore.Actions
 
         private Act GetNewActionForJava()
         {
-            if(GenElementAction.Equals(eGenElementAction.SwitchFrame))
+            if(GenElementAction.Equals(eGenElementAction.SwitchFrame) || GenElementAction.Equals(eGenElementAction.RunJavaScript))
             {
                 ActBrowserElement NewActBrowserElement = GetNewBrowserElementFromAutoMapper();
 
-                NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
+                if (GenElementAction.Equals(eGenElementAction.SwitchFrame))
+                {
+                    NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
+                }
+                else if (GenElementAction.Equals(eGenElementAction.RunJavaScript))
+                {
+                    NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+                }
 
                 return NewActBrowserElement;
             }
@@ -145,6 +152,13 @@ namespace GingerCore.Actions
                 newActUIElement.ElementAction = MapJavaGenericElementAction(GenElementAction);
                 newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, this.Value);
 
+                if (this.ReturnValues.Count > 0)
+                {
+                    if (this.ReturnValues[0].Param == "Actual")
+                    {
+                        newActUIElement.ReturnValues[0].Param = "Actual0";
+                    }
+                }
                 return newActUIElement;
             }
 

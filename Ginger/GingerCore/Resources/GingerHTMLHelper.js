@@ -128,11 +128,24 @@ function define_GingerLib() {
            var ElementLocateValue = inputValues["ElementLocateValue"];
            var Value = inputValues["Value"];
 
-            if (ElementAction == "TriggerJavaScriptEvent")
+            if (ElementAction === "TriggerJavaScriptEvent")
             {
                 var IsMouseEvent = inputValues["IsMouseEvent"];
 
-                var element = GingerLib.GetElement(ElementLocateBy, ElementLocateValue);
+                var element = "undefined";
+
+                element = GingerLib.GetElementWithImplicitSync(ElementLocateBy, ElementLocateValue);
+
+                if (element === undefined) {
+
+                    if (ErrorMessage == "")
+                        ErrorMessage = "ERROR|Web Element not Found: " + LocateBy + " " + LocateValue;
+
+                    var payload = new GingerPayLoad("ERROR");
+                    payload.AddValueString(ErrorMessage);
+                    payload.ClosePackage();
+                    return payload;
+                }
 
                 if (IsMouseEvent.toLowerCase() == "true")
                 {
@@ -151,6 +164,12 @@ function define_GingerLib() {
             if (ElementAction === "IsEnabled")
             {
                 ElementAction = "Enabled";
+            }
+            if (ElementAction === "Select") {
+                ElementAction = "SelectFromDropDown";
+            }
+            else if (ElementAction === "SelectByIndex") {
+                ElementAction = "SelectFromDropDownByIndex";
             }
 
            return GingerLib.HandleHTMLControlAction(ElementAction, ElementLocateBy, ElementLocateValue, Value);

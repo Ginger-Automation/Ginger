@@ -911,10 +911,10 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ActUIElement actUIElement)
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
         {
             string payLoadName = @"UIElementAction";
-            if (Convert.ToBoolean(actUIElement.GetInputParamValue(Fields.IsWidgetsElement)))
+            if (Convert.ToBoolean(this.GetInputParamValue(Fields.IsWidgetsElement)))
             {
                 payLoadName = @"WidgetsUIElementAction";
             }
