@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Plugin.Core.Database;
 using Amdocs.Ginger.Plugin.Core.Reporter;
 using System;
@@ -29,6 +30,7 @@ using System.Data.OleDb;
 
 namespace MSAccessDB
 {
+    [GingerService("MSAccessService", "MSAccess Database service")]
     public class MSAccessDBCon : IDatabase
     {
         // private OleDbConnection conn = null;

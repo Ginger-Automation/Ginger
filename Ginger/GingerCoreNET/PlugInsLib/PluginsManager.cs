@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.PlugInsLib;
+using Amdocs.Ginger.Plugin.Core.Database;
 using GingerUtils;
 using Newtonsoft.Json;
 using System;
@@ -47,8 +48,8 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public bool BackgroudDownloadInprogress { get;  set; }
-        
+        public bool BackgroudDownloadInprogress { get; set; }
+
 
         public void Init(SolutionRepository solutionRepository)
         {
@@ -58,7 +59,7 @@ namespace Amdocs.Ginger.Repository
 
         private void GetPackages()
         {
-            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();            
+            mPluginPackages = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
         }
 
         public class DriverInfo
@@ -67,17 +68,17 @@ namespace Amdocs.Ginger.Repository
             public string PluginPackageFolder { get; set; }
         }
 
-      
+
         public void AddPluginPackage(string folder)
         {
             // Verify folder exist
             if (!System.IO.Directory.Exists(folder))
             {
                 throw new Exception("Plugin folder not found: " + folder);
-            }            
+            }
 
-            PluginPackage pluginPackage = new PluginPackage(folder);          
-            mSolutionRepository.AddRepositoryItem(pluginPackage);            
+            PluginPackage pluginPackage = new PluginPackage(folder);
+            mSolutionRepository.AddRepositoryItem(pluginPackage);
         }
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
@@ -164,9 +165,9 @@ namespace Amdocs.Ginger.Repository
         //            return null;
         //        }
 
-       
+
         public System.Diagnostics.Process StartService(string pluginId, string serviceID)
-        {            
+        {
             Console.WriteLine("Starting Service: " + serviceID + " from Plugin: " + pluginId);
             if (string.IsNullOrEmpty(pluginId))
             {
@@ -180,7 +181,7 @@ namespace Amdocs.Ginger.Repository
             pluginPackage.LoadServicesFromJSON();
 
             if (pluginPackage == null)
-            {                
+            {
                 throw new Exception("PluginPackage not found in solution PluginId=" + pluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
@@ -230,27 +231,27 @@ namespace Amdocs.Ginger.Repository
         public List<ActionInputValueInfo> GetActionEditInfo(string pluginId, string serviceId, string actionId)
         {
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
-            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();            
+            PluginServiceInfo pluginServiceInfo = (from x in pluginPackage.Services where x.ServiceId == serviceId select x).SingleOrDefault();
             PluginServiceActionInfo actionInfo = (from x in pluginServiceInfo.Actions where x.ActionId == actionId select x).SingleOrDefault();
             return actionInfo.InputValues;
         }
 
         public ObservableList<OnlinePluginPackage> GetOnlinePluginsIndex()
-        {            
+        {
             // edit at: "https://github.com/Ginger-Automation/Ginger-Plugins-Index/blob/master/PluginsList.json";
 
             // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
             Reporter.ToLog(eLogLevel.INFO, "Getting Plugins list from " + url);
 
-            ObservableList < OnlinePluginPackage > list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
+            ObservableList<OnlinePluginPackage> list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
             Reporter.ToLog(eLogLevel.INFO, "Online Plugins count=" + list.Count);
             ObservableList<PluginPackage> installedPlugins = mSolutionRepository.GetAllRepositoryItems<PluginPackage>();
             foreach (OnlinePluginPackage onlinePluginPackage in list)
-            {                
+            {
                 PluginPackage pluginPackage = (from x in installedPlugins where x.PluginId == onlinePluginPackage.Id select x).FirstOrDefault();
                 if (pluginPackage != null)
-                {                    
+                {
                     onlinePluginPackage.CurrentPackage = pluginPackage.PluginPackageVersion;
                     onlinePluginPackage.Status = "Installed - " + pluginPackage.PluginPackageVersion;
                 }
@@ -270,7 +271,7 @@ namespace Amdocs.Ginger.Repository
             {
                 return isSession;
             }
-            
+
             PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginId select x).SingleOrDefault();
             PluginServiceInfo pluginServiceInfo = pluginPackage.GetService(serviceId);
             if (pluginServiceInfo != null)
@@ -291,9 +292,9 @@ namespace Amdocs.Ginger.Repository
             //download missing plugins
             GetPackages();
             if (mPluginPackages != null && mPluginPackages.Count > 0)
-            {                
-                if ( WorkSpace.Instance.RunningInExecutionMode)
-                {                    
+            {
+                if (WorkSpace.Instance.RunningInExecutionMode)
+                {
                     DownloadMissingPlugins(); //need to download it before execution starts
                 }
                 else
@@ -328,7 +329,7 @@ namespace Amdocs.Ginger.Repository
                         Reporter.ToLog(eLogLevel.INFO, "Private plugin folder no need to download");
                         continue;   // this is private plugin located on the developer machine will not be able to download from online
                     }
-                    
+
                     if (OnlinePlugins == null)
                     {
                         Reporter.ToLog(eLogLevel.INFO, "Getting online plugins index");
@@ -355,7 +356,7 @@ namespace Amdocs.Ginger.Repository
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Plugin version not found cannot install!");
                     }
-                                            
+
                 }
             }
             finally
@@ -364,6 +365,9 @@ namespace Amdocs.Ginger.Repository
                 Reporter.HideStatusMessage();
             }
         }
+
+
+        
 
         private bool isPrivatePlugin(PluginPackage solutionPlugin)
         {
@@ -377,7 +381,29 @@ namespace Amdocs.Ginger.Repository
             {
                 return true;
             }
-            
         }
+
+
+        public List<IDatabase> GetDatabase()
+        {
+            List<IDatabase> DBConnectors = new List<IDatabase>();
+            foreach (PluginPackage pluginPackage in mPluginPackages)
+            {
+                foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
+                {
+                    if (pluginServiceInfo.Interfaces.Contains(nameof(IDatabase)))
+                    {
+
+                        // DBConnectors.Add
+                    }
+                    
+                }
+            }
+
+            return DBConnectors;
+        }
+
+
+
     }
 }

@@ -1,0 +1,8 @@
+{
+  "Id": "MSAccessDatabasePlugin",
+  "Version": "1.0.0",
+  "ProjectUrl": "git\\Pluginex1...",
+  "Description": "MSAccess Database Plugin",
+  "Summary": "MSAccess Database Plugin",
+  "StartupDll": "MSAccessDB.exe"
+}
