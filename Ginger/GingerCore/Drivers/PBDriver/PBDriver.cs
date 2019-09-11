@@ -77,13 +77,7 @@ namespace GingerCore.Drivers.PBDriver
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
                     ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.PowerBuilder;
                     break;
-
-                case eUIALibraryType.FlaUI:
-                    mUIAutomationHelper = new FlaUIHelper();
-                    ((FlaUIHelper)mUIAutomationHelper).WindowExplorer = this;
-                    ((FlaUIHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((FlaUIHelper)mUIAutomationHelper).mPlatform = UIAutomationHelperBase.ePlatform.PowerBuilder;
-                    break;
+                                   
             }
         }
 
