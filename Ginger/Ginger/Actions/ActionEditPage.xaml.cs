@@ -1041,46 +1041,19 @@ namespace Ginger.Actions
 
         private void ActionTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //set the selected tab text style
-            try
-            {
-                if (xActionTabs.SelectedItem != null)
-                {
-                    foreach (TabItem tab in xActionTabs.Items)
-                    {
-                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
-                            if (ctrl.GetType() == typeof(TextBlock))
-                            {
-                                if (xActionTabs.SelectedItem == tab)
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-                                else
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
-                            }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
-            }
-
             if (xActionTabs.SelectedItem == xScreenShotTab)
             {
                 UpdateScreenShotPage();
                 return;
             }
-            else if (xActionTabs.SelectedItem == xHelpTab)
-            {
-                General.ShowGingerHelpWindow(mAction.ActionDescription);
-            }
+            //else if (xActionTabs.SelectedItem == xHelpTab)
+            //{
+            //    General.ShowGingerHelpWindow(mAction.ActionDescription);
+            //}
         }
 
         private void UpdateScreenShotPage()
         {
-
             ScreenShotsGrid.Children.Clear();
             ScreenShotsGrid.RowDefinitions.Clear();
             ScreenShotsGrid.ColumnDefinitions.Clear();
@@ -1232,7 +1205,6 @@ namespace Ginger.Actions
 
         void UpdateTabsVisual()
         {
-            UpdateRetryMechanismTabVisual();
             UpdateFlowControlTabVisual();
             UpdateOutputTabVisual();
             UpdateScreenshotTabVisual();
@@ -1243,20 +1215,15 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                int count = mAction.ReturnValues.Count();
-                if (count > 0)
+                if (mAction.ReturnValues.Count() > 0)
                 {
-                    SetTabOnOffSign(xOutputValuesTab, true);
-                    OutputCount.Text = "(" + count + ")";
+                    xOutputValuesTabHeaderTextBlock.Text = string.Format("Output Values ({0})", mAction.ReturnValues.Count());
                 }
                 else
                 {
-                    SetTabOnOffSign(xOutputValuesTab, false);
-                    OutputCount.Text = "";
+                    xOutputValuesTabHeaderTextBlock.Text = "Output Values";
                 }
 
-                if (mAction.ConfigOutputDS)
-                    SetTabOnOffSign(xOutputValuesTab, true);
             });
         }
 
@@ -1285,27 +1252,15 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                SetTabOnOffSign(xScreenShotTab, mAction.TakeScreenShot);
-
-                int count = mAction.ScreenShots.Count;
-                if (count > 0)
+                if (mAction.ScreenShots.Count() > 0)
                 {
-                    ScreenShotCount.Text = "(" + count + ")";
+                    xScreenshotsTabHeaderTextBlock.Text = string.Format("ScreenShots ({0})", mAction.ScreenShots.Count());
                 }
                 else
                 {
-                    ScreenShotCount.Text = "";
+                    xScreenshotsTabHeaderTextBlock.Text = "ScreenShots";
                 }
             });
-        }
-
-        // Retry Tab
-        private void UpdateRetryMechanismTabVisual()
-        {
-            if (mAction.EnableRetryMechanism)
-                xRetryMechConfigsPnl.IsEnabled = true;
-            else
-                xRetryMechConfigsPnl.IsEnabled = false;
         }
 
 
@@ -1313,15 +1268,13 @@ namespace Ginger.Actions
         {
             this.Dispatcher.Invoke(() =>
             {
-                bool b = mAction.FlowControls.Count() > 0;
-                SetTabOnOffSign(xFlowControlTab, b);
-                if (b)
+                if (mAction.FlowControls.Count() > 0)
                 {
-                    FlowControlCountLabel.Text = "(" + mAction.FlowControls.Count() + ")";
+                    xFlowControlTabHeaderTextBlock.Text = string.Format("Flow Control ({0})", mAction.FlowControls.Count());
                 }
                 else
                 {
-                    FlowControlCountLabel.Text = "";
+                    xFlowControlTabHeaderTextBlock.Text = "Flow Control";
                 }
             });
         }
@@ -1332,43 +1285,6 @@ namespace Ginger.Actions
             xActionHelpDetailsFram.SetContent(desPage);
         }
 
-        void SetTabOnOffSign(TabItem tab, bool indicatorToShow)
-        {
-            try
-            {
-                //set the selected tab text style
-                if (tab != null)
-                {
-                    foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-                        if (ctrl.GetType() == typeof(System.Windows.Controls.Image))
-                        {
-                            System.Windows.Controls.Image img = (System.Windows.Controls.Image)ctrl;
-                            if (img.Tag != null)
-                            {
-                                if (img.Tag.ToString() == "OffSignImage")
-                                    if (indicatorToShow)
-                                        img.Visibility = Visibility.Collapsed;
-                                    else
-                                        img.Visibility = Visibility.Visible;
-                                else if (img.Tag.ToString() == "OnSignImage")
-                                    if (indicatorToShow)
-                                        img.Visibility = Visibility.Visible;
-                                    else
-                                        img.Visibility = Visibility.Collapsed;
-                            }
-                        }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error in Action Edit Page tabs style", ex);
-            }
-        }
-
-        private void EnableRetryMechanismCheckBox_CheckedUnChecked(object sender, RoutedEventArgs e)
-        {
-            UpdateRetryMechanismTabVisual();
-        }
 
         private void GridDSVEButton_Click(object sender, RoutedEventArgs e)
         {

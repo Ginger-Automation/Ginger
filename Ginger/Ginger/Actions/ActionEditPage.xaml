@@ -50,315 +50,287 @@
 
         <ScrollViewer>
             <DockPanel>
-                <Expander x:Name="xActionDetailsExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
-                    <Expander.Header>
-                        <Label Content="General Details" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <Grid x:Name="xActionsDetailsPnl" Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition x:Name="xSharedRepoInstanceUCCol" Width="50"/>
-                            </Grid.ColumnDefinitions>
-                            <DockPanel Grid.Column="0">
-                                <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
-                                <TextBox x:Name="xDescriptionTextBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30"/>
-                                <Label Style="{StaticResource $LabelStyle}" Content="Run Description:" DockPanel.Dock="Top"/>
-                                <Actions:UCValueExpression  x:Name="xRunDescritpionUC" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
-                                <Ginger:ucTagsViewer x:Name="xTagsViewer" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
-                            </DockPanel>
-                            <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-2,0,0"/>
-                        </Grid>
-                    </Expander.Content>
-                </Expander>
-
                 <!--Tabs Area-->
-                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,10,0,0" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
-                    <TabControl.Resources>
-                        <Style TargetType="{x:Type TabItem}">
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                            <Setter Property="Height" Value="33"/>
-                            <Style.Triggers>
-                                <Trigger Property="IsSelected" Value="False" >
-                                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                                </Trigger>
-                                <Trigger Property="IsSelected" Value="True" >
-                                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TabControl.Resources>
-                    <TabItem x:Name="xConfigurationsTab2">
+                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0">
+                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0">
                         <TabItem.Header>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Image Source="{StaticResource  @Config_20x20.png }" Height="20" Width="20" />
-                                <TextBlock Text="Configurations" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
-                            </StackPanel>
-                        </TabItem.Header>
-
-                        <DockPanel x:Name="xConfigurationsPnl">
-                            <Grid x:Name="ActionLocatorPanel" DockPanel.Dock="Top">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="58" />
-                                    <ColumnDefinition Width="200" />
-                                    <ColumnDefinition Width="85" />
-                                    <ColumnDefinition Width="200*" />
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="30" />
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Content="Locate By:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
-                                <ComboBox Grid.Column="1" x:Name="xLocateByCombo" SelectionChanged="cboLocateBy_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="How to Locate the Element on the screen" VerticalAlignment="Center" />
-                                <Label Grid.Column="2" Content="Locate Value:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"  />
-                                <usercontrols:ucButton x:Name="xEditLocatorBtn" Grid.Column="4"  ButtonType="ImageButton" Click="btnEditLocator_Click" ToolTip="Edit"  ButtonFontImageSize="15"  ButtonImageType="Edit" VerticalAlignment="Center" />
-                                <usercontrols:ucButton x:Name="xControlSelectorButton" Grid.Column="5"  ButtonType="ImageButton" Click="ControlSelectorButton_Click" ToolTip="Open Window Explorer to select Element"  ButtonFontImageSize="15"  ButtonImageType="Search" VerticalAlignment="Center" />
-                                <usercontrols:ucButton x:Name="xHighLightElementButton" Grid.Column="6"  ButtonType="ImageButton" Click="HighLightElementButton_Click" ToolTip="Highlight Element on Application"  ButtonFontImageSize="15"  ButtonImageType="Pointer" VerticalAlignment="Center" />
-                            </Grid>
-
-                            <Frame x:Name="xActionPrivateConfigsFrame" DockPanel.Dock="Top" Margin="0,10,0,0"  Content="Action private configurations Frame" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
-
-                            <DockPanel Name="xInputValuesEditControlsPnl" DockPanel.Dock="Top" >
-                                <Ginger:ucGrid x:Name="xInputValuesGrid" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" HorizontalAlignment="Stretch" Title="Input Value(s)" Height="156"/>
-                                <DockPanel Name="xValueBoxPnl" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,10,0,0" Height="25">
-                                    <Label Name="xValueLbl" DockPanel.Dock="Left" Style="{StaticResource $LabelStyle}" Content="Value:"/>
-                                    <Actions:UCValueExpression x:Name="xValueVE" DockPanel.Dock="Left" Margin="10,0,90,0" ToolTip="Value to Set"/>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Info" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                    <TextBlock Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
                                 </DockPanel>
+                            </Border>
+                        </TabItem.Header>
+                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <!--<Expander x:Name="xActionDetailsExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
+                            <Expander.Header>
+                                <Label Content="General Details" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                            </Expander.Header>
+                            <Expander.Content>-->
+                            <Grid x:Name="xActionsDetailsPnl" Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition x:Name="xSharedRepoInstanceUCCol" Width="50"/>
+                                </Grid.ColumnDefinitions>
+                                <DockPanel Grid.Column="0">
+                                    <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
+                                    <TextBox x:Name="xDescriptionTextBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30"/>
+                                    <Label Style="{StaticResource $LabelStyle}" Content="Run Description:" DockPanel.Dock="Top"/>
+                                    <Actions:UCValueExpression  x:Name="xRunDescritpionUC" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>
+                                    <Ginger:ucTagsViewer x:Name="xTagsViewer" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                </DockPanel>
+                                <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-2,0,0"/>
+                            </Grid>
+                            <!--</Expander.Content>
+                        </Expander>-->
+                        </Border>
+                    </TabItem>
+
+                    <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="1">
+                        <TabItem.Header>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Operation to Perform Settings">
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    <TextBlock  Text="Operation Settings" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                </DockPanel>
+                            </Border>
+                        </TabItem.Header>
+                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <DockPanel x:Name="xConfigurationsPnl" Margin="5">
+                                <Grid x:Name="ActionLocatorPanel" DockPanel.Dock="Top">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="65" />
+                                        <ColumnDefinition Width="200" />
+                                        <ColumnDefinition Width="85" />
+                                        <ColumnDefinition Width="200*" />
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Content="Locate By:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" x:Name="xLocateByCombo" SelectionChanged="cboLocateBy_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="How to Locate the Element on the screen" VerticalAlignment="Center" />
+                                    <Label Grid.Column="2" Content="Locate Value:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"  />
+                                    <usercontrols:ucButton x:Name="xEditLocatorBtn" Grid.Column="4"  ButtonType="ImageButton" Click="btnEditLocator_Click" ToolTip="Edit"  ButtonFontImageSize="15"  ButtonImageType="Edit" VerticalAlignment="Center" />
+                                    <usercontrols:ucButton x:Name="xControlSelectorButton" Grid.Column="5"  ButtonType="ImageButton" Click="ControlSelectorButton_Click" ToolTip="Open Window Explorer to select Element"  ButtonFontImageSize="15"  ButtonImageType="Search" VerticalAlignment="Center" />
+                                    <usercontrols:ucButton x:Name="xHighLightElementButton" Grid.Column="6"  ButtonType="ImageButton" Click="HighLightElementButton_Click" ToolTip="Highlight Element on Application"  ButtonFontImageSize="15"  ButtonImageType="Pointer" VerticalAlignment="Center" />
+                                </Grid>
+
+                                <Frame x:Name="xActionPrivateConfigsFrame" DockPanel.Dock="Top" Margin="0,0,0,0"  Content="Action private configurations Frame" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+
+                                <DockPanel Name="xInputValuesEditControlsPnl" DockPanel.Dock="Top" >
+                                    <Ginger:ucGrid x:Name="xInputValuesGrid" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" HorizontalAlignment="Stretch" Title="Input Value(s)" Height="156"/>
+                                    <DockPanel Name="xValueBoxPnl" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,10,0,0" Height="25">
+                                        <Label Name="xValueLbl" DockPanel.Dock="Left" Style="{StaticResource $LabelStyle}" Content="Value:"/>
+                                        <Actions:UCValueExpression x:Name="xValueVE" DockPanel.Dock="Left" Margin="10,0,0,0" ToolTip="Value to Set"/>
+                                    </DockPanel>
+                                </DockPanel>
+
                             </DockPanel>
-                        </DockPanel>
+                        </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xFlowControlTab" Margin="8,0,-12,0" >
+                    <TabItem x:Name="xFlowControlTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="2">
                         <TabItem.Header>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                                <Image Source="{StaticResource  @Flow_24x24.png }" Height="20" Width="20" />
-                                <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0"  />
-                                <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-7,0,0,0" Visibility="Collapsed"/>
-                                <TextBlock x:Name="FlowControlTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
-                            <Run>Flow Control</Run>
-                            <Run x:Name="FlowControlCountLabel">(0)</Run>
-                                </TextBlock>
-                            </StackPanel>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Flow Control Configurations">
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="MapSigns" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                    <TextBlock x:Name="xFlowControlTabHeaderTextBlock" Text="Flow Control" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                </DockPanel>
+                            </Border>
                         </TabItem.Header>
-                        <DockPanel Margin="5">
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
-                                <Label Content="Wait:" Style="{StaticResource $LabelStyle}" />
-                                <Actions:UCValueExpression x:Name="xWaitVeUC" ToolTip="Action will wait this seconds long before start to run" HorizontalAlignment="Stretch" Width="80" />
-                                <Label Content="Timeout:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
-                                <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout is been used to configure the MAXIMUM allowed time (Action can finish before) for the Action to run. If action running longer than the timeout time (seconds), the action will stop and mark as Failed" Style="{StaticResource @TextBoxStyle}" Width="50" TextAlignment="Center"  HorizontalAlignment="Left" />
-                            </StackPanel>
-
-                            <Expander x:Name="xRetryExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
-                                <Expander.Header>
-                                    <Label Content="Retry Mechanism" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <StackPanel x:Name="xRetryMechanismPnl" Margin="5" >
-                                        <CheckBox x:Name="xEnableRetryMechanismCheckBox" Content="Enable Retry Mechanism" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}" Checked="EnableRetryMechanismCheckBox_CheckedUnChecked" Unchecked="EnableRetryMechanismCheckBox_CheckedUnChecked"/>
-                                        <StackPanel x:Name="xRetryMechConfigsPnl" Orientation="Horizontal" Margin="0,5,0,0">
-                                            <Label Style="{StaticResource $LabelStyle}">Interval (seconds):</Label>
-                                            <TextBox x:Name="xRetryMechanismIntervalTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Number of seconds to wait before re-run" Width="50" Text="5" TextAlignment="Center" Margin="0,0,0,0" />
-                                            <Label Style="{StaticResource $LabelStyle}" Margin="10,0,0,0">Max Retries Number:</Label>
-                                            <TextBox x:Name="xRetryMechanismMaxRetriesTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Max number of retries before finally failing the action" Width="50" TextAlignment="Center" Text="3"></TextBox>
-                                        </StackPanel>
-                                        <Label HorizontalAlignment="Left" FontSize="10" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: Retry mechanism is executed after error handler and before flow control.</Label>
-                                    </StackPanel>
-                                </Expander.Content>
-                            </Expander>
-
-                            <Expander x:Name="xFlowControlConditionsExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
-                                <Expander.Header>
-                                    <Label Content="Flow Control Conditions" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <Frame x:Name="xFlowControlConditionsFrame" Margin="5" Content="Flow Control Conditions Frame" NavigationUIVisibility="Hidden"/>
-                                </Expander.Content>
-                            </Expander>
-                        </DockPanel>
-                    </TabItem>
-
-                    <TabItem x:Name="xOutputValuesTab" Margin="14,0,-18,0">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                                <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20" />
-                                <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0"  />
-                                <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-4,0,0,0" Visibility="Collapsed"/>
-                                <TextBlock x:Name="OutputTabTextBlock" VerticalAlignment="Center" Margin="-1,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
-                            <Run>Output Values</Run>
-                            <Run x:Name="OutputCount">(0)</Run>
-                                </TextBlock>
-                            </StackPanel>
-                        </TabItem.Header>
-                        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
-                            <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
-                                <Expander.Header>
-                                    <Label Content="Execution Output Values" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5" ShowTitle="Collapsed" />
-                                </Expander.Content>
-                            </Expander>
-                            
-                            <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
-                                <Expander.Header>
-                                    <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource $HorizontalExpanderLabelStyle}">
-                                        <Label.Content>
-                                            <GingerCore:ucTextDicResource Text="Outputs to Data Source"/>
-                                        </Label.Content>
-                                    </Label>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <StackPanel x:Name="xAddOutputToDataSourcePnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
-                                        <CheckBox Name="xAddOutToDSCheckbox" Content="Add Output Value/s to Data Source" Checked="AddOutDS_Checked"  Unchecked="AddOutDS_Unchecked" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" FontWeight="Bold"/>
-                                        <DockPanel x:Name="xAddOutputToDataSourceConfigPnl" >
-                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,5">
-                                                <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource $LabelStyle}">Data Source:</Label>
-                                                <ComboBox Name="xDataSourceNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}"  Width="200" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
-                                                <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
-                                                <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
+                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <DockPanel Margin="5" >
+                                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"  HorizontalAlignment="Left" Margin="0,5,0,0">
+                                    <Label Content="Wait:" Style="{StaticResource $LabelStyle}" />
+                                    <Actions:UCValueExpression x:Name="xWaitVeUC" ToolTip="Action will wait this seconds long before start to run" HorizontalAlignment="Stretch" Width="80" />
+                                    <Label Content="Timeout:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
+                                    <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout is been used to configure the MAXIMUM allowed time (Action can finish before) for the Action to run. If action running longer than the timeout time (seconds), the action will stop and mark as Failed" Style="{StaticResource @TextBoxStyle}" Width="50" TextAlignment="Center"  HorizontalAlignment="Left" />
+                                </StackPanel>
+                                
+                                <Expander x:Name="xRetryExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
+                                    <Expander.Header>
+                                        <Label Content="Retry Mechanism" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <StackPanel x:Name="xRetryMechanismPnl" Margin="5" >
+                                            <CheckBox x:Name="xEnableRetryMechanismCheckBox" Content="Enable Retry Mechanism" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}"/>
+                                            <StackPanel x:Name="xRetryMechConfigsPnl" Orientation="Horizontal" Margin="0,5,0,0">
+                                                <Label Style="{StaticResource $LabelStyle}">Interval (seconds):</Label>
+                                                <TextBox x:Name="xRetryMechanismIntervalTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Number of seconds to wait before re-run" Width="50" Text="5" TextAlignment="Center" Margin="0,0,0,0" />
+                                                <Label Style="{StaticResource $LabelStyle}" Margin="10,0,0,0">Max Retries Number:</Label>
+                                                <TextBox x:Name="xRetryMechanismMaxRetriesTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Max number of retries before finally failing the action" Width="50" TextAlignment="Center" Text="3"></TextBox>
                                             </StackPanel>
-                                            <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" />
+                                            <Label HorizontalAlignment="Left" FontSize="10" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: Retry mechanism is executed after error handler and before flow control.</Label>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+
+                                <Expander x:Name="xFlowControlConditionsExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
+                                    <Expander.Header>
+                                        <Label Content="Flow Control Conditions" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <Frame x:Name="xFlowControlConditionsFrame" Margin="5,5,5,10" Content="Flow Control Conditions Frame" NavigationUIVisibility="Hidden"/>
+                                    </Expander.Content>
+                                </Expander>
+                            </DockPanel>
+                        </Border>
+                    </TabItem>
+
+                    <TabItem x:Name="xOutputValuesTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="3">
+                        <TabItem.Header>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Output Values" >
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Output" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    <TextBlock x:Name="xOutputValuesTabHeaderTextBlock" Text="Output Values" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                </DockPanel>
+                            </Border>
+                        </TabItem.Header>
+                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <DockPanel Margin="5">
+                                <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
+                                    <Expander.Header>
+                                        <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource $HorizontalExpanderLabelStyle}">
+                                            <Label.Content>
+                                                <GingerCore:ucTextDicResource Text="Outputs to Data Source Settings"/>
+                                            </Label.Content>
+                                        </Label>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <StackPanel x:Name="xAddOutputToDataSourcePnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
+                                            <CheckBox Name="xAddOutToDSCheckbox" Content="Add Output Value/s to Data Source" Checked="AddOutDS_Checked"  Unchecked="AddOutDS_Unchecked" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" FontWeight="Bold"/>
+                                            <DockPanel x:Name="xAddOutputToDataSourceConfigPnl" >
+                                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,5">
+                                                    <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource $LabelStyle}">Data Source:</Label>
+                                                    <ComboBox Name="xDataSourceNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}"  Width="200" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+                                                    <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
+                                                    <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
+                                                </StackPanel>
+                                                <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" />
+                                            </DockPanel>
+                                        </StackPanel>
+                                    </Expander.Content>
+                                </Expander>
+
+                                <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
+                                    <Expander.Header>
+                                        <Label Content="Execution Output Values" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,10" ShowTitle="Collapsed" />
+                                    </Expander.Content>
+                                </Expander>
+                            </DockPanel>
+                        </Border>
+                    </TabItem>
+
+                    <TabItem x:Name="xScreenShotTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="4">
+                        <TabItem.Header>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Screenshotes View &amp; Configurations">
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Camera" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                    <TextBlock x:Name="xScreenshotsTabHeaderTextBlock" Text="Screenshots" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                </DockPanel>
+                            </Border>
+                        </TabItem.Header>
+                        <Border Margin="5"  BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <DockPanel x:Name="xScreenshotsPnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
+                                <CheckBox x:Name="xTakeScreenShotCheckBox" DockPanel.Dock="Top" Content="Take Screenshot(s)" Checked="TakeScreenShot_Checked" Unchecked="TakeScreenShot_UnChecked" FontWeight="Bold" ToolTip="Add tested application screenshot to the report after the action executed" Style="{StaticResource $CeckBoxStyle}" Margin="0,10,0,0" />
+                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,0" x:Name="TakeScreenshotsConfigs" Visibility="Visible">
+                                    <Label Content="Screenshot(s) Capture Type:" Style="{StaticResource $LabelStyle}"/>
+                                    <ComboBox x:Name="xWindowsToCaptureCombo" Margin="5,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200"  HorizontalAlignment="Left"/>
+                                </StackPanel>
+
+                                <Grid x:Name="ScreenShotsGrid" DockPanel.Dock="Top" Margin="0,10,0,0" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem>
+
+                    <TabItem x:Name="xExecutionDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5">
+                        <TabItem.Header>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}">
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Pending" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    <TextBlock Text="Execution Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                </DockPanel>
+                            </Border>
+                        </TabItem.Header>
+                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <DockPanel Margin="5">
+                                <Expander x:Name="xExecutionDetailsRelatedSettingsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
+                                    <Expander.Header>
+                                        <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
+                                            <Label.Content>
+                                                <GingerCore:ucTextDicResource Text="Execution Details Related Settings"/>
+                                            </Label.Content>
+                                        </Label>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <DockPanel Margin="5">
+                                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" ToolTip="Status Conversion will be performed only after flow control is executed. So that flow control will always use the original action status">
+                                                <Label Content="Status Converter:" Style="{StaticResource $LabelStyle}" />
+                                                <ComboBox x:Name="xStatusConvertorCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150" HorizontalAlignment="Left"/>
+                                                <CheckBox x:Name="xFailIgnoreCheckBox" Content="Ignore on Fail" Visibility="Collapsed" ToolTip="If the action fails change status to Ignore Fail" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                                            </StackPanel>
+
+                                            <DockPanel x:Name="xActionLogPnl" Margin="0,10,0,0" >
+                                                <CheckBox x:Name="xEnableActionLogConfigCheckBox" DockPanel.Dock="Top" Content="Enable Action Log" HorizontalAlignment="Left" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}" Checked="EnableActionLogConfigCheckBox_Checked" Unchecked="EnableActionLogConfigCheckBox_UnChecked"/>
+                                                <Frame x:Name="xActionLogConfigFrame" DockPanel.Dock="Top" Margin="10,10,0,0" NavigationUIVisibility="Hidden"/>
+                                            </DockPanel>
                                         </DockPanel>
-                                    </StackPanel>
-                                </Expander.Content>
-                            </Expander>
-                        </DockPanel>
-                    </TabItem>
+                                    </Expander.Content>
+                                </Expander>
 
-                    <TabItem x:Name="xScreenShotTab" Margin="20,0,-24,0">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                                <Image Source="{StaticResource @Camera_32x32.png}" Height="20" Width="20"/>
-                                <Image Tag="OffSignImage" Source="{StaticResource  @OffSign_24x24.png }" Height="20" Width="20" Margin="-6,0,0,0"  />
-                                <Image Tag="OnSignImage" Source="{StaticResource  @OnSign_24x24.png }" Height="20" Width="20" Margin="-6,0,0,0" Visibility="Collapsed"/>
-                                <TextBlock x:Name="ScreenShotTabTextBlock" VerticalAlignment="Center" Margin="0,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold">
-                            <Run>Screenshots</Run>
-                            <Run x:Name="ScreenShotCount">(0)</Run>
-                                </TextBlock>
-                            </StackPanel>
-                        </TabItem.Header>
-                        <DockPanel x:Name="xScreenshotsPnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
-                            <CheckBox x:Name="xTakeScreenShotCheckBox" DockPanel.Dock="Top" Content="Take Screenshot(s)" Checked="TakeScreenShot_Checked" Unchecked="TakeScreenShot_UnChecked" FontWeight="Bold" ToolTip="Add tested application screenshot to the report after the action executed" Style="{StaticResource $CeckBoxStyle}" />
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,0" x:Name="TakeScreenshotsConfigs" Visibility="Visible">
-                                <Label Content="Screenshot(s) Capture Type:" Style="{StaticResource $LabelStyle}"/>
-                                <ComboBox x:Name="xWindowsToCaptureCombo" Margin="5,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200"  HorizontalAlignment="Left"/>
-                            </StackPanel>
+                                <Expander x:Name="xExecutionDetailsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" Margin="0,10,0,0" VerticalAlignment="Top">
+                                    <Expander.Header>
+                                        <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
+                                            <Label.Content>
+                                                <GingerCore:ucTextDicResource Text="Execution Details"/>
+                                            </Label.Content>
+                                        </Label>
+                                    </Expander.Header>
+                                    <Expander.Content>
+                                        <DockPanel  x:Name="xActionRunDetailsPnl"  DockPanel.Dock="Top" Margin="5">
+                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
+                                                <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
+                                                <Label x:Name="xExecutionStatusLbl" FontSize="14" FontWeight="Bold" Style="{StaticResource $LabelStyle}" />
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                                <Label Content="Execution Time:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
+                                                <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
+                                            </StackPanel>
 
-                            <Grid x:Name="ScreenShotsGrid" DockPanel.Dock="Top" Margin="0,10,0,0" />
-                        </DockPanel>
-                    </TabItem>
+                                            <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+                                                <Label Content="Extra Information:" Style="{StaticResource $LabelStyle}"/>
+                                                <TextBox x:Name="xExecutionExtraInfoText" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource $MultiRowsTextBoxStyle}" Background="Transparent" Height="100"/>
+                                            </StackPanel>
 
-                    <TabItem x:Name="xHelpTab" Margin="32,0,-36,0"  >
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                                <Image Source="{StaticResource  @Help_32x32 }" Height="20" Width="20"/>
-                                <TextBlock Text="Help" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
-                            </StackPanel>
-                        </TabItem.Header>
-
-                        <Frame x:Name="xActionHelpDetailsFram" Margin="5" Content="Action Description" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
-                    </TabItem>
-
-                    <TabItem x:Name="xExecutionDetailsTab">
-                        <TabItem.Header>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                                <Image Source="{StaticResource  @Report_32x32 }" Height="20" Width="20" />
-                                <TextBlock Text="Execution Details" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <DockPanel Margin="5">
-
-                            <Expander x:Name="xExecutionDetailsRelatedSettingsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
-                                <Expander.Header>
-                                    <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
-                                        <Label.Content>
-                                            <GingerCore:ucTextDicResource Text="Execution Details Related Settings"/>
-                                        </Label.Content>
-                                    </Label>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <DockPanel Margin="5">
-                                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" ToolTip="Status Conversion will be performed only after flow control is executed. So that flow control will always use the original action status">
-                                            <Label Content="Status Converter:" Style="{StaticResource $LabelStyle}" />
-                                            <ComboBox x:Name="xStatusConvertorCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150" HorizontalAlignment="Left"/>
-                                            <CheckBox x:Name="xFailIgnoreCheckBox" Content="Ignore on Fail" Visibility="Collapsed" ToolTip="If the action fails change status to Ignore Fail" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}"/>
-                                        </StackPanel>
-
-                                        <DockPanel x:Name="xActionLogPnl" Margin="0,10,0,0" >
-                                            <CheckBox x:Name="xEnableActionLogConfigCheckBox" DockPanel.Dock="Top" Content="Enable Action Log" HorizontalAlignment="Left" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}" Checked="EnableActionLogConfigCheckBox_Checked" Unchecked="EnableActionLogConfigCheckBox_UnChecked"/>
-                                            <Frame x:Name="xActionLogConfigFrame" DockPanel.Dock="Top" Margin="10,10,0,0" NavigationUIVisibility="Hidden"/>
+                                            <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+                                                <Label Content="Error Details:" Style="{StaticResource $LabelStyle}"/>
+                                                <TextBox x:Name="xExecutionErrorDetailsText" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource $MultiRowsTextBoxStyle}" Foreground="Red" FontWeight="Bold" Background="Transparent" Height="100"/>
+                                            </StackPanel>
                                         </DockPanel>
-                                    </DockPanel>
-                                </Expander.Content>
-                            </Expander>
-
-                            <Expander x:Name="xExecutionDetailsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" Margin="0,10,0,0">
-                                <Expander.Header>
-                                    <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
-                                        <Label.Content>
-                                            <GingerCore:ucTextDicResource Text="Execution Details"/>
-                                        </Label.Content>
-                                    </Label>
-                                </Expander.Header>
-                                <Expander.Content>
-                                    <DockPanel  x:Name="xActionRunDetailsPnl"  DockPanel.Dock="Top" Margin="5">
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
-                                            <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}"/>
-                                            <Label x:Name="xExecutionStatusLbl" FontSize="14" FontWeight="Bold" Style="{StaticResource $LabelStyle}"/>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                                            <Label Content="Execution Time:"  Style="{StaticResource $LabelStyle}"/>
-                                            <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
-                                        </StackPanel>
-
-                                        <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
-                                            <Label Content="Extra Information:" Style="{StaticResource $LabelStyle}"/>
-                                            <TextBox x:Name="xExecutionExtraInfoText" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource $MultiRowsTextBoxStyle}" Background="Transparent" Height="100"/>
-                                        </StackPanel>
-
-                                        <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
-                                            <Label Content="Error Details:" Style="{StaticResource $LabelStyle}"/>
-                                            <TextBox x:Name="xExecutionErrorDetailsText" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource $MultiRowsTextBoxStyle}" Foreground="Red" FontWeight="Bold" Background="Transparent" Height="100"/>
-                                        </StackPanel>
-                                    </DockPanel>
-                                </Expander.Content>
-                            </Expander>
-                        </DockPanel>
+                                    </Expander.Content>
+                                </Expander>
+                            </DockPanel>
+                        </Border>
                     </TabItem>
 
-
+                    <TabItem x:Name="xHelpTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="6">
+                        <TabItem.Header>
+                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Help Details">
+                                <DockPanel >
+                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                    <TextBlock  Text="Help" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                </DockPanel>
+                            </Border>
+                        </TabItem.Header>
+                        <Border Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                            <Frame x:Name="xActionHelpDetailsFram" Margin="10" Content="Action Description" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+                        </Border>
+                    </TabItem>
                 </TabControl>
-
-                <!--Run Status Area-->
-                <!--
-        <Expander x:Name="xRunStatusExpander" Grid.Row="2" Margin="0,0,0,0" ExpandDirection="Down" IsExpanded="True" Expanded="xRunStatusExpander_Expanded" Collapsed="xRunStatusExpander_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
-            <Expander.Header>
-                <Label Content="Run Status" Style="{StaticResource @HorizontalExpanderLightLabelStyle}"/>
-            </Expander.Header>
-            <Expander.Content>
-                <Grid  Background="{StaticResource $BackgroundColor_LightGray}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="35"/>
-                        <RowDefinition Height="40*"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="3,0,0,0">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="24">
-                            <Image x:Name="PassImage" Source="{StaticResource @PassIcon_Large.png}" Width="24" />
-                            <Image x:Name="FailImage" Source="{StaticResource @FailIcon_Large.png}" Width="24" />
-                            <Image x:Name="WarningImage" Source="{StaticResource @WarnIcon_Large.png}" Width="24"  />
-                        </StackPanel>
-                        <Label x:Name="StatusLabel" Content="Status" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" />
-                    </StackPanel>
-                    <ScrollViewer x:Name="ExecutionInfoTextBlockViewer" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <DockPanel>
-                            <TextBlock x:Name="ErrorTextBlock" DockPanel.Dock="Top" Text="Error Description" Style="{StaticResource @DetailsTextBlockStyle}" Foreground="Red" />
-                            <TextBlock x:Name="ExtraInfoTextBlock" DockPanel.Dock="Top" Text="Extra Info Description" Style="{StaticResource @DetailsTextBlockStyle}" />
-                        </DockPanel>
-                    </ScrollViewer>
-                </Grid>
-            </Expander.Content>
-        </Expander>-->
-
             </DockPanel>
         </ScrollViewer>
     </Grid>
