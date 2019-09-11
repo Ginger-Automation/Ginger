@@ -136,6 +136,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             cliHelper.Solution = value;                            
                             break;
                         case "Env":
+                        case "env":
                             cliHelper.Env = value;                        
                             break;
                         case "RunSet":
