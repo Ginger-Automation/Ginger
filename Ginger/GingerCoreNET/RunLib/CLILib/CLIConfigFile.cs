@@ -81,10 +81,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     }
                 }
             }
-            sConfig += "Solution=" + solution.Folder + Environment.NewLine;
-            sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
-            sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-            sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
+            sConfig += "solution=" + solution.Folder + Environment.NewLine;
+            sConfig += "env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
+            sConfig += "runset=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
+            sConfig += "analyze=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
+            if (!string.IsNullOrEmpty(cliHelper.TestArtifactsFolder))
+            {
+                sConfig += "artifacts-path=" + cliHelper.TestArtifactsFolder + Environment.NewLine;
+            }
+            
             //OLD sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
             sConfig += CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)) + "=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
@@ -127,12 +132,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             cliHelper.SourceControlProxyPort(value);                            
                             break;
                         case "Solution":
+                        case "solution":
                             cliHelper.Solution = value;                            
                             break;
                         case "Env":
                             cliHelper.Env = value;                        
                             break;
                         case "RunSet":
+                        case "runset":
                             cliHelper.Runset = value;                            
                             break;
                         case "ShowAutoRunWindow": // Support old style
@@ -140,6 +147,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             cliHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
+                        case "analyze":
                             cliHelper.RunAnalyzer = bool.Parse(value);                            
                             break;
                         default:

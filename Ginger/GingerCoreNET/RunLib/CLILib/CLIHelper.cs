@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 OnPropertyChanged(nameof(RunAnalyzer));
             }
         }
-
+        
         string mTestArtifactsFolder;
         public string TestArtifactsFolder
         {

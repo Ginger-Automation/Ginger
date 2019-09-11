@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerUtils;
@@ -58,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 if (mConfigFileFolderPath == null)
                 {
-                    //defualt folder
+                    //default folder
                     string SolFolder = mSolution.Folder;
                     if (SolFolder.EndsWith(@"\"))
                     {
@@ -79,6 +80,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        string mArtifactsPath = null;
+        public string ArtifactsPath
+        {
+            get
+            {
+                if (mArtifactsPath == null)
+                {
+                    mArtifactsPath = WorkSpace.Instance.TestArtifactsFolder;                         
+                }
+                return mArtifactsPath;
+            }
+            set
+            {
+                mArtifactsPath = value;
+                mCLIHelper.TestArtifactsFolder = value;
+                OnPropertyChanged(nameof(ArtifactsPath));
+            }
+        }
+
 
         string mConfigName = null;
         public string ConfigName
@@ -87,7 +107,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 if (mConfigName == null)
                 {
-                    //defualt name
+                    //default name
                     mConfigName = FileUtils.RemoveInvalidChars(mSolution.Name + "-" + mRunsetExecutor.RunSetConfig.Name);
                 }
                 return mConfigName;
