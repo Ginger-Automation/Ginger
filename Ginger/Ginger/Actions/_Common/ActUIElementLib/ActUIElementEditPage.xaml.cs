@@ -366,8 +366,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
                 //added for Widgets
                 case eElementAction.TriggerJavaScriptEvent:
+                    //add combobox
                     possibleValues = GetJavaScriptEventList();
                     elementList.Add(GetElementConfigControl("Event", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
+
+                    //add checkbox
+                    elementList.Add(GetElementConfigControl("Mouse Event", Fields.IsMouseEvent, eElementType.CheckBox, new List<string> { "true" }));
                     break;
 
                 case eElementAction.SelectByIndex:
@@ -418,15 +422,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     break;
             }
 
-            //if widgets and element action is TriggerJavaScriptEvent
-            if (mAction.ElementAction.Equals(eElementAction.TriggerJavaScriptEvent))
-            {
-                BindAndShowMouseEventCheckBox();
-            }
-            else
-            {
-                xMouseEventCheckBox.Visibility = Visibility.Collapsed;
-            }
 
             Page elementEditPage = null;
             if (elementList.Count != 0)
@@ -434,12 +429,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 elementEditPage = GetConfigPage(elementList);
             }
             return elementEditPage;
-        }
-
-        private void BindAndShowMouseEventCheckBox()
-        {
-            xMouseEventCheckBox.Visibility = Visibility.Visible;
-            BindingHandler.ActInputValueBinding(xMouseEventCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsMouseEvent, "false"), new InputValueToBoolConverter());
         }
 
         private List<string> GetJavaScriptEventList()
@@ -500,9 +489,31 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(txtBox);
                 }
+
+                //Added for widgets if Element Action is TriggerJavaScriptEvent
+                else if (element.ControlType == eElementType.CheckBox &&  Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
+                {
+                    CheckBox dyanamicCheckBox = new CheckBox();
+                    dyanamicCheckBox.Content = element.Title;
+                    dyanamicCheckBox.HorizontalAlignment = HorizontalAlignment.Left;
+                    dyanamicCheckBox.VerticalAlignment = VerticalAlignment.Center;
+                    dyanamicCheckBox.IsChecked = false;
+                    dyanamicCheckBox.Width = 100;
+                    dyanamicCheckBox.Margin = new Thickness() { Left = 5};
+                    dyanamicCheckBox.Click += new RoutedEventHandler(dyanamicCheckBox_Checked);
+
+                    BindingHandler.ActInputValueBinding(dyanamicCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(element.BindedString, "false"));
+                    dynamicPanel.Children.Add(dyanamicCheckBox);
+                }
             }
             dynamicPage.Content = dynamicPanel;
             return dynamicPage;
+        }
+
+        private void dyanamicCheckBox_Checked(object sender, EventArgs e)
+        {
+            mAction.AddOrUpdateInputParamValue(Fields.ValueToSelect, "");
+            GetDefaultPageContent();
         }
 
         private static UCValueExpression CreateTextBox(ElementConfigControl element)
@@ -524,7 +535,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 Name = element.Title,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                Width = 600,
+                Width = 300,
                 Margin = new Thickness(10, 0, 0, 0)
             };
         }
@@ -733,12 +744,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             BindElementTypeComboBox();
             ShowPlatformSpecificPage();
-        }
-
-        private void XMouseEventCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            mAction.AddOrUpdateInputParamValue(Fields.ValueToSelect, "");
-            GetDefaultPageContent();
         }
     }
 }

@@ -47,9 +47,6 @@
                 <Label Content="Element Action:"  Name="ElementActionLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}" />
                 <ComboBox x:Name="ElementActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementActionComboBox_SelectionChanged" IsSynchronizedWithCurrentItem="True" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="15,0,0,0"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="xMouseEventCheckBox" Click="XMouseEventCheckBox_Click" Content="Mouse Event" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,5,0,-5" VerticalAlignment="Center" />
-            </StackPanel>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="0,10,0,0" x:Name="UIElementActionEditPagePanel"  >
