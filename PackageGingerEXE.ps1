@@ -9,7 +9,7 @@ Compress-Archive -Path 'D:\a\1\s\Ginger\Ginger\bin\Release' -DestinationPath 'D:
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                    Package Ginger.log                      "
 Write-Host "-------------------------------------------------------------"
-Compress-Archive -Path C:\Users\VssAdministrator\AppData\Roaming\amdocs\Ginger\WorkingFolder\Logs\Ginger_Log.txt -DestinationPath '/home/vsts/work/1/a/GingerLog'
+Compress-Archive -Path C:\Users\VssAdministrator\AppData\Roaming\amdocs\Ginger\WorkingFolder\Logs\Ginger_Log.txt -DestinationPath 'D:\a\1\a\GingerLog'
 
 
 Write-Host "-------------------------------------------------------------"
