@@ -104,6 +104,7 @@ namespace GingerTest
             Activity activity = new Activity();
             activity.Active = true;
             activity.SelectedForConversion = true;
+            activity.TargetApplication = "Web-App";
             ActGenElement gen1 = new ActGenElement();
             gen1.Active = true;
             gen1.Description = "Set Value : first_name input";
@@ -468,7 +469,7 @@ namespace GingerTest
         }
 
         [TestMethod]
-        [Timeout(60000)]
+        //[Timeout(60000)]
         public void SingleBFActionConversionToSameActivityTest()
         {
             GetActivityWithActGenElementActions();
