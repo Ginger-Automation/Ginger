@@ -137,8 +137,7 @@ namespace Amdocs.Ginger.GingerConsole
 
             gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
         }
-
-        PluginPackage p;
+        
 
        
     }

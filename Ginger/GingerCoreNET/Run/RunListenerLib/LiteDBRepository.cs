@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private int activitySeq = 0;
         private int acgSeq = 0;
         private int bfSeq = 0;
-        private int runsetSeq = 0;
+        // private int runsetSeq = 0;
 
         public LiteDBRepository()
         {
@@ -281,7 +281,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             actionSeq = 0;
             activitySeq = 0;
             bfSeq = 0;
-            runsetSeq = 0;
+            // runsetSeq = 0;
             acgSeq = 0;
         }
 
