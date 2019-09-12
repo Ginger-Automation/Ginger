@@ -26,6 +26,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -88,7 +89,11 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            Assert.AreEqual(781, xml.Length);  // Y.W: 781 was verified and OK on Sep 2019  
+            int lt = xml.Count(f => f == '<');
+            int gt = xml.Count(f => f == '>');
+            Assert.IsTrue(xml.Length < 800, "Verify minimal xml is less than 800 bytes");   
+            Assert.AreEqual(9, lt, "XML Elements count <"); 
+            Assert.AreEqual(9, gt, "XML Elements count >"); 
 
             //Verify the major element of the expected xml
             Assert.IsTrue(xml.Contains("utf-8"));
@@ -106,6 +111,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
             Assert.IsTrue(xml.Contains("</Activities>"));
             Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
+
+            //TODO: do not containts "00000000-0000-0000-0000-000000000000"
 
         }
 
