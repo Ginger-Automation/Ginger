@@ -3,6 +3,9 @@ Write-Host "-                    Package Ginger EXE                      "
 Write-Host "-------------------------------------------------------------"
 cd D:\a\1\s\Ginger\Ginger\bin\Release
 dir
+# delete app.publish since it is ~30mb which are not needed so save space and time for download
+Remove-Item D:\a\1\s\Ginger\Ginger\bin\Release\app.publish
+#zip release folder 
 Compress-Archive -Path 'D:\a\1\s\Ginger\Ginger\bin\Release' -DestinationPath 'D:\a\1\a\GingerEXE'
 
 
