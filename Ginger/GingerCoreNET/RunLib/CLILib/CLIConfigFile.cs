@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        public async void Execute(RunsetExecutor runsetExecutor)
+        public void Execute(RunsetExecutor runsetExecutor)
         {            
             runsetExecutor.RunRunset();            
         }

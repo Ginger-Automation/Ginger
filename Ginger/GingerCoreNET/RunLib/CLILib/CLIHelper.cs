@@ -271,6 +271,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 catch(Exception ex)
                 {
+                    string mess = ex.Message; //To avoid warning of ex not used
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
                 }
             }
