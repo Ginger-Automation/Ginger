@@ -350,9 +350,12 @@ namespace Ginger.Actions
         {
             UpdateOutputValuesTabHeader();
             mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
-            if (mAction.ActReturnValues.Count > 0)
+            this.Dispatcher.Invoke(() =>
             {
-                xOutputValuesExpander.IsExpanded = true;
+                if (mAction.ActReturnValues.Count > 0)
+                {
+                    xOutputValuesExpander.IsExpanded = true;
+                }
             }
         }
 
