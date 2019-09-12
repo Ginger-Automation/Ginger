@@ -30,30 +30,37 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
+        public static void ClassInit(TestContext TestContext)
         {
-            
+            mTestHelper.ClassInitialize(TestContext);
         }
-
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            mTestHelper.ClassCleanup();
         }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+            mTestHelper.TestCleanup();
         }
-        
-        [Ignore] // different length on Linux Mac, Win...
+
+        // [Ignore] // different length on Linux Mac, Win...
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -63,17 +70,21 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             //Act
             string xml = RS.SerializeToString(BF);
-
+            
             /// to see the xml as file uncomment below line
             // System.IO.File.WriteAllText(@"c:\temp\1.xml", xml);
-            
+
             string compressed = xml.Replace(Environment.NewLine, "");  // For Linux it is one char new line
+            // compressed = compressed.Replace(" ", "");
+
+            //Artifacts
+            mTestHelper.CreateTestArtifact("BF1.txt", compressed);
 
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            Assert.AreEqual(780, compressed.Length);  // 776 was verified and OK on 7/13/2019  
+            Assert.AreEqual(780, compressed.Length);  // 780 was verified and OK on Sep 2019  
 
             //Verify the major element of the expected xml
             Assert.IsTrue(compressed.Contains("utf-8"));
