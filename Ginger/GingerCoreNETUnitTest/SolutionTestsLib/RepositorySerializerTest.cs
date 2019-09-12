@@ -23,7 +23,12 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
@@ -70,38 +75,60 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             //Act
             string xml = RS.SerializeToString(BF);
-            
-            /// to see the xml as file uncomment below line
-            // System.IO.File.WriteAllText(@"c:\temp\1.xml", xml);
 
-            string compressed = xml.Replace(Environment.NewLine, "");  // For Linux it is one char new line
-            // compressed = compressed.Replace(" ", "");
+
+            //byte[] byteArray = Encoding.ASCII.GetBytes(xml);
+            //MemoryStream stream = new MemoryStream(byteArray);
+
+            //// convert stream to string
+            //StreamReader reader = new StreamReader(stream);
+            //string text = reader.ReadToEnd();
+
+            //XmlReader xmlReader = XmlReader.Create(reader);
+            //int elements = 0;
+            //while (xmlReader.Read())
+            //{
+            //    switch (xmlReader.NodeType)
+            //    {
+            //        case XmlNodeType.Element:
+            //            elements++;
+            //            break;
+            //        case XmlNodeType.Text:
+                        
+            //            break;
+            //        case XmlNodeType.EndElement:
+                        
+            //            break;
+            //    }
+            //}
+            // For Linux it is one char new line
+
 
             //Artifacts
-            mTestHelper.CreateTestArtifact("BF1.txt", compressed);
+            mTestHelper.CreateTestArtifact("BF1.txt", xml);
 
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            Assert.AreEqual(780, compressed.Length);  // 780 was verified and OK on Sep 2019  
+            //Assert.AreEqual(780, xml.Length);  // 780 was verified and OK on Sep 2019  
 
             //Verify the major element of the expected xml
-            Assert.IsTrue(compressed.Contains("utf-8"));
-            Assert.IsTrue(compressed.Contains("<GingerRepositoryItem>"));
-            Assert.IsTrue(compressed.Contains("CreatedBy"));
+            Assert.IsTrue(xml.Contains("utf-8"));
+            Assert.IsTrue(xml.Contains("<GingerRepositoryItem>"));
+            Assert.IsTrue(xml.Contains("CreatedBy"));
             // Verify we get the short name: 'BusinessFlow'
             // and not 'GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib.BusinessFlow'
-            Assert.IsTrue(compressed.Contains("ItemType=\"BusinessFlow\""));
+            Assert.IsTrue(xml.Contains("ItemType=\"BusinessFlow\""));
             // Verify Object class written in short name again, and since we changed only the name no other attrs should be added
             // We do not write all attribute only the one which changed from default value            
-            Assert.IsTrue(compressed.Contains(" Name=\"BF1"));
-            Assert.IsTrue(compressed.Contains("<BusinessFlow Guid="));
-            Assert.IsTrue(compressed.Contains("<Activities>"));
+            Assert.IsTrue(xml.Contains(" Name=\"BF1"));
+            Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
+            Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
-            Assert.IsTrue(compressed.Contains("ActivityName=\"Activity 1\""));
-            Assert.IsTrue(compressed.Contains("</Activities>"));
-            Assert.IsTrue(compressed.Contains("</BusinessFlow></GingerRepositoryItem>"));
+            Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
+            Assert.IsTrue(xml.Contains("</Activities>"));
+            Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
 
         }
 
