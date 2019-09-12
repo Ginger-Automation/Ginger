@@ -73,36 +73,13 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Arrange
             BusinessFlow BF = new BusinessFlow("BF1");
 
+            // Since we can run this test on local user, Azure windows/Linux - we change the user name since we check total length and want it to be same
+            BF.InitHeader();
+            BF.RepositoryItemHeader.CreatedBy = "UnitTest";
+            BF.RepositoryItemHeader.LastUpdateBy = "UnitTest";
+
             //Act
             string xml = RS.SerializeToString(BF);
-
-
-            //byte[] byteArray = Encoding.ASCII.GetBytes(xml);
-            //MemoryStream stream = new MemoryStream(byteArray);
-
-            //// convert stream to string
-            //StreamReader reader = new StreamReader(stream);
-            //string text = reader.ReadToEnd();
-
-            //XmlReader xmlReader = XmlReader.Create(reader);
-            //int elements = 0;
-            //while (xmlReader.Read())
-            //{
-            //    switch (xmlReader.NodeType)
-            //    {
-            //        case XmlNodeType.Element:
-            //            elements++;
-            //            break;
-            //        case XmlNodeType.Text:
-                        
-            //            break;
-            //        case XmlNodeType.EndElement:
-                        
-            //            break;
-            //    }
-            //}
-            // For Linux it is one char new line
-
 
             //Artifacts
             mTestHelper.CreateTestArtifact("BF1.txt", xml);
@@ -111,7 +88,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            //Assert.AreEqual(780, xml.Length);  // 780 was verified and OK on Sep 2019  
+            Assert.AreEqual(781, xml.Length);  // Y.W: 781 was verified and OK on Sep 2019  
 
             //Verify the major element of the expected xml
             Assert.IsTrue(xml.Contains("utf-8"));
