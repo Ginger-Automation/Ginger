@@ -51,8 +51,8 @@
         <ScrollViewer>
             <DockPanel>
                 <!--Tabs Area-->
-                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0">
-                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0">
+                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" SelectedIndex="0">
+                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
                                 <DockPanel >
@@ -86,7 +86,7 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="1">
+                    <TabItem x:Name="xOperationSettingsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="1" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Operation to Perform Settings">
                                 <DockPanel >
@@ -96,8 +96,8 @@
                             </Border>
                         </TabItem.Header>
                         <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
-                            <DockPanel x:Name="xConfigurationsPnl" Margin="5">
-                                <Grid x:Name="ActionLocatorPanel" DockPanel.Dock="Top">
+                            <DockPanel x:Name="xOperationSettingsPnl" Margin="5">
+                                <Grid x:Name="xActionLocatorPnl" DockPanel.Dock="Top">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="65" />
                                         <ColumnDefinition Width="200" />
@@ -130,7 +130,7 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xFlowControlTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="2">
+                    <TabItem x:Name="xFlowControlTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="2" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Flow Control Configurations">
                                 <DockPanel >
@@ -178,7 +178,7 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xOutputValuesTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="3">
+                    <TabItem x:Name="xOutputValuesTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="3" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Output Values" >
                                 <DockPanel >
@@ -225,7 +225,7 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xScreenShotTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="4">
+                    <TabItem x:Name="xScreenShotTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="4" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Screenshotes View &amp; Configurations">
                                 <DockPanel >
@@ -247,7 +247,7 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xExecutionDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5">
+                    <TabItem x:Name="xExecutionDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}">
                                 <DockPanel >
@@ -317,7 +317,7 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xHelpTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="6">
+                    <TabItem x:Name="xHelpTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="6" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Help Details">
                                 <DockPanel >
