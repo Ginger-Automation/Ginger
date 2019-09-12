@@ -18,20 +18,14 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Reports.ReportHelper;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.GingerConsole.ReporterLib;
 using Amdocs.Ginger.Repository;
-using log4net;
-using log4net.Config;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
-using System.Xml;
 
 namespace Amdocs.Ginger.GingerConsole
 {
