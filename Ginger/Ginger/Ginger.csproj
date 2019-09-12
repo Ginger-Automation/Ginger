@@ -119,14 +119,6 @@
     <Reference Include="EPPlus, Version=4.5.3.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.5.3.1\lib\net40\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\FlaUI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.UIA3, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\FlaUI.UIA3.dll</HintPath>
-    </Reference>
     <Reference Include="FontAwesome.WPF">
       <HintPath>..\packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
     </Reference>
@@ -4770,8 +4762,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="DLLs\FlaUI.Core.dll" />
-    <Content Include="DLLs\FlaUI.UIA3.dll" />
     <Content Include="DLLs\interop.UIAutomationCore.dll" />
     <None Include="CI\GingerSitePublish.bat" />
     <None Include="CI\GingerAgentPublish.bat" />

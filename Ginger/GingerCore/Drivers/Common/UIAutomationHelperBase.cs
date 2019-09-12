@@ -174,16 +174,10 @@ namespace GingerCore.Drivers.Common
             {
                 double x;
                 double y;
-                if(GetCurrentWindow().GetType().FullName == "FlaUI.Core.AutomationElements.Infrastructure.AutomationElement")
-                {
-                    x = ((FlaUI.Core.AutomationElements.Infrastructure.AutomationElement)GetCurrentWindow()).Properties.BoundingRectangle.Value.X;
-                    y = ((FlaUI.Core.AutomationElements.Infrastructure.AutomationElement)GetCurrentWindow()).Properties.BoundingRectangle.Value.Y;
-                }
-                else
-                {
-                    x = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
-                    y = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
-                }
+
+                x = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.X;
+                y = ((AutomationElement)GetCurrentWindow()).Current.BoundingRectangle.Y;
+
                 double xCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "XOffset")) - x;
                 double yCordinate = double.Parse(GetControlPropertyValue(ei.ElementObject, "YOffset")) - y;
                 list.Add(new ElementLocator()

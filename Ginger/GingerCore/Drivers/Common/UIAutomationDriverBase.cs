@@ -37,8 +37,8 @@ namespace GingerCore.Drivers.Common
 
         public enum eUIALibraryType
         {
-            ComWrapper = 0,
-            FlaUI = 1
+            ComWrapper = 0
+            
         }
 
         public UIAutomationHelperBase mUIAutomationHelper;

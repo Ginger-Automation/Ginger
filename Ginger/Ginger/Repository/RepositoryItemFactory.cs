@@ -184,15 +184,9 @@ namespace Ginger.Repository
                                 break;
                             case eDriverType.WindowsAutomation:
                                 Driver = new WindowsDriver(BusinessFlow);
-                                break;
-                            case eDriverType.FlaUIWindow:
-                                Driver = new WindowsDriver(BusinessFlow, UIAutomationDriverBase.eUIALibraryType.FlaUI);
-                                break;
+                                break;                          
                             case eDriverType.PowerBuilder:
                                 Driver = new PBDriver(BusinessFlow);
-                                break;
-                            case eDriverType.FlaUIPB:
-                                Driver = new PBDriver(BusinessFlow, UIAutomationDriverBase.eUIALibraryType.FlaUI);
                                 break;
                             case eDriverType.JavaDriver:
                                 Driver = new JavaDriver(BusinessFlow);
