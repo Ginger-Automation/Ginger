@@ -591,7 +591,7 @@ namespace GingerWPF.TreeViewItemsLib
                 Task.Factory.StartNew(() =>
                 {
                     repoItemFolder.RefreshFolderSourceControlStatus();
-                };
+                });
             }
 
             // Add Item Image            
