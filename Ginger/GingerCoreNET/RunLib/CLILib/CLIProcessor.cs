@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             // Do not show default version
             // Parser.Default.Settings.AutoVersion = false;            
 
-            int result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions>(args).MapResult(
+            int result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
                     (RunOptions opts) => HandleRunOptions(opts),
                     (GridOptions opts) => HanldeGridOption(opts),
                     (ConfigFileOptions opts) => HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
@@ -74,6 +74,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     (SCMOptions opts) => HandleSCMOptions(opts),
                     (VersionOptions opts) => HandleVersionOptions(opts),                        
                     (ExampleOptions opts) => HandleExampleOptions(opts),
+                    (DoOptions opts) => HandleDoOptions(opts),
+                    
 
                     errs => HandleCLIParseError(errs)
             );          
@@ -83,6 +85,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 Reporter.ToConsole(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
                 Environment.ExitCode = 1; // error
             }            
+        }
+
+        private int HandleDoOptions(DoOptions opts)
+        {
+            DoOptionsHanlder.Run(opts);            
+            return 0;
         }
 
         private int HandleVersionOptions(VersionOptions opts)
