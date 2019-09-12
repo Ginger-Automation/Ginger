@@ -51,7 +51,7 @@
         <ScrollViewer>
             <DockPanel>
                 <!--Tabs Area-->
-                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" SelectedIndex="0">
+                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
                     <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
@@ -154,24 +154,26 @@
                                     </Expander.Header>
                                     <Expander.Content>
                                         <StackPanel x:Name="xRetryMechanismPnl" Margin="5" >
-                                            <CheckBox x:Name="xEnableRetryMechanismCheckBox" Content="Enable Retry Mechanism" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}"/>
-                                            <StackPanel x:Name="xRetryMechConfigsPnl" Orientation="Horizontal" Margin="0,5,0,0">
-                                                <Label Style="{StaticResource $LabelStyle}">Interval (seconds):</Label>
-                                                <TextBox x:Name="xRetryMechanismIntervalTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Number of seconds to wait before re-run" Width="50" Text="5" TextAlignment="Center" Margin="0,0,0,0" />
-                                                <Label Style="{StaticResource $LabelStyle}" Margin="10,0,0,0">Max Retries Number:</Label>
-                                                <TextBox x:Name="xRetryMechanismMaxRetriesTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Max number of retries before finally failing the action" Width="50" TextAlignment="Center" Text="3"></TextBox>
+                                            <CheckBox x:Name="xEnableRetryMechanismCheckBox" Content="Enable Retry Mechanism" FontWeight="Bold" Style="{StaticResource $CeckBoxStyle}" Checked="XEnableRetryMechanismCheckBox_CheckChanged" Unchecked="XEnableRetryMechanismCheckBox_CheckChanged"/>
+                                            <StackPanel x:Name="xRetryMechConfigsPnl" Margin="0,5,0,0">
+                                                <StackPanel Orientation="Horizontal" >
+                                                    <Label Style="{StaticResource $LabelStyle}">Interval (seconds):</Label>
+                                                    <TextBox x:Name="xRetryMechanismIntervalTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Number of seconds to wait before re-run" Width="50" Text="5" TextAlignment="Center" Margin="0,0,0,0" />
+                                                    <Label Style="{StaticResource $LabelStyle}" Margin="10,0,0,0">Max Retries Number:</Label>
+                                                    <TextBox x:Name="xRetryMechanismMaxRetriesTextBox" Style="{StaticResource $TextBoxStyle}" ToolTip="Max number of retries before finally failing the action" Width="50" TextAlignment="Center" Text="3"></TextBox>
+                                                </StackPanel>
+                                                <Label HorizontalAlignment="Left" FontSize="10" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: Retry mechanism is executed after error handler and before flow control.</Label>
                                             </StackPanel>
-                                            <Label HorizontalAlignment="Left" FontSize="10" Margin="-5,0,0,0" Style="{StaticResource $LabelStyle}">Note: Retry mechanism is executed after error handler and before flow control.</Label>
                                         </StackPanel>
                                     </Expander.Content>
                                 </Expander>
 
-                                <Expander x:Name="xFlowControlConditionsExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
+                                <Expander x:Name="xFlowControlConditionsExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
                                     <Expander.Header>
                                         <Label Content="Flow Control Conditions" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <Frame x:Name="xFlowControlConditionsFrame" Margin="5,5,5,10" Content="Flow Control Conditions Frame" NavigationUIVisibility="Hidden"/>
+                                        <Frame x:Name="xFlowControlConditionsFrame" Margin="5,5,5,20" Content="Flow Control Conditions Frame" NavigationUIVisibility="Hidden"/>
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>
@@ -207,18 +209,18 @@
                                                     <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
                                                     <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
                                                 </StackPanel>
-                                                <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" />
+                                                <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" Margin="0,0,0,10" />
                                             </DockPanel>
                                         </StackPanel>
                                     </Expander.Content>
                                 </Expander>
 
-                                <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
+                                <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
                                     <Expander.Header>
                                         <Label Content="Execution Output Values" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,10" ShowTitle="Collapsed" />
+                                        <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>

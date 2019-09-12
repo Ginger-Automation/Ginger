@@ -146,14 +146,14 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
-
-            InitDetailsTabView();
         }
 
         private void InitDetailsTabView()
         {
-            xDescriptionTextBox.BindControl(mAction, Act.Fields.Description);
-            xRunDescritpionUC.Init(mContext, mAction, Act.Fields.RunDescription);
+            xDetailsTab.Tag = true;//marking that binding was done
+
+            xDescriptionTextBox.BindControl(mAction, nameof(Act.Description));
+            xRunDescritpionUC.Init(mContext, mAction, nameof(Act.RunDescription));
             xTagsViewer.Init(mAction.Tags);
 
             if (EditMode == General.eRIPageViewMode.Automation)
@@ -164,18 +164,19 @@ namespace Ginger.Actions
             {
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
-            }
-
-            xDetailsTab.Tag = true;//marking that binding was done
+            }            
         }
 
         private void InitOperationSettingsTabView()
         {
+            xOperationSettingsTab.Tag = true;//marking that bindings were done
+
             if (mAction.ObjectLocatorConfigsNeeded)
             {
-                xLocateByCombo.BindControl(mAction, Act.Fields.LocateBy, mAction.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList());
-                xLocateValueVE.BindControl(mContext, mAction, Act.Fields.LocateValue);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xLocateValueVE, TextBox.ToolTipProperty, mAction, Act.Fields.LocateValue);
+                List<eLocateBy> locatorsTypeList = mAction.AvailableLocateBy().Where(e => e != eLocateBy.POMElement).ToList();
+                xLocateByCombo.BindControl(mAction, nameof(Act.LocateBy), locatorsTypeList);
+                xLocateValueVE.BindControl(mContext, mAction, nameof(Act.LocateValue));
+                BindingHandler.ObjFieldBinding(xLocateValueVE, TextBox.ToolTipProperty, mAction, nameof(Act.LocateValue));
             }
             else
             {
@@ -185,28 +186,32 @@ namespace Ginger.Actions
             SwitchingInputValueBoxAndGrid(mAction);
             SetActInputValuesGrid();
                         
-            LoadActionInfoPage(mAction);
-
-            xOperationSettingsTab.Tag = true;//marking that bindings were done
+            LoadActionPrivateEditPage(mAction);            
         }
 
         private void InitFlowControlTabView()
         {
-            xWaitVeUC.BindControl(mContext, mAction, nameof(Act.WaitVE));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTimeoutTextBox, TextBox.TextProperty, mAction, Act.Fields.Timeout);
+            xFlowControlTab.Tag = true;//marking that bindings were done
 
+            //Wait/Timeout
+            xWaitVeUC.BindControl(mContext, mAction, nameof(Act.WaitVE));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTimeoutTextBox, TextBox.TextProperty, mAction, nameof(Act.Timeout));
+
+            //Retry
             if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 xRetryExpander.Visibility = Visibility.Collapsed;
             }
             else
             {
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.EnableRetryMechanism);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, Act.Fields.RetryMechanismInterval);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, Act.Fields.MaxNumberOfRetries);
+                BindingHandler.ObjFieldBinding(xEnableRetryMechanismCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableRetryMechanism));
+                BindingHandler.ObjFieldBinding(xRetryMechanismIntervalTextBox, TextBox.TextProperty, mAction, nameof(Act.RetryMechanismInterval));
+                BindingHandler.ObjFieldBinding(xRetryMechanismMaxRetriesTextBox, TextBox.TextProperty, mAction, nameof(Act.MaxNumberOfRetries));
+
+                SetRetryMechConfigsPnlView();
             }
 
-            //Load Flow Controls page
+            //Flow Controls Conditions
             if (EditMode == General.eRIPageViewMode.View)
             {
                 mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.View);
@@ -219,19 +224,24 @@ namespace Ginger.Actions
             {
                 mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity);
             }
-            xFlowControlConditionsFrame.SetContent(mAFCP);
-
-            xFlowControlTab.Tag = true;//marking that bindings were done
+            xFlowControlConditionsFrame.SetContent(mAFCP);     
+            
+            if(mAction.FlowControls.Count > 0)
+            {
+                xFlowControlConditionsExpander.IsExpanded = true;
+            }
         }
 
         private void InitOutputValuesTabView()
         {
+            xOutputValuesTab.Tag = true;//marking that bindings were done
+
             //Outputs to Data Source
             dsOutputParamMapType = xDataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, Act.Fields.ConfigOutputDS);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceName);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, Act.Fields.OutDataSourceTableName);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, Act.Fields.OutDSParamMapType);
+            BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
+            BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
+            BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
+            BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, nameof(Act.OutDSParamMapType));
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
             {
                 xDataSourceExpander.IsExpanded = true;
@@ -257,53 +267,58 @@ namespace Ginger.Actions
             {
                 mAction.AddNewReturnParams = true;
             }
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, Act.Fields.AddNewReturnParams);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, Act.Fields.SupportSimulation);
-            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter));
+
+            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize:14);
+            BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
+            BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
+            
             xOutputValuesGrid.AllowHorizentalScroll = true;
             SetActReturnValuesGrid();
 
-            xOutputValuesTab.Tag = true;//marking that bindings were done
+            if (mAction.ActReturnValues.Count > 0)
+            {
+                xOutputValuesExpander.IsExpanded = true;
+            }
         }
 
         private void InitScreenshotsTabView()
         {
+            xScreenShotTab.Tag = true;//marking that bindings were done
+
             if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
             {
                 xScreenShotTab.Visibility = Visibility.Collapsed;
             }
             else
             {
-                xWindowsToCaptureCombo.BindControl(mAction, Act.Fields.WindowsToCapture);
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.TakeScreenShot);
+                xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
+                BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
                 UpdateScreenShotPage();
-            }
-
-            xScreenShotTab.Tag = true;//marking that bindings were done
+            }            
         }
 
         private void InitExecutionDetailsTabView()
         {
-            xStatusConvertorCombo.BindControl(mAction, Act.Fields.StatusConverter);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, Act.Fields.FailIgnored);
+            xExecutionDetailsTab.Tag = true;//marking that bindings were done
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
+            xStatusConvertorCombo.BindControl(mAction, nameof(Act.StatusConverter));
+           BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.FailIgnored));
+
+            BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
             InitActionLog();
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, Act.Fields.Status, BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, Act.Fields.ElapsedSecs, BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionErrorDetailsText, TextBox.TextProperty, mAction, Act.Fields.Error, BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, Act.Fields.ExInfo, BindingMode.OneWay);
-
-            xExecutionDetailsTab.Tag = true;//marking that bindings were done
+            BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xExecutionErrorDetailsText, TextBox.TextProperty, mAction, nameof(Act.Error), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);            
         }
 
         private void InitHelpTabView()
         {
-            ActDescriptionPage desPage = new ActDescriptionPage(mAction);
-            xActionHelpDetailsFram.SetContent(desPage);
-
             xHelpTab.Tag = true;//marking that bindings were done
+
+            ActDescriptionPage desPage = new ActDescriptionPage(mAction);
+            xActionHelpDetailsFram.SetContent(desPage);            
         }
 
 
@@ -335,6 +350,10 @@ namespace Ginger.Actions
         {
             UpdateOutputValuesTabHeader();
             mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
+            if (mAction.ActReturnValues.Count > 0)
+            {
+                xOutputValuesExpander.IsExpanded = true;
+            }
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -400,7 +419,6 @@ namespace Ginger.Actions
                 }
                 else if (a.InputValues.Count == minimumInputValuesToHideGrid)
                 {
-
                     xInputValuesGrid.Visibility = Visibility.Collapsed;
                     xValueBoxPnl.Visibility = Visibility.Visible;
                     ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
@@ -630,7 +648,7 @@ namespace Ginger.Actions
             xInputValuesGrid.DataSourceList = mAction.InputValues;
         }
 
-        private void LoadActionInfoPage(Act a)
+        private void LoadActionPrivateEditPage(Act a)
         {
             //Each Action need to implement ActionEditPage which return the name of the page for edit
             //TODO: check all action are working and showing the correct Edit Page
@@ -1024,7 +1042,7 @@ namespace Ginger.Actions
 
         private void cboLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xLocateByCombo.SelectedItem.ToString() == "ByMulitpleProperties")
+            if (xLocateByCombo.SelectedItem != null && xLocateByCombo.SelectedItem.ToString() == "ByMulitpleProperties")
             {
                 sMultiLocatorVals = xLocateValueVE.ValueTextBox.Text;
                 xLocateValueVE.Background = System.Windows.Media.Brushes.LightGray;
@@ -1073,35 +1091,40 @@ namespace Ginger.Actions
 
         private void xActionTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xActionTabs.SelectedItem == xDetailsTab && (bool)xDetailsTab.Tag != true)
+            if (mAction == null)
+            {
+                return;
+            }
+
+            if (xActionTabs.SelectedItem == xDetailsTab && bool.Parse(xDetailsTab.Tag.ToString()) != true)
             {
                 InitDetailsTabView();                
             }
-            else if (xActionTabs.SelectedItem == xOperationSettingsTab && (bool)xOperationSettingsTab.Tag != true)
+            else if (xActionTabs.SelectedItem == xOperationSettingsTab && bool.Parse(xOperationSettingsTab.Tag.ToString()) != true)
             {
                 InitOperationSettingsTabView();                
             }
-            else if (xActionTabs.SelectedItem == xFlowControlTab && (bool)xFlowControlTab.Tag != true)
+            else if (xActionTabs.SelectedItem == xFlowControlTab && bool.Parse(xFlowControlTab.Tag.ToString()) != true)
             {
                 InitFlowControlTabView();
             }
-            else if (xActionTabs.SelectedItem == xOutputValuesTab && (bool)xOutputValuesTab.Tag != true)
+            else if (xActionTabs.SelectedItem == xOutputValuesTab && bool.Parse(xOutputValuesTab.Tag.ToString()) != true)
             {
                 InitOutputValuesTabView();
             }
             else if (xActionTabs.SelectedItem == xScreenShotTab)
             {
-                if ((bool)xScreenShotTab.Tag != true)
+                if (bool.Parse(xScreenShotTab.Tag.ToString()) != true)
                 {
                     InitScreenshotsTabView();
                 }
                 UpdateScreenShotPage();                
             }
-            else if (xActionTabs.SelectedItem == xExecutionDetailsTab && (bool)xExecutionDetailsTab.Tag != true)
+            else if (xActionTabs.SelectedItem == xExecutionDetailsTab && bool.Parse(xExecutionDetailsTab.Tag.ToString()) != true)
             {
                 InitExecutionDetailsTabView();
             }
-            else if (xActionTabs.SelectedItem == xHelpTab && (bool)xHelpTab.Tag != true)
+            else if (xActionTabs.SelectedItem == xHelpTab && bool.Parse(xHelpTab.Tag.ToString()) != true)
             {
                 InitHelpTabView();
             }
@@ -1711,6 +1734,22 @@ namespace Ginger.Actions
             xActionLogConfigFrame.NavigationService.RemoveBackEntry();
         }
 
+        private void XEnableRetryMechanismCheckBox_CheckChanged(object sender, RoutedEventArgs e)
+        {
+            SetRetryMechConfigsPnlView();
+        }
 
+        private void SetRetryMechConfigsPnlView()
+        {
+            if (xEnableRetryMechanismCheckBox.IsChecked == true)
+            {
+                xRetryMechConfigsPnl.Visibility = Visibility.Visible;
+                xRetryExpander.IsExpanded = true;
+            }
+            else
+            {
+                xRetryMechConfigsPnl.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

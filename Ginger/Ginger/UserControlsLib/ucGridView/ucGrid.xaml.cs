@@ -1734,6 +1734,7 @@ public void RemoveCustomView(string viewName)
             ShowUpDown = System.Windows.Visibility.Collapsed;
         }
 
+
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
         {
             Image image = new Image();
@@ -1741,11 +1742,11 @@ public void RemoveCustomView(string viewName)
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
-        public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, int imageSize = 16)
         {
             ImageMakerControl image = new ImageMakerControl();
-            image.Width = 16;
-            image.Height = 16;
+            image.Width = imageSize;
+            image.Height = imageSize;
             image.ImageType = imageType;
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
