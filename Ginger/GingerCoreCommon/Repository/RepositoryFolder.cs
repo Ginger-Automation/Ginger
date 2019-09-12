@@ -398,7 +398,7 @@ namespace Amdocs.Ginger.Repository
                     RepositoryFolder<T> sf = GetSubFolder(fn);
                     sf.DisplayName = e.Name;
                     sf.FolderRelativePath = ReplaceLastOccurrence(sf.FolderRelativePath, fn, e.Name);
-                    sf.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                    sf.RefreshFolderSourceControlStatus();
                     return;
                 }
 

@@ -786,11 +786,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async Task RefreshSourceControlStatus()
+        public void RefreshSourceControlStatus()
         {
             if (mSourceControlStatus != eImageType.Null)
             {
-                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath).ConfigureAwait(true);
+                mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
                 OnPropertyChanged(nameof(SourceControlStatus));
             }
         }

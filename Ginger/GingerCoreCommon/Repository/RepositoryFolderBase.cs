@@ -192,11 +192,11 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async Task RefreshFolderSourceControlStatus()
+        public void RefreshFolderSourceControlStatus()
         {
             if (mSourceControlStatus != eImageType.Null)
             {
-                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath).ConfigureAwait(true);
+                mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(FolderFullPath);
                 OnPropertyChanged(nameof(SourceControlStatus));
             }
         }

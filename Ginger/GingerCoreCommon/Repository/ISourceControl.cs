@@ -23,11 +23,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Common.Repository
-{
-
-    
+{    
     public interface ISourceControl
     {
-        Task<eImageType> GetFileStatusForRepositoryItemPath(string FullPath);
+        eImageType GetFileStatusForRepositoryItemPath(string FullPath);
     }
 }
