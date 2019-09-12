@@ -979,9 +979,9 @@ namespace Amdocs.Ginger.Repository
                             // Read the list from the xml
                             xmlReadListOfObjects(obj, xdr, lst);
                         }
-                        catch(Exception e)
+                        catch(Exception ex)
                         {
-
+                            Reporter.ToLog(eLogLevel.WARN, "Error in SetObjectListAttrs", ex);
                         }
                     }
                 }
