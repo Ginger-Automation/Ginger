@@ -398,6 +398,12 @@ namespace GingerCore.Actions
                 case eGenElementAction.RunJavaScript:
                 case eGenElementAction.AsyncSelectFromDropDownByIndex:
                 case eGenElementAction.SetAttributeUsingJs:
+                //Added for Java
+                case eGenElementAction.SelectFromDropDownByIndex:
+                case eGenElementAction.FireSpecialEvent:
+                case eGenElementAction.FireMouseEvent:
+                case eGenElementAction.ScrollDown:
+                case eGenElementAction.ScrollUp:
                     currentType =  typeof(ActUIElement);
                     break;
 

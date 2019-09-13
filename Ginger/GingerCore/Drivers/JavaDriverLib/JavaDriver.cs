@@ -2857,6 +2857,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                 actUIElement.ElementLocateValue = elementLocateValue;
             }
 
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, GetElementACtion(elementAction).ToString());
+
             if (actUIElement.ElementLocateBy.Equals(eLocateBy.ByName) || actUIElement.ElementLocateBy.Equals(eLocateBy.ByID))
             {
                 actUIElement.Description = string.Concat(elementAction, " ", elementLocateValue);
@@ -2866,7 +2868,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 actUIElement.Description = string.Concat(elementAction, " ", Type.ToUpper());
             }
 
-            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, GetElementACtion(elementAction).ToString());
+            
             actUIElement.Value = elementValue;
 
             actUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, elementValue);
@@ -2882,7 +2884,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch
             {
-                return ActUIElement.eElementAction.Wait;
+                return ActUIElement.eElementAction.Unknown;
             }
             
         }

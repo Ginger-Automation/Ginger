@@ -77,7 +77,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             if (elementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                return CreateWidgetUIElementList(elementInfo);
+                return GetWidgetUIElementList(elementInfo);
             }
 
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
@@ -148,7 +148,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             };
         }
 
-        private ObservableList<Act> CreateWidgetUIElementList(ElementInfo elementInfo)
+        private ObservableList<Act> GetWidgetUIElementList(ElementInfo elementInfo)
         {
             var widgetsActionList = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
 
