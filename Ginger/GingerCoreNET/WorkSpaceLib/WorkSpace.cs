@@ -146,7 +146,10 @@ namespace amdocs.ginger.GingerCoreNET
                 AppSolutionAutoSave.CleanAutoSaveFolders();
             }
 
-            WorkSpace.Instance.LocalGingerGrid.Stop();
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                WorkSpace.Instance.LocalGingerGrid.Stop();
+            }
             WorkSpace.Instance.Telemetry.SessionEnd();
             mWorkSpace = null;            
         }
