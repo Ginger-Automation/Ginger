@@ -93,6 +93,7 @@ namespace Amdocs.Ginger.GingerConsole
                 Console.WriteLine("Exception: " + ex.Message);
                 Thread.Sleep(3000);
             }
+            WorkSpace.Instance.Close();
         }
 
        

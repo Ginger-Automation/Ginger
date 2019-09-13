@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 if 
                     (mSessionFileName == null)
                 {
-                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
+                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss"));
                 }                
                 return mSessionFileName;
             }
@@ -205,7 +205,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             
             Task.Factory.StartNew(() => {
                 // TODO: add timeout to wait
-                while(!TelemetryRecords.IsCompleted) // Wait for all records to process
+                while(!TelemetryRecords.IsCompleted) // Wait for all pending records to process
                 {
                     Thread.Sleep(100);
                 }
@@ -274,7 +274,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         private async void Compress()
         {
             try
-            {
+            {                
                 string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss") + "_Data_zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
 
