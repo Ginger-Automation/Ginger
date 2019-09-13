@@ -11,7 +11,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string Solution { get; set; }
 
 
-        [Option('r', "runset", Default = "Default Run Set", Required = true, HelpText = "Set runset name")]
+        [Option('r', "runset", Required = true, HelpText = "Set runset name")]
         public string Runset { get; set; }
 
         [Option('e', "env", Required = false, Default = "Default", HelpText = "Set environment name")]
