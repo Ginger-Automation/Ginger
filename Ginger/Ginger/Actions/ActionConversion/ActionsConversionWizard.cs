@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
 {
-    public class ActionsConversionWizard : WizardBase
+    public class ActionsConversionWizard : WizardBase, IConversionProcess
     {
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
@@ -37,7 +37,6 @@ namespace Ginger.Actions.ActionConversion
 
         public bool NewActivityChecked { get; set; }
 
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         ActionConversionUtils mConversionUtils = new ActionConversionUtils();
 
         public enum eActionConversionType
@@ -49,6 +48,18 @@ namespace Ginger.Actions.ActionConversion
         public eActionConversionType ConversionType { get; set; }
                 
         public bool ConvertToPOMAction { get; set; }
+
+        ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
+        {
+            get
+            {
+                return mListOfBusinessFlow;
+            }
+            set {
+                mListOfBusinessFlow = value;
+            }
+        }
 
         ConversionStatusReportPage mReportPage = null;
 

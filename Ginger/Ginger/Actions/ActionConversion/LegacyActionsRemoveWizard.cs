@@ -27,12 +27,24 @@ using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
 {
-    public class LegacyActionsRemoveWizard : WizardBase
+    public class LegacyActionsRemoveWizard : WizardBase, IConversionProcess
     {
         public override string Title { get { return "Legacy Actions Removal Wizard"; } }
         public Context Context;
 
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
+        ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
+        {
+            get
+            {
+                return mListOfBusinessFlow;
+            }
+            set
+            {
+                mListOfBusinessFlow = value;
+            }
+        }
+
         ActionConversionUtils mConversionUtils = new ActionConversionUtils();
 
         public LegacyActionsRemoveWizard(Context context, ObservableList<BusinessFlow> businessFlows)
@@ -100,6 +112,40 @@ namespace Ginger.Actions.ActionConversion
         public override void Cancel()
         {
             base.Cancel();
+        }
+
+        public void StopConversion()
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stopping the conversion", ex);
+                Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+        }
+
+        public void ProcessConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow, bool v)
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying process conversion", ex);
+                Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
     }
 }

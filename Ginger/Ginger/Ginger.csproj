@@ -410,6 +410,7 @@
     <Compile Include="Actions\ActionConversion\ActionConverterPage.xaml.cs">
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionConversion\IConversionProcess.cs" />
     <Compile Include="Actions\ActionConversion\LegacyActionsRemoveWizard.cs" />
     <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
     <Compile Include="Actions\ActionConversion\ConversionStatusForgroundColorConverter.cs" />
