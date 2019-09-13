@@ -148,13 +148,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void ElementTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
+            if (!Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
             {
-                mElementActionsList = mPlatform.GetPlatformWidgetsUIActionsList(mAction.ElementType);
+                mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
             }
             else
             {
-                mElementActionsList = mPlatform.GetPlatformUIElementActionsList(mAction.ElementType);
+                mElementActionsList = mPlatform.GetPlatformWidgetsUIActionsList(mAction.ElementType);
             }
 
             ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
@@ -371,7 +371,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     elementList.Add(GetElementConfigControl("Event", Fields.ValueToSelect, eElementType.ComboBox, possibleValues));
 
                     //add checkbox
-                    elementList.Add(GetElementConfigControl("Mouse Event", Fields.IsMouseEvent, eElementType.CheckBox, new List<string> { "true" }));
+                    elementList.Add(GetElementConfigControl("Mouse Event", Fields.IsMouseEvent, eElementType.CheckBox, new List<string> { "false" }, MouseEventCheckBox_click));
                     break;
 
                 case eElementAction.SelectByIndex:
@@ -489,9 +489,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     dynamicPanel.Children.Add(elementLabel);
                     dynamicPanel.Children.Add(txtBox);
                 }
-
-                //Added for widgets if Element Action is TriggerJavaScriptEvent
-                else if (element.ControlType == eElementType.CheckBox &&  Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
+                else if (element.ControlType == eElementType.CheckBox)
                 {
                     CheckBox dyanamicCheckBox = new CheckBox();
                     dyanamicCheckBox.Content = element.Title;
@@ -500,8 +498,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     dyanamicCheckBox.IsChecked = false;
                     dyanamicCheckBox.Width = 100;
                     dyanamicCheckBox.Margin = new Thickness() { Left = 5};
-                    dyanamicCheckBox.Click += new RoutedEventHandler(dyanamicCheckBox_Checked);
 
+                    if (element.ElementEvent != null)
+                    {
+                        dyanamicCheckBox.Click += new RoutedEventHandler(element.ElementEvent);
+                    }
                     BindingHandler.ActInputValueBinding(dyanamicCheckBox, CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(element.BindedString, "false"));
                     dynamicPanel.Children.Add(dyanamicCheckBox);
                 }
@@ -510,7 +511,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             return dynamicPage;
         }
 
-        private void dyanamicCheckBox_Checked(object sender, EventArgs e)
+        private void MouseEventCheckBox_click(object sender, EventArgs e)
         {
             mAction.AddOrUpdateInputParamValue(Fields.ValueToSelect, "");
             GetDefaultPageContent();
@@ -552,14 +553,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
             };
         }
 
-        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue)
+        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent=null)
         {
             return new ElementConfigControl()
             {
                 Title = title,
                 BindedString = bindedString,
                 ControlType = elementType,
-                PossibleValues = possibleValue
+                PossibleValues = possibleValue,
+                ElementEvent = routedEvent
             };
         }
 
