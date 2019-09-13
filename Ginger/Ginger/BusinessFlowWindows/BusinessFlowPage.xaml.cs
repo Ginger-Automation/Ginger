@@ -79,7 +79,6 @@ namespace Ginger.BusinessFlowFolder
             TagsViewer.Init(mBusinessFlow.Tags);
 
             TrackBusinessFlowAutomationPrecentage();
-            mBusinessFlow.AttachActivitiesGroupsAndActivities();
 
             if (!showMiniView)
             {
