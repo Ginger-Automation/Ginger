@@ -201,8 +201,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             Add("dummy", new { a = 1}); // add another dummy to make sure session is written
 
-            TelemetryRecords.CompleteAdding();
-            
+            TelemetryRecords.CompleteAdding();            
             
             Task.Factory.StartNew(() => {
                 // TODO: add timeout to wait
@@ -216,7 +215,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 {
                     Thread.Sleep(100);
                 }
-            }).Wait(30000);  // Max 30 seconds to wait          
+            }).Wait(30000);  // Max 30 seconds to wait   
+
+            Thread.Sleep(500);
         }
 
 
@@ -276,6 +277,12 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {
                 string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss") + "_Data_zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
+
+                if (!Directory.Exists(zipFolder))
+                {
+                    Directory.CreateDirectory(zipFolder);
+                }
+
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
                 
                 ZipFile.CreateFromDirectory(TelemetryDataFolder, LocalZipfileName);                
