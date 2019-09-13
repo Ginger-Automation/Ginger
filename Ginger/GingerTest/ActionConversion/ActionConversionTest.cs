@@ -754,7 +754,7 @@ namespace GingerTest
 
             mBF.AddActivity(activity);
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -779,7 +779,7 @@ namespace GingerTest
 
             mBF.AddActivity(activity);
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -826,7 +826,7 @@ namespace GingerTest
             mBF.AddActivity(activity);
 
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -854,7 +854,7 @@ namespace GingerTest
             mBF.AddActivity(activity);
 
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -882,7 +882,7 @@ namespace GingerTest
             mBF.AddActivity(activity);
             
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -910,7 +910,7 @@ namespace GingerTest
             mBF.AddActivity(activity);
 
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -936,7 +936,7 @@ namespace GingerTest
         private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
         {
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
@@ -949,7 +949,7 @@ namespace GingerTest
         private void JavaGenericToBrowserActionConversionActAndAssert(ActGenElement genAction)
         {
             //Act
-            ExecuteActionConversion(false, true, string.Empty, false);
+            ExecuteActionConversion(false, true, string.Empty);
 
             //Assert
             Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).LocateBy.ToString(), genAction.LocateBy.ToString());
