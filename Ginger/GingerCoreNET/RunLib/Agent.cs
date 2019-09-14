@@ -95,16 +95,12 @@ namespace GingerCore
             //Web Service
             [Description("Web Services")]
             WebServices,
-            [Description("Windows (UIAutomation)")]
 
             //Windows
+            [Description("Windows (UIAutomation)")]           
             WindowsAutomation,
-            [Description("Windows (FlaUI)")]
-            FlaUIWindow,
-
-            //PowerBuilder
-            [Description("Power Builder (FlaUI)")]
-            FlaUIPB,
+           
+            //PowerBuilder          
             [Description("Power Builder")]
             PowerBuilder,
 
@@ -833,9 +829,7 @@ namespace GingerCore
                 case eDriverType.WebServices:
                     return ePlatformType.WebServices;
                 case eDriverType.WindowsAutomation:
-                    return ePlatformType.Windows;
-                case eDriverType.FlaUIWindow:
-                    return ePlatformType.Windows;
+                    return ePlatformType.Windows;             
                 case eDriverType.MobileAppiumAndroid:
                 case eDriverType.MobileAppiumIOS:
                 //Add Perfecto Mobile
@@ -848,8 +842,6 @@ namespace GingerCore
                 case eDriverType.MobileAppiumIOSBrowser:
                     return ePlatformType.Mobile;
                 case eDriverType.PowerBuilder:
-                    return ePlatformType.PowerBuilder;
-                case eDriverType.FlaUIPB:
                     return ePlatformType.PowerBuilder;
                 case eDriverType.JavaDriver:
                     return ePlatformType.Java;
@@ -896,13 +888,11 @@ namespace GingerCore
             }
             else if (platformType == ePlatformType.Windows.ToString())
             {
-                driverTypes.Add(Agent.eDriverType.WindowsAutomation);
-                driverTypes.Add(Agent.eDriverType.FlaUIWindow);
+                driverTypes.Add(Agent.eDriverType.WindowsAutomation);                
             }
             else if (platformType == ePlatformType.PowerBuilder.ToString())
             {
-                driverTypes.Add(Agent.eDriverType.PowerBuilder);
-                driverTypes.Add(Agent.eDriverType.FlaUIPB);
+                driverTypes.Add(Agent.eDriverType.PowerBuilder);                
             }
 
             else if (platformType == ePlatformType.Unix.ToString())

@@ -271,7 +271,7 @@
 
         <Border Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
-                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" Visibility="Collapsed" >
+                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1">
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="382"/>
@@ -299,11 +299,11 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0"  Visibility="Collapsed">
+                <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0">
                     <Frame x:Name="xBfVariablesTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
 
-                <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0"  Visibility="Collapsed">
+                <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0">
                     <Frame x:Name="xBfConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
             </TabControl>
