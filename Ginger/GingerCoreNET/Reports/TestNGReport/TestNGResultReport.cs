@@ -115,7 +115,6 @@ namespace Ginger.Reports
 
             if (BF.ActivitiesGroups.Count > 0)
             {
-                BF.AttachActivitiesGroupsAndActivities();
                 foreach (var item in BF.ActivitiesGroups)
                 {
                     if (item.ActivitiesIdentifiers.Count > 0)
