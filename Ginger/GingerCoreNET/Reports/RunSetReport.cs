@@ -263,24 +263,20 @@ namespace Ginger.Reports
                 return GingerReports.Count();
             }
         }
+
         [FieldParams]
         [FieldParamsNameCaption("RunSet Execution Pass Rate")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public double GingerRunnersPassRate
-        {
-            get
-            {
-                return (TotalGingerRunners != 0) ? TotalGingerRunnersPassed * 100 / TotalGingerRunners : 0;
-            }
-        }
+        public string GingerRunnersPassRate { get; set; }
+
         [FieldParams]
         [FieldParamsNameCaption("RunSet Execution Rate")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public double RunSetExecutionRate { get; set; }
+        public string RunSetExecutionRate { get; set; }
         public double GingerRunnersFailRate
         {
             get

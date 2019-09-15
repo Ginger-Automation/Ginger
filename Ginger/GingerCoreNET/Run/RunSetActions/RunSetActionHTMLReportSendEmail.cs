@@ -219,7 +219,13 @@ namespace Ginger.Run.RunSetActions
                     {
                         if (selectedHTMLReportTemplateID > -1)
                         {
-                            CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                            int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
+                            int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).Count();
+                            int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked).Count();
+                            ReportInfo offlineReportInfo = new ReportInfo(runSetFolder);
+                            ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
+                            ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
+                            CreateSummaryViewReportForEmailAction(offlineReportInfo);
                         }
                         else
                         {
@@ -249,6 +255,8 @@ namespace Ginger.Run.RunSetActions
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).StartTimeStamp = liteDbRunSet.StartTimeStamp;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).EndTimeStamp = liteDbRunSet.EndTimeStamp;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).Elapsed = liteDbRunSet.Elapsed;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = liteDbRunSet.ExecutionRate;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = liteDbRunSet.PassRate;
                         CreateSummaryViewReportForEmailAction(offlineReportInfo);
                         // TODO: check multi run on same machine/user
                     }
