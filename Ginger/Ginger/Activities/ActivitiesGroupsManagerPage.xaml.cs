@@ -52,9 +52,8 @@ namespace Ginger.Activities
 
             mBusinessFlow = businessFlow;
             mContext.BusinessFlow = mBusinessFlow;
-            mBusinessFlow.SaveBackup();            
-
-            mBusinessFlow.AttachActivitiesGroupsAndActivities();
+            mBusinessFlow.SaveBackup(); 
+           
             //mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.All);
 
             SetGridsView();
@@ -170,7 +169,6 @@ namespace Ginger.Activities
         private void UpdateActivitiesAfterGroupRemoved(object sender, RoutedEventArgs e)
         {
             //mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
-            mBusinessFlow.AttachActivitiesGroupsAndActivities();
         }
 
         private void AddActivityToGroup(object sender, RoutedEventArgs e)
@@ -189,7 +187,6 @@ namespace Ginger.Activities
         private void UpdateRemovedActivities(object sender, RoutedEventArgs e)
         {
             //mBusinessFlow.UpdateActivitiesGroupDetails(BusinessFlow.eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
-            mBusinessFlow.AttachActivitiesGroupsAndActivities();
             if ((ActivitiesGroup)grdGroups.Grid.SelectedItem != null)
                 ((ActivitiesGroup)grdGroups.Grid.SelectedItem).OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
         }
@@ -259,7 +256,6 @@ namespace Ginger.Activities
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
-                mBusinessFlow.AttachActivitiesGroupsAndActivities();
             }
         }
 

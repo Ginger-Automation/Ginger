@@ -51,24 +51,23 @@ namespace Ginger.SolutionWindows
 
             // meanwhile grid will do
             ObservableList<ApplicationPlatform> APs = new ObservableList<ApplicationPlatform>();
-            APs.Add(new ApplicationPlatform() { AppName = "CRM", Platform = ePlatformType.Java, Description = "Amdocs Client Relationship Manager" });
-            APs.Add(new ApplicationPlatform() { AppName = "CSM", Platform = ePlatformType.PowerBuilder, Description = "Amdocs CSM" });
+            
+            
             APs.Add(new ApplicationPlatform() { AppName = "MyWebApp", Platform = ePlatformType.Web, Description = "Web Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyNewWebApp", Platform = ePlatformType.Web, Description = "Web Application" });
+            APs.Add(new ApplicationPlatform() { AppName = "MyJavaApp", Platform = ePlatformType.Java, Description = "Java Application" });
             APs.Add(new ApplicationPlatform() { AppName = "MyWebServicesApp", Platform = ePlatformType.WebServices, Description = "WebServices Application" });
             APs.Add(new ApplicationPlatform() { AppName = "MyMobileApp", Platform = ePlatformType.Mobile, Description = "Mobile Application" });
             APs.Add(new ApplicationPlatform() { AppName = "Mediation", Platform = ePlatformType.Unix, Description = "Amdocs Mediation" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyDosApp", Platform = ePlatformType.DOS, Description = "DOS Application" });
-            APs.Add(new ApplicationPlatform() { AppName = "MyJavaApp", Platform = ePlatformType.Java, Description = "Java Application" });
+            APs.Add(new ApplicationPlatform() { AppName = "MyDosApp", Platform = ePlatformType.DOS, Description = "DOS Application" });          
             APs.Add(new ApplicationPlatform() { AppName = "MyMainFrameApp", Platform = ePlatformType.MainFrame, Description = "MainFrame Application" });
             APs.Add(new ApplicationPlatform() { AppName = "MyWindowsApp", Platform = ePlatformType.Windows, Description = "Windows Application" });
+            APs.Add(new ApplicationPlatform() { AppName = "MyPowerBuilderApp", Platform = ePlatformType.PowerBuilder, Description = "Power Builder Application" });
             SelectApplicationGrid.DataSourceList = APs;
             SelectApplicationGrid.RowDoubleClick += SelectApplicationGrid_RowDoubleClick;
         }
        
         private void SetAppsGridView()
-        {         
-            SelectApplicationGrid.SelectionMode = DataGridSelectionMode.Single;
+        {   
             SelectApplicationGrid.ShowDelete = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowClearAll = System.Windows.Visibility.Collapsed;
             SelectApplicationGrid.ShowAdd = System.Windows.Visibility.Collapsed;

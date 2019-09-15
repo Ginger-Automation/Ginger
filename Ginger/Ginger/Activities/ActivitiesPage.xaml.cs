@@ -181,8 +181,7 @@ namespace Ginger.BusinessFlowFolder
                 mBusinessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 mBusinessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
-                mBusinessFlow.AttachActivitiesGroupsAndActivities();
-                        
+                
             }
         }
         
