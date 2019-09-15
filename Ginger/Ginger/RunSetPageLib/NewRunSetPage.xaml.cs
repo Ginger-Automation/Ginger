@@ -510,11 +510,7 @@ namespace Ginger.Run
 
         private void BusinessFlows_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                ((BusinessFlow)e.NewItems[0]).AttachActivitiesGroupsAndActivities();
-            }
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 if (mCurrentSelectedRunner.BusinessflowRunnerItems.Count > 0)
                     mCurrentSelectedRunner.BusinessflowRunnerItems.RemoveAt(e.OldStartingIndex);
