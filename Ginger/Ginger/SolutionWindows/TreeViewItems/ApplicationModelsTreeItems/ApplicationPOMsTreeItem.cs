@@ -143,7 +143,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
-        {            
+        {
+            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
             WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder),1000,700, DoNotShowAsDialog:true);            
         }
     }
