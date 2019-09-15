@@ -280,13 +280,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public double RunSetExecutionRate
-        {
-            get
-            {
-                return 17;
-            }
-        }
+        public double RunSetExecutionRate { get; set; }
         public double GingerRunnersFailRate
         {
             get
