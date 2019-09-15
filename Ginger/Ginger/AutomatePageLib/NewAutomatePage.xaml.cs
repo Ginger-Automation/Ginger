@@ -452,8 +452,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         xBDDOperationsMenu.Visibility = Visibility.Visible;
                     }
-
-                    mBusinessFlow.AttachActivitiesGroupsAndActivities();
+                    
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
