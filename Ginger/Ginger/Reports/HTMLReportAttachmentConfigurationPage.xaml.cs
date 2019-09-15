@@ -105,11 +105,6 @@ namespace Ginger.Reports
                     Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                     return;
                 }
-                else if (!HasWritePermission(extraInformationCalculated))
-                {
-                    Reporter.ToUser(eUserMsgKey.UserHaveNoWritePermission);
-                    // return;
-                }
             }
 
             if (mEmailAttachment != null)
