@@ -40,6 +40,7 @@ namespace Ginger.Reports
             public static string ExecutionDuration = "ExecutionDuration";
             public static string RunSetExecutionStatus = "RunSetExecutionStatus";
             public static string GingerRunnersPassRate = "GingerRunnersPassRate";
+            public static string RunSetExecutionRate = "RunSetExecutionRate";
             public static string EnvironmentsDetails = "EnvironmentsDetails";
             public static string ExecutionStatisticsDetails = "ExecutionStatisticsDetails";
             public static string ExecutedBusinessFlowsDetails = "ExecutedBusinessFlowsDetails";
@@ -262,15 +263,30 @@ namespace Ginger.Reports
                 return GingerReports.Count();
             }
         }
-
+        [FieldParams]
+        [FieldParamsNameCaption("RunSet Execution Pass Rate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public double GingerRunnersPassRate
         {
             get
             {
-                return TotalGingerRunnersPassed * 100 / TotalGingerRunners;
+                return (TotalGingerRunners != 0) ? TotalGingerRunnersPassed * 100 / TotalGingerRunners : 0;
             }
         }
-
+        [FieldParams]
+        [FieldParamsNameCaption("RunSet Execution Rate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public double RunSetExecutionRate
+        {
+            get
+            {
+                return 17;
+            }
+        }
         public double GingerRunnersFailRate
         {
             get
