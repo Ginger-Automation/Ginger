@@ -92,7 +92,7 @@ namespace GingerCore.SourceControl
 
 
         // Get Source Control one file info
-        [MethodImpl(MethodImplOptions.Synchronized)]
+        // [MethodImpl(MethodImplOptions.Synchronized)] // Removed since causing long queue for big BF folders
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
             if (Path == null || Path.Length == 0) return SourceControlFileInfo.eRepositoryItemStatus.Unknown;
