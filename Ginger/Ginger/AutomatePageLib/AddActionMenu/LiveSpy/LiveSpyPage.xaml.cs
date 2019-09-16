@@ -302,7 +302,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
                     // if platform is web or
                     // platform is java and element info type is javaelementinfo 
-                    if (mPlatformType == ePlatformType.Web || (mPlatformType == ePlatformType.Java && (EI.GetType() == typeof(JavaElementInfo))))
+                    if (mPlatformType == ePlatformType.Web || mPlatformType == ePlatformType.Java)
                     {
                         list = xWindowSelectionUC.mPlatform.GetPlatformElementActions(EI);
                     }

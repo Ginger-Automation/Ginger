@@ -65,6 +65,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         public event SelectionTreeEventHandler SelectionDone;
         public event SelectionTreeEventHandler OnSelect;
 
+        bool mShowAlerts;
+
         protected virtual void OnSelectionDone(SelectionTreeEventArgs e)
         {
             if (SelectionDone != null)
@@ -85,7 +87,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             get { return xTreeView; }
         }
 
-        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, Tuple<string, string> propertyValueFilter = null, UCTreeView.eFilteroperationType filterType = UCTreeView.eFilteroperationType.Equals)
+        public SingleItemTreeViewSelectionPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, eItemSelectionType itemSelectionType = eItemSelectionType.Single, bool allowTreeTools = false, Tuple<string, string> propertyValueFilter = null, UCTreeView.eFilteroperationType filterType = UCTreeView.eFilteroperationType.Equals, bool showAlerts = true)
         {
             InitializeComponent();
 
@@ -113,7 +115,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (mItemSelectionType == eItemSelectionType.MultiStayOpenOnDoubleClick)
                 xTipLabel.Visibility = Visibility.Visible;
             else
-                xTipLabel.Visibility = Visibility.Collapsed;             
+                xTipLabel.Visibility = Visibility.Collapsed;
+
+            mShowAlerts = showAlerts;
         }        
 
         public List<object> ShowAsWindow(string windowTitle="", Window ownerWindow = null, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
@@ -160,7 +164,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 mSelectedItems = new List<object>();
                 if (itvItem.IsExpandable())
                 {
-                    if (mItemSelectionType == eItemSelectionType.Single)
+                    if (mShowAlerts && mItemSelectionType == eItemSelectionType.Single)
                     {                        
                         Reporter.ToUser(eUserMsgKey.ItemSelection, "Please select single node item (not a folder).");
                         return false;
@@ -178,7 +182,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
 
-            if (mSelectedItems == null || mSelectedItems.Count == 0)
+            if (mShowAlerts && (mSelectedItems == null || mSelectedItems.Count == 0))
             {                
                 Reporter.ToUser(eUserMsgKey.ItemSelection, "No item was selected.");
                 return false;
