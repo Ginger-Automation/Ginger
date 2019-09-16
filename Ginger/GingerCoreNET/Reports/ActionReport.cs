@@ -150,7 +150,7 @@ namespace Ginger.Reports
                 {
                     if (mAction.StatusConverter == eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                     {
-                        return eStatusConverterOptions.IgnoreFail.ToString();
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored.ToString();
                     }
                     else
                     {

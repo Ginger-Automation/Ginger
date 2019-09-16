@@ -37,7 +37,6 @@ namespace Ginger.Actions.ActionConversion
 
         public bool NewActivityChecked { get; set; }
 
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         ActionConversionUtils mConversionUtils = new ActionConversionUtils();
 
         public enum eActionConversionType
@@ -49,6 +48,18 @@ namespace Ginger.Actions.ActionConversion
         public eActionConversionType ConversionType { get; set; }
                 
         public bool ConvertToPOMAction { get; set; }
+
+        ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
+        {
+            get
+            {
+                return mListOfBusinessFlow;
+            }
+            set {
+                mListOfBusinessFlow = value;
+            }
+        }
 
         ConversionStatusReportPage mReportPage = null;
 
@@ -88,13 +99,24 @@ namespace Ginger.Actions.ActionConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert(ObservableList<BusinessFlow> businessFlows)
         {
             ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
-            foreach (BusinessFlow bf in businessFlows)
+            Parallel.ForEach(businessFlows, bf =>
             {
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
                 flowToConvert.BusinessFlow = bf;
+                flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
                 lst.Add(flowToConvert);
-            }
+            });
             return lst;
+        }
+
+        /// <summary>
+        /// This method is used to get the Convertible Actions Count From BusinessFlow
+        /// </summary>
+        /// <param name="bf"></param>
+        /// <returns></returns>
+        public int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf)
+        {
+            return mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
         }
 
         /// <summary>
@@ -197,7 +219,7 @@ namespace Ginger.Actions.ActionConversion
                 Reporter.HideStatusMessage();               
             }
         }
-
+        
         /// <summary>
         /// This method is used to cancle the wizard
         /// </summary>
