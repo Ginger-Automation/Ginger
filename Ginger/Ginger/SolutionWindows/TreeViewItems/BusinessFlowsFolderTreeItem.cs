@@ -143,7 +143,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Actions Conversion");
                 TreeViewUtils.AddSubMenuItem(actConversionMenu, "BusinessFlows Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Remove);
 
                 AddSourceControlOptions(mContextMenu, false, false);
 
@@ -182,26 +181,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700, true);
         }
-
-        private void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
-            if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
-            {
-                lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
-            }
-            else
-            {
-                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
-                foreach (var bf in items)
-                {
-                    lst.Add(bf);
-                }
-            }
-
-            WizardWindow.ShowWizard(new LegacyActionsRemoveWizard(new Context(), lst), 900, 700, true);
-        }
-
+                
         private void ImportSeleniumScript(object sender, System.Windows.RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();

@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
 {
-    public class ActionsConversionWizard : WizardBase, IConversionProcess
+    public class ActionsConversionWizard : WizardBase
     {
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
@@ -99,13 +99,13 @@ namespace Ginger.Actions.ActionConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert(ObservableList<BusinessFlow> businessFlows)
         {
             ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
-            foreach (BusinessFlow bf in businessFlows)
+            Parallel.ForEach(businessFlows, bf =>
             {
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
                 flowToConvert.BusinessFlow = bf;
                 flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
                 lst.Add(flowToConvert);
-            }
+            });
             return lst;
         }
 
