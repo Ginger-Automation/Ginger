@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
@@ -33,6 +34,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             InitializeComponent();            
 
             mAction = Action;
+
+            //if widgets then no need to show and bind WaitforIdle field
+            if (Convert.ToBoolean(mAction.GetInputParamValue(ActUIElement.Fields.IsWidgetsElement)))
+            {
+                lblWaitforIdleComboBox.Visibility = System.Windows.Visibility.Collapsed;
+                WaitforIdleComboBox.Visibility = System.Windows.Visibility.Collapsed;
+                return;
+            }
             if (mAction.ElementType.ToString() == eElementType.Table.ToString())
             {
                 if (mAction.GetInputParamValue(ActUIElement.Fields.ControlAction) == ActUIElement.eElementAction.Click.ToString())
