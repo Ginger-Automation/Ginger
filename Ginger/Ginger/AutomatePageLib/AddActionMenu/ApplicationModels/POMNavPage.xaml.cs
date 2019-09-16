@@ -20,8 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.BusinessFlowPages;
@@ -29,8 +27,6 @@ using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Platforms.PlatformsInfo;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -96,7 +92,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mItemTypeRootNode = mPOMsRoot;
             mPOMPage = new SingleItemTreeViewSelectionPage("Page Object Models", eImageType.ApplicationPOMModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
                                         new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication),
-                                            UCTreeView.eFilteroperationType.Equals);
+                                            UCTreeView.eFilteroperationType.Equals, showAlerts: false);
 
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
             mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
