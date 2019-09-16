@@ -601,16 +601,16 @@
       <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\ActionsFactory.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\ActionsLibrary\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\APINavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\ApplicationModels\APINavPage.xaml.cs">
       <DependentUpon>APINavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\LiveSpyPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyPage.xaml.cs">
       <DependentUpon>LiveSpyPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\LiveSpyNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyNavPage.xaml.cs">
       <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
@@ -618,17 +618,17 @@
     </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\AgentPageMappingHelper.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\INavPanelPage.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\POMNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\ApplicationModels\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\RecordNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\Recording\RecordNavPage.xaml.cs">
       <DependentUpon>RecordNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml.cs">
       <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorerCommon.cs" />
-    <Compile Include="AutomatePageLib\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowExplorerCommon.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\AddActivityWizard\AddActivityConfigsPage.xaml.cs">
@@ -702,7 +702,7 @@
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\RepositoryItemFactory.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemFactory.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>
@@ -1048,22 +1048,22 @@
     <Compile Include="RunSetPageLib\NewRunSetPage.xaml.cs">
       <DependentUpon>NewRunSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\ItemValidationBase.cs" />
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ItemValidationBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
       <DependentUpon>UploadItemsValidationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemToRepositoryWizard.cs" />
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemToRepositoryWizard.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
       <DependentUpon>UploadStatusPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\ActionValidation.cs" />
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\ActivityValidation.cs" />
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
-    <Compile Include="SharedRepositoryLib\AddItemToRepositoryWizard\VariableValidation.cs" />
-    <Compile Include="SharedRepositoryLib\SharedRepositoryOperations.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActionValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivityValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\VariableValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryOperations.cs" />
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>
@@ -1158,7 +1158,7 @@
     <Compile Include="UserControlsLib\TextEditor\Common\PlugInTextCompletionData.cs" />
     <Compile Include="UserControlsLib\TextEditor\Gherkin\GherkinTextCompletionData.cs" />
     <Compile Include="UserControlsLib\TextEditor\Common\PlugInTextEditorWrapper.cs" />
-    <Compile Include="SharedRepositoryLib\ucSharedRepoInstance.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ucSharedRepoInstance.xaml.cs">
       <DependentUpon>ucSharedRepoInstance.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinFeatureSummaryPage.xaml.cs">
@@ -1892,12 +1892,12 @@
     <Compile Include="Imports\UFT\UFTImportPage.xaml.cs">
       <DependentUpon>UFTImportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\ActivitiesGroupsRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesGroupsRepositoryPage.xaml.cs">
       <DependentUpon>ActivitiesGroupsRepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Imports\UFT\UFT_ExcelProcessing.cs" />
-    <Compile Include="SharedRepositoryLib\RepositoryItemUsage.cs" />
-    <Compile Include="SharedRepositoryLib\RepositoryItemUsagePage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsage.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsagePage.xaml.cs">
       <DependentUpon>RepositoryItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
@@ -1937,13 +1937,13 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\ActivitiesRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesRepositoryPage.xaml.cs">
       <DependentUpon>ActivitiesRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\RepositoryItemPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemPage.xaml.cs">
       <DependentUpon>RepositoryItemPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\SharedRepositorySummaryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositorySummaryPage.xaml.cs">
       <DependentUpon>SharedRepositorySummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\AutoRunWindow.xaml.cs">
@@ -1967,13 +1967,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SharedRepositoryLib\ActionsRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActionsRepositoryPage.xaml.cs">
       <DependentUpon>ActionsRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\VariableRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\VariableRepositoryPage.xaml.cs">
       <DependentUpon>VariableRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SharedRepositoryLib\RepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
@@ -3053,19 +3053,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\ActionsLibraryNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\ActionsLibrary\ActionsLibraryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\APINavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\ApplicationModels\APINavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\LiveSpyPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\LiveSpyNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3073,19 +3073,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\POMNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\ApplicationModels\POMNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\RecordNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\Recording\RecordNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AutomatePageLib\AddActionMenu\WindowsExplorerNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsExplorerNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3289,11 +3289,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3722,11 +3722,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\ucSharedRepoInstance.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ucSharedRepoInstance.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4434,11 +4434,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\ActivitiesGroupsRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesGroupsRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\RepositoryItemUsagePage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4482,15 +4482,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\ActivitiesRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\RepositoryItemPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\SharedRepositorySummaryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositorySummaryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4522,15 +4522,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\ActionsRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActionsRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SharedRepositoryLib\VariableRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\VariableRepositoryPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="SharedRepositoryLib\RepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
