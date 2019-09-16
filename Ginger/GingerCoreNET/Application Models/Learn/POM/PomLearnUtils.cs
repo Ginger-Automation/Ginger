@@ -150,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void LearnScreenShot()
         {
-            IWindowExplorerDriver.UnHighLightElements();
+            //IWindowExplorerDriver.UnHighLightElements();
             ScreenShot = ((IVisualTestingDriver)Agent.Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
         }
 

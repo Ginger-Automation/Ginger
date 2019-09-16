@@ -340,6 +340,27 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mJavaPlatformElementActionslist;
         }
 
+        public List<ElementTypeData> GetPlatformElementTypesData()
+        {
+            if (mPlatformElementTypeOperations == null)
+            {
+                mPlatformElementTypeOperations = new List<ElementTypeData>();
+                foreach(eElementType eElementType in GetPlatformUIElementsType())
+                {                   
+                    mPlatformElementTypeOperations.Add(new ElementTypeData()
+                    {
+                        ElementType = eElementType,
+                        IsCommonElementType = true,
+                        ActionType = typeof(ActUIElement),
+                        ElementOperationsList = GetPlatformUIElementActionsList(eElementType).ConvertAll(delegate (ActUIElement.eElementAction x) {
+                            return (Enum)Enum.Parse(typeof(Enum), x.ToString());
+                        }) 
+                    });
+                }
+            }
+            return mPlatformElementTypeOperations;
+        }
+
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
             List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
@@ -435,7 +456,18 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            return null;
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByContainerName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTitle, Help = "Recommended (sensitive to page design changes)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Recommended (sensitive to page design changes)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByText, Help = "Recommended (sensitive to page design changes)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Recommended (sensitive to page design changes)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Recommended (sensitive to page design changes)" });           
+
+            return learningLocatorsList;
         }
     }
 }

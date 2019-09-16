@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.Java;
@@ -71,7 +72,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         [UserConfiguredDescription("Implicit wait is to tell driver to sync for a certain amount of time when trying to find an element, if they are not immediately available")]
         public int ImplicitWait { get; set; }
 
-
+ 
         private IPEndPoint serverAddress;
         TcpClient clientSocket;
         private bool mConnected = false;
@@ -119,7 +120,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             GetContainerControls,
             GetComponentFromCursor,
             Echo,
-            GetProperties
+            GetProperties,
+            GetOptionalValuesList
         }
         public override void StartDriver()
         {
@@ -1758,6 +1760,9 @@ namespace GingerCore.Drivers.JavaDriverLib
                 foreach (PayLoad pl in ControlsPL)
                 {
                     JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+                    ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
+                    ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);                    
+                    ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
                     list.Add(ci);
                     if (ci.ElementType != null && ci.ElementType.Contains("com.amdocs.uif.widgets.browser") )
                     {
@@ -1782,6 +1787,10 @@ namespace GingerCore.Drivers.JavaDriverLib
                             list.AddRange(HTMLControlsPL);
                     }
                 }
+            }        
+            foreach(var item in list)
+            {
+                foundElementsList.Add(item);
             }
             return list;
         }
@@ -1898,6 +1907,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             JEI.Value = pl.GetValueString();
             JEI.Path = pl.GetValueString();
             JEI.XPath = pl.GetValueString();
+            JEI.ElementTypeEnum = GetHTMLElementType(JEI.ElementType);
+            JEI.IsAutoLearned = true;
             //If name if blank keep it blank. else creating issue for spy and highlight, as we try to search with below
             if (String.IsNullOrEmpty(JEI.ElementTitle))
             {
@@ -1938,7 +1949,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private static eElementType GetHTMLElementType(string elementTypeString)
         {
             elementTypeString = elementTypeString.ToUpper();
-
+      
             switch(elementTypeString)
             {
                 case "INPUT.TEXT":
@@ -1982,6 +1993,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     return eElementType.Label;
 
                 case "SELECT":
+                case "JAVAX.SWING.JCOMBOBOX":
                     return eElementType.ComboBox;
 
                 case "TABLE":
@@ -2099,8 +2111,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else
             {
-                PayLoad PLReq = new PayLoad("GetElementProperties");
-                PLReq.AddValue(ElementInfo.Path);
+                PayLoad PLReq = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
+                PLReq.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetProperties);
+                //PayLoad PLReq = new PayLoad("GetElementProperties");                
+                PLReq.AddValue("ByXPath");
                 PLReq.AddValue(ElementInfo.XPath);
                 PLReq.ClosePackage();
                 response = Send(PLReq);
@@ -2110,9 +2124,19 @@ namespace GingerCore.Drivers.JavaDriverLib
             foreach (PayLoad plp in PropertiesPLs)
             {
                 string PName = plp.GetValueString();
-                string PValue = plp.GetValueString();
+                string PValue = string.Empty;                
+                if (PName != "Value")
+                {
+                    PValue = plp.GetValueString();
+                }
+                else
+                {
+                    List<String> valueList = plp.GetListString();
+                    if (valueList.Count != 0)
+                        PValue = valueList.ElementAt(0);
+                }
                 list.Add(new ControlProperty() { Name = PName, Value = PValue });
-            }
+            }            
             //TODO:J.G: Fix it for JEDITOR Elements
 
             return list;
@@ -2921,6 +2945,28 @@ namespace GingerCore.Drivers.JavaDriverLib
         public void StartSpying()
         {
             throw new NotImplementedException();
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            ObservableList<OptionalValue> props = new ObservableList<OptionalValue>();
+            PayLoad PLListDetails = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
+            PLListDetails.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetOptionalValuesList);
+            PLListDetails.AddValue(elementLocateBy.ToString());
+            PLListDetails.AddValue(elementLocateValue.ToString());
+            PLListDetails.AddValue(eElementType.ComboBox.ToString());
+            PLListDetails.ClosePackage();
+            PayLoad RespListDetails = Send(PLListDetails);
+            if (RespListDetails.IsErrorPayLoad())
+            {
+                string ErrMSG = RespListDetails.GetValueString();
+                throw new Exception(ErrMSG);
+            }         
+            foreach (string res in RespListDetails.GetListString())
+            {
+                props.Add(new OptionalValue { Value = res, IsDefault = false });
+            }
+            return props;
         }
     }
 }

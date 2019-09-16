@@ -160,7 +160,8 @@ public class JavaDriver {
 		GetActiveWindow,
 		GetCurrentWindowVisibleControls,
 		GetContainerControls,
-		GetComponentFromCursor		
+		GetComponentFromCursor,
+		GetOptionalValuesList
 	}
 	
 		
@@ -853,6 +854,21 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		else if (WindowExplorerOperationType.GetComponentFromCursor.toString().equals(operationType))
 		{						
 			return GetComponentFromCursor();
+		}
+		else if(WindowExplorerOperationType.GetOptionalValuesList.toString().equals(operationType))
+		{
+			String LocateBy = PL.GetValueString();
+			String LocateValue = PL.GetValueString();					
+			Component c=null;					
+			c = mSwingHelper.FindElement(LocateBy, LocateValue);
+				
+			// Handle Text Field		
+			if (c!= null)
+			{										
+				GingerAgent.WriteLog("Inside Optional Values List");
+				return GetAllValues(c);				
+			}
+			return null;
 		}
 		else
 		{

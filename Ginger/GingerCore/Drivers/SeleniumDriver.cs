@@ -7526,5 +7526,10 @@ namespace GingerCore.Drivers
         {
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
         }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
