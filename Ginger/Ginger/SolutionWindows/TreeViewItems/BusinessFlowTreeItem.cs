@@ -106,7 +106,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
-                TreeViewUtils.AddMenuItem(mContextMenu, "Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);                
+                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
+
                 AddSourceControlOptions(mContextMenu);
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);
@@ -135,9 +137,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
             }
 
-            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700);
+            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700, true);
         }
-
+        
         private void VisualAutomate(object sender, RoutedEventArgs e)
         {
             VisualAutomatePage p = new VisualAutomatePage(mBusinessFlow);

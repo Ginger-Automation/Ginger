@@ -411,6 +411,7 @@
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionStatusForgroundColorConverter.cs" />
     <Compile Include="Actions\ActionConversion\ConversionStatusReportPage.xaml.cs">
       <DependentUpon>ConversionStatusReportPage.xaml</DependentUpon>
     </Compile>

@@ -1203,7 +1203,7 @@ namespace GingerWPF.BusinessFlowsLib
             if (CheckIfExecutionIsInProgress()) return;
 
             ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>() { mBusinessFlow };
-            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700);
+            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700, true);
         }
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)

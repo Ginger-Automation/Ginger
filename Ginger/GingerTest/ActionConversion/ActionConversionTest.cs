@@ -220,7 +220,8 @@ namespace GingerTest
             BusinessFlowToConvert statusLst = new BusinessFlowToConvert()
             {
                 ConversionStatus = eConversionStatus.Pending,
-                BusinessFlow = mBF
+                BusinessFlow = mBF,
+                TotalProcessingActionsCount = mBF.Activities[0].Acts.Count
             };
 
             utils.ConvertToActions(statusLst, addNewActivity, lst, convertableTargetApplications, convertToPOMAction, poms);
@@ -245,6 +246,7 @@ namespace GingerTest
                 BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                 flowConversion.BusinessFlow = bf;
                 flowConversion.ConversionStatus = eConversionStatus.Pending;
+                flowConversion.TotalProcessingActionsCount = lst.Count;
                 ListOfBusinessFlowToConvert.Add(flowConversion);
             }
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
