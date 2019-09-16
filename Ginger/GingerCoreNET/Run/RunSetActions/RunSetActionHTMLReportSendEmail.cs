@@ -249,6 +249,7 @@ namespace Ginger.Run.RunSetActions
                     try
                     {
                         WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+                        WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
                         GingerRunner gr = new GingerRunner();  // Why we create new GR here !!!!!!!!!!!!!!!
                         runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
                         ReportInfo offlineReportInfo = new ReportInfo(runSetFolder);

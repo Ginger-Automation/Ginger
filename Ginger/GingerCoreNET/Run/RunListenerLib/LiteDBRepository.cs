@@ -321,11 +321,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            string LogFolder = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, WorkSpace.Instance.RunsetExecutor.Runners[0].ExecutionLoggerManager.CurrentLoggerFolderName);
-            if (Directory.Exists(LogFolder))
+            if (Directory.Exists(ExecutionLoggerManager.RunSetReport.LogFolder))
             {
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder exist deleting folder: " + LogFolder);
-                Directory.Delete(LogFolder, true);
+                Directory.Delete(ExecutionLoggerManager.RunSetReport.LogFolder, true);
             }
             ClearSeq();
         }
@@ -363,7 +361,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
-            return;
+            if (!offline)
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder, executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss")));
+            else
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
         }
 
         internal override void StartRunSet()
