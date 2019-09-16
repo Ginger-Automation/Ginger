@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
-using Ginger.BusinessFlowFolder;
 using Ginger.BusinessFlowWindows;
 using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
