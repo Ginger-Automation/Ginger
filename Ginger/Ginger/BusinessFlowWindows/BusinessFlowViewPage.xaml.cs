@@ -85,8 +85,7 @@ namespace GingerWPF.BusinessFlowsLib
             mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
             UpdateDescription();
 
-            //Activities Tab Bindings      
-            mBusinessFlow.AttachActivitiesGroupsAndActivities();
+            //Activities Tab Bindings
             mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
             mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
             UpdateActivitiesTabHeader();
