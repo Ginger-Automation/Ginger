@@ -106,8 +106,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
-                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Actions Conversion");
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "BusinessFlows Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
+                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
 
                 AddSourceControlOptions(mContextMenu);
 

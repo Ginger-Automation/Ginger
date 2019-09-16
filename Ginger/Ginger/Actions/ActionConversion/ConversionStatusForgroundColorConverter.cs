@@ -16,25 +16,25 @@ namespace Ginger.Actions.ActionConversion
                 {
                     case Amdocs.Ginger.Common.Enums.eImageType.Passed:
                     case Amdocs.Ginger.Common.Enums.eImageType.Finish:
-                        return (SolidColorBrush)(new BrushConverter().ConvertFrom("#109717"));//green
+                        return App.Current.TryFindResource("$PassedStatusColor") as SolidColorBrush; //green
 
                     case Amdocs.Ginger.Common.Enums.eImageType.Running:
-                        return (SolidColorBrush)(new BrushConverter().ConvertFrom("#152B37"));//blue
+                        return App.Current.TryFindResource("$Color_DarkBlue") as SolidColorBrush;//blue
 
                     case Amdocs.Ginger.Common.Enums.eImageType.Pending:
-                        return (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC268"));//orange
+                        return App.Current.TryFindResource("$PendingStatusColor") as SolidColorBrush;//orange 
 
                     case Amdocs.Ginger.Common.Enums.eImageType.Stopped:
                     case Amdocs.Ginger.Common.Enums.eImageType.Failed:
-                        return (SolidColorBrush)(new BrushConverter().ConvertFrom("#DC3812"));//red
+                        return App.Current.TryFindResource("$HighlightColor_Red") as SolidColorBrush;//red
 
                     default:
-                        return (SolidColorBrush)(new BrushConverter().ConvertFrom("#D3D3D3"));//gray
+                        return App.Current.TryFindResource("$SkippedStatusColor") as SolidColorBrush;//gray
                 }
             }
             else
             {
-                return (SolidColorBrush)(new BrushConverter().ConvertFrom("#D3D3D3"));//gray
+                return App.Current.TryFindResource("$SkippedStatusColor") as SolidColorBrush;//gray
             }
         }
 
