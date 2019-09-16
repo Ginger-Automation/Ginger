@@ -92,7 +92,6 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            //defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 15, Header = "Folder" });
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, Header = "Name" });
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.Description), WidthWeight = 10, Header = "Description"  });
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount), WidthWeight = 10,

@@ -117,7 +117,7 @@ namespace GingerCore.Actions
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the operation to action while conversion", ex);
-                            throw (ex);
+                            throw;
                         }
                         break;
                 }
@@ -200,6 +200,7 @@ namespace GingerCore.Actions
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the operation to action while conversion", ex);
+                            throw;
                         }
                         break;
                 }
