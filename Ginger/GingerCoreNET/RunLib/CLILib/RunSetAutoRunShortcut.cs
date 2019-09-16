@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 string args = mAutoRunConfiguration.ConfigArgs;
                 if (ExecutorType == eExecutorType.GingerConsole)
                 {
-                    return "dotnet " + ExecuterFullPath + " " + args;                    
+                    return "dotnet \"" + ExecuterFullPath + "\" " + args;                    
                 }
                 else
                 {
