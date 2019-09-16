@@ -160,6 +160,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mElementsTypeList;
         }
 
+        public virtual List<eElementType> GetPlatformWidgetsUIElementsType()
+        {
+            return null;
+        }
+
+        public virtual List<ActUIElement.eElementAction> GetPlatformWidgetsUIActionsList(eElementType ElementType)
+        {
+            return null;
+        }
+
         public virtual ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
