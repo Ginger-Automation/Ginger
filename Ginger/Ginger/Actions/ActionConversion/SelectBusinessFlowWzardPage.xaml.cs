@@ -74,6 +74,7 @@ namespace Ginger.Actions.ActionConversion
         {
             foreach (var businessFlow in ListOfBusinessFlow)
             {
+                businessFlow.BusinessFlow.CreateBackup();
                 if (businessFlow.IsSelected)
                 {
                     foreach (var act in businessFlow.BusinessFlow.Activities)

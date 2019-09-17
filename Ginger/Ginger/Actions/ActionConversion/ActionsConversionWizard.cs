@@ -154,8 +154,8 @@ namespace Ginger.Actions.ActionConversion
                     foreach (var bf in lst)
                     {
                         if (bf.IsSelected)
-                        {
-                            bf.BusinessFlow.RestoreFromBackup(true);
+                        {                            
+                            bf.BusinessFlow.RestoreFromBackup(clearBackup: false);
                             bf.ConversionStatus = eConversionStatus.Pending;
                             bf.SaveStatus = eConversionSaveStatus.Pending;
                             selectedLst.Add(bf);
