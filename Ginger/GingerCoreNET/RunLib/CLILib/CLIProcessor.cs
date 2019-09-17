@@ -304,7 +304,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.Solution = runOptions.Solution;
             mCLIHelper.Runset = runOptions.Runset;
             mCLIHelper.Env = runOptions.Environment;
-            mCLIHelper.RunAnalyzer = runOptions.RunAnalyzer;
+            mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
 

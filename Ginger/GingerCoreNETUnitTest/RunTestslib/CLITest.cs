@@ -491,7 +491,7 @@ namespace WorkspaceHold
         public void NewCreateCLIArgs()
         {
             //Arrange
-            RunOptions options = new RunOptions() { Environment = "env1", RunAnalyzer = true, Runset = "rs1" };
+            RunOptions options = new RunOptions() { Environment = "env1", DoNotAnalyze = true, Runset = "rs1" };
 
 
             // Act            

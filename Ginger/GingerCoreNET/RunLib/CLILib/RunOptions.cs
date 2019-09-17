@@ -18,8 +18,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string Environment { get; set; }
         
 
-        [Option('a', "analyze", Required = false, HelpText = "runAnalyzer")]
-        public bool RunAnalyzer { get; set; }
+        [Option('d', "do-not-analyze", Required = false, HelpText = "runAnalyzer")]
+        public bool DoNotAnalyze { get; set; }
 
         [Option('u', "showui", Required = false, Default = false, HelpText = "Show Auto Run Window UI - Windows only")]
         public bool ShowUI { get; set; }

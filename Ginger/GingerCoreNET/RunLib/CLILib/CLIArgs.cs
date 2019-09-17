@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             options.Solution = solution.Folder;
             options.Runset = runsetExecutor.RunSetConfig.Name;
             options.Environment = runsetExecutor.RunsetExecutionEnvironment.Name;
-            options.RunAnalyzer = cliHelper.RunAnalyzer;
+            options.DoNotAnalyze = !cliHelper.RunAnalyzer;
             options.ShowUI = cliHelper.ShowAutoRunWindow;
             options.TestArtifactsPath = cliHelper.TestArtifactsFolder;
 
