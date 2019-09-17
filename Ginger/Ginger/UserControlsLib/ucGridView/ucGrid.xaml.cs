@@ -90,7 +90,7 @@ namespace Ginger
             }
         }
 
-        private bool ActiveStatus = false;
+        public bool ActiveStatus = false;
         private bool UsingDataTableAsSource = false;
 
         public ObservableList<Guid> Tags = null;
@@ -1891,6 +1891,7 @@ public void RemoveCustomView(string viewName)
 
             if (row != null)
             {
+                int selectedItemsCount = this.GetSelectedItems().Count;
                 //no drag if we are in the middle of Edit
                 if (row.IsEditing) return;
 
@@ -1901,10 +1902,23 @@ public void RemoveCustomView(string viewName)
                 }
 
                 Info.DragSource = this;
-                Info.Data = row.Item;
+                if (selectedItemsCount > 1)
+                {
+                    Info.Data = this.GetSelectedItems();
+                    int identityTextLength = row.Item.ToString().ToCharArray().Length;
+                    if(identityTextLength > 16)
+                    {
+                        identityTextLength = 16;
+                    }
+                    Info.Header = row.Item.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount-1);
+                }
+                else
+                {
+                    Info.Data = row.Item;
+                    Info.Header = row.Item.ToString();
+                }
                 //TODO: Do not use REpo since it will move to UserControls2
                 // Each object dragged should override ToString to return nice text for header                
-                Info.Header = row.Item.ToString(); 
             }
         }
 

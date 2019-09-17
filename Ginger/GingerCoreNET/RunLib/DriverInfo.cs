@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -81,13 +82,33 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             List<DriverInfo> PlatformServices = new List<DriverInfo>();
 
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
+            string PlatformInterface = string.Empty;
+            ePlatformType mplatformType=ePlatformType.NA;
 
-            if (platformType == ePlatformType.Web.ToString())
+            Enum.TryParse(platformType, true, out mplatformType);
+
+          
+   
+            switch(mplatformType)
+            {
+                case ePlatformType.Web:
+                    PlatformInterface = "IWebPlatform";
+
+                    break;
+                case ePlatformType.WebServices:
+                    PlatformInterface = "IWebServicePlatform";
+
+                    break;
+
+            }
+
+
+            if(!string.IsNullOrEmpty(PlatformInterface))
             {
                 foreach (PluginPackage plugin in Plugins) //.Where(x => x.Services!=null && x.Services.Any(a=>a.Interfaces.Contains("IWebPlatform"))))
                 {
                     DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
-                    foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains("IWebPlatform")))
+                    foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains(PlatformInterface)))
                     {
 
                         DI.services.Add(PI.ServiceId);
@@ -98,9 +119,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         PlatformServices.Add(DI);
                     }
                 }
-
             }
-
             return PlatformServices;
         }
 
@@ -140,13 +159,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else if (platformType == ePlatformType.Windows.ToString())
             {
-                DI.services.Add(Agent.eDriverType.WindowsAutomation);
-                DI.services.Add(Agent.eDriverType.FlaUIWindow);
+                DI.services.Add(Agent.eDriverType.WindowsAutomation);                
             }
             else if (platformType == ePlatformType.PowerBuilder.ToString())
             {
                 DI.services.Add(Agent.eDriverType.PowerBuilder);
-                DI.services.Add(Agent.eDriverType.FlaUIPB);
             }
 
             else if (platformType == ePlatformType.Unix.ToString())

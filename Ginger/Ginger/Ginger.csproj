@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\build\Microsoft.CodeAnalysis.Analyzers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -115,14 +115,6 @@
     </Reference>
     <Reference Include="EPPlus, Version=4.5.3.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.5.3.1\lib\net40\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\FlaUI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.UIA3, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\FlaUI.UIA3.dll</HintPath>
     </Reference>
     <Reference Include="FontAwesome.WPF">
       <HintPath>..\packages\FontAwesome.WPF.4.7.0.9\lib\net40\FontAwesome.WPF.dll</HintPath>
@@ -400,25 +392,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Actions\ActAgentManipulationEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActAgentManipulationEditPage.xaml.cs">
       <DependentUpon>ActAgentManipulationEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActASCFControlEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActASCFControlEditPage.xaml.cs">
       <DependentUpon>ActASCFControlEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActCheckboxEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActCheckboxEditPage.xaml.cs">
       <DependentUpon>ActCheckboxEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActClearAllVariablesEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActClearAllVariablesEditPage.xaml.cs">
       <DependentUpon>ActClearAllVariablesEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActGoToURLEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActGoToURLEditPage.xaml.cs">
       <DependentUpon>ActGoToURLEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\ActionConverterPage.xaml.cs">
       <DependentUpon>ActionConverterPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\ActionsConversionWizard.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionStatusForgroundColorConverter.cs" />
+    <Compile Include="Actions\ActionConversion\ConversionStatusReportPage.xaml.cs">
+      <DependentUpon>ConversionStatusReportPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
@@ -426,88 +422,95 @@
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml.cs">
+      <DependentUpon>SelectBusinessFlowWzardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActLinkEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActLinkEditPage.xaml.cs">
       <DependentUpon>ActLinkEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActLowLevelClicksEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActLowLevelClicksEditPage.xaml.cs">
       <DependentUpon>ActLowLevelClicksEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActCreatePDFChartEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActCreatePDFChartEditPage.xaml.cs">
       <DependentUpon>ActCreatePDFChartEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActCompareImgsEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActCompareImgsEditPage.xaml.cs">
       <DependentUpon>ActCompareImgsEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActHandleBrowserAlert.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActHandleBrowserAlert.xaml.cs">
       <DependentUpon>ActHandleBrowserAlert.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActMenuItemEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActMenuItemEditPage.xaml.cs">
       <DependentUpon>ActMenuItemEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActPBControlEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActPBControlEditPage.xaml.cs">
       <DependentUpon>ActPBControlEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActFileOperationEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActFileOperationEditPage.xaml.cs">
       <DependentUpon>ActFileOperationEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActReadTextFileEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActReadTextFileEditPage.xaml.cs">
       <DependentUpon>ActReadTextFileEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActSendKeysEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActSendKeysEditPage.xaml.cs">
       <DependentUpon>ActSendKeysEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActDemoPageEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActDemoPageEditPage.xaml.cs">
       <DependentUpon>ActDemoPageEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\RobotFramework\ActRobotEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\RobotFramework\ActRobotEditPage.xaml.cs">
       <DependentUpon>ActRobotEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\WebServices\ActWebAPIModelEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\WebServices\ActWebAPIModelEditPage.xaml.cs">
       <DependentUpon>ActWebAPIModelEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\JSON\ActJSONValidateTagsEditPage .xaml.cs">
+    <Compile Include="Actions\ActionEditPages\JSON\ActJSONValidateTagsEditPage .xaml.cs">
       <DependentUpon>ActJSONValidateTagsEditPage .xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\PlugIns\ActPlugInEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\UCInputValuesGrid.xaml.cs">
+    <Compile Include="Actions\UserControls\UCInputValuesGrid.xaml.cs">
       <DependentUpon>UCInputValuesGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActDataSourcePage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\POMModels\POMBindingObjectHelper.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml.cs">
+      <DependentUpon>POMsSelectionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByPOMElementPage.xaml.cs">
       <DependentUpon>LocateByPOMElementPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementSelectAndValidate.xaml.cs">
       <DependentUpon>UIElementSelectAndValidate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementSendKeysAndValidate.xaml.cs">
       <DependentUpon>UIElementSendKeysAndValidate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementJavaPlatformPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementJavaPlatformPage.xaml.cs">
       <DependentUpon>UIElementJavaPlatformPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementClickAndValidate.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementClickAndValidate.xaml.cs">
       <DependentUpon>UIElementClickAndValidate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementDragAndDropEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementDragAndDropEditPage.xaml.cs">
       <DependentUpon>UIElementDragAndDropEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementTableConfigPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementTableConfigPage.xaml.cs">
       <DependentUpon>UIElementTableConfigPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByModelEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByModelEditPage.xaml.cs">
       <DependentUpon>LocateByModelEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\UIElementXYCoordinatePage.xaml.cs">
       <DependentUpon>UIElementXYCoordinatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\ErrorHandlerMappingPage.xaml.cs">
@@ -519,16 +522,16 @@
     <Compile Include="AdornerLib\HighlightAdornerControl.xaml.cs">
       <DependentUpon>HighlightAdornerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AgentsNew\NewAgentEditPage.xaml.cs">
+    <Compile Include="Agents\AgentsNew\NewAgentEditPage.xaml.cs">
       <DependentUpon>NewAgentEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AgentsNew\MapApplicationAgentPage.xaml.cs">
+    <Compile Include="Agents\AgentsNew\MapApplicationAgentPage.xaml.cs">
       <DependentUpon>MapApplicationAgentPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AgentsNew\NewAgentPage.xaml.cs">
+    <Compile Include="Agents\AgentsNew\NewAgentPage.xaml.cs">
       <DependentUpon>NewAgentPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AgentsNew\SolutionAgentsPage.xaml.cs">
+    <Compile Include="Agents\AgentsNew\SolutionAgentsPage.xaml.cs">
       <DependentUpon>SolutionAgentsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\AddAgentWizardLib\AddAgentDetailsPage.xaml.cs">
@@ -582,7 +585,7 @@
     <Compile Include="ApplicationModelsLib\POMModels\ButtonToDisableConverter.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMTAValidationRule.cs" />
-    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\Unused\AddEditPOMWizardLib\UnmappedElementsPage.xaml.cs">
       <DependentUpon>UnmappedElementsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\PomAllElementsPage.xaml.cs">
@@ -594,61 +597,62 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMModelsPage.xaml.cs">
       <DependentUpon>POMModelsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml.cs">
+    <Compile Include="Activities\ActivitiesGroupSelectionPage.xaml.cs">
       <DependentUpon>ActivitiesGroupSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml.cs">
+    <Compile Include="Activities\ActivityConfigurationsPage.xaml.cs">
       <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsFactory.cs" />
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\ActionsFactory.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\ActionsLibrary\ActionsLibraryNavPage.xaml.cs">
       <DependentUpon>ActionsLibraryNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\APINavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\ApplicationModels\APINavPage.xaml.cs">
       <DependentUpon>APINavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyPage.xaml.cs">
       <DependentUpon>LiveSpyPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyNavPage.xaml.cs">
       <DependentUpon>LiveSpyNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\MainAddActionsNavigationPage.xaml.cs">
       <DependentUpon>MainAddActionsNavigationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\AgentPageMappingHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\AgentPageMappingHelper.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\INavPanelPage.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\ApplicationModels\POMNavPage.xaml.cs">
       <DependentUpon>POMNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\RecordNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\Recording\RecordNavPage.xaml.cs">
       <DependentUpon>RecordNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\SharedRepositoryNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml.cs">
       <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowExplorerCommon.cs" />
-    <Compile Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowExplorerCommon.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml.cs">
+    <Compile Include="Activities\AddActivityWizard\AddActivityConfigsPage.xaml.cs">
       <DependentUpon>AddActivityConfigsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml.cs">
+    <Compile Include="Activities\AddActivityWizard\AddActivityDetailsPage.xaml.cs">
       <DependentUpon>AddActivityDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\AddActivityWizard\AddActivityWizard.cs" />
-    <Compile Include="BusinessFlowPages_New\ListHelpers\ActionsListViewHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesGroupsListViewHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\ListHelpers\ActivitiesListViewHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml.cs">
+    <Compile Include="Activities\AddActivityWizard\AddActivityWizard.cs" />
+    <Compile Include="Actions\ActionsListViewHelper.cs" />
+    <Compile Include="Activities\ActivitiesGroupsListViewHelper.cs" />
+    <Compile Include="Activities\ActivitiesListViewHelper.cs" />
+    <Compile Include="Activities\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ListHelpers\VariablesListViewHelper.cs" />
-    <Compile Include="BusinessFlowPages_New\VariabelsListViewPage.xaml.cs">
+    <Compile Include="Variables\VariablesListViewHelper.cs" />
+    <Compile Include="Variables\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowWindows\AutomateEventArgs.cs" />
-    <Compile Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml.cs">
+    <Compile Include="AutomatePageLib\AutomateEventArgs.cs" />
+    <Compile Include="AutomatePageLib\BusinessFlowsAutomatePage.xaml.cs">
       <DependentUpon>BusinessFlowsAutomatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\ucBusinessFlowMap.xaml.cs">
@@ -682,17 +686,17 @@
     <Compile Include="GeneralValidationRules\MinLegthValidationRule.cs" />
     <Compile Include="GeneralValidationRules\MinValueValidationRule.cs" />
     <Compile Include="GeneralValidationRules\ValidValueValidationRule.cs" />
-    <Compile Include="GeneralWindows\Run Set Pages\RunnerPageEventArgs.cs" />
+    <Compile Include="RunSetPageLib\RunnerPageEventArgs.cs" />
     <Compile Include="GeneralWindows\VersionAndNewsPage.xaml.cs">
       <DependentUpon>VersionAndNewsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\LocalPluginsPage.xaml.cs">
+    <Compile Include="PluginsLib\LocalPluginsPage.xaml.cs">
       <DependentUpon>LocalPluginsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\PluginsIndexPage.xaml.cs">
+    <Compile Include="PluginsLib\PluginsIndexPage.xaml.cs">
       <DependentUpon>PluginsIndexPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlugInsWindows\PluginTextEditorHelper.cs" />
+    <Compile Include="PluginsLib\PluginTextEditorHelper.cs" />
     <Compile Include="ReporterLib\GingerWorkSpaceReporter.cs" />
     <Compile Include="ReporterLib\UserMessageBox.xaml.cs">
       <DependentUpon>UserMessageBox.xaml</DependentUpon>
@@ -701,7 +705,7 @@
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\RepositoryItemFactory.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemFactory.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>
@@ -718,6 +722,7 @@
     <Compile Include="Run\RunSetActions\RunSetActionSummaryJSONPage.xaml.cs">
       <DependentUpon>RunSetActionSummaryJSONPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SourceControl\SourceControlUI.cs" />
     <Compile Include="TimeLineLib\TimeLinePage.xaml.cs">
       <DependentUpon>TimeLinePage.xaml</DependentUpon>
     </Compile>
@@ -771,11 +776,11 @@
     <Compile Include="ALM\RQM\RQMPlansExplorerPage.xaml.cs">
       <DependentUpon>RQMPlansExplorerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApiModelsFolder\AddApiModelActionWizardPage.cs" />
-    <Compile Include="ApiModelsFolder\APIModelParamsWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelActionsWizard\AddApiModelActionWizardPage.cs" />
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelActionsWizard\APIModelParamsWizardPage.xaml.cs">
       <DependentUpon>APIModelParamsWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApiModelsFolder\APIModelSelectionWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelActionsWizard\APIModelSelectionWizardPage.xaml.cs">
       <DependentUpon>APIModelSelectionWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\APIModelPage.xaml.cs">
@@ -802,9 +807,6 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\OutputTemplatePage.xaml.cs">
       <DependentUpon>OutputTemplatePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationModelsLib\ApplicationsPage.xaml.cs">
-      <DependentUpon>ApplicationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\DBModels\DBModelWizard\AddDBModelIntroWizardPage.xaml.cs">
       <DependentUpon>AddDBModelIntroWizardPage.xaml</DependentUpon>
@@ -847,33 +849,26 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMObjectsMappingWizardPage.xaml.cs">
       <DependentUpon>POMObjectsMappingWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\Unused\AddEditPOMWizardLib\ScanPageWizardPage.xaml.cs">
       <DependentUpon>ScanPageWizardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMGeneralDetailsWizardPage.xaml.cs">
       <DependentUpon>POMGeneralDetailsWizardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\NavigationsPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\Unused\AddEditPOMWizardLib\NavigationsPage.xaml.cs">
       <DependentUpon>NavigationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMEditPage.xaml.cs">
       <DependentUpon>POMEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\OldPOMsLib\POMSimulatorPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\Unused\POMSimulatorPage.xaml.cs">
       <DependentUpon>POMSimulatorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\OldPOMsLib\POMsManagerPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\Unused\POMsManagerPage.xaml.cs">
       <DependentUpon>POMsManagerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationPlatformsLib\AddApplicationPage.xaml.cs">
-      <DependentUpon>AddApplicationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationPlatformsLib\ApplicationEditPage.xaml.cs">
-      <DependentUpon>ApplicationEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ApplicationsModels\ApplicationModelsHandler.cs" />
-    <Compile Include="ApplicationsModels\ModelsUsages\ModelItemUsage.cs" />
-    <Compile Include="ApplicationsModels\ModelsUsages\ModelItemUsagePage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\ModelsUsages\ModelItemUsage.cs" />
+    <Compile Include="ApplicationModelsLib\ModelsUsages\ModelItemUsagePage.xaml.cs">
       <DependentUpon>ModelItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MenusLib\ResourcesMenu.cs" />
@@ -905,31 +900,31 @@
     <Compile Include="BetaFeaturesLib\BetaFeaturesPage.xaml.cs">
       <DependentUpon>BetaFeaturesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActionsListViewPage.xaml.cs">
+    <Compile Include="Actions\ActionsListViewPage.xaml.cs">
       <DependentUpon>ActionsListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActivityPage.xaml.cs">
+    <Compile Include="Activities\ActivityPage.xaml.cs">
       <DependentUpon>ActivityPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\ActivityVariablesPage.xaml.cs">
+    <Compile Include="Activities\ActivityVariablesPage.xaml.cs">
       <DependentUpon>ActivityVariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\NewAutomatePage.xaml.cs">
+    <Compile Include="AutomatePageLib\NewAutomatePage.xaml.cs">
       <DependentUpon>NewAutomatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\BusinessFlowDiagramPage.xaml.cs">
+    <Compile Include="BusinessFlowWindows\BusinessFlowDiagramPage.xaml.cs">
       <DependentUpon>BusinessFlowDiagramPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\BusinessFlowConfigurationsPage.xaml.cs">
+    <Compile Include="BusinessFlowWindows\BusinessFlowConfigurationsPage.xaml.cs">
       <DependentUpon>BusinessFlowConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml.cs">
+    <Compile Include="BusinessFlowWindows\BusinessFlowViewPage.xaml.cs">
       <DependentUpon>BusinessFlowViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowWindows\UCValueExpression.xaml.cs">
+    <Compile Include="ValueExpression\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChartItems.cs" />
+    <Compile Include="GeneralLib\ChartItems.cs" />
     <Compile Include="DataSource\DataSourceExportToExcelPage.xaml.cs">
       <DependentUpon>DataSourceExportToExcelPage.xaml</DependentUpon>
     </Compile>
@@ -948,20 +943,20 @@
     <Compile Include="DataSource\DataSourcePage.xaml.cs">
       <DependentUpon>DataSourcePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\UserControls\ScreenShotViewPage.xaml.cs">
+    <Compile Include="Actions\ScreenShotViewPage.xaml.cs">
       <DependentUpon>ScreenShotViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\VisualTesting\ApplitoolsComparePage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\VisualTesting\ApplitoolsComparePage.xaml.cs">
       <DependentUpon>ApplitoolsComparePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\VisualTesting\BitmapPixelsComaprePage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\VisualTesting\BitmapPixelsComaprePage.xaml.cs">
       <DependentUpon>BitmapPixelsComaprePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\ALMIntegration.cs" />
     <Compile Include="ALM\Repository\ALMRepository.cs" />
     <Compile Include="ALM\Repository\QCRepository.cs" />
     <Compile Include="ALM\Repository\RQMRepository.cs" />
-    <Compile Include="Actions\VisualTesting\UIElementsComparisonPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\VisualTesting\UIElementsComparisonPage.xaml.cs">
       <DependentUpon>UIElementsComparisonPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DragDropLib\DragDrop2.cs" />
@@ -982,10 +977,6 @@
     </Compile>
     <Compile Include="Environments\AddEnvironmentWizardLib\AddNewEnvironmentSavePage.xaml.cs">
       <DependentUpon>AddNewEnvironmentSavePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GeneralLib\ActionSelectorItem.cs" />
-    <Compile Include="GeneralLib\ActionSelectorWindow.xaml.cs">
-      <DependentUpon>ActionSelectorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Functionalities\FindAndReplacePage.xaml.cs">
       <DependentUpon>FindAndReplacePage.xaml</DependentUpon>
@@ -1011,7 +1002,7 @@
     <Compile Include="GingerGridLib\GingerGridPage.xaml.cs">
       <DependentUpon>GingerGridPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GingerHelperWindow.xaml.cs">
+    <Compile Include="ReporterLib\GingerHelperWindow.xaml.cs">
       <DependentUpon>GingerHelperWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Imports\CDL\ImportCDL.cs" />
@@ -1022,27 +1013,27 @@
     <Compile Include="Imports\CDL\ImportCDLWizardProcessPage.xaml.cs">
       <DependentUpon>ImportCDLWizardProcessPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MemoryChart.xaml.cs">
+    <Compile Include="GeneralWindows\MemoryChart.xaml.cs">
       <DependentUpon>MemoryChart.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\Run Set Pages\HighlightBorder.xaml.cs">
+    <Compile Include="RunSetPageLib\HighlightBorder.xaml.cs">
       <DependentUpon>HighlightBorder.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\Run Set Pages\RunnerItemPage.xaml.cs">
+    <Compile Include="RunSetPageLib\RunnerItemPage.xaml.cs">
       <DependentUpon>RunnerItemPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\Run Set Pages\IconConverter.cs" />
-    <Compile Include="GeneralWindows\Run Set Pages\StatusItem.xaml.cs">
+    <Compile Include="RunSetPageLib\IconConverter.cs" />
+    <Compile Include="RunSetPageLib\StatusItem.xaml.cs">
       <DependentUpon>StatusItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\AddPluginPackageWizard.cs" />
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\PluginPackageInfoPage.xaml.cs">
+    <Compile Include="PluginsLib\AddPluginWizardLib\AddPluginPackageWizard.cs" />
+    <Compile Include="PluginsLib\AddPluginWizardLib\PluginPackageInfoPage.xaml.cs">
       <DependentUpon>PluginPackageInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\SelectPluginPackageFolderPage.xaml.cs">
+    <Compile Include="PluginsLib\AddPluginWizardLib\SelectPluginPackageFolderPage.xaml.cs">
       <DependentUpon>SelectPluginPackageFolderPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PluginsLibNew\AddPluginWizardLib\SelectPluginPackageTypePage.xaml.cs">
+    <Compile Include="PluginsLib\AddPluginWizardLib\SelectPluginPackageTypePage.xaml.cs">
       <DependentUpon>SelectPluginPackageTypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="RunLibNew\GingerRunnerControlsMiniWindow.xaml.cs">
@@ -1054,28 +1045,28 @@
     <Compile Include="RunLibNew\GingerSocketMonitorWindow.xaml.cs">
       <DependentUpon>GingerSocketMonitorWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\Run Set Pages\RunnerPage.xaml.cs">
+    <Compile Include="RunSetPageLib\RunnerPage.xaml.cs">
       <DependentUpon>RunnerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\Run Set Pages\NewRunSetPage.xaml.cs">
+    <Compile Include="RunSetPageLib\NewRunSetPage.xaml.cs">
       <DependentUpon>NewRunSetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml.cs">
       <DependentUpon>UploadItemsSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\AddItemToRepositoryWizard\ItemValidationBase.cs" />
-    <Compile Include="Repository\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ItemValidationBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml.cs">
       <DependentUpon>UploadItemsValidationPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\AddItemToRepositoryWizard\UploadItemToRepositoryWizard.cs" />
-    <Compile Include="Repository\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemToRepositoryWizard.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml.cs">
       <DependentUpon>UploadStatusPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\AddItemToRepositoryWizard\ActionValidation.cs" />
-    <Compile Include="Repository\AddItemToRepositoryWizard\ActivityValidation.cs" />
-    <Compile Include="Repository\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
-    <Compile Include="Repository\AddItemToRepositoryWizard\VariableValidation.cs" />
-    <Compile Include="Repository\SharedRepositoryOperations.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActionValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivityValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\ActivitiesGroupValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\VariableValidation.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryOperations.cs" />
     <Compile Include="Run\FailedActionsScreenshotsPage.xaml.cs">
       <DependentUpon>FailedActionsScreenshotsPage.xaml</DependentUpon>
     </Compile>
@@ -1089,7 +1080,7 @@
     <Compile Include="Run\RunSetActions\RunSetActionSendFreeEmailEditPage.xaml.cs">
       <DependentUpon>RunSetActionSendFreeEmailEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\Run Set Pages\RunsetOperationsPage.xaml.cs">
+    <Compile Include="RunSetPageLib\RunsetOperationsPage.xaml.cs">
       <DependentUpon>RunsetOperationsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\RunSetsALMDefectsOpeningPage.xaml.cs">
@@ -1132,7 +1123,7 @@
     <Compile Include="SolutionWindows\TreeViewItems\NewTreeViewItemBase.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\PlugInsFolderTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\PluginPackageTreeItem.cs" />
-    <Compile Include="PlugInsWindows\PluginPackagePage.xaml.cs">
+    <Compile Include="PluginsLib\PluginPackagePage.xaml.cs">
       <DependentUpon>PluginPackagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TestLib\ListsPage.xaml.cs">
@@ -1170,7 +1161,7 @@
     <Compile Include="UserControlsLib\TextEditor\Common\PlugInTextCompletionData.cs" />
     <Compile Include="UserControlsLib\TextEditor\Gherkin\GherkinTextCompletionData.cs" />
     <Compile Include="UserControlsLib\TextEditor\Common\PlugInTextEditorWrapper.cs" />
-    <Compile Include="Repository\ucSharedRepoInstance.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ucSharedRepoInstance.xaml.cs">
       <DependentUpon>ucSharedRepoInstance.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\ImportGherkinWizard\ImportGherkinFeatureSummaryPage.xaml.cs">
@@ -1223,24 +1214,24 @@
     <Compile Include="UserControlsLib\VisualFlow\ZoomPanel.xaml.cs">
       <DependentUpon>ZoomPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User\UserProfilePage.xaml.cs">
+    <Compile Include="UserConfigLib\UserProfilePage.xaml.cs">
       <DependentUpon>UserProfilePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="User\UserSettingsPage.xaml.cs">
+    <Compile Include="UserConfigLib\UserSettingsPage.xaml.cs">
       <DependentUpon>UserSettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariablePasswordStringPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariablePasswordStringPage.xaml.cs">
       <DependentUpon>VariablePasswordStringPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableTimerPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableTimerPage.xaml.cs">
       <DependentUpon>VariableTimerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Common\WindowExplorerPOMPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\WindowExplorerPOMPage.xaml.cs">
       <DependentUpon>WindowExplorerPOMPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\HTMLCommon\JEditorHTMLTableTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaInternalFrameTitleTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsBrowserTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\JEditorHTMLTableTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaInternalFrameTitleTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsBrowserTreeItem.cs" />
     <Compile Include="WizardLib\BoolToVisibilityConverter.cs" />
     <Compile Include="WizardLib\WizardIntroPage.xaml.cs">
       <DependentUpon>WizardIntroPage.xaml</DependentUpon>
@@ -1249,12 +1240,12 @@
       <DependentUpon>WizardWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="WorkSpaceLib\WorkSpaceEventHandler.cs" />
-    <Content Include="Actions\RobotFramework\Robot\GingerUtils.py">
+    <Content Include="Actions\ActionEditPages\RobotFramework\Robot\GingerUtils.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="CI\updateGingerAgentVersion.vbs" />
     <Content Include="Exports\ExportToJava\BusinessFlowJavaTemplate.java" />
-    <Compile Include="PlugInsWindows\PlugInsPage.xaml.cs">
+    <Compile Include="PluginsLib\PlugInsPage.xaml.cs">
       <DependentUpon>PlugInsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -1262,7 +1253,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SourceControl\SourceControlIntegration.cs" />
     <Compile Include="SourceControl\SourceControlItemInfoPage.xaml.cs">
       <DependentUpon>SourceControlItemInfoPage.xaml</DependentUpon>
     </Compile>
@@ -1314,13 +1304,13 @@
     <Compile Include="SolutionWindows\TreeViewItems\DataSourceTableTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportsTreeItem.cs" />
     <Compile Include="SolutionWindows\TreeViewItems\HTMLGingerReportTreeItem.cs" />
-    <Compile Include="Actions\_Common\ActMediaEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActMediaEditPage.xaml.cs">
       <DependentUpon>ActMediaEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActBatteryEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mobile\ActBatteryEditPage.xaml.cs">
       <DependentUpon>ActBatteryEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActPhoneEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mobile\ActPhoneEditPage.xaml.cs">
       <DependentUpon>ActPhoneEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\Gherkin\GherkinGeneral.cs" />
@@ -1389,179 +1379,170 @@
     <Compile Include="UserControlsLib\UCRadioButtons.xaml.cs">
       <DependentUpon>UCRadioButtons.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\WebServices\ActSoapUIEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\WebServices\ActSoapUIEditPage.xaml.cs">
       <DependentUpon>ActSoapUIEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActSwitchWindowEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActSwitchWindowEditPage.xaml.cs">
       <DependentUpon>ActSwitchWindowEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\VisualTesting\ActVisualTestingEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\VisualTesting\ActVisualTestingEditPage.xaml.cs">
       <DependentUpon>ActVisualTestingEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActWebSitePerformanceTimingPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActWebSitePerformanceTimingPage.xaml.cs">
       <DependentUpon>ActWebSitePerformanceTimingPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActDescriptionPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActDescriptionPage.xaml.cs">
       <DependentUpon>ActDescriptionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActLaunchJavaWSApplicationEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActLaunchJavaWSApplicationEditPage.xaml.cs">
       <DependentUpon>ActLaunchJavaWSApplicationEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActPWLEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActPWLEditPage.xaml.cs">
       <DependentUpon>ActPWLEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActFileTransferEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActFileTransferEditPage.xaml.cs">
       <DependentUpon>ActFileTransferEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActGenerateFileFromTemplateEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActGenerateFileFromTemplateEditPage.xaml.cs">
       <DependentUpon>ActGenerateFileFromTemplateEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionFlowControlPage.xaml.cs">
       <DependentUpon>ActionFlowControlPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActMobileDeviceEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActMobileDeviceEditPage.xaml.cs">
       <DependentUpon>ActMobileDeviceEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActScreenShotEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActScreenShotEditPage.xaml.cs">
       <DependentUpon>ActScreenShotEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActSetVariableValuePage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActSetVariableValuePage.xaml.cs">
       <DependentUpon>ActSetVariableValuePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActSmartSyncEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActSmartSyncEditPage.xaml.cs">
       <DependentUpon>ActSmartSyncEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActDropdownListEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActDropdownListEditPage.xaml.cs">
       <DependentUpon>ActDropdownListEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionEditPage.xaml.cs">
       <DependentUpon>ActionEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActScriptEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActScriptEditPage.xaml.cs">
       <DependentUpon>ActScriptEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionsPage.xaml.cs">
-      <DependentUpon>ActionsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Actions\ActUIASwitchWindowEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIASwitchWindowEditPage.xaml.cs">
       <DependentUpon>ActUIASwitchWindowEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActUIAButtonEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIAButtonEditPage.xaml.cs">
       <DependentUpon>ActUIAButtonEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActUIATextBoxEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIATextBoxEditPage.xaml.cs">
       <DependentUpon>ActUIATextBoxEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActTextSpeechEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActTextSpeechEditPage.xaml.cs">
       <DependentUpon>ActTextSpeechEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Java\ActJavaElementEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Java\ActJavaElementEditPage.xaml.cs">
       <DependentUpon>ActJavaElementEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Java\ActJavaEXEEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Java\ActJavaEXEEditPage.xaml.cs">
       <DependentUpon>ActJavaEXEEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Mainframe\ActMainFrameGetDetailsEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mainframe\ActMainFrameGetDetailsEditPage.xaml.cs">
       <DependentUpon>ActMainFrameGetDetailsEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Mainframe\ActMainFrameSetTextEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mainframe\ActMainFrameSetTextEditPage.xaml.cs">
       <DependentUpon>ActMainFrameSetTextEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Mainframe\ActMainFrameSendKey.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mainframe\ActMainFrameSendKey.xaml.cs">
       <DependentUpon>ActMainFrameSendKey.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\WebServices\ActWebAPIEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\WebServices\ActWebAPIEditPage.xaml.cs">
       <DependentUpon>ActWebAPIEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\WebServices\ActWebServiceEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\WebServices\ActWebServiceEditPage.xaml.cs">
       <DependentUpon>ActWebServiceEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActWindowEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActWindowEditPage.xaml.cs">
       <DependentUpon>ActWindowEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\AddActionPage.xaml.cs">
-      <DependentUpon>AddActionPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Actions\ASCF\ActASCFBrowserControlEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ASCF\ActASCFBrowserControlEditPage.xaml.cs">
       <DependentUpon>ActASCFBrowserControlEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Communication\ActeMailEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Communication\ActeMailEditPage.xaml.cs">
       <DependentUpon>ActeMailEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActUIAGridEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIAGridEditPage.xaml.cs">
       <DependentUpon>ActUIAGridEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActUIALabelEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIALabelEditPage.xaml.cs">
       <DependentUpon>ActUIALabelEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActUIAClickOnPointEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIAClickOnPointEditPage.xaml.cs">
       <DependentUpon>ActUIAClickOnPointEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActUIAImageEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIAImageEditPage.xaml.cs">
       <DependentUpon>ActUIAImageEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\EditLocatorsWindow.xaml.cs">
       <DependentUpon>EditLocatorsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActBrowserElementEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActBrowserElementEditPage.xaml.cs">
       <DependentUpon>ActBrowserElementEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActTableEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActTableEditPage.xaml.cs">
       <DependentUpon>ActTableEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Tuxedo\ActTuxedoEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Tuxedo\ActTuxedoEditPage.xaml.cs">
       <DependentUpon>ActTuxedoEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\WebServices\ActRESTEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\WebServices\ActRESTEditPage.xaml.cs">
       <DependentUpon>ActRESTEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\Windows\ActWindowsControlEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Windows\ActWindowsControlEditPage.xaml.cs">
       <DependentUpon>ActWindowsControlEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\XML\ActXMLValidateTagsEditPage .xaml.cs">
+    <Compile Include="Actions\ActionEditPages\XML\ActXMLValidateTagsEditPage .xaml.cs">
       <DependentUpon>ActXMLValidateTagsEditPage .xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\XML\ActXMLProcessingEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\XML\ActXMLProcessingEditPage.xaml.cs">
       <DependentUpon>ActXMLProcessingEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActDeviceButtonEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mobile\ActDeviceButtonEditPage.xaml.cs">
       <DependentUpon>ActDeviceButtonEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActDeviceEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\Mobile\ActDeviceEditPage.xaml.cs">
       <DependentUpon>ActDeviceEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\ActUIElementEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\ActUIElementEditPage.xaml.cs">
       <DependentUpon>ActUIElementEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\CheckBoxEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\CheckBoxEditPage.xaml.cs">
       <DependentUpon>CheckBoxEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\ComboBoxEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\ComboBoxEditPage.xaml.cs">
       <DependentUpon>ComboBoxEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByElementRepositoryPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByElementRepositoryPage.xaml.cs">
       <DependentUpon>LocateByElementRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByMultiplePropertiesEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByMultiplePropertiesEditPage.xaml.cs">
       <DependentUpon>LocateByMultiplePropertiesEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByXPathEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByXPathEditPage.xaml.cs">
       <DependentUpon>LocateByXPathEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateByXYEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByXYEditPage.xaml.cs">
       <DependentUpon>LocateByXYEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\Locators\LocateValueEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateValueEditPage.xaml.cs">
       <DependentUpon>LocateValueEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\ActUIElementLib\ActValueEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActUIElementLib\ActValueEditPage.xaml.cs">
       <DependentUpon>ActValueEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\_Common\UCActionDetails.xaml.cs">
+    <Compile Include="Actions\UserControls\UCActionDetails.xaml.cs">
       <DependentUpon>UCActionDetails.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Activities\ActivitiesGroupsPage.xaml.cs">
-      <DependentUpon>ActivitiesGroupsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Agents\ApplicationAgentsMapPage.xaml.cs">
       <DependentUpon>ApplicationAgentsMapPage.xaml</DependentUpon>
@@ -1676,172 +1657,172 @@
     <Compile Include="UserControlsLib\PieChart\PiePiece.cs" />
     <Compile Include="UserControlsLib\PieChart\FormattingConverter.cs" />
     <Compile Include="UserControlsLib\PieChart\Utils.cs" />
-    <Compile Include="Variables\VariableDynamicPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableDynamicPage.xaml.cs">
       <DependentUpon>VariableDynamicPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisualAutomate\VisualAutomatePage.xaml.cs">
+    <Compile Include="AutomatePageLib\VisualAutomate\VisualAutomatePage.xaml.cs">
       <DependentUpon>VisualAutomatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Android\AndroidElementInfoConverter.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidWindowTreeItem.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidElementTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidWidgetButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidWidgetCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidWidgetEditTextTreeItem.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidWidgetImageTreeItem.cs" />
-    <Compile Include="WindowExplorer\Android\AndroidWidgetTextViewTreeItem.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumAndroidWidgetEditTextTreeItem.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumAndroidWidgetImageTreeItem.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumAndroidWidgetButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumAndroidWidgetCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumAndroidWidgetTextViewTreeItem.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumElementInfoConverter.cs" />
-    <Compile Include="WindowExplorer\Appium\AppiumElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidElementInfoConverter.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidWindowTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidWidgetButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidWidgetCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidWidgetEditTextTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidWidgetImageTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Android\AndroidWidgetTextViewTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumAndroidWidgetEditTextTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumAndroidWidgetImageTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumAndroidWidgetButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumAndroidWidgetCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumAndroidWidgetTextViewTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumElementInfoConverter.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumElementTreeItemBase.cs" />
     <!--<Compile Include="WindowExplorer\Appium\AppiumScreenShotPage.xaml.cs">
       <DependentUpon>AppiumScreenShotPage.xaml</DependentUpon>
     </Compile>-->
-    <Compile Include="WindowExplorer\Appium\AppiumWindowPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumWindowPage.xaml.cs">
       <DependentUpon>AppiumWindowPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Appium\AppiumWindowTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserDropDownTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserInfoPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumWindowTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserDropDownTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserInfoPage.xaml.cs">
       <DependentUpon>ASCFBrowserInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserElementTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserLabelTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserLinkTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserElementInfoPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserElementTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserLabelTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserLinkTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserElementInfoPage.xaml.cs">
       <DependentUpon>ASCFBrowserElementInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\ASCF\ASCFControlInfoPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFControlInfoPage.xaml.cs">
       <DependentUpon>ASCFControlInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\UIFControls\ASCFLabelTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\UIFControls\ASCFTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\UIFControls\ASCFControlTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\UIFControls\ASCFFormTreeItem.cs" />
-    <Compile Include="WindowExplorer\ASCF\UIFControls\ASCFGridTreeItem.cs" />
-    <Compile Include="WindowExplorer\Common\FilterElementsPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\UIFControls\ASCFLabelTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\UIFControls\ASCFTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\UIFControls\ASCFControlTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\UIFControls\ASCFFormTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\UIFControls\ASCFGridTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\FilterElementsPage.xaml.cs">
       <DependentUpon>FilterElementsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\UCFileBrowser.xaml.cs">
+    <Compile Include="Actions\UserControls\UCFileBrowser.xaml.cs">
       <DependentUpon>UCFileBrowser.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\UCValueExpression.xaml.cs">
+    <Compile Include="Actions\UserControls\UCValueExpression.xaml.cs">
       <DependentUpon>UCValueExpression.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UIAutomation.cs" />
     <Compile Include="Actions\UserControls\UCFlowControlAction.xaml.cs">
       <DependentUpon>UCFlowControlAction.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ValidationDBPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ValidationDBPage.xaml.cs">
       <DependentUpon>ValidationDBPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ValueExpression\ValueExpressionEditorPage.xaml.cs">
       <DependentUpon>ValueExpressionEditorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActButtonEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActButtonEditPage.xaml.cs">
       <DependentUpon>ActButtonEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActGenElementEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActGenElementEditPage.xaml.cs">
       <DependentUpon>ActGenElementEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActConsoleCommandEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActConsoleCommandEditPage.xaml.cs">
       <DependentUpon>ActConsoleCommandEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActTextBoxEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActTextBoxEditPage.xaml.cs">
       <DependentUpon>ActTextBoxEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActExcelEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\ActExcelEditPage.xaml.cs">
       <DependentUpon>ActExcelEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Common\MenuControlActionsPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\MenuControlActionsPage.xaml.cs">
       <DependentUpon>MenuControlActionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Common\TableActionsPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\TableActionsPage.xaml.cs">
       <DependentUpon>TableActionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Common\ElementInfoPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ElementInfoPage.xaml.cs">
       <DependentUpon>ElementInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLCanvasElementPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLCanvasElementPage.xaml.cs">
       <DependentUpon>HTMLCanvasElementPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLTDTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLFrameTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLImgTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLSpanTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLLinkTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLRadioButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLComboBoxPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLTDTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLFrameTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLImgTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLSpanTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLLinkTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLRadioButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLComboBoxPage.xaml.cs">
       <DependentUpon>HTMLComboBoxPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLComboBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLDivTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLTableTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLCanvasTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLComboBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLDivTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLTableTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLCanvasTreeItem.cs" />
     <!--<Compile Include="WindowExplorer\Java\JavaTextAreaTreeItem.cs" />-->
-    <Compile Include="WindowExplorer\Java\JavaButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaDatePickerTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaElementInfoConverter.cs" />
-    <Compile Include="WindowExplorer\Java\JavaTreeTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaScrollTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaComboBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaElementTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaElementTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\Java\JavaLabelTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaBrowserTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaMenuTreeItem.cs" />
-    <Compile Include="WindowExplorer\Mainframe\MainframeControlTreeItem.cs" />
-    <Compile Include="WindowExplorer\Mainframe\MainframeTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBBrowserTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBGridTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaListTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaRadioButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaTabTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaTableTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Java\JavaWindowTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBTableTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLElementPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaDatePickerTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaElementInfoConverter.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaTreeTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaScrollTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaComboBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaElementTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaLabelTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaBrowserTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaMenuTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Mainframe\MainframeControlTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Mainframe\MainframeTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBBrowserTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBGridTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaListTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaRadioButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaTabTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaTableTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Java\JavaWindowTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBTableTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLElementPage.xaml.cs">
       <DependentUpon>HTMLElementPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLElementTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLLabelTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLPageTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\HTMLCommon\HTMLElementInfoConverter.cs" />
-    <Compile Include="WindowExplorer\Common\ScreenShotPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLLabelTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLPageTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLElementInfoConverter.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ScreenShotPage.xaml.cs">
       <DependentUpon>ScreenShotPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\WindowsAutomation\AutomationElementTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBTabTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBComboBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\DataGridInfoPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsAutomation\AutomationElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBTabTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBComboBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\DataGridInfoPage.xaml.cs">
       <DependentUpon>DataGridInfoPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\PowerBuilder\PBDataGridTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBDatePickerTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBDialogBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBListBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBListItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBMenuBarTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBMenuItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBRadioButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBScrollBarTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBDocumentTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\WindowsAutomation\ControlAutomationPatterm.cs" />
-    <Compile Include="WindowExplorer\UIA\UIAElementPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBDataGridTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBDatePickerTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBDialogBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBListBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBListItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBMenuBarTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBMenuItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBRadioButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBScrollBarTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBDocumentTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsAutomation\ControlAutomationPatterm.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\UIA\UIAElementPage.xaml.cs">
       <DependentUpon>UIAElementPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Activities\ActivitiesGroupPage.xaml.cs">
@@ -1853,30 +1834,24 @@
     <Compile Include="Imports\QTP\QTPImportPage.xaml.cs">
       <DependentUpon>QTPImportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RingBuffer.cs" />
+    <Compile Include="GeneralWindows\RingBuffer.cs" />
     <Compile Include="Run\ApplicationAgentSelectionPage.xaml.cs">
       <DependentUpon>ApplicationAgentSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Common\ControlActionsPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ControlActionsPage.xaml.cs">
       <DependentUpon>ControlActionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Common\IWindowExplorerTreeItem.cs" />
-    <Compile Include="WindowExplorer\Common\WindowExplorerPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\IWindowExplorerTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\WindowExplorerPage.xaml.cs">
       <DependentUpon>WindowExplorerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\PowerBuilder\PBButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBControlTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBTextTreeItem.cs" />
-    <Compile Include="WindowExplorer\PowerBuilder\PBTitleBarTreeItem.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBControlTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBTextTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBTitleBarTreeItem.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WindowExplorer\PowerBuilder\PBWindowTreeItem.cs" />
-    <Compile Include="Activities\ActivitiesGroupsManagerPage.xaml.cs">
-      <DependentUpon>ActivitiesGroupsManagerPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Activities\ActivitiesGroupsActivitiesSelectionPage.xaml.cs">
-      <DependentUpon>ActivitiesGroupsActivitiesSelectionPage.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\PBWindowTreeItem.cs" />
     <Compile Include="Activities\BusinessFlowActivityUsage.cs" />
     <Compile Include="AnalyzerLib\AnalyzerPage.xaml.cs">
       <DependentUpon>AnalyzerPage.xaml</DependentUpon>
@@ -1884,7 +1859,7 @@
     <Compile Include="BusinessFlowWindows\EditBusinessFlowAppsPage.xaml.cs">
       <DependentUpon>EditBusinessFlowAppsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClosingWindow.xaml.cs">
+    <Compile Include="GeneralWindows\ClosingWindow.xaml.cs">
       <DependentUpon>ClosingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Environments\AppDataBasesPage.xaml.cs">
@@ -1920,12 +1895,12 @@
     <Compile Include="Imports\UFT\UFTImportPage.xaml.cs">
       <DependentUpon>UFTImportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\ActivitiesGroupsRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesGroupsRepositoryPage.xaml.cs">
       <DependentUpon>ActivitiesGroupsRepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Imports\UFT\UFT_ExcelProcessing.cs" />
-    <Compile Include="Repository\RepositoryItemUsage.cs" />
-    <Compile Include="Repository\RepositoryItemUsagePage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsage.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsagePage.xaml.cs">
       <DependentUpon>RepositoryItemUsagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionWindows\AddApplicationPage.xaml.cs">
@@ -1948,23 +1923,8 @@
     <Compile Include="Run\GingerRunnerConfigurationsPage.xaml.cs">
       <DependentUpon>GingerRunnerConfigurationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Activities\ActivitiesMiniViewPage.xaml.cs">
-      <DependentUpon>ActivitiesMiniViewPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Activities\ActivityEditPage.xaml.cs">
-      <DependentUpon>ActivityEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AppProgressBar.cs" />
-    <Compile Include="BusinessFlowWindows\AutomatePage.xaml.cs">
-      <DependentUpon>AutomatePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Activities\ActivitiesPage.xaml.cs">
-      <DependentUpon>ActivitiesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowWindows\BusinessFlowPage.xaml.cs">
-      <DependentUpon>BusinessFlowPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="BusinessFlowWindows\ExecutionSummaryPage.xaml.cs">
+    <Compile Include="GeneralWindows\AppProgressBar.cs" />
+    <Compile Include="AutomatePageLib\ExecutionSummaryPage.xaml.cs">
       <DependentUpon>ExecutionSummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="BusinessFlowWindows\ExplorerBusinessFlowsPage.xaml.cs">
@@ -1973,23 +1933,20 @@
     <Compile Include="ALM\QC\QCTestLabExplorerPage.xaml.cs">
       <DependentUpon>QCTestLabExplorerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BusinessFlowWindows\OpenBusinessFlowWindow.xaml.cs">
-      <DependentUpon>OpenBusinessFlowWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GeneralLib\AboutPage.xaml.cs">
+    <Compile Include="GeneralWindows\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Imports\SeleniumToGinger.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\ActivitiesRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesRepositoryPage.xaml.cs">
       <DependentUpon>ActivitiesRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\RepositoryItemPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemPage.xaml.cs">
       <DependentUpon>RepositoryItemPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\SharedRepositorySummaryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositorySummaryPage.xaml.cs">
       <DependentUpon>SharedRepositorySummaryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Run\AutoRunWindow.xaml.cs">
@@ -2008,18 +1965,18 @@
       <DependentUpon>SolutionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\ExtensionsMethods.cs" />
-    <Compile Include="General.cs" />
+    <Compile Include="GeneralLib\General.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Repository\ActionsRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActionsRepositoryPage.xaml.cs">
       <DependentUpon>ActionsRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\VariableRepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\VariableRepositoryPage.xaml.cs">
       <DependentUpon>VariableRepositoryPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Repository\RepositoryPage.xaml.cs">
+    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryPage.xaml.cs">
       <DependentUpon>RepositoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SolutionWindows\TreeViewItems\AgentsFolderTreeItem.cs" />
@@ -2050,7 +2007,7 @@
     <Compile Include="ALM\QC\UploadBusinessFlowsPage.xaml.cs">
       <DependentUpon>UploadBusinessFlowsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="StartPage.xaml.cs">
+    <Compile Include="GeneralWindows\StartPage.xaml.cs">
       <DependentUpon>StartPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Support\WebSupportPage.xaml.cs">
@@ -2080,45 +2037,45 @@
     <Compile Include="Variables\VariableEditPage.xaml.cs">
       <DependentUpon>VariableEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableRandomStringPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableRandomStringPage.xaml.cs">
       <DependentUpon>VariableRandomStringPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableSelectionListPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableSelectionListPage.xaml.cs">
       <DependentUpon>VariableSelectionListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableSequencePage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableSequencePage.xaml.cs">
       <DependentUpon>VariableSequencePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableStringPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableStringPage.xaml.cs">
       <DependentUpon>VariableStringPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableListPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableListPage.xaml.cs">
       <DependentUpon>VariableListPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Variables\VariableRandomNumberPage.xaml.cs">
+    <Compile Include="Variables\VariableEditPages\VariableRandomNumberPage.xaml.cs">
       <DependentUpon>VariableRandomNumberPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Variables\VariablesPage.xaml.cs">
       <DependentUpon>VariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Windows\WindowsDatePickerTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsDialogBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsListBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsListItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsMenuBarTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsRadioButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsElementConverter.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsLabelTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsComboBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsMenuItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsTabItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsDatePickerTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsDialogBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsListBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsListItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsMenuBarTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsRadioButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsElementConverter.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsLabelTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsComboBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsMenuItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsTabItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsControlTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowTreeItem.cs" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Content Include="WebReportApp\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <Resource Include="WebReportApp\Ginger-Web-Client\assets\Execution_Data\dummy.txt" />
@@ -2293,10 +2250,10 @@
     </Content>
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
-    <None Include="ALMRESTConfiguration\appsettings.json">
+    <None Include="ALM\ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Resource Include="PluginsLibNew\AddPluginWizardLib\AddPluginIntro.md" />
+    <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Include="Ginger.ruleset" />
@@ -2847,6 +2804,10 @@
     <Content Include="Reports\GingerExecutionReport\assets\img\%40item_prev.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Page Include="Actions\ActionConversion\ConversionStatusReportPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionConversion\ConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2855,11 +2816,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionConversion\SelectBusinessFlowWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByPOMElementPage.xaml">
+    <Page Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByPOMElementPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2867,11 +2836,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementSelectAndValidate.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementSelectAndValidate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementXYCoordinatePage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementXYCoordinatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2879,19 +2848,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AgentsNew\NewAgentEditPage.xaml">
+    <Page Include="Agents\AgentsNew\NewAgentEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AgentsNew\MapApplicationAgentPage.xaml">
+    <Page Include="Agents\AgentsNew\MapApplicationAgentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AgentsNew\NewAgentPage.xaml">
+    <Page Include="Agents\AgentsNew\NewAgentPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="AgentsNew\SolutionAgentsPage.xaml">
+    <Page Include="Agents\AgentsNew\SolutionAgentsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2967,10 +2936,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\ApplicationsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="ApplicationModelsLib\DBModels\DBModelWizard\AddDBModelIntroWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3031,7 +2996,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\ScanPageWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\Unused\AddEditPOMWizardLib\ScanPageWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3039,11 +3004,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\NavigationsPage.xaml">
+    <Page Include="ApplicationModelsLib\Unused\AddEditPOMWizardLib\NavigationsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\OldPOMsLib\AddEditPOMWizardLib\UnmappedElementsPage.xaml">
+    <Page Include="ApplicationModelsLib\Unused\AddEditPOMWizardLib\UnmappedElementsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3059,7 +3024,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\OldPOMsLib\POMSimulatorPage.xaml">
+    <Page Include="ApplicationModelsLib\Unused\POMSimulatorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3067,107 +3032,99 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationModelsLib\OldPOMsLib\POMsManagerPage.xaml">
+    <Page Include="ApplicationModelsLib\Unused\POMsManagerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationPlatformsLib\AddApplicationPage.xaml">
+    <Page Include="Actions\ActionsListViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationPlatformsLib\ApplicationEditPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowPages_New\ActionsListViewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowPages_New\ActivitiesGroupSelectionPage.xaml">
+    <Page Include="Activities\ActivitiesGroupSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\ActivitiesListViewPage.xaml">
+    <Page Include="Activities\ActivitiesListViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\ActivityConfigurationsPage.xaml">
+    <Page Include="Activities\ActivityConfigurationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\ActivityPage.xaml">
+    <Page Include="Activities\ActivityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\ActivityVariablesPage.xaml">
+    <Page Include="Activities\ActivityVariablesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\ActionsLibraryNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\ActionsLibrary\ActionsLibraryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\APINavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\ApplicationModels\APINavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\LiveSpyNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\LiveSpy\LiveSpyNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\MainAddActionsNavigationPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\MainAddActionsNavigationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\POMNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\ApplicationModels\POMNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\RecordNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\Recording\RecordNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\SharedRepositoryNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActionMenu\WindowsExplorerNavPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsExplorerNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityConfigsPage.xaml">
+    <Page Include="Activities\AddActivityWizard\AddActivityConfigsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\AddActivityWizard\AddActivityDetailsPage.xaml">
+    <Page Include="Activities\AddActivityWizard\AddActivityDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowPages_New\NewAutomatePage.xaml">
+    <Page Include="AutomatePageLib\NewAutomatePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\BusinessFlowDiagramPage.xaml">
+    <Page Include="BusinessFlowWindows\BusinessFlowDiagramPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\BusinessFlowConfigurationsPage.xaml">
+    <Page Include="BusinessFlowWindows\BusinessFlowConfigurationsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\BusinessFlowViewPage.xaml">
+    <Page Include="BusinessFlowWindows\BusinessFlowViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowPages_New\VariabelsListViewPage.xaml">
+    <Page Include="Variables\VariabelsListViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowWindows\BusinessFlowsAutomatePage.xaml">
+    <Page Include="AutomatePageLib\BusinessFlowsAutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3199,10 +3156,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GeneralLib\ActionSelectorWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="GeneralLib\LoadingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3219,11 +3172,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PluginsLibNew\LocalPluginsPage.xaml">
+    <Page Include="PluginsLib\LocalPluginsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PluginsLibNew\PluginsIndexPage.xaml">
+    <Page Include="PluginsLib\PluginsIndexPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3319,15 +3272,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PluginsLibNew\AddPluginWizardLib\PluginPackageInfoPage.xaml">
+    <Page Include="PluginsLib\AddPluginWizardLib\PluginPackageInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PluginsLibNew\AddPluginWizardLib\SelectPluginPackageFolderPage.xaml">
+    <Page Include="PluginsLib\AddPluginWizardLib\SelectPluginPackageFolderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="PluginsLibNew\AddPluginWizardLib\SelectPluginPackageTypePage.xaml">
+    <Page Include="PluginsLib\AddPluginWizardLib\SelectPluginPackageTypePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3343,11 +3296,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Repository\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsValidationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\AddItemToRepositoryWizard\UploadStatusPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadStatusPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3447,19 +3400,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="User\UserProfilePage.xaml">
+    <Page Include="UserConfigLib\UserProfilePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="User\UserSettingsPage.xaml">
+    <Page Include="UserConfigLib\UserSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Variables\VariablePasswordStringPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariablePasswordStringPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Variables\VariableTimerPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableTimerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3499,23 +3452,23 @@
     <None Include="Resources\%40ErrorOrange_16x16.png" />
     <None Include="Resources\%40ErrorRed_16x16.png" />
     <None Include="Resources\%40ErrorYellow_16x16.png" />
-    <Page Include="Actions\ActAgentManipulationEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActAgentManipulationEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActASCFControlEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActASCFControlEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActCheckboxEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActCheckboxEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActClearAllVariablesEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActClearAllVariablesEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActGoToURLEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActGoToURLEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3523,103 +3476,103 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActLinkEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActLinkEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActLowLevelClicksEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActLowLevelClicksEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActCreatePDFChartEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActCreatePDFChartEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActCompareImgsEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActCompareImgsEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActHandleBrowserAlert.xaml">
+    <Page Include="Actions\ActionEditPages\ActHandleBrowserAlert.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActMenuItemEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActMenuItemEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActPBControlEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActPBControlEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActFileOperationEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActFileOperationEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActReadTextFileEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActReadTextFileEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActSendKeysEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActSendKeysEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActDemoPageEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActDemoPageEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\RobotFramework\ActRobotEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\RobotFramework\ActRobotEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\WebServices\ActWebAPIModelEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\WebServices\ActWebAPIModelEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\JSON\ActJSONValidateTagsEditPage .xaml">
+    <Page Include="Actions\ActionEditPages\JSON\ActJSONValidateTagsEditPage .xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\PlugIns\ActPlugInEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\UCInputValuesGrid.xaml">
+    <Page Include="Actions\UserControls\UCInputValuesGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\UserControls\ScreenShotViewPage.xaml">
+    <Page Include="Actions\ScreenShotViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\VisualTesting\ApplitoolsComparePage.xaml">
+    <Page Include="Actions\ActionEditPages\VisualTesting\ApplitoolsComparePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\VisualTesting\BitmapPixelsComaprePage.xaml">
+    <Page Include="Actions\ActionEditPages\VisualTesting\BitmapPixelsComaprePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\VisualTesting\UIElementsComparisonPage.xaml">
+    <Page Include="Actions\ActionEditPages\VisualTesting\UIElementsComparisonPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActDataSourcePage.xaml">
+    <Page Include="Actions\ActionEditPages\ActDataSourcePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByModelEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByModelEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementSendKeysAndValidate.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementSendKeysAndValidate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementClickAndValidate.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementClickAndValidate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementDragAndDropEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementDragAndDropEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3655,23 +3608,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementJavaPlatformPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementJavaPlatformPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\UIElementTableConfigPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\UIElementTableConfigPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApiModelsFolder\APIModelParamsWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\APIModels\APIModelActionsWizard\APIModelParamsWizardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApiModelsFolder\APIModelSelectionWizardPage.xaml">
+    <Page Include="ApplicationModelsLib\APIModels\APIModelActionsWizard\APIModelSelectionWizardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ApplicationsModels\ModelsUsages\ModelItemUsagePage.xaml">
+    <Page Include="ApplicationModelsLib\ModelsUsages\ModelItemUsagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3679,7 +3632,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BusinessFlowWindows\UCValueExpression.xaml">
+    <Page Include="ValueExpression\UCValueExpression.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3731,31 +3684,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GingerHelperWindow.xaml">
+    <Page Include="ReporterLib\GingerHelperWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="MemoryChart.xaml">
+    <Page Include="GeneralWindows\MemoryChart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GeneralWindows\Run Set Pages\HighlightBorder.xaml">
+    <Page Include="RunSetPageLib\HighlightBorder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GeneralWindows\Run Set Pages\RunnerItemPage.xaml">
+    <Page Include="RunSetPageLib\RunnerItemPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GeneralWindows\Run Set Pages\StatusItem.xaml">
+    <Page Include="RunSetPageLib\StatusItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlugInsWindows\PlugInsPage.xaml">
+    <Page Include="PluginsLib\PlugInsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlugInsWindows\PluginPackagePage.xaml">
+    <Page Include="PluginsLib\PluginPackagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3776,19 +3729,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Repository\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\AddItemToRepositoryWizard\UploadItemsSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\ucSharedRepoInstance.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ucSharedRepoInstance.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GeneralWindows\Run Set Pages\RunnerPage.xaml">
+    <Page Include="RunSetPageLib\RunnerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GeneralWindows\Run Set Pages\NewRunSetPage.xaml">
+    <Page Include="RunSetPageLib\NewRunSetPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3804,15 +3757,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActMediaEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActMediaEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActBatteryEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Mobile\ActBatteryEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActPhoneEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Mobile\ActPhoneEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3828,7 +3781,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GeneralWindows\Run Set Pages\RunsetOperationsPage.xaml">
+    <Page Include="RunSetPageLib\RunsetOperationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3948,39 +3901,39 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\WebServices\ActSoapUIEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\WebServices\ActSoapUIEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActSwitchWindowEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActSwitchWindowEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\VisualTesting\ActVisualTestingEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\VisualTesting\ActVisualTestingEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActWebSitePerformanceTimingPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActWebSitePerformanceTimingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActDescriptionPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActDescriptionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActLaunchJavaWSApplicationEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActLaunchJavaWSApplicationEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActPWLEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActPWLEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActFileTransferEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActFileTransferEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActGenerateFileFromTemplateEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActGenerateFileFromTemplateEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -3988,23 +3941,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActMobileDeviceEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActMobileDeviceEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActScreenShotEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActScreenShotEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActSetVariableValuePage.xaml">
+    <Page Include="Actions\ActionEditPages\ActSetVariableValuePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActSmartSyncEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActSmartSyncEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActDropdownListEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActDropdownListEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4012,87 +3965,79 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActScriptEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActScriptEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActionsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Actions\ActUIASwitchWindowEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIASwitchWindowEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActUIAButtonEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIAButtonEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActUIATextBoxEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIATextBoxEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActTextSpeechEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActTextSpeechEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\Java\ActJavaElementEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Java\ActJavaElementEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\Java\ActJavaEXEEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Java\ActJavaEXEEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\Mainframe\ActMainFrameGetDetailsEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Mainframe\ActMainFrameGetDetailsEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\Mainframe\ActMainFrameSetTextEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Mainframe\ActMainFrameSetTextEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\Mainframe\ActMainFrameSendKey.xaml">
+    <Page Include="Actions\ActionEditPages\Mainframe\ActMainFrameSendKey.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\WebServices\ActWebAPIEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\WebServices\ActWebAPIEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\WebServices\ActWebServiceEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\WebServices\ActWebServiceEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActWindowEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActWindowEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\AddActionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Actions\ASCF\ActASCFBrowserControlEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ASCF\ActASCFBrowserControlEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\Communication\ActeMailEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Communication\ActeMailEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActUIAGridEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIAGridEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActUIALabelEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIALabelEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActUIAClickOnPointEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIAClickOnPointEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActUIAImageEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIAImageEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4100,83 +4045,79 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActBrowserElementEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActBrowserElementEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActTableEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActTableEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\Tuxedo\ActTuxedoEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Tuxedo\ActTuxedoEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\WebServices\ActRESTEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\WebServices\ActRESTEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\Windows\ActWindowsControlEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Windows\ActWindowsControlEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\XML\ActXMLValidateTagsEditPage .xaml">
+    <Page Include="Actions\ActionEditPages\XML\ActXMLValidateTagsEditPage .xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\XML\ActXMLProcessingEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\XML\ActXMLProcessingEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActDeviceButtonEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Mobile\ActDeviceButtonEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActDeviceEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\Mobile\ActDeviceEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\ActUIElementEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\ActUIElementEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\CheckBoxEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\CheckBoxEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\ComboBoxEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\ComboBoxEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByElementRepositoryPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByElementRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByMultiplePropertiesEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByMultiplePropertiesEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByXPathEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByXPathEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateByXYEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateByXYEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\Locators\LocateValueEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\Locators\LocateValueEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\ActUIElementLib\ActValueEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActUIElementLib\ActValueEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\_Common\UCActionDetails.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Activities\ActivitiesGroupsPage.xaml">
+    <Page Include="Actions\UserControls\UCActionDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4348,11 +4289,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Variables\VariableDynamicPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableDynamicPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="VisualAutomate\VisualAutomatePage.xaml">
+    <Page Include="AutomatePageLib\VisualAutomate\VisualAutomatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4360,27 +4301,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>-->
-    <Page Include="WindowExplorer\Appium\AppiumWindowPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Appium\AppiumWindowPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserInfoPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserElementInfoPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFBrowserElements\ASCFBrowserElementInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WindowExplorer\ASCF\ASCFControlInfoPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\ASCF\ASCFControlInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\UCFileBrowser.xaml">
+    <Page Include="Actions\UserControls\UCFileBrowser.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\UCValueExpression.xaml">
+    <Page Include="Actions\UserControls\UCValueExpression.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4388,7 +4329,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ValidationDBPage.xaml">
+    <Page Include="Actions\ActionEditPages\ValidationDBPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4396,23 +4337,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActButtonEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActButtonEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActGenElementEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActGenElementEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActConsoleCommandEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActConsoleCommandEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActTextBoxEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActTextBoxEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActExcelEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\ActExcelEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -4432,33 +4373,25 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\Common\ControlActionsPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ControlActionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\Common\FilterElementsPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\FilterElementsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\Common\MenuControlActionsPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\MenuControlActionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\Common\TableActionsPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\TableActionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\Common\WindowExplorerPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\WindowExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Activities\ActivitiesGroupsManagerPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Activities\ActivitiesGroupsActivitiesSelectionPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AnalyzerLib\AnalyzerPage.xaml">
       <SubType>Designer</SubType>
@@ -4468,7 +4401,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ClosingWindow.xaml">
+    <Page Include="GeneralWindows\ClosingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4508,11 +4441,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\ActivitiesGroupsRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesGroupsRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\RepositoryItemUsagePage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemUsagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4540,27 +4473,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Activities\ActivitiesMiniViewPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowWindows\AutomatePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Activities\ActivitiesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Activities\ActivityEditPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="BusinessFlowWindows\BusinessFlowPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="BusinessFlowWindows\ExecutionSummaryPage.xaml">
+    <Page Include="AutomatePageLib\ExecutionSummaryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4572,23 +4485,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="BusinessFlowWindows\OpenBusinessFlowWindow.xaml">
+    <Page Include="GeneralWindows\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GeneralLib\AboutPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActivitiesRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\ActivitiesRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\RepositoryItemPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Repository\SharedRepositorySummaryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositorySummaryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4616,19 +4525,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NewsPage.xaml">
+    <Page Include="GeneralWindows\NewsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\ActionsRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\ActionsRepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Repository\VariableRepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\VariableRepositoryPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Repository\RepositoryPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4636,7 +4545,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StartPage.xaml">
+    <Page Include="GeneralWindows\StartPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4672,27 +4581,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Variables\VariableRandomStringPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableRandomStringPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Variables\VariableSelectionListPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableSelectionListPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Variables\VariableSequencePage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableSequencePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Variables\VariableStringPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableStringPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Variables\VariableListPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableListPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Variables\VariableRandomNumberPage.xaml">
+    <Page Include="Variables\VariableEditPages\VariableRandomNumberPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4700,41 +4609,41 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\Common\ElementInfoPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ElementInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WindowExplorer\Common\WindowExplorerPOMPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\WindowExplorerPOMPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\HTMLCommon\HTMLCanvasElementPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLCanvasElementPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\HTMLCommon\HTMLComboBoxPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLComboBoxPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\HTMLCommon\HTMLElementPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\HTMLElementPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WindowExplorer\UIA\UIAElementPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\UIA\UIAElementPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WindowExplorer\PowerBuilder\DataGridInfoPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\PowerBuilder\DataGridInfoPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WindowExplorer\Common\ScreenShotPage.xaml">
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ScreenShotPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NewsPage.xaml.cs">
+    <Compile Include="GeneralWindows\NewsPage.xaml.cs">
       <DependentUpon>NewsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -4751,8 +4660,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="DLLs\FlaUI.Core.dll" />
-    <Content Include="DLLs\FlaUI.UIA3.dll" />
     <Content Include="DLLs\interop.UIAutomationCore.dll" />
     <None Include="CI\GingerSitePublish.bat" />
     <None Include="CI\GingerAgentPublish.bat" />
@@ -4844,14 +4751,13 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
     <Folder Include="Reports\HTMLReports\" />
     <Folder Include="Reports\SpecialReports\" />
     <Folder Include="Settings\TreeViewItems\" />
-    <Folder Include="UserConfig\" />
     <Folder Include="UserControlsLib\TextEditor\Java\" />
-    <Folder Include="WindowExplorer\InternalBrowser\" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
@@ -4895,7 +4801,7 @@
     <None Include="Resources\ASCF16x16.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="WindowExplorer\HTMLCommon\_ReadMe.txt" />
+    <Resource Include="AutomatePageLib\AddActionMenu\WindowExplorer\HTMLCommon\_ReadMe.txt" />
     <Resource Include="AutoLog.MainConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -4958,8 +4864,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
@@ -4972,8 +4878,8 @@
     <Error Condition="!Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.141.59\build\Selenium.WebDriver.IEDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.3\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.12600\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.12600\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
   </Target>
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.24.0\build\Selenium.Firefox.WebDriver.targets')" />
@@ -4983,7 +4889,7 @@
     </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.MicrosoftWebDriver.10.0.16299\build\Selenium.WebDriver.MicrosoftWebDriver.targets')" />
-  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.6801\build\Selenium.WebDriver.ChromeDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.12600\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.76.0.3809.12600\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

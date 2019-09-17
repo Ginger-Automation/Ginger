@@ -126,14 +126,6 @@
     <Reference Include="Eyes.Sdk.DotNet, Version=2.22.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
     </Reference>
-    <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.UIA3, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.UIA3.dll</HintPath>
-    </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\GingerExternal.dll</HintPath>
@@ -491,7 +483,6 @@
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />
@@ -564,9 +555,6 @@
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIBase.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIRest.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPISoap.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
     <Compile Include="Actions\REST\ActREST.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
@@ -705,7 +693,6 @@
     <Compile Include="Drivers\Mobile\Perfecto\PerfectoDriver.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
-    <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
@@ -738,7 +725,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SourceControl\GITSourceControl.cs" />
     <Compile Include="SourceControl\SVNSourceControl.cs" />
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>

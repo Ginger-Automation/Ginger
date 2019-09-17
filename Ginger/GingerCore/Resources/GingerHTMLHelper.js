@@ -118,6 +118,62 @@ function define_GingerLib() {
             var txt = PayLoad.GetValueString();
             return GingerLib.Echo(txt);
         }
+        else if (Command === "WidgetsUIElementAction")
+        {
+           var list = PayLoad.GetListPayLoad();
+           var inputValues = PayLoad.GetInputValues(list);
+
+           var ElementAction = inputValues["ElementAction"];
+           var ElementLocateBy = inputValues["ElementLocateBy"];
+           var ElementLocateValue = inputValues["ElementLocateValue"];
+           var Value = inputValues["Value"];
+
+            if (ElementAction === "TriggerJavaScriptEvent")
+            {
+                var IsMouseEvent = inputValues["IsMouseEvent"];
+
+                var element = "undefined";
+
+                element = GingerLib.GetElementWithImplicitSync(ElementLocateBy, ElementLocateValue);
+
+                if (element === undefined) {
+
+                    if (ErrorMessage == "")
+                        ErrorMessage = "ERROR|Web Element not Found: " + LocateBy + " " + LocateValue;
+
+                    var payload = new GingerPayLoad("ERROR");
+                    payload.AddValueString(ErrorMessage);
+                    payload.ClosePackage();
+                    return payload;
+                }
+
+                if (IsMouseEvent.toLowerCase() == "true")
+                {
+                    return GingerLib.fireMouseEvent(element, Value);               
+                }
+                else
+                {
+                    return GingerLib.fireSpecialEvent(element, Value);
+                }
+            }
+
+            if (ElementAction === "IsVisible")
+            {
+                ElementAction = "Visible";
+            }
+            if (ElementAction === "IsEnabled")
+            {
+                ElementAction = "Enabled";
+            }
+            if (ElementAction === "Select") {
+                ElementAction = "SelectFromDropDown";
+            }
+            else if (ElementAction === "SelectByIndex") {
+                ElementAction = "SelectFromDropDownByIndex";
+            }
+
+           return GingerLib.HandleHTMLControlAction(ElementAction, ElementLocateBy, ElementLocateValue, Value);
+        }
         else if (Command == "HTMLElementAction") {
             var ControlAction = PayLoad.GetValueString();
             var LocateBy = PayLoad.GetValueString();

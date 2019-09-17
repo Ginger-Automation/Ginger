@@ -17,9 +17,10 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
-using Ginger.BusinessFlowFolder;
 using Ginger.BusinessFlowWindows;
 using Ginger.Exports.ExportToJava;
 using Ginger.UserControlsLib.TextEditor;
@@ -28,6 +29,7 @@ using GingerCore;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -104,6 +106,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
+                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
+
                 AddSourceControlOptions(mContextMenu);
 
                 MenuItem ExportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export", eImageType.Export);
@@ -116,6 +121,25 @@ namespace Ginger.SolutionWindows.TreeViewItems
             AddGherkinOptions(mContextMenu);
         }
 
+        private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
+            if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
+            {
+                lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
+            }
+            else
+            {
+                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
+                foreach (var bf in items)
+                {
+                    lst.Add(bf);
+                }
+            }
+
+            WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700, true);
+        }
+        
         private void VisualAutomate(object sender, RoutedEventArgs e)
         {
             VisualAutomatePage p = new VisualAutomatePage(mBusinessFlow);

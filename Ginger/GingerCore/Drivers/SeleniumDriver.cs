@@ -840,7 +840,7 @@ namespace GingerCore.Drivers
         public override void RunAction(Act act)
         {
             // if alert exist then any action on driver throwing exception and dismissing the pop up
-            // so keeping handle browswer as first step.
+            // so keeping handle browser as first step.
             if (act.GetType() == typeof(ActHandleBrowserAlert))
             {
                 HandleBrowserAlert((ActHandleBrowserAlert)act);
@@ -850,7 +850,7 @@ namespace GingerCore.Drivers
             //implicityWait must be done on actual window so need to make sure the driver is pointing on window
             try
             {
-                // if ActBrowserElement and conrol action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
+                // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
                 if (act.GetType() == typeof(ActBrowserElement))
                 {
                     ActBrowserElement ABE = (ActBrowserElement)act;
@@ -890,7 +890,7 @@ namespace GingerCore.Drivers
                 //TODO: call GetHARData and add it as screen shot or...
                 // GetHARData();
 
-                // TODO: save it in the dolutionm docs... 
+                // TODO: save it in the solution docs... 
                 string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
                 BMPClient.SaveHAR(filename);
                 act.ExInfo += "Action HAR file saved at: " + filename;
@@ -1336,7 +1336,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void SmartSyncHandler(ActSmartSync act)
+        public void SmartSyncHandler(ActSmartSync act)
         {
             IWebElement e = LocateElement(act, true);
             Stopwatch st = new Stopwatch();

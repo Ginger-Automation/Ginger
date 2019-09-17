@@ -408,7 +408,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);							
 		}
 
-		else if ("HTMLElementAction".equals(PL.Name))
+		else if ("HTMLElementAction".equals(PL.Name) || "WidgetsUIElementAction".equals(PL.Name))
 		{
 			//TODO: add null check and browser valid check also in other places.
 			if(mBrowserHelper != null) 

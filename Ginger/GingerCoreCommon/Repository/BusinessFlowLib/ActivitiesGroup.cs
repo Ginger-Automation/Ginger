@@ -125,8 +125,9 @@ namespace GingerCore.Activities
             }
             ActivityIdentifiers actIdents = new ActivityIdentifiers();
             actIdents.IdentifiedActivity = activity;
+            actIdents.AddDynamicly = activity.AddDynamicly;
             activity.ActivitiesGroupID = this.Name;
-
+            
             if (insertIndx >= 0)
             {
                 this.ActivitiesIdentifiers.Insert(insertIndx, actIdents);

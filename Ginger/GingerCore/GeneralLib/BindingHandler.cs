@@ -10,9 +10,9 @@ namespace GingerCore.GeneralLib
     public class BindingHandler
     {
         #region Binding
-        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, BindingMode BindingMode = BindingMode.TwoWay)
+        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, IValueConverter bindingConvertor=null, BindingMode BindingMode = BindingMode.TwoWay)
         {
-            ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), BindingMode);
+            ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), bindingConvertor, BindingMode);
         }
 
         public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay)
@@ -185,6 +185,30 @@ namespace GingerCore.GeneralLib
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class InputValueToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value.ToString().ToLower().Equals("true"))
+            {
+                return true;
+            }
+            else if(value.ToString().ToLower().Equals("false"))
+            {
+                return false;
+            }
+            else
+            {
+                throw new System.ArgumentException("Invalid input value for boolean conversion.");
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString();
         }
     }
     #endregion Binding Convertors

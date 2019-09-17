@@ -321,9 +321,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            if (runSetReport.LogFolder != null && System.IO.Directory.Exists(runSetReport.LogFolder))
+            if (Directory.Exists(ExecutionLoggerManager.RunSetReport.LogFolder))
             {
-                System.IO.Directory.Delete(runSetReport.LogFolder, true);
+                Directory.Delete(ExecutionLoggerManager.RunSetReport.LogFolder, true);
             }
             ClearSeq();
         }
@@ -361,7 +361,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
-            return;
+            if (!offline)
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder, executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss")));
+            else
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
         }
 
         internal override void StartRunSet()
