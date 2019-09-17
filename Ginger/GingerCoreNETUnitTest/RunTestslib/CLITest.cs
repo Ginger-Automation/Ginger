@@ -473,7 +473,7 @@ namespace WorkspaceHold
             args.Add("--runset");
             args.Add("Default Run Set");
 
-            args.Add("--analyze");
+            args.Add("--do-not-analyze");
 
             args.Add("--showui");            
 
