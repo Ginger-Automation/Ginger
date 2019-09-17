@@ -305,6 +305,10 @@ namespace GingerCore
             }
         }
 
+        public override void PostSerialization()
+        {
+            AttachActivitiesGroupsAndActivities();
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();

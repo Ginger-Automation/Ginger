@@ -69,6 +69,13 @@ namespace GingerTest
                 AppName = "Web-App",
                 Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web
             });
+
+            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            {
+                AppName = "Java-App",
+                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
+            });
+
             WorkSpace.Instance.Solution = sol;
         }
 
@@ -104,6 +111,7 @@ namespace GingerTest
             Activity activity = new Activity();
             activity.Active = true;
             activity.SelectedForConversion = true;
+            activity.TargetApplication = "Web-App";
             ActGenElement gen1 = new ActGenElement();
             gen1.Active = true;
             gen1.Description = "Set Value : first_name input";
@@ -155,7 +163,7 @@ namespace GingerTest
             Activity pbActivity = new Activity();
             pbActivity.Active = true;
             pbActivity.SelectedForConversion = true;
-            winActivity.TargetApplication = "Web-App";
+            pbActivity.TargetApplication = "Web-App";
             ActGenElement gen3 = new ActGenElement();
             gen3.Active = true;
             gen3.Description = "Set Value : email input";
@@ -212,7 +220,8 @@ namespace GingerTest
             BusinessFlowToConvert statusLst = new BusinessFlowToConvert()
             {
                 ConversionStatus = eConversionStatus.Pending,
-                BusinessFlow = mBF
+                BusinessFlow = mBF,
+                TotalProcessingActionsCount = mBF.Activities[0].Acts.Count
             };
 
             utils.ConvertToActions(statusLst, addNewActivity, lst, convertableTargetApplications, convertToPOMAction, poms);
@@ -237,6 +246,7 @@ namespace GingerTest
                 BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
                 flowConversion.BusinessFlow = bf;
                 flowConversion.ConversionStatus = eConversionStatus.Pending;
+                flowConversion.TotalProcessingActionsCount = lst.Count;
                 ListOfBusinessFlowToConvert.Add(flowConversion);
             }
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
@@ -585,5 +595,370 @@ namespace GingerTest
             Assert.AreEqual(mBF.Activities.Count(), 1);
             Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
         }
+
+        #region java Convertor Test
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActGenericSetValueToUIElementSetValue()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Set Value : txtEmployeeID";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "txtEmployeeID";
+            genAction.Value = "12321";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.SetValue;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToUIElementConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActGenericGetValueToUIElementGetValue()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Get Value : txtEmployeeID";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "txtEmployeeID";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.GetValue;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+           // Act & Assert
+            JavaGenericToUIElementConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaGenericSwitchFromToActBroswerSwitchFrame()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Switch Frame";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "frame1";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.SwitchFrame;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToBrowserActionConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActRunJavaScriptToActBroswerRunJavaScript()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Run JavaScript";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.Unknown;
+            genAction.LocateValue = "";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.RunJavaScript;
+            genAction.Value = "document.getElementById('id1')";
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToBrowserActionConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActGenericClickToUIElementClick()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Click: Submit";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "btnSumit";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.Click;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToUIElementConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaGenericScrollUpToUIElementScrollUp()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Scroll up";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "scroller1";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.ScrollUp;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToUIElementConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaGenericScrollDownToUIElementScrollDown()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Scroll Down";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "scroller1";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.ScrollDown;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToUIElementConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaGenericVisibleToUIElementIsVisible()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "is visible";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "btnSumit";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.Visible;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.IsVisible.ToString());
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaGenericEnableToUIElementIsEnable()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "is enabled";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "btnSumit";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.Enabled;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.IsEnabled.ToString());
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActGenericAsyncClickToUIElementAsyncClick()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Click: Submit";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "btnSumit";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.AsyncClick;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            // Act & Assert
+            JavaGenericToUIElementConversionActAndAssert(genAction);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActFireMouseEventToUIElementTriggerJavaScriptEvent()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "FireMouseEvent: onmouseout";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "selectCountry";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.FireMouseEvent;
+            genAction.Value = "onmouseout";
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.TriggerJavaScriptEvent.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.ValueToSelect), genAction.Value);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActFireSpecialEventToUIElementTriggerJavaScriptEvent()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "FireSpecialEvent: onblur";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "selectCountry";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.FireSpecialEvent;
+            genAction.Value = "onblur";
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.TriggerJavaScriptEvent.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.ValueToSelect), genAction.Value);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActGenericSelectFromDropDownByIndexToUIElementSelectByIndex()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Select : Country";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "selectCountry";
+            genAction.Value = "0";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDownByIndex;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+            
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.SelectByIndex.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.ValueToSelect), genAction.Value);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActGenericSelectFromDropDownToUIElementSelect()
+        {
+            Activity activity = GetJavaActivityforConversionTest();
+
+            ActGenElement genAction = new ActGenElement();
+            genAction.Active = true;
+            genAction.Description = "Select : Country";
+            genAction.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            genAction.LocateValue = "selectCountry";
+            genAction.Value = "india";
+            genAction.GenElementAction = ActGenElement.eGenElementAction.SelectFromDropDown;
+            activity.Acts.Add(genAction);
+
+            mBF.AddActivity(activity);
+
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.Select.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.ValueToSelect), genAction.Value);
+        }
+
+        private static Activity GetJavaActivityforConversionTest()
+        {
+            mBF = new BusinessFlow() { Name = "TestJavaConversion", Active = true };
+
+            Activity activity = new Activity();
+            activity.Active = true;
+            activity.SelectedForConversion = true;
+            activity.TargetApplication = "Java-App";
+            return activity;
+        }
+
+
+
+        private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
+        {
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "true");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), genAction.GenElementAction.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).Value, genAction.Value);
+        }
+
+        private void JavaGenericToBrowserActionConversionActAndAssert(ActGenElement genAction)
+        {
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).LocateBy.ToString(), genAction.LocateBy.ToString());
+            Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).LocateValue.ToString(), genAction.LocateValue.ToString());
+            Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).ControlAction.ToString(), genAction.GenElementAction.ToString());
+            Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).Value, genAction.Value);
+        }
+        #endregion
     }
 }

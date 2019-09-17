@@ -106,10 +106,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                 AAM.ContainingFolder = APIModelFolder.FolderFullPath;
                 if (TargetApplicationKey != null)
+                {
                     AAM.TargetApplicationKey = TargetApplicationKey;
+                }
                 if (TagsKeys != null)
+                {
                     foreach (RepositoryItemKey tagKey in TagsKeys)
+                    {
                         AAM.TagsKeys.Add(tagKey);
+                    }
+                }
                 APIModelFolder.AddRepositoryItem(AAM);
             }
         }

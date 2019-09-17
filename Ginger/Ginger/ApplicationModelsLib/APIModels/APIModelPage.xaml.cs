@@ -136,7 +136,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=>x.Platform == ePlatformType.WebServices).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
