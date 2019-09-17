@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -302,8 +303,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             
             mCLIHandler = new CLIArgs();
             mCLIHelper.Solution = runOptions.Solution;
-            mCLIHelper.Runset = runOptions.Runset;
-            mCLIHelper.Env = runOptions.Environment;
+            mCLIHelper.Runset = runOptions.Runset;                         
+            mCLIHelper.Env = GetEnv(runOptions.Environment);            
             mCLIHelper.RunAnalyzer = !runOptions.DoNotAnalyze;
             mCLIHelper.ShowAutoRunWindow = runOptions.ShowUI;
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
@@ -312,6 +313,29 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ExecuteRunSet();
 
             return Environment.ExitCode;
+        }
+
+        private string GetEnv(string runOptionsEnvironment)
+        {
+            string env = runOptionsEnvironment;
+            if (runOptionsEnvironment == "Default")
+            {
+                ObservableList<ProjEnvironment> envs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+                int count = (from x in envs where x.Name == "Default" select x).Count();
+                if (count == 0)
+                {
+                    // if solution have only one env then we select it 
+                    if (envs.Count == 1)
+                    {
+                        env = envs[0].Name;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Cannot auto select default environment since solution do not contain 'Default' env and solution contains more than one env, please specify the env name using -e or --env");
+                    }
+                }
+            }
+            return env;
         }
 
         private void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
