@@ -501,7 +501,7 @@ namespace WorkspaceHold
             Assert.IsTrue(arguments.StartsWith("run"), "arguments Starts With run");
             Assert.IsTrue(arguments.Contains("--env env1"), "arguments Contains --env env1");
             Assert.IsTrue(arguments.Contains("--runset rs1"), "arguments Contains --runset rs1");
-            Assert.IsTrue(arguments.Contains("--analyze"), "arguments Contains --analyze");                   
+            Assert.IsTrue(arguments.Contains("--do-not-analyze"), "arguments Contains --do-not-analyze");                   
         }
 
         [TestMethod]
