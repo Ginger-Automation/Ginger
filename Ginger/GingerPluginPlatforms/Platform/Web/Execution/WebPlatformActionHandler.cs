@@ -120,7 +120,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                     }
                     break;
 
-                case ""WaitUntilDisapear"":
+                case "WaitUntilDisapear":
                     st.Reset();
                     st.Start();
 
