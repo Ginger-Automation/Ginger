@@ -321,10 +321,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            if (Directory.Exists(ExecutionLoggerManager.RunSetReport.LogFolder))
-            {
-                Directory.Delete(ExecutionLoggerManager.RunSetReport.LogFolder, true);
-            }
+
+            //TODO: temp comment/remove as causing issue with CLI, cleanup after old reports are fully cleaned
+            // Will leave an empty folder on the FS
+            //if (Directory.Exists(ExecutionLoggerManager.RunSetReport.LogFolder))
+            //{
+            //    Directory.Delete(ExecutionLoggerManager.RunSetReport.LogFolder, true);
+            //}
+
             ClearSeq();
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
