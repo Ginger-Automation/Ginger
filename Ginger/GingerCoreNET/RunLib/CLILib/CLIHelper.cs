@@ -228,7 +228,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         private void SelectEnv()
-        {           
+        {            
             Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + Env + "'");
             ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
             if (env != null)
@@ -237,9 +237,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                // TODO: throw
-                // return false;
+                if (Env == "Default")
+                {
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 1)
+                    {
+                        mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
+                        Reporter.ToLog(eLogLevel.INFO, "Auto Selected Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Cannot auto select default environment since solution do not contain 'Default' env and solution contains more than one env, please specify the env name using -e or --env");
+                    }
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
+                    // TODO: throw
+                    // return false;
+                }
             }
         }
 

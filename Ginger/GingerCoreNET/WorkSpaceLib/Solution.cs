@@ -287,7 +287,7 @@ namespace Ginger.SolutionGeneral
                     LoggerConfigurations.IsSelected = true;
                     LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
                     LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign +   "ExecutionResults";
+                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
                 }
 
                 if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
