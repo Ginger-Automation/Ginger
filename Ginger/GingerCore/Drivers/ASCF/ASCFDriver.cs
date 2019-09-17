@@ -98,23 +98,20 @@ namespace GingerCore.Drivers.ASCF
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
                 return;
             }
-          
+
             serverAddress = new IPEndPoint(IPAddress.Parse(GingerToolBoxHost), GingerToolBoxPort);
 
             IsTryingToConnect = true;
-            System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                // OpenASCFDriverWindow();             
-                ConnectToGingerToolBox();
-            });
+            // OpenASCFDriverWindow();             
+            ConnectToGingerToolBox();
 
             while (IsTryingToConnect)
             {
                 General.DoEvents();
                 Thread.Sleep(100);
             }
+
         }
-        
         private void ConnectToGingerToolBox()
         {
             clientSocket = new TcpClient();
@@ -156,7 +153,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.INFO, "Trying to connect ASCF Agent on address:" + serverAddress);
                         Thread.Sleep(500);
                     }
                 }

@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Platforms.PlatformsInfo
@@ -50,7 +51,8 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
-           
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.RunJavaScript);
             return browserActElementList;
         }
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()
@@ -73,12 +75,17 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
+            if (elementInfo.GetType() == typeof(HTMLElementInfo))
+            {
+                return GetWidgetUIElementList(elementInfo);
+            }
+
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
             eElementType elementType = GetElementType(elementInfo.ElementType);
 
             if (elementType.Equals(eElementType.Table))
             {
-                //get all action list supported to tablecell action
+                //get all action list supported to table
                 var tableActionList = new[] { ActUIElement.eElementAction.TableCellAction, ActUIElement.eElementAction.TableAction, ActUIElement.eElementAction.TableRowAction }
                                             .SelectMany(action => GetTableControlActions(action))
                                             .ToList();
@@ -123,14 +130,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     foreach (var action in actionList)
                     {
-                        UIElementsActionsList.Add(
-                            new ActUIElement()
-                            {
-                                Description = action + " : " + elementInfo.ElementTitle,
-                                ElementAction = (ActUIElement.eElementAction)action,
-                                ElementType = elementType,
-                            }
-                            );
+                        UIElementsActionsList.Add(CreateUIElementAction(elementInfo, elementType, action));
                     }
                 }
             }
@@ -138,6 +138,36 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
+        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo, eElementType elementType, ActUIElement.eElementAction action)
+        {
+            return new ActUIElement()
+            {
+                Description = action + " : " + elementInfo.ElementTitle,
+                ElementAction = action,
+                ElementType = elementType,
+            };
+        }
+
+        private ObservableList<Act> GetWidgetUIElementList(ElementInfo elementInfo)
+        {
+            var widgetsActionList = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
+
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
+
+            if (widgetsActionList.Count > 0)
+            {
+                foreach (var action in widgetsActionList)
+                {
+                    var widgetsAction = CreateUIElementAction(elementInfo, elementInfo.ElementTypeEnum, action);
+
+                    widgetsAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
+
+                    UIElementsActionsList.Add(widgetsAction);
+                }
+            }
+
+            return UIElementsActionsList;
+        }
 
         private eElementType GetElementType(string elementType)
         {
@@ -310,9 +340,91 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
                     break;
             }
+
             return javaPlatformElementActionslist;
         }
 
+        public override List<ActUIElement.eElementAction> GetPlatformWidgetsUIActionsList(eElementType ElementType)
+        {
+            List<ActUIElement.eElementAction> widgetsActionslist = new List<ActUIElement.eElementAction>();
+            
+            //common action type for all elementType
+            widgetsActionslist.Add(ActUIElement.eElementAction.IsVisible);
+            widgetsActionslist.Add(ActUIElement.eElementAction.RunJavaScript);
+            switch (ElementType)
+            {
+                case eElementType.Button:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Click);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    break;
+
+                case eElementType.TextBox:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    break;
+
+                case eElementType.ComboBox:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Select);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    break;
+
+
+                case eElementType.ScrollBar:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    break;
+
+                case eElementType.RadioButton:
+                case eElementType.CheckBox:
+                case eElementType.Span:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Click);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.Label:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                default:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Click);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Select);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    break;
+            }
+
+            return widgetsActionslist;
+        }
+
+        public override List<eElementType> GetPlatformWidgetsUIElementsType()
+        {
+            var mWidgetsElementsTypeList = new List<eElementType>();
+            mWidgetsElementsTypeList.Add(eElementType.Unknown);
+            mWidgetsElementsTypeList.Add(eElementType.Button);
+            mWidgetsElementsTypeList.Add(eElementType.ScrollBar);
+            mWidgetsElementsTypeList.Add(eElementType.ComboBox);
+            mWidgetsElementsTypeList.Add(eElementType.RadioButton);
+            mWidgetsElementsTypeList.Add(eElementType.TextBox);
+            mWidgetsElementsTypeList.Add(eElementType.CheckBox);
+            mWidgetsElementsTypeList.Add(eElementType.Label);
+            mWidgetsElementsTypeList.Add(eElementType.Span);
+
+            return mWidgetsElementsTypeList;
+        }
         public override string GetPlatformGenericElementEditControls()
         {
             return "UIElementJavaPlatformPage";

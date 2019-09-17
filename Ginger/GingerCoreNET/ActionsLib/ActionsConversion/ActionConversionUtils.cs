@@ -66,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET
             get;
             set;
         }
-
+        
         bool mStopConversion = false;
 
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlowsToConvert = new ObservableList<BusinessFlowToConvert>();
@@ -92,6 +92,47 @@ namespace Amdocs.Ginger.CoreNET
         }
 
         /// <summary>
+        /// This method is used to remove the Legacy actions from the businessFlows
+        /// </summary>
+        /// <param name="lst"></param>
+        public void RemoveLegacyActionsHandler(ObservableList<BusinessFlowToConvert> lst)
+        {
+            try
+            {
+                foreach (BusinessFlowToConvert businessFlowToConvert in lst)
+                {
+                    for (int activityIndex = 0; activityIndex <= businessFlowToConvert.BusinessFlow.Activities.Count; activityIndex++)
+                    {
+                        Activity activity = businessFlowToConvert.BusinessFlow.Activities[activityIndex];
+                        ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == activity.TargetApplication select x.Platform).FirstOrDefault();
+                        if (activity.Active)
+                        {
+                            for (int actIndex = 0; actIndex < activity.Acts.Count; actIndex++)
+                            {
+                                Act act = (Act)activity.Acts[actIndex];
+                                if((act.Active &&
+                                   (act is IObsoleteAction) && 
+                                   (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) &&
+                                   (((IObsoleteAction)act).TargetAction()) != null))
+                                {
+                                    activity.Acts.RemoveAt(actIndex);
+                                }
+                            }
+                            if(activity.Acts.Count <= 0 || activity.Acts.Where(x => x.Active == true).Count() <= 0)
+                            {
+                                businessFlowToConvert.BusinessFlow.Activities.RemoveAt(activityIndex);
+                            }
+                        }
+                    }
+                }   
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to get the count of legacy actions", ex);
+            }
+        }
+
+        /// <summary>
         /// This method is used to convert actions from multiple BusinessFlows
         /// </summary>
         /// <param name="addNewActivity"></param>
@@ -107,7 +148,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                foreach (BusinessFlowToConvert bfToConvert in ListOfBusinessFlowsToConvert)
+                Parallel.ForEach(ListOfBusinessFlowsToConvert, (bfToConvert, state) =>
                 {
                     if (!mStopConversion)
                     {
@@ -124,16 +165,17 @@ namespace Amdocs.Ginger.CoreNET
                     }
                     else
                     {
-                        break;
+                        state.Stop();
                     }
-                }
+                });
+                Reporter.HideStatusMessage();
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
             }
         }
-        
+
         /// <summary>
         /// This method is used to add the actions
         /// </summary>
@@ -148,16 +190,20 @@ namespace Amdocs.Ginger.CoreNET
                 int activityIndex = 0;
                 businessFlowToConvert.ConvertedActionsCount = 0;
                 for (; activityIndex < businessFlowToConvert.BusinessFlow.Activities.Count(); activityIndex++)
-                {                    
+                {
                     if (!mStopConversion)
                     {
-                        Activity activity = businessFlowToConvert.BusinessFlow.Activities[activityIndex];
-                        if (activity != null && activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                        if (businessFlowToConvert.TotalProcessingActionsCount > 0)
                         {
-                            Activity currentActivity = GetCurrentWorkingActivity(businessFlowToConvert.BusinessFlow, addNewActivity, ref activityIndex, activity);
-                            ConvertSelectedActionsFromActivity(businessFlowToConvert, actionsToBeConverted, addNewActivity, convertToPOMAction, selectedPOMObjectName, currentActivity);
+                            Activity activity = businessFlowToConvert.BusinessFlow.Activities[activityIndex];
+                            if (activity != null && activity.Active && activity.SelectedForConversion && activity.Acts.OfType<IObsoleteAction>().ToList().Count > 0)
+                            {
+                                businessFlowToConvert.BusinessFlow.StartDirtyTracking();
+                                Activity currentActivity = GetCurrentWorkingActivity(businessFlowToConvert.BusinessFlow, addNewActivity, ref activityIndex, activity);
+                                ConvertSelectedActionsFromActivity(businessFlowToConvert, actionsToBeConverted, addNewActivity, convertToPOMAction, selectedPOMObjectName, currentActivity);
 
-                            currentActivity.TargetApplication = convertableTargetApplications.Where(x => x.SourceTargetApplicationName == activity.TargetApplication).Select(x => x.TargetTargetApplicationName).FirstOrDefault();
+                                currentActivity.TargetApplication = convertableTargetApplications.Where(x => x.SourceTargetApplicationName == activity.TargetApplication).Select(x => x.TargetTargetApplicationName).FirstOrDefault();
+                            } 
                         }
                     }
                     else
@@ -190,21 +236,23 @@ namespace Amdocs.Ginger.CoreNET
                                                         bool convertToPOMAction, ObservableList<Guid> selectedPOMObjectName, Activity currentActivity)
         {
             int actionIndex = 0;
-            for(; actionIndex < currentActivity.Acts.Count(); actionIndex++)
-            {                
+            for (; actionIndex < currentActivity.Acts.Count(); actionIndex++)
+            {
                 Act act = (Act)currentActivity.Acts[actionIndex];
                 if (!mStopConversion)
                 {
                     try
                     {
-                        if (act.Active && act is IObsoleteAction &&
-                                                actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
-                                                                            a.Selected &&
-                                                                            a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                        ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == currentActivity.TargetApplication select x.Platform).FirstOrDefault();
+                        if (act.Active && act is IObsoleteAction 
+                                       && (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) 
+                                       && actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
+                                                                          a.Selected &&
+                                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
                         {
                             // get the index of the action that is being converted 
                             int selectedActIndex = currentActivity.Acts.IndexOf(act);
-                            
+
                             // convert the old action
                             Act newAct = ((IObsoleteAction)act).GetNewAction();
                             if (newAct != null)
@@ -246,10 +294,10 @@ namespace Amdocs.Ginger.CoreNET
                 else
                 {
                     break;
-                }                 
-            }            
+                }
+            }
         }
-
+        
         /// <summary>
         /// This method will get the activity by checking the flag whether to create new or use existing activity
         /// </summary>
@@ -392,7 +440,7 @@ namespace Amdocs.Ginger.CoreNET
                                     }
                                 }
                             }
-                        } 
+                        }
                     }
                 }
             }
@@ -441,6 +489,31 @@ namespace Amdocs.Ginger.CoreNET
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Getting convertible actions from activities", ex);
             }
             return lst;
+        }
+
+        /// <summary>
+        /// This method is used to get the Convertible Actions Count From BusinessFlow
+        /// </summary>
+        /// <param name="bf"></param>
+        /// <returns></returns>
+        public int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf)
+        {
+            int count = 0;
+            try
+            {
+                foreach (Activity activity in bf.Activities.Where(x => x.Active))
+                {
+                    ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == activity.TargetApplication select x.Platform).FirstOrDefault();
+                    count = count + activity.Acts.Where(act => (act.Active &&
+                                                               (act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) &&
+                                                               (((IObsoleteAction)act).TargetAction()) != null)).Count();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to get the count of legacy actions", ex);
+            }
+            return count;
         }
     }
 }

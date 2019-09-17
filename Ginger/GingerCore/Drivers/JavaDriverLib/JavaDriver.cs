@@ -688,6 +688,18 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                     resp = Response3;
                     break;
+
+                case ActBrowserElement.eControlAction.SwitchFrame:
+                    PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", actJavaBrowserElement.LocateBy.ToString(), actJavaBrowserElement.LocateValueCalculated, actJavaBrowserElement.ValueForDriver);
+                    PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
+                    resp = ResponseSwitchFrame;
+                    break;
+
+                case ActBrowserElement.eControlAction.RunJavaScript:
+                    PayLoad PLRunJS = new PayLoad("RunJavaScript", actJavaBrowserElement.LocateBy.ToString(), actJavaBrowserElement.LocateValueCalculated, actJavaBrowserElement.ValueForDriver);
+                    PayLoad ResponseRunJS = Send(PLRunJS);
+                    resp = ResponseRunJS;
+                    break;
             }
             return resp;
         }
@@ -2845,23 +2857,73 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        private ActGenElement GetHTMLAction(PayLoad pl)
+        private ActUIElement GetHTMLAction(PayLoad pl)
         {
-            ActGenElement act = new ActGenElement();
 
-            string LocateBy = pl.GetValueString();
-            string LocateValue = pl.GetValueString();
-            string ElemValue = pl.GetValueString();
-            string ControlAction = pl.GetValueString();
+            ActUIElement actUIElement = new ActUIElement();
+
+            string elementLocateBy = pl.GetValueString();
+            string elementLocateValue = pl.GetValueString();
+            string elementValue = pl.GetValueString();
+            string elementAction = pl.GetValueString();
             string Type = pl.GetValueString();
 
-            act.Description = SeleniumDriver.GetDescription(ControlAction, LocateValue, ElemValue, Type);
-            act.LocateBy = SeleniumDriver.GetLocateBy(LocateBy);
-            act.GenElementAction = SeleniumDriver.GetElemAction(ControlAction);
-            act.LocateValue = SeleniumDriver.GetLocatedValue(Type, LocateValue, ElemValue);
-            act.Value = ElemValue;
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
 
-            return act;
+            actUIElement.ElementLocateBy = GetElementLocatBy(elementLocateBy);
+
+            if (Type.ToLower().Equals("radio"))
+            {
+                actUIElement.ElementLocateValue = elementValue;
+            }
+            else
+            {
+                actUIElement.ElementLocateValue = elementLocateValue;
+            }
+
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.ElementAction, GetElementACtion(elementAction).ToString());
+
+            if (actUIElement.ElementLocateBy.Equals(eLocateBy.ByName) || actUIElement.ElementLocateBy.Equals(eLocateBy.ByID))
+            {
+                actUIElement.Description = string.Concat(elementAction, " ", elementLocateValue);
+            }
+            else
+            {
+                actUIElement.Description = string.Concat(elementAction, " ", Type.ToUpper());
+            }
+
+            
+            actUIElement.Value = elementValue;
+
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, elementValue);
+
+            return actUIElement;
+        }
+
+        private ActUIElement.eElementAction GetElementACtion(string elementAction)
+        {
+            try
+            {
+                return (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), elementAction);
+            }
+            catch
+            {
+                return ActUIElement.eElementAction.Unknown;
+            }
+            
+        }
+
+        private eLocateBy GetElementLocatBy(string elementLocateBy)
+        {
+            try
+            {
+                return (eLocateBy)Enum.Parse(typeof(eLocateBy), elementLocateBy);
+            }
+            catch
+            {
+
+                return eLocateBy.NA;
+            }
         }
 
         private void CreateSwitchWindowAction(string windowTitle)
