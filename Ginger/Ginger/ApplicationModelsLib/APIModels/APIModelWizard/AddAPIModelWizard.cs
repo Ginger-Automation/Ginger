@@ -19,10 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
+using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.WizardLib;
 using GingerCore;
+using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -58,9 +60,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         public ObservableList<TemplateFile> XTFList = new ObservableList<TemplateFile>();
 
-        public ObservableList<ApplicationAPIModel> AAMList { get; set; }
-
-        public ObservableList<APIModelsDelta> AAMDeltaList { get; set; }
+        public ObservableList<ApplicationAPIModel> LearnedAPIModelsList { get; set; }
+        public ObservableList<DeltaAPIModel> DeltaModelsList { get; set; }
 
         public bool IsParsingWasDone { get; set; }
 
@@ -93,7 +94,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public override void Finish()
         {
             //ExportAPIFiles(SelectedAAMList);
-            ExportAPIFiles(General.ConvertListToObservableList(AAMList.Where(x => x.IsSelected == true).ToList()));
+            ExportAPIFiles(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).Select(m => (ApplicationAPIModel)m).ToList()));
         }
 
         private void ExportAPIFiles(ObservableList<ApplicationAPIModel> SelectedAAMList)

@@ -1,0 +1,67 @@
+﻿<Page x:Class="Ginger.ApplicationModelsLib.APIModels.APIModelWizard.MergerWindow"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.ApplicationModelsLib.APIModels.APIModelWizard"
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="780" d:DesignWidth="960" 
+      Title="API Compare And Merge" >
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="500*" />
+            <RowDefinition Height="400*" x:Name="xMergerRow"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" x:Name="xAPICompareSectionScroller" CanContentScroll="True" ScrollChanged="ScrollViewer_ScrollChanged">
+            <Grid x:Name="xComparerGrid" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300*" />
+                    <ColumnDefinition Width="300*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock DockPanel.Dock="Top" Height="20" Background="{StaticResource $BackgroundColor_DarkBlue}"
+                           Foreground="White" VerticalAlignment="Center" TextAlignment="Center" Text="Existing API" />
+                    <Frame IsEnabled="False" DockPanel.Dock="Bottom" x:Name="xExistingAPIFrame" ScrollViewer.CanContentScroll="False" />
+                </StackPanel>
+
+                <!--<GridSplitter Grid.Column="1" Width="15" ResizeDirection="Columns" 
+                       Background="DarkSlateGray" />-->
+                <GridSplitter x:Name="xComparerSplitter" ResizeDirection="Columns" Grid.Column="1" Height="Auto" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" IsEnabled="True" />
+
+                <StackPanel Grid.Column="1" >
+                    <TextBlock DockPanel.Dock="Top" Height="20" Background="{StaticResource $BackgroundColor_DarkBlue}"
+                           Foreground="White" VerticalAlignment="Center" TextAlignment="Center" Text="Learned API" />
+                    <Frame IsEnabled="False" DockPanel.Dock="Bottom" x:Name="xLearnedAPIFrame" ScrollViewer.CanContentScroll="False"/>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+
+        <!--<GridSplitter Grid.Row="1" Height="8" ResizeDirection="Rows"
+                  Background="DarkSlateGray" />-->
+
+        <GridSplitter x:Name="xMergerSplitter" ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
+
+        <ScrollViewer Grid.Row="1" x:Name="xAPIMergerSectionScroller">
+            <StackPanel>
+                <TextBlock Height="20" Background="{StaticResource $BackgroundColor_DarkBlue}"
+                           Foreground="White" VerticalAlignment="Center" TextAlignment="Center" Text="Merged API : Preview" />
+                <Frame x:Name="xMergedAPIFrame" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!--<DataGrid>
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Width="30" MaxWidth="50" />
+                <DataGridTextColumn MinWidth="350" MaxWidth="1024" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <ginger:ucGrid x:Name="xExistingAPIGrid" Grid.Column="0" Grid.Row="0" Title="Existing API" />
+        <ginger:ucGrid x:Name="xNewAPIGrid" Grid.Column="1" Grid.Row="0"  Title="New API" />
+        <ginger:ucGrid x:Name="xAPIMergerGrid" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" />-->
+
+    </Grid>
+</Page>

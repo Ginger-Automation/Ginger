@@ -420,12 +420,6 @@ namespace Ginger
             set { xSimpleHeaderTitle.Visibility = value; }
         }
 
-        public Visibility ShowCompare
-        {
-            get { return xCompreExistingItemBtn.Visibility; }
-            set { xCompreExistingItemBtn.Visibility = value; }
-        }
-
         public Style TitleStyle
         {
             get { return xSimpleHeaderTitle.Style; }
@@ -1468,7 +1462,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
-                                                            string readonlyfield ="", bool isreadonly=false)
+                                                            string readonlyfield ="", bool isreadonly=false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));         
@@ -1498,6 +1492,9 @@ public void RemoveCustomView(string viewName)
             {
                 combo.SetValue(ComboBox.SelectedIndexProperty, 0);
             }
+
+            if (comboSelectionChangedHandler != null)
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
 
             template.VisualTree = combo;
             return template;

@@ -16,11 +16,43 @@
                 <CheckBox x:Name="IsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
             </DataTemplate>
 
+            <DataTemplate x:Key="CompareAndMergeTemplate">
+                <Button x:Name="CompareAndMergeButton" Width="100" MaxWidth="230" IsEnabled="False" Click="CompareAndMergeButton_Click" Content="Compare And Merge" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding defaultOperation}" Value="Merge Changes">
+                        <Setter Property="IsEnabled" TargetName="CompareAndMergeButton" Value="True" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation}" Value="Replace Existing with New">
+                        <Setter Property="IsEnabled" TargetName="CompareAndMergeButton" Value="True" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+
             <DataTemplate x:Key="xHandlingOperationTemplate">
-                <ComboBox x:Name="xHandlingOperation_FieldSelection" Style="{StaticResource @ToolBarComboBoxStyle}" ItemsSource="{Binding Path=handlingOperations}" />
-                <!--<DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding }"
-                </DataTemplate.Triggers>-->
+                <ComboBox x:Name="xHandlingOperation_FieldSelection" SelectedValue="{Binding defaultOperation}" Style="{StaticResource @ToolBarComboBoxStyle}" Width="200"
+                           SelectionChanged="XHandlingOperation_SelectionChanged"/>
+                <DataTemplate.Triggers>
+                    <!--<DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Add New">-->
+                    <DataTrigger Binding="{Binding defaultOperation}" Value="Add New">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Gray"/>
+                        <Setter Property="IsEnabled" TargetName="xHandlingOperation_FieldSelection" Value="False"/>
+                    </DataTrigger>
+                    <!--<DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unchanged">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Green"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Orange"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Blue"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Purple"/>
+                    </DataTrigger>-->
+                </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate  x:Key="xDeltaStatusIconTemplate">
@@ -34,12 +66,14 @@
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Orange"/>
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="Modified" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Red"/>
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Blue"/>
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="New" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Purple"/>
@@ -50,10 +84,22 @@
         </Grid.Resources>
         
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
 
-        <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="0" Margin="0,0,0,0" Visibility="Visible" Title="API's Source/s Content to Select From"  ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed"  ShowUpDown="Collapsed" ShowCompare="Visible"></ginger:ucGrid>
+        <DockPanel>
+            <TextBlock Text="API's Source/s Content to Select From" DockPanel.Dock="Left" />
+
+            <UserControls:ucButton x:Name="xCompreExistingItemBtn" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" 
+                      ButtonType="RoundTextAndImageButton" Click="BtnCompareAPIClicked" ButtonText="Compare APIs" ToolTip="Compare with Existing API Models"  ButtonFontImageSize="15" ButtonImageHeight="15"
+                            ButtonImageWidth="15" ButtonImageType="Analyze" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" />
+
+            <!--<Button Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" BorderBrush="SlateGray" BorderThickness="1" 
+                    Margin="0,0,15,0" FontWeight="Bold" MaxWidth="250" Padding="3" DockPanel.Dock="Right" />-->
+        </DockPanel>
+
+        <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="1" Margin="0,0,0,0" Visibility="Visible" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ></ginger:ucGrid>
         
     </Grid>
 </Page>
