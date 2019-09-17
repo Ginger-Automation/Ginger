@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 if (SelectedCLI.IsFileBasedConfig)
                 {
-                    return SelectedCLI.Verb +  " " + CLIOptionClassHelper.FILENAME + " " + ConfigFileFullPath;
+                    return SelectedCLI.Verb +  " --" + CLIOptionClassHelper.FILENAME + " \"" + ConfigFileFullPath + "\"";
                 }
                 else
                 {

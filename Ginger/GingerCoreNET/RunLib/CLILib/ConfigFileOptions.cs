@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
-{
-
-
-
-
+{   
     [Verb("configfile", HelpText = "Use config file")]
     public class ConfigFileOptions : OptionsBase
     {
@@ -16,7 +12,5 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         [Option('f', CLIOptionClassHelper.FILENAME, Required = true, HelpText = "Config file path")]
         public string FileName { get; set; }
-
     }
-
 }
