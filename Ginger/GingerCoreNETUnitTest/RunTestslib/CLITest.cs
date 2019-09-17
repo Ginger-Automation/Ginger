@@ -333,14 +333,14 @@ namespace WorkspaceHold
 
 
         [TestMethod]
-        public void CLIArgsWithAnalyzeTest()
+        public void CLIArgsWithDoNotAnalyzeTest()
         {
             //lock (WorkSpace.Instance)
             //{
                 //Arrange
                 PrepareForCLICreationAndExecution();
                 // Create args
-                string[] args = { "run", "--solution", mSolutionFolder, "--env", "Default", "--runset", "Default Run Set", "--analyze"};
+                string[] args = { "run", "--solution", mSolutionFolder, "--env", "Default", "--runset", "Default Run Set", "--do-not-analyze"};
                 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
