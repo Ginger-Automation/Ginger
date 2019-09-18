@@ -90,6 +90,7 @@
     <None Remove="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.eot" />
     <None Remove="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.ttf" />
     <None Remove="Reports\GingerExecutionReport\assets\fonts\SourceSansPro-Regular.ttf" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\%40Ginger_old.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\@BeatLogo.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\@Ginger.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\@item_next.png" />
@@ -269,6 +270,7 @@
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\img\@BeatLogo.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\@Ginger.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\@Ginger_old.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\@item_next.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\@item_prev.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\comments-icon.jpg">
@@ -379,6 +381,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Reports\GingerExecutionReport\assets\img\%40Ginger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Reports\GingerExecutionReport\assets\img\%40Ginger_old.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Reports\GingerExecutionReport\assets\img\%40item_next.png">
