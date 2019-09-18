@@ -34,6 +34,13 @@ namespace Ginger.Plugin.Platform.Web.Execution
     /// </summary>
     public class WebPlatformActionHandler : IPlatformActionHandler
     {
+
+        /// <summary>
+        /// Tells to shift Frames automatically in case of a POM Element
+        /// </summary>
+        bool AutomaticallyShiftIframe { get; set; }
+
+
         /// <summary>
         /// It Takes an instance of IWebPlatform(ehich extends IPlatformService ) and Action payload and call the required functions for execution.
         /// Supported actions are Browser Action and Ui Element action with Page object Model Support

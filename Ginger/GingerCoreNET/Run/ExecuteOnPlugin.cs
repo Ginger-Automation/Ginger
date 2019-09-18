@@ -520,6 +520,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                         }
                     }
 
+                    PlatformAction.InputParams.Add("Frames", Frames);
 
 
                     //adding all locators from POM

@@ -186,6 +186,12 @@ namespace Ginger.Plugin.Platform.Web.Execution
             
                 eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)InputParams["ElementType"]);
                 IGingerWebElement uiElement = null;
+
+                if(InputParams.ContainsKey("Frames"))
+                {
+                    JObject Frames = (JObject)InputParams["Frames"];
+                }
+
                 foreach (JProperty locator in Locators.Children())
                 {
                     uiElement = WebPlatformActionHandler.LocateElement(ref ElementType, locator.Name, locator.Value.ToString(),mPlatformService);

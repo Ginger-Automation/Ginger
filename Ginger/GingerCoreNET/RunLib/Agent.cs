@@ -560,6 +560,8 @@ namespace GingerCore
         {
             DriverConfiguration.Clear();
             SetServiceMissingParams();
+           ;
+
         }
 
         private void SetServiceMissingParams()
@@ -586,8 +588,44 @@ namespace GingerCore
                     DriverConfiguration.Add(DI);
                 }
             }
-        }
 
+            SetPlatformParameters(PSI);
+
+        }
+        /// <summary>
+        /// Set AGent Configuration with default values in addition to the configurations asked by Service 
+        /// </summary>
+        /// <param name="PSI"></param>
+        private void SetPlatformParameters(PluginServiceInfo PSI)
+        {
+            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Count() > 0)
+            {
+                DriverConfigParam DI = new DriverConfigParam();
+                DI.Parameter = "Max Agent Load Time";
+                DI.Value = "30";
+                DI.Description = "Max Time allowed in seconds to start the agent0";
+             
+                DI.IsPlatformParameter = true;
+          
+                DriverConfiguration.Add(DI);
+
+
+                DriverConfigParam DI2 = new DriverConfigParam();
+                DI2.Parameter = "Auto Switch Frame";
+                DI2.Value = bool.TrueString;
+                DI2.Description = "Automatic Switch Frame for POM Element";
+
+                DI2.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI2);
+
+
+            }
+            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
+            {
+             //   throw new NotImplementedException("Implement adding mandatory configs for webservices");
+            }
+        }
         private void SetDriverDefualtParams(Type t)
         {
             MemberInfo[] members = t.GetMembers();
