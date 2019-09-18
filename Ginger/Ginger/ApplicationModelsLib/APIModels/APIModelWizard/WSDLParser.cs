@@ -73,8 +73,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //Make it recursivly
             ImportAllServiceDescription(mServiceDescriptionsExtendedList[0].mServiceDescription.Imports, mServiceDescriptionsExtendedList[0].ContainingFolder);
 
-
-
+            bindColl = null;
+            Services = null;
+            portTypColl = null;
+            Messages = null;
 
             foreach (ServiceDescriptionExtended SDExtended in mServiceDescriptionsExtendedList)
             {
@@ -164,7 +166,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             string containingFolder = GetContainingFolderFromURL(URL);
             ServiceDescriptionExtended serviceDescriptionExtended = new ServiceDescriptionExtended() { mServiceDescription = sd, ContainingFolder = containingFolder };
 
-            mServiceDescriptionsExtendedList.Add(serviceDescriptionExtended);
+            if (mServiceDescriptionsExtendedList.Where(x => x.ContainingFolder == containingFolder).Count() == 0)
+            {
+                mServiceDescriptionsExtendedList.Add(serviceDescriptionExtended); 
+            }
 
             return sd.Imports;
         }
