@@ -114,6 +114,8 @@ namespace GingerCore.Actions.Common
 
             //used for Java
             public static string WaitforIdle = "WaitforIdle";
+            public static string IsWidgetsElement = "IsWidgetsElement";
+            public static string IsMouseEvent = "IsMouseEvent";
 
             //used for TableElementAction
             public static string ControlAction = "ControlAction";
@@ -314,7 +316,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Does not exist")]
             NotExist,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Enabled")]
+            [EnumValueDescription("Enabled")]  //Need to check ???
             Enabled,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Name")]
@@ -504,6 +506,9 @@ namespace GingerCore.Actions.Common
 
             [EnumValueDescription("Get selected node child Items")]
             GetSelectedNodeChildItems,
+
+            [EnumValueDescription("Trigger JavaScript Event")]
+            TriggerJavaScriptEvent,
 
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types
@@ -908,7 +913,12 @@ namespace GingerCore.Actions.Common
 
         public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
         {
-            PayLoad PL = new PayLoad("UIElementAction");           
+            string payLoadName = @"UIElementAction";
+            if (Convert.ToBoolean(this.GetInputParamValue(Fields.IsWidgetsElement)))
+            {
+                payLoadName = @"WidgetsUIElementAction";
+            }
+            PayLoad PL = new PayLoad(payLoadName);           
             // Make it generic function in Act.cs to be used by other actions
             List<PayLoad> PLParams = new List<PayLoad>();
             foreach (ActInputValue AIV in this.InputValues)

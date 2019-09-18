@@ -132,7 +132,7 @@ namespace Ginger.Reports
                         {
                             try
                             {
-                                BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(folder + @"\BusinessFlow.txt", typeof(BusinessFlowReport));
+                                BusinessFlowReport br = (BusinessFlowReport)JsonLib.LoadObjFromJSonFile(Path.Combine(folder,"BusinessFlow.txt"), typeof(BusinessFlowReport));
                                 br.LogFolder = folder;
                                 br.ExecutionLoggerIsEnabled = true;
                                 businessFlowReports.Add(br);

@@ -2884,6 +2884,11 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
 
+    <Style TargetType="Expander" x:Key="$MenuExpanderTransparentStyle" >
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+    </Style>
+    
     <Style TargetType="GridSplitter" x:Key="@TreeSplitterStyle" >
         <Setter Property="Width" Value="10"/>
         <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}"/>

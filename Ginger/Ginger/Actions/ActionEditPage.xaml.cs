@@ -65,7 +65,7 @@ namespace Ginger.Actions
         private Act mAction;
         static public string sMultiLocatorVals = "";
         GenericWindow _pageGenericWin = null;
-        public ActionsPage ap;
+        //public ActionsPage ap;
 
         bool IsPageClosing = false;
 
@@ -405,21 +405,20 @@ namespace Ginger.Actions
                     ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
                 }
             }
-            else if (a.GetType() == typeof(ActGenElement))
+            else if (a.GetType() == typeof(ActGenElement)|| a.GetType() == typeof(ActTableElement))
             {
-                if (a.InputValues.Count == 0)
+
+                ActInputValue inputValue = a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
+
+                if(inputValue==null)
                 {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
                     a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
+                    inputValue= a.InputValues.Where(x => x.Param == "Value").FirstOrDefault();
                 }
-                else
-                {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), nameof(ActInputValue.Value));
-                }
+                ValueGridPanel.Visibility = Visibility.Collapsed;
+                ValueBoxPanel.Visibility = Visibility.Visible;
+                ValueUC.Init(Context.GetAsContext(a.Context), inputValue, nameof(ActInputValue.Value));
+
             }
             else if (a.GetType() == typeof(ActLaunchJavaWSApplication) || a.GetType() == typeof(ActJavaEXE))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
@@ -433,23 +432,7 @@ namespace Ginger.Actions
                     ValueGridPanel.Visibility = Visibility.Visible;
                     ValueBoxPanel.Visibility = Visibility.Collapsed;
                 }
-            }
-            else if (a.GetType() == typeof(ActTableElement))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
-            {
-                if (a.InputValues.Count == 0)
-                {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    a.AddOrUpdateInputParamValue("Value", "");
-                    ValueUC.Init(Context.GetAsContext(a.Context), a.InputValues.FirstOrDefault(), nameof(ActInputValue.Value));
-                }
-                else
-                {
-                    ValueGridPanel.Visibility = Visibility.Collapsed;
-                    ValueBoxPanel.Visibility = Visibility.Visible;
-                    ValueUC.Init(mContext, mAction.InputValues.Where(x => x.Param == "Value").FirstOrDefault(), nameof(ActInputValue.Value));
-                }
-            }
+            }    
             else if (a.GetType() == typeof(ActDBValidation))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
                 if (a.InputValues.Count == 1)
@@ -667,63 +650,63 @@ namespace Ginger.Actions
             }
         }
         
-        private void NextActionButton_Click(object sender, RoutedEventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        //private void NextActionButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
-            if (ap == null)
-            {
-                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
-            }
-            else if (ap.grdActions.grdMain.Items.CurrentPosition < ap.grdActions.grdMain.Items.Count - 1)
-            {
-                ap.grdActions.grdMain.Items.MoveCurrentToNext();
-                Act tempact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
-                if (tempact != null)
-                {
-                    mAction = tempact;
+        //    if (ap == null)
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
+        //    }
+        //    else if (ap.grdActions.grdMain.Items.CurrentPosition < ap.grdActions.grdMain.Items.Count - 1)
+        //    {
+        //        ap.grdActions.grdMain.Items.MoveCurrentToNext();
+        //        Act tempact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
+        //        if (tempact != null)
+        //        {
+        //            mAction = tempact;
 
-                    ActionEditPage actedit = new ActionEditPage(mAction);
-                    actedit.ap = ap;
-                    actedit.ShowAsWindow();
-                    _pageGenericWin.Close();
-                }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
-            }
+        //            ActionEditPage actedit = new ActionEditPage(mAction);
+        //            actedit.ap = ap;
+        //            actedit.ShowAsWindow();
+        //            _pageGenericWin.Close();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
+        //    }
 
-            Mouse.OverrideCursor = null;
-        }
+        //    Mouse.OverrideCursor = null;
+        //}
 
-        private void PrevActionButton_Click(object sender, RoutedEventArgs e)
-        {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            if (ap == null)
-            {
-                Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
-            }
-            else if (ap.grdActions.grdMain.Items.CurrentPosition >= 1)
-            {
-                ap.grdActions.grdMain.Items.MoveCurrentToPrevious();
-                Act tempact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
-                if (tempact != null)
-                {
-                    mAction = tempact;
-                    ActionEditPage actedit = new ActionEditPage(mAction);
-                    actedit.ap = ap;
-                    actedit.ShowAsWindow();
-                    _pageGenericWin.Close();
-                }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
-            }
+        //private void PrevActionButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        //    if (ap == null)
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.CurrentActionNotSaved);
+        //    }
+        //    else if (ap.grdActions.grdMain.Items.CurrentPosition >= 1)
+        //    {
+        //        ap.grdActions.grdMain.Items.MoveCurrentToPrevious();
+        //        Act tempact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
+        //        if (tempact != null)
+        //        {
+        //            mAction = tempact;
+        //            ActionEditPage actedit = new ActionEditPage(mAction);
+        //            actedit.ap = ap;
+        //            actedit.ShowAsWindow();
+        //            _pageGenericWin.Close();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to move to.");
+        //    }
 
-            Mouse.OverrideCursor = null;
-        }
+        //    Mouse.OverrideCursor = null;
+        //}
 
         private async void RunActionInSimulationButton_Click(object sender, RoutedEventArgs e)
         {
@@ -885,15 +868,15 @@ namespace Ginger.Actions
                     winButtons.Add(okBtn);                    
                     winButtons.Add(undoBtn);
 
-                    Button nextAction = new Button();
-                    nextAction.Content = "Next Action";
-                    nextAction.Click += new RoutedEventHandler(NextActionButton_Click);
-                    nextAction.Margin = new Thickness(0, 0, 60, 0);
-                    winButtons.Add(nextAction);
-                    Button prevAction = new Button();
-                    prevAction.Content = "Previous Action";
-                    prevAction.Click += new RoutedEventHandler(PrevActionButton_Click);
-                    winButtons.Add(prevAction);
+                    //Button nextAction = new Button();
+                    //nextAction.Content = "Next Action";
+                    //nextAction.Click += new RoutedEventHandler(NextActionButton_Click);
+                    //nextAction.Margin = new Thickness(0, 0, 60, 0);
+                    //winButtons.Add(nextAction);
+                    //Button prevAction = new Button();
+                    //prevAction.Content = "Previous Action";
+                    //prevAction.Click += new RoutedEventHandler(PrevActionButton_Click);
+                    //winButtons.Add(prevAction);
 
                     mRunActionBtn.Content = "Run";
                     mRunActionBtn.Click += new RoutedEventHandler(RunActionButton_Click);
@@ -999,15 +982,15 @@ namespace Ginger.Actions
             IsPageClosing = true;
             _pageGenericWin.Close();
         }
-        public void UpdateGrid()
-        {
-            Act currentact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
-            if (currentact != null)
-            {
-                mAction = currentact;
-                ap.UpdateActionGrid();
-            }
-        }
+        //public void UpdateGrid()
+        //{
+        //    Act currentact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
+        //    if (currentact != null)
+        //    {
+        //        mAction = currentact;
+        //        ap.UpdateActionGrid();
+        //    }
+        //}
 
         private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {

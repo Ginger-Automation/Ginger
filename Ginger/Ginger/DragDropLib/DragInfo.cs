@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 
 namespace GingerWPF.DragDropLib
@@ -44,12 +45,22 @@ namespace GingerWPF.DragDropLib
             DoNotDrop,
             Add,
             Move,
-            Unknown
+            Unknown,
+            MultiAdd
         }
 
-        public bool DataIsAssignableToType(Type T)
+        public bool DataIsAssignableToType(Type T, bool isObservableList = false)
         {
-            return T.IsAssignableFrom(Data.GetType());            
+            if (isObservableList && (Data as ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase>) != null)
+            {
+                ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> obList = (Data as ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase>);
+                object listData = obList[0];
+                return T.IsAssignableFrom(listData.GetType());
+            }
+            else
+            {
+                return T.IsAssignableFrom(Data.GetType());
+            }
         }
     }
 }

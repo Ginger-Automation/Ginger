@@ -32,7 +32,7 @@ namespace GingerCoreCommonTest.Repository
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //
-    // >>>>>>>>>>>>>>>>>> ALL test marked with ignore failing, when moving to .NET core 3 they should work - remove commented after move, DO NOT DELELTE !!!
+    // >>>>>>>>>>>>>>>>>> ALL test marked with ignore failing, when moving to .NET core 3 they should work - remove commented after move, DO NOT DELETE !!!
     // 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

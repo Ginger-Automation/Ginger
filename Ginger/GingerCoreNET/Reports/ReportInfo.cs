@@ -172,7 +172,7 @@ namespace Ginger.Reports
                 switch (txtFileName)
                 {
                     case "RunSet.txt":
-                        curFileWithPath = folder + @"\RunSet.txt";
+                        curFileWithPath = Path.Combine(folder,"RunSet.txt");
                         ReportInfoRootObject = (RunSetReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(RunSetReport));
                         ((RunSetReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.RunSetLevel;

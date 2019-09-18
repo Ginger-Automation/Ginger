@@ -11,19 +11,20 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="300*"/>
-            <RowDefinition Height="150*" />
+            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
         <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0">
-            <Image x:Name="infoImage" DockPanel.Dock="Top" Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" HorizontalAlignment="Right" Margin="0,5,10,0"/>
-            <CheckBox x:Name="chkBoxEnableDisableDepControl" Style="{StaticResource @InputCheckBoxStyle}" DockPanel.Dock="Top" Margin="2,0,0,10" FontWeight="Bold" Click="chkBoxEnableDisableDepControl_Click" FontSize="14">
+            <CheckBox x:Name="chkBoxEnableDisableDepControl" Style="{StaticResource $CeckBoxStyle}" DockPanel.Dock="Left" Margin="5,0,0,0" FontWeight="Bold" Click="chkBoxEnableDisableDepControl_Click" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <CheckBox.Content>
                     <GingerCore:ucTextDicResource Text="Enable Items-[Variables] Dependencies Control"/>
                 </CheckBox.Content>
-            </CheckBox>         
+            </CheckBox>
+            <Image x:Name="infoImage" Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="5"/>
         </DockPanel>
+        
         <DockPanel x:Name="DependenciesGridSection" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="1">
             <Ginger:ucGrid x:Name="grdDependencies" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed" IsEnabled="False" DockPanel.Dock="Top" Margin="0,0,0,10">
                 <Ginger:ucGrid.Title>

@@ -515,16 +515,15 @@ namespace GingerCore.Actions.WebAPI
                 mAct.AddOrUpdateReturnParamActual("Respond", "Respond returned as null");
             }
 
-            bool XMLResponseCanBeParsed = false;
-            XMLResponseCanBeParsed = XMLStringCanBeParsed(ResponseMessage);
+          
             
-            Reporter.ToLog(eLogLevel.DEBUG, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed);
+          
 
             string prettyResponse = XMLDocExtended.PrettyXml(ResponseMessage);
 
             mAct.AddOrUpdateReturnParamActual("Response:", prettyResponse);
 
-            if (!ParseNodesToReturnParams(XMLResponseCanBeParsed))
+            if (!ActWebAPIBase.ParseNodesToReturnParams(mAct, ResponseMessage))
                 return false;
 
             return true;
@@ -567,125 +566,9 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private bool ParseNodesToReturnParams(bool XMLResponseCanBeParsed)
-        {
-            if (XMLResponseCanBeParsed && mAct.GetType() == typeof(ActWebAPISoap))
-            {
-                return ParseXMLNodesToReturnParams();
-            }
-            else if (mAct.GetType() == typeof(ActWebAPIRest))
-            {
-                if (string.IsNullOrEmpty(ResponseMessage))
-                {
-                    return false;
-                }
 
-                string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
-                bool jsonParsinFailed = false;
 
-                if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
-                {
-                    if (!ParseJsonNodesToReturnParams())
-                        jsonParsinFailed = true;//will try XML parsing instead
-                    else
-                        return true;
-                }
 
-                if (XMLResponseCanBeParsed && (
-                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.XML.ToString()) || jsonParsinFailed))
-                {
-                   return ParseXMLNodesToReturnParams();
-                }
-            }
-
-            return false;
-        }
-
-        private bool ParseJsonNodesToReturnParams()
-        {
-            XmlDocument doc = null;
-
-            try
-            {
-                var JsonCheck = JToken.Parse(ResponseMessage);
-            }
-            catch (JsonReaderException)
-            {
-                return false;
-            }
-
-            if (mAct.UseLegacyJSONParsing)
-            {
-
-                if (((ResponseMessage[0] == '[') && (ResponseMessage[ResponseMessage.Length - 1] == ']')))
-                {
-                    doc = JsonConvert.DeserializeXmlNode("{\"root\":" + ResponseMessage + "}", "root");
-                }
-                else
-                {
-                    try
-                    {
-                        doc = JsonConvert.DeserializeXmlNode(ResponseMessage, "root");
-                    }
-                    catch
-                    {
-                        doc = JsonConvert.DeserializeXmlNode(General.CorrectJSON(ResponseMessage), "root");
-                    }
-
-                }
-
-                List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
-                outputTagsList = General.GetXMLNodesItems(doc, true);
-                foreach (General.XmlNodeItem outputItem in outputTagsList)
-                {
-                    mAct.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
-                }
-            }
-            else
-            {
-                try
-                {
-                    mAct.ParseJSONToOutputValues(ResponseMessage, 1);
-                }
-                catch
-                {
-                    mAct.ParseJSONToOutputValues(General.CorrectJSON(ResponseMessage), 1);
-                }
-            }
-            return true;
-        }
-
-        private bool ParseXMLNodesToReturnParams()
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(ResponseMessage);
-
-                if (mAct.UseLegacyJSONParsing)
-                {
-                    List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
-                    outputTagsList = General.GetXMLNodesItems(doc, true);
-                    foreach (General.XmlNodeItem outputItem in outputTagsList)
-                    {
-                        mAct.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
-                    }
-                }
-                else
-                {
-                    XMLDocExtended XDE = new XMLDocExtended(doc);
-                    foreach (XMLDocExtended XDN in XDE.GetEndingNodes())
-                    {
-                        mAct.AddOrUpdateReturnParamActualWithPath(XDN.LocalName, XDN.Value, XDN.XPathWithoutNamspaces);
-                    }
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
 
         public void HandlePostExecutionOperations()
         {
@@ -714,20 +597,7 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private bool XMLStringCanBeParsed(string responseMessage)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseMessage);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-                return false;
-            }
-        }
+ 
         
         private bool RequestConstractorREST(ActWebAPIRest act)
         {

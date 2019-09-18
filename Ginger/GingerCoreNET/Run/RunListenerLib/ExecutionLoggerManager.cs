@@ -575,7 +575,7 @@ namespace Ginger.Run
 
                 foreach (GingerRunner gingerrunner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
                 {
-                    string folder = exec_folder + "\\" + RunnerCount.ToString() + " " + gingerrunner.Name + "\\";
+                    string folder = Path.Combine(exec_folder,RunnerCount.ToString() + " " + gingerrunner.Name);
                     if (System.IO.Directory.Exists(folder))
                     {
                         executionLoggerHelper.CleanDirectory(folder);
@@ -696,7 +696,7 @@ namespace Ginger.Run
                 int counter = 1;
                 foreach (BusinessFlow bf in listBF)
                 {
-                    string reportpath = logFolderPath + "\\" + counter.ToString() + " " + folderNameNormalazing(bf.Name);
+                    string reportpath = Path.Combine(logFolderPath,counter.ToString() + " " + folderNameNormalazing(bf.Name));
                     System.IO.Directory.CreateDirectory(reportpath);
                     this.ExecutionLogBusinessFlowsCounter = counter;
                     mExecutionLogger.ExecutionLogBusinessFlowsCounter = counter;

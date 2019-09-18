@@ -38,11 +38,13 @@ namespace UnitTests.NonUITests
     {
         static GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
         ObservableList<DataSourceTable> sourceTables;
-
+        static string excelFilePath = "";
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
             string Connectionstring = "filename=" + TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db") + "; mode=Exclusive";
+            excelFilePath = TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "ExportedDS.xlsx");
+
             liteDB.FileFullPath = Connectionstring;
         }
 
@@ -295,6 +297,22 @@ namespace UnitTests.NonUITests
             Assert.AreEqual( 1, res.Rows.Count);
         }
 
+        [TestMethod]
+        public void ExportToExcel()
+        {
+            //Arrange
+            string Query = "db.MyCustomizedDataTable.find limit 1";
 
+            //Act
+            DataTable dt = liteDB.GetQueryOutput(Query);
+            bool res = GingerCoreNET.GeneralLib.General.ExportToExcel(dt, excelFilePath, "LiteDbExportedData");
+
+            //// TODO:  Fetch and validate data from exported excel using excel action
+
+            //Assert
+            Assert.AreEqual(true, res);
+        }
+
+        
     }
 }

@@ -100,26 +100,10 @@ namespace Ginger.Reports
                     Reporter.ToUser(eUserMsgKey.FolderNameTextBoxIsEmpty);
                     return;
                 }
-                else if(extraInformationCalculated.Length > 100)
+                else if (extraInformationCalculated.Length > 100)
                 {
                     Reporter.ToUser(eUserMsgKey.FolderNamesAreTooLong);
                     return;
-                }                
-                else
-                {
-                    if (!Directory.Exists(extraInformationCalculated))
-                    {
-                        Reporter.ToUser(eUserMsgKey.FolderNotExistOrNotAvailible);
-                        return;
-                    }
-                    else
-                    {
-                        if (!HasWritePermission(extraInformationCalculated))
-                        {
-                            Reporter.ToUser(eUserMsgKey.UserHaveNoWritePermission);
-                            // return;
-                        }
-                    }
                 }
             }
 
