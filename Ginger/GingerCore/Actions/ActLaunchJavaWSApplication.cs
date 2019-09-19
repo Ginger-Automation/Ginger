@@ -359,11 +359,7 @@ namespace GingerCore.Actions
             if (portConfigType == ePortConfigType.Manual)
             {
                 mPort_Calc = CalculateValue(mPort);
-            }
-            else
-            {
-                mPort_Calc = SocketHelper.GetOpenPort().ToString();
-            }
+            }          
         }
 
         private string CalculateValue(string valueTocalc)
@@ -454,12 +450,11 @@ namespace GingerCore.Actions
                         return false;
                     }
 
-                    int mPort_Calc_int = 0;
-                    if (string.IsNullOrEmpty(mPort_Calc) || int.TryParse(mPort_Calc, out mPort_Calc_int) == false)
+                    ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
+                    if (portConfigType== ePortConfigType.Manual)
                     {
-                        Error = "The Port number '" + mPort_Calc + "' is not valid.";
-                        return false;
-                    }
+                        return ValidatePort();
+                    }                    
                 }
 
                 return true;
@@ -471,7 +466,26 @@ namespace GingerCore.Actions
             }
         }
 
+        private bool ValidatePort()
+        {
+            try
+            {
+                int mPort_Calc_int = 0;
+                if (string.IsNullOrEmpty(mPort_Calc) || int.TryParse(mPort_Calc, out mPort_Calc_int) == false)
+                {
+                    Error = "The Port number '" + mPort_Calc + "' is not valid.";
+                    return false;
+                }
 
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception during parsing Port Value", ex);
+                return false;
+            }
+            return true;
+
+        }
         private bool SetURLExtensionType(string url)
         {
 
@@ -598,6 +612,14 @@ namespace GingerCore.Actions
                 {
                     Error = "Failed to find the Java application with title '" + mWaitForWindowTitle_Calc + "' after " + mWaitForWindowTitleMaxTime_Calc + " seconds.";
                     return false;
+                }
+
+                //If Auto detect port then we get available port just before doing attach
+                //So for parallel execution 2 runners won't get same Port                
+                ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
+                if (portConfigType == ePortConfigType.AutoDetect)
+                {
+                    mPort_Calc = SocketHelper.GetOpenPort().ToString();                  
                 }
 
                 //choosing executer
