@@ -399,10 +399,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                 // Update default Operation Enum field
                 deltaAPI.DefaultOperationEnum = selectedOperation;
-                //if (selectedOperation == DeltaAPIModel.eHandlingOperations.DoNotAdd)
-                //    deltaAPI.IsSelected = false;
-                //else
-                //    deltaAPI.IsSelected = true;
+                if (selectedOperation == DeltaAPIModel.eHandlingOperations.DoNotAdd)
+                    deltaAPI.IsSelected = false;
+                else
+                    deltaAPI.IsSelected = true;
             }
 
             // Launch the Merger Window as Merge Changes is selected.
