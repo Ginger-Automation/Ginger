@@ -93,7 +93,6 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-            AddLazyLoad();
 
             if (startLocalGrid)
             {
