@@ -170,6 +170,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
         {
+            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
             WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
         }
 

@@ -34,21 +34,23 @@ namespace Amdocs.Ginger.CoreNET
     /// This class is used to hold the wrapper for businessflow conversion status
     /// </summary>
     public class BusinessFlowToConvert : INotifyPropertyChanged
-    {     
+    {
         public event PropertyChangedEventHandler PropertyChanged;
 
         BusinessFlow mBusinessFlow;
         public BusinessFlow BusinessFlow
         {
-            get {
+            get
+            {
                 return mBusinessFlow;
             }
-            set {
+            set
+            {
                 if (mBusinessFlow != value)
                 {
                     mBusinessFlow = value;
-                    RelativeFilePath = value.ContainingFolder;
-                    BusinessFlowName = value.Name;
+                    RelativeFilePath = value.ContainingFolder.Replace("~\\\\BusinessFlows", "");
+                    BusinessFlowName = string.Format("{0}\\{1}", RelativeFilePath, value.Name);
                     Description = value.Description;
                     OnPropertyChanged(nameof(BusinessFlow));
                 }
@@ -72,8 +74,8 @@ namespace Amdocs.Ginger.CoreNET
                 }
             }
         }
-
-        eConversionSaveStatus mSaveStatus = eConversionSaveStatus.Pending; 
+        
+        eConversionSaveStatus mSaveStatus = eConversionSaveStatus.Pending;
         public eConversionSaveStatus SaveStatus
         {
             get
@@ -128,13 +130,28 @@ namespace Amdocs.Ginger.CoreNET
         int mConvertedActionsCount = 0;
         public int ConvertedActionsCount
         {
-            get {
+            get
+            {
                 return mConvertedActionsCount;
             }
             set
             {
                 mConvertedActionsCount = value;
                 OnPropertyChanged(nameof(ConvertedActionsCount));
+            }
+        }
+
+        int mTotalConvertibleActionsCount = 0;
+        public int TotalProcessingActionsCount
+        {
+            get
+            {
+                return mTotalConvertibleActionsCount;
+            }
+            set
+            {
+                mTotalConvertibleActionsCount = value;
+                OnPropertyChanged(nameof(TotalProcessingActionsCount));
             }
         }
 
@@ -181,7 +198,7 @@ namespace Amdocs.Ginger.CoreNET
                     break;
                 case eConversionSaveStatus.Saved:
                     SaveStatusIcon = eImageType.Passed;
-                    break;                
+                    break;
                 case eConversionSaveStatus.Saving:
                     SaveStatusIcon = eImageType.Running;
                     break;
@@ -194,11 +211,13 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsSelected = false;
         public bool IsSelected
         {
-            get {
+            get
+            {
                 return mIsSelected;
             }
-            set {
-                if(mIsSelected != value)
+            set
+            {
+                if (mIsSelected != value)
                 {
                     mIsSelected = value;
                     OnPropertyChanged(nameof(IsSelected));
