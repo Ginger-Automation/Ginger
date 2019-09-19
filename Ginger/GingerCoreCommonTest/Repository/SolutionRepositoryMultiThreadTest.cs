@@ -32,7 +32,7 @@ namespace GingerCoreCommonTest.Repository
     
     [TestClass]    
     [Level1]
-    public class SolutionRepositoryMultiThreadTestTest
+    public class SolutionRepositoryMultiThreadTest
     {
         static SolutionRepository mSolutionRepository;
         static NewRepositorySerializer mRepositorySerializer;
@@ -126,6 +126,7 @@ namespace GingerCoreCommonTest.Repository
                 bigFolder.AddRepositoryItem(bigItem);
             }
 
+
             //TODO: add more sample items for testing
             SR.Close();
         }
@@ -136,8 +137,21 @@ namespace GingerCoreCommonTest.Repository
 
         }
 
-      
-        // run to threads which does GetAllitems
+
+        [TestMethod]
+        public void zz()
+        {
+            //Arrange
+            int t1Count = 0;
+
+
+            //Act            
+
+            ObservableList<MyRepositoryItem> allMRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
+            t1Count = allMRIs.Count;
+        }
+
+        // run two threads which does GetAllitems
         [TestMethod]
         public void GetAllRepositoryItemsUsingParallel()
         {
@@ -167,7 +181,7 @@ namespace GingerCoreCommonTest.Repository
             // since each item load take ~10ms (using sleep in set of attr) the first thread will load about 5 items
             // then we kick off the second thread
             t2.Start();
-            // Not t2 should wait for t1 to complete get all items, if it goes back too fast it means it got partial list
+            // Note t2 should wait for t1 to complete get all items, if it goes back too fast it means it got partial list
             Console.WriteLine("t2.Start");
             Task.WaitAll(t1, t2);
 

@@ -93,13 +93,29 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
+            AddLazyLoad();
+
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
             }
+            AddLazyLoad();
+
+            mWorkSpace.InitLocalGrid();
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
         }
+
+        private static void AddLazyLoad()
+        {
+            // TODO: add RI type, and use attr on field
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
+            //TODO: see impact of acts - remember to add also handle in attr see others
+            //NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
+        }
+
       
 
         public void StartLocalGrid()

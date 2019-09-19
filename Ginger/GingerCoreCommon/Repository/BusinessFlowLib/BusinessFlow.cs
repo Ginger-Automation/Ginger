@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.EnumsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -186,7 +185,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository(true)]
+        [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool Active
         {
             get { return mActive; }
@@ -765,7 +764,7 @@ namespace GingerCore
                 }
             }
 
-            //Attach mapped activities to groups nad clear missing Activities
+            //Attach mapped activities to groups and clear missing Activities
             foreach (ActivitiesGroup group in this.ActivitiesGroups)
             {
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
@@ -1198,7 +1197,7 @@ namespace GingerCore
             if (Activities.LazyLoad) return;
 
 
-            //Remove dyamically added activities from groups identifies
+            //Remove dynamically added activities from groups identifies
             foreach (var activitiesGroup in ActivitiesGroups)
             {
                 for(int index=0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
