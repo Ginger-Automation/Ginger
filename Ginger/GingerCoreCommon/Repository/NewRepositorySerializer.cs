@@ -680,7 +680,7 @@ namespace Amdocs.Ginger.Repository
 
 
 
-                SetObjectSerialziedAttrDefaultValue(obj);
+                SetObjectSerializedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
 
                 xdr.Read();
@@ -789,7 +789,7 @@ namespace Amdocs.Ginger.Repository
         // so we don't need to read all attrs every time when deserializing
         private static Dictionary<Type, List<MemberInfoDefault>> mMemberDefaultDictionary = new Dictionary<Type, List<MemberInfoDefault>>();
 
-        private static void SetObjectSerialziedAttrDefaultValue(object obj)
+        private static void SetObjectSerializedAttrDefaultValue(object obj)
         {
             try
             {
@@ -827,6 +827,11 @@ namespace Amdocs.Ginger.Repository
         [MethodImpl(MethodImplOptions.Synchronized)]  
         private static void AddClassTypeInfo(Type type)
         {
+            if (mMemberDefaultDictionary.ContainsKey(type))  // Check again due to parallelism we can get same request in the queue
+            {
+                return;
+            }
+
             List<MemberInfoDefault> list = new List<MemberInfoDefault>();
 
             var members = type.GetMembers();
