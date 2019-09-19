@@ -14,16 +14,32 @@
         <Grid.Resources>
             <DataTemplate x:Key="IsSelectedTemplate">
                 <CheckBox x:Name="IsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding defaultOperation}" Value="Do Not Add New">
+                        <Setter Property="IsEnabled" TargetName="IsSelected_FieldSelection" Value="False" />
+                        <Setter Property="IsChecked" TargetName="IsSelected_FieldSelection" Value="False" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation}" Value="Add New">
+                        <Setter Property="IsChecked" TargetName="IsSelected_FieldSelection" Value="True" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding defaultOperation}" Value="Replace Existing with New">
+                        <Setter Property="IsChecked" TargetName="IsSelected_FieldSelection" Value="True" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate x:Key="CompareAndMergeTemplate">
-                <Button x:Name="CompareAndMergeButton" Width="100" MaxWidth="230" IsEnabled="False" Click="CompareAndMergeButton_Click" Content="Compare And Merge" />
+                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False"
+                      ButtonType="CircleImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
+                            ButtonImageWidth="15" ButtonImageType="Columns" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" />
+
+                <!--<Button x:Name="xCompareAndMergeButton" Width="100" MaxWidth="230" IsEnabled="False" Click="xCompareAndMergeButton_Click" Content="Compare And Merge" />-->
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding defaultOperation}" Value="Merge Changes">
-                        <Setter Property="IsEnabled" TargetName="CompareAndMergeButton" Value="True" />
+                        <Setter Property="IsEnabled" TargetName="xCompareAndMergeButton" Value="True" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding defaultOperation}" Value="Replace Existing with New">
-                        <Setter Property="IsEnabled" TargetName="CompareAndMergeButton" Value="True" />
+                        <Setter Property="IsEnabled" TargetName="xCompareAndMergeButton" Value="True" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -31,28 +47,6 @@
             <DataTemplate x:Key="xHandlingOperationTemplate">
                 <ComboBox x:Name="xHandlingOperation_FieldSelection" SelectedValue="{Binding defaultOperation}" Style="{StaticResource @ToolBarComboBoxStyle}" Width="200"
                            SelectionChanged="XHandlingOperation_SelectionChanged"/>
-                <DataTemplate.Triggers>
-                    <!--<DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Add New">-->
-                    <DataTrigger Binding="{Binding defaultOperation}" Value="Add New">
-                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Gray"/>
-                        <Setter Property="IsEnabled" TargetName="xHandlingOperation_FieldSelection" Value="False"/>
-                    </DataTrigger>
-                    <!--<DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unchanged">
-                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Green"/>
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
-                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Orange"/>
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
-                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Red"/>
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
-                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Blue"/>
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
-                        <Setter Property="DataGridCell.Foreground" TargetName="xHandlingOperation_FieldSelection" Value="Purple"/>
-                    </DataTrigger>-->
-                </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate  x:Key="xDeltaStatusIconTemplate">
@@ -71,9 +65,9 @@
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Red"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="New">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Blue"/>
-                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="New" />
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="New API Model" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Purple"/>

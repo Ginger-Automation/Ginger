@@ -42,6 +42,19 @@ namespace GingerCoreNET.Application_Models
         //    }
         //}
 
+        private bool mIsSelected;
+        public bool IsSelected
+        {
+            get
+            {
+                return mIsSelected;
+            }
+            set
+            {
+                mIsSelected = value;
+            }
+        }
+
         private string mName;
         public string Name
         {
@@ -109,6 +122,19 @@ namespace GingerCoreNET.Application_Models
                 string[] relPathArr = value.ContainingFolderFullPath.Split(new string[] { "API Models" }, StringSplitOptions.RemoveEmptyEntries);
                 string relPath = (relPathArr != null && relPathArr.Length > 1) ? relPathArr[1] : string.Empty;
                 MatchingAPIName = "~" + relPath + "\\" + value.Name;
+            }
+        }
+
+        private ApplicationAPIModel mMergedAPIModel;
+        public ApplicationAPIModel MergedAPIModel
+        {
+            get
+            {
+                return mMergedAPIModel;
+            }
+            set
+            {
+                mMergedAPIModel = value;
             }
         }
 
@@ -254,17 +280,30 @@ namespace GingerCoreNET.Application_Models
                 }
             }
 
-            //return 
-            //FieldInfo fI = value.GetType().GetField(value.ToString());
-            ////EnumValueDescriptionAttribute.GetCustomAttribute;
-            //DescriptionAttribute[] desAttr = fI.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
-
-            //if(desAttr != null && desAttr.Any<DescriptionAttribute>())
-            //{
-            //    return desAttr.First().Description;
-            //}
-
             return value.ToString();
+        }
+
+        public static T GetValueFromDescription<T>(string description)
+        {
+            var type = typeof(T);
+            if (!type.IsEnum) throw new InvalidOperationException();
+            foreach (var field in type.GetFields())
+            {
+                var attribute = Attribute.GetCustomAttribute(field,
+                    typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if (attribute != null)
+                {
+                    if (attribute.Description == description)
+                        return (T)field.GetValue(null);
+                }
+                else
+                {
+                    if (field.Name == description)
+                        return (T)field.GetValue(null);
+                }
+            }
+            throw new ArgumentException("Not found.", nameof(description));
+            // or return default(T);
         }
     }
 }

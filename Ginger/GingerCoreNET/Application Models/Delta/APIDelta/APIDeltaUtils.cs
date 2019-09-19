@@ -19,9 +19,6 @@ namespace GingerCoreNET.Application_Models
             {
                 //ApplicationAPIModel apiModelLearned = learnedAPIModelsList[i];
 
-                //AutoMapper.MapperConfiguration automapAPIModel = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<ApplicationAPIModel, DeltaAPIModel>(); });
-                //DeltaAPIModel apiModelDelta = automapAPIModel.CreateMapper().Map<ApplicationAPIModel, DeltaAPIModel>(apiModelLearned);
-
                 DeltaAPIModel apiModelDelta = new DeltaAPIModel();
                 apiModelDelta.learnedAPI = apiModelLearned;
                 List<ApplicationAPIModel> matchingAPIModels;
@@ -31,7 +28,6 @@ namespace GingerCoreNET.Application_Models
                 else
                     matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
 
-                //apiModelDelta.matchingAPIModel = existingAPIModels.Where(m => m.EndpointURL.Equals(apiModel.EndpointURL, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                 if (matchingAPIModels != null && matchingAPIModels.Count > 0)
                 {
                     ApplicationAPIModel matchingModel = matchingAPIModels[0];
@@ -40,20 +36,31 @@ namespace GingerCoreNET.Application_Models
                     {
                         apiModelDelta.comparisonStatus = DeltaAPIModel.eComparisonOutput.Unchanged;         // UNCHANGED
                         apiModelDelta.matchingAPIModel = matchingAPIModels[0];
+                        apiModelDelta.IsSelected = false;
                     }
                     else
                     {
                         apiModelDelta.comparisonStatus = DeltaAPIModel.eComparisonOutput.Modified;          // MODIFIED
                         apiModelDelta.matchingAPIModel = matchingModel;
+                        apiModelDelta.IsSelected = true;
                     }
                 }
                 else
                 {
                     apiModelDelta.comparisonStatus = DeltaAPIModel.eComparisonOutput.New;                   // NEW API
+                    apiModelDelta.IsSelected = true;
                 }
 
                 deltaAPIModelsList.Add(apiModelDelta);
             }
+        }
+
+        public static ApplicationAPIModel CreateAPIModelObject(ApplicationAPIModel sourceAPIModel)
+        {
+            AutoMapper.MapperConfiguration automapAPIModel = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<ApplicationAPIModel, ApplicationAPIModel>(); });
+            ApplicationAPIModel DuplicateAPIModel = automapAPIModel.CreateMapper().Map<ApplicationAPIModel, ApplicationAPIModel>(sourceAPIModel);
+
+            return DuplicateAPIModel;
         }
 
         public static List<ApplicationAPIModel> CompareAPIModels(ApplicationAPIModel learnedModel, List<ApplicationAPIModel> existingAPIs)
@@ -74,22 +81,22 @@ namespace GingerCoreNET.Application_Models
             existingAPIs = existingAPIs.Where(m => m.URLDomain == learnedModel.URLDomain).ToList();
 
             // Filter matching APIs based on HTTP Headers
-            existingAPIs = existingAPIs.Where(m => m.HttpHeaders.Equals(learnedModel.HttpHeaders)).ToList();
+            //existingAPIs = existingAPIs.Where(m => m.HttpHeaders.Equals(learnedModel.HttpHeaders)).ToList();
 
-            //for(int i = existingAPIs.Count - 1; i >= 0; i--)
-            //{
-            //    ApplicationAPIModel apiMod = existingAPIs[i];
-            //    foreach (APIModelKeyValue headerPair in apiMod.HttpHeaders)
-            //    {
-            //        if (learnedModel.HttpHeaders.Contains(headerPair))
-            //            continue;
-            //        else
-            //        {
-            //            existingAPIs[i] = null;
-            //            break;
-            //        }
-            //    }
-            //}
+            for (int i = existingAPIs.Count - 1; i >= 0; i--)
+            {
+                ApplicationAPIModel apiMod = existingAPIs[i];
+                foreach (APIModelKeyValue headerPair in apiMod.HttpHeaders)
+                {
+                    if (learnedModel.HttpHeaders.Contains(headerPair))
+                        continue;
+                    else
+                    {
+                        existingAPIs[i] = null;
+                        break;
+                    }
+                }
+            }
 
             // Filter matching APIs based on Request Body
             existingAPIs = existingAPIs.Where(m => m.RequestBody.Equals(learnedModel.RequestBody)).ToList();
