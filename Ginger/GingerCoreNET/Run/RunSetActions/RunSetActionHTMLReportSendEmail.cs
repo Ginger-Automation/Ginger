@@ -536,7 +536,7 @@ namespace Ginger.Run.RunSetActions
             StringBuilder fieldsValuesHTMLTableCellsm = new StringBuilder();
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
-                if (currentTemplate.EmailSummaryViewFieldsToSelect.IndexOf(selectedField) <= 5)
+                if (currentTemplate.EmailSummaryViewFieldsToSelect.IndexOf(selectedField) <= 6)
                 {
                     fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField.FieldName + "</td>");
 
@@ -559,11 +559,15 @@ namespace Ginger.Run.RunSetActions
 
                         if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                         {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + 's') + "</td>");
                         }
-                        else if ((selectedField.FieldKey == ActionReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActionReport.Fields.EndTimeStamp))
+                        else if ((selectedField.FieldKey == RunSetReport.Fields.StartTimeStamp) || (selectedField.FieldKey == RunSetReport.Fields.EndTimeStamp))
                         {
-                            fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd' >" +  DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + " </td>");
+                        }
+                        else if ((selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate) || (selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate))
+                        {
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + '%') + "</td>");
                         }
                         else
                         {
