@@ -109,10 +109,6 @@ namespace Ginger
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
             
 
-            // Put back for Lazy load of BF.Acitvities
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
 
             NewRepositorySerializer.AddClasses(list);
         }
