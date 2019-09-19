@@ -105,23 +105,42 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         Activity activity = businessFlowToConvert.BusinessFlow.Activities[activityIndex];
                         ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == activity.TargetApplication select x.Platform).FirstOrDefault();
-                        if (activity.Active)
+                        bool isRemoved = false;
+                        //if activity not active then check if all the actions are obsolete then remove the complete activity
+                        if (!activity.Active)
                         {
+                            var count = activity.Acts.Where(act => (act is IObsoleteAction) &&
+                                                            (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) &&
+                                                            (((IObsoleteAction)act).TargetAction()) != null).Count();
+                            if (count == activity.Acts.Count)
+                            {
+                                businessFlowToConvert.BusinessFlow.Activities.RemoveAt(activityIndex);
+                                isRemoved = true;
+                                activityIndex++;
+                            }
+                        }
+
+                        if (!isRemoved)
+                        {
+                            //check the actions if it is obsolete then remove the action
                             for (int actIndex = 0; actIndex < activity.Acts.Count; actIndex++)
                             {
                                 Act act = (Act)activity.Acts[actIndex];
-                                if((act.Active &&
-                                   (act is IObsoleteAction) && 
+                                if ((act.Active &&
+                                   (act is IObsoleteAction) &&
                                    (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) &&
                                    (((IObsoleteAction)act).TargetAction()) != null))
                                 {
                                     activity.Acts.RemoveAt(actIndex);
                                 }
                             }
-                            if(activity.Acts.Count <= 0 || activity.Acts.Where(x => x.Active == true).Count() <= 0)
+
+                            //check if all the actions removed from activity the remove the activity
+                            if (activity.Acts.Count <= 0 || activity.Acts.Where(x => x.Active == true).Count() <= 0)
                             {
                                 businessFlowToConvert.BusinessFlow.Activities.RemoveAt(activityIndex);
-                            }
+                                activityIndex++;
+                            } 
                         }
                     }
                 }   
