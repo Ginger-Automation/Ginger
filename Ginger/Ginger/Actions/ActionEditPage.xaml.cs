@@ -356,7 +356,7 @@ namespace Ginger.Actions
                 {
                     xOutputValuesExpander.IsExpanded = true;
                 }
-            }
+            });
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
