@@ -342,16 +342,15 @@ namespace Ginger.Variables
             if (grdVariables.CurrentItem != null && grdVariables.CurrentItem.ToString() != "{NewItemPlaceholder}")
             {
                 VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
-                VariableEditPage.eEditMode  mode=VariableEditPage.eEditMode.BusinessFlow;
-                selectedVarb.NameBeforeEdit = selectedVarb.Name;    
-                switch(mVariablesLevel)// variable page is generic so need to change editmode as per type of variable.
+                selectedVarb.NameBeforeEdit = selectedVarb.Name;
+                VariableEditPage.eEditMode mode = VariableEditPage.eEditMode.Default;
+                switch (mVariablesLevel)// variable page is generic so need to change editmode as per type of variable.
                 {
-                    case eVariablesLevel.Activity:
-                        mode = VariableEditPage.eEditMode.Activity;
-                        break;
                     case eVariablesLevel.BusinessFlow:
-                        mode = VariableEditPage.eEditMode.BusinessFlow;
+                    case eVariablesLevel.Activity:
+                        mode = VariableEditPage.eEditMode.Default;
                         break;
+
                     case eVariablesLevel.Solution:
                         mode = VariableEditPage.eEditMode.Global;
                         break;
@@ -373,7 +372,7 @@ namespace Ginger.Variables
         {
             VariableBase selectedVarb = (VariableBase)grdVariables.CurrentItem;
             selectedVarb.NameBeforeEdit = selectedVarb.Name;
-            VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.BusinessFlow;
+            VariableEditPage.eEditMode editMode = VariableEditPage.eEditMode.Default;
             if (mContext!=null && mContext.BusinessFlow == null)
             {
                 editMode = VariableEditPage.eEditMode.SharedRepository;
