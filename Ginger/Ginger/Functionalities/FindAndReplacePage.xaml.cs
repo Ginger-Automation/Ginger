@@ -902,9 +902,9 @@ namespace Ginger.Functionalities
             if (mContext == eContext.AutomatePage)
             {
                 if (Parent != null && Parent is BusinessFlow)
-                    w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.BusinessFlow, Parent as BusinessFlow);
+                    w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.Default, Parent as BusinessFlow);
                 else if (Parent != null && Parent is Activity)
-                    w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Activity, Parent as Activity);
+                    w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Default, Parent as Activity);
                 else
                     w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository, Parent);
             }
