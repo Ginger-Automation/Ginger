@@ -22,6 +22,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -46,10 +47,9 @@ namespace Amdocs.Ginger.Repository
     // We cam also read partial files - i.e: if we just need the Business flow name for list, no need to read all file
     // We can add custom attr at the top
 
+
     public class NewRepositorySerializer : IRepositorySerializer
     {
-       
-
         private const string cGingerRepositoryItem = "GingerRepositoryItem";
         private const string cGingerRepositoryItemHeader = "Header";
         private const string cHeaderGingerVersion= "GingerVersion";
@@ -57,14 +57,14 @@ namespace Amdocs.Ginger.Repository
         // We keep year/month/day hour/minutes - removed seconds and millis
         private const string cDateTimeXMLFormat = "yyyyMMddHHmm";
 
-        public delegate object NewRepositorySerializerEventHandler(NewRepositorySerilizerEventArgs EventArgs);
+        public delegate object NewRepositorySerializerEventHandler(NewRepositorySerializerEventArgs EventArgs);
         public static event NewRepositorySerializerEventHandler NewRepositorySerializerEvent;        
-        public static object OnNewRepositorySerializerEvent(NewRepositorySerilizerEventArgs.eEventType EvType, string FilePath, string XML, RepositoryItemBase TargetObj)
+        public static object OnNewRepositorySerializerEvent(NewRepositorySerializerEventArgs.eEventType EvType, string FilePath, string XML, RepositoryItemBase TargetObj)
         {
             NewRepositorySerializerEventHandler handler = NewRepositorySerializerEvent;
             if (handler != null)
             {
-               return handler(new NewRepositorySerilizerEventArgs(EvType, FilePath, XML, TargetObj));
+               return handler(new NewRepositorySerializerEventArgs(EvType, FilePath, XML, TargetObj));
             }
 
             return null;
@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.Repository
             xml.WriteAttributeString(nameof(RepositoryItemHeader.CreatedBy), repositoryItem.RepositoryItemHeader.CreatedBy);
             xml.WriteAttributeString(nameof(RepositoryItemHeader.Created), repositoryItem.RepositoryItemHeader.Created.ToString(cDateTimeXMLFormat));
 
-            xml.WriteAttributeString(nameof(RepositoryItemHeader.GingerVersion), repositoryItem.RepositoryItemHeader.GingerVersion.ToString());
+            xml.WriteAttributeString(nameof(RepositoryItemHeader.GingerVersion), repositoryItem.RepositoryItemHeader.GingerVersion);
             string ver = repositoryItem.RepositoryItemHeader.Version.ToString();
             xml.WriteAttributeString(nameof(RepositoryItemHeader.Version), ver);
 
@@ -336,16 +336,6 @@ namespace Amdocs.Ginger.Repository
             {
                 return false;
             }
-            //object def = GetDefault(v.GetType());
-            //if (def != null)
-            //{
-            //    // if (((object)v) == def) return true;  // NOT WORKING
-            //    string s1 = ((object)v).ToString();
-            //    if (string.IsNullOrEmpty(s1)) return true;
-            //    string s2 = def.ToString();
-            //    if (s1 == s2) return true;
-            //}
-            //return false;
         }
 
         //TODO: Make it class.attr
@@ -571,7 +561,7 @@ namespace Amdocs.Ginger.Repository
             else
             {
                 //Item saved by old Serialize so calling it to load the XML 
-                return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
+                return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerializerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
             }
 
             return (RepositoryItemBase)RootObj;
@@ -690,7 +680,7 @@ namespace Amdocs.Ginger.Repository
 
 
 
-                SetObjectSerialziedAttrDefaultValue(obj);
+                SetObjectSerializedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
 
                 xdr.Read();
@@ -715,13 +705,11 @@ namespace Amdocs.Ginger.Repository
                     //or find a better way
                     // meanwhile it is working
 
-
                     
                     if (mi.MemberType == MemberTypes.Property)
                     {
                         // check if this is kind of a list
-                        if (((PropertyInfo)mi).PropertyType.GenericTypeArguments.Count() > 0)
-                        // if (((PropertyInfo)mi).PropertyType is IObservableList)
+                        if (((PropertyInfo)mi).PropertyType.GenericTypeArguments.Any())
                         {
                             SetObjectListAttrs(xdr, obj);
                         }
@@ -731,12 +719,11 @@ namespace Amdocs.Ginger.Repository
                             object item = xmlReadObject(obj, xdr);
                             xdr.ReadEndElement();
                             ((PropertyInfo)mi).SetValue(obj, item);
-                            
                         }
                     }
                     else
                     {
-                        if (((FieldInfo)mi).FieldType.GenericTypeArguments.Count() > 0)
+                        if (((FieldInfo)mi).FieldType.GenericTypeArguments.Any())
                         {
                             SetObjectListAttrs(xdr, obj);
                         }
@@ -797,41 +784,71 @@ namespace Amdocs.Ginger.Repository
 
         }
 
-        private static void SetObjectSerialziedAttrDefaultValue(object obj)
+
+        // We keep a cache of type and members default value since reflection is costly/perf 
+        // so we don't need to read all attrs every time when deserializing
+        private static Dictionary<Type, List<MemberInfoDefault>> mMemberDefaultDictionary = new Dictionary<Type, List<MemberInfoDefault>>();
+
+        private static void SetObjectSerializedAttrDefaultValue(object obj)
         {
-            // TODO: check if we can combine the below into one faster func
             try
             {
-                var properties = obj.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property);
-                foreach (MemberInfo mi in properties)
+                List<MemberInfoDefault> members;
+                Type type = obj.GetType();
+
+                if (!mMemberDefaultDictionary.ContainsKey(type))
                 {
-                    IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                    if (token != null)
-                    {
-                        if (token.GetDefualtValue() != null)
-                        {
-                            obj.GetType().GetProperty(mi.Name).SetValue(obj, token.GetDefualtValue());
-                        }
-                    }
+                    AddClassTypeInfo(type);
                 }
 
-                var fields = obj.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
-                foreach (MemberInfo mi in fields)
+                mMemberDefaultDictionary.TryGetValue(type, out members);
+
+                foreach (MemberInfoDefault memberInfo in members)
                 {
-                    IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(mi, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
-                    if (token != null)
+                    switch (memberInfo.MemberInfo.MemberType)
                     {
-                        if (token.GetDefualtValue() != null)
-                        {
-                            obj.GetType().GetField(mi.Name).SetValue(obj, token.GetDefualtValue());
-                        }
+                        case MemberTypes.Property:
+                            ((PropertyInfo)memberInfo.MemberInfo).SetValue(obj, memberInfo.DefaultValue);
+                            break;
+                        case MemberTypes.Field:
+                            ((FieldInfo)memberInfo.MemberInfo).SetValue(obj, memberInfo.DefaultValue);
+                            break;
                     }
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Unable to set default value of serialized Repository Item - " + ex.Message);
+                throw new Exception("Unable to set default value of serialized Repository Item - Type: '" + obj.GetType().Name + "' ," + ex.Message);
             }
+
+        }
+
+        // Marked sync in case we load in parallel so we don't add same class twice
+        [MethodImpl(MethodImplOptions.Synchronized)]  
+        private static void AddClassTypeInfo(Type type)
+        {
+            if (mMemberDefaultDictionary.ContainsKey(type))  // Check again due to parallelism we can get same request in the queue
+            {
+                return;
+            }
+
+            List<MemberInfoDefault> list = new List<MemberInfoDefault>();
+
+            var members = type.GetMembers();
+            foreach (MemberInfo memberInfo in members)
+            {
+                IsSerializedForLocalRepositoryAttribute token = Attribute.GetCustomAttribute(memberInfo, typeof(IsSerializedForLocalRepositoryAttribute), false) as IsSerializedForLocalRepositoryAttribute;
+                if (token != null)
+                {
+                    object defaultValue = token.GetDefualtValue();
+                    if (defaultValue != null)
+                    {
+                        MemberInfoDefault md = new MemberInfoDefault {MemberInfo = memberInfo, DefaultValue = defaultValue };
+                        list.Add(md);
+                    }
+                }
+            }
+            mMemberDefaultDictionary.Add(type, list);
         }
 
         static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
@@ -1416,7 +1433,7 @@ namespace Amdocs.Ginger.Repository
 
 
     //TODO: move to separate file
-    public class NewRepositorySerilizerEventArgs
+    public class NewRepositorySerializerEventArgs
     {
         public enum eEventType
         {
@@ -1428,9 +1445,9 @@ namespace Amdocs.Ginger.Repository
         public string XML;
         public RepositoryItemBase TargetObj;
 
-        public NewRepositorySerilizerEventArgs(eEventType EventType, string FilePath, string XML, RepositoryItemBase TargetObj)
+        public NewRepositorySerializerEventArgs(eEventType eventType, string FilePath, string XML, RepositoryItemBase TargetObj)
         {
-            this.EventType = EventType;
+            this.EventType = eventType;
             this.FilePath = FilePath;
             this.XML = XML;
             this.TargetObj = TargetObj;
