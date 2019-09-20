@@ -81,7 +81,7 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
-        private string mMatchingAPIName;
+        private string mMatchingAPIName = "";
         public string MatchingAPIName
         {
             get

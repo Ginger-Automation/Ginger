@@ -27,8 +27,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         {
             InitializeComponent();
             mDeltaAPIModel = deltaAPIModel;
-            APIModelPage existingAPIPage = new APIModelPage(deltaAPIModel.matchingAPIModel);
-            APIModelPage learnedAPIPage = new APIModelPage(deltaAPIModel.learnedAPI);
+            APIModelPage existingAPIPage = new APIModelPage(deltaAPIModel.matchingAPIModel, true);
+            APIModelPage learnedAPIPage = new APIModelPage(deltaAPIModel.learnedAPI, true);
 
             xExistingAPIFrame.Content = existingAPIPage;
             xLearnedAPIFrame.Content = learnedAPIPage;

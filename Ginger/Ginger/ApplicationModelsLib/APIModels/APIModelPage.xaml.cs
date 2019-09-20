@@ -40,7 +40,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;
         private bool saveWasDone = false;
-        public APIModelPage(ApplicationAPIModel applicationAPIModelBase)
+        public APIModelPage(ApplicationAPIModel applicationAPIModelBase, bool IsReadOnlyRequest = false)
         {
             mApplicationAPIModel = applicationAPIModelBase;
 
@@ -63,6 +63,49 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
+
+            if (IsReadOnlyRequest)
+                UpdatePageAsReadOnly();
+        }
+
+        void UpdatePageAsReadOnly()
+        {
+            txtName.IsReadOnly = true;
+            txtDescription.IsReadOnly = true;
+            xTagsViewer.IsEnabled = false;
+            xTargetApplicationComboBox.IsEnabled = false;
+            xAPITypeComboBox.IsEnabled = false;
+            EndPointURLTextBox.IsReadOnly = true;
+            RequestTypeComboBox.IsEnabled = false;
+            HttpVersioncombobox.IsEnabled = false;
+            ResponseTypeComboBox.IsEnabled = false;
+            CookieMode.IsEnabled = false;
+            NetworkCeredentials.IsEnabled = false;
+            SP_CustomCreds.IsEnabled = false;
+            PanelSoap.IsEnabled = false;
+            DoNotFailActionOnBadRespose.IsEnabled = false;
+            HttpHeadersGrid.IsReadOnly = true;
+            ContentTypeComboBox.IsEnabled = false;
+            BodySelection.IsEnabled = false;
+            UseWSSecurityHeader.IsEnabled = false;
+            RequestBodyTextBox.IsReadOnly = true;
+            TemplateFileNameFileBrowser.IsReadOnly = true;
+            TemplateFileBrowseButton.IsEnabled = false;
+            DoNotImportRequestFile.IsEnabled = false;
+
+            controlGrid.IsEnabled = false;
+
+            FormDataGrid.IsReadOnly = true;
+
+            CertificateSelection.IsEnabled = false;
+            CertificateFileGrid.IsEnabled = false;
+            DoNotCertificateImportFile.IsEnabled = false;
+            CertificatePasswordUCValueExpression.IsReadOnly = true;
+            SecurityTypeComboBox.IsEnabled = false;
+            AuthTypeComboBox.IsEnabled = false;
+            AuthUserTextBox.IsReadOnly = true;
+            AuthPasswordTextBox.IsReadOnly = true;
+
         }
 
         private void InitializeUIByActionType()
