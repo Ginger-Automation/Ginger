@@ -116,6 +116,8 @@ namespace GingerCore.Actions.Common
             public static string WaitforIdle = "WaitforIdle";
             public static string IsWidgetsElement = "IsWidgetsElement";
             public static string IsMouseEvent = "IsMouseEvent";
+            public static string POMElementLocator = "POMElementLocator";
+            public static string POMElementLocateValue = "POMElementLocateValue";
 
             //used for TableElementAction
             public static string ControlAction = "ControlAction";

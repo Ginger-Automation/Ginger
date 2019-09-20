@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -372,6 +373,11 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad HandleActUIElement(ActUIElement act)
         {
+            if(act.ElementLocateBy.Equals(eLocateBy.POMElement))
+            {
+               return HandlePOMElememntExecution(act);
+            }
+
             PayLoad PL = act.GetPayLoad();
             PayLoad response = Send(PL);
             if (!response.IsErrorPayLoad() && !response.IsOK())
@@ -379,6 +385,63 @@ namespace GingerCore.Drivers.JavaDriverLib
                 List<KeyValuePair<string,string>> parsedResponse = response.GetParsedResult();
                 act.AddOrUpdateReturnParsedParamValue(parsedResponse);
             }
+            return response;
+        }
+
+        private PayLoad HandlePOMElememntExecution(ActUIElement act)
+        {
+            ObservableList<ElementLocator> locators;
+
+            string[] pomElementGUIDs = act.ElementLocateValue.ToString().Split('_');
+            Guid selectedPOMGUID = new Guid(pomElementGUIDs[0]);
+            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+
+            if (currentPOM == null)
+            {
+                act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
+                return null;
+            }
+            else
+            {
+                Guid selectedPOMElementGUID = new Guid(pomElementGUIDs[1]);
+                ElementInfo selectedPOMElement = currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                if (selectedPOMElement == null)
+                {
+                    act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
+                    return null;
+                }
+                else
+                {
+                    locators = selectedPOMElement.Locators;
+                }
+            }
+
+            PayLoad response = null;
+
+            foreach (var locateElement in locators)
+            {
+                act.AddOrUpdateInputParamValueAndCalculatedValue(ActUIElement.Fields.POMElementLocator, locateElement.LocateBy.ToString());
+                act.AddOrUpdateInputParamValueAndCalculatedValue(ActUIElement.Fields.POMElementLocateValue, locateElement.LocateValue.ToString());
+
+                PayLoad PL = act.GetPayLoad();
+
+                response = Send(PL);
+
+                if (!response.IsErrorPayLoad() && !response.IsOK())
+                {
+                    if (!locateElement.Equals(locators.LastOrDefault()))
+                    {
+                        continue;
+                    }
+                    List<KeyValuePair<string, string>> parsedResponse = response.GetParsedResult();
+                    act.AddOrUpdateReturnParsedParamValue(parsedResponse);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
             return response;
         }
 

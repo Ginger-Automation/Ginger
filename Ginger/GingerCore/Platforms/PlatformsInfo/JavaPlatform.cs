@@ -59,16 +59,20 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             if (mElementLocatorsTypeList == null)
             {
+                //Arrange locator on priority basis
                 mElementLocatorsTypeList = new List<eLocateBy>();
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);
+                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
+                mElementLocatorsTypeList.Add(eLocateBy.ByName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
+                mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByTitle);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
-                mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSSSelector);
+                mElementLocatorsTypeList.Add(eLocateBy.ByValue);
             }
             return mElementLocatorsTypeList;
         }
