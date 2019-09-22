@@ -102,7 +102,38 @@ namespace GingerCore.GeneralLib
                 textBlockControl.Background = System.Windows.Media.Brushes.LightPink;
                 textBlockControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
-        }        
+        }
+
+        public static void ObjFieldBinding(Panel panelControl, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay)
+        {
+            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
+            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            try
+            {
+                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
+                b.Source = obj;
+                b.Path = new PropertyPath(property);
+                b.Mode = BindingMode;
+                if (bindingConvertor != null)
+                    b.Converter = bindingConvertor;
+                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                panelControl.SetBinding(dependencyProperty, b);
+            }
+            catch (Exception ex)
+            {
+                //it is possible we load an old enum or something else which will cause the binding to fail
+                // Can happen also if the bind field name is incorrect
+                // mark the control in red, instead of not openning the Page
+                // Set a tool tip with the error
+
+                // control.IsEnabled = false; // Do not disable as the red will not show
+                panelControl.Style = null; // remove style so red will show
+                //control.Foreground = System.Windows.Media.Brushes.Red;
+                panelControl.Background = System.Windows.Media.Brushes.LightPink;
+
+                panelControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
+            }
+        }
         #endregion Binding
     }
 

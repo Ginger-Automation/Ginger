@@ -8,6 +8,7 @@
       xmlns:UCControl="clr-namespace:Ginger.UserControlsLib"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+      xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView"
       mc:Ignorable="d" 
       Title="Edit Action" 
       d:DesignWidth="1100"
@@ -227,40 +228,19 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xScreenShotTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="4" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Screenshotes View &amp; Configurations">
-                                <DockPanel >
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Camera" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                                    <TextBlock x:Name="xScreenshotsTabHeaderTextBlock" Text="Screenshots" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5"  BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
-                            <DockPanel x:Name="xScreenshotsPnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
-                                <CheckBox x:Name="xTakeScreenShotCheckBox" DockPanel.Dock="Top" Content="Take Screenshot(s)" Checked="TakeScreenShot_Checked" Unchecked="TakeScreenShot_UnChecked" FontWeight="Bold" ToolTip="Add tested application screenshot to the report after the action executed" Style="{StaticResource $CeckBoxStyle}" Margin="0,10,0,0" />
-                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,0" x:Name="TakeScreenshotsConfigs" Visibility="Visible">
-                                    <Label Content="Screenshot(s) Capture Type:" Style="{StaticResource $LabelStyle}"/>
-                                    <ComboBox x:Name="xWindowsToCaptureCombo" Margin="5,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200"  HorizontalAlignment="Left"/>
-                                </StackPanel>
-
-                                <Grid x:Name="ScreenShotsGrid" DockPanel.Dock="Top" Margin="0,10,0,0" />
-                            </DockPanel>
-                        </Border>
-                    </TabItem>
-
                     <TabItem x:Name="xExecutionDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}">
                                 <DockPanel >
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Pending" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                    <!--<usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Pending" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />-->
                                     <TextBlock Text="Execution Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                    <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage"/>
                                 </DockPanel>
                             </Border>
                         </TabItem.Header>
                         <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
                             <DockPanel Margin="5">
-                                <Expander x:Name="xExecutionDetailsRelatedSettingsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
+                                <Expander x:Name="xExecutionDetailsRelatedSettingsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
                                     <Expander.Header>
                                         <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
                                             <Label.Content>
@@ -274,6 +254,14 @@
                                                 <Label Content="Status Converter:" Style="{StaticResource $LabelStyle}" />
                                                 <ComboBox x:Name="xStatusConvertorCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150" HorizontalAlignment="Left"/>
                                                 <CheckBox x:Name="xFailIgnoreCheckBox" Content="Ignore on Fail" Visibility="Collapsed" ToolTip="If the action fails change status to Ignore Fail" Margin="10,0,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                                            </StackPanel>
+
+                                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,10,0,0">
+                                                <CheckBox x:Name="xTakeScreenShotCheckBox" DockPanel.Dock="Top" Content="Take Screenshot(s)" Checked="TakeScreenShot_Checked" Unchecked="TakeScreenShot_UnChecked" FontWeight="Bold" ToolTip="Add tested application screenshot to the report after the action executed" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" />
+                                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="20,0,0,0" x:Name="xScreenshotsConfigsPnl" Visibility="Visible">
+                                                    <Label Content="Capture Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                                                    <ComboBox x:Name="xWindowsToCaptureCombo" Margin="0,0,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                </StackPanel>
                                             </StackPanel>
 
                                             <DockPanel x:Name="xActionLogPnl" Margin="0,10,0,0" >
@@ -294,24 +282,42 @@
                                     </Expander.Header>
                                     <Expander.Content>
                                         <DockPanel  x:Name="xActionRunDetailsPnl"  DockPanel.Dock="Top" Margin="5">
-                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
-                                                <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
-                                                <Label x:Name="xExecutionStatusLbl" FontSize="14" FontWeight="Bold" Style="{StaticResource $LabelStyle}" />
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                                                <Label Content="Execution Time:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
-                                                <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
-                                            </StackPanel>
+                                            <Grid DockPanel.Dock="Top">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="100*"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
+                                                    <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
+                                                    <Label x:Name="xExecutionStatusLbl" FontSize="14" FontWeight="Bold" Style="{StaticResource $LabelStyle}" />
+                                                </StackPanel>
 
-                                            <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+                                                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
+                                                    <Label Content="Execution Time:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
+                                                    <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
+                                                </StackPanel>
+
+                                                <usercontrols:ImageMakerControl x:Name="xExecutionStatusImage" ImageType="Pending" Height="50" Grid.RowSpan="2" Grid.Column="1"/>
+                                            </Grid>
+
+                                            <StackPanel x:Name="xExecutionExtraInfoPnl" DockPanel.Dock="Top" Margin="0,10,0,0">
                                                 <Label Content="Extra Information:" Style="{StaticResource $LabelStyle}"/>
                                                 <TextBox x:Name="xExecutionExtraInfoText" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource $MultiRowsTextBoxStyle}" Background="Transparent" Height="100"/>
                                             </StackPanel>
 
-                                            <StackPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+                                            <StackPanel x:Name="xExecutionErrorDetailsPnl" DockPanel.Dock="Top" Margin="0,10,0,0">
                                                 <Label Content="Error Details:" Style="{StaticResource $LabelStyle}"/>
                                                 <TextBox x:Name="xExecutionErrorDetailsText" TextWrapping="Wrap" ScrollViewer.VerticalScrollBarVisibility="Auto" IsReadOnly="True" FontSize="12" Style="{StaticResource $MultiRowsTextBoxStyle}" Foreground="Red" FontWeight="Bold" Background="Transparent" Height="100"/>
                                             </StackPanel>
+
+                                            <DockPanel x:Name="xScreenShotsPnl" DockPanel.Dock="Top" Margin="0,10,0,0" >
+                                                <Label Content="Screenshots:" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}"/>
+                                                <Grid x:Name="xScreenShotsGrid" DockPanel.Dock="Top" Margin="10"/>
+                                            </DockPanel>
                                         </DockPanel>
                                     </Expander.Content>
                                 </Expander>
