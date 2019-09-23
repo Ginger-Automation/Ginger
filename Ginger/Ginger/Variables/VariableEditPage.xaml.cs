@@ -49,8 +49,7 @@ namespace Ginger.Variables
         public enum eEditMode
         {
             SharedRepository = 0,
-            BusinessFlow = 1,
-            Activity = 2,
+            Default=1,
             Global = 4,
             FindAndReplace = 5,
             View = 6
@@ -60,7 +59,7 @@ namespace Ginger.Variables
 
         Context mContext;
 
-        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
+        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null)
         {
             InitializeComponent();
            
@@ -110,8 +109,15 @@ namespace Ginger.Variables
                 cbSetAsOutputValue.IsEnabled = false;
                 linkedvariableCombo.IsEnabled = false;
                 publishValueToLinkedBtn.IsEnabled = false;
+            }
+            if (editMode == eEditMode.View)
+            {
                 frmVarTypeInfo.IsEnabled = false;
-            }             
+            }
+            else
+            {
+                frmVarTypeInfo.IsEnabled = true;
+            }
             
             mVariable.PropertyChanged += mVariable_PropertyChanged;
             LoadVarPage();
@@ -181,8 +187,7 @@ namespace Ginger.Variables
 
             switch (editMode)
             {                
-                case VariableEditPage.eEditMode.BusinessFlow:
-                case VariableEditPage.eEditMode.Activity:
+                case VariableEditPage.eEditMode.Default:
                 case VariableEditPage.eEditMode.Global:
                 case VariableEditPage.eEditMode.View:
                     Button okBtn = new Button();

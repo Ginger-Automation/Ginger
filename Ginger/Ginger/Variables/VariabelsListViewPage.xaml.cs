@@ -140,11 +140,18 @@ namespace Ginger.BusinessFlowPages
                 }
                 else if (mVariabelsParent is BusinessFlow)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.BusinessFlow);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default);
                 }
                 else if (mVariabelsParent is Activity)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Activity);
+                    if(mPageViewMode== General.eRIPageViewMode.View)
+                    {
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.View);
+                    }
+                    else
+                    {
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default);
+                    }
                 }                
                 xMainFrame.SetContent(mVariabelEditPage);
             }
