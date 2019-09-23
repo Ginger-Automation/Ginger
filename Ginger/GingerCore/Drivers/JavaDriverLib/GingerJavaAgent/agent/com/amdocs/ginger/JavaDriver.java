@@ -879,7 +879,6 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 	
 	private PayLoad HandleUIElementAction(PayLoad PL)
 	{
-	
 				
 		HashMap inputValues = PL.GetInputValues(PL.GetListPayLoad());
 		
@@ -887,6 +886,16 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		String LocateValue = PL.GetInputParamValue(inputValues, "ElementLocateValue");
 		String ElementType = PL.GetInputParamValue(inputValues, "ElementType");
 		String ControlAction = PL.GetInputParamValue(inputValues, "ElementAction");	
+		
+		//support POM Element
+		String POMElementLocator = PL.GetInputParamValue(inputValues, "POMElementLocator");
+		String POMElementLocateValue = PL.GetInputParamValue(inputValues, "POMElementLocateValue");
+		
+		if(POMElementLocator != null && POMElementLocateValue != null && LocateBy.equals("POMElement"))
+		{
+			LocateBy = POMElementLocator;
+			LocateValue = POMElementLocateValue;
+		}
 		
 		GingerAgent.WriteLog("ProcessCommand 'ElementAction': "  
 				+ " LocateBy = " + LocateBy + ","
