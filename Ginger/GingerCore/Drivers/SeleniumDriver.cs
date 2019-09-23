@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -3090,30 +3091,18 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                string[] pOMandElementGUIDs = locateValue.ToString().Split('_');
-                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                if (currentPOM == null)
+                var pomExcutionUtil = new POMExecutionUtils(act);
+                var currentPOM = pomExcutionUtil.CurrentPOM;
+
+                ElementInfo currentPOMElementInfo = null;
+                if (currentPOM != null)
                 {
-                    act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                    return null;
-                }
-                else
-                {
-                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                    if (selectedPOMElement == null)
-                    {
-                        act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                        return null;
-                    }
-                    else
-                    {
-                        if (HandelIFramShiftAutomaticallyForPomElement)
-                            SwitchFrame(selectedPOMElement);
-                        elem = LocateElementByLocators(selectedPOMElement.Locators);
-                        selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
-                    }
+                    currentPOMElementInfo = pomExcutionUtil.CurrentPOMElementInfo;
+
+                    if (HandelIFramShiftAutomaticallyForPomElement)
+                            SwitchFrame(currentPOMElementInfo);
+                        elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                    currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                 }
             }
             else

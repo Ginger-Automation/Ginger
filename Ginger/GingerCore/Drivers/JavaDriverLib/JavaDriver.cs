@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -390,35 +391,28 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad HandlePOMElememntExecution(ActUIElement act)
         {
-            ObservableList<ElementLocator> locators;
+            ObservableList<ElementLocator> locators = new ObservableList<ElementLocator>();
 
-            string[] pomElementGUIDs = act.ElementLocateValue.ToString().Split('_');
-            Guid selectedPOMGUID = new Guid(pomElementGUIDs[0]);
-            ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+            var pomExcutionUtil = new  POMExecutionUtils(act);
 
-            if (currentPOM == null)
+            var currentPOM = pomExcutionUtil.CurrentPOM;
+
+            ElementInfo currentPOMElementInfo = null;
+            if (currentPOM != null)
             {
-                act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                return null;
-            }
-            else
-            {
-                Guid selectedPOMElementGUID = new Guid(pomElementGUIDs[1]);
-                ElementInfo selectedPOMElement = currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                if (selectedPOMElement == null)
-                {
-                    act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                    return null;
-                }
-                else
-                {
-                    locators = selectedPOMElement.Locators;
-                }
+                currentPOMElementInfo = pomExcutionUtil.CurrentPOMElementInfo;
+                locators = currentPOMElementInfo.Locators;
             }
 
             PayLoad response = null;
 
-            foreach (var locateElement in locators)
+            foreach (ElementLocator locator in locators)
+            {
+                locator.StatusError = string.Empty;
+                locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            }
+
+            foreach (var locateElement in locators.Where(x => x.Active == true).ToList())
             {
                 act.AddOrUpdateInputParamValueAndCalculatedValue(ActUIElement.Fields.POMElementLocator, locateElement.LocateBy.ToString());
                 act.AddOrUpdateInputParamValueAndCalculatedValue(ActUIElement.Fields.POMElementLocateValue, locateElement.LocateValue.ToString());
