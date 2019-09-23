@@ -76,32 +76,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public string DestinationFilePath
-        {
-            get
-            {
-                return GetInputParamCalculatedValue("DestinationFolder");
-            }
-            set
-            {
-                AddOrUpdateInputParamValue("DestinationFolder", value);
-            }
-        }
-
-        [IsSerializedForLocalRepository]
-        public string SourceFilePath
-        {
-            get
-            {
-                return GetInputParamCalculatedValue("SourceFilePath");
-            }
-            set
-            {
-                AddOrUpdateInputParamValue("SourceFilePath", value);
-            }
-        }
-        // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
             get
@@ -366,6 +340,14 @@ namespace GingerCore.Actions
             }
             DestinationFile = System.IO.Path.GetFileName(calculatedDestinationPath);
 
+        }
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if(errorType==SerializationErrorType.PropertyNotFound && (name==Fields.SourceFilePath || name == Fields.DestinationFolder))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
