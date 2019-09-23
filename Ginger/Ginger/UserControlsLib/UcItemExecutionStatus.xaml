@@ -18,7 +18,7 @@
                 </TransformGroup>
             </Polygon.RenderTransform>
         </Polygon>
-        <usercontrols:ImageMakerControl x:Name="xStatusIcon" DockPanel.Dock="Right" Margin="0,-8,-25,0"  Padding="0" SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
+        <usercontrols:ImageMakerControl x:Name="xStatusIcon" DockPanel.Dock="Right" Margin="0,-8,-25,0"  SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
     </DockPanel>
 
 </UserControl>

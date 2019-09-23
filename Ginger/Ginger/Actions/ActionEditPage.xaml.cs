@@ -23,13 +23,13 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
-using Ginger.Actions.ActionConversion;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib.UCListView;
 using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
@@ -286,15 +286,18 @@ namespace Ginger.Actions
         {
             xExecutionDetailsTab.Tag = true;//marking that bindings were done
 
+            BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+            BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+
             xStatusConvertorCombo.BindControl(mAction, nameof(Act.StatusConverter));
-           BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.FailIgnored));
+            BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.FailIgnored));
 
             BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
             InitActionLog();
 
             BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
-            
+
             BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xExecutionExtraInfoPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.ExInfo), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
 
@@ -303,13 +306,14 @@ namespace Ginger.Actions
 
             if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
             {
+                xScreenshotsConfigsPnl.Visibility = Visibility.Collapsed;
                 xScreenShotsPnl.Visibility = Visibility.Collapsed;
             }
             else
-            {                
+            {
                 BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
-                BindingHandler.ObjFieldBinding(xScreenshotsConfigsPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.WindowsToCapture), bindingConvertor: new BoolVisibilityConverter(), BindingMode: BindingMode.OneWay);
-                UpdateScreenShots(); 
+                xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
+                SetScreenshotsPnlView();                
             }
         }
 
@@ -814,7 +818,7 @@ namespace Ginger.Actions
             this.Dispatcher.Invoke(() =>
             {
                 mAction.IsSingleAction = false;
-                UpdateTabsHeaders();
+                //UpdateTabsHeaders();
                 UpdateScreenShots();
                 Mouse.OverrideCursor = null;
             });
@@ -1562,9 +1566,11 @@ namespace Ginger.Actions
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    //UpdatePassFailImages();
                     ShowHideRunStopButtons();
-                    //xRunStatusExpander.IsExpanded = true;
+                    //if (mAction.TakeScreenShot)
+                    //{
+                    //    UpdateScreenShots();
+                    //}
                 });
             }
         }
@@ -1715,6 +1721,26 @@ namespace Ginger.Actions
             else
             {
                 xRetryMechConfigsPnl.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void XTakeScreenShotCheckBox_CheckChanged(object sender, RoutedEventArgs e)
+        {
+            SetScreenshotsPnlView();
+        }
+
+        private void SetScreenshotsPnlView()
+        {
+            if (xTakeScreenShotCheckBox.IsChecked == true)
+            {
+                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;
+                xScreenShotsPnl.Visibility = Visibility.Visible;
+                UpdateScreenShots();
+            }
+            else
+            {
+                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Collapsed;
+                xScreenShotsPnl.Visibility = Visibility.Collapsed;
             }
         }
     }

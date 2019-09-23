@@ -34,6 +34,40 @@ namespace Ginger.UserControlsLib.UCListView
             InitializeComponent();
         }
 
+        public enum eStatusViewMode { Polygon, Image}
+
+        public static readonly DependencyProperty StatusViewModeProperty = DependencyProperty.Register("StatusViewMode", typeof(eStatusViewMode), typeof(UcItemExecutionStatus),
+                             new FrameworkPropertyMetadata(OnStatusViewModePropertyChanged));
+        public eStatusViewMode StatusViewMode
+        {
+            get { return (eStatusViewMode)GetValue(StatusViewModeProperty); }
+            set
+            {
+                SetValue(StatusViewModeProperty, value);
+            }
+        }
+        private static void OnStatusViewModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UcItemExecutionStatus ub = (UcItemExecutionStatus)d;
+            ub.SetStatus();
+        }
+        
+        public double StatusImageSize
+        {
+            get
+            {
+                return xStatusIcon.SetAsFontImageWithSize;
+            }
+            set
+            {
+                xStatusIcon.SetAsFontImageWithSize = value;
+            }
+        }
+
+        Brush mStatusBrush = null;
+        eImageType mStatusImage = eImageType.Pending;
+
+
         public static readonly DependencyProperty StatusProperty = DependencyProperty.Register(nameof(Status), typeof(eRunStatus), typeof(UcItemExecutionStatus), new FrameworkPropertyMetadata(eRunStatus.Pending, OnStatusPropertyChanged));
         public eRunStatus Status
         {
@@ -55,58 +89,73 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetStatus()
         {
-            Brush statusBrush = null;
-            eImageType statusImage;
-            int imageSize = 13;
-
             switch (Status)
             {
                 case eRunStatus.Passed:
-                    statusBrush = FindResource("$PassedStatusColor") as Brush;
-                    statusImage = eImageType.Passed;
+                    mStatusBrush = FindResource("$PassedStatusColor") as Brush;
+                    mStatusImage = eImageType.Passed;
                     break;
                 case eRunStatus.Failed:
-                    statusBrush = FindResource("$FailedStatusColor") as Brush;
-                    statusImage = eImageType.Failed;
+                    mStatusBrush = FindResource("$FailedStatusColor") as Brush;
+                    mStatusImage = eImageType.Failed;
                     break;
                 case eRunStatus.Pending:
-                    statusBrush = FindResource("$PendingStatusColor") as Brush;
-                    statusImage = eImageType.Pending;
+                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
+                    mStatusImage = eImageType.Pending;
                     break;
                 case eRunStatus.Running:
-                    statusBrush = FindResource("$RunningStatusColor") as Brush;
-                    statusImage = eImageType.Running;
+                    mStatusBrush = FindResource("$RunningStatusColor") as Brush;
+                    mStatusImage = eImageType.Running;
                     break;
                 case eRunStatus.Stopped:
-                    statusBrush = FindResource("$StoppedStatusColor") as Brush;
-                    statusImage = eImageType.Stop;
-                    imageSize = 10;
+                    mStatusBrush = FindResource("$StoppedStatusColor") as Brush;
+                    mStatusImage = eImageType.Stop;
                     break;
                 case eRunStatus.Blocked:
-                    statusBrush = FindResource("$BlockedStatusColor") as Brush;
-                    statusImage = eImageType.Blocked;
+                    mStatusBrush = FindResource("$BlockedStatusColor") as Brush;
+                    mStatusImage = eImageType.Blocked;
                     break;
                 case eRunStatus.Skipped:
-                    statusBrush = FindResource("$SkippedStatusColor") as Brush;
-                    statusImage = eImageType.Skipped;
+                    mStatusBrush = FindResource("$SkippedStatusColor") as Brush;
+                    mStatusImage = eImageType.Skipped;
                     break;
                 default:
-                    statusBrush = FindResource("$PendingStatusColor") as Brush;
-                    statusImage = eImageType.Pending;
+                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
+                    mStatusImage = eImageType.Pending;
                     break;
             }
 
-            xPolygon.Fill = statusBrush;
-            xPolygon.Stroke = statusBrush;
+            if (StatusViewMode == eStatusViewMode.Polygon)
+            {
+                xPolygon.Visibility = Visibility.Visible;
+                xPolygon.Fill = mStatusBrush;
+                xPolygon.Stroke = mStatusBrush;
+                xPolygon.ToolTip = Status.ToString();
 
-            xStatusIcon.ImageType = statusImage;
-            xStatusIcon.ImageForeground = Brushes.White;
+                xStatusIcon.ImageForeground = Brushes.White;
+                if (Status == eRunStatus.Stopped)
+                {
+                    StatusImageSize = 10;
+                }
 
-            xStatusIcon.SetAsFontImageWithSize = imageSize;
-            xStatusIcon.Width = imageSize;
-            xStatusIcon.Height = imageSize;
+                DockPanel.SetDock(xStatusIcon, Dock.Right);
+                xStatusIcon.Margin = new Thickness(0, -8, -25, 0);
+                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+            else//image view mode
+            {
+                xPolygon.Visibility = Visibility.Collapsed;
+                xStatusIcon.ImageForeground = (SolidColorBrush)mStatusBrush;
 
-            xPolygon.ToolTip = Status.ToString();
+                DockPanel.SetDock(xStatusIcon, Dock.Top);
+                xStatusIcon.Margin = new Thickness(0, 0, 0, 0);
+                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Center;
+                xStatusIcon.VerticalAlignment = VerticalAlignment.Center;
+            }
+
+            xStatusIcon.ImageType = mStatusImage;
+            xStatusIcon.Width = xStatusIcon.SetAsFontImageWithSize;
+            xStatusIcon.Height = xStatusIcon.SetAsFontImageWithSize;            
             xStatusIcon.ToolTip = Status.ToString();
         }
     }
