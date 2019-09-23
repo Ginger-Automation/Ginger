@@ -31,7 +31,7 @@ namespace Ginger.UserControlsLib.UCListView
     {
         public UcItemExecutionStatus()
         {
-            InitializeComponent();
+            InitializeComponent();           
         }
 
         public enum eStatusViewMode { Polygon, Image}
@@ -48,8 +48,9 @@ namespace Ginger.UserControlsLib.UCListView
         }
         private static void OnStatusViewModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            UcItemExecutionStatus ub = (UcItemExecutionStatus)d;
-            ub.SetStatus();
+            UcItemExecutionStatus uc = (UcItemExecutionStatus)d;
+            uc.SetViewModeControls();
+            uc.SetStatus();
         }
         
         public double StatusImageSize
@@ -85,6 +86,28 @@ namespace Ginger.UserControlsLib.UCListView
         {
             UcItemExecutionStatus itemExecutionStatus = (UcItemExecutionStatus)d;
             itemExecutionStatus.Status = (eRunStatus)e.NewValue;
+        }
+
+        private void SetViewModeControls()
+        {
+            if (StatusViewMode == eStatusViewMode.Polygon)
+            {
+                xPolygon.Visibility = Visibility.Visible;
+                xStatusIcon.ImageForeground = Brushes.White;
+
+                DockPanel.SetDock(xStatusIcon, Dock.Right);
+                xStatusIcon.Margin = new Thickness(0, -8, -25, 0);
+                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+            else//image view mode
+            {
+                xPolygon.Visibility = Visibility.Collapsed;
+
+                DockPanel.SetDock(xStatusIcon, Dock.Top);
+                xStatusIcon.Margin = new Thickness(0, 0, 0, 0);
+                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Center;
+                xStatusIcon.VerticalAlignment = VerticalAlignment.Center;
+            }
         }
 
         private void SetStatus()
@@ -127,30 +150,18 @@ namespace Ginger.UserControlsLib.UCListView
 
             if (StatusViewMode == eStatusViewMode.Polygon)
             {
-                xPolygon.Visibility = Visibility.Visible;
                 xPolygon.Fill = mStatusBrush;
                 xPolygon.Stroke = mStatusBrush;
                 xPolygon.ToolTip = Status.ToString();
 
-                xStatusIcon.ImageForeground = Brushes.White;
                 if (Status == eRunStatus.Stopped)
                 {
                     StatusImageSize = 10;
                 }
-
-                DockPanel.SetDock(xStatusIcon, Dock.Right);
-                xStatusIcon.Margin = new Thickness(0, -8, -25, 0);
-                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Right;
             }
             else//image view mode
             {
-                xPolygon.Visibility = Visibility.Collapsed;
                 xStatusIcon.ImageForeground = (SolidColorBrush)mStatusBrush;
-
-                DockPanel.SetDock(xStatusIcon, Dock.Top);
-                xStatusIcon.Margin = new Thickness(0, 0, 0, 0);
-                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Center;
-                xStatusIcon.VerticalAlignment = VerticalAlignment.Center;
             }
 
             xStatusIcon.ImageType = mStatusImage;

@@ -142,7 +142,9 @@ namespace Ginger.Actions
 
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
-            UpdateTabsHeaders();            
+            UpdateTabsHeaders();
+            BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+
             if (editMode == General.eRIPageViewMode.View)
             {
                 SetViewMode();
@@ -285,8 +287,7 @@ namespace Ginger.Actions
         private void InitExecutionDetailsTabView()
         {
             xExecutionDetailsTab.Tag = true;//marking that bindings were done
-
-            BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+            
             BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
 
             xStatusConvertorCombo.BindControl(mAction, nameof(Act.StatusConverter));
@@ -819,7 +820,7 @@ namespace Ginger.Actions
             {
                 mAction.IsSingleAction = false;
                 //UpdateTabsHeaders();
-                UpdateScreenShots();
+                //UpdateScreenShots();
                 Mouse.OverrideCursor = null;
             });
             return result;
@@ -1558,19 +1559,19 @@ namespace Ginger.Actions
 
         private void ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Act.Fields.SupportSimulation)
+            if (e.PropertyName == nameof(Act.SupportSimulation))
             {
                 ShowHideRunSimulation();
             }
-            else if (e.PropertyName == Act.Fields.Status)
+            else if (e.PropertyName == nameof(Act.Status))
             {
                 this.Dispatcher.Invoke(() =>
                 {
                     ShowHideRunStopButtons();
-                    //if (mAction.TakeScreenShot)
-                    //{
-                    //    UpdateScreenShots();
-                    //}
+                    if (this.IsVisible && mAction.TakeScreenShot || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    {
+                        UpdateScreenShots();
+                    }
                 });
             }
         }
