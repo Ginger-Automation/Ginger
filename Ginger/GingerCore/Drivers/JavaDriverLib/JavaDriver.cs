@@ -43,6 +43,7 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Input;
 using System.Windows.Threading;
+using GingerCore.Platforms.PlatformsInfo;
 
 namespace GingerCore.Drivers.JavaDriverLib
 {
@@ -1976,7 +1977,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             JEI.Value = pl.GetValueString();
             JEI.Path = pl.GetValueString();
             JEI.XPath = pl.GetValueString();
-            JEI.ElementTypeEnum = GetHTMLElementType(JEI.ElementType);
+            JEI.ElementTypeEnum = JavaPlatform.GetElementType(JEI.ElementType);
             JEI.IsAutoLearned = true;
             //If name if blank keep it blank. else creating issue for spy and highlight, as we try to search with below
             if (String.IsNullOrEmpty(JEI.ElementTitle))
@@ -2188,12 +2189,12 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PLReq.ClosePackage();
                 response = Send(PLReq);
             }
-            
+
             List<PayLoad> PropertiesPLs = response.GetListPayLoad();
             foreach (PayLoad plp in PropertiesPLs)
             {
                 string PName = plp.GetValueString();
-                string PValue = string.Empty;                
+                string PValue = string.Empty;
                 if (PName != "Value")
                 {
                     PValue = plp.GetValueString();
@@ -2205,7 +2206,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         PValue = valueList.ElementAt(0);
                 }
                 list.Add(new ControlProperty() { Name = PName, Value = PValue });
-            }            
+            }
             //TODO:J.G: Fix it for JEDITOR Elements
 
             return list;
@@ -3078,7 +3079,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad RespListDetails = Send(PLListDetails);
             if (RespListDetails.IsErrorPayLoad())
             {
-                string ErrMSG = RespListDetails.GetValueString();
+                string ErrMSG = RespListDetails.GetValueString();                
                 throw new Exception(ErrMSG);
             }         
             foreach (string res in RespListDetails.GetListString())

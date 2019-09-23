@@ -3760,13 +3760,41 @@ private PayLoad SetComponentFocus(Component c)
     		PL1.AddValue("");
     	PL1.ClosePackage();
     	FieldProperties.add(PL1);
-
+    	
     	//Add Component Value
 	    PayLoad PL2 = new PayLoad("ComponentProperty");	    
     	PL2.AddValue("Value");
     	PL2.AddValue(mSwingHelper.GetCompValue(comp));
     	PL2.ClosePackage();
     	FieldProperties.add(PL2);
+    	
+    	PayLoad PLW = new PayLoad("ComponentProperty");	    
+    	PLW.AddValue("Width");    	
+    	String Width=Integer.toString(comp.getWidth());     	
+    	PLW.AddValue(Width);
+    	PLW.ClosePackage();
+    	FieldProperties.add(PLW);
+    	
+    	PayLoad PLH = new PayLoad("ComponentProperty");	    
+    	PLH.AddValue("Height");    	
+    	String Height=Integer.toString(comp.getHeight());     	
+    	PLH.AddValue(Height);
+    	PLH.ClosePackage();
+    	FieldProperties.add(PLH);
+    	
+    	PayLoad PLX = new PayLoad("ComponentProperty");	    
+    	PLX.AddValue("X Coordinate");    	
+    	String X=Integer.toString(comp.getX());     	
+    	PLX.AddValue(X);
+    	PLX.ClosePackage();
+    	FieldProperties.add(PLX);
+    	
+    	PayLoad PLY = new PayLoad("ComponentProperty");	    
+    	PLY.AddValue("Y Coordinate");    	
+    	String Y=Integer.toString(comp.getY());     	
+    	PLY.AddValue(Y);
+    	PLY.ClosePackage();
+    	FieldProperties.add(PLY);
     	
 	    //Add Component Class
     	PayLoad PL3 = new PayLoad("ComponentProperty");	    
@@ -3781,7 +3809,7 @@ private PayLoad SetComponentFocus(Component c)
     	PL4.AddValue(mSwingHelper.GetComponentSwingClass(comp));
     	PL4.ClosePackage();
     	FieldProperties.add(PL4);
-    	    	    	
+    	   
 		// Add all generic fields
 	    Field[] allFields = comp.getClass().getFields();	    
 	    for (Field field : allFields) {
