@@ -173,7 +173,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
-        private eElementType GetElementType(string elementType)
+        public static eElementType GetElementType(string elementType)
         {
             eElementType element;
 
@@ -572,16 +572,13 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByContainerName, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByTitle, Help = "Recommended (sensitive to page design changes)" });
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();            
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Recommended (sensitive to page design changes)" });
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Recommended (sensitive to page design changes)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByText, Help = "Recommended (sensitive to page design changes)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Recommended (sensitive to page design changes)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Recommended (sensitive to page design changes)" });           
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Recommended (sensitive to page design changes)" });            
+            
 
             return learningLocatorsList;
         }
