@@ -453,7 +453,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             if (ACT is ActUIElement actUi)
             {
-                if (actUi.LocateBy == eLocateBy.POMElement)
+                if (actUi.ElementLocateBy == eLocateBy.POMElement)
                 {
                     AddPOMLocators(ref platformAction, ref actUi, agent.ProjEnvironment, agent.BusinessFlow);
                 }
@@ -472,15 +472,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             void AddPOMLocators(ref PlatformAction PlatformAction, ref ActUIElement UIElementAction, ProjEnvironment projEnvironment, BusinessFlow businessFlow)
             {
-                Dictionary<string, string> Locators = null;
-                if (PlatformAction.InputParams.ContainsKey("Locators"))
-                {
-                    Locators = (Dictionary<string, string>)PlatformAction.InputParams["Locators"];
-                }
-                else
-                {
-                    Locators = new Dictionary<string, string>();
-                }
+                Dictionary<string, string> Locators = new Dictionary<string, string>();
 
 
                 List<string> Frames = new List<string>();
@@ -544,6 +536,18 @@ namespace Amdocs.Ginger.CoreNET.Run
                         Locators.Add(locator.LocateBy.ToString(), locateValue);
 
                     }
+
+
+
+                    if (PlatformAction.InputParams.ContainsKey("Locators"))
+                    {
+                        PlatformAction.InputParams["Locators"] = Locators;
+                    }
+                    else
+                    {
+                        PlatformAction.InputParams.Add("Locators", Locators);
+                    }
+
 
                 }
             }                       

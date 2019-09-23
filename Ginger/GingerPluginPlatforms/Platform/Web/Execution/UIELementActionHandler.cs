@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
@@ -186,12 +187,23 @@ namespace Ginger.Plugin.Platform.Web.Execution
             
                 eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)InputParams["ElementType"]);
                 IGingerWebElement uiElement = null;
-
-                if(InputParams.ContainsKey("Frames"))
+                JArray Frames = null;
+                if (InputParams.ContainsKey("Frames"))
                 {
-                    JObject Frames = (JObject)InputParams["Frames"];
-                }
+                    Frames = (JArray)InputParams["Frames"];
 
+                    if (Frames != null && Frames.Children().Count() > 0) {
+
+                        mPlatformService.BrowserActions.SwitchToDefaultContent();
+                        foreach (JToken jf in Frames.Children())
+                        {
+
+                            IGingerWebElement GWA = mPlatformService.LocateWebElement.LocateElementByXPath(eElementType.WebElement, jf.ToString());
+                            mPlatformService.BrowserActions.SwitchToFrame(GWA);
+                        }
+                    }
+                }
+             
                 foreach (JProperty locator in Locators.Children())
                 {
                     uiElement = WebPlatformActionHandler.LocateElement(ref ElementType, locator.Name, locator.Value.ToString(),mPlatformService);
@@ -283,13 +295,6 @@ namespace Ginger.Plugin.Platform.Web.Execution
             }
         }
 
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!
-        private void AutomaticSwitchFrame()
-        {
-
-#warning implemen Automatic switch frame        
-            throw new NotImplementedException();
-        }
 
    
 

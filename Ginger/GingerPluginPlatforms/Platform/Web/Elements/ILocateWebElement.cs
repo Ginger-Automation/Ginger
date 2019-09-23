@@ -42,7 +42,8 @@ namespace Ginger.Plugin.Platform.Web.Elements
         Span,
         Table,
         TextBox,
-        HyperLink
+        HyperLink,
+        Text
     }
     /// <summary>
     /// Exposes The Functionality to Locate Web Element
