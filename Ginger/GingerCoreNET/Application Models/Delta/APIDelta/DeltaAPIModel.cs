@@ -14,7 +14,34 @@ namespace GingerCoreNET.Application_Models
 {
     public class DeltaAPIModel
     {
-        public object mergerPageObject { get; set; }
+        //private bool mNewSelected = false;
+        //public bool NewSelected
+        //{
+        //    get
+        //    {
+        //        return mNewSelected;
+        //    }
+        //    set
+        //    {
+        //        mNewSelected = value;
+        //        mExistingSelected = !value;
+        //    }
+        //}
+
+        //private bool mExistingSelected = false;
+        //public bool ExistingSelected
+        //{
+        //    get
+        //    {
+        //        return mExistingSelected;
+        //    }
+        //    set
+        //    {
+        //        mExistingSelected = value;
+        //        mNewSelected = !value;
+        //    }
+        //}
+
         private bool mIsSelected;
         public bool IsSelected
         {
