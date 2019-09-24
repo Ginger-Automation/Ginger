@@ -570,10 +570,10 @@ namespace GingerCore
                             }
                         }
                     }
-                }
-                else
-                {
-                    CurrentActivity = activity;
+                    else
+                    {
+                        insertIndex = Activities.IndexOf(CurrentActivity) + 1;
+                    }
                 }
             }
 
@@ -582,13 +582,8 @@ namespace GingerCore
                 activitiesGroup.AddActivityToGroup(activity);
             }
 
-            if (insertIndex > 0)
+            if (insertIndex >= 0)
             {
-                Activities.Insert(insertIndex, activity);
-            }
-            else if (insertIndex == 0)
-            {
-                insertIndex = Activities.IndexOf(CurrentActivity) + 1;
                 Activities.Insert(insertIndex, activity);
             }
             else
