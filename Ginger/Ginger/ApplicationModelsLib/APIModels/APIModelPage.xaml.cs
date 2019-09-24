@@ -40,7 +40,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;
         private bool saveWasDone = false;
-        public APIModelPage(ApplicationAPIModel applicationAPIModelBase, bool IsReadOnlyRequest = false)
+        public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
 
@@ -64,7 +64,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
 
-            if (IsReadOnlyRequest)
+            if (viewMode == General.eRIPageViewMode.View)
                 UpdatePageAsReadOnly();
         }
 
