@@ -321,10 +321,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            if (Directory.Exists(ExecutionLoggerManager.RunSetReport.LogFolder))
-            {
-                Directory.Delete(ExecutionLoggerManager.RunSetReport.LogFolder, true);
-            }
             ClearSeq();
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
@@ -361,10 +357,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
-            if (!offline)
-                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder, executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss")));
-            else
-                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
+            return;
         }
 
         internal override void StartRunSet()
@@ -398,6 +391,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, ExecutionLoggerManager.RunSetReport);
                 ExecutionLoggerManager.RunSetReport = null;
             }
+        }
+
+        public override string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile)
+        {
+            return string.Empty;
+        }
+
+        public override string GetLogFolder(string folder)
+        {
+            return string.Empty;
         }
     }
 }
