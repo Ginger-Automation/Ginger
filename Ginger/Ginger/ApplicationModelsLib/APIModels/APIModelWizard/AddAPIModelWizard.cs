@@ -94,11 +94,22 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public override void Finish()
         {
             //ExportAPIFiles(SelectedAAMList);
-            bool IsComparisonDone = (DeltaModelsList != null && DeltaModelsList.Count > 0);
-            ExportAPIFiles(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).Select(m => (ApplicationAPIModel)m).ToList()), IsComparisonDone);
+            if(DeltaModelsList != null && DeltaModelsList.Count > 0)
+            {
+                foreach(DeltaAPIModel deltaAPI in DeltaModelsList.GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
+                {
+                    if(deltaAPI.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges 
+                        || deltaAPI.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
+                    {
+                        APIDeltaUtils.DeleteExistingItem(deltaAPI.matchingAPIModel);
+                    }
+                }
+            }
+
+            ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
         }
 
-        private void ExportAPIFiles(ObservableList<ApplicationAPIModel> SelectedAAMList, bool IsComparisonDone)
+        private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
             foreach (ApplicationAPIModel apiModel in SelectedAAMList)
             {
@@ -108,45 +119,32 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(apiModel, OptionalValuesPerParameterDict);
                 ImportOptionalValues.PopulateOptionalValuesForAPIParameters(apiModel, OptionalValuesPerParameterDict);
 
-                DeltaAPIModel deltaModel = null;
-
-                if (IsComparisonDone)
-                {
-                    deltaModel = DeltaModelsList.Where(d => d.learnedAPI == apiModel || d.MergedAPIModel == apiModel).FirstOrDefault();
-                }
-
-                if (deltaModel == null || deltaModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.Add)
+                if (string.IsNullOrEmpty(apiModel.ContainingFolder))
                 {
                     apiModel.ContainingFolder = APIModelFolder.FolderFullPath;
+                }
 
-                    if (TargetApplicationKey != null)
+                if (apiModel.TargetApplicationKey == null && TargetApplicationKey != null)
+                {
+                    apiModel.TargetApplicationKey = TargetApplicationKey;
+                }
+
+                if (apiModel.TagsKeys == null && TagsKeys != null)
+                {
+                    foreach (RepositoryItemKey tagKey in TagsKeys)
                     {
-                        apiModel.TargetApplicationKey = TargetApplicationKey;
+                        apiModel.TagsKeys.Add(tagKey);
                     }
-                    if (TagsKeys != null)
-                    {
-                        foreach (RepositoryItemKey tagKey in TagsKeys)
-                        {
-                            apiModel.TagsKeys.Add(tagKey);
-                        }
-                    }
+                }
+
+                if (APIModelFolder.FolderFullPath == apiModel.ContainingFolder)
+                {
                     APIModelFolder.AddRepositoryItem(apiModel);
                 }
                 else
                 {
-                    apiModel.ContainingFolderFullPath = deltaModel.matchingAPIModel.ContainingFolderFullPath;
-
-                    apiModel.TargetApplicationKey = deltaModel.matchingAPIModel.TargetApplicationKey;
-
-                    //if (deltaModel.matchingAPIModel.TagsKeys != null)
-                    //{
-                        foreach (RepositoryItemKey tagKey in deltaModel.matchingAPIModel.TagsKeys)
-                        {
-                            apiModel.TagsKeys.Add(tagKey);
-                        }
-                    //}
-                    APIModelFolder.DeleteRepositoryItem(deltaModel.matchingAPIModel);
-                    APIModelFolder.AddRepositoryItem(apiModel);
+                    RepositoryFolderBase rfFolderBase = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModel.ContainingFolder);
+                    rfFolderBase.AddRepositoryItem(apiModel);
                 }
 
             }

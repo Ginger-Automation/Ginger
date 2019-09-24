@@ -137,6 +137,15 @@
         <Setter Property="IsEnabled" Value="True" />
     </Style>
 
+    <Style TargetType="TextBlock" x:Key="$TextBlockTitle">
+        <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
     <Style
     x:Key="LinkButton"
     TargetType="Button">

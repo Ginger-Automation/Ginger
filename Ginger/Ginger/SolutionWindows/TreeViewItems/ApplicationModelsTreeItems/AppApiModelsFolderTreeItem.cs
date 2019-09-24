@@ -37,7 +37,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
     {
         public RepositoryFolder<ApplicationAPIModel> mAPIModelFolder;
         private APIModelsPage mAPIModelsPage;
-        public ObservableList<ApplicationAPIModel> mChildAPIs = null;
+        private ObservableList<ApplicationAPIModel> mChildAPIs = null;
 
         public AppApiModelsFolderTreeItem(RepositoryFolder<ApplicationAPIModel> apiModelFolder)
         {

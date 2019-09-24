@@ -11,125 +11,97 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
     /// <summary>
     /// Interaction logic for MergerWindow.xaml
     /// </summary>
-    public partial class MergerWindow : Page
+    public partial class MergerPage : Page
     {
         //ObservableList<ApplicationAPIModel> modelsEvaluated;
         GenericWindow mWin;
         DeltaAPIModel mDeltaAPIModel;
         APIModelPage mergedAPIPage;
 
-        public MergerWindow()
+        public MergerPage()
         {
             InitializeComponent();
         }
 
-        public MergerWindow(DeltaAPIModel deltaAPIModel)
+        public MergerPage(DeltaAPIModel deltaAPIModel, Window ownerWindow)
         {
             InitializeComponent();
             mDeltaAPIModel = deltaAPIModel;
-            APIModelPage existingAPIPage = new APIModelPage(deltaAPIModel.matchingAPIModel, true);
-            APIModelPage learnedAPIPage = new APIModelPage(deltaAPIModel.learnedAPI, true);
+
+            mOwnerWindow = ownerWindow;
+
+            APIModelPage existingAPIPage = new APIModelPage(deltaAPIModel.matchingAPIModel, General.eRIPageViewMode.View);
+            APIModelPage learnedAPIPage = new APIModelPage(deltaAPIModel.learnedAPI, General.eRIPageViewMode.View);
 
             xExistingAPIFrame.Content = existingAPIPage;
             xLearnedAPIFrame.Content = learnedAPIPage;
         }
 
-        public Window ownerWindow;
-        public void ShowAsWindow(bool showMergerWindow = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        Window mOwnerWindow;
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button OKButton = new Button();
-            OKButton.Content = "OK";
-            OKButton.Click += OKButton_Click;
-
-            if (ownerWindow == null)
+            if (mOwnerWindow == null)
             {
-                ownerWindow = App.MainWindow;
+                mOwnerWindow = App.MainWindow;
             }
 
-            if (mDeltaAPIModel.MergedAPIModel == null)
-            {
-                ToggleMergerSection(Visibility.Collapsed);
+            ToggleSections();
 
-                if (showMergerWindow)
+            GingerCore.General.LoadGenericWindow(ref mWin, mOwnerWindow, windowStyle, @"Compare & Merge", this, null, true, "OK");
+        }
+
+        void ToggleSections()
+        {
+            if (mDeltaAPIModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+            {
+                xMergerTextRow.Height = new GridLength(30);
+                if (mDeltaAPIModel.MergedAPIModel == null)
                 {
-                    ToggleBaseModelSection(Visibility.Visible);
+                    xMatchedAPIAsBaseBtn.Visibility = Visibility.Visible;
+                    xLearnedAPIAsBaseBtn.Visibility = Visibility.Visible;
+
+                    xMergerSplitter.Visibility = Visibility.Collapsed;
+                    xMergerWindowTxtBlock.Visibility = Visibility.Collapsed;
+                    xMergedAPIFrame.Visibility = Visibility.Collapsed;
+
+                    xMergerAPIRow.Height = new GridLength(0);
                 }
                 else
                 {
-                    ToggleBaseModelSection(Visibility.Collapsed);
+                    xMatchedAPIAsBaseBtn.Visibility = Visibility.Collapsed;
+                    xLearnedAPIAsBaseBtn.Visibility = Visibility.Collapsed;
+
+                    xMergerSplitter.Visibility = Visibility.Visible;
+                    xMergerWindowTxtBlock.Visibility = Visibility.Visible;
+                    xMergedAPIFrame.Visibility = Visibility.Visible;
+
+                    xMergerAPIRow.Height = new GridLength(400, GridUnitType.Star);
+                    SetMergedrFrame();
                 }
             }
             else
             {
-                ToggleBaseModelSection(Visibility.Collapsed);
-                if (showMergerWindow)
-                {
-                    ToggleMergerSection(Visibility.Visible);
-                }
-                else
-                {
-                    ToggleMergerSection(Visibility.Collapsed);
-                }
+                xMergerTextRow.Height = new GridLength(0);
+                xMergerAPIRow.Height = new GridLength(0);
             }
-
-            GingerCore.General.LoadGenericWindow(ref mWin, ownerWindow, windowStyle, @"Compare & Merge", this, new ObservableList<Button> { OKButton }, true, "Cancel");
         }
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void XMatchedAPIAsBase_Click(object sender, RoutedEventArgs e)
+        private void XMatchedAPIAsBaseBtn_Click(object sender, RoutedEventArgs e)
         {
             mDeltaAPIModel.MergedAPIModel = APIDeltaUtils.CreateAPIModelObject(mDeltaAPIModel.matchingAPIModel);
-            SetMergedrFrame();
+            ToggleSections();
         }
 
-        private void XLearnedAPIAsBase_Click(object sender, RoutedEventArgs e)
+        private void XLearnedAPIAsBaseBtn_Click(object sender, RoutedEventArgs e)
         {
             mDeltaAPIModel.MergedAPIModel = APIDeltaUtils.CreateAPIModelObject(mDeltaAPIModel.learnedAPI);
-            SetMergedrFrame();
+            ToggleSections();
         }
 
         void SetMergedrFrame()
         {
             mergedAPIPage = new APIModelPage(mDeltaAPIModel.MergedAPIModel);
             xMergedAPIFrame.Content = mergedAPIPage;
-            SetBaseAPIDone();
-        }
-
-        void SetBaseAPIDone()
-        {
-            ToggleBaseModelSection(Visibility.Collapsed);
-            ToggleMergerSection(Visibility.Visible);
-        }
-
-        void ToggleBaseModelSection(Visibility visibilityOption)
-        {
-            xBaseSelectionSection.Visibility = visibilityOption;
-            if (visibilityOption == Visibility.Visible)
-            {
-                xMergerTextRow.Height = new GridLength(30);
-            }
-        }
-
-        void ToggleMergerSection(Visibility visibilityOption)
-        {
-            xMergerSplitter.Visibility = visibilityOption;
-            xMergerWindowTxtBlock.Visibility = visibilityOption;
-            xMergedAPIFrame.Visibility = visibilityOption;
-
-            if (visibilityOption == Visibility.Collapsed)
-            {
-                xMergerTextRow.Height = new GridLength(0);
-                xMergerAPIRow.Height = new GridLength(0);
-            }
-            else
-            {
-                xMergerTextRow.Height = new GridLength(30);
-                xMergerAPIRow.Height = new GridLength(400, GridUnitType.Star);
-            }
         }
     }
 }

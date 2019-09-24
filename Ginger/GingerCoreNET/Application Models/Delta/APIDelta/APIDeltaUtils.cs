@@ -10,8 +10,10 @@ namespace GingerCoreNET.Application_Models
 {
     public class APIDeltaUtils
     {
-        public static void ComparisonUtility(ObservableList<ApplicationAPIModel> learnedAPIModelsList, ObservableList<DeltaAPIModel> deltaAPIModelsList)
+        public static ObservableList<DeltaAPIModel> DoAPIModelsCompare(ObservableList<ApplicationAPIModel> learnedAPIModelsList, ObservableList<ApplicationAPIModel> existingAPIModels = null)
         {
+            ObservableList<DeltaAPIModel> deltaAPIModelsList = new ObservableList<DeltaAPIModel>();
+
             ObservableList<ApplicationAPIModel> existingAPIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
 
             //for (int i = 0; i < learnedAPIModelsList.Count; i++)
@@ -22,11 +24,17 @@ namespace GingerCoreNET.Application_Models
                 DeltaAPIModel apiModelDelta = new DeltaAPIModel();
                 apiModelDelta.learnedAPI = apiModelLearned;
                 List<ApplicationAPIModel> matchingAPIModels;
-
-                if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
-                    matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                if (existingAPIModels == null)
+                {
+                    if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                        matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                    else
+                        matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
+                }
                 else
-                    matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
+                {
+                    matchingAPIModels = existingAPIModels.ToList();
+                }
 
                 if (matchingAPIModels != null && matchingAPIModels.Count > 0)
                 {
@@ -53,6 +61,8 @@ namespace GingerCoreNET.Application_Models
 
                 deltaAPIModelsList.Add(apiModelDelta);
             }
+
+            return deltaAPIModelsList;
         }
 
         public static ApplicationAPIModel CreateAPIModelObject(ApplicationAPIModel sourceAPIModel)
@@ -102,6 +112,12 @@ namespace GingerCoreNET.Application_Models
             existingAPIs = existingAPIs.Where(m => m.RequestBody.Equals(learnedModel.RequestBody)).ToList();
 
             return existingAPIs;
+        }
+
+        public static void DeleteExistingItem(ApplicationAPIModel existingAPI)
+        {
+            RepositoryFolderBase repItemFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(existingAPI.ContainingFolderFullPath);
+            repItemFolderBase.DeleteRepositoryItem(existingAPI);
         }
     }
 }

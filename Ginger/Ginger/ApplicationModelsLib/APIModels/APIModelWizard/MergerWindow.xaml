@@ -1,13 +1,12 @@
-﻿<Page x:Class="Ginger.ApplicationModelsLib.APIModels.APIModelWizard.MergerWindow"
+﻿<Page x:Class="Ginger.ApplicationModelsLib.APIModels.APIModelWizard.MergerPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.ApplicationModelsLib.APIModels.APIModelWizard"
       xmlns:ginger="clr-namespace:Ginger"
-      mc:Ignorable="d" 
-      d:DesignHeight="780" d:DesignWidth="960" 
-      Title="API Compare And Merge" >
+      mc:Ignorable="d" d:DesignWidth="960" 
+      Title="API Compare And Merge" Height="812" >
 
 
     <Grid>
@@ -22,34 +21,23 @@
             <ColumnDefinition Width="300*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Background="{StaticResource $BackgroundColor_DarkBlue}"
-                           Foreground="White" VerticalAlignment="Center" TextAlignment="Center" Text="Existing API" />
-        <Frame Grid.Row="1" Grid.Column="0" x:Name="xExistingAPIFrame" ScrollViewer.CanContentScroll="False" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource $TextBlockTitle}" Text="Existing API" />
+        <Frame Grid.Row="1" Grid.Column="0" x:Name="xExistingAPIFrame" NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="False" />
 
         <GridSplitter x:Name="xComparerSplitter" ResizeDirection="Columns" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Height="Auto" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" IsEnabled="True" />
 
-        <TextBlock Grid.Row="0" Grid.Column="1" Background="{StaticResource $BackgroundColor_DarkBlue}"
-                           Foreground="White" VerticalAlignment="Center" TextAlignment="Center" Text="Learned API" />
-        <Frame Grid.Row="1" Grid.Column="1" x:Name="xLearnedAPIFrame" ScrollViewer.CanContentScroll="False"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource $TextBlockTitle}" Text="Learned API" />
+        <Frame Grid.Row="1" Grid.Column="1" x:Name="xLearnedAPIFrame" NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="False"/>
 
-        <Grid x:Name="xBaseSelectionSection" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_Gray}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="160" />
-                <ColumnDefinition Width="160" />
-                <ColumnDefinition Width="160" />
-            </Grid.ColumnDefinitions>
+        <Button x:Name="xMatchedAPIAsBaseBtn" Width="120" Content="Take Existing API" Click="XMatchedAPIAsBaseBtn_Click" Grid.Row="2" Grid.Column="0" Style="{StaticResource $InputButtonStyle}" />
+        <Button x:Name="xLearnedAPIAsBaseBtn" Width="120" Content="Take Learned API" Click="XLearnedAPIAsBaseBtn_Click" Grid.Row="2" Grid.Column="1" Style="{StaticResource $InputButtonStyle}" />
 
-            <TextBlock Text="Base API Model : " Grid.Column="0" VerticalAlignment="Center" FontWeight="Bold" FontSize="20"/>
-            <Button x:Name="xMatchedAPIAsBase" Width="120" Content="Matching API" Click="XMatchedAPIAsBase_Click" Grid.Column="1" Style="{StaticResource $InputButtonStyle}" />
-            <Button x:Name="xLearnedAPIAsBase" Width="120" Content="New\Learned API" Click="XLearnedAPIAsBase_Click" Grid.Column="2" Style="{StaticResource $InputButtonStyle}" />
-        </Grid>
 
         <GridSplitter x:Name="xMergerSplitter" Visibility="Collapsed" ResizeDirection="Rows" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
 
-        <TextBlock x:Name="xMergerWindowTxtBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Background="{StaticResource $BackgroundColor_DarkBlue}"
-                           Foreground="White" VerticalAlignment="Center" TextAlignment="Center" Text="Merged API : Preview" />
+        <TextBlock x:Name="xMergerWindowTxtBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource $TextBlockTitle}" Text="Merged API : Preview" />
 
-        <Frame x:Name="xMergedAPIFrame" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" />
+        <Frame x:Name="xMergedAPIFrame" NavigationUIVisibility="Hidden" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" />
 
     </Grid>
 </Page>
