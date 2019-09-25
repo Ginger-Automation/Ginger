@@ -20,11 +20,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         private string[] PomElementGUID => mAct.ElementLocateValue.ToString().Split('_');
 
-        public ApplicationPOMModel CurrentPOM { get { return GetCurrentPOM(); } }
 
-        public ElementInfo CurrentPOMElementInfo { get { return GetCurrentPOMElementDetails(); } }
-
-        private ApplicationPOMModel GetCurrentPOM()
+        public ApplicationPOMModel GetCurrentPOM()
         {
             Guid selectedPOMGUID = new Guid(PomElementGUID[0]);
             ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
@@ -38,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
 
         }
 
-        private ElementInfo GetCurrentPOMElementDetails()
+        public ElementInfo GetCurrentPOMElementInfo()
         {
             Guid currentPOMElementInfoGUID = new Guid(PomElementGUID[1]);
             ElementInfo selectedPOMElementInfo = GetCurrentPOM().MappedUIElements.Where(z => z.Guid == currentPOMElementInfoGUID).FirstOrDefault();

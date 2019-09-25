@@ -3092,17 +3092,21 @@ namespace GingerCore.Drivers
             if (locateBy == eLocateBy.POMElement)
             {
                 var pomExcutionUtil = new POMExecutionUtils(act);
-                var currentPOM = pomExcutionUtil.CurrentPOM;
+                var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
-                ElementInfo currentPOMElementInfo = null;
                 if (currentPOM != null)
                 {
-                    currentPOMElementInfo = pomExcutionUtil.CurrentPOMElementInfo;
-
-                    if (HandelIFramShiftAutomaticallyForPomElement)
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    if (currentPOMElementInfo != null)
+                    {
+                        if (HandelIFramShiftAutomaticallyForPomElement)
+                        {
                             SwitchFrame(currentPOMElementInfo);
+                        }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
-                    currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                        currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                    }
+                    
                 }
             }
             else

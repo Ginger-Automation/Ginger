@@ -400,12 +400,12 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             var pomExcutionUtil = new  POMExecutionUtils(act);
 
-            var currentPOM = pomExcutionUtil.CurrentPOM;
+            var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
             ElementInfo currentPOMElementInfo = null;
             if (currentPOM != null)
             {
-                currentPOMElementInfo = pomExcutionUtil.CurrentPOMElementInfo;
+                currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
                 locators = currentPOMElementInfo.Locators;
             }
 
