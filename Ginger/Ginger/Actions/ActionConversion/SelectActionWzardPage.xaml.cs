@@ -79,30 +79,32 @@ namespace Ginger.Actions.ActionConversion
         }
 
         private void Init()
-        {
-            // clearing the list of actions to be converted before clicking on Convertible Actions buttons again to reflect the fresh list of convertible actions
-            mWizard.ActionToBeConverted.Clear();
-
-            List<Activity> lstSelectedActivities = null;
-            // fetching list of selected convertible activities from the first grid
-            if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+        {   
+            if (mWizard.LstSelectedActivities == null || mWizard.LstSelectedActivities.Count <= 0)
             {
-                lstSelectedActivities = mWizard.Context.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList(); 
-            }
-            else
-            {
-                lstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.IsSelected).SelectMany(y => y.BusinessFlow.Activities).Where(z => z.Active).ToList();
+                // fetching list of selected convertible activities from the first grid
+                if (mWizard.ConversionType == ActionsConversionWizard.eActionConversionType.SingleBusinessFlow)
+                {
+                    mWizard.LstSelectedActivities = mWizard.Context.BusinessFlow.Activities.Where(x => x.SelectedForConversion).ToList();
+                }
+                else
+                {
+                    mWizard.LstSelectedActivities = mWizard.ListOfBusinessFlow.Where(x => x.IsSelected).SelectMany(y => y.BusinessFlow.Activities).Where(z => z.Active).ToList();
+                } 
             }
 
-            if (lstSelectedActivities.Count != 0)
+            if (mWizard.LstSelectedActivities.Count != 0)
             {
                 xGridConvertibleActions.ValidationRules = new List<ucGrid.eUcGridValidationRules>()
                 {
                     ucGrid.eUcGridValidationRules.CheckedRowCount
                 };
 
-                ActionConversionUtils utils = new ActionConversionUtils();
-                mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(lstSelectedActivities);
+                if (mWizard.ActionToBeConverted == null || mWizard.ActionToBeConverted.Count <= 0)
+                {
+                    ActionConversionUtils utils = new ActionConversionUtils();
+                    mWizard.ActionToBeConverted = utils.GetConvertableActivityActions(mWizard.LstSelectedActivities); 
+                }
                 if (mWizard.ActionToBeConverted.Count != 0)
                 {
                     xGridConvertibleActions.DataSourceList = GetDistinctList(mWizard.ActionToBeConverted);
