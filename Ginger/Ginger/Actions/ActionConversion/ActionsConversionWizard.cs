@@ -23,6 +23,7 @@ using GingerCore;
 using GingerCore.Actions.Common;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
@@ -39,6 +40,7 @@ namespace Ginger.Actions.ActionConversion
 
         ActionConversionUtils mConversionUtils = new ActionConversionUtils();
 
+        public List<Activity> LstSelectedActivities { get; set; }
         public enum eActionConversionType
         {
             SingleBusinessFlow,
