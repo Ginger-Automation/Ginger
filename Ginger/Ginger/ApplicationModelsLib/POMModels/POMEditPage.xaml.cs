@@ -26,6 +26,7 @@ using Ginger.BusinessFlowWindows;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Drawing;
@@ -92,6 +93,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         // ScreenShotViewPage pd;
 
         readonly PomAllElementsPage mPomAllElementsPage;
+        ePlatformType mAppPlatform;
         public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode = eRIPageViewMode.View)
         {
             InitializeComponent();
@@ -123,7 +125,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             UIElementTabTextBlockUpdate();
 
-            ePlatformType mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
+            mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
             ObservableList<Agent> optionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, this, nameof(Agent));
             xAgentControlUC.Init(optionalAgentsList, mPOM.LastUsedAgent);
@@ -133,9 +135,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void SetDefaultPage()
         {
+        
             if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.PageURL)
             {
                 xPageUrlRadioBtn.IsChecked = true;
+
+                mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+
+                PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(mAppPlatform);
+                if (platformInfoBase != null)
+                {
+                    xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
+                    xPageURLBtn.ToolTip = platformInfoBase.GetNextBtnToolTip();
+                }
             }
             else if (mPOM.PageLoadFlow == ApplicationPOMModel.ePageLoadFlowType.BusinessFlow)
             {

@@ -41,6 +41,21 @@ public class PayLoad {
         this.Name = Name;
         WriteString(Name);
     }
+    
+	enum ErrorCode
+	{
+		ElementNotFound(404),
+		CommandTimeOut(408),
+		Unknown(-1);
+		
+		private int errorCode;
+		
+		private ErrorCode(int errorCode) { this.errorCode = errorCode; }
+		
+		public Integer GetErrorCode() {
+	        return errorCode;
+	    }
+	}
 
     /// Create PayLoad from Bytes
     public PayLoad(byte[] bytes)
@@ -620,12 +635,13 @@ public class PayLoad {
         GingerAgent.WriteLog(s);
     }
     
-    public static PayLoad Error(String ErrorMessage) 
+    public static PayLoad Error(String errorMessage,int errorCode) 
     {
-    	GingerAgent.WriteLog("Returing ERROR PayLoad: " + ErrorMessage);
+    	GingerAgent.WriteLog("Returing ERROR PayLoad: " + errorMessage);
     	
 		PayLoad PL = new PayLoad("ERROR");
-		PL.AddValue(ErrorMessage);
+		PL.AddValue(errorCode);
+		PL.AddValue(errorMessage);
 		PL.ClosePackage();
 		return PL;
 	}

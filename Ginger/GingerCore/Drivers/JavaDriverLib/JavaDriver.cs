@@ -375,13 +375,17 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad HandleActUIElement(ActUIElement act)
         {
-            if(act.ElementLocateBy.Equals(eLocateBy.POMElement))
+            PayLoad response;
+            if (act.ElementLocateBy.Equals(eLocateBy.POMElement))
             {
-               return HandlePOMElememntExecution(act);
+               response = HandlePOMElememntExecution(act);
+            }
+            else
+            {
+                PayLoad PL = act.GetPayLoad();
+                response = Send(PL);
             }
 
-            PayLoad PL = act.GetPayLoad();
-            PayLoad response = Send(PL);
             if (!response.IsErrorPayLoad() && !response.IsOK())
             {
                 List<KeyValuePair<string,string>> parsedResponse = response.GetParsedResult();
@@ -422,22 +426,45 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                 response = Send(PL);
 
-                if (!response.IsErrorPayLoad() && !response.IsOK())
+                //if isErrorPayLoad and Element is not found with current locater
+                if (response.IsErrorPayLoad() && response.GetValueInt().Equals(Convert.ToInt32(PayLoad.ErrorCode.ElementNotFound)))
                 {
                     if (!locateElement.Equals(locators.LastOrDefault()))
                     {
                         continue;
                     }
-                    List<KeyValuePair<string, string>> parsedResponse = response.GetParsedResult();
-                    act.AddOrUpdateReturnParsedParamValue(parsedResponse);
+                    else
+                    {
+                        locateElement.StatusError = "Element not found";
+                        UpdateRunDetails(act, locateElement);
+                    }
+                }
+                else if (response.IsErrorPayLoad())
+                {
+                    locateElement.StatusError = "Unknown error";
+                    UpdateRunDetails(act, locateElement);
+
+                    break;
                 }
                 else
                 {
+                    locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                    act.ExInfo += locateElement.LocateStatus;
                     break;
                 }
+
             }
 
             return response;
+        }
+
+        private static void UpdateRunDetails(ActUIElement act, ElementLocator locateElement)
+        {
+            locateElement.LocateStatus = ElementLocator.eLocateStatus.Failed;
+            act.ExInfo += string.Format("'{0}', Error Details: ='{1}'", locateElement.LocateStatus, locateElement.StatusError);
+            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+
+            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locateElement.LocateBy, locateElement.LocateValue, locateElement.LocateStatus));
         }
 
         private void SetCommandTimeoutForAction(int? timeout)
@@ -528,7 +555,16 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
 
             if (Response != null)
-                SetActionStatusFromResponse(act, Response);
+            {
+                if (actClass.Equals("Common.ActUIElement") && act.GetInputParamValue(ActUIElement.Fields.ElementLocateBy).Equals(eLocateBy.POMElement.ToString()))
+                {
+                    return;
+                }
+                else
+                {
+                    SetActionStatusFromResponse(act, Response);
+                }
+            }
             else
             {
                 if (act.Error == null)
@@ -766,6 +802,9 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (Response.IsErrorPayLoad())
             {
+                //reading errorcode
+                Response.GetValueInt();
+
                 string ErrMsg = Response.GetValueString();
                 act.Error = ErrMsg;
             }
@@ -1764,7 +1803,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public override string GetURL()
         {
-            return "TBD";
+            return ((IWindowExplorer)this).GetActiveWindow().Title;
         }
 
 

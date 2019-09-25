@@ -582,5 +582,15 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             return learningLocatorsList;
         }
+
+        public override string GetPageUrlRadioLabelText()
+        {
+            return "Window Title";
+        }
+
+        public override string GetNextBtnToolTip()
+        {
+            return "Switch Window";
+        }
     }
 }

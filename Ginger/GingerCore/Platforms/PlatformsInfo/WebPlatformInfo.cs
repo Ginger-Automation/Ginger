@@ -626,5 +626,15 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             return learningLocatorsList;
         }
+
+        public override string GetPageUrlRadioLabelText()
+        {
+            return "URL";
+        }
+
+        public override string GetNextBtnToolTip()
+        {
+            return "Go To Page";
+        }
     }
 }
