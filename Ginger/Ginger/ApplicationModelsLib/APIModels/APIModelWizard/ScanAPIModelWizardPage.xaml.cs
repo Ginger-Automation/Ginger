@@ -69,7 +69,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
             xApisSelectionGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
 
-            xCompreExistingItemBtn.Visibility = Visibility.Collapsed;
+            xCompareBtnRow.Height = new GridLength(0);
             SetFieldsGrid();
         }
 
@@ -86,7 +86,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             xApisSelectionGrid.InitViewItems();
 
             xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Collapsed;
-            xCompreExistingItemBtn.Visibility = Visibility.Collapsed;
+            xCompareBtnRow.Height = new GridLength(0);
 
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.DeltaModelsList;
         }
@@ -126,6 +126,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 if (AddAPIModelWizard.DeltaModelsList != null && AddAPIModelWizard.DeltaModelsList.Count > 0)
                 {
+                    bool mergeIssue = false;
+                    bool notifyReplaceAPI = false;
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
                     foreach (DeltaAPIModel deltaModel in AddAPIModelWizard.DeltaModelsList.Where(m => m.IsSelected == true))
                     {
@@ -135,18 +137,44 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                             selectedAPIModel = deltaModel.learnedAPI;
                         else if (deltaModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
                         {
-                            deltaModel.MergedAPIModel.ContainingFolder = deltaModel.matchingAPIModel.ContainingFolderFullPath;
+                            if (deltaModel.MergedAPIModel == null)
+                            {
+                                mergeIssue = true;
+                                break;
+                            }
+                            else
+                            {
+                                deltaModel.MergedAPIModel.ContainingFolder = deltaModel.matchingAPIModel.ContainingFolderFullPath;
+                                deltaModel.MergedAPIModel.Guid = deltaModel.matchingAPIModel.Guid;
 
-                            selectedAPIModel = deltaModel.MergedAPIModel;
+                                selectedAPIModel = deltaModel.MergedAPIModel;
+                                notifyReplaceAPI = true;
+                            }
                         }
                         else if (deltaModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
                         {
                             deltaModel.learnedAPI.ContainingFolder = deltaModel.matchingAPIModel.ContainingFolderFullPath;
+                            deltaModel.learnedAPI.Guid = deltaModel.matchingAPIModel.Guid;
 
                             selectedAPIModel = deltaModel.learnedAPI;
+                            notifyReplaceAPI = true;
                         }
+
                         if (selectedAPIModel != null)
                             AddAPIModelWizard.LearnedAPIModelsList.Add(selectedAPIModel);
+                    }
+
+                    if(mergeIssue)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Merged API should derived from Either Existing API Or Learned API !");
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+
+                    if (notifyReplaceAPI && Reporter.ToUser(eUserMsgKey.SureWantToDelete, "For selected default Operations Merge/Replace, the Existing API's would be replaced", eUserMsgOption.YesNo) == eUserMsgSelection.No)
+                    {
+                        WizardEventArgs.CancelEvent = true;
+                        return;
                     }
                 }
             }
@@ -156,6 +184,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         {
             if (!AddAPIModelWizard.IsParsingWasDone)
             {
+                xCompareBtnRow.Height = new GridLength(0);
+                if (AddAPIModelWizard.DeltaModelsList != null)
+                {
+                    xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
+                    xApisSelectionGrid.ChangeGridView(eAddAPIWizardViewStyle.Add.ToString());
+                }
                 bool parseSuccess = false;
                 if (AddAPIModelWizard.LearnedAPIModelsList != null)
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
@@ -187,7 +221,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
-                xCompreExistingItemBtn.Visibility = Visibility.Visible;
+                xCompareBtnRow.Height = new GridLength(50);
             }
         }
 

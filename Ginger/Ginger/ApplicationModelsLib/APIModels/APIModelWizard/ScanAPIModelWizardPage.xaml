@@ -35,17 +35,17 @@
                         <ColumnDefinition Width="50" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="xMatchingAPIName" Text="{Binding MatchingAPIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" />
-                    <UserControls:ucButton x:Name="xManualMatchBtn" VerticalAlignment="Center" IsEnabled="True" Grid.Column="1" Margin="0"
+                    <TextBlock x:Name="xMatchingAPIName" ToolTip="{Binding MatchingAPIName}" Text="{Binding MatchingAPIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" />
+                    <UserControls:ucButton x:Name="xManualMatchBtn" VerticalAlignment="Center" IsEnabled="True" Grid.Column="1" Margin="0" Padding="0" Height="23"
                       ButtonType="ImageButton" Click="XManualMatchBtn_Click" ButtonText="" ToolTip="Manually Match an Existing API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Edit" />
                 </Grid>
             </DataTemplate>
 
             <DataTemplate x:Key="CompareAndMergeTemplate">
-                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False"
+                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False" Margin="0" Padding="0" Height="21"
                       ButtonType="ImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
-                            ButtonImageWidth="15" ButtonImageType="Columns" />
+                            ButtonImageWidth="15" ButtonImageType="Columns" Background="Transparent" />
 
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding defaultOperation}" Value="Merge Changes">
@@ -65,6 +65,7 @@
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Unchanged">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Green"/>
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="Un-Changed API" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Changed">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Orange"/>
@@ -73,9 +74,9 @@
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Deleted">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Red"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="New">
+                    <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Added">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Blue"/>
-                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="New API Model" />
+                        <Setter Property="ToolTip" TargetName="xDeltaStatusIconImageMakerControl" Value="New API" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding DeltaStatusIcon, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="Avoided">
                         <Setter Property="DataGridCell.Foreground" TargetName="xDeltaStatusIconImageMakerControl" Value="Purple"/>
@@ -86,12 +87,12 @@
         </Grid.Resources>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
+            <RowDefinition Height="50" x:Name="xCompareBtnRow" />
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <UserControls:ucButton x:Name="xCompreExistingItemBtn" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0"
+            <UserControls:ucButton x:Name="xCompreExistingItemBtn" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Right"
                       ButtonType="RoundTextAndImageButton" Click="BtnCompareAPIClicked" ButtonText="Compare APIs" ToolTip="Compare with Existing API Models"  ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Analyze" />
         </DockPanel>

@@ -52,10 +52,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             SecondRow.MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight - 380;
 
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
-            page = new ModelParamsPage(mApplicationAPIModel);
+            page = new ModelParamsPage(mApplicationAPIModel, viewMode);
             xDynamicParamsFrame.Content = page;
 
-            OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
+            OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
             xOutputTemplateFrame.Content = outputTemplatePage;
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -82,9 +82,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             CookieMode.IsEnabled = false;
             NetworkCeredentials.IsEnabled = false;
             SP_CustomCreds.IsEnabled = false;
-            PanelSoap.IsEnabled = false;
+            SoapActionTextBox.IsReadOnly = true;
             DoNotFailActionOnBadRespose.IsEnabled = false;
+
             HttpHeadersGrid.IsReadOnly = true;
+            HttpHeadersGrid.ShowCopy = Visibility.Visible;
+            HttpHeadersGrid.ShowAdd = Visibility.Collapsed;
+            HttpHeadersGrid.ShowDelete = Visibility.Collapsed;
+            HttpHeadersGrid.ShowClearAll = Visibility.Collapsed;
+
             ContentTypeComboBox.IsEnabled = false;
             BodySelection.IsEnabled = false;
             UseWSSecurityHeader.IsEnabled = false;
@@ -96,6 +102,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             controlGrid.IsEnabled = false;
 
             FormDataGrid.IsReadOnly = true;
+            FormDataGrid.ShowCopy = Visibility.Visible;
+            FormDataGrid.ShowAdd = Visibility.Collapsed;
+            FormDataGrid.ShowDelete = Visibility.Collapsed;
+            FormDataGrid.ShowClearAll = Visibility.Collapsed;
 
             CertificateSelection.IsEnabled = false;
             CertificateFileGrid.IsEnabled = false;

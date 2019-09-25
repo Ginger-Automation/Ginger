@@ -36,19 +36,37 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     {
         private enum eGridView { All, NonSimulation }
         ApplicationAPIModel mApplicationAPIModel;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
-        public OutputTemplatePage(ApplicationAPIModel applicationAPIModel)
+        public OutputTemplatePage(ApplicationAPIModel applicationAPIModel, Ginger.General.eRIPageViewMode pageViewMode = Ginger.General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
             mApplicationAPIModel = applicationAPIModel;
 
-            xOutputValuesGrid.AddToolbarTool("@Share_16x16.png", "Push Changes to All Relevant Actions", new RoutedEventHandler(PushChangesClicked));
-            xOutputValuesGrid.AddToolbarTool("@Import_16x16.png", "Import output values from Response sample file", new RoutedEventHandler(ImpurtButtonClicked));
-            
-            xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
-            xOutputValuesGrid.AddSeparator();
+            mPageViewMode = pageViewMode;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
+            if (pageViewMode == Ginger.General.eRIPageViewMode.Standalone)
+            {
+                xOutputValuesGrid.AddToolbarTool("@Share_16x16.png", "Push Changes to All Relevant Actions", new RoutedEventHandler(PushChangesClicked));
+                xOutputValuesGrid.AddToolbarTool("@Import_16x16.png", "Import output values from Response sample file", new RoutedEventHandler(ImpurtButtonClicked));
+
+                xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
+                xOutputValuesGrid.AddSeparator();
+
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
+            }
+            else
+            {
+                xOutputValuesGrid.ShowAdd = Visibility.Collapsed;
+                xOutputValuesGrid.ShowUpDown = Visibility.Collapsed;
+                xOutputValuesGrid.ShowDelete = Visibility.Collapsed;
+                xOutputValuesGrid.ShowSearch = Visibility.Collapsed;
+                xOutputValuesGrid.ShowClearAll = Visibility.Collapsed;
+                xOutputValuesGrid.ShowCopy = Visibility.Visible;
+
+                xOutputValuesGrid.IsReadOnly = true;
+            }
+
             SetActReturnValuesGrid();
 
             xOutputValuesGrid.DataSourceList = mApplicationAPIModel.ReturnValues;

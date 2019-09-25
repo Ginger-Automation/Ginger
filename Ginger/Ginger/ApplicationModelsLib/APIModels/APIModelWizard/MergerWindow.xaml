@@ -35,7 +35,7 @@
 
         <GridSplitter x:Name="xMergerSplitter" Visibility="Collapsed" ResizeDirection="Rows" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
 
-        <TextBlock x:Name="xMergerWindowTxtBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource $TextBlockTitle}" Text="Merged API : Preview" />
+        <TextBlock x:Name="xMergerWindowTxtBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Style="{StaticResource $TextBlockTitle}" Text="Merged API" />
 
         <Frame x:Name="xMergedAPIFrame" NavigationUIVisibility="Hidden" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" />
 

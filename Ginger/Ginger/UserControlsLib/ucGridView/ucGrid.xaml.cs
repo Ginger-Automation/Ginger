@@ -2140,7 +2140,10 @@ public void RemoveCustomView(string viewName)
             ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
             foreach (object selectedItem in grdMain.SelectedItems)
             {
-                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                if (selectedItem is RepositoryItemBase)
+                {
+                    selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                }
             }
             return selectedItemsList;
         }

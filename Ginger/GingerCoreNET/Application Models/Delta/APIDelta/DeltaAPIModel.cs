@@ -231,7 +231,7 @@ namespace GingerCoreNET.Application_Models
             {
                 switch(comparisonStatus)
                 {
-                    case eComparisonOutput.New : return Amdocs.Ginger.Common.Enums.eImageType.Add;
+                    case eComparisonOutput.New : return Amdocs.Ginger.Common.Enums.eImageType.Added;
                     case eComparisonOutput.Modified : return Amdocs.Ginger.Common.Enums.eImageType.Changed;
                     case eComparisonOutput.Unchanged : return Amdocs.Ginger.Common.Enums.eImageType.Unchanged;
                     default : return Amdocs.Ginger.Common.Enums.eImageType.Unknown;

@@ -51,13 +51,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         public ObservableList<AppModelParameter> ParamsList = new ObservableList<AppModelParameter>();
         public ObservableList<GlobalAppModelParameter> APIGlobalParamList = new ObservableList<GlobalAppModelParameter>();
         string GridPlaceholderHeader = "Place Holder";
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
-        public ModelParamsPage(ApplicationModelBase AAMB)
+        public ModelParamsPage(ApplicationModelBase AAMB, Ginger.General.eRIPageViewMode viewMode = Ginger.General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
             mApplicationModel = AAMB;
             ParamsList = AAMB.AppModelParameters;
             APIGlobalParamList = AAMB.GlobalAppModelParameters;
+
+            mPageViewMode = viewMode;
+
             InitModelParametersGrid();
             InitGlobalModelParametersGrid();
 
@@ -98,18 +102,34 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             }
 
             xGlobalModelParametersGrid.Grid.CanUserDeleteRows = false;
-            xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
             xGlobalModelParametersGrid.ShowTitle = Visibility.Collapsed;
-            xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
-            xGlobalModelParametersGrid.ShowUpDown = Visibility.Visible;
-            xGlobalModelParametersGrid.ShowAdd = Visibility.Visible;
-            xGlobalModelParametersGrid.ShowClearAll = Visibility.Visible;
-            xGlobalModelParametersGrid.ShowDelete = Visibility.Visible;
             xGlobalModelParametersGrid.ShowEdit = Visibility.Collapsed;
             xGlobalModelParametersGrid.ShowCopyCutPast = Visibility.Collapsed;
 
-            xGlobalModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
-            xGlobalModelParametersGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGlobalParameters));
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Standalone)
+            {
+                xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowUpDown = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowAdd = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowClearAll = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowDelete = Visibility.Visible;
+
+                xGlobalModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
+                xGlobalModelParametersGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGlobalParameters));
+            }
+            else
+            {
+                xGlobalModelParametersGrid.ShowCopy = Visibility.Visible;
+                xGlobalModelParametersGrid.IsReadOnly = true;
+
+                xGlobalModelParametersGrid.ShowRefresh = Visibility.Collapsed;
+                xGlobalModelParametersGrid.ShowUpDown = Visibility.Collapsed;
+                xGlobalModelParametersGrid.ShowAdd = Visibility.Collapsed;
+                xGlobalModelParametersGrid.ShowClearAll = Visibility.Collapsed;
+                xGlobalModelParametersGrid.ShowDelete = Visibility.Collapsed;
+                xGlobalModelParametersGrid.ShowSearch = Visibility.Collapsed;
+            }
         }
 
 
@@ -135,29 +155,46 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             ModelParametersGrid.DataSourceList = mApplicationModel.AppModelParameters;
 
-            ModelParametersGrid.Grid.CanUserDeleteRows = false;
             ModelParametersGrid.ShowTitle = Visibility.Collapsed;
             ModelParametersGrid.ShowRefresh = Visibility.Collapsed;
-            ModelParametersGrid.ShowUpDown = Visibility.Visible;
-            ModelParametersGrid.ShowAdd = Visibility.Visible;
-            ModelParametersGrid.ShowClearAll = Visibility.Visible;
-            ModelParametersGrid.ShowDelete = Visibility.Visible;
             ModelParametersGrid.ShowEdit = Visibility.Collapsed;
-            ModelParametersGrid.ShowCopyCutPast = Visibility.Visible;
-            
-            ModelParametersGrid.AddToolbarTool(eImageType.Merge, "Merge Selected Parameters", new RoutedEventHandler(MergeSelectedParams));
-            ModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddParamsRow));
-            ModelParametersGrid.AddToolbarTool("@Upgrade_16x16.png", "Upload to Global Parameters", new RoutedEventHandler(UploadToGlobalParam));
-            ModelParametersGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForParameters));
 
-            ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
-            ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
-            ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
-            ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Standalone)
+            {
+                ModelParametersGrid.Grid.CanUserDeleteRows = false;
+                ModelParametersGrid.ShowUpDown = Visibility.Visible;
+                ModelParametersGrid.ShowAdd = Visibility.Visible;
+                ModelParametersGrid.ShowClearAll = Visibility.Visible;
+                ModelParametersGrid.ShowDelete = Visibility.Visible;
+                ModelParametersGrid.ShowCopyCutPast = Visibility.Visible;
+
+                ModelParametersGrid.AddToolbarTool(eImageType.Merge, "Merge Selected Parameters", new RoutedEventHandler(MergeSelectedParams));
+                ModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddParamsRow));
+                ModelParametersGrid.AddToolbarTool("@Upgrade_16x16.png", "Upload to Global Parameters", new RoutedEventHandler(UploadToGlobalParam));
+                ModelParametersGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForParameters));
+
+                ModelParametersGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteParams_Clicked));
+                ModelParametersGrid.SetbtnClearAllHandler(new RoutedEventHandler(ClearAllParams_Clicked));
+                ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
+                ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
+            }
+            else
+            {
+                ModelParametersGrid.IsReadOnly = true;
+
+                ModelParametersGrid.ShowUpDown = Visibility.Collapsed;
+                ModelParametersGrid.ShowAdd = Visibility.Collapsed;
+                ModelParametersGrid.ShowClearAll = Visibility.Collapsed;
+                ModelParametersGrid.ShowDelete = Visibility.Collapsed;
+                ModelParametersGrid.ShowCopyCutPast = Visibility.Collapsed;
+                ModelParametersGrid.ShowSearch = Visibility.Collapsed;
+
+                ModelParametersGrid.ShowCopy = Visibility.Visible;
+            }
         }
 
         private void ImportOptionalValuesForParameters(object sender, RoutedEventArgs e)
-        {            
+        {
             WizardWindow.ShowWizard(new AddModelOptionalValuesWizard((ApplicationModelBase)mApplicationModel));
             ModelParametersGrid.DataSourceList = mApplicationModel.AppModelParameters;
         }
@@ -181,7 +218,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
                     List<AppParameters> parameters = GetParameterList();
                     string filePath = im.ExportParametersToExcelFile(parameters, string.Format("{0}_Parameters", mApplicationModel.Name));
-                    Process.Start(filePath); 
+                    Process.Start(filePath);
                 }
             }
             catch (System.Exception ex)
@@ -229,18 +266,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 {
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
                     DataSourceBase dataSource= (((DataSourceTable)selectedRunSet[0]).DSC);
-                   
+
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
-                    im.ExportSelectedParametersToDataSouce(parameters, dataSource, tableName); 
+                    im.ExportSelectedParametersToDataSouce(parameters, dataSource, tableName);
                 }
             }
             catch (System.Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
             }
-        }        
-        
+        }
+
         private void UploadToGlobalParam(object sender, RoutedEventArgs e)
         {
             AppModelParameter CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
@@ -252,7 +289,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             foreach (GlobalAppModelParameter GAMDP in ModelsGlobalParamsList)
             {
                 if (GAMDP != globalAppModelParameter && GAMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
-                {                   
+                {
                     Reporter.ToUser(eUserMsgKey.ParameterAlreadyExists, "Global Model Parameters already contains a parameter Place Holder with the same value");
                     return;
                 }
@@ -274,7 +311,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
         }
-        
+
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
         {
             DeleteParams(false);
@@ -289,7 +326,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             Amdocs.Ginger.Common.eUserMsgSelection messageResult = Amdocs.Ginger.Common.eUserMsgSelection.No;
             if (mApplicationModel is ApplicationAPIModel && (((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.XML || ((ApplicationAPIModel)mApplicationModel).ContentType == ApplicationAPIUtils.eContentType.JSon))
-            {                
+            {
                 messageResult = Reporter.ToUser(eUserMsgKey.DeleteNodesFromRequest);
             }
 
@@ -397,7 +434,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 {
                     mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, placeHoldersToReplace, newParamName);
                 }
-                    
+
             }
         }
 
@@ -443,8 +480,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 CurrentAMDP = (AppModelParameter)ModelParametersGrid.CurrentItem;
                 if (CurrentAMDP != null && !IsParamPlaceholderNameConflict(CurrentAMDP))
                 {
-                  mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
-                }  
+                    mApplicationModel.UpdateParamsPlaceholder(mApplicationModel, new List<string> { LocalParamValueBeforeEdit }, CurrentAMDP.PlaceHolder);
+                }
             }
         }
 
@@ -461,7 +498,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 CurrentGAMDP = (GlobalAppModelParameter)xGlobalModelParametersGrid.CurrentItem;
                 if (CurrentGAMDP != null && !CurrentGAMDP.PlaceHolder.Equals(GlobalParamOldValueBeforeEdit))
-                {                    
+                {
                     Reporter.ToUser(eUserMsgKey.ParameterEdit);
                     CurrentGAMDP.PlaceHolder = GlobalParamOldValueBeforeEdit;
                 }
@@ -474,7 +511,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 if (AMDP != CurrentAMDP && AMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {
-                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;                    
+                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;
                     Reporter.ToUser(eUserMsgKey.SpecifyUniqueValue);
                     return true;
                 }
@@ -483,7 +520,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 if (GAMDP != CurrentAMDP && GAMDP.PlaceHolder == CurrentAMDP.PlaceHolder)
                 {
-                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;                    
+                    CurrentAMDP.PlaceHolder = LocalParamValueBeforeEdit;
                     Reporter.ToUser(eUserMsgKey.SpecifyUniqueValue);
                     return true;
                 }
