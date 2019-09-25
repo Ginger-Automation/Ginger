@@ -168,14 +168,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 else
                 {                    
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped" + mPOM.Key.ItemName + "Target Application was not found, please select new Target Application");
-
                 }
             }
-            xTargetApplicationComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=> ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
+
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform.Equals(WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey))).ToList();
             xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
 
-             WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+            WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -280,9 +280,25 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             string calculatedValue = ValueExpression.Calculate(null, null, mPOM.PageURL, null);
+            GoToPage(calculatedValue);
+        }
 
-            ActGotoURL act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
-            mAgent.Driver.RunAction(act);
+        private void GoToPage(string calculatedValue)
+        {
+            Act act = null;
+            switch(mAppPlatform)
+            {
+                case ePlatformType.Web:
+                     act = new ActGotoURL() { LocateBy = eLocateBy.NA, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
+                    break;
+                case ePlatformType.Java:
+                     act = new ActSwitchWindow { LocateBy = eLocateBy.ByTitle, Value = calculatedValue, ValueForDriver = calculatedValue, Active = true };
+                    break;
+            }
+            if (act != null)
+            {
+                mAgent.Driver.RunAction(act);
+            }
         }
 
         private void AgentStartedHandler()
