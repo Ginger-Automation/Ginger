@@ -306,6 +306,7 @@ namespace GingerCore
 
         public override void PostSerialization()
         {
+            //TODO: FIXME Perf issue read Activities and do no lazy load !!!!!!!!!!!!!!!!!!!!!!!!
             AttachActivitiesGroupsAndActivities();
         }
 
@@ -313,7 +314,7 @@ namespace GingerCore
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
 
-        static public ObservableList<VariableBase> SolutionVariables;
+        public static ObservableList<VariableBase> SolutionVariables;
 
         public VariableBase GetVariable(string name)
         {
