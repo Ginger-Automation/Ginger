@@ -317,7 +317,10 @@
 
                                             <DockPanel x:Name="xScreenShotsPnl" DockPanel.Dock="Top" Margin="0,10,0,0" >
                                                 <Label Content="Screenshots:" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}"/>
-                                                <Grid x:Name="xScreenShotsGrid" DockPanel.Dock="Top" Margin="10"/>
+                                                <!--<Grid x:Name="xScreenShotsGrid" DockPanel.Dock="Top" Margin="10"/>-->
+                                                <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}">
+                                                    <DockPanel x:Name="xScreenShotsViewPnl" DockPanel.Dock="Top" Margin="10"/>
+                                                </Border>
                                             </DockPanel>
                                         </DockPanel>
                                     </Expander.Content>

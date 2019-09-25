@@ -29,11 +29,6 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcItemExecutionStatus : UserControl
     {
-        public UcItemExecutionStatus()
-        {
-            InitializeComponent();           
-        }
-
         public enum eStatusViewMode { Polygon, Image}
 
         public static readonly DependencyProperty StatusViewModeProperty = DependencyProperty.Register("StatusViewMode", typeof(eStatusViewMode), typeof(UcItemExecutionStatus),
@@ -44,24 +39,39 @@ namespace Ginger.UserControlsLib.UCListView
             set
             {
                 SetValue(StatusViewModeProperty, value);
+                SetViewModeControls();
+                SetStatus();
             }
         }
         private static void OnStatusViewModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UcItemExecutionStatus uc = (UcItemExecutionStatus)d;
-            uc.SetViewModeControls();
-            uc.SetStatus();
+            uc.StatusViewMode = (eStatusViewMode)e.NewValue;
         }
         
         public double StatusImageSize
         {
             get
             {
-                return xStatusIcon.SetAsFontImageWithSize;
+                if (StatusViewMode == eStatusViewMode.Polygon)
+                {
+                    return xPolygonStatusImage.SetAsFontImageWithSize;
+                }
+                else
+                {
+                    return xStatusImage.SetAsFontImageWithSize;
+                }
             }
             set
-            {
-                xStatusIcon.SetAsFontImageWithSize = value;
+            {                
+                if (StatusViewMode == eStatusViewMode.Polygon)
+                {
+                    xPolygonStatusImage.SetAsFontImageWithSize = value;
+                }
+                else
+                {
+                    xStatusImage.SetAsFontImageWithSize = value;
+                }
             }
         }
 
@@ -85,28 +95,33 @@ namespace Ginger.UserControlsLib.UCListView
         private static void OnStatusPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UcItemExecutionStatus itemExecutionStatus = (UcItemExecutionStatus)d;
-            itemExecutionStatus.Status = (eRunStatus)e.NewValue;
+            itemExecutionStatus.Status = (eRunStatus)e.NewValue;            
+        }
+
+        public UcItemExecutionStatus()
+        {
+            InitializeComponent();
+
+            Init();
+        }
+
+        public void Init()
+        {
+            SetViewModeControls();
+            SetStatus();
         }
 
         private void SetViewModeControls()
         {
             if (StatusViewMode == eStatusViewMode.Polygon)
             {
-                xPolygon.Visibility = Visibility.Visible;
-                xStatusIcon.ImageForeground = Brushes.White;
-
-                DockPanel.SetDock(xStatusIcon, Dock.Right);
-                xStatusIcon.Margin = new Thickness(0, -8, -25, 0);
-                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Right;
+                xPolygonStatusPnl.Visibility = Visibility.Visible;
+                xStatusImage.Visibility = Visibility.Collapsed;
             }
             else//image view mode
             {
-                xPolygon.Visibility = Visibility.Collapsed;
-
-                DockPanel.SetDock(xStatusIcon, Dock.Top);
-                xStatusIcon.Margin = new Thickness(0, 0, 0, 0);
-                xStatusIcon.HorizontalAlignment = HorizontalAlignment.Center;
-                xStatusIcon.VerticalAlignment = VerticalAlignment.Center;
+                xPolygonStatusPnl.Visibility = Visibility.Collapsed;
+                xStatusImage.Visibility = Visibility.Visible;
             }
         }
 
@@ -158,16 +173,20 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     StatusImageSize = 10;
                 }
+
+                xPolygonStatusImage.ImageType = mStatusImage;
+                xPolygonStatusImage.Width = StatusImageSize;
+                xPolygonStatusImage.Height = StatusImageSize;
+                xPolygonStatusImage.ToolTip = Status.ToString();
             }
             else//image view mode
             {
-                xStatusIcon.ImageForeground = (SolidColorBrush)mStatusBrush;
+                xStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
+                xStatusImage.ImageType = mStatusImage;
+                xStatusImage.Width = StatusImageSize;
+                xStatusImage.Height = StatusImageSize;
+                xStatusImage.ToolTip = Status.ToString();
             }
-
-            xStatusIcon.ImageType = mStatusImage;
-            xStatusIcon.Width = xStatusIcon.SetAsFontImageWithSize;
-            xStatusIcon.Height = xStatusIcon.SetAsFontImageWithSize;            
-            xStatusIcon.ToolTip = Status.ToString();
         }
     }
 }
