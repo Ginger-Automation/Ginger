@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="556.717" d:DesignWidth="728.358"
 	Title="ValidationDBPage" >
-
+        
     <Grid x:Name="pageGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="170*"/>
@@ -61,14 +61,13 @@
                 </StackPanel>
             </StackPanel>
             <StackPanel x:Name="SqlFile">
-                <Label x:Name="SQLInputFile"  Style="{StaticResource @InputFieldLabelStyle}">SQL File:</Label>
+                <Label x:Name="SQLInputFile"  Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Default path recommended is ~\Documents\SQL">SQL File Path:</Label>
                 <Actions:UCValueExpression x:Name="QueryFile"/>
-                <CheckBox x:Name="ImportFile" Content="Import SQL file to Solution folder" ToolTip="If checked the selected file will be imported to ~Documents\SQL" HorizontalAlignment="Left" Margin="0,10,0,0"/>
                 <StackPanel Name="QueryParamsPanel" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0">
-                    <Ginger:ucGrid x:Name="QueryParamsGrid" Title="Query Value(s)" Height="156"/>
-                </StackPanel>                
+                    <Ginger:ucGrid x:Name="QueryParamsGrid" Title="Query Input Value(s)" Height="156"/>
+                </StackPanel>
             </StackPanel>
-            
+
             <StackPanel x:Name="TableColWhereStackPanel" Height="244">
                 
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Table:</Label>

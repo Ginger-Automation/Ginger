@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         // static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
-        // string mLogsFolderName;
+        string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;
         
         public BusinessFlow mCurrentBusinessFlow;
@@ -230,5 +230,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
         internal abstract void StartRunSet();
         internal abstract void EndRunSet();
+
+        public abstract string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
+        public abstract string GetLogFolder(string folder);
     }
 }

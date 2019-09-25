@@ -494,10 +494,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void RestoreFromBackup(bool isLocalBackup = false)
+        public void RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
         {
             RestoreBackup(isLocalBackup);
-            ClearBackup(isLocalBackup);
+            if (clearBackup)
+            {
+                ClearBackup(isLocalBackup); 
+            }
         }
 
         private string mFileName = null;

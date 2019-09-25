@@ -1224,7 +1224,7 @@ namespace GingerCore
 
 
         public string ExecutionFullLogFolder { get; set; }
-        public string ExecutionLogFolder { get; set; }
+        public string ExecutionLogFolder { get; set; } = string.Empty;
         public bool BusinessFlowExecLoggerPopulated
         {
             get
