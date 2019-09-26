@@ -22,7 +22,6 @@ using System.Windows.Controls;
 using GingerCore;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-
 namespace Ginger.Actions
 {
     /// <summary>
@@ -33,6 +32,7 @@ namespace Ginger.Actions
         private object obj;
         private string AttrName;
         private string fileType;
+        private string initialDirectory;
         eBrowserType mBrowserType;
 
                 
@@ -95,7 +95,6 @@ namespace Ginger.Actions
                 this.fileType = fileType;
 
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
-
                 if (extraBrowserSelectionHandler != null)
                     BrowseButton.Click += extraBrowserSelectionHandler;
             }
@@ -116,7 +115,7 @@ namespace Ginger.Actions
         /// <param name="browserType">Can be eBrowserType.File or eBrowserType.Folder</param>
         /// <param name="fileType">Type of the files for filter the Browser Dialog</param>
         /// <param name="extraBrowserSelectionHandler">To be used whenever extra functionality is needed after clicking OK or cancel at the Dialog window</param>
-        public void Init(Context context, ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler= null)
+        public void Init(Context context, ActInputValue AIV, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", RoutedEventHandler extraBrowserSelectionHandler= null, string initialDirectory=null)
         {
             // If the VE is on stand alone form:
             this.obj = AIV;
@@ -130,13 +129,13 @@ namespace Ginger.Actions
                 LastCol.Width = new GridLength(55);
                 BrowseButton.Visibility = Visibility.Visible;
                 this.fileType = fileType;
+                this.initialDirectory = initialDirectory;
 
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
 
                 if (extraBrowserSelectionHandler != null)
                     BrowseButton.Click += extraBrowserSelectionHandler;
             }
-
             if (!isVENeeded)
             {
                 MidCol.Width = new GridLength(0);
@@ -155,11 +154,19 @@ namespace Ginger.Actions
             switch (mBrowserType)
             {
                 case eBrowserType.File:
-
                     string upperFileType = fileType.ToUpper();
                     System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
                     dlg.Filter = upperFileType + " Files (*." + fileType + ")|*." + fileType + "|All Files (*.*)|*.*";
                     dlg.FilterIndex = 1;
+                    if (string.IsNullOrEmpty(initialDirectory)==false)
+                    {
+                        String filePath = System.IO.Path.Combine(initialDirectory, @"Documents\SQL");
+                        if (!System.IO.Directory.Exists(filePath))
+                        {
+                            System.IO.Directory.CreateDirectory(filePath);
+                        }
+                        dlg.InitialDirectory = filePath;
+                    }
                     System.Windows.Forms.DialogResult result = dlg.ShowDialog();
                     if (result == System.Windows.Forms.DialogResult.OK)
                     {
