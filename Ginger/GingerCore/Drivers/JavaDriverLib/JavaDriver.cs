@@ -1882,7 +1882,9 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                     if(learnElement)
                     {
+                        ci.IsAutoLearned = true;
                         foundElementsList.Add(ci);
+                        List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
                         if (ci.ElementType != null && ci.ElementType.Contains("com.amdocs.uif.widgets.browser"))
                         {
                             PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
@@ -1892,26 +1894,20 @@ namespace GingerCore.Drivers.JavaDriverLib
                             {
                                 InitializeBrowser(ci);
 
-                                List<ElementInfo> HTMLControlsPL = GetBrowserVisibleControls();
-                                if (HTMLControlsPL != null)
-                                {
-                                    foreach(var item in HTMLControlsPL)
-                                    {
-                                        foundElementsList.Add(item);
-                                    }
-                                }                                   
+                                HTMLControlsPL = GetBrowserVisibleControls();                                                                 
                             }
                         }
                         else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
                         {
                             InitializeJEditorPane(ci);
-                            List<ElementInfo> HTMLControlsPL = GetBrowserVisibleControls();
-                            if (HTMLControlsPL != null)
+                            HTMLControlsPL = GetBrowserVisibleControls();                           
+                        }
+                        if (HTMLControlsPL != null)
+                        {
+                            foreach (ElementInfo item in HTMLControlsPL)
                             {
-                                 foreach(var item in HTMLControlsPL)
-                                    {
-                                        foundElementsList.Add(item);
-                                    }
+                                item.IsAutoLearned = true;
+                                foundElementsList.Add(item);
                             }
                         }
                     }
@@ -2033,8 +2029,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             JEI.Value = pl.GetValueString();
             JEI.Path = pl.GetValueString();
             JEI.XPath = pl.GetValueString();
-            JEI.ElementTypeEnum = JavaPlatform.GetElementType(JEI.ElementType);
-            JEI.IsAutoLearned = true;
+            JEI.ElementTypeEnum = JavaPlatform.GetElementType(JEI.ElementType);            
             //If name if blank keep it blank. else creating issue for spy and highlight, as we try to search with below
             if (String.IsNullOrEmpty(JEI.ElementTitle))
             {
@@ -2426,7 +2421,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         locatorList.Add(locator);
                     }
                 }
-                if(ElementInfo.ElementType.Contains("JEditor"))
+                
+                if (ElementInfo.ElementType.Contains("JEditor"))
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
@@ -2437,7 +2433,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
             }
-
+            locatorList.ToList().ForEach(x => x.IsAutoLearned = true);
             return locatorList;
         }
         
