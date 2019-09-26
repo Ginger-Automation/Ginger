@@ -250,7 +250,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     break;
             }            
             mCLIHandler.LoadContent(ReadFile(fileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-            CLILoadAndPrepare();  // not needed for script
+            if (fileType == "config" || fileType == "dynamic")  // not needed for script
+            {
+                CLILoadAndPrepare();  
+            }
             ExecuteRunSet();
 
             return Environment.ExitCode;
