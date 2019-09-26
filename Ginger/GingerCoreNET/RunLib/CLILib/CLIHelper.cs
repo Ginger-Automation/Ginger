@@ -150,6 +150,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        public void PostExecution()
+        {
+            if (ShowAutoRunWindow)
+            {                
+                RepositoryItemHelper.RepositoryItemFactory.WaitForAutoRunWindowClose();
+            }
+        }
+
         public bool PrepareRunsetForExecution()
         {
             try

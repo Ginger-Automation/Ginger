@@ -33,7 +33,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
-using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Actions
@@ -1236,9 +1235,17 @@ namespace GingerCore.Actions
 
         protected void AddAllPlatforms()
         {
-            foreach (object v in Enum.GetValues(typeof(ePlatformType)))
+            lock (mPlatforms)   // Handle reentry 
             {
-                mPlatforms.Add((ePlatformType)v);
+                if (mPlatforms.Count != 0)
+                {
+                    return;
+                }
+
+                foreach (object v in Enum.GetValues(typeof(ePlatformType)))
+                {
+                    mPlatforms.Add((ePlatformType)v);
+                }
             }
         }
 

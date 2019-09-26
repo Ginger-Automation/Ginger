@@ -239,8 +239,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             switch (fileType)
             {
                 case "config":
-                    mCLIHandler = new CLIConfigFile();
-                    
+                    mCLIHandler = new CLIConfigFile();                    
                     break;
                 case "dynamic":
                     mCLIHandler = new CLIDynamicXML();
@@ -312,6 +311,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.RunningInExecutionMode = true;
             CLILoadAndPrepare();
             ExecuteRunSet();
+
+            mCLIHelper.PostExecution();
+
 
             return Environment.ExitCode;
         }
@@ -404,7 +406,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
 
             Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
-            mCLIHelper.CloseSolution();
+            mCLIHelper.CloseSolution();            
         }
 
         private void CLILoadAndPrepare()

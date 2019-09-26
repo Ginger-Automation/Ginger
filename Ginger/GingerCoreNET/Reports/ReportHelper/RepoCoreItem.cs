@@ -124,6 +124,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             Reporter.ToLog(eLogLevel.WARN, "Show UI is set to true but not supported when running with GingerConsole");
         }
 
+        public void WaitForAutoRunWindowClose()
+        {
+            // NA for GingerConsole
+        }
+
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
         {
             throw new NotImplementedException();
@@ -138,5 +143,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             throw new NotImplementedException();
         }
+
+
     }
 }
