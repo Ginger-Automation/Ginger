@@ -72,13 +72,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             bool bFound = false;
             while (!bFound)
             {
-                Random rand = new Random();
-                int toSkip = rand.Next(1, 10);
-                int portStartIndex = LastPort + toSkip;
                 if (LastPort > 16000)
                 {
                     LastPort = 15000;
                 }
+                Random rand = new Random();
+                int toSkip = rand.Next(1, 100);
+                int portStartIndex = LastPort + toSkip;
+                
                 IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
                 IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
                 List<int> usedPorts = tcpEndPoints.Select(p => p.Port).ToList<int>();

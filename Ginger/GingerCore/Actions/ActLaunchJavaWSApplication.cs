@@ -89,6 +89,7 @@ namespace GingerCore.Actions
             public static string WaitForWindowTitleMaxTime = "WaitForWindowTitleMaxTime";    //the max time in seconds to wait for the window to load
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
+            public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
         }
 
         //------------------- Java version to use args
@@ -302,10 +303,12 @@ namespace GingerCore.Actions
 
         private static readonly object syncLock = new object();
 
+        AutoResetEvent portValueAutoResetEvent;
+
         public override void Execute()
         {
             mJavaApplicationProcessID = -1;
-
+           
             //calculate the arguments
             if (!CalculateArguments()) return;
 
@@ -326,6 +329,11 @@ namespace GingerCore.Actions
                     mProcessIDForAttach = -1;
                     if (!PerformAttachGingerAgent()) return;
 
+                    if(mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
+                        portValueAutoResetEvent!=null)
+                    {
+                        portValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+                    }                 
                     AddOrUpdateReturnParamActual("Port", mPort_Calc);
                 }
             }
@@ -360,6 +368,11 @@ namespace GingerCore.Actions
             {
                 mPort_Calc = CalculateValue(mPort);
             }          
+            else
+            {
+                //If port calculation is auto detect then we initialize autoreset event for it
+                portValueAutoResetEvent = new AutoResetEvent(false);
+            }
         }
 
         private string CalculateValue(string valueTocalc)
@@ -619,7 +632,7 @@ namespace GingerCore.Actions
                 ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
                 if (portConfigType == ePortConfigType.AutoDetect)
                 {
-                    mPort_Calc = SocketHelper.GetOpenPort().ToString();                  
+                    mPort_Calc = Fields.DynamicPortPlaceHolder;                  
                 }
 
                 //choosing executer
@@ -835,6 +848,13 @@ namespace GingerCore.Actions
             try
             {
                 List<string> commnadConfigs = (List<string>)command;
+                if(commnadConfigs[1].Contains(Fields.DynamicPortPlaceHolder))
+                {
+                    mPort_Calc = SocketHelper.GetOpenPort().ToString();
+                    portValueAutoResetEvent.Set();
+                    commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);                   
+                }
+                
                 ExInfo += "Executing Command: " + commnadConfigs[0] + " " + commnadConfigs[1] + Environment.NewLine;
 
                 Process p = new Process();
@@ -913,7 +933,7 @@ namespace GingerCore.Actions
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception when checking IsInstrumentationModuleLoaded", e);
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsInstrumentationModuleLoaded", e);
             }
 
             return false;
