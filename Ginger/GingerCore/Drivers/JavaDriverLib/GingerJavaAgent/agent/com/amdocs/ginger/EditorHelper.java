@@ -38,7 +38,6 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import sun.awt.SunToolkit;
 import us.codecraft.xsoup.Xsoup;
 
@@ -198,7 +197,7 @@ public class EditorHelper {
 			if(CurrentTable==null)
 			{
 				GingerAgent.WriteLog("Editor table element not found");
-				return PayLoad.Error("Editor table element not found");
+				return PayLoad.Error("Editor table element not found",PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 				
 			}
 			List<String> ColomumnNames = new ArrayList<String>();
@@ -259,7 +258,7 @@ public class EditorHelper {
 				nxtIndex = 2;
 			}
 			if (rowNum == -1)
-				return PayLoad.Error("Row not found with given Condition");
+				return PayLoad.Error("Row not found with given Condition",PayLoad.ErrorCode.Unknown.GetErrorCode());
 
 			GingerAgent.WriteLog("getRowNum::" + rowNum);
 			
@@ -287,7 +286,7 @@ public class EditorHelper {
 				colNum = getColumnNum(CurrentTable, colBy, colVal);
 				if (colNum == -1)
 					return PayLoad.Error("Column not found with " + colBy + " :"
-							+ colVal);
+							+ colVal,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			
 			 if (controlAction.equals("GetValue")) {			 
@@ -344,7 +343,7 @@ public class EditorHelper {
 				 }
 				 else
 				 {
-					 return PayLoad.Error("Cell component not found");
+					 return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				 }				 
 		}
 		else if (controlAction.equals("Click") || controlAction.equals("AsyncClick")) {
@@ -403,7 +402,7 @@ public class EditorHelper {
 								Thread.sleep(1);
 							}
 						} catch (Exception e) {
-							return PayLoad.Error("PayLoad ClickComponent Error: " + e.getMessage());
+							return PayLoad.Error("PayLoad ClickComponent Error: " + e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 						}
 						
 						
@@ -462,11 +461,11 @@ public class EditorHelper {
 				}
 			}
 			if (response[0] == false)
-				return PayLoad.Error("Fail to perform click operation");
+				return PayLoad.Error("Fail to perform click operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			else
 				return PayLoad.OK("Performed click operation");			
 		}
-		return PayLoad.Error("Unsupported operation");
+		return PayLoad.Error("Unsupported operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 	}
 	
 		private List<PayLoad> GetComponentProperties()

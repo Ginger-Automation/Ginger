@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
@@ -177,6 +178,16 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
             return null;
+        }
+
+        public override string GetPageUrlRadioLabelText()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetNextBtnToolTip()
+        {
+            throw new NotImplementedException();
         }
     }
 }

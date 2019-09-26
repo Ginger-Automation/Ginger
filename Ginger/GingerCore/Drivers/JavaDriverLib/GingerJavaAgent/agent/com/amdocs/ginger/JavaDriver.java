@@ -165,8 +165,8 @@ public class JavaDriver {
 		LocateElement
 	}
 	
-		
 
+	
 public PayLoad ProcessCommand(final PayLoad PL) {
     		
     	mWaitForIdleHandler.isCommandTimedOut=false;
@@ -200,7 +200,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 					} 
 					catch (Exception e)
 					{						
-						response[0]=PayLoad.Error("Error:"+e.getMessage());
+						response[0]=PayLoad.Error("Error:"+e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 						e.printStackTrace();
 					} 
 				}
@@ -267,7 +267,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		{
 			if(response[0]==null)
 			{
-				response[0]=PayLoad.Error("Timeout after: "+mCommandTimeout+" secs");
+				response[0]=PayLoad.Error("Timeout after: "+mCommandTimeout+" secs",PayLoad.ErrorCode.CommandTimeOut.GetErrorCode());
 			}			
 		}
 
@@ -355,7 +355,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			}
 			else
 			{
-				return PayLoad.Error("Window not found title: " + Title);				
+				return PayLoad.Error("Window not found title: " + Title,PayLoad.ErrorCode.Unknown.GetErrorCode());				
 			}					
 		}		
 		else if("InitializeJEditorPane".equals(PL.Name))
@@ -375,7 +375,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			}
 			else
 			{					 
-				return PayLoad.Error("JEditor Element not found - " + LocateBy + " " + LocateValue);
+				return PayLoad.Error("JEditor Element not found - " + LocateBy + " " + LocateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 			}	
 			
 		}
@@ -434,12 +434,12 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				}
 				else 
 				{
-					return PayLoad.Error("Current browser is not valid. Please add Initializer Browser");
+					return PayLoad.Error("Current browser is not valid. Please add Initializer Browser",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 			}
 			else
 			{
-				return PayLoad.Error("Browser not initialized");
+				return PayLoad.Error("Browser not initialized",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		}
 		else if("RunJavaScript".equals(PL.Name))
@@ -456,12 +456,12 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			
 				Object RC=mBrowserHelper.ExecuteScript(Script);
 				if (RC!=null && RC.toString().startsWith("ERROR"))
-			        	return PayLoad.Error(RC.toString()); 
+			        	return PayLoad.Error(RC.toString(),PayLoad.ErrorCode.Unknown.GetErrorCode()); 
 				return PayLoad.OK("Java script executed");		
 			}
 			else
 			{					 
-				return PayLoad.Error("Browser Element not found - " + LocateBy + " " + LocateValue);
+				return PayLoad.Error("Browser Element not found - " + LocateBy + " " + LocateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 			}											
 		}
 		
@@ -707,7 +707,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			return plrc;			
 		}							
 		
-		return PayLoad.Error("Unknown Package Type - " + PL.Name);
+		return PayLoad.Error("Unknown Package Type - " + PL.Name,PayLoad.ErrorCode.Unknown.GetErrorCode());
 	}
 	
 	private PayLoad HandleAgentOperation(PayLoad PL)
@@ -738,7 +738,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		}
 		else
 		{
-			return PayLoad.Error("Invalid Agent Operation Type: "+ agentOperationType);
+			return PayLoad.Error("Invalid Agent Operation Type: "+ agentOperationType,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 	}
 	
@@ -755,7 +755,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			Component c = mSwingHelper.FindElement(LocateBy, LocateValue);
 			if(c == null){
 				System.out.println("Component null");
-				return PayLoad.Error("Unable to find element to highlight");
+				return PayLoad.Error("Unable to find element to highlight",PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 			}
 			return HighLightElement(c);
 			
@@ -786,10 +786,10 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				if(winTitleToAdd!="")				
 					return PayLoad.OK(winTitleToAdd);
 				else
-					return PayLoad.Error("Window title is empty");
+					return PayLoad.Error("Window title is empty",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			else
-				return PayLoad.Error("Current Window is null");
+				return PayLoad.Error("Current Window is null",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		else if (WindowExplorerOperationType.GetProperties.toString().equals(operationType))
 		{
@@ -835,7 +835,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			}
 			else
 			{
-				return PayLoad.Error("Active window not found");
+				return PayLoad.Error("Active window not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			
 		}		
@@ -893,14 +893,13 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		}
 		else
 		{
-			return PayLoad.Error("Invalid Window Explorer Operation Type: "+ operationType);
+			return PayLoad.Error("Invalid Window Explorer Operation Type: "+ operationType,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 	}
 	
 	
 	private PayLoad HandleUIElementAction(PayLoad PL)
 	{
-	
 				
 		HashMap inputValues = PL.GetInputValues(PL.GetListPayLoad());
 		
@@ -908,6 +907,16 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		String LocateValue = PL.GetInputParamValue(inputValues, "ElementLocateValue");
 		String ElementType = PL.GetInputParamValue(inputValues, "ElementType");
 		String ControlAction = PL.GetInputParamValue(inputValues, "ElementAction");	
+		
+		//support POM Element
+		String POMElementLocator = PL.GetInputParamValue(inputValues, "POMElementLocator");
+		String POMElementLocateValue = PL.GetInputParamValue(inputValues, "POMElementLocateValue");
+		
+		if(POMElementLocator != null && POMElementLocateValue != null && LocateBy.equals("POMElement"))
+		{
+			LocateBy = POMElementLocator;
+			LocateValue = POMElementLocateValue;
+		}
 		
 		GingerAgent.WriteLog("ProcessCommand 'ElementAction': "  
 				+ " LocateBy = " + LocateBy + ","
@@ -971,7 +980,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				}
 				else
 				{					 
-					return PayLoad.Error("JEditor Element not found - " + LocateBy + " " + LocateValue);
+					return PayLoad.Error("JEditor Element not found - " + LocateBy + " " + LocateValue, PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 				}	
 				
 			}
@@ -1010,11 +1019,11 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				}
 				else 
 				{
-					return PayLoad.Error("Unknown sub-element type: "+ SubElementType);
+					return PayLoad.Error("Unknown sub-element type: "+ SubElementType,PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 			}
 			else
-				return PayLoad.Error("Unknown EditorPane action");
+				return PayLoad.Error("Unknown EditorPane action",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		else
 		{
@@ -1106,7 +1115,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 					if (IsBrowserBusyWithImplicitSync(implicitBrowserWait))
 					{
 						RemoveFromlstmBrowser(LocateValue);
-						return PayLoad.Error("Browser not fully loaded");
+						return PayLoad.Error("Browser not fully loaded",PayLoad.ErrorCode.Unknown.GetErrorCode());
 					}
 					mBrowserHelper.InjectInitializationScripts(Scripts);
 					
@@ -1127,7 +1136,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		}
 		else
 		{					 
-			return PayLoad.Error("Browser Element not found - " + LocateBy + " " + LocateValue);
+			return PayLoad.Error("Browser Element not found - " + LocateBy + " " + LocateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 		}
 	}
 	
@@ -1264,7 +1273,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						winTitleToAdd = winTitleToAdd + sBrowserURL;
 						GingerAgent.WriteLog("winTitleToAdd" + winTitleToAdd);
 						list.add(PayLoad.Error("ERROR: Handle : "
-								+ winTitleToAdd));
+								+ winTitleToAdd,PayLoad.ErrorCode.Unknown.GetErrorCode()));
 					} 
 					else if(errMsg.contains("Failed"))
 					{
@@ -1639,7 +1648,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 					TreePath treePath = SearchTreeNodes((JTree)c,Value,searchResult);
 					if(treePath == null)				
 					{				
-						return PayLoad.Error(searchResult.toString());
+						return PayLoad.Error(searchResult.toString(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 					}
 					((JTree)c).requestFocus();
 					try {
@@ -1724,7 +1733,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 			}		
 			else 
 			{
-				return PayLoad.Error("Unknown Control Action - " + controlAction);
+				return PayLoad.Error("Unknown Control Action - " + controlAction,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}			
 			
 		}
@@ -1737,7 +1746,7 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		}	
 		else
 		{
-			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue);
+			return PayLoad.Error("Element not found - " + locateBy + " " + locateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 		}
 	}
 
@@ -1770,7 +1779,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-		return PayLoad.Error(e.getMessage());
+		return PayLoad.Error(e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 	}
 	return PayLoad.OK("Type operation Passed");
 }
@@ -1975,17 +1984,17 @@ private PayLoad TypeKeys(Component c,String Value) {
 		} 		
 		
 		catch (Exception e) {
-			return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage());
+			return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}		
 		
 		if (response[0] == "false")
-			return PayLoad.Error("Fail to perform click operation");
+			return PayLoad.Error("Fail to perform click operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		
 		if (Timeout != -1 && response[1] == "false")
 			return PayLoad.OK("Click Activity Passed after Timeout");
 		
 		if (response[2] != "")
-			return PayLoad.Error(response[2]);
+			return PayLoad.Error(response[2],PayLoad.ErrorCode.Unknown.GetErrorCode());
 		else
 			return  PayLoad.OK("Click Activity Passed");
 	}
@@ -2111,17 +2120,17 @@ private PayLoad TypeKeys(Component c,String Value) {
 		} 		
 		
 		catch (Exception e) {
-			return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage());
+			return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}		
 		
 		if (response[0] == "false")
-			return PayLoad.Error("Fail to perform click operation");
+			return PayLoad.Error("Fail to perform click operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		
 		if (Timeout != -1 && response[1] == "false")
 			return PayLoad.OK("Click Activity Passed after Timeout");
 		
 		if (response[2] != "")
-			return PayLoad.Error(response[2]);
+			return PayLoad.Error(response[2],PayLoad.ErrorCode.Unknown.GetErrorCode());
 		else
 			return  PayLoad.OK("Click Activity Passed");
 	}
@@ -2167,10 +2176,10 @@ private PayLoad TypeKeys(Component c,String Value) {
 			if (tf.getText().equals(value)) {
 				return PayLoad.OK("JTextField value set to " + value);
 			} else {
-				return PayLoad.Error("JTextField value is '" + tf.getText() + "' instead of '" + value + "'");
+				return PayLoad.Error("JTextField value is '" + tf.getText() + "' instead of '" + value + "'",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		} else {
-			return PayLoad.Error("SendKeys - not supported for Component type " + c.getClass().getName());
+			return PayLoad.Error("SendKeys - not supported for Component type " + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 
 	}
@@ -2351,7 +2360,7 @@ private PayLoad TypeKeys(Component c,String Value) {
  				}
  				else
  				{
- 					return PayLoad.Error("Window not found with title : " + locateValue);				
+ 					return PayLoad.Error("Window not found with title : " + locateValue,PayLoad.ErrorCode.Unknown.GetErrorCode());				
  				}		
  		}
 		else if (controlAction.equals("CloseWindow"))
@@ -2359,7 +2368,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 
 			if (!mSwingHelper.SwitchWindow(locateValue))
 			{
-				return PayLoad.Error("Window not found with title : " + locateValue);
+				return PayLoad.Error("Window not found with title : " + locateValue,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 
 			
@@ -2386,7 +2395,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 		}
 		else 
 		{
-			return PayLoad.Error("Unknown Window Action - " + controlAction);
+			return PayLoad.Error("Unknown Window Action - " + controlAction,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}	
 		
 	}
@@ -2424,7 +2433,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 				}
 				else
 				{
-					return PayLoad.Error("Scroll operation is unknown: " + controlAction);
+					return PayLoad.Error("Scroll operation is unknown: " + controlAction,PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 				
 				GingerAgent.WriteLog("scroll value  before Scroll : " +JSB.getValue());				
@@ -2434,7 +2443,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 			}
 		}	
 		
-		return PayLoad.Error("Control Type is not Supported: "+ c.getClass().toString());
+		return PayLoad.Error("Control Type is not Supported: "+ c.getClass().toString(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 	}
 	
 	private int CalcScrollByValue(Component c, String Value)
@@ -2487,7 +2496,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 				}
 				else
 				{
-					return PayLoad.Error("Not able to retrieve text for Dialog");
+					return PayLoad.Error("Not able to retrieve text for Dialog",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 			}
 			if(controlAction.equals("AcceptDialog"))
@@ -2496,7 +2505,7 @@ private PayLoad TypeKeys(Component c,String Value) {
 				if(jb!=null)
 				return ClickComponent(jb,Value,-1);
 				else 
-					return PayLoad.Error("Dialog Accept button not found - " + locateBy + " " + locateValue);
+					return PayLoad.Error("Dialog Accept button not found - " + locateBy + " " + locateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 			}
 			if(controlAction.equals("DismissDialog"))
 			{			
@@ -2504,18 +2513,18 @@ private PayLoad TypeKeys(Component c,String Value) {
 				if(jb!=null)
 				return ClickComponent(jb,Value,-1);
 				else 
-					return PayLoad.Error("Dialog Dismiss button not found - " + locateBy + " " + locateValue);
+					return PayLoad.Error("Dialog Dismiss button not found - " + locateBy + " " + locateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 			}
 		
 			else 
 			{
-				return PayLoad.Error("Invalid Control Action " + controlAction + " for dialog box " + locateValue);			
+				return PayLoad.Error("Invalid Control Action " + controlAction + " for dialog box " + locateValue,PayLoad.ErrorCode.Unknown.GetErrorCode());			
 			}
 			
 		}
 		else
 		{
-			return PayLoad.Error("Dialog not found - " + locateBy + " " + locateValue);
+			return PayLoad.Error("Dialog not found - " + locateBy + " " + locateValue,PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
 		}
 	}
 	
@@ -2738,7 +2747,7 @@ private PayLoad GetComponentState(Component c)
 		}
 		else 
 		{
-			return PayLoad.Error("Unsupported property name");
+			return PayLoad.Error("Unsupported property name",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 				
 		Response.AddValue(propValue);		
@@ -2765,7 +2774,7 @@ private PayLoad GetComponentState(Component c)
 		if (!(c instanceof JComponent))
 		{			
 			GingerAgent.WriteLog("Component is not JComponent - " + c.getName());
-			return PayLoad.Error("Component is not JComponent - " + c.getName());
+			return PayLoad.Error("Component is not JComponent - " + c.getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		
 		//Save Original Border for restore later
@@ -2790,7 +2799,7 @@ private PayLoad GetComponentState(Component c)
 				 && !(c instanceof JMenuItem) && !(c instanceof JTree) && !((c instanceof JCheckBox)) 
 				 && !(c instanceof JPanel) && !(c instanceof JScrollPane)
 				 && !(c.getClass().toString().contains("uif.widgets.DropDownButtonNative")))
-				return PayLoad.Error("Unknown Element for click action - Class=" + c.getClass().getName());
+				return PayLoad.Error("Unknown Element for click action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		 
 		 if (c instanceof JTree)
 		 {
@@ -2811,7 +2820,7 @@ private PayLoad GetComponentState(Component c)
 			else
 			{
 				GingerAgent.WriteLog("ClickComponent - TreePath = null");
-				return PayLoad.Error(searchResultMessage.toString());
+				return PayLoad.Error(searchResultMessage.toString(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		    
 		 }
@@ -3082,17 +3091,17 @@ private PayLoad GetComponentState(Component c)
 		} 		
 		
 		catch (Exception e) {
-			return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage());
+			return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}		
 		
 		if (response[0] == "false")
-			return PayLoad.Error("Fail to perform click operation");
+			return PayLoad.Error("Fail to perform click operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		
 		if (Timeout != -1 && response[1] == "false")
 			return PayLoad.OK("Click Activity Passed after Timeout");
 		
 		if (response[2] != "")
-			return PayLoad.Error(response[2]);
+			return PayLoad.Error(response[2],PayLoad.ErrorCode.Unknown.GetErrorCode());
 		else
 			return  PayLoad.OK("Click Activity Passed");
 		
@@ -3156,12 +3165,12 @@ private PayLoad GetComponentState(Component c)
 		 String response = "";
 		
 		 if (!( (c instanceof JButton) || (c instanceof JTree)))
-				return PayLoad.Error("Unknown Element for Win click action - Class=" + c.getClass().getName());
+				return PayLoad.Error("Unknown Element for Win click action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		 									    
 		 response=mSwingHelper.winClick(c,value);							    
 		
 		if (response != "")
-			return PayLoad.Error(response);
+			return PayLoad.Error(response,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		else
 			return  PayLoad.OK("Win Click Activity Passed");
 		
@@ -3173,12 +3182,12 @@ private PayLoad GetComponentState(Component c)
 		 String response = "";
 		
 		 if (!( (c instanceof JButton) || (c instanceof JTree)))
-				return PayLoad.Error("Unknown Element for win Double click action - Class=" + c.getClass().getName());
+				return PayLoad.Error("Unknown Element for win Double click action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		 									    
 		 response=mSwingHelper.winDoubleClick(c,value);							    
 		
 		if (response != "")
-			return PayLoad.Error(response);
+			return PayLoad.Error(response,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		else
 			return  PayLoad.OK("win Double Click Activity Passed");
 		
@@ -3207,16 +3216,16 @@ private PayLoad GetComponentState(Component c)
 				if(e.getMessage().indexOf("Event handler had an unexpected error") != -1)
 					msg= " :: " + e.getMessage();
 				else
-					return PayLoad.Error(e.getMessage());
+					return PayLoad.Error(e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			if(cb.isSelected() == b)
-				return PayLoad.Error("Failed to set Toggle the Value ");
+				return PayLoad.Error("Failed to set Toggle the Value ",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 			return PayLoad.OK("Checkbox Toggled" + msg);
 		}
 		else
 		{
-			return PayLoad.Error("Unknown Element for Toggle action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for Toggle action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 	}
 	
@@ -3241,7 +3250,7 @@ private PayLoad GetComponentState(Component c)
 				cb.setSelected(true);
 						
 			if (cb.isSelected() != true)
-				return PayLoad.Error("Not able to Select Radio Button");
+				return PayLoad.Error("Not able to Select Radio Button",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 			return PayLoad.OK("Radio Button Selected" + msg);
 		}		
@@ -3321,17 +3330,17 @@ private PayLoad GetComponentState(Component c)
 			} 		
 			
 			catch (Exception e) {
-				return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage());
+				return PayLoad.Error(" PayLoad ClickComponent Error: " + e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}		
 			
 			if (response[0] == "false")
-				return PayLoad.Error("Fail to perform click operation");
+				return PayLoad.Error("Fail to perform click operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 			if (response[2] != "")
-				return PayLoad.Error(response[2]);			
+				return PayLoad.Error(response[2],PayLoad.ErrorCode.Unknown.GetErrorCode());			
 				
 			if(!jcb.getSelectedItem().equals(value))
-				return PayLoad.Error("Failed to select combo box item");
+				return PayLoad.Error("Failed to select combo box item",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 			if (Timeout != -1 && response[1] == "false")
 				return PayLoad.OK("Select Activity Passed after Timeout");
@@ -3352,12 +3361,12 @@ private PayLoad GetComponentState(Component c)
 				  return PayLoad.OK("Tab  Selected");	  
 				}
 			}
-			return PayLoad.Error("No Matching Tab Found for Value=" + value);
+			return PayLoad.Error("No Matching Tab Found for Value=" + value,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		
 		else
 		{
-			return PayLoad.Error("Unknown Element for Select action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for Select action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}		
 	}	
 	
@@ -3372,7 +3381,7 @@ private PayLoad GetComponentState(Component c)
 				jcb.setSelectedIndex(index);
 				return PayLoad.OK("ComboBox value selected");	  
 			}
-			return PayLoad.Error("No ComboBox item found at index = " + index);
+			return PayLoad.Error("No ComboBox item found at index = " + index,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		else if (c instanceof JTabbedPane)
 		{
@@ -3382,11 +3391,11 @@ private PayLoad GetComponentState(Component c)
 				jtp.setSelectedIndex(index);
 				return PayLoad.OK("Tab  selected");	  
 			}				
-			return PayLoad.Error("No matching tab found at index = " + index);
+			return PayLoad.Error("No matching tab found at index = " + index,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}		
 		else
 		{
-			return PayLoad.Error("Unknown element for SelectByIndex action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown element for SelectByIndex action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}	
 	}
 	
@@ -3408,12 +3417,12 @@ private PayLoad GetComponentState(Component c)
 				}
 				else
 				{
-					return PayLoad.Error("ComboBox item is null");
+					return PayLoad.Error("ComboBox item is null",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 			}
 		    else
 		    {
-		    	return PayLoad.Error("No ComboBox item found at index = " + index);
+		    	return PayLoad.Error("No ComboBox item found at index = " + index,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		    }
 		}
 		else if (c instanceof JTabbedPane)
@@ -3431,15 +3440,15 @@ private PayLoad GetComponentState(Component c)
 				}
 				else
 				{
-					return PayLoad.Error("Tab Value is null");
+					return PayLoad.Error("Tab Value is null",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 			}
 			else
 			{
-				return PayLoad.Error("No matching tab found at index = " + index);
+				return PayLoad.Error("No matching tab found at index = " + index,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		}
-		return PayLoad.Error("Unknown element for GetValueByIndex action - Class = " + c.getClass().getName());
+		return PayLoad.Error("Unknown element for GetValueByIndex action - Class = " + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 	}
 	
 	
@@ -3458,7 +3467,7 @@ private PayLoad GetComponentState(Component c)
 		}
 		else
 		{
-			return PayLoad.Error("Unknown Element for GetValueByIndex action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for GetValueByIndex action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}	
 	}
 	
@@ -3475,7 +3484,7 @@ private PayLoad GetComponentState(Component c)
 		}
 		else
 		{
-			return PayLoad.Error("Unknown Element for GetItemCount action - Class=" + c.getClass().getName());
+			return PayLoad.Error("Unknown Element for GetItemCount action - Class=" + c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}			
 	}
 	
@@ -3498,7 +3507,7 @@ private PayLoad GetComponentState(Component c)
 			catch (Exception e) 
 			{
 				GingerAgent.WriteLog("exception while parsing date"+e.getMessage());
-				return PayLoad.Error("Invalid date format. Expected format is MM/dd/yyyy hh:mm:ss a  e.g. 01/15/2017 01:20:05 AM");	
+				return PayLoad.Error("Invalid date format. Expected format is MM/dd/yyyy hh:mm:ss a  e.g. 01/15/2017 01:20:05 AM",PayLoad.ErrorCode.Unknown.GetErrorCode());	
 			}			
 			
 			if (componentClassName.contains("uif"))			
@@ -3507,7 +3516,7 @@ private PayLoad GetComponentState(Component c)
 				
 				if(result == false)
 				{
-					return PayLoad.Error("Failed to set date. Exception occurred during set date");
+					return PayLoad.Error("Failed to set date. Exception occurred during set date",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 				
 				// Special for UIF we need to mark it modified, otherwise the field value will not go to the server
@@ -3522,7 +3531,7 @@ private PayLoad GetComponentState(Component c)
 				
 				if(result == false)
 				{
-					return PayLoad.Error("Failed to set date. Exception occurred during set date");
+					return PayLoad.Error("Failed to set date. Exception occurred during set date",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 				o= mSwingHelper.GetComponentDate(c);		
 			}
@@ -3530,7 +3539,7 @@ private PayLoad GetComponentState(Component c)
 			
 			if(o == null)
 			{
-				return PayLoad.Error("Failed to set date");
+				return PayLoad.Error("Failed to set date",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			
 			
@@ -3540,13 +3549,13 @@ private PayLoad GetComponentState(Component c)
 			String expectedDateValue= formatter.format(o);
 						
 			if(actualDateValue.compareTo(expectedDateValue)!=0)
-				return PayLoad.Error("Current Selected Value::" + actualDateValue + " - Expected Value::" + expectedDateValue);
+				return PayLoad.Error("Current Selected Value::" + actualDateValue + " - Expected Value::" + expectedDateValue,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 			return PayLoad.OK("Date value set to..." + value);
 			
 		}		
 	
-		return PayLoad.Error("SetComponentValue - Unknown Component type:"+componentClassName);
+		return PayLoad.Error("SetComponentValue - Unknown Component type:"+componentClassName,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 
 	}
@@ -3569,7 +3578,7 @@ private PayLoad SetComponentFocus(Component c)
 		
 		if(componentClassName==null)
 		{
-			return PayLoad.Error("SetComponentValue - not supported for Component type"+c.getClass().getName());
+			return PayLoad.Error("SetComponentValue - not supported for Component type"+c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 
 		if (c instanceof JTextField)
@@ -3651,7 +3660,7 @@ private PayLoad SetComponentFocus(Component c)
 			((JCheckBox)c).setSelected(b);
 			
 			if(((JCheckBox)c).isSelected() != b)
-				return PayLoad.Error("Failed to set JCheckBox Value Set to - " + value);
+				return PayLoad.Error("Failed to set JCheckBox Value Set to - " + value,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			return PayLoad.OK("JCheckBox Value Set to - " + value);	
 		}
 		else if (c instanceof JList) 
@@ -3665,7 +3674,7 @@ private PayLoad SetComponentFocus(Component c)
 		
 			if (jl.getSelectionMode() == ListSelectionModel.SINGLE_SELECTION && items.size()>1) 
 			{
-				return PayLoad.Error("Failure : Trying to Select multiple values in Single Section List ");
+				return PayLoad.Error("Failure : Trying to Select multiple values in Single Section List ",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 
 			List<Integer> selectedItems = new ArrayList<Integer>();
@@ -3693,7 +3702,7 @@ private PayLoad SetComponentFocus(Component c)
 
 			if(selectItems.length<items.size())
 			{
-				return PayLoad.Error("Failure : Element(s) doesn't exist in the List ");				
+				return PayLoad.Error("Failure : Element(s) doesn't exist in the List ",PayLoad.ErrorCode.Unknown.GetErrorCode());				
 			}
 			jl.setSelectedIndices(selectItems);
 
@@ -3742,7 +3751,7 @@ private PayLoad SetComponentFocus(Component c)
 
 
 			if(!jcb.getSelectedItem().equals(value))
-				return PayLoad.Error("Failed to select combo box item");
+				return PayLoad.Error("Failed to select combo box item",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			
 			return PayLoad.OK(respString);
 		}
@@ -3752,7 +3761,7 @@ private PayLoad SetComponentFocus(Component c)
 		}	
 		else
 		{
-			return PayLoad.Error("SetComponentValue - not supported for Component type"+c.getClass().getName());
+			return PayLoad.Error("SetComponentValue - not supported for Component type"+c.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		// TODO: Add other type of controls + err if not known
 		
@@ -3913,13 +3922,13 @@ private PayLoad SetComponentFocus(Component c)
 			}
 			else
 			{
-				return PayLoad.Error("Failed to get child items for node");
+				return PayLoad.Error("Failed to get child items for node",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			
 		} 
 		else 
 		{
-			return PayLoad.Error("No noode is selected, please select the node");
+			return PayLoad.Error("No noode is selected, please select the node",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 	}
 
@@ -3988,7 +3997,7 @@ private PayLoad SetComponentFocus(Component c)
 
 			//return c;
 		} else {
-			return PayLoad.Error("Live spy failed Current Window is null");
+			return PayLoad.Error("Live spy failed Current Window is null",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}	
 	}
 	private PayLoad RequireInitializeBrowser(String xpath)
@@ -4239,7 +4248,7 @@ private PayLoad SetComponentFocus(Component c)
 		}
 		else
 		{
-			return PayLoad.Error("Browser component not exist");
+			return PayLoad.Error("Browser component not exist",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 				
 		
@@ -4280,7 +4289,7 @@ private PayLoad SetComponentFocus(Component c)
 		}
 		else
 		{			
-			return PayLoad.Error("No current Window");
+			return PayLoad.Error("No current Window",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}	
 	}
 
@@ -4294,7 +4303,7 @@ private PayLoad SetComponentFocus(Component c)
 		Component ct = FindElementWithImplicitSync(locateBy, locateValue);
 		if (ct == null) 
 		{
-			return PayLoad.Error("Table Element Not Found by locate value:" + locateValue);
+			return PayLoad.Error("Table Element Not Found by locate value:" + locateValue,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 		GingerAgent.WriteLog("Table Element Found");
 		
@@ -4379,13 +4388,13 @@ private PayLoad SetComponentFocus(Component c)
 				catch(Exception ex)
 				{
 					GingerAgent.WriteLog("Exception during Select all rows"+ ex.getMessage());
-					return PayLoad.Error("Exception during Select all rows"+ ex.getMessage());
+					return PayLoad.Error("Exception during Select all rows"+ ex.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 				
 			}
 			else
 			{
-				return PayLoad.Error("Table do not support multiple row selection");
+				return PayLoad.Error("Table do not support multiple row selection",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		}
 //		else if (controlAction.equals("RightClick"))
@@ -4441,7 +4450,7 @@ private PayLoad SetComponentFocus(Component c)
 			nxtIndex = 2;
 		}
 		if (rowNum == -1)
-			return PayLoad.Error("Row not found with given Condition");
+			return PayLoad.Error("Row not found with given Condition",PayLoad.ErrorCode.Unknown.GetErrorCode());
 
 		GingerAgent.WriteLog("getRowNum::" + rowNum);
 
@@ -4471,7 +4480,7 @@ private PayLoad SetComponentFocus(Component c)
 			colNum = getColumnNum(CurrentTable, colBy, colVal);
 			if (colNum == -1)
 				return PayLoad.Error("Coloumn not found with " + colBy + " :"
-						+ colVal);
+						+ colVal,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 
 		if (controlAction.equals("GetSelectedRow")) 
@@ -4513,7 +4522,7 @@ private PayLoad SetComponentFocus(Component c)
 			} 
 			else 
 			{
-				return PayLoad.Error(" Toggle Operation is not valid for cell type-"+ CellComponent.getClass().getName());
+				return PayLoad.Error(" Toggle Operation is not valid for cell type-"+ CellComponent.getClass().getName(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		} 
 		else if (controlAction.equals("SelectDate"))
@@ -4528,7 +4537,7 @@ private PayLoad SetComponentFocus(Component c)
 			}
 			else
 			{
-				return PayLoad.Error("Cell component not found");
+				return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		}
 		else if (controlAction.equals("IsCellEnabled")) {
@@ -4539,7 +4548,7 @@ private PayLoad SetComponentFocus(Component c)
 				Response.ClosePackage();
 				return Response;
 				}   else {
-				return PayLoad.Error("Cell component not found");
+				return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		} else if (controlAction.equals("IsVisible")) {
 			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum);
@@ -4549,7 +4558,7 @@ private PayLoad SetComponentFocus(Component c)
 				Response.ClosePackage();
 				return Response;
 			}   else {
-				return PayLoad.Error("Cell component not found");
+				return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 			
 		}
@@ -4565,7 +4574,7 @@ private PayLoad SetComponentFocus(Component c)
 				}
 				else
 				{
-					return PayLoad.Error("Cell component not found");
+					return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 
 		}else if (controlAction.equals("SendKeys")){
@@ -4579,7 +4588,7 @@ private PayLoad SetComponentFocus(Component c)
 				}
 				else
 				{
-					return PayLoad.Error("Cell component not found");
+					return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 		
 		} else if (controlAction.equals("SetFocus")) {
@@ -4620,7 +4629,7 @@ private PayLoad SetComponentFocus(Component c)
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return PayLoad.Error(e.getMessage());
+				return PayLoad.Error(e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 
 			return PayLoad.OK("Type Activity Passed");
@@ -4634,9 +4643,9 @@ private PayLoad SetComponentFocus(Component c)
 
 				if (cb.getSelectedItem() != Value)
 					return PayLoad.Error("Failed to Select combo box item "
-							+ Value);
+							+ Value,PayLoad.ErrorCode.Unknown.GetErrorCode());
 			} else {
-				return PayLoad.Error("Component is not of type combo box ");
+				return PayLoad.Error("Component is not of type combo box ",PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 
 		} else if (controlAction.equals("WinClick")) {
@@ -4676,7 +4685,7 @@ private PayLoad SetComponentFocus(Component c)
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return PayLoad.Error(e.getMessage());
+				return PayLoad.Error(e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 
 			return PayLoad.OK("Win Click Activity Passed");
@@ -4759,11 +4768,11 @@ private PayLoad SetComponentFocus(Component c)
 						
 						
 						if(((JCheckBox)CellComponent).isSelected() == isSelected)
-						return PayLoad.Error("Failed to click on JCheckBox");
+						return PayLoad.Error("Failed to click on JCheckBox",PayLoad.ErrorCode.Unknown.GetErrorCode());
 					}
 					else
 					{
-						return PayLoad.Error("Cell component not found");
+						return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
 					}
 				
 				}
@@ -4813,7 +4822,7 @@ private PayLoad SetComponentFocus(Component c)
 				
 				if(treeNode == null)				
 				{				
-					return PayLoad.Error(searchResult.toString());
+					return PayLoad.Error(searchResult.toString(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 				}
 				((JTree)CellComponent).requestFocus();	
 				//already in EDT - this call will cues exception
@@ -4974,10 +4983,10 @@ private PayLoad SetComponentFocus(Component c)
 				
 			} catch (Exception e) {
 				GingerAgent.WriteLog("In Exception");
-				return PayLoad.Error(e.getMessage());
+				return PayLoad.Error(e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
 			}
 		} else {
-			return PayLoad.Error("Unsupported Table Operation");
+			return PayLoad.Error("Unsupported Table Operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
 
 		return null;

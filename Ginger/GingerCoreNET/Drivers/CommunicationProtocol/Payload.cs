@@ -736,5 +736,12 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             return mBuffer.Length;
         }
+
+        public enum ErrorCode
+        {
+            ElementNotFound=404,
+            CommandTimeOut=408,
+            Unknown=-1
+        }
     }
 }

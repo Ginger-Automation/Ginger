@@ -83,7 +83,7 @@ public class BrowserHelper
 			Response.AddValue("ZZZZ");
 			return Response;
 		}
-		return PayLoad.Error("Unknown Browser Element Action - " + Action);		
+		return PayLoad.Error("Unknown Browser Element Action - " + Action,PayLoad.ErrorCode.Unknown.GetErrorCode());		
 	}
 
 	
@@ -182,7 +182,7 @@ public class BrowserHelper
 			return resp;
 		}
 		else
-			return PayLoad.Error("Failed to get screenshot. Ginger script lost");
+			return PayLoad.Error("Failed to get screenshot. Ginger script lost",PayLoad.ErrorCode.Unknown.GetErrorCode());
 		
 	
 	}
@@ -287,11 +287,11 @@ public class BrowserHelper
              if (rc==null)
              {
              	GingerAgent.WriteLog("rc is null");
-             	return PayLoad.Error("Failed to execute- response null");
+             	return PayLoad.Error("Failed to execute- response null",PayLoad.ErrorCode.Unknown.GetErrorCode());
              }               
              else if (rc.toString().startsWith("ERROR"))
              {
-             	return PayLoad.Error(rc.toString());       
+             	return PayLoad.Error(rc.toString(),PayLoad.ErrorCode.Unknown.GetErrorCode());       
              }        
              else
              {
@@ -308,7 +308,7 @@ public class BrowserHelper
         if (rc!=null)
         	return PayLoad.OK("Error Suppress Passed");
         else
-        	return PayLoad.Error("Error Suppress Failed");        
+        	return PayLoad.Error("Error Suppress Failed",PayLoad.ErrorCode.Unknown.GetErrorCode());        
     }
 
     public Object setJavascriptErrorsSuppressed(boolean bSupress)

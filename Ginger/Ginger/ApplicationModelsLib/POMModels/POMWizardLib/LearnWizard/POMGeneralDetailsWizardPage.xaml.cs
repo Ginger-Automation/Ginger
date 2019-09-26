@@ -22,6 +22,8 @@ using Ginger;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.IO;
@@ -82,7 +84,16 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void SetDefaultPage()
         {
             xPageUrlRadioBtn.IsChecked = true;
+
             mBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
+
+            ePlatformType mAppPlatform = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+
+            PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(mAppPlatform);
+            if (platformInfoBase != null)
+            {
+                xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
+            }
         }
 
         public void ShowScreenShot()
