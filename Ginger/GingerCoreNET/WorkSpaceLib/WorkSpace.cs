@@ -98,9 +98,7 @@ namespace amdocs.ginger.GingerCoreNET
             {
                 mWorkSpace.InitLocalGrid();
             }
-            AddLazyLoad();
-
-            mWorkSpace.InitLocalGrid();
+            AddLazyLoad();            
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
         }
