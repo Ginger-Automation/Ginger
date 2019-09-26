@@ -73,13 +73,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void InitGlobalModelParametersGrid()
         {
+            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", ReadOnly = isFieldReadOnly, WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, ReadOnly = isFieldReadOnly, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", ReadOnly = isFieldReadOnly, WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditGlobalParamPossibleValuesPage"] });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, ReadOnly = isFieldReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditGlobalParamPossibleValuesPage"] });
 
             xGlobalModelParametersGrid.SetAllColumnsDefaultView(view);
             xGlobalModelParametersGrid.InitViewItems();
@@ -106,19 +108,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             xGlobalModelParametersGrid.ShowEdit = Visibility.Collapsed;
             xGlobalModelParametersGrid.ShowCopyCutPast = Visibility.Collapsed;
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.Standalone)
-            {
-                xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
-                xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
-                xGlobalModelParametersGrid.ShowUpDown = Visibility.Visible;
-                xGlobalModelParametersGrid.ShowAdd = Visibility.Visible;
-                xGlobalModelParametersGrid.ShowClearAll = Visibility.Visible;
-                xGlobalModelParametersGrid.ShowDelete = Visibility.Visible;
-
-                xGlobalModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
-                xGlobalModelParametersGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGlobalParameters));
-            }
-            else
+            if (isFieldReadOnly)
             {
                 xGlobalModelParametersGrid.ShowCopy = Visibility.Visible;
                 xGlobalModelParametersGrid.IsReadOnly = true;
@@ -130,19 +120,38 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 xGlobalModelParametersGrid.ShowDelete = Visibility.Collapsed;
                 xGlobalModelParametersGrid.ShowSearch = Visibility.Collapsed;
             }
+            else
+            {
+                xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowRefresh = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowUpDown = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowAdd = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowClearAll = Visibility.Visible;
+                xGlobalModelParametersGrid.ShowDelete = Visibility.Visible;
+
+                xGlobalModelParametersGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddGlobalParam));
+                xGlobalModelParametersGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGlobalParameters));
+            }
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Add)
+            {
+                xGlobalModelParametersGrid.ShowPaste = Visibility.Visible;
+            }
         }
 
 
         private void InitModelParametersGrid()
         {
+            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Path), Header = "Path", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.RequiredAsInput), Header = "Required as Input", ReadOnly = isFieldReadOnly, WidthWeight = 30, MaxWidth = 220, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.PlaceHolder), Header = GridPlaceholderHeader, ReadOnly = isFieldReadOnly, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Path), Header = "Path", ReadOnly = isFieldReadOnly, WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.Description), Header = "Description", ReadOnly = isFieldReadOnly, WidthWeight = 150 });
             view.GridColsView.Add(new GridColView() { Field = nameof(AppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditLocalParamPossibleValuesPage"] });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, ReadOnly = isFieldReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["OpenEditLocalParamPossibleValuesPage"] });
 
             ModelParametersGrid.SetAllColumnsDefaultView(view);
             ModelParametersGrid.InitViewItems();
@@ -159,7 +168,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             ModelParametersGrid.ShowRefresh = Visibility.Collapsed;
             ModelParametersGrid.ShowEdit = Visibility.Collapsed;
 
-            if (mPageViewMode == Ginger.General.eRIPageViewMode.Standalone)
+            if (isFieldReadOnly)
+            {
+                ModelParametersGrid.IsReadOnly = true;
+
+                ModelParametersGrid.ShowUpDown = Visibility.Collapsed;
+                ModelParametersGrid.ShowAdd = Visibility.Collapsed;
+                ModelParametersGrid.ShowClearAll = Visibility.Collapsed;
+                ModelParametersGrid.ShowDelete = Visibility.Collapsed;
+                ModelParametersGrid.ShowCopyCutPast = Visibility.Collapsed;
+                ModelParametersGrid.ShowSearch = Visibility.Collapsed;
+
+                ModelParametersGrid.ShowCopy = Visibility.Visible;
+            }
+            else
             {
                 ModelParametersGrid.Grid.CanUserDeleteRows = false;
                 ModelParametersGrid.ShowUpDown = Visibility.Visible;
@@ -178,18 +200,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 ModelParametersGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
                 ModelParametersGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
             }
-            else
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.Add)
             {
-                ModelParametersGrid.IsReadOnly = true;
-
-                ModelParametersGrid.ShowUpDown = Visibility.Collapsed;
-                ModelParametersGrid.ShowAdd = Visibility.Collapsed;
-                ModelParametersGrid.ShowClearAll = Visibility.Collapsed;
-                ModelParametersGrid.ShowDelete = Visibility.Collapsed;
-                ModelParametersGrid.ShowCopyCutPast = Visibility.Collapsed;
-                ModelParametersGrid.ShowSearch = Visibility.Collapsed;
-
-                ModelParametersGrid.ShowCopy = Visibility.Visible;
+                ModelParametersGrid.ShowPaste = Visibility.Visible;
             }
         }
 

@@ -220,8 +220,8 @@ namespace GingerCoreNET.Application_Models
 
         public enum eComparisonOutput
         {
-            New,
             Modified,
+            New,
             Unchanged
         }
 

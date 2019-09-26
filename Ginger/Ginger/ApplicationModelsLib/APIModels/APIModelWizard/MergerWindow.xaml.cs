@@ -100,7 +100,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         void SetMergedrFrame()
         {
-            mergedAPIPage = new APIModelPage(mDeltaAPIModel.MergedAPIModel);
+            mergedAPIPage = new APIModelPage(mDeltaAPIModel.MergedAPIModel, General.eRIPageViewMode.Add);
             xMergedAPIFrame.Content = mergedAPIPage;
         }
     }

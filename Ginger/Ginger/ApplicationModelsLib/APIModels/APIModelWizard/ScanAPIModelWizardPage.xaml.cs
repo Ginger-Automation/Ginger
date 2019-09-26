@@ -166,12 +166,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                     if(mergeIssue)
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Merged API should derived from Either Existing API Or Learned API !");
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Merged API should be derived from a base API, Please update selected !");
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
 
-                    if (notifyReplaceAPI && Reporter.ToUser(eUserMsgKey.SureWantToDelete, "For selected default Operations Merge/Replace, the Existing API's would be replaced", eUserMsgOption.YesNo) == eUserMsgSelection.No)
+                    if (notifyReplaceAPI && Reporter.ToUser(eUserMsgKey.SureWantToContinue, "Replace Existing API Models", "Are you sure you want to delet the existing API Models ?", eUserMsgOption.YesNo) == eUserMsgSelection.No)
                     {
                         WizardEventArgs.CancelEvent = true;
                         return;
@@ -364,7 +364,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             initView.GridColsView = new ObservableList<GridColView>();
 
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order=0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["IsSelectedTemplate"] });
-            //initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", WidthWeight = 30, Visible = true});
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 20, Visible = false });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comparison Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Difference's Handling Operation", Visible = false });
@@ -425,28 +424,31 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             ComboBox handlingOpCB = sender as ComboBox;
             string mergerDescription = Convert.ToString(DeltaAPIModel.GetEnumDescription(DeltaAPIModel.eHandlingOperations.MergeChanges));
 
-            DeltaAPIModel.eHandlingOperations selectedOperation = DeltaAPIModel.GetValueFromDescription<DeltaAPIModel.eHandlingOperations>(handlingOpCB.SelectedItem.ToString());
-
-            DeltaAPIModel deltaAPI = null;
-            var fEl = sender as FrameworkElement;
-            if (fEl != null)
-                deltaAPI = fEl.DataContext as DeltaAPIModel;
-            if (deltaAPI != null)
+            if (handlingOpCB != null && handlingOpCB.SelectedItem != null)
             {
-                deltaAPI.defaultOperation = Convert.ToString(handlingOpCB.SelectedItem);
+                DeltaAPIModel.eHandlingOperations selectedOperation = DeltaAPIModel.GetValueFromDescription<DeltaAPIModel.eHandlingOperations>(Convert.ToString(handlingOpCB.SelectedItem));
 
-                // Update default Operation Enum field
-                deltaAPI.DefaultOperationEnum = selectedOperation;
-                if (selectedOperation == DeltaAPIModel.eHandlingOperations.DoNotAdd)
-                    deltaAPI.IsSelected = false;
-                else
-                    deltaAPI.IsSelected = true;
-            }
+                DeltaAPIModel deltaAPI = null;
+                var fEl = sender as FrameworkElement;
+                if (fEl != null)
+                    deltaAPI = fEl.DataContext as DeltaAPIModel;
+                if (deltaAPI != null)
+                {
+                    deltaAPI.defaultOperation = Convert.ToString(handlingOpCB.SelectedItem);
 
-            // Launch the Merger Window as Merge Changes is selected.
-            if (handlingOpCB.SelectedItem.Equals(mergerDescription))
-            {
-                ShowMergerPage(sender);
+                    // Update default Operation Enum field
+                    deltaAPI.DefaultOperationEnum = selectedOperation;
+                    if (selectedOperation == DeltaAPIModel.eHandlingOperations.DoNotAdd)
+                        deltaAPI.IsSelected = false;
+                    else
+                        deltaAPI.IsSelected = true;
+                }
+
+                // Launch the Merger Window as Merge Changes is selected.
+                if (handlingOpCB.SelectedItem.Equals(mergerDescription))
+                {
+                    ShowMergerPage(sender);
+                }
             }
         }
 

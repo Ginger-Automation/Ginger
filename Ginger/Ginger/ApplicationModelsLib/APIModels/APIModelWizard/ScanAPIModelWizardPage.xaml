@@ -43,9 +43,9 @@
             </DataTemplate>
 
             <DataTemplate x:Key="CompareAndMergeTemplate">
-                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False" Margin="0" Padding="0" Height="21"
+                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False" Margin="0" Padding="0" Height="23"
                       ButtonType="ImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
-                            ButtonImageWidth="15" ButtonImageType="Columns" Background="Transparent" />
+                            ButtonImageWidth="15" ButtonImageType="Columns" />
 
                 <DataTemplate.Triggers>
                     <DataTrigger Binding="{Binding defaultOperation}" Value="Merge Changes">

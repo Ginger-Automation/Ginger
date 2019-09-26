@@ -62,6 +62,8 @@ namespace GingerCoreNET.Application_Models
                 deltaAPIModelsList.Add(apiModelDelta);
             }
 
+            deltaAPIModelsList = new ObservableList<DeltaAPIModel>(deltaAPIModelsList.OrderBy(d => d.comparisonStatus));
+
             return deltaAPIModelsList;
         }
 
@@ -109,7 +111,7 @@ namespace GingerCoreNET.Application_Models
             }
 
             // Filter matching APIs based on Request Body
-            existingAPIs = existingAPIs.Where(m => m.RequestBody.Equals(learnedModel.RequestBody)).ToList();
+            existingAPIs = existingAPIs.Where(m => m.RequestBody != null && m.RequestBody.Equals(learnedModel.RequestBody)).ToList();
 
             return existingAPIs;
         }

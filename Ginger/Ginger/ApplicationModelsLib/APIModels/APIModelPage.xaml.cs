@@ -40,6 +40,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;
         private bool saveWasDone = false;
+        General.eRIPageViewMode mPageViewMode;
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
@@ -64,8 +65,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
 
-            if (viewMode == General.eRIPageViewMode.View)
+            mPageViewMode = viewMode;
+
+            if (mPageViewMode == General.eRIPageViewMode.View)
                 UpdatePageAsReadOnly();
+
+            if (mPageViewMode == General.eRIPageViewMode.Add)
+                HttpHeadersGrid.ShowPaste = Visibility.Visible;
         }
 
         void UpdatePageAsReadOnly()
@@ -347,13 +353,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetHTTPHeadersGrid()
         {
+            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
+
             HttpHeadersGrid.Title = "Request Headers";
             HttpHeadersGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Param), Header = "Header", WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Value), Header = "Value", WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Param), Header = "Header", ReadOnly = isFieldReadOnly, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Value), Header = "Value", ReadOnly = isFieldReadOnly, WidthWeight = 100 });
 
             HttpHeadersGrid.SetAllColumnsDefaultView(view);
             HttpHeadersGrid.InitViewItems();
