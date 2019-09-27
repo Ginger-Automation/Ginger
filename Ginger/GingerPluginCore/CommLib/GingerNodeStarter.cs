@@ -86,6 +86,14 @@ namespace Amdocs.Ginger.Plugin.Core
             CheckAddGingerNode(gingerNode);
         }
 
+        public void StartNode(string name, object gingerServiceObject, int gingerGridport)
+        {
+            GingerNode gingerNode = new GingerNode(gingerServiceObject);
+            gingerNode.StartGingerNode(name, "localhost", gingerGridport);
+            CheckAddGingerNode(gingerNode);
+        }
+
+
         public void StartNode(string name, Type serviceType)
         {
             object serviceObject = Activator.CreateInstance(serviceType);

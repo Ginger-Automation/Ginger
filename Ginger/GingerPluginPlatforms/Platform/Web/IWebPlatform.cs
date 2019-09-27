@@ -33,10 +33,7 @@ namespace Ginger.Plugin.Platform.Web
     [GingerInterface("IWebPlatform", "Web Platform driver")]
     public interface IWebPlatform: IPlatformService
     {
-        /// <summary>
-        /// Tells to shift Frames automatically in case of a POM Element
-        /// </summary>
-        bool AutomaticallyShiftIframe { get; set; }
+        
 
         /// <summary>
         /// Instance of Executor for Browser Service

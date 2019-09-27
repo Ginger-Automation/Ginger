@@ -144,6 +144,10 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new NotImplementedException();
         }
 
+        public void SwitchToDefaultContent()
+        {
+            throw new NotImplementedException();
+        }
 
         public void SwitchToFrame(IGingerWebElement WebElement)
         {

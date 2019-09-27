@@ -84,10 +84,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 return GetWidgetUIElementList(elementInfo);
             }
 
-            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
-            eElementType elementType = GetElementType(elementInfo.ElementType);
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();         
 
-            if (elementType.Equals(eElementType.Table))
+            if (elementInfo.ElementTypeEnum==eElementType.Table)
             {
                 //get all action list supported to table
                 var tableActionList = new[] { ActUIElement.eElementAction.TableCellAction, ActUIElement.eElementAction.TableAction, ActUIElement.eElementAction.TableRowAction }
@@ -115,8 +114,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, action.ToString());
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                     if (!action.Equals(ActUIElement.eElementAction.TableAction))
-                    {
-                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
+                    {                        
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
 
@@ -128,13 +126,13 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             else
             {
-                var actionList = GetPlatformUIElementActionsList(elementType);
+                var actionList = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
 
                 if (actionList.Count > 0)
                 {
                     foreach (var action in actionList)
                     {
-                        UIElementsActionsList.Add(CreateUIElementAction(elementInfo, elementType, action));
+                        UIElementsActionsList.Add(CreateUIElementAction(elementInfo, action));
                     }
                 }
             }
@@ -142,13 +140,13 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
-        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo, eElementType elementType, ActUIElement.eElementAction action)
+        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo,ActUIElement.eElementAction action)
         {
             return new ActUIElement()
             {
                 Description = action + " : " + elementInfo.ElementTitle,
                 ElementAction = action,
-                ElementType = elementType,
+                ElementType = elementInfo.ElementTypeEnum
             };
         }
 
@@ -162,7 +160,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 foreach (var action in widgetsActionList)
                 {
-                    var widgetsAction = CreateUIElementAction(elementInfo, elementInfo.ElementTypeEnum, action);
+                    var widgetsAction = CreateUIElementAction(elementInfo, action);
 
                     widgetsAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
 
@@ -175,59 +173,87 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public static eElementType GetElementType(string elementType)
         {
-            eElementType element;
+            //TODO: J.G all this logic should be moved to java side 
+            //and payload should return simply element type as Buttton or TextBox etc.
+            eElementType elementTypeEnum;
 
             switch (elementType)
             {
                 case "javax.swing.JTextField":
                 case "javax.swing.JTextPane":
                 case "javax.swing.JTextArea":
-                    element = eElementType.TextBox;
+                    elementTypeEnum = eElementType.TextBox;
                     break;
                 case "javax.swing.JButton":
-                    element = eElementType.Button;
+                    elementTypeEnum = eElementType.Button;
                     break;
                 case "javax.swing.JLabel":
-                    element = eElementType.Label;
+                    elementTypeEnum = eElementType.Label;
                     break;
+
+                case "com.amdocs.uif.widgets.browser.JxBrowserBrowserComponent":  //  added to support live spy in JxBrowserBrowserComponent
+                case "com.amdocs.uif.widgets.browser.JExplorerBrowserComponent":// "com.jniwrapper.win32.ie.aw" :
+                    elementTypeEnum = eElementType.Browser;
+                    break;
+
                 case "javax.swing.JCheckBox":
-                    element = eElementType.CheckBox;
+                    elementTypeEnum = eElementType.CheckBox;
                     break;
                 case "javax.swing.JRadioButton":
-                    element = eElementType.RadioButton;
+                    elementTypeEnum = eElementType.RadioButton;
                     break;
+
+                case "com.amdocs.uif.widgets.CalendarComponent":
+                case "com.amdocs.uif.widgets.DateTimeNative$2":
+                case "lt.monarch.swing.JDateField$Editor":
+                    elementTypeEnum = eElementType.DatePicker;
+                    break;
+
                 case "javax.swing.JComboBox":
-                    element = eElementType.ComboBox;
+                case "com.amdocs.uif.widgets.ComboBoxNative$1":
+                    elementTypeEnum = eElementType.ComboBox;
                     break;
+
+
                 case "javax.swing.JList":
-                    element = eElementType.List;
+                    elementTypeEnum = eElementType.List;
                     break;
                 case "javax.swing.JTable":
-                    element = eElementType.Table;
+                case "com.amdocs.uif.widgets.search.SearchJTable":
+                    elementTypeEnum = eElementType.Table;
                     break;
+
                 case "javax.swing.JScrollPane":
                 case "javax.swing.JScrollPane$ScrollBar":
-                    element = eElementType.ScrollBar;
+                    elementTypeEnum = eElementType.ScrollBar;
                     break;
                 case "javax.swing.JTree":
-                    element = eElementType.TreeView;
+                case "com.amdocs.uif.widgets.TreeNative$SmartJTree":
+                    elementTypeEnum = eElementType.TreeView;
                     break;
                 case "javax.swing.JMenu":
-                    element = eElementType.MenuItem;
+                    elementTypeEnum = eElementType.MenuItem;
                     break;
                 case "javax.swing.JTabbedPane":
-                    element = eElementType.Tab;
+                case "com.amdocs.uif.widgets.JXTabbedPane":
+                    elementTypeEnum = eElementType.Tab;
                     break;
                 case "javax.swing.JEditorPane":
-                    element = eElementType.EditorPane;
+                    elementTypeEnum = eElementType.EditorPane;
                     break;
+
+                case "javax.swing.JInternalFrame":
+                case "com.amdocs.uif.workspace.MDIWorkspace$27":
+                    elementTypeEnum = eElementType.Iframe;
+                    break;
+
                 default:
-                    element = eElementType.Unknown;
+                    elementTypeEnum = eElementType.Unknown;
                     break;
             }
 
 
-            return element;
+            return elementTypeEnum;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)

@@ -300,7 +300,7 @@ namespace Ginger.Actions
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputTabVisual();
-            mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
+            mAction.OnPropertyChanged(nameof(Act.ReturnValuesCount));
         }
 
         private void FlowControls_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

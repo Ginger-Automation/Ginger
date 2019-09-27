@@ -27,6 +27,7 @@ using GingerCore.Actions.Java;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
+using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -121,6 +122,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             HighLightElement,
             GetCurrentWindowVisibleControls,
             GetContainerControls,
+            GetEditorChildrens,
             GetComponentFromCursor,
             Echo,
             GetProperties,
@@ -1885,7 +1887,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ci.IsAutoLearned = true;
                         foundElementsList.Add(ci);
                         List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
-                        if (ci.ElementType != null && ci.ElementType.Contains("com.amdocs.uif.widgets.browser"))
+                        if (ci.ElementTypeEnum == eElementType.Browser)
                         {
                             PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
                             String flag = PL.GetValueString();
@@ -1897,6 +1899,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 HTMLControlsPL = GetBrowserVisibleControls();                                                                 
                             }
                         }
+                        //TODO: J.G. use elementTypeEnum instead of contains
                         else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
                         {
                             InitializeJEditorPane(ci);
@@ -2063,6 +2066,15 @@ namespace GingerCore.Drivers.JavaDriverLib
             EI.Path = PL.GetValueString();
             EI.XPath = PL.GetValueString();
             EI.RelXpath = PL.GetValueString();
+            string IsExpandable = PL.GetValueString();
+            if (IsExpandable == "Y")
+            {
+                EI.IsExpandable = true;
+            }
+            else
+            {
+                EI.IsExpandable = false;
+            }
             return EI;
         }
 
@@ -2420,7 +2432,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                 if (!(String.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID)))
                 {
-                    if (ElementInfo.XPath != "/" && !ElementInfo.ElementType.Contains("JEditor"))
+                    if (ElementInfo.XPath != "/" && !ElementInfo.ElementType.Contains("JEditor"))//?????????
                     {
                         ElementLocator locator = new ElementLocator();
                         locator.LocateBy = eLocateBy.ByID;
@@ -2549,16 +2561,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             List<PayLoad> ElementsPL = PLRC.GetListPayLoad();
             foreach (PayLoad PL in ElementsPL)
             {
-                HTMLElementInfo EI = new HTMLElementInfo();
-                EI.ElementTitle = PL.GetValueString();
-                EI.ID = PL.GetValueString();
-                EI.Value = PL.GetValueString();
-                EI.Name = PL.GetValueString();
-                EI.ElementType = PL.GetValueString();
-                EI.Path = PL.GetValueString();
-                EI.XPath = PL.GetValueString();
-                EI.RelXpath = PL.GetValueString();
-                EI.WindowExplorer = this;
+                HTMLElementInfo EI = (HTMLElementInfo)GetHTMLElementInfoFromPL(PL);
+                EI.WindowExplorer = this; 
                 list.Add(EI);
             }
             return list;
@@ -2788,8 +2792,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementType = eElementType.Table,
                         ElementAction = ActUIElement.eElementAction.TableCellAction,
                     };
-                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, column);
-                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, column);                    
+                    actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
                     actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString());
                     actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, column);
                     actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.DoubleClick.ToString());

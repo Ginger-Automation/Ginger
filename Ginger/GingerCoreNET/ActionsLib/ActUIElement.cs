@@ -100,8 +100,7 @@ namespace GingerCore.Actions.Common
             public static string XCoordinate = "XCoordinate";
             public static string YCoordinate = "YCoordinate";
             public static string ValueToSelect = "ValueToSelect";
-            public static string Value = "Value";
-            public static string RowSelectorRadioParam = "RowSelectorRadioParam";
+            public static string Value = "Value";            
 
             //Used for Drag & Drop Action
             public static string TargetElementType = "TargetElementType";
@@ -169,10 +168,10 @@ namespace GingerCore.Actions.Common
             Checked,
             UnChecked
         }
-        public enum eRadioButtonValueType
+        public enum eLocateRowTypeOptions
         {
             [EnumValueDescription("Row Number")]
-            RowNum,
+            RowNumber,
             [EnumValueDescription("Any Row")]
             AnyRow,
             [EnumValueDescription("By Selected Row")]
@@ -1095,6 +1094,36 @@ namespace GingerCore.Actions.Common
         }
 
 
-     
+        public override void PostSerialization()
+        {
+            //Row selection options Row Number, Any Row, By Selected Row and Where
+            //Earlier these were stored in fields differently RowSelectorRadioParam and LocateRowType
+            //Below code is for backward compatibility
+            //It will move the correct value to "LocateRowType" and remove the other fields
+            string currentValue = this.GetInputParamValue("RowSelectorRadioParam");
+            if(!string.IsNullOrEmpty(currentValue))
+            {
+
+                switch(currentValue)
+                {
+                    case "RowNum":
+                        currentValue = "Row Number";
+                        break;
+
+                    case "AnyRow":
+                        currentValue = "Any Row";
+                        break;
+
+                    case "BySelectedRow":
+                        currentValue = "By Selected Row";
+                        break;                        
+                }
+                this.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, currentValue);
+                this.RemoveInputParam("RowSelectorRadioParam");
+            }
+        }
+
+
+
     }
 }

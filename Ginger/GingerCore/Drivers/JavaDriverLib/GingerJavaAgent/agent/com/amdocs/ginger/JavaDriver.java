@@ -159,10 +159,11 @@ public class JavaDriver {
 		GetAllWindows,
 		GetActiveWindow,
 		GetCurrentWindowVisibleControls,
-		GetContainerControls,
-		GetComponentFromCursor,
+		GetContainerControls,		
 		GetOptionalValuesList,
 		LocateElement
+		GetEditorChildrens,
+		GetComponentFromCursor		
 	}
 	
 
@@ -852,6 +853,11 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		{
 			String containerXPath = PL.GetValueString();
 			return HandleGetContainerControls(containerXPath);
+		}
+		else if (WindowExplorerOperationType.GetEditorChildrens.toString().equals(operationType))
+		{
+			String containerXPath = PL.GetValueString();
+			return HandleGetEditorChildrens(containerXPath);
 		}
 		
 		else if (WindowExplorerOperationType.GetComponentFromCursor.toString().equals(operationType))
@@ -4089,23 +4095,39 @@ private PayLoad SetComponentFocus(Component c)
 		}
 		
 		List<PayLoad> Elements = new ArrayList<PayLoad>(); 	
-		String PayLoadName="";
-		if(c instanceof JEditorPane && (c.getClass().getName().contains("JEditorPane")))
-		{
-			PayLoadName="HTML Element Children";
-			Elements= getEditorComponents();
-		}
-		else
-		{
-			PayLoadName="ContainerComponents";
-			Elements=getContainerComponents(c);				
-		}
-		PayLoad pl2 = new PayLoad(PayLoadName);
+		Elements=getContainerComponents(c);
+		PayLoad pl2 = new PayLoad("ContainerComponents");
 		pl2.AddListPayLoad(Elements);
 		pl2.ClosePackage();
 		return pl2;	
 		
 	}		
+	
+	private PayLoad HandleGetEditorChildrens(String containerXPath) 
+	{
+		//TODO: make me work find the container by XPath.
+
+		Container c=null;				
+		if("/".equals(containerXPath))   // '/' = current Window
+		{
+			c=mSwingHelper.getCurrentWindow();
+		}
+		else
+		{			
+			// It is Xpath to container - /Class[Index]
+			c=(Container)mSwingHelper.FindElement("ByXPath", containerXPath);	
+			
+		}
+		
+		List<PayLoad> Elements = new ArrayList<PayLoad>();	
+
+		Elements=getEditorComponents();
+		PayLoad pl2 = new PayLoad("EditorChildrens");
+		pl2.AddListPayLoad(Elements);
+		pl2.ClosePackage();
+		return pl2;	
+		
+	}
 	
 	private List<PayLoad> getEditorComponents()
 	{

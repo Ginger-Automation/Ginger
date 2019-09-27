@@ -83,10 +83,12 @@ namespace Ginger.Actions.ActionConversion
         {
             xPOMSelectionPage.OwnerWindow = (Window)mWizard.mWizardWindow;
             DataContext = mWizard;
-            xRadSameActivity.IsChecked = true;
+            xRadSameActivity.IsChecked = !mWizard.NewActivityChecked;
+            xNewActivityRadioBtn.IsChecked = mWizard.NewActivityChecked;
             SetTargetApplicationGridView();
              
             xChkPOM.Visibility = IsPOMSupportedFromSelectedTargetApplications() ? Visibility.Visible : Visibility.Hidden;
+            xChkPOM.IsChecked = mWizard.ConvertToPOMAction;
         }
 
         /// <summary>
@@ -119,9 +121,12 @@ namespace Ginger.Actions.ActionConversion
             //Set the Data Grid columns
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            TargetAppList = new ObservableList<string>();
-
-            mWizard.ConvertableTargetApplications = GetTargetApplication();
+            
+            if (mWizard.ConvertableTargetApplications != null && mWizard.ConvertableTargetApplications.Count <= 0)
+            {
+                TargetAppList = new ObservableList<string>();
+                mWizard.ConvertableTargetApplications = GetTargetApplication(); 
+            }
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Taret Application" });
             view.GridColsView.Add(new GridColView()
