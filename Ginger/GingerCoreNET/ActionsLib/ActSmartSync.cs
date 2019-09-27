@@ -19,16 +19,16 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.Run;
+using GingerCore.Platforms;
 
 namespace GingerCore.Actions
 {
     //This class is for UI link element
-    public class ActSmartSync : Act
+    public class ActSmartSync : Act, IActPluginExecution
     {
         public override string ActionDescription { get { return "Smart Sync Action"; } }
         public override string ActionUserDescription { get { return "Smart Sync"; } }
@@ -66,15 +66,44 @@ namespace GingerCore.Actions
         public new static partial class Fields
         {
             public static string WaitTime = "WaitTime";
+            public static string SmartSyncAction = "SmartSyncAction";
+        
         }
-        [IsSerializedForLocalRepository]
-        public int? WaitTime { set; get; }
-        [IsSerializedForLocalRepository]
-        public eSmartSyncAction SmartSyncAction { get; set; }
+
+        public int? WaitTime
+        {
+            get
+            {
+
+
+                int i;
+                return int.TryParse(GetOrCreateInputParam(Fields.WaitTime).Value, out i)?i: (int?)null; ;
+
+            }
+            set
+            {
+                GetOrCreateInputParam(Fields.WaitTime).Value = value.ToString();
+            }
+        }
+
+        public eSmartSyncAction SmartSyncAction
+        {
+            get { return GetOrCreateInputParam<eSmartSyncAction>(Fields.SmartSyncAction); }
+            set
+            {
+                GetOrCreateInputParam(Fields.SmartSyncAction).Value = value.ToString();
+            }           
+        }
 
         public override String ToString()
         {
             return "SmartSync: " + GetInputParamValue("Value");            
+        }
+
+
+        public string GetName()
+        {
+            return "SmartSyncAction";
         }
 
         public override String ActionType
@@ -84,6 +113,28 @@ namespace GingerCore.Actions
                 return "SmartSync: " + SmartSyncAction.ToString();
             }
         }
-        public override eImageType Image { get { return eImageType.Refresh; } } 
+        public override eImageType Image { get { return eImageType.Refresh; } }
+
+
+
+        public PlatformAction GetAsPlatformAction()
+        {
+                   
+                PlatformAction platformAction = new PlatformAction(this);
+
+                foreach (ActInputValue aiv in this.InputValues)
+                {
+
+                    string ValueforDriver = aiv.ValueForDriver;
+                    if (!platformAction.InputParams.ContainsKey(aiv.Param) && !String.IsNullOrEmpty(ValueforDriver))
+                    {
+                        platformAction.InputParams.Add(aiv.Param, ValueforDriver);
+                    }
+                }
+                                                                                     
+
+                return platformAction;
+            }
+        }
     }
-}
+
