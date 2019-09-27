@@ -659,24 +659,22 @@ namespace amdocs.ginger.GingerCoreNET
 
         public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
         {
-            BusinessFlow biz = new BusinessFlow();
-            biz.Name = Name;
-            biz.Activities = new ObservableList<Activity>();
-            biz.Variables = new ObservableList<VariableBase>();
-            Activity a = new Activity() { Active = true };
-            a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<IAct>();
-            biz.Activities.Add(a);
-            biz.Activities.CurrentItem = a;
-            biz.CurrentActivity = a;
+            BusinessFlow newBF = new BusinessFlow();
+            newBF.Name = Name;
+            
+            Activity defActivity = new Activity() { Active = true };
+            defActivity.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
+            newBF.AddActivity(defActivity, newBF.AddActivitiesGroup());
+            newBF.Activities.CurrentItem = defActivity;
+            newBF.CurrentActivity = defActivity;
 
             if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
             {
-                biz.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
-                biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
+                newBF.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                newBF.CurrentActivity.TargetApplication = newBF.TargetApplications[0].Name;
             }
 
-            return biz;
+            return newBF;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

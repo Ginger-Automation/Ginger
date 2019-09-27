@@ -62,7 +62,7 @@ namespace Ginger.Actions.ActionConversion
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
-                    SetActivitiesSelected();
+                    PrepareBFsForConversion();
                     break;
             }
         }
@@ -70,10 +70,11 @@ namespace Ginger.Actions.ActionConversion
         /// <summary>
         /// This method is used to set the acitvities for selected to conversion
         /// </summary>
-        private void SetActivitiesSelected()
+        private void PrepareBFsForConversion()
         {
             foreach (var businessFlow in ListOfBusinessFlow)
             {
+                businessFlow.BusinessFlow.CreateBackup();
                 if (businessFlow.IsSelected)
                 {
                     foreach (var act in businessFlow.BusinessFlow.Activities)
@@ -92,10 +93,11 @@ namespace Ginger.Actions.ActionConversion
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select", BindingMode = System.Windows.Data.BindingMode.TwoWay });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.RelativeFilePath), WidthWeight = 15, Header = "Folder" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 15, Header = "Name" });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.Description), WidthWeight = 15, Header = "Description"  });
-                        
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 25, Header = "Name" });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.Description), WidthWeight = 10, Header = "Description"  });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount), WidthWeight = 10,
+                                                         Header = "Convertible Actions", HorizontalAlignment = HorizontalAlignment.Center });
+
             xBusinessFlowGrid.SetAllColumnsDefaultView(defView);
             xBusinessFlowGrid.InitViewItems();
             xBusinessFlowGrid.SetTitleLightStyle = true;
@@ -154,14 +156,15 @@ namespace Ginger.Actions.ActionConversion
         {
             if (selectedBFs != null && selectedBFs.Count > 0)
             {                
-                foreach (var bf in selectedBFs)
+                foreach (BusinessFlow bf in selectedBFs)
                 {
-                    if (!IsBusinessFlowAdded(((BusinessFlow)bf).Guid))
+                    if (!IsBusinessFlowAdded(bf.Guid))
                     {
                         BusinessFlowToConvert flowToConversion = new BusinessFlowToConvert();
-                        flowToConversion.BusinessFlow = (BusinessFlow)bf;
+                        flowToConversion.BusinessFlow = bf;
                         flowToConversion.ConversionStatus = eConversionStatus.Pending;
                         flowToConversion.IsSelected = true;
+                        flowToConversion.TotalProcessingActionsCount = mWizard.GetConvertibleActionsCountFromBusinessFlow(bf);
                         ListOfBusinessFlow.Add(flowToConversion); 
                     }
                 } 

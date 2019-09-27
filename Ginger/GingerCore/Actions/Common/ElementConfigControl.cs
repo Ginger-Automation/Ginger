@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.UIElement;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace GingerCore.Actions.Common
 {
@@ -32,5 +33,7 @@ namespace GingerCore.Actions.Common
         public List<string> PossibleValues = new List<string>();
 
         public string DefaultValue { get; set; }
+
+        public RoutedEventHandler ElementEvent { get;set; }
     }
 }

@@ -305,6 +305,10 @@ namespace GingerCore
             }
         }
 
+        public override void PostSerialization()
+        {
+            AttachActivitiesGroupsAndActivities();
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
@@ -566,10 +570,10 @@ namespace GingerCore
                             }
                         }
                     }
-                }
-                else
-                {
-                    CurrentActivity = activity;
+                    else
+                    {
+                        insertIndex = Activities.IndexOf(CurrentActivity) + 1;
+                    }
                 }
             }
 
@@ -578,13 +582,8 @@ namespace GingerCore
                 activitiesGroup.AddActivityToGroup(activity);
             }
 
-            if (insertIndex > 0)
+            if (insertIndex >= 0)
             {
-                Activities.Insert(insertIndex, activity);
-            }
-            else if (insertIndex == 0)
-            {
-                insertIndex = Activities.IndexOf(CurrentActivity) + 1;
                 Activities.Insert(insertIndex, activity);
             }
             else
@@ -1225,7 +1224,7 @@ namespace GingerCore
 
 
         public string ExecutionFullLogFolder { get; set; }
-        public string ExecutionLogFolder { get; set; }
+        public string ExecutionLogFolder { get; set; } = string.Empty;
         public bool BusinessFlowExecLoggerPopulated
         {
             get

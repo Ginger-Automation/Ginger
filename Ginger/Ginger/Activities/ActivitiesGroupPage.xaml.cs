@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Repository;
-using Ginger.TagsLib;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
@@ -28,9 +28,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using Ginger.BusinessFlowWindows;
-using Ginger.BusinessFlowFolder;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Activities
 {

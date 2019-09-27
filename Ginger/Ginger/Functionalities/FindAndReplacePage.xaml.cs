@@ -21,8 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Functionalities;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
-using Ginger.BusinessFlowFolder;
-using Ginger.BusinessFlowWindows;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
@@ -904,9 +902,9 @@ namespace Ginger.Functionalities
             if (mContext == eContext.AutomatePage)
             {
                 if (Parent != null && Parent is BusinessFlow)
-                    w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.BusinessFlow, Parent as BusinessFlow);
+                    w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.Default, Parent as BusinessFlow);
                 else if (Parent != null && Parent is Activity)
-                    w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Activity, Parent as Activity);
+                    w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Default, Parent as Activity);
                 else
                     w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository, Parent);
             }

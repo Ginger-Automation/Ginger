@@ -188,7 +188,6 @@ namespace Ginger.Run
                     BFCopy.Reset();
                     BFCopy.Active = businessFlowRun.BusinessFlowIsActive;
                     BFCopy.Mandatory = businessFlowRun.BusinessFlowIsMandatory;
-                    BFCopy.AttachActivitiesGroupsAndActivities();
                     if (businessFlowRun.BusinessFlowInstanceGuid == Guid.Empty)
                     {
                         BFCopy.InstanceGuid = Guid.NewGuid();

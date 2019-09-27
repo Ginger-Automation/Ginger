@@ -321,10 +321,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            if (runSetReport.LogFolder != null && System.IO.Directory.Exists(runSetReport.LogFolder))
-            {
-                System.IO.Directory.Delete(runSetReport.LogFolder, true);
-            }
             ClearSeq();
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
@@ -395,6 +391,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, ExecutionLoggerManager.RunSetReport);
                 ExecutionLoggerManager.RunSetReport = null;
             }
+        }
+
+        public override string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile)
+        {
+            return string.Empty;
+        }
+
+        public override string GetLogFolder(string folder)
+        {
+            return string.Empty;
         }
     }
 }

@@ -820,7 +820,7 @@ namespace GingerCore
 
         public bool AddDynamicly { get; set; }
 
-        public string ExecutionLogFolder { get; set; }
+        public string ExecutionLogFolder { get; set; } = string.Empty;
 
         public int ExecutionLogActionCounter { get; set; }
 
