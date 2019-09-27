@@ -1466,6 +1466,8 @@ namespace Ginger.Run
                             act.Timeout = 1;
                         PrepAction(act, ref ActionExecutorType, st);
                         RunActionWithTimeOutControl(act, ActionExecutorType);
+                        ProcessStoretoValue(act);
+                        UpdateDSReturnValues(act);
                         CalculateActionFinalStatus(act);
                     }
                     st.Stop();
