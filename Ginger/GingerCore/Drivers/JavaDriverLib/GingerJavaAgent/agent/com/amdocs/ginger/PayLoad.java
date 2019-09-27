@@ -46,7 +46,7 @@ public class PayLoad {
 	{
 		ElementNotFound(404),
 		CommandTimeOut(408),
-		Unknown(-1);
+		Unknown(0);
 		
 		private int errorCode;
 		
