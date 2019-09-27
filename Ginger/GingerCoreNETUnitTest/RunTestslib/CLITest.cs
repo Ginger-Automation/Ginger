@@ -197,37 +197,32 @@ namespace WorkspaceHold
         [TestMethod]
         public void CLIDynamicTest()
         {
-            //lock (WorkSpace.Instance)
-            //{
-                // Arrange
-                PrepareForCLICreationAndExecution();
-                // Create config file
-                CLIHelper cLIHelper = new CLIHelper();
-                cLIHelper.RunAnalyzer = true;
-                cLIHelper.ShowAutoRunWindow = false;
-                cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            // Arrange
+            PrepareForCLICreationAndExecution();
+            // Create config file
+            CLIHelper cLIHelper = new CLIHelper();
+            cLIHelper.RunAnalyzer = true;
+            cLIHelper.ShowAutoRunWindow = false;
+            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
 
-                RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-                runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-                runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicXML();
-                runSetAutoRunConfiguration.CreateContentFile();
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
+            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
+            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicXML();
+            runSetAutoRunConfiguration.CreateContentFile();
 
-                // Act            
-                CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "dynamic", "-f" ,runSetAutoRunConfiguration.ConfigFileFullPath });
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f" ,runSetAutoRunConfiguration.ConfigFileFullPath });
 
-                // Assert            
-                Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "BF RunStatus=Passed");
-            //}
+            // Assert            
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "BF RunStatus=Passed");
         }
 
         [TestMethod]
         public void OLDCLIDynamicRegressionTest()
         {
-            //lock (WorkSpace.Instance)
-            //{
+         
                 //Arrange
-                // PrepareForCLIExecution();
                 //Create config file       
                 string fileName = Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-Default Run Set.Ginger.AutoRunConfigs.xml");
                 string dynamicXML = System.IO.File.ReadAllText(fileName);
@@ -241,90 +236,79 @@ namespace WorkspaceHold
 
                 // Assert            
                 Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
-            //}
         }
 
 
         [TestMethod]
         public void OLDCLIConfigFileTest()
         {
-            //lock (WorkSpace.Instance)
-            //{
-                // Arrange
-                PrepareForCLICreationAndExecution();
-                // Create config file
-                CLIHelper cLIHelper = new CLIHelper();
-                cLIHelper.RunAnalyzer = true;
-                cLIHelper.ShowAutoRunWindow = false;
-                cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            // Arrange
+            PrepareForCLICreationAndExecution();
+            // Create config file
+            CLIHelper cLIHelper = new CLIHelper();
+            cLIHelper.RunAnalyzer = true;
+            cLIHelper.ShowAutoRunWindow = false;
+            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
 
-                RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-                runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-                runSetAutoRunConfiguration.SelectedCLI = new CLIConfigFile();
-                runSetAutoRunConfiguration.CreateContentFile();
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
+            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
+            runSetAutoRunConfiguration.SelectedCLI = new CLIConfigFile();
+            runSetAutoRunConfiguration.CreateContentFile();
 
-                // Act            
-                CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
 
-                // Assert            
-                Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
-            //}
+            // Assert            
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
 
         [TestMethod]
         public void CLIScriptRegressionTest()
         {
-            //lock (WorkSpace.Instance)
-            //{
+            //Arrange
+            // PrepareForCLIExecution();
+            // Create config file
+            string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
+            string jsonFileName = TestResources.GetTempFile("runset.json");
+            string txt = "int i=1;" + Environment.NewLine;
+            txt += "i++;" + Environment.NewLine;
+            txt += nameof(GingerScriptGlobals.OpenSolution) + "(@\"" + mSolutionFolder + "\");" + Environment.NewLine;
+            txt += nameof(GingerScriptGlobals.OpenRunSet) + "(\"Default Run Set\", \"Default\");" + Environment.NewLine;    // Runset, env
+            txt += nameof(GingerScriptGlobals.CreateExecutionSummaryJSON) + "(@\"" + jsonFileName + "\");" + Environment.NewLine;    // summary json
+            txt += "i" + Environment.NewLine;  // script rc
+            File.WriteAllText(scriptFile, txt);
 
-                //Arrange
-                // PrepareForCLIExecution();
-                // Create config file
-                string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
-                string jsonFileName = TestResources.GetTempFile("runset.json");
-                string txt = "int i=1;" + Environment.NewLine;
-                txt += "i++;" + Environment.NewLine;
-                txt += nameof(GingerScriptGlobals.OpenSolution) + "(@\"" + mSolutionFolder + "\");" + Environment.NewLine;
-                txt += nameof(GingerScriptGlobals.OpenRunSet) + "(\"Default Run Set\", \"Default\");" + Environment.NewLine;    // Runset, env
-                txt += nameof(GingerScriptGlobals.CreateExecutionSummaryJSON) + "(@\"" + jsonFileName + "\");" + Environment.NewLine;    // summary json
-                txt += "i" + Environment.NewLine;  // script rc
-                System.IO.File.WriteAllText(scriptFile, txt);
+            // Act
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "script", "-f" , scriptFile });
 
-                // Act
-                CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "script", "-f" , scriptFile });
-
-                // Assert
-                Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
-            //}
+            // Assert
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
 
         [TestMethod]
         public void CLIArgsTest()
         {
-            //lock (WorkSpace.Instance)
-            //{
-                // Arrange
-                PrepareForCLICreationAndExecution();
-                // Create config file
-                CLIHelper cLIHelper = new CLIHelper();
-                cLIHelper.RunAnalyzer = true;
-                cLIHelper.ShowAutoRunWindow = false;
-                cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            // Arrange
+            PrepareForCLICreationAndExecution();
+            // Create config file
+            CLIHelper cLIHelper = new CLIHelper();
+            cLIHelper.RunAnalyzer = true;
+            cLIHelper.ShowAutoRunWindow = false;
+            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
 
-                RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
-                runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-                runSetAutoRunConfiguration.SelectedCLI = new CLIArgs();
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
+            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
+            runSetAutoRunConfiguration.SelectedCLI = new CLIArgs();
 
-                // Act            
-                CLIProcessor CLI = new CLIProcessor();
-                string[] args = CommandLineToStringArray(runSetAutoRunConfiguration.CLIContent).ToArray();
-                CLI.ExecuteArgs(args);
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            string[] args = CommandLineToStringArray(runSetAutoRunConfiguration.CLIContent).ToArray();
+            CLI.ExecuteArgs(args);
 
-                // Assert            
-                Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
-            //}
+            // Assert            
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
 
 
@@ -335,22 +319,19 @@ namespace WorkspaceHold
         [TestMethod]
         public void CLIArgsWithDoNotAnalyzeTest()
         {
-            //lock (WorkSpace.Instance)
-            //{
-                //Arrange
-                PrepareForCLICreationAndExecution();
-                // Create args
-                string[] args = { "run", "--solution", mSolutionFolder, "--env", "Default", "--runset", "Default Run Set", "--do-not-analyze"};
-                
-                // Act            
-                CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(args);
+            //Arrange
+            PrepareForCLICreationAndExecution();
+            // Create args
+            string[] args = { "run", "--solution", mSolutionFolder, "--env", "Default", "--runset", "Default Run Set", "--do-not-analyze"};
+            
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(args);
 
-                // Assert            
-                Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+            // Assert            
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
 
             // TODO: test analyze was run !!!!
-            //}
         }
 
 
