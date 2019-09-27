@@ -134,7 +134,7 @@ namespace Ginger.Actions.ActionConversion
                 BusinessFlowsActionsConversion(ListOfBusinessFlow);
             }
         }
-        
+
         /// <summary>
         /// This method is used to Stop the conversion process in between conversion process
         /// </summary>
@@ -209,7 +209,7 @@ namespace Ginger.Actions.ActionConversion
                 mConversionUtils.ListOfBusinessFlowsToConvert = lst;
 
                 await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
-                
+
                 if (ConversionType == eActionConversionType.MultipleBusinessFlow)
                 {
                     mReportPage.SetButtonsVisibility(true);
@@ -238,13 +238,16 @@ namespace Ginger.Actions.ActionConversion
                 {
                     foreach (BusinessFlowToConvert bfToConvert in ListOfBusinessFlow)
                     {
-                        bfToConvert.BusinessFlow.RestoreFromBackup();
+                        try
+                        {
+                            bfToConvert.BusinessFlow.RestoreFromBackup();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Restoring from backup - " + bfToConvert.BusinessFlowName + " - ", ex);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
             }
             finally
             {
