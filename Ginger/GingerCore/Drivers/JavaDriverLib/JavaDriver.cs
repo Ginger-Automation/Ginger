@@ -437,13 +437,13 @@ namespace GingerCore.Drivers.JavaDriverLib
                     else
                     {
                         locateElement.StatusError = "Element not found";
-                        UpdateRunDetails(act, locateElement);
+                        UpdateRunDetails(act, locateElement, response);
                     }
                 }
                 else if (response.IsErrorPayLoad())
                 {
                     locateElement.StatusError = "Unknown error";
-                    UpdateRunDetails(act, locateElement);
+                    UpdateRunDetails(act, locateElement, response);
 
                     break;
                 }
@@ -459,13 +459,13 @@ namespace GingerCore.Drivers.JavaDriverLib
             return response;
         }
 
-        private static void UpdateRunDetails(ActUIElement act, ElementLocator locateElement)
+        private static void UpdateRunDetails(ActUIElement act, ElementLocator locateElement,PayLoad response)
         {
             locateElement.LocateStatus = ElementLocator.eLocateStatus.Failed;
             act.ExInfo += string.Format("'{0}', Error Details: ='{1}'", locateElement.LocateStatus, locateElement.StatusError);
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
 
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locateElement.LocateBy, locateElement.LocateValue, locateElement.LocateStatus));
+            Reporter.ToLog(eLogLevel.DEBUG, response.GetValueString());
         }
 
         private void SetCommandTimeoutForAction(int? timeout)
@@ -804,10 +804,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             if (Response.IsErrorPayLoad())
             {
                 //reading errorcode
-                Response.GetValueInt();
+                var errorCode = Response.GetValueInt();
 
                 string ErrMsg = Response.GetValueString();
-                act.Error = ErrMsg;
+                act.Error = string.Format("'{0}' -Error Code : '{1}'", ErrMsg, errorCode);
             }
             else if (Response.IsOK())
             {

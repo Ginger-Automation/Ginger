@@ -815,21 +815,23 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		{			
 			
 			//TODO: fixme try to get the real active window, meanwhile return 0			
-			Window f =null;
+			Window currentWindow =null;
 			if(mSwingHelper.getCurrentWindow()!=null)		
 			{
-				f = mSwingHelper.getCurrentWindow();
+				currentWindow = mSwingHelper.getCurrentWindow();
 			}				
 			else
 			{
 				Window[] listOfWindows=SwingHelper.GetAllWindowsByReflection();
 				if(listOfWindows.length!=0)
-					f= listOfWindows[0];
+					currentWindow= listOfWindows[0];
 			}
-			if(f!=null)
+			if(currentWindow!=null)
 			{
+				String winTitle = GetCurrentWindowTitle(currentWindow);
+	    		
 				PayLoad pl = new PayLoad("ActiveWindow");
-				pl.AddValue(f.getName());						
+				pl.AddValue(winTitle);						
 				pl.ClosePackage();
 				return pl;
 			}
@@ -895,6 +897,20 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		{
 			return PayLoad.Error("Invalid Window Explorer Operation Type: "+ operationType,PayLoad.ErrorCode.Unknown.GetErrorCode());
 		}
+	}
+
+	private String GetCurrentWindowTitle(Window currentWindow) {
+		String winTitle= currentWindow.getName();
+		if (currentWindow instanceof JFrame)	
+		{
+			winTitle= ((JFrame)currentWindow).getTitle();
+		}
+		else
+		if (currentWindow instanceof JDialog)
+		{
+			winTitle= ((JDialog)currentWindow).getTitle();
+		}
+		return winTitle;
 	}
 	
 	

@@ -741,7 +741,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             ElementNotFound=404,
             CommandTimeOut=408,
-            Unknown=-1
+            Unknown=0
         }
     }
 }
