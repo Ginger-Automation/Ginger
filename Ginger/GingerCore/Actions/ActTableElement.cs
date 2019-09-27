@@ -331,8 +331,7 @@ namespace GingerCore.Actions
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByRowNum, this.ByRowNum.ToString());
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ByRandRow, this.ByRandRow.ToString());
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.BySelectedRow, this.BySelectedRow.ToString());
-
-            newActUIElement.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, GetCheckedRadioButton());
+                        
 
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, this.LocateColTitle);
             newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, Convert.ToString(this.ColSelectorValue));
