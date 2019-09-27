@@ -38,7 +38,7 @@ using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
 {    
-    [Ignore]  // temp
+    
     [TestClass]
     [Level3]
 
@@ -82,7 +82,8 @@ namespace UnitTests.UITests.JavaDriverTest
                 ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
                 LJA.LaunchJavaApplication = true;
                 LJA.LaunchWithAgent = true;
-                LJA.WaitForWindowTitle = "Java";
+                LJA.WaitForWindowTitle = "Java Swing Test App";
+                
                 LJA.AddOrUpdateInputParamValue(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString());
                 LJA.Port = "9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
@@ -641,6 +642,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickChildTreeNodeSingleNodeValueTest()
@@ -711,6 +713,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
+        [Ignore]
         [TestMethod]
         [Timeout(180000)]
         public void ClickNotExistChildNodeValidationTest()
@@ -1652,6 +1655,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
 
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActWindowActionCloseWindowTest()
