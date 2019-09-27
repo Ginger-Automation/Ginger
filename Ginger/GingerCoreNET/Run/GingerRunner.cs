@@ -937,8 +937,7 @@ namespace Ginger.Run
                 if (standaloneExecution)
                 {
                     IsRunning = false;
-                }
-                act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));                             
+                }                          
             }
         }
 
