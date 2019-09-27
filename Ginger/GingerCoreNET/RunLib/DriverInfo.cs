@@ -58,12 +58,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             return Name;
         }
-        public static List<DriverInfo> GetDriversforPlatform(string platformType)
+        public static List<DriverInfo> GetDriversforPlatform(ePlatformType platformType)
         {
             List<DriverInfo> driverTypes = new List<DriverInfo>();
 
 
-            if (platformType == ePlatformType.Service.ToString())
+            if (platformType == ePlatformType.Service)
             {
 
             }
@@ -77,19 +77,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return driverTypes;
         }
 
-        private static List<DriverInfo> GetServices(string platformType)
+        private static List<DriverInfo> GetServices(ePlatformType platformType)
         {
             List<DriverInfo> PlatformServices = new List<DriverInfo>();
 
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             string PlatformInterface = string.Empty;
-            ePlatformType mplatformType=ePlatformType.NA;
 
-            Enum.TryParse(platformType, true, out mplatformType);
 
           
    
-            switch(mplatformType)
+            switch(platformType)
             {
                 case ePlatformType.Web:
                     PlatformInterface = "IWebPlatform";
@@ -105,7 +103,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if(!string.IsNullOrEmpty(PlatformInterface))
             {
-                foreach (PluginPackage plugin in Plugins) //.Where(x => x.Services!=null && x.Services.Any(a=>a.Interfaces.Contains("IWebPlatform"))))
+                foreach (PluginPackage plugin in Plugins) 
                 {
                     DriverInfo DI = new DriverInfo(plugin.PluginPackageInfo.Id, true);
                     foreach (PluginServiceInfo PI in plugin.Services.Where(a => a.Interfaces.Contains(PlatformInterface)))
@@ -123,12 +121,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return PlatformServices;
         }
 
-        private static DriverInfo GetDriver(string platformType)
+        private static DriverInfo GetDriver(ePlatformType platformType)
         {
             DriverInfo DI = new DriverInfo(platformType + " Driver");
 
 
-            if (platformType == ePlatformType.Web.ToString())
+            if (platformType == ePlatformType.Web)
             {
 
                 DI.services.Add(Agent.eDriverType.InternalBrowser);
@@ -141,12 +139,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
 
             }
-            else if (platformType == ePlatformType.Java.ToString())
+            else if (platformType == ePlatformType.Java)
             {
                 DI.services.Add(Agent.eDriverType.JavaDriver);
 
             }
-            else if (platformType == ePlatformType.Mobile.ToString())
+            else if (platformType == ePlatformType.Mobile)
             {
                 DI.services.Add(Agent.eDriverType.MobileAppiumAndroid);
                 DI.services.Add(Agent.eDriverType.MobileAppiumIOS);
@@ -157,26 +155,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 DI.services.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
                 DI.services.Add(Agent.eDriverType.MobileAppiumIOSBrowser);
             }
-            else if (platformType == ePlatformType.Windows.ToString())
+            else if (platformType == ePlatformType.Windows)
             {
                 DI.services.Add(Agent.eDriverType.WindowsAutomation);                
             }
-            else if (platformType == ePlatformType.PowerBuilder.ToString())
+            else if (platformType == ePlatformType.PowerBuilder)
             {
                 DI.services.Add(Agent.eDriverType.PowerBuilder);
             }
 
-            else if (platformType == ePlatformType.Unix.ToString())
+            else if (platformType == ePlatformType.Unix)
             {
                 DI.services.Add(Agent.eDriverType.UnixShell);
 
             }
-            else if (platformType == ePlatformType.DOS.ToString())
+            else if (platformType == ePlatformType.DOS)
             {
                 DI.services.Add(Agent.eDriverType.DOSConsole);
             }
 
-            else if (platformType == ePlatformType.WebServices.ToString())
+            else if (platformType == ePlatformType.WebServices)
             {
                 DI.services.Add(Agent.eDriverType.WebServices);
             }
@@ -185,12 +183,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             //{
             //    DI.services.Add(Agent.eDriverType.AndroidADB);
             //}
-            else if (platformType == ePlatformType.ASCF.ToString())
+            else if (platformType == ePlatformType.ASCF)
             {
                 DI.services.Add(Agent.eDriverType.ASCF);
             }
 
-            else if (platformType == ePlatformType.MainFrame.ToString())
+            else if (platformType == ePlatformType.MainFrame)
             {
                 DI.services.Add(Agent.eDriverType.MainFrame3270);
             }

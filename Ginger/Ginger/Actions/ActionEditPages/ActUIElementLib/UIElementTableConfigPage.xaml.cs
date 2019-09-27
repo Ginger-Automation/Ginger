@@ -107,6 +107,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
         public void TableActionFieldBinding()
         {
             RowSelectorPanelInit();
+            //TODO:Use binding for row locator type radio buttons
+            //xLocateRowTypeRadioButtonGroup.Init(typeof(ActUIElement.eLocateRowTypeOptions), RowSelectorPanel, mAct.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType));
             WhereColumn.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColSelector,mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector)), typeof(ActUIElement.eTableElementRunColSelectorValue), isVENeeded: false, UCselectionChange: WhereColumn_SelectionChanged);    
             WhereColumnTitle.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle)), isVENeeded: true, UCselectionChange: WhereColumnTitle_SelectionChanged, context: Context.GetAsContext(mAct.Context));
             WhereProperty.Init(mAct.GetOrCreateInputParam(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty)), typeof(ActUIElement.eTableElementRunColPropertyValue), isVENeeded: false, UCselectionChange: WhereProperty_SelectionChanged);
@@ -205,7 +207,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         public void RowSelectorPanelInit()
         {
-            string currentValue = mAct.GetInputParamValue(ActUIElement.Fields.RowSelectorRadioParam);
+            string currentValue = mAct.GetInputParamValue(ActUIElement.Fields.LocateRowType);
             foreach (RadioButton rdb in RowSelectorPanel.Children)
                 if (rdb.Tag.ToString() == currentValue)
                 {
@@ -401,7 +403,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WherePanel.Visibility = Visibility.Collapsed;
                 WhereDataRow.Height = new GridLength(0);
             }
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, (((RadioButton)sender).Tag).ToString());
             SetDescriptionDetails();
         }
 
@@ -420,7 +422,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 WherePanel.Visibility = Visibility.Collapsed;
                 WhereDataRow.Height = new GridLength(0);
             }
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, (((RadioButton)sender).Tag).ToString());
             SetDescriptionDetails();
         }
 
@@ -428,7 +430,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             RowSelectorValue.IsEnabled = false;
             WherePanel.Visibility = Visibility.Collapsed;
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, (((RadioButton)sender).Tag).ToString());
             WhereDataRow.Height = new GridLength(0);
             SetDescriptionDetails();
         }
@@ -437,7 +439,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             RowSelectorValue.IsEnabled = false;
             WherePanel.Visibility = Visibility.Visible;
-            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, (((RadioButton)sender).Tag).ToString());
+            mAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, (((RadioButton)sender).Tag).ToString());
             WhereDataRow.Height = new GridLength(100);       
                 SetDescriptionDetails();           
         }
@@ -533,28 +535,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
         }             
 
-        public ActUIElement CreateActUIElementObject(String descriptionString, String DescriptionValue, String rowVal, String colVal, String LocateRowType)
-        {
-            ActUIElement a = (ActUIElement)mAct.CreateCopy();
-
-            a.Description = descriptionString + DescriptionValue;
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlAction, mAct.GetInputParamValue(ActUIElement.Fields.ControlAction));
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.ColSelectorValue, ColSelectorValue.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateColTitle, colVal.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, LocateRowType);
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, rowVal.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.ByRowNum, RowNum.IsChecked.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.ByRandRow, AnyRow.IsChecked.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.BySelectedRow, BySelectedRow.IsChecked.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.ByWhere, Where.IsChecked.ToString());
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColSelector, mAct.GetInputParamValue(ActUIElement.Fields.WhereColSelector));
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColumnTitle, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnTitle));
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereColumnValue, mAct.GetInputParamValue(ActUIElement.Fields.WhereColumnValue));
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereOperator, mAct.GetInputParamValue(ActUIElement.Fields.WhereOperator));
-            a.AddOrUpdateInputParamValue(ActUIElement.Fields.WhereProperty, mAct.GetInputParamValue(ActUIElement.Fields.WhereProperty));
-
-            return a;
-        }
 
         public ActUIElement.eTableElementRunColOperator WhereOperator_Value
         {

@@ -526,7 +526,6 @@
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActSmartSync.cs" />
     <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActMultiselectList.cs" />

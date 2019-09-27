@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Ginger.Plugin.Platform.Web.Execution
 {
@@ -186,9 +187,26 @@ namespace Ginger.Plugin.Platform.Web.Execution
             
                 eElementType ElementType = (eElementType)Enum.Parse(typeof(eElementType), (string)InputParams["ElementType"]);
                 IGingerWebElement uiElement = null;
+                JArray Frames = null;
+                if (InputParams.ContainsKey("Frames"))
+                {
+                    Frames = (JArray)InputParams["Frames"];
+
+                    if (Frames != null && Frames.Children().Count() > 0) {
+
+                        mPlatformService.BrowserActions.SwitchToDefaultContent();
+                        foreach (JToken jf in Frames.Children())
+                        {
+
+                            IGingerWebElement GWA = mPlatformService.LocateWebElement.LocateElementByXPath(eElementType.WebElement, jf.ToString());
+                            mPlatformService.BrowserActions.SwitchToFrame(GWA);
+                        }
+                    }
+                }
+             
                 foreach (JProperty locator in Locators.Children())
                 {
-                    uiElement = LocateElement(ref ElementType, locator.Name, locator.Value.ToString());
+                    uiElement = WebPlatformActionHandler.LocateElement(ref ElementType, locator.Name, locator.Value.ToString(),mPlatformService);
                     if (uiElement != null)
                     {
                         platformAction.exInfo += "UI Element Located using: " + locator.Name + "=" + locator.Value;
@@ -277,96 +295,8 @@ namespace Ginger.Plugin.Platform.Web.Execution
             }
         }
 
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!
-        private void AutomaticSwitchFrame()
-        {
 
-#warning implemen Automatic switch frame        
-            throw new NotImplementedException();
-        }
-
-        private IGingerWebElement LocateElement(ref eElementType ElementType,string ElementLocateBy,string LocateByValue)
-        {
-            IGingerWebElement Element=null;            
-            switch (ElementLocateBy)
-            {
-                case "ByID":
-                    Element = mPlatformService.LocateWebElement.LocateElementByID(ElementType, LocateByValue);
-                    break;
-                case "ByCSSSelector":
-                case "ByCSS":
-                    Element = mPlatformService.LocateWebElement.LocateElementByCss(ElementType, LocateByValue);
-                    break;
-                case "ByLinkText":
-                    Element = mPlatformService.LocateWebElement.LocateElementByLinkTest(ElementType, LocateByValue);
-                    break;
-                case "ByName":
-                    Element = mPlatformService.LocateWebElement.LocateElementByName(ElementType, LocateByValue);
-                    break;
-                case "ByRelXPath":
-                case "ByXPath":
-                    Element = mPlatformService.LocateWebElement.LocateElementByXPath(ElementType, LocateByValue);
-                    break;
-            }
-
-            if (Element!=null &&(ElementType == eElementType.WebElement || ElementType == eElementType.Unknown))
-            {
-                if (Element is IButton)
-                {
-                    ElementType = eElementType.Button;
-                }
-                else if (Element is ICanvas)
-                {
-                    ElementType = eElementType.Canvas;
-                }
-                else if (Element is ICheckBox)
-                {
-                    ElementType = eElementType.CheckBox;
-                }
-                else if (Element is IComboBox)
-                {
-                    ElementType = eElementType.ComboBox;
-                }
-                else if (Element is IDiv)
-                {
-                    ElementType = eElementType.Div;
-                }
-                else if (Element is IHyperLink)
-                {
-                    ElementType = eElementType.HyperLink;
-                }
-                else if (Element is IImage)
-                {
-                    ElementType = eElementType.Image;
-                }
-                else if (Element is ILabel)
-                {
-                    ElementType = eElementType.Label;
-                }
-                else if (Element is IWebList)
-                {
-                    ElementType = eElementType.List;
-                }
-                else if (Element is IRadioButton)
-                {
-                    ElementType = eElementType.RadioButton;
-                }
-                else if (Element is ISpan)
-                {
-                    ElementType = eElementType.Span;
-                }
-                else if (Element is ITable)
-                {
-                    ElementType = eElementType.Table;
-                }
-                else if (Element is ITextBox)
-                {
-                    ElementType = eElementType.TextBox;
-                }
-            }
-       
-            return Element;
-        }
+   
 
         private void HyperLinkActions(IGingerWebElement element, eElementAction mElementAction)
         {
@@ -393,7 +323,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
             string ValidationElementLocatorValue = (string)InputParams["ValidationElementLocatorValue"]; 
             string mValidationElement = (string)InputParams["ValidationElement"];
             eElementType validationElementType = (eElementType)Enum.Parse(typeof(eElementType), mValidationElement);
-            IGingerWebElement ValidationElement = LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue);
+            IGingerWebElement ValidationElement = WebPlatformActionHandler.LocateElement(ref validationElementType, ValidationElementLocateBy, ValidationElementLocatorValue,mPlatformService);
             return ValidationElement;
         }
 
