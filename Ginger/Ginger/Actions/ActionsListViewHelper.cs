@@ -296,8 +296,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             outputValuesInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Output;
             outputValuesInd.ToolTip = "Action contains Output Values";
             outputValuesInd.BindingObject = mAction;
-            outputValuesInd.BindingFieldName = nameof(Act.ReturnValuesInfo);
-            outputValuesInd.BindingConverter = new StringVisibilityConverter();
+            outputValuesInd.BindingFieldName = nameof(Act.ReturnValuesCount);
+            outputValuesInd.BindingConverter = new OutPutValuesCountConverter();
             notificationsList.Add(outputValuesInd);
 
             ListItemNotification waitInd = new ListItemNotification();
