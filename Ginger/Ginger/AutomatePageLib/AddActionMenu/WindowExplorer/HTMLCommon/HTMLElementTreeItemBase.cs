@@ -33,8 +33,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
 {
     public class HTMLElementTreeItemBase : TreeViewItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {        
-        public ElementInfo ElementInfo { get; set; }
-
+        public ElementInfo ElementInfo { get; set; }     
+        
         Object ITreeViewItem.NodeObject()
         {
             return ElementInfo;
@@ -67,7 +67,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         
         bool ITreeViewItem.IsExpandable()
         {
-            return true;
+            return this.ElementInfo.IsExpandable;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)

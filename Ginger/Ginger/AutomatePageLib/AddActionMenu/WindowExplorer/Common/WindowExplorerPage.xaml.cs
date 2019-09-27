@@ -674,8 +674,9 @@ namespace Ginger.WindowExplorer
                     {
                         ObservableList<Act> list = new ObservableList<Act>();
                         ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                        if (mPlatform.PlatformType().Equals(ePlatformType.Web) || mPlatform.PlatformType().Equals(ePlatformType.Java))
+                        if (mPlatform.PlatformType().Equals(ePlatformType.Web) || (mPlatform.PlatformType().Equals(ePlatformType.Java) && !EI.ElementType.Contains("JEditor")))
                         {
+                            //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
                             list = mPlatform.GetPlatformElementActions(EI);
                         }
                         else
