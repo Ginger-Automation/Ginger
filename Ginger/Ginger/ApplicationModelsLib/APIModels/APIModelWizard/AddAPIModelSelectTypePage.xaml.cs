@@ -214,10 +214,19 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             if (AddAPIModelWizard != null)
             {
                 AddAPIModelWizard.IsParsingWasDone = false;
-                if(AddAPIModelWizard.LearnedAPIModelsList != null)
-                    AddAPIModelWizard.LearnedAPIModelsList.Clear();
-                if (AddAPIModelWizard.DeltaModelsList != null)
-                    AddAPIModelWizard.DeltaModelsList.Clear();
+                CleanLearnedAPIModels();
+            }
+        }
+
+        void CleanLearnedAPIModels()
+        {
+            if (AddAPIModelWizard.LearnedAPIModelsList != null)
+            {
+                AddAPIModelWizard.LearnedAPIModelsList.Clear();
+            }
+            if (AddAPIModelWizard.DeltaModelsList != null)
+            {
+                AddAPIModelWizard.DeltaModelsList.Clear();
             }
         }
 
@@ -278,11 +287,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             ///To relearn the APIs once we move next.
             AddAPIModelWizard.IsParsingWasDone = false;
 
-            if(AddAPIModelWizard.LearnedAPIModelsList != null)
-                AddAPIModelWizard.LearnedAPIModelsList.Clear();
-
-            if(AddAPIModelWizard.DeltaModelsList != null)
-                AddAPIModelWizard.DeltaModelsList.Clear();
+            CleanLearnedAPIModels();
 
             if (URLRadioButton.IsChecked == true)
             {

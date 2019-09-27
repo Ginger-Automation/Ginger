@@ -66,29 +66,6 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(AAMSList[0].AppModelParameters[1].PlaceHolder, "{LICENSEKEY}", "Is parameter name equal");
         }
 
-        [TestMethod]  [Timeout(60000)]
-        public void APIComparisonWSDLStockSimbolTest()
-        {
-            //Arrange
-            WSDLParser wsdlParser = new WSDLParser();
-            ObservableList<ApplicationAPIModel> learnedAPIsList = new ObservableList<ApplicationAPIModel>();
-            ObservableList<DeltaAPIModel> deltaAPIsList = new ObservableList<DeltaAPIModel>();
-
-            Learn(learnedAPIsList, wsdlParser);
-            while(learnedAPIsList.Count < 6)
-            {
-                // Let it learn _ will look for another procedure later
-            }
-
-            deltaAPIsList = APIDeltaUtils.DoAPIModelsCompare(learnedAPIsList);
-
-            //Assert
-            Assert.AreEqual(deltaAPIsList.Count, 6, "Is Delta API's equal to 6");
-            Assert.AreEqual(deltaAPIsList[0].comparisonStatus, DeltaAPIModel.eComparisonOutput.Unchanged, "Is Comparison Status : Un-Changed");
-            Assert.AreEqual(deltaAPIsList[0].DefaultOperationEnum, DeltaAPIModel.eHandlingOperations.DoNotAdd, "Is Default Operation : Do Not Add");
-            Assert.AreEqual(deltaAPIsList[0].matchingAPIModel, null, "No Matching API");
-        }
-
         private async void Learn(ObservableList<ApplicationAPIModel> AAMSList, WSDLParser wsdlParser)
         {
             string path = TestResources.GetTestResourcesFile(@"AutoPilot\WSDLs\delayedstockquote.xml");

@@ -566,8 +566,8 @@
     <Compile Include="Agents\ucAgentControl.xaml.cs">
       <DependentUpon>ucAgentControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\MergerWindow.xaml.cs">
-      <DependentUpon>MergerWindow.xaml</DependentUpon>
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\APIModelsCompareMergePage.xaml.cs">
+      <DependentUpon>APIModelsCompareMergePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
@@ -2924,7 +2924,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ApplicationModelsLib\APIModels\APIModelWizard\MergerWindow.xaml">
+    <Page Include="ApplicationModelsLib\APIModels\APIModelWizard\APIModelsCompareMergePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

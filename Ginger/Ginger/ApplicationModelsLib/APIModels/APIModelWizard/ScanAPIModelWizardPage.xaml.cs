@@ -54,7 +54,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         private string PrevURL;
         WSDLParser WSDLP;
         public AddAPIModelWizard AddAPIModelWizard;
-        MergerPage mergerWindow = null;
+        APIModelsCompareMergePage mergerWindow = null;
 
         public enum eAddAPIWizardViewStyle
         {
@@ -133,9 +133,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     {
                         ApplicationAPIModel selectedAPIModel = null;
 
-                        if (deltaModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.Add)
+                        if (deltaModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.Add)
                             selectedAPIModel = deltaModel.learnedAPI;
-                        else if (deltaModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                        else if (deltaModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
                         {
                             if (deltaModel.MergedAPIModel == null)
                             {
@@ -145,16 +145,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                             else
                             {
                                 deltaModel.MergedAPIModel.ContainingFolder = deltaModel.matchingAPIModel.ContainingFolderFullPath;
-                                deltaModel.MergedAPIModel.Guid = deltaModel.matchingAPIModel.Guid;
 
                                 selectedAPIModel = deltaModel.MergedAPIModel;
                                 notifyReplaceAPI = true;
                             }
                         }
-                        else if (deltaModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
+                        else if (deltaModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
                         {
                             deltaModel.learnedAPI.ContainingFolder = deltaModel.matchingAPIModel.ContainingFolderFullPath;
-                            deltaModel.learnedAPI.Guid = deltaModel.matchingAPIModel.Guid;
 
                             selectedAPIModel = deltaModel.learnedAPI;
                             notifyReplaceAPI = true;
@@ -166,12 +164,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                     if(mergeIssue)
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Merged API should be derived from a base API, Please update selected !");
+                        Reporter.ToUser(eUserMsgKey.BaseAPIWarning, "Merged API should be derived from a base API, Please update selected !");
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
 
-                    if (notifyReplaceAPI && Reporter.ToUser(eUserMsgKey.SureWantToContinue, "Replace Existing API Models", "Are you sure you want to delet the existing API Models ?", eUserMsgOption.YesNo) == eUserMsgSelection.No)
+                    if (notifyReplaceAPI && Reporter.ToUser(eUserMsgKey.SureWantToContinue, "API Models", "API Models", eUserMsgOption.YesNo) == eUserMsgSelection.No)
                     {
                         WizardEventArgs.CancelEvent = true;
                         return;
@@ -354,20 +352,21 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.Description), Header = "Description", WidthWeight = 250, BindingMode = BindingMode.OneWay });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 300, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingModelTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comparison Status", WidthWeight = 150, MaxWidth = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Difference's Handling Operation", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(DeltaAPIModel.OperationsList), nameof(DeltaAPIModel.defaultOperation), comboSelectionChangedHandler: XHandlingOperation_SelectionChanged) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.defaultOperation), Header = "Compare & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["CompareAndMergeTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comparison Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Difference's Handling Operation", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(DeltaAPIModel.OperationsList), nameof(DeltaAPIModel.SelectedOperation), comboSelectionChangedHandler: XHandlingOperation_SelectionChanged) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Compare & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareAndMergeTemplate"] });
             xApisSelectionGrid.SetAllColumnsDefaultView(view);
 
             //# Custom View - Initial View
             GridViewDef initView = new GridViewDef(eAddAPIWizardViewStyle.Add.ToString());
             initView.GridColsView = new ObservableList<GridColView>();
 
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order=0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["IsSelectedTemplate"] });
+            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order=0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xIsSelectedTemplate"] });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 20, Visible = false });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comparison Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Difference's Handling Operation", Visible = false });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.defaultOperation), Header = "Compare & Merge", Visible = false });
+            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Compare & Merge", Visible = false });
+
             xApisSelectionGrid.AddCustomView(initView);
             xApisSelectionGrid.ShowViewCombo = Visibility.Collapsed;
 
@@ -412,10 +411,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 if (deltaAPI.mergerPageObject == null)
                 {
-                    deltaAPI.mergerPageObject = new MergerPage(deltaAPI, (Window)AddAPIModelWizard.mWizardWindow);
+                    deltaAPI.mergerPageObject = new APIModelsCompareMergePage(deltaAPI, (Window)AddAPIModelWizard.mWizardWindow);
                 }
 
-                (deltaAPI.mergerPageObject as MergerPage).ShowAsWindow();
+                (deltaAPI.mergerPageObject as APIModelsCompareMergePage).ShowAsWindow();
             }
         }
 
@@ -434,10 +433,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     deltaAPI = fEl.DataContext as DeltaAPIModel;
                 if (deltaAPI != null)
                 {
-                    deltaAPI.defaultOperation = Convert.ToString(handlingOpCB.SelectedItem);
+                    deltaAPI.SelectedOperation = Convert.ToString(handlingOpCB.SelectedItem);
 
                     // Update default Operation Enum field
-                    deltaAPI.DefaultOperationEnum = selectedOperation;
+                    deltaAPI.SelectedOperationEnum = selectedOperation;
                     if (selectedOperation == DeltaAPIModel.eHandlingOperations.DoNotAdd)
                         deltaAPI.IsSelected = false;
                     else

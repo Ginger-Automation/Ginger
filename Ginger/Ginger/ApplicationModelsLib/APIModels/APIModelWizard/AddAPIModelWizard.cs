@@ -96,11 +96,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             //ExportAPIFiles(SelectedAAMList);
             if(DeltaModelsList != null && DeltaModelsList.Count > 0)
             {
-                foreach(DeltaAPIModel deltaAPI in DeltaModelsList.GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
+                foreach(DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges || d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
                 {
-                    if(deltaAPI.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges 
-                        || deltaAPI.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
+                    if(deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges 
+                        || deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
                     {
+                        if (deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                        {
+                            deltaAPI.MergedAPIModel.Guid = deltaAPI.matchingAPIModel.Guid;
+                        }
+                        else
+                        {
+                            deltaAPI.learnedAPI.Guid = deltaAPI.matchingAPIModel.Guid;
+                        }
                         APIDeltaUtils.DeleteExistingItem(deltaAPI.matchingAPIModel);
                     }
                 }

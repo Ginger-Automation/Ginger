@@ -92,9 +92,11 @@ namespace GingerCoreNET.Application_Models
             set
             {
                 mMatchingAPIModel = value;
-                string[] relPathArr = value.ContainingFolderFullPath.Split(new string[] { "API Models" }, StringSplitOptions.RemoveEmptyEntries);
-                string relPath = (relPathArr != null && relPathArr.Length > 1) ? relPathArr[1] : string.Empty;
-                MatchingAPIName = "~" + relPath + "\\" + value.Name;
+                string[] fPath = value.ContainingFolder.Split(new string[] { "\\" }, 4, StringSplitOptions.RemoveEmptyEntries);
+                if(fPath != null)
+                {
+                    MatchingAPIName = "~\\" + ((fPath.Length > 3) ? fPath.Last() + "\\" : "") + value.Name;
+                }
             }
         }
 
@@ -111,29 +113,29 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
-        private eHandlingOperations mDefaultOperationEnum;
-        public eHandlingOperations DefaultOperationEnum
+        private eHandlingOperations mSelectedOperationEnum;
+        public eHandlingOperations SelectedOperationEnum
         {
             get
             {
-                return mDefaultOperationEnum;
+                return mSelectedOperationEnum;
             }
             set
             {
-                mDefaultOperationEnum = value;
+                mSelectedOperationEnum = value;
             }
         }
 
-        private string mDefaultOperation;
-        public string defaultOperation
+        private string mSelectedOperation;
+        public string SelectedOperation
         {
             get
             {
-                return mDefaultOperation;
+                return mSelectedOperation;
             }
             set
             {
-                mDefaultOperation = value;
+                mSelectedOperation = value;
                 //OnPropertyChanged(nameof(defaultOperation));
             }
         }
@@ -164,8 +166,8 @@ namespace GingerCoreNET.Application_Models
 
                     if (enumItem == eHandlingOperations.Add)
                     {
-                        defaultOperation = enumDes;
-                        DefaultOperationEnum = enumItem;
+                        SelectedOperation = enumDes;
+                        SelectedOperationEnum = enumItem;
                     }
                 }
                 else if (comparisonStatus == eComparisonOutput.Unchanged)
@@ -175,16 +177,16 @@ namespace GingerCoreNET.Application_Models
 
                     if (enumItem == eHandlingOperations.DoNotAdd)
                     {
-                        defaultOperation = enumDes;
-                        DefaultOperationEnum = enumItem;
+                        SelectedOperation = enumDes;
+                        SelectedOperationEnum = enumItem;
                     }
                 }
                 else
                 {
                     if (enumItem == eHandlingOperations.ReplaceExisting)
                     {
-                        defaultOperation = enumDes;
-                        DefaultOperationEnum = enumItem;
+                        SelectedOperation = enumDes;
+                        SelectedOperationEnum = enumItem;
                     }
                 }
 

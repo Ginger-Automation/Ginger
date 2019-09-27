@@ -67,14 +67,6 @@ namespace GingerCoreNET.Application_Models
             return deltaAPIModelsList;
         }
 
-        public static ApplicationAPIModel CreateAPIModelObject(ApplicationAPIModel sourceAPIModel)
-        {
-            AutoMapper.MapperConfiguration automapAPIModel = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<ApplicationAPIModel, ApplicationAPIModel>(); });
-            ApplicationAPIModel DuplicateAPIModel = automapAPIModel.CreateMapper().Map<ApplicationAPIModel, ApplicationAPIModel>(sourceAPIModel);
-
-            return DuplicateAPIModel;
-        }
-
         public static List<ApplicationAPIModel> CompareAPIModels(ApplicationAPIModel learnedModel, List<ApplicationAPIModel> existingAPIs)
         {
             if (learnedModel.APIType == ApplicationAPIUtils.eWebApiType.REST)
@@ -104,7 +96,7 @@ namespace GingerCoreNET.Application_Models
                         continue;
                     else
                     {
-                        existingAPIs[i] = null;
+                        existingAPIs.RemoveAt(i);
                         break;
                     }
                 }

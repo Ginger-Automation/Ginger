@@ -12,18 +12,18 @@
 
     <Grid Name="MainGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>
-            <DataTemplate x:Key="IsSelectedTemplate">
-                <CheckBox x:Name="IsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            <DataTemplate x:Key="xIsSelectedTemplate">
+                <CheckBox x:Name="xIsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding defaultOperation}" Value="Do Not Add New">
-                        <Setter Property="IsEnabled" TargetName="IsSelected_FieldSelection" Value="False" />
-                        <Setter Property="IsChecked" TargetName="IsSelected_FieldSelection" Value="False" />
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Do Not Add New">
+                        <Setter Property="IsEnabled" TargetName="xIsSelected_FieldSelection" Value="False" />
+                        <Setter Property="IsChecked" TargetName="xIsSelected_FieldSelection" Value="False" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation}" Value="Add New">
-                        <Setter Property="IsChecked" TargetName="IsSelected_FieldSelection" Value="True" />
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Add New">
+                        <Setter Property="IsChecked" TargetName="xIsSelected_FieldSelection" Value="True" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation}" Value="Replace Existing with New">
-                        <Setter Property="IsChecked" TargetName="IsSelected_FieldSelection" Value="True" />
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Replace Existing with New">
+                        <Setter Property="IsChecked" TargetName="xIsSelected_FieldSelection" Value="True" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
@@ -42,16 +42,16 @@
                 </Grid>
             </DataTemplate>
 
-            <DataTemplate x:Key="CompareAndMergeTemplate">
+            <DataTemplate x:Key="xCompareAndMergeTemplate">
                 <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False" Margin="0" Padding="0" Height="23"
                       ButtonType="ImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Columns" />
 
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding defaultOperation}" Value="Merge Changes">
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Merge Changes">
                         <Setter Property="IsEnabled" TargetName="xCompareAndMergeButton" Value="True" />
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding defaultOperation}" Value="Replace Existing with New">
+                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Replace Existing with New">
                         <Setter Property="IsEnabled" TargetName="xCompareAndMergeButton" Value="True" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
@@ -98,6 +98,5 @@
         </DockPanel>
 
         <ginger:ucGrid x:Name="xApisSelectionGrid"  Grid.Row="1" Margin="0,0,0,0" Visibility="Visible" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ></ginger:ucGrid>
-        
     </Grid>
 </Page>

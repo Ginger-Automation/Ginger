@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.Application_Models;
 using GingerWPF.ApplicationModelsLib.APIModels;
@@ -11,19 +12,19 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
     /// <summary>
     /// Interaction logic for MergerWindow.xaml
     /// </summary>
-    public partial class MergerPage : Page
+    public partial class APIModelsCompareMergePage : Page
     {
         //ObservableList<ApplicationAPIModel> modelsEvaluated;
         GenericWindow mWin;
         DeltaAPIModel mDeltaAPIModel;
         APIModelPage mergedAPIPage;
 
-        public MergerPage()
+        public APIModelsCompareMergePage()
         {
             InitializeComponent();
         }
 
-        public MergerPage(DeltaAPIModel deltaAPIModel, Window ownerWindow)
+        public APIModelsCompareMergePage(DeltaAPIModel deltaAPIModel, Window ownerWindow)
         {
             InitializeComponent();
             mDeltaAPIModel = deltaAPIModel;
@@ -52,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         void ToggleSections()
         {
-            if (mDeltaAPIModel.DefaultOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+            if (mDeltaAPIModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
             {
                 xMergerTextRow.Height = new GridLength(30);
                 if (mDeltaAPIModel.MergedAPIModel == null)
@@ -88,13 +89,13 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void XMatchedAPIAsBaseBtn_Click(object sender, RoutedEventArgs e)
         {
-            mDeltaAPIModel.MergedAPIModel = APIDeltaUtils.CreateAPIModelObject(mDeltaAPIModel.matchingAPIModel);
+            mDeltaAPIModel.MergedAPIModel = LearnAPIModelsUtils.CreateAPIModelObject(mDeltaAPIModel.matchingAPIModel);
             ToggleSections();
         }
 
         private void XLearnedAPIAsBaseBtn_Click(object sender, RoutedEventArgs e)
         {
-            mDeltaAPIModel.MergedAPIModel = APIDeltaUtils.CreateAPIModelObject(mDeltaAPIModel.learnedAPI);
+            mDeltaAPIModel.MergedAPIModel = LearnAPIModelsUtils.CreateAPIModelObject(mDeltaAPIModel.learnedAPI);
             ToggleSections();
         }
 
