@@ -161,7 +161,8 @@ public class JavaDriver {
 		GetCurrentWindowVisibleControls,
 		GetContainerControls,
 		GetComponentFromCursor,
-		GetOptionalValuesList
+		GetOptionalValuesList,
+		LocateElement
 	}
 	
 
@@ -871,6 +872,26 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				return GetAllValues(c);				
 			}
 			return null;
+		}
+		else if(WindowExplorerOperationType.LocateElement.toString().equals(operationType))
+		{
+			String LocateBy = PL.GetValueString();
+			String LocateValue = PL.GetValueString();
+			PayLoad Response = new PayLoad("LocateElement");	
+			Component c=null;					
+			c = mSwingHelper.FindElement(LocateBy, LocateValue);
+			
+			if(c!=null)
+			{
+				Response.AddValue("true");		
+			}
+			else
+			{
+				Response.AddValue("false");		
+			}			
+			Response.ClosePackage();
+			
+			return Response;			
 		}
 		else
 		{
@@ -4266,8 +4287,8 @@ private PayLoad SetComponentFocus(Component c)
 			List<PayLoad> Elements = new ArrayList<PayLoad>(); 
 			for(Component c : list)
 			{
-				if (c.isVisible())
-				{
+				if (c.isVisible() && c.isShowing())
+				{				
 				
 				PayLoad PL = GetCompInfo(c);
 

@@ -124,7 +124,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             GetComponentFromCursor,
             Echo,
             GetProperties,
-            GetOptionalValuesList
+            GetOptionalValuesList,
+            LocateElement
         }
         public override void StartDriver()
         {
@@ -1872,35 +1873,47 @@ namespace GingerCore.Drivers.JavaDriverLib
                     ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
                     ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);                    
                     ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
-                    list.Add(ci);
-                    if (ci.ElementType != null && ci.ElementType.Contains("com.amdocs.uif.widgets.browser") )
+                    // set the Flag in case you wish to learn the element or not
+                    bool learnElement = true;                    
+                    if (filteredElementType != null)
                     {
-                        PayLoad PL= IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
-                        String flag = PL.GetValueString();
-
-                        if(flag.Contains("True"))
+                       if(!filteredElementType.Contains(ci.ElementTypeEnum))
+                            learnElement = false;
+                    }
+                    if(learnElement)
+                    {
+                        ci.IsAutoLearned = true;
+                        foundElementsList.Add(ci);
+                        List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                        if (ci.ElementType != null && ci.ElementType.Contains("com.amdocs.uif.widgets.browser"))
                         {
-                            InitializeBrowser(ci);
+                            PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
+                            String flag = PL.GetValueString();
 
-                            List<ElementInfo> HTMLControlsPL = GetBrowserVisibleControls();
-                            if (HTMLControlsPL!=null)
-                                list.AddRange(HTMLControlsPL);
+                            if (flag.Contains("True"))
+                            {
+                                InitializeBrowser(ci);
 
+                                HTMLControlsPL = GetBrowserVisibleControls();                                                                 
+                            }
+                        }
+                        else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
+                        {
+                            InitializeJEditorPane(ci);
+                            HTMLControlsPL = GetBrowserVisibleControls();                           
+                        }
+                        if (HTMLControlsPL != null)
+                        {
+                            foreach (ElementInfo item in HTMLControlsPL)
+                            {
+                                item.IsAutoLearned = true;
+                                foundElementsList.Add(item);
+                            }
                         }
                     }
-                    else if(ci.ElementType != null && ci.ElementType.Contains("JEditor"))
-                    {
-                        InitializeJEditorPane(ci);
-                        List<ElementInfo> HTMLControlsPL = GetBrowserVisibleControls();
-                        if (HTMLControlsPL != null)
-                            list.AddRange(HTMLControlsPL);
-                    }
                 }
-            }        
-            foreach(var item in list)
-            {
-                foundElementsList.Add(item);
-            }
+            }           
+            list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
             return list;
         }
 
@@ -2016,8 +2029,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             JEI.Value = pl.GetValueString();
             JEI.Path = pl.GetValueString();
             JEI.XPath = pl.GetValueString();
-            JEI.ElementTypeEnum = JavaPlatform.GetElementType(JEI.ElementType);
-            JEI.IsAutoLearned = true;
+            JEI.ElementTypeEnum = JavaPlatform.GetElementType(JEI.ElementType);            
             //If name if blank keep it blank. else creating issue for spy and highlight, as we try to search with below
             if (String.IsNullOrEmpty(JEI.ElementTitle))
             {
@@ -2228,8 +2240,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PLReq.ClosePackage();
                 response = Send(PLReq);
             }
-
-            List<PayLoad> PropertiesPLs = response.GetListPayLoad();
+            List<PayLoad> PropertiesPLs = new List<PayLoad>();
+            if (response.IsErrorPayLoad())
+            {
+                string ErrMSG = response.GetValueString();
+                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching properties :" + ErrMSG);
+            }
+            else
+            {
+                PropertiesPLs = response.GetListPayLoad();
+            }
+            
             foreach (PayLoad plp in PropertiesPLs)
             {
                 string PName = plp.GetValueString();
@@ -2400,7 +2421,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         locatorList.Add(locator);
                     }
                 }
-                if(ElementInfo.ElementType.Contains("JEditor"))
+                
+                if (ElementInfo.ElementType.Contains("JEditor"))
                 {
                     if (!String.IsNullOrEmpty(ElementInfo.Path))
                     {
@@ -2411,7 +2433,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
             }
-
+            locatorList.ToList().ForEach(x => x.IsAutoLearned = true);
             return locatorList;
         }
         
@@ -3088,7 +3110,64 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                mIsDriverBusy = true;
+                foreach (ElementLocator el in EI.Locators)
+                {
+                    el.LocateStatus = ElementLocator.eLocateStatus.Pending;
+                }
+
+                List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
+                foreach (ElementLocator el in activesElementLocators)
+                {
+                    PayLoad PLLocateElement = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
+                    PLLocateElement.AddEnumValue(JavaDriver.WindowExplorerOperationType.LocateElement);
+                    PLLocateElement.AddValue(el.LocateBy.ToString());
+                    PLLocateElement.AddValue(el.LocateValue.ToString());
+                    PLLocateElement.ClosePackage();
+                    PayLoad Response = Send(PLLocateElement);
+                    if (Response.IsErrorPayLoad())
+                    {
+                        string ErrMSG = Response.GetValueString();
+                        throw new Exception(ErrMSG);
+                    }
+                    else
+                    {
+                        if (Response.GetValueString() == "true")
+                        {
+                            el.StatusError = string.Empty;
+                            el.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                            if (GetOutAfterFoundElement)
+                            {
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            el.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                        }
+                    }
+                }
+
+                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                foreach (ElementLocator el in EI.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Pending).ToList())
+                {
+                    el.LocateStatus = ElementLocator.eLocateStatus.Unknown;
+                }               
+                mIsDriverBusy = false;
+            }
         }
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)
@@ -3096,14 +3175,24 @@ namespace GingerCore.Drivers.JavaDriverLib
             throw new NotImplementedException();
         }
 
-        public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
-        {
-            throw new NotImplementedException();
+        public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> originalElements)
+        {            
+            //try by type and Xpath comparison
+            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
+                                                                && (x.XPath == element.XPath)
+                                                                && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
+                                                                && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
+                                                                    || (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null && element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null
+                                                                        && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
+                                                                        )
+                                                                    )
+                                                                ).FirstOrDefault();           
+            return OriginalElementInfo;
         }
 
         public void StartSpying()
         {
-            throw new NotImplementedException();
+           // ((IWindowExplorer)this).GetControlFromMousePosition();
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -3119,7 +3208,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             if (RespListDetails.IsErrorPayLoad())
             {
                 string ErrMSG = RespListDetails.GetValueString();                
-                throw new Exception(ErrMSG);
+                //throw new Exception(ErrMSG);               
+                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching optional values :" + ErrMSG);                
             }         
             foreach (string res in RespListDetails.GetListString())
             {
