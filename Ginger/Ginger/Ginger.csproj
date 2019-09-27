@@ -4785,9 +4785,6 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\donutchart.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\GingerExecutionReport\EmailExecutionReport.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\GingerExecutionReport\PreviewDummyReport\RunSet.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
