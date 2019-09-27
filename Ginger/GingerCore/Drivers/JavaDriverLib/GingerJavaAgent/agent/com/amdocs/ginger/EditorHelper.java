@@ -339,7 +339,7 @@ public class EditorHelper {
 					 }
 					 catch(Exception ex)
 					 {
-						 PayLoad.Error("Exception during set value of editor cell");
+						 PayLoad.Error("Exception during set value of editor cell", PayLoad.ErrorCode.Unknown.GetErrorCode());
 					 }
 					 			 
 				 }
