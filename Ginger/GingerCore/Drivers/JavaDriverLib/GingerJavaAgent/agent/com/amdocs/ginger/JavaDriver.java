@@ -161,7 +161,7 @@ public class JavaDriver {
 		GetCurrentWindowVisibleControls,
 		GetContainerControls,		
 		GetOptionalValuesList,
-		LocateElement
+		LocateElement,
 		GetEditorChildrens,
 		GetComponentFromCursor		
 	}
