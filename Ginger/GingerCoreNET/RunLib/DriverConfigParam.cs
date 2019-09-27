@@ -35,6 +35,9 @@ namespace GingerCore
         [IsSerializedForLocalRepository]
         public string Parameter { get { return mParameter; } set { if (mParameter != value) { mParameter = value; OnPropertyChanged(nameof(Parameter)); } } }
 
+        [IsSerializedForLocalRepository(false)]
+        public bool IsPlatformParameter = false;
+
         public string mValue;
         [IsSerializedForLocalRepository]
         public string Value
@@ -54,7 +57,6 @@ namespace GingerCore
         }
 
         string mDescription;
-        [IsSerializedForLocalRepository]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         public override string ItemName
