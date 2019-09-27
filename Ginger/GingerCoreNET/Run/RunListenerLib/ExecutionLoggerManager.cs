@@ -382,7 +382,13 @@ namespace Ginger.Run
                 }
 
                 activity.ExecutionLogFolder = mExecutionLogger.GetLogFolder(ActivityFolder);
-                mExecutionLogger.CreateNewDirectory(Path.Combine(mExecutionLogger.ExecutionLogfolder,ActivityFolder));
+                // TODO: cleanup after all execution move to LiteDB
+                if (mExecutionLogger.ExecutionLogfolder != null)
+                {
+                    mExecutionLogger.CreateNewDirectory(Path.Combine(mExecutionLogger.ExecutionLogfolder,
+                        ActivityFolder));
+                }
+
                 activity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             }
 
@@ -428,7 +434,7 @@ namespace Ginger.Run
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActionFolder = string.Empty;
-                if ((this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation) && (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ActionRun))
+                if ((this.ExecutedFrom == eExecutedFrom.Automation) && (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ActionRun))
                 {
                     mExecutionLogger.ExecutionLogfolder = mExecutionLogger.SetExecutionLogFolder(mExecutionLogger.ExecutionLogfolder, true);
                     Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.None;
@@ -446,7 +452,11 @@ namespace Ginger.Run
                     ActionFolder = Path.Combine(mCurrentActivity.ExecutionLogFolder,mCurrentActivity.ExecutionLogActionCounter + " " + folderNameNormalazing(action.Description));
                 }
                 action.ExecutionLogFolder = mExecutionLogger.GetLogFolder(ActionFolder);
-                mExecutionLogger.CreateNewDirectory(Path.Combine(mExecutionLogger.ExecutionLogfolder,ActionFolder));
+                if (mExecutionLogger.ExecutionLogfolder != null)
+                {
+                    mExecutionLogger.CreateNewDirectory(Path.Combine(mExecutionLogger.ExecutionLogfolder,
+                        ActionFolder));
+                }
 
             }
         }
