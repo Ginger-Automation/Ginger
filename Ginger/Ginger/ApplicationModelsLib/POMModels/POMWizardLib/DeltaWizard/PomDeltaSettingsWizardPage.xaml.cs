@@ -78,6 +78,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                             mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
                         }
                         break;
+                    case ePlatformType.Java:
+                        foreach (eElementType eElementType in new JavaPlatform().GetPlatformUIElementsType().ToList())
+                        {
+                            mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(eElementType, string.Empty, true));
+                        }
+                        break;
                 }
             }
             xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapElementTypesList;
@@ -91,6 +97,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     case ePlatformType.Web:
                         mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = new WebPlatform().GetLearningLocators();
+                        break;
+                    case ePlatformType.Java:
+                        mWizard.mPomDeltaUtils.PomLearnUtils.ElementLocatorsSettingsList = new JavaPlatform().GetLearningLocators();
                         break;
                 }
             }
