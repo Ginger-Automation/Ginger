@@ -62,7 +62,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 SetApplicationModelsGrid();
                 //ApplicationModelsGrid.DataSourceList = AddAPIModelWizard.SelectedAAMList;
-                ApplicationModelsGrid.DataSourceList = General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Where(x => x.IsSelected == true).ToList());
+                ApplicationModelsGrid.DataSourceList = General.ConvertListToObservableList(AddAPIModelWizard.LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList());
                 XMLOptionalValuesTemplatesGrid.DataSourceList = CurrentSelectedAPIModel.OptionalValuesTemplates;
             }
         }
