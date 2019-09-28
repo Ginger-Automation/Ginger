@@ -1459,7 +1459,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
-                                                            string readonlyfield ="", bool isreadonly=false)
+                                                            string readonlyfield ="", bool isreadonly=false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));         
@@ -1489,6 +1489,9 @@ public void RemoveCustomView(string viewName)
             {
                 combo.SetValue(ComboBox.SelectedIndexProperty, 0);
             }
+
+            if (comboSelectionChangedHandler != null)
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
 
             template.VisualTree = combo;
             return template;
@@ -2138,7 +2141,10 @@ public void RemoveCustomView(string viewName)
             ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
             foreach (object selectedItem in grdMain.SelectedItems)
             {
-                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                if (selectedItem is RepositoryItemBase)
+                {
+                    selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                }
             }
             return selectedItemsList;
         }

@@ -943,7 +943,10 @@ namespace Ginger.UserControlsLib.UCListView
             ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
             foreach (object selectedItem in xListView.SelectedItems)
             {
-                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                if (selectedItem is RepositoryItemBase)
+                {
+                    selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                }
             }
             return selectedItemsList;
         }

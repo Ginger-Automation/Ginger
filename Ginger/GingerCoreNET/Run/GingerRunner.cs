@@ -937,8 +937,7 @@ namespace Ginger.Run
                 if (standaloneExecution)
                 {
                     IsRunning = false;
-                }
-                act.OnPropertyChanged(nameof(Act.ReturnValuesInfo));                             
+                }                          
             }
         }
 
@@ -1467,6 +1466,8 @@ namespace Ginger.Run
                             act.Timeout = 1;
                         PrepAction(act, ref ActionExecutorType, st);
                         RunActionWithTimeOutControl(act, ActionExecutorType);
+                        ProcessStoretoValue(act);
+                        UpdateDSReturnValues(act);
                         CalculateActionFinalStatus(act);
                     }
                     st.Stop();

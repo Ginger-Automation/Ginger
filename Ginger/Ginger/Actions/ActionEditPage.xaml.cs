@@ -355,7 +355,7 @@ namespace Ginger.Actions
         private void ReturnValues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateOutputValuesTabHeader();
-            mAction.OnPropertyChanged(nameof(Act.ReturnValuesInfo));
+            mAction.OnPropertyChanged(nameof(Act.ReturnValuesCount));
             this.Dispatcher.Invoke(() =>
             {
                 if (mAction.ActReturnValues.Count > 0)

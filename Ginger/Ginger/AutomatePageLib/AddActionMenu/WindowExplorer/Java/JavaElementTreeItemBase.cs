@@ -45,7 +45,7 @@ namespace Ginger.WindowExplorer.Java
                 if (Response.Name == "ContainerComponents")
                     Childrens = GetControlsAsTreeItems(controls);
 
-                if (Response.Name == "HTML Element Children")
+                if (Response.Name == "EditorChildrens")
                     Childrens = GetHTMLControlsAsTreeItems(controls);
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace Ginger.WindowExplorer.Java
 
            JavaDriver d = (JavaDriver)JavaElementInfo.WindowExplorer;
            PayLoad Request = null;
-            if (JavaElementInfo.ElementType != null && JavaElementInfo.ElementType.Contains("com.amdocs.uif.widgets.browser"))
+            if (JavaElementInfo.ElementTypeEnum== eElementType.Browser)
             {
                     d.InitializeBrowser(JavaElementInfo);        
                 Request = new PayLoad("GetElementChildren");
@@ -97,11 +97,11 @@ namespace Ginger.WindowExplorer.Java
                 Request.AddValue("/");
                 Request.ClosePackage();
             } 
-            else if (JavaElementInfo.ElementType != null && JavaElementInfo.ElementType.Contains("JEditorPane"))
+            else if (JavaElementInfo.ElementTypeEnum == eElementType.EditorPane)
             {
                 d.InitializeJEditorPane(JavaElementInfo);
                 Request = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
-                Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetContainerControls);
+                Request.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetEditorChildrens);
                 Request.AddValue(JavaElementInfo.XPath);        
                 Request.ClosePackage();
             }
