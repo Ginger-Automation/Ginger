@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
                 TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Convert);
 
                 AddSourceControlOptions(mContextMenu);
 
