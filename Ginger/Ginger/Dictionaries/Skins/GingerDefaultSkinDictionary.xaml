@@ -137,6 +137,14 @@
         <Setter Property="IsEnabled" Value="True" />
     </Style>
 
+    <Style TargetType="TextBlock" x:Key="$TextBlockTitle">
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
     <Style
     x:Key="LinkButton"
     TargetType="Button">

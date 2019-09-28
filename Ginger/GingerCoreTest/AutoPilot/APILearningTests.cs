@@ -29,6 +29,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using GingerCoreNET.Application_Models;
 
 namespace UnitTests.NonUITests.AutoPilot
 {
