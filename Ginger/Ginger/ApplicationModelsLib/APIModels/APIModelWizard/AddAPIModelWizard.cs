@@ -19,10 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
+using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.WizardLib;
 using GingerCore;
+using GingerCoreNET.Application_Models;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -43,7 +45,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             [EnumValueDescription("Swagger(Open API) Document")]
             Swagger
         }
-        
+
         public enum eAPITypeTemp
         {
             [EnumValueDescription("WSDL")]
@@ -51,14 +53,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         }
 
         public eAPIType APIType { get; set; }
-        
+
         public RepositoryFolder<ApplicationAPIModel> APIModelFolder;
 
         public string URL { get; set; }
 
         public ObservableList<TemplateFile> XTFList = new ObservableList<TemplateFile>();
 
-        public ObservableList<ApplicationAPIModel> AAMList { get; set; }
+        public ObservableList<ApplicationAPIModel> LearnedAPIModelsList { get; set; }
+        public ObservableList<DeltaAPIModel> DeltaModelsList { get; set; }
 
         public bool IsParsingWasDone { get; set; }
 
@@ -68,7 +71,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public override string Title { get { return "API Model Import Wizard"; } }
 
         public RepositoryItemKey TargetApplicationKey { get; set; }
-        
+
         public ObservableList<RepositoryItemKey> TagsKeys = new ObservableList<RepositoryItemKey>();
 
         public bool AvoidDuplicatesNodes { get; set; }
@@ -76,7 +79,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public AddAPIModelWizard(RepositoryFolder<ApplicationAPIModel> APIModelsFolder)
         {
             APIModelFolder = APIModelsFolder;
-            
+
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "API Model Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/APIModels/APIModelWizard/AddAPIModelIntro.md"));
 
             AddPage(Name: "Select Document", Title: "API's Import Source", SubTitle: "Set API's Import Source/s", Page: new AddAPIModelSelectTypePage());
@@ -84,39 +87,74 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             AddPage(Name: "Select API", Title: "Select API's", SubTitle: "Select Desired API's to Add", Page: new ScanAPIModelWizardPage());
 
             AddPage(Name: "Learn Optional Parameters Values", Title: "Learn Optional Parameters Values", SubTitle: "Learn Optional Parameters Values from Sample Request Files", Page: new AdAPIModelMappingPage());
-            
+
             AddPage(Name: "Extra Configurations", Title: "API's Extra Configurations", SubTitle: "Set API's Extra Configurations", Page: new AddAPIModelExtraConfigsPage());
         }
 
         public override void Finish()
         {
             //ExportAPIFiles(SelectedAAMList);
-            ExportAPIFiles(General.ConvertListToObservableList(AAMList.Where(x => x.IsSelected == true).ToList()));
+            if(DeltaModelsList != null && DeltaModelsList.Count > 0)
+            {
+                foreach(DeltaAPIModel deltaAPI in DeltaModelsList.Where(d => d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges || d.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting).GroupBy(d => d.matchingAPIModel).Select(d => d.First()))     // (DeltaAPIModel.matchingAPIModel)))          //.Where(d => d.IsSelected))
+                {
+                    if(deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges 
+                        || deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting)
+                    {
+                        if (deltaAPI.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                        {
+                            deltaAPI.MergedAPIModel.Guid = deltaAPI.matchingAPIModel.Guid;
+                        }
+                        else
+                        {
+                            deltaAPI.learnedAPI.Guid = deltaAPI.matchingAPIModel.Guid;
+                        }
+                        APIDeltaUtils.DeleteExistingItem(deltaAPI.matchingAPIModel);
+                    }
+                }
+            }
+
+            ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
         }
 
-        private void ExportAPIFiles(ObservableList<ApplicationAPIModel> SelectedAAMList)
+        private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
-            foreach (ApplicationAPIModel AAM in SelectedAAMList)
+            foreach (ApplicationAPIModel apiModel in SelectedAAMList)
             {
                 Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
 
                 ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
-                ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(AAM, OptionalValuesPerParameterDict);
-                ImportOptionalValues.PopulateOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict);
+                ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(apiModel, OptionalValuesPerParameterDict);
+                ImportOptionalValues.PopulateOptionalValuesForAPIParameters(apiModel, OptionalValuesPerParameterDict);
 
-                AAM.ContainingFolder = APIModelFolder.FolderFullPath;
-                if (TargetApplicationKey != null)
+                if (string.IsNullOrEmpty(apiModel.ContainingFolder))
                 {
-                    AAM.TargetApplicationKey = TargetApplicationKey;
+                    apiModel.ContainingFolder = APIModelFolder.FolderFullPath;
                 }
-                if (TagsKeys != null)
+
+                if (apiModel.TargetApplicationKey == null && TargetApplicationKey != null)
+                {
+                    apiModel.TargetApplicationKey = TargetApplicationKey;
+                }
+
+                if (apiModel.TagsKeys == null && TagsKeys != null)
                 {
                     foreach (RepositoryItemKey tagKey in TagsKeys)
                     {
-                        AAM.TagsKeys.Add(tagKey);
+                        apiModel.TagsKeys.Add(tagKey);
                     }
                 }
-                APIModelFolder.AddRepositoryItem(AAM);
+
+                if (APIModelFolder.FolderFullPath == apiModel.ContainingFolder)
+                {
+                    APIModelFolder.AddRepositoryItem(apiModel);
+                }
+                else
+                {
+                    RepositoryFolderBase rfFolderBase = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(apiModel.ContainingFolder);
+                    rfFolderBase.AddRepositoryItem(apiModel);
+                }
+
             }
         }
     }

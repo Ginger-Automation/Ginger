@@ -93,7 +93,7 @@ namespace Ginger.Agents.AddAgentWizardLib
             xDriverTypeComboBox.SelectedItem = null;
             xDriverTypeComboBox.Items.Clear();            
             mWizard.Agent.Platform=(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType) Enum.Parse(typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType), xPlatformTypeComboBox.SelectedValue.ToString());
-            DriversforPlatform = DriverInfo.GetDriversforPlatform(xPlatformTypeComboBox.SelectedValue.ToString());
+            DriversforPlatform = DriverInfo.GetDriversforPlatform(mWizard.Agent.Platform);
 
             foreach (DriverInfo driverInfo in DriversforPlatform)
             {

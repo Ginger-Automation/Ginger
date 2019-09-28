@@ -438,6 +438,7 @@ namespace Amdocs.Ginger.CoreNET
                                 if (existingConvertibleActionType == null)
                                 {
                                     ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
+                                    newConvertibleActionType.Selected = true;
                                     newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                                     newConvertibleActionType.SourceActionType = act.GetType();
                                     newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();

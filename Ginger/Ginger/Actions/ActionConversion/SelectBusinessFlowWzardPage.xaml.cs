@@ -59,10 +59,11 @@ namespace Ginger.Actions.ActionConversion
             {
                 case EventType.Init:
                     mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
+                    ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
-                    SetActivitiesSelected();
+                    PrepareBFsForConversion();
                     break;
             }
         }
@@ -70,10 +71,11 @@ namespace Ginger.Actions.ActionConversion
         /// <summary>
         /// This method is used to set the acitvities for selected to conversion
         /// </summary>
-        private void SetActivitiesSelected()
+        private void PrepareBFsForConversion()
         {
             foreach (var businessFlow in ListOfBusinessFlow)
             {
+                businessFlow.BusinessFlow.CreateBackup();
                 if (businessFlow.IsSelected)
                 {
                     foreach (var act in businessFlow.BusinessFlow.Activities)
