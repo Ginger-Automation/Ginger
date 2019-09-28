@@ -228,12 +228,12 @@
                         </Border>
                     </TabItem>
 
-                    <TabItem x:Name="xExecutionDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5" Tag="False">
+                    <TabItem x:Name="xExecutionReportTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5" Tag="False">
                         <TabItem.Header>
                             <Border Style="{StaticResource $CoolTabBorderStyle}">
                                 <DockPanel Margin="0,5,0,0">
                                     <!--<usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Pending" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />-->
-                                    <TextBlock Text="Execution Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                    <TextBlock Text="Execution Report" Style="{StaticResource $CoolTabTextBlockStyle}" />
                                     <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusTabImage" StatusViewMode="Polygon"/>
                                 </DockPanel>
                             </Border>
@@ -293,11 +293,11 @@
                                                 </Grid.RowDefinitions>
                                                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
                                                     <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
-                                                    <Label x:Name="xExecutionStatusLbl" FontSize="14" FontWeight="Bold" Style="{StaticResource $LabelStyle}" />
+                                                    <Label x:Name="xExecutionStatusLbl" FontSize="16" FontWeight="Bold" Style="{StaticResource $LabelStyle}" />
                                                 </StackPanel>
 
                                                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
-                                                    <Label Content="Execution Time:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
+                                                    <Label Content="Execution Time (ms):"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
                                                     <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
                                                 </StackPanel>
 

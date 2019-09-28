@@ -115,6 +115,8 @@ namespace Ginger.Actions
             mAction.FlowControls.CollectionChanged += FlowControls_CollectionChanged;
             mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
             mAction.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
+            mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
+            mAction.ScreenShots.CollectionChanged += ScreenShots_CollectionChanged;
 
             mContext = Context.GetAsContext(mAction.Context);
             if (mContext != null && mContext.Runner != null)
@@ -149,6 +151,27 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
+            else if (editMode == General.eRIPageViewMode.Automation)
+            {
+                if (mAction.Status == null || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                {
+                    xActionTabs.SelectedItem = xOperationSettingsTab;
+                }
+                else
+                {
+                    xActionTabs.SelectedItem = xExecutionReportTab;
+                }
+            }
+
+            
+        }
+
+        private void ScreenShots_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                UpdateScreenShots();                
+            });
         }
 
         private void InitDetailsTabView()
@@ -286,7 +309,7 @@ namespace Ginger.Actions
 
         private void InitExecutionDetailsTabView()
         {
-            xExecutionDetailsTab.Tag = true;//marking that bindings were done
+            xExecutionReportTab.Tag = true;//marking that bindings were done
 
             BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             xExecutionStatusImage.Init();
@@ -316,6 +339,7 @@ namespace Ginger.Actions
                 BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
                 xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
                 SetScreenshotsPnlView();
+                UpdateScreenShots();
             }
         }
 
@@ -1119,7 +1143,7 @@ namespace Ginger.Actions
             {
                 InitOutputValuesTabView();
             }
-            else if (xActionTabs.SelectedItem == xExecutionDetailsTab && bool.Parse(xExecutionDetailsTab.Tag.ToString()) != true)
+            else if (xActionTabs.SelectedItem == xExecutionReportTab && bool.Parse(xExecutionReportTab.Tag.ToString()) != true)
             {
                 InitExecutionDetailsTabView();
             }
@@ -1131,69 +1155,12 @@ namespace Ginger.Actions
 
         private void UpdateScreenShots()
         {
-
-            //xScreenShotsGrid.Children.Clear();
-            //xScreenShotsGrid.RowDefinitions.Clear();
-            //xScreenShotsGrid.ColumnDefinitions.Clear();
             xScreenShotsViewPnl.Children.Clear();
 
-            if (mAction.ScreenShots.Count > 0)
+            if (mAction != null && mAction.ScreenShots.Count > 0)
             {
                 xScreenShotsPnl.Visibility = Visibility.Visible;
 
-                //// create grid row cols based on screen shots count, can be 1x1, 2x2, 3x3 etc.. 
-                //int rowcount = 1;
-                //int colsPerRow = 1;
-                //while (rowcount * colsPerRow < mAction.ScreenShots.Count)
-                //{
-                //    if (rowcount < colsPerRow)
-                //        rowcount++;    // enable 1 row 2 columns, 2x3, 3x4 etc.. - avoid showing empty row
-                //    else
-                //        colsPerRow++;
-                //    // we can limit cols if we want for example max 3 per row, and then the grid will have vertical scroll bar
-                //}
-
-                //for (int rows = 0; rows < rowcount; rows++)
-                //{
-                //    RowDefinition rf = new RowDefinition() { Height = new GridLength(50, GridUnitType.Star) };
-                //    xScreenShotsGrid.RowDefinitions.Add(rf);
-                //}
-
-                //for (int cols = 0; cols < colsPerRow; cols++)
-                //{
-                //    ColumnDefinition cf = new ColumnDefinition() { Width = new GridLength(50, GridUnitType.Star) };
-                //    xScreenShotsGrid.ColumnDefinitions.Add(cf);
-                //}
-
-                //// loop through the screen shot and create new frame per each to show and place in the grid
-                //int r = 0;
-                //int c = 0;
-
-                //for (int i = 0; i < mAction.ScreenShots.Count; i++)
-                //{
-                //    //TODO: clean me when Screenshots changed to class instead of list of strings
-                //    // just in case we don't have name, TOOD: fix all places where we add screen shots to include name
-                //    string Name = "";
-                //    if (mAction.ScreenShotsNames.Count > i)
-                //    {
-                //        Name = mAction.ScreenShotsNames[i];
-                //    }
-                //    ScreenShotViewPage p = new ScreenShotViewPage(Name, mAction.ScreenShots[i]);
-                //    Frame f = new Frame();
-                //    Grid.SetRow(f, r);
-                //    Grid.SetColumn(f, c);
-                //    f.HorizontalAlignment = HorizontalAlignment.Center;
-                //    f.VerticalAlignment = VerticalAlignment.Center;
-                //    f.SetContent(p);
-                //    xScreenShotsGrid.Children.Add(f);
-
-                //    c++;
-                //    if (c == colsPerRow)
-                //    {
-                //        c = 0;
-                //        r++;
-                //    }
-                //}
                 for (int i = 0; i < mAction.ScreenShots.Count; i++)
                 {
                     //TODO: clean me when Screenshots changed to class instead of list of strings
@@ -1203,10 +1170,11 @@ namespace Ginger.Actions
                     {
                         Name = mAction.ScreenShotsNames[i];
                     }
-                    ScreenShotViewPage screenShotPage = new ScreenShotViewPage(Name, mAction.ScreenShots[i]);
+                    ScreenShotViewPage screenShotPage = new ScreenShotViewPage(Name, mAction.ScreenShots[i], 0.5);
                     Frame fram = new Frame();
                     fram.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
                     fram.NavigationService.RemoveBackEntry();
+                    fram.Margin = new Thickness(20);
                     DockPanel.SetDock(fram, Dock.Top);
                     fram.HorizontalAlignment = HorizontalAlignment.Center;
                     fram.VerticalAlignment = VerticalAlignment.Center;
@@ -1573,10 +1541,6 @@ namespace Ginger.Actions
                 this.Dispatcher.Invoke(() =>
                 {
                     ShowHideRunStopButtons();
-                    if (this.IsVisible && mAction.TakeScreenShot || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                    {
-                        UpdateScreenShots();
-                    }
                 });
             }
         }
@@ -1739,13 +1703,11 @@ namespace Ginger.Actions
         {
             if (xTakeScreenShotCheckBox.IsChecked == true)
             {
-                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;
-                xScreenShotsPnl.Visibility = Visibility.Visible;                
+                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;              
             }
             else
             {
                 xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Collapsed;
-                xScreenShotsPnl.Visibility = Visibility.Collapsed;
             }
         }
     }

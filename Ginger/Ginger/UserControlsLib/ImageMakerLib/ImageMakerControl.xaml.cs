@@ -902,8 +902,12 @@ namespace Amdocs.Ginger.UserControls
             // Reset All do defaults
             xFAImage.Visibility = Visibility.Collapsed;
             xFAImage.Spin = false;
+            xFAImage.StopSpin();
+            xFAImage.Rotation = 0;
             xFAFont.Visibility = Visibility.Collapsed;
             xFAFont.Spin = false;
+            xFAFont.StopSpin();
+            xFAFont.Rotation = 0;
             xStaticImage.Visibility = Visibility.Collapsed;
             xViewBox.Visibility = Visibility.Collapsed;
             this.Background = null;
@@ -942,6 +946,7 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.Spin = true;
                 xFAFont.SpinDuration = spinDuration;
             }
+
 
             if (!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {

@@ -1628,8 +1628,14 @@ namespace Ginger.Run
                                     a.RunAction(screenShotAction);//TODO: Use IVisual driver to get screen shot instead of running action                         
                                     if (string.IsNullOrEmpty(screenShotAction.Error))//make sure the screen shot succeed
                                     {
-                                        act.ScreenShots.AddRange(screenShotAction.ScreenShots);
-                                        act.ScreenShotsNames.AddRange(screenShotAction.ScreenShotsNames);
+                                        foreach (string screenShot in screenShotAction.ScreenShots)
+                                        {
+                                            act.ScreenShots.Add(screenShot);
+                                        }
+                                        foreach (string screenShotName in screenShotAction.ScreenShotsNames)
+                                        {
+                                            act.ScreenShotsNames.Add(screenShotName);
+                                        }
                                     }
                                     else
                                     {
