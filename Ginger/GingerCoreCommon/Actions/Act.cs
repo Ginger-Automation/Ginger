@@ -1735,17 +1735,17 @@ namespace GingerCore.Actions
             }
         }
 
-        public string ReturnValuesInfo
+        public int ReturnValuesCount
         {
             get
             {
-                if (ReturnValues != null && ReturnValues.Count > 0)
+                if (ReturnValues != null)
                 {
-                    return string.Format("{0} Output Values", ReturnValues.Count);
+                    return ReturnValues.Count;
                 }
                 else
                 {
-                    return string.Empty;
+                    return 0;
                 }
             }
         }
