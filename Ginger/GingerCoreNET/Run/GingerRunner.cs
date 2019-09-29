@@ -372,7 +372,10 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
-            RunListeners.Add(new TelemetryRunListener());
+            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            {
+                RunListeners.Add(new TelemetryRunListener());
+            }
         }
 
 
