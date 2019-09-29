@@ -600,8 +600,8 @@
     <Compile Include="Activities\ActivitiesGroupSelectionPage.xaml.cs">
       <DependentUpon>ActivitiesGroupSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Activities\ActivityConfigurationsPage.xaml.cs">
-      <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
+    <Compile Include="Activities\ActivityDetailsPage.xaml.cs">
+      <DependentUpon>ActivityDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\ActionsFactory.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\ActionsLibrary\ActionsLibraryNavPage.xaml.cs">
@@ -3048,7 +3048,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Activities\ActivityConfigurationsPage.xaml">
+    <Page Include="Activities\ActivityDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

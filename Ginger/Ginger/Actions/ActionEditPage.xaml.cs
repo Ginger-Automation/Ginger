@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
@@ -49,6 +50,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Ginger.Actions
 {
@@ -307,12 +309,9 @@ namespace Ginger.Actions
             }
         }
 
-        private void InitExecutionDetailsTabView()
+        private void InitExecutionReportTabView()
         {
-            xExecutionReportTab.Tag = true;//marking that bindings were done
-
-            BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
-            xExecutionStatusImage.Init();
+            xExecutionReportTab.Tag = true;//marking that bindings were done           
 
             xStatusConvertorCombo.BindControl(mAction, nameof(Act.StatusConverter));
             BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.FailIgnored));
@@ -322,6 +321,7 @@ namespace Ginger.Actions
 
             BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
+            UpdateExecutionStatusControls();
 
             BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xExecutionExtraInfoPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.ExInfo), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
@@ -1145,7 +1145,7 @@ namespace Ginger.Actions
             }
             else if (xActionTabs.SelectedItem == xExecutionReportTab && bool.Parse(xExecutionReportTab.Tag.ToString()) != true)
             {
-                InitExecutionDetailsTabView();
+                InitExecutionReportTabView();
             }
             else if (xActionTabs.SelectedItem == xHelpTab && bool.Parse(xHelpTab.Tag.ToString()) != true)
             {
@@ -1541,8 +1541,61 @@ namespace Ginger.Actions
                 this.Dispatcher.Invoke(() =>
                 {
                     ShowHideRunStopButtons();
+
+                    UpdateExecutionStatusControls();
                 });
             }
+        }
+
+        private void UpdateExecutionStatusControls()
+        {
+            Brush mStatusBrush = null;
+            eImageType mStatusImage = eImageType.Pending;
+
+            switch (mAction.Status)
+            {
+                case eRunStatus.Passed:
+                    mStatusBrush = FindResource("$PassedStatusColor") as Brush;
+                    mStatusImage = eImageType.Passed;
+                    break;
+                case eRunStatus.Failed:
+                    mStatusBrush = FindResource("$FailedStatusColor") as Brush;
+                    mStatusImage = eImageType.Failed;
+                    break;
+                case eRunStatus.Pending:
+                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
+                    mStatusImage = eImageType.Pending;
+                    break;
+                case eRunStatus.Running:
+                    mStatusBrush = FindResource("$RunningStatusColor") as Brush;
+                    mStatusImage = eImageType.Running;
+                    break;
+                case eRunStatus.Stopped:
+                    mStatusBrush = FindResource("$StoppedStatusColor") as Brush;
+                    mStatusImage = eImageType.Stop;
+                    break;
+                case eRunStatus.Blocked:
+                    mStatusBrush = FindResource("$BlockedStatusColor") as Brush;
+                    mStatusImage = eImageType.Blocked;
+                    break;
+                case eRunStatus.Skipped:
+                    mStatusBrush = FindResource("$SkippedStatusColor") as Brush;
+                    mStatusImage = eImageType.Skipped;
+                    break;
+                default:
+                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
+                    mStatusImage = eImageType.Pending;
+                    break;
+            }
+
+            xExecutionStatusLbl.Foreground = mStatusBrush;
+            //xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
+            xExecutionStatusImage.SetAsFontImageWithSize = 50;
+            xExecutionStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
+            xExecutionStatusImage.ImageType = mStatusImage;
+            xExecutionStatusImage.Width = 50;
+            xExecutionStatusImage.Height = 50;
+            xExecutionStatusImage.ToolTip = mAction.Status.ToString();
         }
 
         private void InitActionLog()

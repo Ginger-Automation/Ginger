@@ -49,25 +49,21 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <ScrollViewer>
-            <DockPanel>
-                <!--Tabs Area-->
-                <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
-                    <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
-                                <DockPanel >
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Info" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                                    <TextBlock Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
-                            <!--<Expander x:Name="xActionDetailsExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
-                            <Expander.Header>
-                                <Label Content="General Details" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                            </Expander.Header>
-                            <Expander.Content>-->
+
+        <DockPanel>
+            <!--Tabs Area-->
+            <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
+                <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
+                            <DockPanel >
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Info" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                <TextBlock Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer>
                             <Grid x:Name="xActionsDetailsPnl" Margin="10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -82,21 +78,21 @@
                                 </DockPanel>
                                 <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-2,0,0"/>
                             </Grid>
-                            <!--</Expander.Content>
-                        </Expander>-->
-                        </Border>
-                    </TabItem>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
 
-                    <TabItem x:Name="xOperationSettingsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="1" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Operation to Perform Settings">
-                                <DockPanel>
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock  Text="Operation Settings" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                <TabItem x:Name="xOperationSettingsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="1" Tag="False">
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Operation to Perform Settings">
+                            <DockPanel>
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Action" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock  Text="Operation Settings" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer>
                             <DockPanel x:Name="xOperationSettingsPnl" Margin="5">
                                 <Grid x:Name="xActionLocatorPnl" DockPanel.Dock="Top">
                                     <Grid.ColumnDefinitions>
@@ -128,19 +124,21 @@
                                 </DockPanel>
 
                             </DockPanel>
-                        </Border>
-                    </TabItem>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
 
-                    <TabItem x:Name="xFlowControlTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="2" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Flow Control Configurations">
-                                <DockPanel >
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="MapSigns" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                                    <TextBlock x:Name="xFlowControlTabHeaderTextBlock" Text="Flow Control" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                <TabItem x:Name="xFlowControlTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="2" Tag="False">
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Flow Control Configurations">
+                            <DockPanel >
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="MapSigns" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                <TextBlock x:Name="xFlowControlTabHeaderTextBlock" Text="Flow Control" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer>
                             <DockPanel Margin="5" >
                                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"  HorizontalAlignment="Left" Margin="0,5,0,0">
                                     <Label Content="Wait:" Style="{StaticResource $LabelStyle}" />
@@ -148,7 +146,7 @@
                                     <Label Content="Timeout:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
                                     <TextBox x:Name="xTimeoutTextBox" TextChanged="txtTimeout_TextChanged" ToolTip="Timeout is been used to configure the MAXIMUM allowed time (Action can finish before) for the Action to run. If action running longer than the timeout time (seconds), the action will stop and mark as Failed" Style="{StaticResource @TextBoxStyle}" Width="50" TextAlignment="Center"  HorizontalAlignment="Left" />
                                 </StackPanel>
-                                
+
                                 <Expander x:Name="xRetryExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
                                     <Expander.Header>
                                         <Label Content="Retry Mechanism" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
@@ -178,19 +176,21 @@
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>
-                        </Border>
-                    </TabItem>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
 
-                    <TabItem x:Name="xOutputValuesTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="3" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Output Values" >
-                                <DockPanel >
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Output" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                                    <TextBlock x:Name="xOutputValuesTabHeaderTextBlock" Text="Output Values" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                <TabItem x:Name="xOutputValuesTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="3" Tag="False">
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Execution Output Values" >
+                            <DockPanel >
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Output" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock x:Name="xOutputValuesTabHeaderTextBlock" Text="Output Values" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer>
                             <DockPanel Margin="5">
                                 <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
                                     <Expander.Header>
@@ -225,20 +225,22 @@
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>
-                        </Border>
-                    </TabItem>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
 
-                    <TabItem x:Name="xExecutionReportTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}">
-                                <DockPanel Margin="0,5,0,0">
-                                    <!--<usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Pending" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />-->
-                                    <TextBlock Text="Execution Report" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                    <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusTabImage" StatusViewMode="Polygon"/>
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                <TabItem x:Name="xExecutionReportTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="5" Tag="False">
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}">
+                            <DockPanel Margin="0,5,0,0">
+                                <!--<usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Pending" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />-->
+                                <TextBlock Text="Execution Report" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                                <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusTabImage" StatusViewMode="Polygon"/>
+                            </DockPanel>
+                        </Border>
+                    </TabItem.Header>
+                    <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer>
                             <DockPanel Margin="5">
                                 <Expander x:Name="xExecutionDetailsRelatedSettingsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
                                     <Expander.Header>
@@ -293,7 +295,7 @@
                                                 </Grid.RowDefinitions>
                                                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
                                                     <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
-                                                    <Label x:Name="xExecutionStatusLbl" FontSize="16" FontWeight="Bold" Style="{StaticResource $LabelStyle}" />
+                                                    <Label x:Name="xExecutionStatusLbl" FontSize="15" FontWeight="Bold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom" />
                                                 </StackPanel>
 
                                                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
@@ -301,8 +303,8 @@
                                                     <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
                                                 </StackPanel>
 
-                                                <!--<usercontrols:ImageMakerControl x:Name="xExecutionStatusImage" ImageType="Pending" Height="50" Grid.RowSpan="2" Grid.Column="1"/>-->
-                                                <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusImage" StatusViewMode="Image" StatusImageSize="50" Grid.RowSpan="2" Grid.Column="1"/>
+                                                <usercontrols:ImageMakerControl x:Name="xExecutionStatusImage" ImageType="Pending" Height="50" Grid.RowSpan="2" Grid.Column="1"/>
+                                                <!--<uclistview:UcItemExecutionStatus x:Name="xExecutionStatusImage" StatusViewMode="Image" StatusImageSize="50" Grid.RowSpan="2" Grid.Column="1"/>-->
                                             </Grid>
 
                                             <StackPanel x:Name="xExecutionExtraInfoPnl" DockPanel.Dock="Top" Margin="0,10,0,0">
@@ -326,24 +328,26 @@
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>
-                        </Border>
-                    </TabItem>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
 
-                    <TabItem x:Name="xHelpTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="6" Tag="False">
-                        <TabItem.Header>
-                            <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Help Details">
-                                <DockPanel >
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
-                                    <TextBlock  Text="Help" Style="{StaticResource $CoolTabTextBlockStyle}" />
-                                </DockPanel>
-                            </Border>
-                        </TabItem.Header>
-                        <Border Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
-                            <Frame x:Name="xActionHelpDetailsFram" Margin="10" Content="Action Description" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+                <TabItem x:Name="xHelpTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="6" Tag="False">
+                    <TabItem.Header>
+                        <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Help Details">
+                            <DockPanel >
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
+                                <TextBlock  Text="Help" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            </DockPanel>
                         </Border>
-                    </TabItem>
-                </TabControl>
-            </DockPanel>
-        </ScrollViewer>
+                    </TabItem.Header>
+                    <Border Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
+                        <ScrollViewer>
+                            <Frame x:Name="xActionHelpDetailsFram" Margin="10" Content="Action Description" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
+                        </ScrollViewer>
+                    </Border>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
     </Grid>
 </Page>
