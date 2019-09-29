@@ -210,6 +210,24 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
             xPreviewButton.Visibility = Visibility.Collapsed;
             SourceRviewLable.Visibility = Visibility.Collapsed;
+
+            if (AddAPIModelWizard != null)
+            {
+                AddAPIModelWizard.IsParsingWasDone = false;
+                CleanLearnedAPIModels();
+            }
+        }
+
+        void CleanLearnedAPIModels()
+        {
+            if (AddAPIModelWizard.LearnedAPIModelsList != null)
+            {
+                AddAPIModelWizard.LearnedAPIModelsList.Clear();
+            }
+            if (AddAPIModelWizard.DeltaModelsList != null)
+            {
+                AddAPIModelWizard.DeltaModelsList.Clear();
+            }
         }
 
         private void XMLTemplatesGrid_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -265,6 +283,12 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             SourceRviewLable.Visibility = Visibility.Collapsed;
             XMLViewer.Visibility = Visibility.Collapsed;
             XMLViewer.xmlDocument = new XmlDocument();
+
+            ///To relearn the APIs once we move next.
+            AddAPIModelWizard.IsParsingWasDone = false;
+
+            CleanLearnedAPIModels();
+
             if (URLRadioButton.IsChecked == true)
             {
                 if (!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() != eAPIType.Swagger.ToString())

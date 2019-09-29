@@ -81,6 +81,7 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="WizardEventArgs"></param>
         private void Init(WizardEventArgs WizardEventArgs)
         {
+            ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
             xPOMSelectionPage.OwnerWindow = (Window)mWizard.mWizardWindow;
             DataContext = mWizard;
             xRadSameActivity.IsChecked = !mWizard.NewActivityChecked;
