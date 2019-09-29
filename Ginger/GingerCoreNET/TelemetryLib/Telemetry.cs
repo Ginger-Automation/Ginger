@@ -191,12 +191,14 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             mTelemetrySession = new TelemetrySession(Guid);
 
-            // Add("sessionstart", mTelemetrySession);
-            Add("sessionstart", new
-            {
-                id = mTelemetrySession.Guid,
-                zz = mTelemetrySession.Debugger
-            });
+            Add("sessionstart", mTelemetrySession);
+
+            // TODO: add selective collection per user permission
+            //Add("sessionstart", new
+            //{
+            //    id = mTelemetrySession.Guid,
+            //    zz = mTelemetrySession.Debugger
+            //});
         }
         
         public void SessionEnd()
