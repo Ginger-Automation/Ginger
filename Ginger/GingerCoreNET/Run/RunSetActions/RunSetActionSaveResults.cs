@@ -80,20 +80,13 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
-                    string folder = Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults");
-                    if (!Directory.Exists(folder))
-                    {
-                        Directory.CreateDirectory(folder);
-                    }
-                    folder = Path.Combine(folder, SaveResultsInSolutionFolderName);
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");                                        
+                    string folder = Path.Combine(WorkSpace.Instance.TestArtifactsFolder, SaveResultsInSolutionFolderName);
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
                     }
                     SaveBFResults(RI, folder);
-
                     Reporter.HideStatusMessage();
                 }
 

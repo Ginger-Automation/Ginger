@@ -68,13 +68,12 @@ namespace Amdocs.Ginger.Common
             eUserMsgIcon messageImage = eUserMsgIcon.None;
 
             try
-            {
-                //get the message from pool
-                // FIXME improve if as already found !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            {                
                 if ((UserMsgsPool != null) && UserMsgsPool.Keys.Contains(messageKey))
-                {
+                {             
                     messageToShow = UserMsgsPool[messageKey];
                 }
+
                 if (messageToShow == null) // Message not found in message pool
                 {
                     // We do want to pop the error message so below is just in case...
@@ -265,6 +264,9 @@ namespace Amdocs.Ginger.Common
                 }
 
                 WorkSpaceReporter.ToConsole(logLevel, msg);
+
+                // if we have log to console event listener send the message 
+                logToConsoleEvent?.Invoke(logLevel, msg);
             }
             catch (Exception ex)
             {
@@ -273,7 +275,9 @@ namespace Amdocs.Ginger.Common
         }
         #endregion ToConsole
 
-
+        // in case we want to listen to console write events - used for unit tests
+        public static event LogToConsoleEventHandler logToConsoleEvent;
+        public delegate void LogToConsoleEventHandler(eLogLevel logLevel, string messageToConsole);
 
     }
 }

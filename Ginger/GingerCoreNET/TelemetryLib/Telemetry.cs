@@ -51,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 if 
                     (mSessionFileName == null)
                 {
-                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
+                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss"));
                 }                
                 return mSessionFileName;
             }
@@ -86,27 +86,20 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             
             // run it on task so startup is not impacted
             Task.Factory.StartNew(() => {
-                Thread.Sleep(10000);  // Wait 10 seconds so mainwindow and others can load
+                Thread.Sleep(10000);  // Wait 10 seconds so main window and others can load
                 Telemetry.CheckVersionAndNews();
             });
-
-            if (telemetry.DoNotCollect)
-            {
-                // TODO: write to log
-            }
-            else            
-            {
-                StartProcessing();
-            }
-
+            
+            StartProcessing();
+            
         }
-
+        
         private static void StartProcessing()
-        {           
+        {
             // start a long running task to process telemetry queue
-            var task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),
+            Task task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),                     
                     TaskCreationOptions.LongRunning);
-            task.Start();            
+            task.Start();               
         }
 
         private static void InitClient()
@@ -194,19 +187,13 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
 
         public void SessionStarted()
-        {
-            if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
-
+        {            
             TelemetrySession = new TelemetrySession(Guid);
-
             Add("sessionstart", TelemetrySession);
         }
-
-
+        
         public void SessionEnd()
-        {
-            if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
-
+        {         
             TelemetrySession.EndTime = Time;
             TimeSpan ts = TelemetrySession.EndTime - TelemetrySession.StartTime;
             TelemetrySession.Elapsed = ts.ToString(@"hh\:mm\:ss");
@@ -214,12 +201,11 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
             Add("dummy", new { a = 1}); // add another dummy to make sure session is written
 
-            TelemetryRecords.CompleteAdding();
-            
+            TelemetryRecords.CompleteAdding();            
             
             Task.Factory.StartNew(() => {
                 // TODO: add timeout to wait
-                while(!TelemetryRecords.IsCompleted) // Wait for all records to process
+                while(!TelemetryRecords.IsCompleted) // Wait for all pending records to process
                 {
                     Thread.Sleep(100);
                 }
@@ -229,7 +215,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 {
                     Thread.Sleep(100);
                 }
-            }).Wait(30000);  // Max 30 seconds to wait
+            }).Wait(30000);  // Max 30 seconds to wait   
+
+            Thread.Sleep(500);
         }
 
 
@@ -251,7 +239,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         }
 
 
-        // Multithread safe
+        // Multi thread safe
         BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
         public void Add(string entityType, object data)
         {                      
@@ -266,8 +254,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {                                
                 string indexHeader = JsonConvert.SerializeObject(telemetryRecord);
                 string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
-                
-                // Adding timestamp, uid and sid
+
+                // Adding timestamp, uid and sid                
                 string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
                 string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
                              
@@ -281,14 +269,20 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {            
             Add("Exception", new { message = ex.Message, StackTrace = ex.StackTrace });
         }
-
+        
         bool done;
         private async void Compress()
         {
             try
-            {
+            {                
                 string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss") + "_Data_zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
+
+                if (!Directory.Exists(zipFolder))
+                {
+                    Directory.CreateDirectory(zipFolder);
+                }
+
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
                 
                 ZipFile.CreateFromDirectory(TelemetryDataFolder, LocalZipfileName);                

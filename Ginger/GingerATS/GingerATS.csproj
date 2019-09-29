@@ -72,7 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GingerATS.ruleset" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpSvn.1.8-x86">
