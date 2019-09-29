@@ -87,6 +87,13 @@ namespace Ginger.Plugin.Platform.Web
         /// Switches to The Parent froame of Current Element.
         /// </summary>
         void SwitchToParentFrame();
+
+        /// <summary>
+        /// Switches to the default content..
+        /// </summary>
+        void SwitchToDefaultContent();
+
+
         /// <summary>
         /// Maximises CUrrent Browser Window
         /// </summary>

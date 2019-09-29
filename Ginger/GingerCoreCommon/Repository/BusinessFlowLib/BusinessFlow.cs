@@ -265,6 +265,7 @@ namespace GingerCore
                 if (mActivities.LazyLoad)
                 {
                     mActivities.GetItemsInfo();
+                    AttachActivitiesGroupsAndActivities();
                 }
                 return mActivities;
             }
@@ -303,13 +304,7 @@ namespace GingerCore
                 }
             }
         }
-
-        public override void PostSerialization()
-        {
-            //TODO: FIXME Perf issue read Activities and do no lazy load !!!!!!!!!!!!!!!!!!!!!!!!
-            AttachActivitiesGroupsAndActivities();
-        }
-
+        
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
