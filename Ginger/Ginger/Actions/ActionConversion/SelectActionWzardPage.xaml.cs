@@ -79,7 +79,8 @@ namespace Ginger.Actions.ActionConversion
         }
 
         private void Init()
-        {   
+        {
+            ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
             if (mWizard.LstSelectedActivities == null || mWizard.LstSelectedActivities.Count <= 0)
             {
                 // fetching list of selected convertible activities from the first grid

@@ -50,7 +50,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 if 
                     (mSessionFileName == null)
                 {
-                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyymmddhhmmss"));
+                    mSessionFileName = Path.Combine(TelemetryDataFolder, Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss"));
                 }                
                 return mSessionFileName;
             }
@@ -85,27 +85,20 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             
             // run it on task so startup is not impacted
             Task.Factory.StartNew(() => {
-                Thread.Sleep(10000);  // Wait 10 seconds so mainwindow and others can load
+                Thread.Sleep(10000);  // Wait 10 seconds so main window and others can load
                 Telemetry.CheckVersionAndNews();
             });
-
-            if (telemetry.DoNotCollect)
-            {
-                // TODO: write to log
-            }
-            else            
-            {
-                StartProcessing();
-            }
-
+            
+            StartProcessing();
+            
         }
-
+        
         private static void StartProcessing()
-        {           
+        {
             // start a long running task to process telemetry queue
-            var task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),
+            Task task = new Task(() => WorkSpace.Instance.Telemetry.ProcessQueue(),                     
                     TaskCreationOptions.LongRunning);
-            task.Start();            
+            task.Start();               
         }
 
         private static void InitClient()
@@ -205,8 +198,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 zz = mTelemetrySession.Debugger
             });
         }
-
-
+        
         public void SessionEnd()
         {
             if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
@@ -255,7 +247,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         }
 
 
-        // Multithread safe
+        // Multi thread safe
         BlockingCollection<object> TelemetryRecords = new BlockingCollection<object>();
         public void Add(string entityType, object data)
         {                      
@@ -285,14 +277,20 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {            
             Add("Exception", new { message = ex.Message, StackTrace = ex.StackTrace });
         }
-
+        
         bool done;
         private async void Compress()
         {
             try
-            {
+            {                
                 string zipFileName = Guid.ToString().Replace("-", "") + "_" + DateTime.UtcNow.ToString("yyyyMMddhhmmss") + "_Data_zip";
                 string zipFolder = Path.Combine(TelemetryFolder, "Zip");
+
+                if (!Directory.Exists(zipFolder))
+                {
+                    Directory.CreateDirectory(zipFolder);
+                }
+
                 string LocalZipfileName = Path.Combine(zipFolder, zipFileName);
                 
                 ZipFile.CreateFromDirectory(TelemetryDataFolder, LocalZipfileName);                

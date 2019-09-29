@@ -1797,7 +1797,7 @@ namespace Ginger.Run
 
                                         else
                                         {
-                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Error = "Current Plugin Agent does not support execution for " + act.ActionDescription;
                                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                             
                                         }

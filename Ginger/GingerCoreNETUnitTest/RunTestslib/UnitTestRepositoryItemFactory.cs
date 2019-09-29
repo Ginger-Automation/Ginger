@@ -139,5 +139,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             throw new NotImplementedException();
         }
+
+        public void WaitForAutoRunWindowClose()
+        {
+            // NA
+        }
     }
 }

@@ -24,7 +24,9 @@ using System.Text;
 namespace Amdocs.Ginger.GingerConsole.ReporterLib
 {
     public class GingerConsoleWorkspaceReporter : WorkSpaceReporterBase
-    {        
+    {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public override eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt)
         {
             string txt = caption + Environment.NewLine;
@@ -56,9 +58,37 @@ namespace Amdocs.Ginger.GingerConsole.ReporterLib
 
         public override void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-           // Console.WriteLine("[" + logLevel + "]" + messageToLog); //need to implment real write to log instead of this console write which causing duplicate console lines. 
+            try
+            {                
+                switch (logLevel)
+                {                    
+                    case eLogLevel.DEBUG:
+                        log.Debug(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.ERROR:
+                        log.Error(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.FATAL:
+                        log.Fatal(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.INFO:
+                        log.Info(messageToLog, exceptionToLog);
+                        break;
+                    case eLogLevel.WARN:
+                        log.Warn(messageToLog, exceptionToLog);
+                        break;
+                    default:
+                        log.Info(messageToLog, exceptionToLog);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                //failed to write to log
+                throw (ex);
+            }
         }
         
-        // TODO: override WriteToConsole with color and...        
+        
     }
 }

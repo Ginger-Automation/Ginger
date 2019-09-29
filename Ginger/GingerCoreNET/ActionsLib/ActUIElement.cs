@@ -528,8 +528,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Mouse Drag Drop")]
             MouseDragDrop,
         }
-
-        eElementType mElementType;
+        
        
         public eElementType ElementType
         {

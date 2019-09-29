@@ -26,11 +26,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         bool ICLI.IsFileBasedConfig { get { return true; } }
 
-        public string Identifier
+        public string Verb
         {
             get
             {
-                return "Dynamic";
+                return DynamicOptions.Verb;
             }
         }
 
