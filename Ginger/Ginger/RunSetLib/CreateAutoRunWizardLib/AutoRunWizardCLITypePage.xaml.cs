@@ -46,7 +46,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                 case EventType.Init:
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;                    
                     BindingHandler.ObjFieldBinding(xConfigurationNameTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigName));
-                    xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);
+                    xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);                    
                     xConfigRadioButton.IsChecked = true;
                     break;
 
@@ -59,7 +59,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
         
         private void ShowContent()
         {
-            xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.ConfigFileContent;                    
+            xCLIContentTextBox.Text = mAutoRunWizard.AutoRunConfiguration.CLIContent;                    
         }
 
         private void ShowHelp()

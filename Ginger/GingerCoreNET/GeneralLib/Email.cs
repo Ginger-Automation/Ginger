@@ -322,7 +322,7 @@ namespace GingerCore.GeneralLib
                 if (!String.IsNullOrEmpty(MailCC))
                 {
                     Array arrCCEmails = MailCC.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string MailCC1 in arrCCEmails) //arrEmails) // Updated by Preeti for defect 2464
+                    foreach (string MailCC1 in arrCCEmails) 
                     {
                         myMail.CC.Add(MailCC1);
                     }

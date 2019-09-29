@@ -78,5 +78,6 @@ namespace Amdocs.Ginger.Common
         void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
 
         SourceControlBase GetNewSVnRepo();
+        void WaitForAutoRunWindowClose();
     }
 }

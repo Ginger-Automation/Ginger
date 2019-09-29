@@ -43,8 +43,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         private static void SetLocalHostIP()
         {
-            LocalHostIP = OSHelper.Current.GetFirstLocalHostIPAddress();
-            Console.WriteLine("Ginger local Services grid Host:IP = " + LocalHostIP);
+            LocalHostIP = OSHelper.Current.GetFirstLocalHostIPAddress();            
         }
 
         

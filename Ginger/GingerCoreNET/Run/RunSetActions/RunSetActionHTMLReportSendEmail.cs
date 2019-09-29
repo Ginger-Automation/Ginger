@@ -1191,7 +1191,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch(Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.WARN, "Error in GetImageStream", ex);
             }
             return arr;
         }

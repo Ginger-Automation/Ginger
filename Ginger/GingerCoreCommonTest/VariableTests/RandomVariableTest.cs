@@ -249,8 +249,10 @@ namespace GingerCoreCommonTest.VariableTests
             bool Hit5 = false;
             bool Hit10 = false;
 
-            //Act            
-            for (int i = 0; i < 100;i++ )
+            //Act   
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            // Run until we hit all numbers or 10 seconds
+            while (!(Hit0 && Hit5 && Hit10) && stopwatch.ElapsedMilliseconds < 10000)            
             {
                 variableRandomString.GenerateAutoValue();
                 Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");                
@@ -259,7 +261,7 @@ namespace GingerCoreCommonTest.VariableTests
                 if (variableRandomString.Value.Length == 10) Hit10 = true;                
             }
 
-            //Verify we hit the boundries at least once
+            //Verify we hit the boundaries at least once
             Assert.IsTrue(Hit0, "Hit0");
             Assert.IsTrue(Hit5, "Hit5");
             Assert.IsTrue(Hit10, "Hit10");
