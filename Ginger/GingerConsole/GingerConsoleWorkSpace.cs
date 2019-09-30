@@ -17,11 +17,13 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using System;
-// using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib;
-using System.Collections.Generic;
+using Amdocs.Ginger.Common;
 using Ginger.SolutionGeneral;
+using Ginger.SourceControl;
+using GingerCore.SourceControl;
+using GingerCoreNET.SourceControl;
+using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.GingerConsole
 {
@@ -39,8 +41,20 @@ namespace Amdocs.Ginger.GingerConsole
         }
 
         public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
-        {
-            Console.WriteLine("SetSolutionSourceControl " + solution + " NOT IMPL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        {            
+            SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
+            if (type == SourceControlBase.eSourceControlType.GIT)
+            {
+                solution.SourceControl = new GITSourceControl();
+            }
+            else if (type == SourceControlBase.eSourceControlType.SVN)
+            {
+                // FIXME after SVN moved to .net core
+
+                // solution.SourceControl = new SVNSourceControl();
+                                
+                Reporter.ToConsole(eLogLevel.ERROR, "Source Control of type SVN is not yet supported in GingerConsole");
+            }
         }
 
         public void ShowBusinessFlows()
@@ -65,7 +79,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         public void SolutionClosed()
         {
-            
+            Reporter.ToConsole(eLogLevel.INFO, "Solution Closed");
         }
     }
 }

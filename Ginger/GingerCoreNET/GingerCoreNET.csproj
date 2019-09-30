@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <None Remove="DLLS\LibGit2Sharp.dll" />
+    <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <None Remove="Reports\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
     <None Remove="Reports\Ginger-Web-Client\assets\images\SVG\action-big.svg" />
@@ -316,6 +317,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="log4netLib\log4net.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\HTMLTemplates\SkeletonHTMLReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -326,6 +330,8 @@
 
   <ItemGroup>
   
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+  
     <PackageReference Include="AutoMapper" Version="9.0.0" />
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
@@ -334,6 +340,8 @@
 	<PackageReference Include="LiteDB" Version="4.1.4" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
+  
+    <PackageReference Include="log4net" Version="2.0.8" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.4">
       <PrivateAssets>all</PrivateAssets>
