@@ -1006,7 +1006,7 @@ namespace GingerCore.Drivers.Appium
                     
                         break;
                     default:
-                        throw new Exception("Action unknown/Not Implemented in Driver: '" + this.GetType().ToString() + "'");
+                        throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
             }
             catch (Exception ex)

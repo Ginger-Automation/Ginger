@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.Run;
@@ -1198,12 +1199,26 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        private void xActionsConvertionMenuItem_Click(object sender, RoutedEventArgs e)
+        private void xLegacyActionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
             ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>() { mBusinessFlow };
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700, true);
+        }
+
+        private void xLegacyActionsRemoveMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (CheckIfExecutionIsInProgress()) return;
+
+            ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
+
+            BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
+            flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)mBusinessFlow;
+            lstBFToConvert.Add(flowToConvert);
+
+            ActionConversionUtils utils = new ActionConversionUtils();
+            utils.RemoveLegacyActionsHandler(lstBFToConvert);
         }
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)

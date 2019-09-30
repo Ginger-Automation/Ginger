@@ -109,7 +109,8 @@ namespace GingerCore.Actions
                 GetOrCreateInputParam(Fields.GotoURLType).Value = value.ToString();
             }
         }
-        private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
+
+        // private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
 
         private int mImplicitWait = 60;
         [IsSerializedForLocalRepository]

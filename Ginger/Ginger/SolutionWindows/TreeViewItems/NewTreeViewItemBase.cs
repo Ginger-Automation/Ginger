@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -506,11 +507,17 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
-                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
-                repoItem.RefreshSourceControlStatus();
+                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));                
                 sourceControlImage.Width = 8;
                 sourceControlImage.Height = 8;
                 stack.Children.Add(sourceControlImage);
+
+                // Since it might take time to get the item status from SCM server 
+                // we run it on task so update will happen when status come back and we do not block the UI
+                Task.Factory.StartNew(() =>
+                {
+                    repoItem.RefreshSourceControlStatus();
+                });
             }
 
             // Add Item Image            
@@ -573,12 +580,18 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
-                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));
-                repoItemFolder.RefreshFolderSourceControlStatus();
+                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));                
                 sourceControlImage.Width = 8;
                 sourceControlImage.Height = 8;
                 sourceControlImage.Margin = new Thickness(0, 0, 2, 0);
                 stack.Children.Add(sourceControlImage);
+
+                // Since it might take time to get the item status from SCM server 
+                // we run it on task so update will happen when status come back and we do not block the UI
+                Task.Factory.StartNew(() =>
+                {
+                    repoItemFolder.RefreshFolderSourceControlStatus();
+                });
             }
 
             // Add Item Image            

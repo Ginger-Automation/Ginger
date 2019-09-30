@@ -118,6 +118,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         string mItemNameField;
         string mItemDescriptionField;
+        string mItemErrorField;
         string mItemNameExtentionField;
         string mItemTagsField;
         string mItemIconField;
@@ -227,6 +228,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 mItemDescriptionField = ListHelper.GetItemDescriptionField();
                 mItemTagsField = ListHelper.GetItemTagsField();
+                mItemErrorField = ListHelper.GetItemErrorField();
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -577,7 +579,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetItemFullName();
             }
-            else if (e.PropertyName == mItemDescriptionField || e.PropertyName == mItemTagsField)
+            else if (e.PropertyName == mItemDescriptionField || e.PropertyName == mItemTagsField || e.PropertyName == mItemErrorField)
             {
                 SetItemDescription();
             }
@@ -710,26 +712,46 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
+                
                 try
                 {
                     string fullDesc = string.Empty;
-                    if (!string.IsNullOrEmpty(mItemDescriptionField))
+                    bool errorWasSet = false;
+                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    if (!string.IsNullOrEmpty(mItemErrorField))
                     {
-                        Object desc = Item.GetType().GetProperty(mItemDescriptionField).GetValue(Item);
-                        if (desc != null)
+                        Object error = Item.GetType().GetProperty(mItemErrorField).GetValue(Item);
+                        if (error != null)
                         {
-                            fullDesc += desc.ToString() + " ";
+                            fullDesc += error.ToString();
+                            xItemDescriptionTxtBlock.Foreground = FindResource("$FailedStatusColor") as Brush;
+                            xItemDescriptionTxtBlock.Text = "Error: " + fullDesc;
+                            xItemDescriptionTxtBlock.ToolTip = "Error: " + fullDesc;
+                            errorWasSet = true;
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(mItemTagsField))
+                    if (!errorWasSet)
                     {
-                        Object tags = Item.GetType().GetField(mItemTagsField).GetValue(Item);
-                        fullDesc += General.GetTagsListAsString((ObservableList<Guid>)tags) + " ";
-                    }
+                        if (!string.IsNullOrEmpty(mItemDescriptionField))
+                        {
+                            Object desc = Item.GetType().GetProperty(mItemDescriptionField).GetValue(Item);
+                            if (desc != null)
+                            {
+                                fullDesc += desc.ToString() + " ";
+                            }
+                        }
 
-                    xItemDescriptionTxtBlock.Text = fullDesc;
-                    xItemDescriptionTxtBlock.ToolTip = fullDesc;
+                        if (!string.IsNullOrEmpty(mItemTagsField))
+                        {
+                            Object tags = Item.GetType().GetField(mItemTagsField).GetValue(Item);
+                            fullDesc += General.GetTagsListAsString((ObservableList<Guid>)tags) + " ";
+                        }
+
+
+                        xItemDescriptionTxtBlock.Text = fullDesc;
+                        xItemDescriptionTxtBlock.ToolTip = fullDesc;
+                    }
                 }
                 catch (Exception ex)
                 {

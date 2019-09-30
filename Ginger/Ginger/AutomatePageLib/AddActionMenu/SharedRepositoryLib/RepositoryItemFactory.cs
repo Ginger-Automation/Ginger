@@ -19,10 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
-using Ginger.AnalyzerLib;
 using Ginger.GeneralLib;
 using Ginger.Reports;
 using Ginger.Run;
@@ -34,10 +32,8 @@ using GingerCore.Actions;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
-using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.ASCF;
-using GingerCore.Drivers.Common;
 using GingerCore.Drivers.ConsoleDriverLib;
 using GingerCore.Drivers.InternalBrowserLib;
 using GingerCore.Drivers.JavaDriverLib;
@@ -353,6 +349,16 @@ namespace Ginger.Repository
                     Thread.Sleep(100);  // run something on main window so we know it is active and pumping messages
             });
             }
+        }
+
+        public void WaitForAutoRunWindowClose()
+        {
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            while (mAutoRunWindow.IsVisible && stopwatch.ElapsedMilliseconds < 30000) // max 30 seconds to wait
+            {
+                Thread.Sleep(500);
+            }
+            
         }
 
         bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
@@ -713,6 +719,8 @@ namespace Ginger.Repository
         {
             return new SVNSourceControl();
         }
+
+
     }
     
 }

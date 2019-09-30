@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public interface ICLI
     {
-        string Identifier { get; }
+        string Verb { get; }
 
         string FileExtension { get; }
 

@@ -31,13 +31,13 @@ namespace Ginger.BusinessFlowPages
     /// <summary>
     /// Interaction logic for ActivityConfigurationsPage.xaml
     /// </summary>
-    public partial class ActivityConfigurationsPage : Page
+    public partial class ActivityDetailsPage : Page
     {
         Activity mActivity;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
 
-        public ActivityConfigurationsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
+        public ActivityDetailsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
@@ -66,6 +66,14 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTypeCombo.IsEnabled = false;
                 xErrorHandlerMappingCmb.IsEnabled = false;
                 xSpecificErrorHandlerBtn.IsEnabled = false;
+                xSharedRepoInstanceUC.IsEnabled = false;
+            }
+
+
+            if (mPageViewMode == Ginger.General.eRIPageViewMode.SharedReposiotry)
+            {
+                xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
         }
 
@@ -99,9 +107,10 @@ namespace Ginger.BusinessFlowPages
 
         private void BindControls()
         {
-            //Configurations Tab Bindings
+            //Details Tab Bindings
             xRunDescritpion.Init(mContext, mActivity, nameof(Activity.RunDescription));
             xRunOptionCombo.BindControl(mActivity, nameof(Activity.ActionRunOption));
+            xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
             GingerCore.General.FillComboFromEnumObj(xErrorHandlerMappingCmb, mActivity.ErrorHandlerMappingType);
             xTagsViewer.Init(mActivity.Tags);
             BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
