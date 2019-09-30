@@ -423,8 +423,20 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             foreach (var locateElement in locators.Where(x => x.Active == true).ToList())
             {
-                PayLoad PL = act.GetPayLoad(locateElement);
-                response = Send(PL);
+                PayLoad payLoad = null;
+                if (!locateElement.IsAutoLearned)
+                {
+                    ElementLocator evaluatedLocator = locateElement.CreateInstance() as ElementLocator;
+                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+                    payLoad = act.GetPayLoad(evaluatedLocator);
+                }
+                else
+                {
+                    payLoad = act.GetPayLoad(locateElement);
+                }
+
+                response = Send(payLoad);
 
                 //if isErrorPayLoad and Element is not found with current locater
                 if (response.IsErrorPayLoad() && response.GetValueInt().Equals(Convert.ToInt32(PayLoad.ErrorCode.ElementNotFound)))
