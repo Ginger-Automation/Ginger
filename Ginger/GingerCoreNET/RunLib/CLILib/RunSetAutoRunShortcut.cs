@@ -140,6 +140,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     prefix = "dotnet ";
                 }                
                 string command = prefix + "\"" + ExecuterFullPath + "\" " + args;
+                return command;
                 
             }
         }
