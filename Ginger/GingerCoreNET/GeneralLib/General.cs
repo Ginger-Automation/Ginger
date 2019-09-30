@@ -18,18 +18,20 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using log4net;
+using log4net.Config;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security;
 using System.Xml;
 
@@ -420,7 +422,11 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
+
+
+      
     }
+
 }
 
 

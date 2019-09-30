@@ -34,11 +34,11 @@
             <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,10,0,0">Configuration Name:</Label>
             <TextBox x:Name="xConfigurationNameTextBox" DockPanel.Dock="Top" Margin="0" Style="{StaticResource $TextBoxStyle}" Height="25"></TextBox>
 
-            <Label DockPanel.Dock="Top" Margin="-5,10,0,0" Content="Configuration Destination Path:" Style="{StaticResource $LabelStyle}"/>
+            <Label DockPanel.Dock="Top" Margin="-5,10,0,0" Content="Configuration Destination path" Style="{StaticResource $LabelStyle}"/>
             <Actions:UCValueExpression x:Name="xConfigurationPathTextbox" DockPanel.Dock="Top"/>
         </DockPanel>
 
-        <Label DockPanel.Dock="Top" Margin="-5,10,0,0" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Configuration Preview:</Label>
+        <Label DockPanel.Dock="Top" Margin="-5,10,0,0" HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Configuration Preview</Label>
         <TextBox x:Name="xCLIContentTextBox" DockPanel.Dock="Top" TextWrapping="Wrap" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">Configuration Preview</TextBox>
     </DockPanel>
 </Page>

@@ -67,7 +67,9 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         {
             List<string> usedVariables = new List<string>();
             foreach (Act action in activity.Acts)
+            {
                 VariableBase.GetListOfUsedVariables(action, ref usedVariables);
+            }
 
             for (int indx = 0; indx < usedVariables.Count; indx++)
             {

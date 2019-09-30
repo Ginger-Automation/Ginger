@@ -14,8 +14,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [TestClass]
     public class MultiRunTest
     {
-        static GingerGrid GG;
-        static SolutionRepository SR;
+        static GingerGrid GG;        
 
 
         [ClassInitialize]

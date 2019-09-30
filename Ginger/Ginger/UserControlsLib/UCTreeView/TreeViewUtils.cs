@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Core;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
-using GingerCore;
+using Ginger;
 using System;
 using System.Reflection;
 using System.Windows;
@@ -28,8 +28,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Ginger;
-using Amdocs.Ginger.Common;
 
 namespace GingerWPF.UserControlsLib.UCTreeView
 {

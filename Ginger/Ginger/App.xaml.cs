@@ -34,7 +34,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Threading;
 
-[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 namespace Ginger
 {
@@ -43,9 +42,7 @@ namespace Ginger
     /// </summary>
     public partial class App : Application
     {
-        //DO NOT REMOVE- Needed for Log to work
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger
-                                       (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        
         
         public new static MainWindow MainWindow { get; set; }
 
@@ -109,10 +106,6 @@ namespace Ginger
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
             
 
-            // Put back for Lazy load of BF.Acitvities
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities)); // TODO: add RI type, and use attr on field
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
 
             NewRepositorySerializer.AddClasses(list);
         }
@@ -239,25 +232,25 @@ namespace Ginger
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            Console.WriteLine("Starting Ginger");
-            Console.WriteLine("Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-            WorkSpace.Init(new WorkSpaceEventHandler());
+        {            
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
 
-            // add additional classed from Ginger and GingerCore
+            bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
+            WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
+
+            // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
 
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());            
+
             if (e.Args.Length != 0)
             {
                 WorkSpace.Instance.RunningInExecutionMode = true;
                 Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             }
 
-            //write Ginger start to log + console
-            Reporter.ToLog(eLogLevel.INFO, Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + " Started");
-            Reporter.ToLog(eLogLevel.INFO, "Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo);
-            
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();            
+
             if (e.Args.Length == 0)
             {
                 HideConsoleWindow();                
@@ -297,7 +290,7 @@ namespace Ginger
             cLIProcessor.ExecuteArgs(args);
 
             // do proper close !!!         
-            System.Windows.Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown(Environment.ExitCode);
         }
 
         public void StartGingerUI()

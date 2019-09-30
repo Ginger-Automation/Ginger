@@ -105,6 +105,16 @@ jobs:
       testResultsFormat: VSTest
       testResultsFiles: '**/DotNetFramework/*.trx'
   
+# ------------------------------------------------------------------------------------------------------
+# Package Ginger EXE
+# ------------------------------------------------------------------------------------------------------
+
+  - task: PowerShell@2
+    displayName: Package Ginger EXE
+    inputs:
+      filePath: PackageGingerEXE.ps1
+    condition: succeededOrFailed()
+
 
 # ------------------------------------------------------------------------------------------------------
 # PublishBuildArtifacts

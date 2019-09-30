@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="12675569-e0f8-45aa-ab87-055e3ae03053" ItemType="RunSetConfig" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.2.0.0" Version="3" LastUpdateBy="YARONWE" LastUpdate="201904021349" />
+<GingerRepositoryItem><Header ItemGuid="12675569-e0f8-45aa-ab87-055e3ae03053" ItemType="RunSetConfig" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.4.0.0" Version="4" LastUpdateBy="YARONWE" LastUpdate="201909061517" />
 <RunSetConfig Guid="12675569-e0f8-45aa-ab87-055e3ae03053" Name="Default Run Set" ParentGuid="00000000-0000-0000-0000-000000000000">
 <GingerRunners>
 <GingerRunner Guid="ea4ab086-67a3-44d3-a5e0-a310ba204fe2" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
@@ -12,7 +12,4 @@
 </BusinessFlowsRunList>
 </GingerRunner>
 </GingerRunners>
-
-<RunSetActions>
-</RunSetActions>
 </RunSetConfig></GingerRepositoryItem>
