@@ -102,6 +102,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(Act.ActionType);
         }
 
+        public string GetItemErrorField()
+        {
+            return nameof(Act.Error);
+        }
+
         public string GetItemExecutionStatusField()
         {
             if (PageViewMode == General.eRIPageViewMode.Automation)

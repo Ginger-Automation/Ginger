@@ -51,7 +51,7 @@ namespace Ginger.Actions.UserControls
             
             ShowBitmap();
 
-            HighLighterRectangle.Visibility = Visibility.Collapsed;
+            xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
         
         public ScreenShotViewPage(string Name, BitmapSource bitmapSource)
@@ -59,24 +59,29 @@ namespace Ginger.Actions.UserControls
             InitializeComponent();
 
             mBitmapSource = bitmapSource;
-
+            mName = Name;
+            if (string.IsNullOrEmpty(mName) == false)
+            {
+                xNameLabel.Content = mName;
+            }
+            else
+            {
+                xNameLabel.Content = "Image";
+            }
             if (bitmapSource != null)
             {
-                
-                SizeLabel.Content = bitmapSource.PixelHeight + "x" + bitmapSource.PixelWidth;
+                xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString(), bitmapSource.PixelHeight + "x" + bitmapSource.PixelWidth);
 
                 //Change the canvas to match bmp size
-                MainCanvas.Width = bitmapSource.PixelWidth;
-                MainCanvas.Height = bitmapSource.PixelHeight;
-                MainImage.Source = bitmapSource;
+                xMainCanvas.Width = bitmapSource.PixelWidth;
+                xMainCanvas.Height = bitmapSource.PixelHeight;
+                xMainImage.Source = bitmapSource;
             }
-
-            mName = Name;
-            NameLabel.Content = mName;
-            HighLighterRectangle.Visibility = Visibility.Collapsed;
+          
+            xHighLighterRectangle.Visibility = Visibility.Collapsed;
         }
 
-        public ScreenShotViewPage(string Name, System.Drawing.Bitmap bitmap)
+        public ScreenShotViewPage(string Name, System.Drawing.Bitmap bitmap, double initialZoom = 1)
         {
             InitializeComponent();
 
@@ -86,10 +91,15 @@ namespace Ginger.Actions.UserControls
                 ShowBitmap();
             }
             mName = Name;
-            HighLighterRectangle.Visibility = Visibility.Collapsed;
+            xHighLighterRectangle.Visibility = Visibility.Collapsed;
+
+            if (initialZoom != 1)
+            {
+                xZoomSlider.Value = initialZoom;
+            }
         }
 
-        public ScreenShotViewPage(string Name, String FilePath)
+        public ScreenShotViewPage(string Name, String FilePath, double initialZoom = 1)
         {
             InitializeComponent();
 
@@ -108,20 +118,25 @@ namespace Ginger.Actions.UserControls
             }
             mName = Name;
 
-            HighLighterRectangle.Visibility = Visibility.Collapsed;
+            xHighLighterRectangle.Visibility = Visibility.Collapsed;
+
+            if (initialZoom != 1)
+            {
+                xZoomSlider.Value = initialZoom;
+            }
         }
 
         private void ClearError()
         {
-            ErrorLabel.Visibility = Visibility.Collapsed;
-            MainScrollViewer.Visibility = Visibility.Visible;
+            xErrorLabel.Visibility = Visibility.Collapsed;
+            xMainScrollViewer.Visibility = Visibility.Visible;
         }
 
         private void ShowError(string err)
         {
-            ErrorLabel.Content = err;
-            ErrorLabel.Visibility = Visibility.Visible;
-            MainScrollViewer.Visibility = Visibility.Collapsed;
+            xErrorLabel.Content = err;
+            xErrorLabel.Visibility = Visibility.Visible;
+            xMainScrollViewer.Visibility = Visibility.Collapsed;
         }
 
         private BitmapImage GetBimapImageFromFile(String filePath)
@@ -135,21 +150,28 @@ namespace Ginger.Actions.UserControls
         }
 
         private void ShowBitmap()
-        {            
+        {
+            if (string.IsNullOrEmpty(mName) == false)
+            {
+                xNameLabel.Content = mName;
+            }
+            else
+            {
+                xNameLabel.Content = "Image";
+            }
             if (mBitmapImage != null)
             {
-                SizeLabel.Content = mBitmapImage.PixelHeight + "x" + mBitmapImage.PixelWidth;
+                xNameLabel.Content = string.Format("{0} ({1})", xNameLabel.Content.ToString() , mBitmapImage.PixelHeight + "x" + mBitmapImage.PixelWidth);
                 
                 //Change the canvas to match bmp size
-                MainCanvas.Width = mBitmapImage.PixelWidth; 
-                MainCanvas.Height = mBitmapImage.PixelHeight;
-                MainImage.Source = mBitmapImage;                
+                xMainCanvas.Width = mBitmapImage.PixelWidth; 
+                xMainCanvas.Height = mBitmapImage.PixelHeight;
+                xMainImage.Source = mBitmapImage;                
             }
             else
             {
                 ShowError("No Bitmap");
-            }
-            NameLabel.Content = mName;
+            }            
         }
 
         //TODO: move to general class
@@ -182,7 +204,7 @@ namespace Ginger.Actions.UserControls
         {
             if (!ShowEnlarge)
             {
-                EnlargeButton.Visibility = Visibility.Collapsed;
+                xEnlargeButton.Visibility = Visibility.Collapsed;
             }
             GenericWindow genWin = null;
             this.Height = 600;
@@ -205,41 +227,41 @@ namespace Ginger.Actions.UserControls
         //TODO: the zoom slider is dup with FlowDiagrmaPage - create User control to use for both
         private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.MainCanvas == null) return;  // will happen only at page load
+            if (this.xMainCanvas == null) return;  // will happen only at page load
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
-            this.MainCanvas.LayoutTransform = ST;
+            this.xMainCanvas.LayoutTransform = ST;
 
-            ZoomPercentLabel.Content = (int)(e.NewValue * 100) + "%";
+            xZoomPercentLabel.Content = (int)(e.NewValue * 100) + "%";
         }
 
         private void ZoomMinus_Click(object sender, RoutedEventArgs e)
         {
             // We reduce 0.1 and round it nicely to the nearest 10% - so it will go from 57% to 50% instaed of 47%
-            ZoomSlider.Value = Math.Round(ZoomSlider.Value * 10 - 1) / 10;
+            xZoomSlider.Value = Math.Round(xZoomSlider.Value * 10 - 1) / 10;
         }
 
         private void ZoomPlus_Click(object sender, RoutedEventArgs e)
         {
-            ZoomSlider.Value = Math.Round(ZoomSlider.Value * 10 + 1) / 10;
+            xZoomSlider.Value = Math.Round(xZoomSlider.Value * 10 + 1) / 10;
         }
 
         private void MainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {            
             if (MouseClickOnScreenshot != null)
             {
-                System.Windows.Point p = Mouse.GetPosition(MainImage);
-                MouseClickOnScreenshot.Invoke(MainImage, new MouseclickonScrenshot(p.X, p.Y));
+                System.Windows.Point p = Mouse.GetPosition(xMainImage);
+                MouseClickOnScreenshot.Invoke(xMainImage, new MouseclickonScrenshot(p.X, p.Y));
             }
         }
 
         internal void HighLight(int x, int y, int width, int height)
         {
-            HighLighterRectangle.Margin = new Thickness(x + MainImage.Margin.Left, y + MainImage.Margin.Top ,0,0);
-            HighLighterRectangle.Width = width;
-            HighLighterRectangle.Height = height;
-            HighLighterRectangle.Visibility = Visibility.Visible;
+            xHighLighterRectangle.Margin = new Thickness(x + xMainImage.Margin.Left, y + xMainImage.Margin.Top ,0,0);
+            xHighLighterRectangle.Width = width;
+            xHighLighterRectangle.Height = height;
+            xHighLighterRectangle.Visibility = Visibility.Visible;
         }
 
         internal void HighLight(Rectangle r)
@@ -250,13 +272,13 @@ namespace Ginger.Actions.UserControls
         // We can add controls on top of the screen shot - can be used for Mobile Driver and POM simulator
         public void AddControl(Control c, double X, Double Y)
         {
-            c.Margin = new Thickness(X + MainImage.Margin.Left, Y + MainImage.Margin.Top, 0, 0);
-            MainCanvas.Children.Add(c);
+            c.Margin = new Thickness(X + xMainImage.Margin.Left, Y + xMainImage.Margin.Top, 0, 0);
+            xMainCanvas.Children.Add(c);
         }
 
         public void ClearControls()
         {
-            MainCanvas.Children.Clear();
+            xMainCanvas.Children.Clear();
         }
 
         private void MainImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -264,8 +286,8 @@ namespace Ginger.Actions.UserControls
             
             if (MouseUpOnScreenshot != null)
             {
-                System.Windows.Point p = Mouse.GetPosition(MainImage);
-                MouseUpOnScreenshot.Invoke(MainImage, new MouseUponScrenshot(p.X, p.Y));
+                System.Windows.Point p = Mouse.GetPosition(xMainImage);
+                MouseUpOnScreenshot.Invoke(xMainImage, new MouseUponScrenshot(p.X, p.Y));
             }
         }
 
@@ -273,8 +295,8 @@ namespace Ginger.Actions.UserControls
         {
             if (MouseMoveOnScreenshot != null)
             {
-                System.Windows.Point p = Mouse.GetPosition(MainImage);
-                MouseMoveOnScreenshot.Invoke(MainImage, new MouseMoveonScrenshot(p.X, p.Y));
+                System.Windows.Point p = Mouse.GetPosition(xMainImage);
+                MouseMoveOnScreenshot.Invoke(xMainImage, new MouseMoveonScrenshot(p.X, p.Y));
             }
         }
     }
