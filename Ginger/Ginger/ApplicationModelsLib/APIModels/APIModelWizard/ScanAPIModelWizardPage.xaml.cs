@@ -88,7 +88,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Collapsed;
             xCompareBtnRow.Height = new GridLength(0);
 
-            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.DeltaModelsList;
+            xApisSelectionGrid.DataSourceList = new ObservableList<DeltaAPIModel>(AddAPIModelWizard.DeltaModelsList.OrderBy(d => d.comparisonStatus));
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

@@ -62,8 +62,6 @@ namespace GingerCoreNET.Application_Models
                 deltaAPIModelsList.Add(apiModelDelta);
             }
 
-            deltaAPIModelsList = new ObservableList<DeltaAPIModel>(deltaAPIModelsList.OrderBy(d => d.comparisonStatus));
-
             return deltaAPIModelsList;
         }
 

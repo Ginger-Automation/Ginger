@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoPilot\APILearningTests.cs" />
+    <Compile Include="AutoPilot\APIModelsCompareTest.cs" />
     <Compile Include="AutoPilot\ImportOptionalValuesTest.cs" />
     <Compile Include="AutoPilot\ParserTest.cs" />
     <Compile Include="CommLib\PayLoadTest.cs" />
