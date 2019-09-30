@@ -463,6 +463,23 @@ public class PayLoad {
         	return "err";
         }
     }
+	
+	public HashMap<String,String> GetKeyValue()
+    {
+		byte b = ReadValueType();
+		
+		//Verify it is String = 1
+        if (b == 8)
+        {                
+            HashMap<String,String> keypairvalue = ReadKeyValuePair();
+            return keypairvalue;
+        }
+		 else
+        {
+        	// TODO: throw
+        	return null;
+        }
+    }
 	  public String GetStringUTF16()
       {
 		  byte b = ReadValueType();
@@ -635,7 +652,7 @@ public class PayLoad {
         GingerAgent.WriteLog(s);
     }
     
-    public static PayLoad Error(String errorMessage,int errorCode) 
+    public static PayLoad Error(int errorCode,String errorMessage) 
     {
     	GingerAgent.WriteLog("Returing ERROR PayLoad: " + errorMessage);
     	

@@ -180,14 +180,5 @@ namespace GingerCore.Platforms.PlatformsInfo
             return null;
         }
 
-        public override string GetPageUrlRadioLabelText()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string GetNextBtnToolTip()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -115,8 +115,6 @@ namespace GingerCore.Actions.Common
             public static string WaitforIdle = "WaitforIdle";
             public static string IsWidgetsElement = "IsWidgetsElement";
             public static string IsMouseEvent = "IsMouseEvent";
-            public static string POMElementLocator = "POMElementLocator";
-            public static string POMElementLocateValue = "POMElementLocateValue";
 
             //used for TableElementAction
             public static string ControlAction = "ControlAction";
@@ -912,7 +910,7 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ElementLocator elementLocator=null)
         {
             string payLoadName = @"UIElementAction";
             if (Convert.ToBoolean(this.GetInputParamValue(Fields.IsWidgetsElement)))
@@ -931,6 +929,13 @@ namespace GingerCore.Actions.Common
                 }
             }
             PL.AddListPayLoad(PLParams);
+
+            //for Java POM Element
+            if(elementLocator != null)
+            {
+                PL.AddKeyValuePair(elementLocator.LocateBy.ToString(), elementLocator.LocateValue);
+            }
+            
             PL.ClosePackage();
 
             return PL;

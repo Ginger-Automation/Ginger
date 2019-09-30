@@ -422,11 +422,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             foreach (var locateElement in locators.Where(x => x.Active == true).ToList())
             {
-                act.AddOrUpdateInputParamValueAndCalculatedValue(ActUIElement.Fields.POMElementLocator, locateElement.LocateBy.ToString());
-                act.AddOrUpdateInputParamValueAndCalculatedValue(ActUIElement.Fields.POMElementLocateValue, locateElement.LocateValue.ToString());
-
-                PayLoad PL = act.GetPayLoad();
-
+                PayLoad PL = act.GetPayLoad(locateElement);
                 response = Send(PL);
 
                 //if isErrorPayLoad and Element is not found with current locater
@@ -1613,11 +1609,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                     resp = Send(Request);
                     List<PayLoad> lstResponse = resp.GetListPayLoad();
 
-                    foreach (PayLoad a in lstResponse)
+                    foreach (PayLoad payLoad in lstResponse)
                     {
-                        if (a.IsErrorPayLoad())
+                        if (payLoad.IsErrorPayLoad())
                         {
-                            String error = a.GetValueString();
+                            String error = payLoad.GetValueString();
                             if (error.IndexOf("ERROR: Handle : ") != -1)
                             {
                                 String ErrorTitle = error.Replace("ERROR: Handle : ", "");
@@ -1690,14 +1686,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                             {
                                 Byte[] screenShotbytes;
 
-                                if (a.Name == "HTMLScreenShot")
+                                if (payLoad.Name == "HTMLScreenShot")
                                 {
-                                    String sURL = a.GetValueString();
+                                    String sURL = payLoad.GetValueString();
                                     screenShotbytes = Convert.FromBase64String(sURL);
                                 }
                                 else
                                 {
-                                    screenShotbytes = a.GetBytes();
+                                    screenShotbytes = payLoad.GetBytes();
                                 }
 
                                 TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));

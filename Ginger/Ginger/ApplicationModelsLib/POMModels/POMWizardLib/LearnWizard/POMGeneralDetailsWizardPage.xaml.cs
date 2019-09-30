@@ -65,9 +65,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
                     xFrameBusinessFlowControl.Content = mBusinessFlowControl;
-                    SetDefaultPage();
                     break;
                 case EventType.Active:
+                    SetDefaultPage();
                     ShowScreenShot();
                     if (mWizard.ManualElementConfiguration)
                     {
@@ -96,6 +96,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
+        public void setPage()
+        {
+            SetDefaultPage();
+        }
         public void ShowScreenShot()
         {
             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);

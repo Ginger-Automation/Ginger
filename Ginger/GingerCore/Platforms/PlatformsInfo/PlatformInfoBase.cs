@@ -54,8 +54,14 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public abstract ObservableList<ElementLocator> GetLearningLocators();
 
-        public abstract string GetPageUrlRadioLabelText();
-        public abstract string GetNextBtnToolTip();
+        public virtual string GetPageUrlRadioLabelText()
+        {
+            return "URL";
+        }
+        public virtual string GetNextBtnToolTip()
+        {
+            return "Go To Page";
+        }
 
         public static PlatformInfoBase GetPlatformImpl(ePlatformType Platform)
         {

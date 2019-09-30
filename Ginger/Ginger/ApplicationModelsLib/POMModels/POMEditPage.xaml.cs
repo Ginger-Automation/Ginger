@@ -171,7 +171,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
             }
 
-            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform.Equals(WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey))).ToList();
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList();
             xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
 

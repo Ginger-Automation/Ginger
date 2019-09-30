@@ -138,7 +138,7 @@ function define_GingerLib() {
                     if (ErrorMessage == "")
                         ErrorMessage = "ERROR|Web Element not Found: " + LocateBy + " " + LocateValue;
 
-                    return new GingerErrorPayLoad(0, ErrorMessage);
+                    return new GingerErrorPayLoad(404, ErrorMessage);
                 }
 
                 if (IsMouseEvent.toLowerCase() == "true")
@@ -216,7 +216,7 @@ function define_GingerLib() {
                 if (img.indexOf("ERROR") == -1)
                     pl = new GingerPayLoad("HTMLScreenShot");
                 else {
-                    pl = new GingerErrorPayLoad(0, "Error");
+                    return new GingerErrorPayLoad(0, img);
                 }
 
 				pl.AddValueString(img);

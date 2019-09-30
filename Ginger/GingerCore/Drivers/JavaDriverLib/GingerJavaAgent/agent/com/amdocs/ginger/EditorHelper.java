@@ -197,7 +197,7 @@ public class EditorHelper {
 			if(CurrentTable==null)
 			{
 				GingerAgent.WriteLog("Editor table element not found");
-				return PayLoad.Error("Editor table element not found",PayLoad.ErrorCode.ElementNotFound.GetErrorCode());
+				return PayLoad.Error(PayLoad.ErrorCode.ElementNotFound.GetErrorCode(),"Editor table element not found");
 				
 			}
 			List<String> ColomumnNames = new ArrayList<String>();
@@ -258,7 +258,7 @@ public class EditorHelper {
 				nxtIndex = 2;
 			}
 			if (rowNum == -1)
-				return PayLoad.Error("Row not found with given Condition",PayLoad.ErrorCode.Unknown.GetErrorCode());
+				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Row not found with given Condition");
 
 			GingerAgent.WriteLog("getRowNum::" + rowNum);
 			
@@ -285,8 +285,8 @@ public class EditorHelper {
 				String colVal = cellLocator.get(nxtIndex + 1);
 				colNum = getColumnNum(CurrentTable, colBy, colVal);
 				if (colNum == -1)
-					return PayLoad.Error("Column not found with " + colBy + " :"
-							+ colVal,PayLoad.ErrorCode.Unknown.GetErrorCode());
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Column not found with " + colBy + " :"
+							+ colVal);
 			}
 			
 			 if (controlAction.equals("GetValue")) {			 
@@ -339,13 +339,13 @@ public class EditorHelper {
 					 }
 					 catch(Exception ex)
 					 {
-						 PayLoad.Error("Exception during set value of editor cell", PayLoad.ErrorCode.Unknown.GetErrorCode());
+						 PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Exception during set value of editor cell");
 					 }
 					 			 
 				 }
 				 else
 				 {
-					 return PayLoad.Error("Cell component not found",PayLoad.ErrorCode.Unknown.GetErrorCode());
+					 return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Cell component not found");
 				 }				 
 		}
 		else if (controlAction.equals("Click") || controlAction.equals("AsyncClick")) {
@@ -404,7 +404,7 @@ public class EditorHelper {
 								Thread.sleep(1);
 							}
 						} catch (Exception e) {
-							return PayLoad.Error("PayLoad ClickComponent Error: " + e.getMessage(),PayLoad.ErrorCode.Unknown.GetErrorCode());
+							return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"PayLoad ClickComponent Error: " + e.getMessage());
 						}
 						
 						
@@ -463,11 +463,11 @@ public class EditorHelper {
 				}
 			}	
 			if (response[0] == false)
-				return PayLoad.Error("Fail to perform click operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
+				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Fail to perform click operation");
 			else
 				return PayLoad.OK("Performed click operation");			
 		}
-		return PayLoad.Error("Unsupported operation",PayLoad.ErrorCode.Unknown.GetErrorCode());
+		return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Unsupported operation");
 	}
 	
 		private List<PayLoad> GetComponentProperties()
