@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using OpenQA.Selenium;
@@ -1572,6 +1573,11 @@ namespace GingerCore.Drivers.Appium
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
             return EI;
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

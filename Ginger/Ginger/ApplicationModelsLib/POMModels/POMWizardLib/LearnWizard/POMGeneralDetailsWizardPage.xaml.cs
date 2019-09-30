@@ -22,6 +22,8 @@ using Ginger;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.IO;
@@ -63,9 +65,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
                     mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
                     xFrameBusinessFlowControl.Content = mBusinessFlowControl;
-                    SetDefaultPage();
                     break;
                 case EventType.Active:
+                    SetDefaultPage();
                     ShowScreenShot();
                     if (mWizard.ManualElementConfiguration)
                     {
@@ -82,9 +84,22 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void SetDefaultPage()
         {
             xPageUrlRadioBtn.IsChecked = true;
+
             mBusinessFlowControl.TargetApplication = mWizard.mPomLearnUtils.POM.TargetApplicationKey.ItemName;
+
+            ePlatformType mAppPlatform = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+
+            PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(mAppPlatform);
+            if (platformInfoBase != null)
+            {
+                xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
+            }
         }
 
+        public void setPage()
+        {
+            SetDefaultPage();
+        }
         public void ShowScreenShot()
         {
             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);

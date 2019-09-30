@@ -59,16 +59,20 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             if (mElementLocatorsTypeList == null)
             {
+                //Arrange locator on priority basis
                 mElementLocatorsTypeList = new List<eLocateBy>();
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);
+                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
+                mElementLocatorsTypeList.Add(eLocateBy.ByName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
+                mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByTitle);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
-                mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSSSelector);
+                mElementLocatorsTypeList.Add(eLocateBy.ByValue);
             }
             return mElementLocatorsTypeList;
         }
@@ -478,6 +482,110 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mJavaPlatformElementActionslist;
         }
 
+        public List<ElementTypeData> GetPlatformElementTypesData()
+        {
+            if (mPlatformElementTypeOperations == null)
+            {
+                mPlatformElementTypeOperations = new List<ElementTypeData>();                
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Unknown,
+                    IsCommonElementType = false           
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Button,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ScrollBar,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ComboBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.RadioButton,
+                    IsCommonElementType = true
+                });
+               
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TextBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.CheckBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Image,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Label,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.List,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Table,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.MenuItem,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Window,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Tab,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.EditorPane,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TreeView,
+                    IsCommonElementType = true
+                });
+            }
+            return mPlatformElementTypeOperations;
+        }
+
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
             List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
@@ -573,7 +681,25 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            return null;
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();            
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
+            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Recommended (sensitive to page design changes)" });
+            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes)" });
+            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Recommended (sensitive to page design changes)" });            
+            
+
+            return learningLocatorsList;
+        }
+
+        public override string GetPageUrlRadioLabelText()
+        {
+            return "Window Title";
+        }
+
+        public override string GetNextBtnToolTip()
+        {
+            return "Switch Window";
         }
     }
 }

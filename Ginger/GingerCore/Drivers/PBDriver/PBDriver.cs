@@ -31,6 +31,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -1100,6 +1101,11 @@ namespace GingerCore.Drivers.PBDriver
         }
 
         public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
         }

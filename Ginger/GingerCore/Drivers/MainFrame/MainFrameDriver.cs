@@ -800,5 +800,10 @@ namespace GingerCore.Drivers.MainFrame
         {
             throw new NotImplementedException();
         }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
