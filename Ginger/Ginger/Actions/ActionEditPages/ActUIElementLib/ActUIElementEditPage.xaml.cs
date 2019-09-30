@@ -59,7 +59,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
+            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList,false);
 
             //if widgets element, only supported to java platform now.
             if (act.Platform.Equals(ePlatformType.Java))

@@ -38,7 +38,6 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import sun.awt.SunToolkit;
 import us.codecraft.xsoup.Xsoup;
 
@@ -198,7 +197,7 @@ public class EditorHelper {
 			if(CurrentTable==null)
 			{
 				GingerAgent.WriteLog("Editor table element not found");
-				return PayLoad.Error("Editor table element not found");
+				return PayLoad.Error(PayLoad.ErrorCode.ElementNotFound.GetErrorCode(),"Editor table element not found");
 				
 			}
 			List<String> ColomumnNames = new ArrayList<String>();
@@ -259,7 +258,7 @@ public class EditorHelper {
 				nxtIndex = 2;
 			}
 			if (rowNum == -1)
-				return PayLoad.Error("Row not found with given Condition");
+				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Row not found with given Condition");
 
 			GingerAgent.WriteLog("getRowNum::" + rowNum);
 			
@@ -286,7 +285,7 @@ public class EditorHelper {
 				String colVal = cellLocator.get(nxtIndex + 1);
 				colNum = getColumnNum(CurrentTable, colBy, colVal);
 				if (colNum == -1)
-					return PayLoad.Error("Column not found with " + colBy + " :"
+					return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Column not found with " + colBy + " :"
 							+ colVal);
 			}
 			
@@ -340,13 +339,13 @@ public class EditorHelper {
 					 }
 					 catch(Exception ex)
 					 {
-						 PayLoad.Error("Exception during set value of editor cell");
+						 PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Exception during set value of editor cell");
 					 }
 					 			 
 				 }
 				 else
 				 {
-					 return PayLoad.Error("Cell component not found");
+					 return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Cell component not found");
 				 }				 
 		}
 		else if (controlAction.equals("Click") || controlAction.equals("AsyncClick")) {
@@ -405,7 +404,7 @@ public class EditorHelper {
 								Thread.sleep(1);
 							}
 						} catch (Exception e) {
-							return PayLoad.Error("PayLoad ClickComponent Error: " + e.getMessage());
+							return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"PayLoad ClickComponent Error: " + e.getMessage());
 						}
 						
 						
@@ -464,11 +463,11 @@ public class EditorHelper {
 				}
 			}	
 			if (response[0] == false)
-				return PayLoad.Error("Fail to perform click operation");
+				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Fail to perform click operation");
 			else
 				return PayLoad.OK("Performed click operation");			
 		}
-		return PayLoad.Error("Unsupported operation");
+		return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Unsupported operation");
 	}
 	
 		private List<PayLoad> GetComponentProperties()

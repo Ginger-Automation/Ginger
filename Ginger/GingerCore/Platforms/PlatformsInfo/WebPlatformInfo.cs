@@ -538,18 +538,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             // We cache the results
             if (mElementLocatorsTypeList == null)
             {
+                //Arrange locator on priority basis
                 mElementLocatorsTypeList = new List<eLocateBy>();
                 mElementLocatorsTypeList.Add(eLocateBy.POMElement);
-                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByID);
+                mElementLocatorsTypeList.Add(eLocateBy.ByName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSS);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
                 mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);                                
-                mElementLocatorsTypeList.Add(eLocateBy.NA);
-                mElementLocatorsTypeList.Add(eLocateBy.ByName);
-                mElementLocatorsTypeList.Add(eLocateBy.Unknown);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByHref);
@@ -572,8 +570,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByContentDescription);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
                 mElementLocatorsTypeList.Add(eLocateBy.ByElementsRepository);
-                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSSSelector);
+                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);//???
+                mElementLocatorsTypeList.Add(eLocateBy.NA);
+                mElementLocatorsTypeList.Add(eLocateBy.Unknown);
             }
             return mElementLocatorsTypeList;
         }
@@ -626,5 +626,6 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             return learningLocatorsList;
         }
+
     }
 }

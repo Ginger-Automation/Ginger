@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
@@ -977,6 +978,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
         }

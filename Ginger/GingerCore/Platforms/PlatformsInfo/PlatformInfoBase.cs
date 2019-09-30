@@ -53,6 +53,16 @@ namespace GingerCore.Platforms.PlatformsInfo
         public abstract List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList();
 
         public abstract ObservableList<ElementLocator> GetLearningLocators();
+
+        public virtual string GetPageUrlRadioLabelText()
+        {
+            return "URL";
+        }
+        public virtual string GetNextBtnToolTip()
+        {
+            return "Go To Page";
+        }
+
         public static PlatformInfoBase GetPlatformImpl(ePlatformType Platform)
         {
             switch (Platform)
