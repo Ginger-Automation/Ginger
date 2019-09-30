@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     screenShotCountPerAction--;
                 }
             }
-            liteDbAction.ScreenShots = action.ScreenShots;
+            liteDbAction.ScreenShots = action.ScreenShots.ToList();
 
             isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
             if (isActExsits)

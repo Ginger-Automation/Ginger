@@ -234,7 +234,7 @@ namespace GingerCore.Drivers.PBDriver
                     break;
 
                     default:
-                        throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());                        
+                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());                        
                 }
             }
             catch (System.Runtime.InteropServices.COMException e)

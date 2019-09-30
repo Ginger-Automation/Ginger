@@ -111,16 +111,16 @@
                 <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
-            <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
+            <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
                             <UserControls:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                            <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xConfigurationsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                <Frame x:Name="xDetailsTabFrame" Content="Configurations" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
         </TabControl>
     </Grid>
