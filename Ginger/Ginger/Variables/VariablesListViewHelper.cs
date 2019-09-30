@@ -99,6 +99,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(VariableBase.Description);
         }
 
+        public string GetItemErrorField()
+        {
+            return null;
+        }
+
         public string GetItemNameExtentionField()
         {
             return nameof(VariableBase.Value);

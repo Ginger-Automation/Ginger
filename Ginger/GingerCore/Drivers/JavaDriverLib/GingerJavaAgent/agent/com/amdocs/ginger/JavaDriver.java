@@ -163,7 +163,8 @@ public class JavaDriver {
 		GetOptionalValuesList,
 		LocateElement,
 		GetEditorChildrens,
-		GetComponentFromCursor		
+		GetComponentFromCursor,
+		UnHighlight
 	}
 	
 
@@ -760,6 +761,10 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			}
 			return HighLightElement(c);
 			
+		}
+		else if(WindowExplorerOperationType.UnHighlight.toString().equals(operationType))
+		{			
+			return UnHighLightElement();
 		}
 		else if (WindowExplorerOperationType.GetCurrentWindowTitle.toString().equals(operationType))
 		{
@@ -2789,12 +2794,9 @@ private PayLoad GetComponentState(Component c)
 		}
 	
 	private PayLoad HighLightElement(Component c) {
-		// Restore border for previous highlighted component
-		if (CurrentHighlighedComponent != null)
-		{
-			((JComponent)CurrentHighlighedComponent).setBorder(CurrentHighlighedComponentOriginalBorder);
-		}
 		
+		// Restore border for previous highlighted component
+		UnHighLightElement();
 		if (!(c instanceof JComponent))
 		{			
 			GingerAgent.WriteLog("Component is not JComponent - " + c.getName());
@@ -2811,6 +2813,14 @@ private PayLoad GetComponentState(Component c)
 		return PayLoad.OK("Done");
 	}
 		
+	private PayLoad UnHighLightElement()
+	{
+		if (CurrentHighlighedComponent != null)
+		{
+			((JComponent)CurrentHighlighedComponent).setBorder(CurrentHighlighedComponentOriginalBorder);			
+		}
+		return PayLoad.OK("Done");
+	}
 	private PayLoad ClickComponent(final Component c,final String value,final int Timeout) {
 		 final String[] response = new String[3];
 

@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCoreNET.RosLynLib;
@@ -30,11 +29,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         string mScriptFile;
 
-        public string Identifier
+        public string Verb
         {
             get
             {
-                return "Script";
+                return ScriptOptions.Verb;
             }
         }
 

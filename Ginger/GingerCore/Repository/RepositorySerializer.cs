@@ -976,11 +976,11 @@ namespace GingerCore.Repository
             throw new Exception("Unknown Type for Short Type Name " + t.Name);
         }
 
-        public static object NewRepositorySerializer_NewRepositorySerializerEvent(NewRepositorySerilizerEventArgs EventArgs)
+        public static object NewRepositorySerializer_NewRepositorySerializerEvent(NewRepositorySerializerEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
-                case NewRepositorySerilizerEventArgs.eEventType.LoadWithOldSerilizerRequired:
+                case NewRepositorySerializerEventArgs.eEventType.LoadWithOldSerilizerRequired:
                     Reporter.ToLog(eLogLevel.DEBUG, string.Format("New Serializer is calling Old Serializer for loading the file: '{0}'", EventArgs.FilePath));
                     return DeserializeFromText(EventArgs.XML, EventArgs.TargetObj);
             }

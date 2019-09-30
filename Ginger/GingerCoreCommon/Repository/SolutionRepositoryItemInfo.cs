@@ -33,9 +33,9 @@ namespace Amdocs.Ginger.Repository
             {
                 if (!mDoneAllCache)                
                 {
-                    // We use lock since sevwral threads can request AllItems at the same time when it was not initialized yet
+                    // We use lock since several threads can request AllItems at the same time when it was not initialized yet
                     // if one thread start getting all items we want other threads to wait for it to complete 
-                    // so they dont get partial list while work is in progress                                        
+                    // so they don't get partial list while work is in progress                                        
                     lock (mAllItemsCacheLock)
                     {
                         if (!mDoneAllCache)// make sure all thread which were waiting just return back, only the first enry will do the work

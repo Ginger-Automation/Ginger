@@ -619,7 +619,38 @@ namespace GingerCore
             }
             else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
             {
-             //   throw new NotImplementedException("Implement adding mandatory configs for webservices");
+                DriverConfigParam DI = new DriverConfigParam();
+                DI.Parameter = "Save Request";
+                DI.Value = bool.FalseString;
+                DI.Description = "Save Request";
+
+                DI.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI);
+
+
+                DriverConfigParam DI2 = new DriverConfigParam();
+                DI2.Parameter = "Save Response";
+                DI2.Value = bool.TrueString;
+                DI2.Description = "Save Response";
+
+                DI2.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI2);
+
+
+                DriverConfigParam DI3 = new DriverConfigParam();
+                DI3.Parameter = "Path To Save";
+                DI3.Value = @"~\Documents";
+                DI3.Description = "Path to Save Request/Response Files";
+
+                DI3.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI3);
+
+
+            
+       
             }
         }
         private void SetDriverDefualtParams(Type t)

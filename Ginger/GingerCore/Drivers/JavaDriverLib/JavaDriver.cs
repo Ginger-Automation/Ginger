@@ -83,7 +83,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private bool IsTryingToConnect;
         private Boolean mIsResetTimeout = false;
         public bool LogCommunication { get; set; }
-        private DispatcherTimer mGetRecordingTimer;
+        private DispatcherTimer mGetRecordingTimer;       
 
         public override bool IsWindowExplorerSupportReady()
         {
@@ -127,7 +127,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             Echo,
             GetProperties,
             GetOptionalValuesList,
-            LocateElement
+            LocateElement,
+            UnHighlight
         }
         public override void StartDriver()
         {
@@ -550,7 +551,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver -> " + this.GetType().ToString());                    
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());                    
             }
 
             if (Response != null)
@@ -1871,6 +1872,10 @@ namespace GingerCore.Drivers.JavaDriverLib
                     ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
                     ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);                    
                     ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
+                    if (ci.OptionalValuesObjectsList.Count > 0)
+                    {
+                        ci.OptionalValuesObjectsList[0].IsDefault = true;                        
+                    }
                     // set the Flag in case you wish to learn the element or not
                     bool learnElement = true;                    
                     if (filteredElementType != null)
@@ -1882,33 +1887,33 @@ namespace GingerCore.Drivers.JavaDriverLib
                     {
                         ci.IsAutoLearned = true;
                         foundElementsList.Add(ci);
-                        List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
-                        if (ci.ElementTypeEnum == eElementType.Browser)
-                        {
-                            PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
-                            String flag = PL.GetValueString();
+                        //List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                        //if (ci.ElementTypeEnum == eElementType.Browser)
+                        //{
+                        //    PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
+                        //    String flag = PL.GetValueString();
 
-                            if (flag.Contains("True"))
-                            {
-                                InitializeBrowser(ci);
+                        //    if (flag.Contains("True"))
+                        //    {
+                        //        InitializeBrowser(ci);
 
-                                HTMLControlsPL = GetBrowserVisibleControls();                                                                 
-                            }
-                        }
-                        //TODO: J.G. use elementTypeEnum instead of contains
-                        else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
-                        {
-                            InitializeJEditorPane(ci);
-                            HTMLControlsPL = GetBrowserVisibleControls();                           
-                        }
-                        if (HTMLControlsPL != null)
-                        {
-                            foreach (ElementInfo item in HTMLControlsPL)
-                            {
-                                item.IsAutoLearned = true;
-                                foundElementsList.Add(item);
-                            }
-                        }
+                        //        HTMLControlsPL = GetBrowserVisibleControls();                                                                 
+                        //    }
+                        //}
+                        ////TODO: J.G. use elementTypeEnum instead of contains
+                        //else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
+                        //{
+                        //    InitializeJEditorPane(ci);
+                        //    HTMLControlsPL = GetBrowserVisibleControls();                           
+                        //}
+                        //if (HTMLControlsPL != null)
+                        //{
+                        //    foreach (ElementInfo item in HTMLControlsPL)
+                        //    {
+                        //        item.IsAutoLearned = true;
+                        //        foundElementsList.Add(item);
+                        //    }
+                        //}
                     }
                 }
             }           
@@ -2200,7 +2205,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 }
            // Request.AddValue("");  // Why?          
             Request.ClosePackage();
-                Send(Request);
+                Send(Request);               
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
@@ -3112,9 +3117,23 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         void IWindowExplorer.UnHighLightElements()
         {
-            //throw new NotImplementedException();
+            UnhighlightLast();
         }
 
+        public void UnhighlightLast()
+        {
+            try
+            {               
+                PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                Request.AddEnumValue(WindowExplorerOperationType.UnHighlight);                            
+                Request.ClosePackage();
+                Send(Request);             
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "failed to un-highlight object", ex);
+            }
+        }
         public bool TestElementLocators(ElementInfo EI, bool GetOutAfterFoundElement = false)
         {
             try
@@ -3300,7 +3319,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             foreach (string res in RespListDetails.GetListString())
             {
                 props.Add(new OptionalValue { Value = res, IsDefault = false });
-            }
+            }            
             return props;
         }
     }

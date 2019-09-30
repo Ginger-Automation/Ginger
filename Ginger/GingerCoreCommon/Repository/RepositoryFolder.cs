@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -253,7 +254,7 @@ namespace Amdocs.Ginger.Repository
         // Generic handling for any RI type
         // This is recursive function which run in parallel for extreme speed, be careful! 
         private ObservableList<T> LoadFolderFiles(string Folder = null)
-        {
+        {            
             // for each file we check if in cache return from cache else load from file system and cache the item             
 
             string FullPath = SolutionRepository.GetFolderFullPath(Folder);
@@ -296,8 +297,11 @@ namespace Amdocs.Ginger.Repository
 
         T LoadItemfromFile(string fileName, string containingFolder)
         {
+            Stopwatch st = Stopwatch.StartNew();
             T item = (T)SolutionRepository.RepositorySerializer.DeserializeFromFileObj(typeof(T), fileName);
             SetRepositoryItemInfo(item, fileName, containingFolder);
+            st.Stop();
+            Reporter.ToLog(eLogLevel.DEBUG, "LoadItemfromFile: '" + fileName + "' elapsed=" + st.ElapsedMilliseconds);
             return item;
         }
 
@@ -398,7 +402,7 @@ namespace Amdocs.Ginger.Repository
                     RepositoryFolder<T> sf = GetSubFolder(fn);
                     sf.DisplayName = e.Name;
                     sf.FolderRelativePath = ReplaceLastOccurrence(sf.FolderRelativePath, fn, e.Name);
-                    sf.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                    sf.RefreshFolderSourceControlStatus();
                     return;
                 }
 

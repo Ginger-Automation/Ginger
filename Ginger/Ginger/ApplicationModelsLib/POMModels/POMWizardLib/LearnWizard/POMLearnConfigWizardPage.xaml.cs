@@ -113,9 +113,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         }
                         break;
                     case ePlatformType.Java:
-                        foreach (eElementType eElementType in new JavaPlatform().GetPlatformUIElementsType().ToList())
+                        foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new JavaPlatform().GetPlatformElementTypesData().ToList())
                         {
-                            mWizard.mPomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(eElementType, string.Empty, true));
+                            mWizard.mPomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
                         }
                         break;
                 }

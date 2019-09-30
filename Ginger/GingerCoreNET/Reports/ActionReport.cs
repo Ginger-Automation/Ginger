@@ -340,7 +340,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Section)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public List<string> ScreenShots { get { return mAction != null ? mAction.ScreenShots : screenShotsList; } set { screenShotsList = value; } }
+        public List<string> ScreenShots { get { return mAction != null ? mAction.ScreenShots.ToList() : screenShotsList; } set { screenShotsList = value; } }
 
         public bool Active { get { return mAction.Active; } }
 

@@ -107,6 +107,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GingerCore\DLLs\ALM_Common.dll</HintPath>
     </Reference>
+    <Reference Include="CommandLine, Version=2.6.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.6.0\lib\net461\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="De.TorstenMandelkow.MetroChart, Version=0.9.5818.20693, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ModernUICharts.WPF.Beta.0.9.1\lib\De.TorstenMandelkow.MetroChart.dll</HintPath>
     </Reference>
@@ -566,6 +569,9 @@
     <Compile Include="Agents\ucAgentControl.xaml.cs">
       <DependentUpon>ucAgentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\APIModelsCompareMergePage.xaml.cs">
+      <DependentUpon>APIModelsCompareMergePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml.cs">
@@ -597,8 +603,8 @@
     <Compile Include="Activities\ActivitiesGroupSelectionPage.xaml.cs">
       <DependentUpon>ActivitiesGroupSelectionPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Activities\ActivityConfigurationsPage.xaml.cs">
-      <DependentUpon>ActivityConfigurationsPage.xaml</DependentUpon>
+    <Compile Include="Activities\ActivityDetailsPage.xaml.cs">
+      <DependentUpon>ActivityDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\ActionsFactory.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\ActionsLibrary\ActionsLibraryNavPage.xaml.cs">
@@ -2921,6 +2927,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ApplicationModelsLib\APIModels\APIModelWizard\APIModelsCompareMergePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ApplicationModelsLib\APIModels\APIModelWizard\ScanAPIModelWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -3041,7 +3051,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Activities\ActivityConfigurationsPage.xaml">
+    <Page Include="Activities\ActivityDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

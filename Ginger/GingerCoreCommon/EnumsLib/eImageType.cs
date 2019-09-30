@@ -155,6 +155,7 @@ namespace Amdocs.Ginger.Common.Enums
         ExpandAll,
         CollapseAll,
         ActiveAll,
+        ExpandToFullScreen,
         Exchange,
         Export,
         Filter,

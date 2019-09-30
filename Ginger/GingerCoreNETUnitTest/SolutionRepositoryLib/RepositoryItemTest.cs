@@ -28,8 +28,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
     [Level1]
     [TestClass]
     public class RepositoryItemTest
-    {        
-        static WorkSpace mWorkSpace;
+    {                
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)

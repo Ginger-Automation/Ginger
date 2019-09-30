@@ -24,8 +24,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
     {
         static TestHelper mTestHelper = new TestHelper();
         public TestContext TestContext { get; set; }
-
-        static GingerGrid GG;
+        
         static Agent agent;
 
         [ClassInitialize]
