@@ -109,7 +109,7 @@ namespace Amdocs.Ginger.CoreNET
                         //if activity not active then check if all the actions are obsolete then remove the complete activity
                         if (!activity.Active)
                         {
-                            var count = activity.Acts.Where(act => (act is IObsoleteAction) &&
+                            var count = activity.Acts.Where(act => !act.Active && (act is IObsoleteAction) &&
                                                             (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform))).Count();
                             
                             //Checks if the activity have all the action as obsolete then removes activity directly
@@ -127,7 +127,7 @@ namespace Amdocs.Ginger.CoreNET
                             for (int actIndex = 0; actIndex < activity.Acts.Count; actIndex++)
                             {
                                 Act act = (Act)activity.Acts[actIndex];
-                                if (((act is IObsoleteAction) &&
+                                if (((act.Active == false) && (act is IObsoleteAction) &&
                                    (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform))))
                                 {
                                     activity.Acts.RemoveAt(actIndex);

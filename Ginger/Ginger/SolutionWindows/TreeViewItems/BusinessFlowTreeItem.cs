@@ -108,8 +108,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Exchange);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Reject);
 
                 AddSourceControlOptions(mContextMenu);
 
@@ -130,14 +130,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
             }
-            else
-            {
-                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
-                foreach (var bf in items)
-                {
-                    lst.Add(bf);
-                }
-            }
 
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700, true);
         }
@@ -155,16 +147,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
                 flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject();
                 lstBFToConvert.Add(flowToConvert);
-            }
-            else
-            {
-                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
-                foreach (var bf in items)
-                {
-                    BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
-                    flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)bf;
-                    lstBFToConvert.Add(flowToConvert);
-                }
             }
 
             ActionConversionUtils utils = new ActionConversionUtils();
