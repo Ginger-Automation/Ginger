@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -367,7 +368,7 @@ namespace GingerCore.Actions.WebAPI
                     }
                 }
 
-                string FileFullPath = SaveToFile("Request", RequestFileContent, SaveDirectory);
+                string FileFullPath = Webserviceplatforminfo.SaveToFile("Request", RequestFileContent, SaveDirectory,mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Request File Name", Path.GetFileName(FileFullPath));
             }
         }
@@ -416,60 +417,7 @@ namespace GingerCore.Actions.WebAPI
             return Encoding.Default.GetString(data);
         }
 
-        private string SaveToFile(string fileType, string fileContent, string saveDirectory)
-        {
-            string extension = string.Empty;
-            string contentType = string.Empty;
-            string actName = string.Empty;
-
-            if (fileType == "Request")
-            {
-                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType);
-            }
-            else if (fileType == "Response")
-            {
-                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType);
-            }
-
-            if (contentType == ApplicationAPIUtils.eContentType.XML.ToString())
-            {
-                extension = "xml";
-            }
-            else if (contentType == ApplicationAPIUtils.eContentType.JSon.ToString())
-            {
-                extension = "json";
-            }
-            else if (contentType == ApplicationAPIUtils.eContentType.PDF.ToString())
-            {
-                extension = "pdf";
-            }
-            else
-            {
-                extension = "txt";
-            }
-               
-            string directoryFullPath =Path.Combine(saveDirectory.Replace("~//", mAct.SolutionFolder), fileType + "s");
-            if (!Directory.Exists(directoryFullPath))
-            {
-                Directory.CreateDirectory(directoryFullPath);
-            }
-
-            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
-            actName = PathHelper.CleanInValidPathChars(mAct.Description);            
-            string fullFileName =Path.Combine(directoryFullPath, actName +"_"+ timeStamp + "_" + fileType + "." + extension);
-
-            if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
-            {
-                File.WriteAllText(fullFileName, fileContent);
-            }
-            else
-            {
-                byte[] bytes = Encoding.Default.GetBytes(fileContent);
-                File.WriteAllBytes(fullFileName, bytes);
-            }
-
-            return fullFileName;
-        }
+       
 
         public bool ValidateResponse()
         {
@@ -561,7 +509,7 @@ namespace GingerCore.Actions.WebAPI
 
                 ResponseFileContent = Amdocs.Ginger.Common.XMLDocExtended.PrettyXml(ResponseFileContent);
 
-                string FileFullPath = SaveToFile("Response", ResponseFileContent, savePath);
+                string FileFullPath = Webserviceplatforminfo.SaveToFile("Response", ResponseFileContent, savePath, mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FileFullPath));
             }
         }
