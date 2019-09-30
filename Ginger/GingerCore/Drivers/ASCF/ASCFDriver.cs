@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -1456,6 +1457,11 @@ namespace GingerCore.Drivers.ASCF
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
             return EI;
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }
