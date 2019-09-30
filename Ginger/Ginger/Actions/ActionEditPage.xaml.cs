@@ -146,34 +146,41 @@ namespace Ginger.Actions
 
             GingerHelpProvider.SetHelpString(this, act.ActionDescription);
 
-            UpdateTabsHeaders();
-            BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+            InitView();
+        }
 
-            if (editMode == General.eRIPageViewMode.View)
+        private void InitView()
+        {
+            UpdateTabsHeaders();
+
+            //allowing return values automatically in Edit Action window
+            if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
+            {
+                mAction.AddNewReturnParams = true;
+            }
+
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
+            {
+                BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+            }
+            else
+            {
+                xExecutionStatusTabImage.Visibility = Visibility.Collapsed;
+            }
+
+            if (EditMode == General.eRIPageViewMode.View)
             {
                 SetViewMode();
             }
-            else if (editMode == General.eRIPageViewMode.Automation)
+            else if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
+                       (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
-                if (mAction.Status == null || mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
-                {
-                    xActionTabs.SelectedItem = xOperationSettingsTab;
-                }
-                else
-                {
-                    xActionTabs.SelectedItem = xExecutionReportTab;
-                }
+                xActionTabs.SelectedItem = xExecutionReportTab;
             }
-
-            
-        }
-
-        private void ScreenShots_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            this.Dispatcher.Invoke(() =>
+            else
             {
-                UpdateScreenShots();                
-            });
+                xActionTabs.SelectedItem = xOperationSettingsTab;
+            }
         }
 
         private void InitDetailsTabView()
@@ -214,7 +221,7 @@ namespace Ginger.Actions
             SwitchingInputValueBoxAndGrid(mAction);
             SetActInputValuesGrid();
 
-            LoadActionPrivateEditPage(mAction);
+            LoadOperationSettingsEditPage(mAction);
         }
 
         private void InitFlowControlTabView()
@@ -289,12 +296,7 @@ namespace Ginger.Actions
 
             //Output Values
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
-            xOutputValuesGrid.AddSeparator();
-            //allowing return values automatically in Edit Action window
-            if (mAction.AddNewReturnParams == null && mAction.ReturnValues.Count() == 0)
-            {
-                mAction.AddNewReturnParams = true;
-            }
+            xOutputValuesGrid.AddSeparator();           
 
             xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
@@ -313,33 +315,44 @@ namespace Ginger.Actions
         {
             xExecutionReportTab.Tag = true;//marking that bindings were done           
 
+            //configs section
             xStatusConvertorCombo.BindControl(mAction, nameof(Act.StatusConverter));
             BindingHandler.ObjFieldBinding(xFailIgnoreCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.FailIgnored));
 
             BindingHandler.ObjFieldBinding(xEnableActionLogConfigCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.EnableActionLogConfig));
             InitActionLog();
 
-            BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
-            BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
-            UpdateExecutionStatusControls();
-
-            BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);
-            BindingHandler.ObjFieldBinding(xExecutionExtraInfoPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.ExInfo), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
-
-            BindingHandler.ObjFieldBinding(xExecutionErrorDetailsText, TextBox.TextProperty, mAction, nameof(Act.Error), BindingMode.OneWay);
-            BindingHandler.ObjFieldBinding(xExecutionErrorDetailsPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.Error), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
-
-            if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
+            //execution details section
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
             {
-                xScreenshotsConfigsPnl.Visibility = Visibility.Collapsed;
-                xScreenShotsPnl.Visibility = Visibility.Collapsed;
+
+
+                BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
+                BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
+                UpdateExecutionStatusControls();
+
+                BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);
+                BindingHandler.ObjFieldBinding(xExecutionExtraInfoPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.ExInfo), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
+
+                BindingHandler.ObjFieldBinding(xExecutionErrorDetailsText, TextBox.TextProperty, mAction, nameof(Act.Error), BindingMode.OneWay);
+                BindingHandler.ObjFieldBinding(xExecutionErrorDetailsPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.Error), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
+
+                if (mActParentActivity != null && mActParentActivity.GetType() == typeof(ErrorHandler))
+                {
+                    xScreenshotsConfigsPnl.Visibility = Visibility.Collapsed;
+                    xScreenShotsPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
+                    xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
+                    SetScreenshotsPnlView();
+                    UpdateScreenShots();
+                }
             }
             else
             {
-                BindingHandler.ObjFieldBinding(xTakeScreenShotCheckBox, CheckBox.IsCheckedProperty, mAction, nameof(Act.TakeScreenShot));
-                xWindowsToCaptureCombo.BindControl(mAction, nameof(Act.WindowsToCapture));
-                SetScreenshotsPnlView();
-                UpdateScreenShots();
+                xExecutionDetailsExpander.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -351,6 +364,13 @@ namespace Ginger.Actions
             xActionHelpDetailsFram.SetContent(desPage);
         }
 
+        private void ScreenShots_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                UpdateScreenShots();
+            });
+        }
 
         public void StopEdit()
         {
@@ -681,7 +701,7 @@ namespace Ginger.Actions
             xInputValuesGrid.DataSourceList = mAction.InputValues;
         }
 
-        private void LoadActionPrivateEditPage(Act a)
+        private void LoadOperationSettingsEditPage(Act a)
         {
             //Each Action need to implement ActionEditPage which return the name of the page for edit
             //TODO: check all action are working and showing the correct Edit Page
@@ -777,79 +797,79 @@ namespace Ginger.Actions
         //    Mouse.OverrideCursor = null;
         //}
 
-        private async void RunActionInSimulationButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
-            mContext.Runner.RunInSimulationMode = true;
+        //private async void RunActionInSimulationButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
+        //    mContext.Runner.RunInSimulationMode = true;
 
-            int res = await RunAction().ConfigureAwait(false);
+        //    int res = await RunAction().ConfigureAwait(false);
 
-            mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
-        }
+        //    mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
+        //}
 
-        private async void RunActionButton_Click(object sender, RoutedEventArgs e)
-        {
-            bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
-            mContext.Runner.RunInSimulationMode = false;
+        //private async void RunActionButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool originalSimulationFlagValue = mContext.Runner.RunInSimulationMode;
+        //    mContext.Runner.RunInSimulationMode = false;
 
-            int res = await RunAction().ConfigureAwait(false);
+        //    int res = await RunAction().ConfigureAwait(false);
 
-            mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
-        }
+        //    mContext.Runner.RunInSimulationMode = originalSimulationFlagValue;
+        //}
 
-        private void StopRunBtn_Click(object sender, RoutedEventArgs e)
-        {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.StopRun, null);
-        }
+        //private void StopRunBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.StopRun, null);
+        //}
 
-        private void ShowHideRunStopButtons()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
-                {
-                    mRunActionBtn.Visibility = Visibility.Collapsed;
-                    mStopRunBtn.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    mRunActionBtn.Visibility = Visibility.Visible;
-                    mStopRunBtn.Visibility = Visibility.Collapsed;
-                }
-            });
-        }
+        //private void ShowHideRunStopButtons()
+        //{
+        //    this.Dispatcher.Invoke(() =>
+        //    {
+        //        if (mAction.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+        //        {
+        //            mRunActionBtn.Visibility = Visibility.Collapsed;
+        //            mStopRunBtn.Visibility = Visibility.Visible;
+        //        }
+        //        else
+        //        {
+        //            mRunActionBtn.Visibility = Visibility.Visible;
+        //            mStopRunBtn.Visibility = Visibility.Collapsed;
+        //        }
+        //    });
+        //}
 
-        private async Task<int> RunAction()
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                mAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                if (mAction.GetType() == typeof(ActLowLevelClicks))
-                    App.MainWindow.WindowState = WindowState.Minimized;
-                mAction.IsSingleAction = true;
+        //private async Task<int> RunAction()
+        //{
+        //    this.Dispatcher.Invoke(() =>
+        //    {
+        //        mAction.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+        //        if (mAction.GetType() == typeof(ActLowLevelClicks))
+        //            App.MainWindow.WindowState = WindowState.Minimized;
+        //        mAction.IsSingleAction = true;
 
-                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
+        //        App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
 
-                //No need for agent for some actions like DB and read for excel. For other need agent   
-                if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
-                {
-                    mContext.Runner.SetCurrentActivityAgent();
-                }
+        //        //No need for agent for some actions like DB and read for excel. For other need agent   
+        //        if (!(typeof(ActWithoutDriver).IsAssignableFrom(mAction.GetType())))
+        //        {
+        //            mContext.Runner.SetCurrentActivityAgent();
+        //        }
 
-                mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-            });
+        //        mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+        //    });
 
-            var result = await mContext.Runner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
+        //    var result = await mContext.Runner.RunActionAsync(mAction, false, true).ConfigureAwait(false);
 
-            this.Dispatcher.Invoke(() =>
-            {
-                mAction.IsSingleAction = false;
-                //UpdateTabsHeaders();
-                //UpdateScreenShots();
-                Mouse.OverrideCursor = null;
-            });
-            return result;
-        }
+        //    this.Dispatcher.Invoke(() =>
+        //    {
+        //        mAction.IsSingleAction = false;
+        //        //UpdateTabsHeaders();
+        //        //UpdateScreenShots();
+        //        Mouse.OverrideCursor = null;
+        //    });
+        //    return result;
+        //}
 
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
@@ -910,34 +930,23 @@ namespace Ginger.Actions
             {
                 case General.eRIPageViewMode.Automation:
                     winButtons.Add(okBtn);
-                    winButtons.Add(undoBtn);
+                    //winButtons.Add(undoBtn);
 
-                    //Button nextAction = new Button();
-                    //nextAction.Content = "Next Action";
-                    //nextAction.Click += new RoutedEventHandler(NextActionButton_Click);
-                    //nextAction.Margin = new Thickness(0, 0, 60, 0);
-                    //winButtons.Add(nextAction);
-                    //Button prevAction = new Button();
-                    //prevAction.Content = "Previous Action";
-                    //prevAction.Click += new RoutedEventHandler(PrevActionButton_Click);
-                    //winButtons.Add(prevAction);
+                    //mRunActionBtn.Content = "Run";
+                    //mRunActionBtn.Click += new RoutedEventHandler(RunActionButton_Click);
+                    //mRunActionBtn.Margin = new Thickness(0, 0, 60, 0);
+                    //winButtons.Add(mRunActionBtn);
+                    //mSimulateRunBtn.Content = "Simulate Run";
+                    //mSimulateRunBtn.Click += new RoutedEventHandler(RunActionInSimulationButton_Click);
+                    //ShowHideRunSimulation();
+                    //winButtons.Add(mSimulateRunBtn);
 
-                    mRunActionBtn.Content = "Run";
-                    mRunActionBtn.Click += new RoutedEventHandler(RunActionButton_Click);
-                    mRunActionBtn.Margin = new Thickness(0, 0, 60, 0);
-                    winButtons.Add(mRunActionBtn);
-                    mSimulateRunBtn.Content = "Simulate Run";
-                    mSimulateRunBtn.Click += new RoutedEventHandler(RunActionInSimulationButton_Click);
-                    ShowHideRunSimulation();
-                    winButtons.Add(mSimulateRunBtn);
-
-                    mStopRunBtn.Content = "Stop";
-                    mStopRunBtn.Click += new RoutedEventHandler(StopRunBtn_Click);
-                    mStopRunBtn.Margin = new Thickness(0, 0, 60, 0);
-                    winButtons.Add(mStopRunBtn);
-                    mStopRunBtn.Visibility = Visibility.Collapsed;
+                    //mStopRunBtn.Content = "Stop";
+                    //mStopRunBtn.Click += new RoutedEventHandler(StopRunBtn_Click);
+                    //mStopRunBtn.Margin = new Thickness(0, 0, 60, 0);
+                    //winButtons.Add(mStopRunBtn);
+                    //mStopRunBtn.Visibility = Visibility.Collapsed;
                     break;
-
 
                 case General.eRIPageViewMode.SharedReposiotry:
                     title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
@@ -969,7 +978,7 @@ namespace Ginger.Actions
 
             this.Height = 800;
             this.Width = 1000;
-            ShowHideRunStopButtons();
+            //ShowHideRunStopButtons();
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, closeContent, closeHandler, startupLocationWithOffset: startupLocationWithOffset);
             SwitchingInputValueBoxAndGrid(mAction);
             return saveWasDone;
@@ -981,14 +990,16 @@ namespace Ginger.Actions
 
             xOperationSettingsPnl.IsEnabled = false;
 
+            xWaitTimeoutPnl.IsEnabled = false;
             xRetryMechanismPnl.IsEnabled = false;
 
-            xDataSourceConfigGrid.ToolsTray.Visibility = Visibility.Collapsed;
-            xDataSourceConfigGrid.DisableGridColoumns();
             xAddOutputToDataSourcePnl.IsEnabled = false;
+            xDataSourceConfigGrid.ToolsTray.Visibility = Visibility.Collapsed;
+            xDataSourceConfigGrid.DisableGridColoumns();            
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Collapsed;
             xOutputValuesGrid.DisableGridColoumns();
 
+            xExecutionReportConfigPnl.IsEnabled = false;
             xActionRunDetailsPnl.IsEnabled = false;
         }
 
@@ -1024,20 +1035,11 @@ namespace Ginger.Actions
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
             // cause prop change so grid will refresh the data
-            mAction.OnPropertyChanged(Act.Fields.Details);
-            mAction.OnPropertyChanged(Act.Fields.FlowControls);
+            //mAction.OnPropertyChanged(Act.Fields.Details);
+            //mAction.OnPropertyChanged(Act.Fields.FlowControls);
             IsPageClosing = true;
             _pageGenericWin.Close();
         }
-        //public void UpdateGrid()
-        //{
-        //    Act currentact = (Act)ap.grdActions.grdMain.Items.CurrentItem;
-        //    if (currentact != null)
-        //    {
-        //        mAction = currentact;
-        //        ap.UpdateActionGrid();
-        //    }
-        //}
 
         private void SharedRepoSaveBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -1231,10 +1233,6 @@ namespace Ginger.Actions
             }
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-        }
-
         private void txtTimeout_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (xTimeoutTextBox.Text == String.Empty || xTimeoutTextBox.Text == null)
@@ -1263,7 +1261,6 @@ namespace Ginger.Actions
                 {
                     xOutputValuesTabHeaderTextBlock.Text = "Output Values";
                 }
-
             });
         }
 
@@ -1315,11 +1312,6 @@ namespace Ginger.Actions
             SetDataSourceConfigTabView();
         }
 
-        private void xDataSourceExpander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            //DataSourceRow.Height = new GridLength(35);
-        }
-
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
         {
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
@@ -1360,20 +1352,6 @@ namespace Ginger.Actions
         }
         private void SetDataSourceConfigTabView()
         {
-            //if (xDataSourceExpander.IsExpanded)
-            //{
-            //    if (xAddOutToDSCheckbox.IsChecked == true)
-            //    {
-            //        //DataSourceRow.Height = new GridLength(270);
-            //    }
-            //    else
-            //    {
-            //        //DataSourceRow.Height = new GridLength(60);
-            //    }
-            //}
-            //else
-            //    //DataSourceRow.Height = new GridLength(32);
-
             if (mAction.ConfigOutputDS)
             {
                 xAddOutputToDataSourceConfigPnl.Visibility = Visibility.Visible;
@@ -1540,7 +1518,7 @@ namespace Ginger.Actions
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    ShowHideRunStopButtons();
+                    //ShowHideRunStopButtons();
 
                     UpdateExecutionStatusControls();
                 });
@@ -1588,14 +1566,16 @@ namespace Ginger.Actions
                     break;
             }
 
+            xExecutionStatusImagePnl.Children.Clear();
             xExecutionStatusLbl.Foreground = mStatusBrush;
-            //xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
+            Amdocs.Ginger.UserControls.ImageMakerControl xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
             xExecutionStatusImage.SetAsFontImageWithSize = 50;
             xExecutionStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
             xExecutionStatusImage.ImageType = mStatusImage;
             xExecutionStatusImage.Width = 50;
             xExecutionStatusImage.Height = 50;
             xExecutionStatusImage.ToolTip = mAction.Status.ToString();
+            xExecutionStatusImagePnl.Children.Add(xExecutionStatusImage);
         }
 
         private void InitActionLog()
@@ -1623,22 +1603,13 @@ namespace Ginger.Actions
                 mAction.ActionLogConfig = new ActionLogConfig();
             }
             ResetActionLog();
-            SetActionLogFrameView();
         }
 
         private void EnableActionLogConfigCheckBox_UnChecked(object sender, RoutedEventArgs e)
         {
             mAction.EnableActionLogConfig = false;
             ResetActionLog();
-            SetActionLogFrameView();
         }
-
-        private void ActionLogConfigExpander_Expanded(object sender, RoutedEventArgs e)
-        {
-            SetActionLogFrameView();
-        }
-
-
 
         private void ResetActionLog()
         {
@@ -1650,32 +1621,6 @@ namespace Ginger.Actions
             {
                 xActionLogConfigFrame.SetContent(null);
             }
-        }
-
-        private void SetActionLogFrameView()
-        {
-            //if (ActionLogConfigExpander.IsExpanded)
-            //{
-            //    if (EnableActionLogConfigCheckBox.IsChecked == true)
-            //    {
-            //        ActionLogRow.Height = new GridLength(230);
-            //    }
-            //    else
-            //    {
-            //        ActionLogRow.Height = new GridLength(60);
-            //    }
-            //}
-            //else
-            //    ActionLogRow.Height = new GridLength(32);
-
-            //if (mAction.EnableActionLogConfig)
-            //{
-            //    ActionLogDetailsStackPanel.IsEnabled = true;
-            //}
-            //else
-            //{
-            //    ActionLogDetailsStackPanel.IsEnabled = false;
-            //}
         }
 
         private void GridClearExpectedValueBtn_Click(object sender, RoutedEventArgs e)
@@ -1762,6 +1707,11 @@ namespace Ginger.Actions
             {
                 xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void XHelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            xActionTabs.SelectedItem = xHelpTab;
         }
     }
 }

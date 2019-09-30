@@ -66,7 +66,7 @@ namespace Ginger.Actions.UserControls
             }
             else
             {
-                xNameLabel.Content = "No Name";
+                xNameLabel.Content = "Image";
             }
             if (bitmapSource != null)
             {
@@ -157,7 +157,7 @@ namespace Ginger.Actions.UserControls
             }
             else
             {
-                xNameLabel.Content = "No Name";
+                xNameLabel.Content = "Image";
             }
             if (mBitmapImage != null)
             {

@@ -1316,6 +1316,40 @@
         </Setter>
     </Style>
 
+    <Style TargetType="TabItem" x:Key="$TransparentTabHeader">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <ControlTemplate.Resources>
+                        <SolidColorBrush x:Key="MouseOverBackground" Color="Transparent" />
+                    </ControlTemplate.Resources>
+                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="Transparent">
+                        <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="20,2" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="Transparent"/>
+                            <Setter TargetName="Border" Property="VerticalAlignment"  Value="Top" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="TabItem" x:Key="$CoolMainTab">
         <Setter Property="Template">
             <Setter.Value>

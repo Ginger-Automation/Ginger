@@ -11,9 +11,8 @@
       xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView"
       mc:Ignorable="d" 
       Title="Edit Action" 
-      d:DesignWidth="1100"
-      d:DesignHeight="800"
-      SizeChanged="Page_SizeChanged">
+      d:DesignWidth="1000"
+      d:DesignHeight="800">
 
     <Grid Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>
@@ -49,10 +48,9 @@
             </DataTemplate>
         </Grid.Resources>
 
-
-        <DockPanel>
+        <Grid>
             <!--Tabs Area-->
-            <TabControl x:Name="xActionTabs" DockPanel.Dock="Top" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
+            <TabControl x:Name="xActionTabs" Margin="0,0,0,0" HorizontalAlignment="Stretch" SelectionChanged="xActionTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0" >
                 <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="0" Tag="False">
                     <TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="General Details">
@@ -140,7 +138,7 @@
                     <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel Margin="5" >
-                                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal"  HorizontalAlignment="Left" Margin="0,5,0,0">
+                                <StackPanel x:Name="xWaitTimeoutPnl"  DockPanel.Dock="Top" Orientation="Horizontal"  HorizontalAlignment="Left" Margin="0,5,0,0">
                                     <Label Content="Wait:" Style="{StaticResource $LabelStyle}" />
                                     <Actions:UCValueExpression x:Name="xWaitVeUC" ToolTip="Action will wait this seconds long before start to run" HorizontalAlignment="Stretch" Width="80" />
                                     <Label Content="Timeout:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
@@ -192,7 +190,7 @@
                     <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel Margin="5">
-                                <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded" Collapsed="xDataSourceExpander_Collapsed">
+                                <Expander x:Name="xDataSourceExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="False" Grid.Row="0" Style="{StaticResource $ExpanderStyle}" Expanded="xDataSourceExpander_Expanded">
                                     <Expander.Header>
                                         <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource $HorizontalExpanderLabelStyle}">
                                             <Label.Content>
@@ -242,7 +240,7 @@
                     <Border Margin="5" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <DockPanel Margin="5">
-                                <Expander x:Name="xExecutionDetailsRelatedSettingsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
+                                <Expander x:Name="xExecutionDetailsRelatedSettingsExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}">
                                     <Expander.Header>
                                         <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
                                             <Label.Content>
@@ -251,7 +249,7 @@
                                         </Label>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <DockPanel Margin="5">
+                                        <DockPanel x:Name="xExecutionReportConfigPnl" Margin="5">
                                             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" ToolTip="Status Conversion will be performed only after flow control is executed. So that flow control will always use the original action status">
                                                 <Label Content="Status Converter:" Style="{StaticResource $LabelStyle}" />
                                                 <ComboBox x:Name="xStatusConvertorCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150" HorizontalAlignment="Left"/>
@@ -274,7 +272,7 @@
                                     </Expander.Content>
                                 </Expander>
 
-                                <Expander x:Name="xExecutionDetailsPnl" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" Margin="0,10,0,0" VerticalAlignment="Top">
+                                <Expander x:Name="xExecutionDetailsExpander" DockPanel.Dock="Top" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" Margin="0,10,0,0" VerticalAlignment="Top">
                                     <Expander.Header>
                                         <Label Style="{StaticResource $HorizontalExpanderLabelStyle}">
                                             <Label.Content>
@@ -303,8 +301,7 @@
                                                     <Label x:Name="xExecutionTimeLbl" Style="{StaticResource $LabelStyle}"/>
                                                 </StackPanel>
 
-                                                <usercontrols:ImageMakerControl x:Name="xExecutionStatusImage" ImageType="Pending" Height="50" Grid.RowSpan="2" Grid.Column="1"/>
-                                                <!--<uclistview:UcItemExecutionStatus x:Name="xExecutionStatusImage" StatusViewMode="Image" StatusImageSize="50" Grid.RowSpan="2" Grid.Column="1"/>-->
+                                                <DockPanel x:Name="xExecutionStatusImagePnl" Height="50" Grid.RowSpan="2" Grid.Column="1"/>
                                             </Grid>
 
                                             <StackPanel x:Name="xExecutionExtraInfoPnl" DockPanel.Dock="Top" Margin="0,10,0,0">
@@ -332,15 +329,15 @@
                     </Border>
                 </TabItem>
 
-                <TabItem x:Name="xHelpTab" Style="{StaticResource $CoolTabInInternalPages}" TabIndex="6" Tag="False">
-                    <TabItem.Header>
+                <TabItem x:Name="xHelpTab" Style="{StaticResource $TransparentTabHeader}" TabIndex="6" Tag="False">
+                    <!--<TabItem.Header>
                         <Border Style="{StaticResource $CoolTabBorderStyle}" ToolTip="Help Details">
                             <DockPanel >
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Help" Width="16" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  />
                                 <TextBlock  Text="Help" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
-                    </TabItem.Header>
+                    </TabItem.Header>-->
                     <Border Margin="5" DockPanel.Dock="Top" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3">
                         <ScrollViewer>
                             <Frame x:Name="xActionHelpDetailsFram" Margin="10" Content="Action Description" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
@@ -348,6 +345,7 @@
                     </Border>
                 </TabItem>
             </TabControl>
-        </DockPanel>
+            <usercontrols:ucButton x:Name="xHelpButton" VerticalAlignment="Top" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonType="ImageButton" ButtonImageType="Help" Click="XHelpButton_Click" ToolTip="View Action help info" Margin="0,0,5,0" />
+        </Grid>
     </Grid>
 </Page>

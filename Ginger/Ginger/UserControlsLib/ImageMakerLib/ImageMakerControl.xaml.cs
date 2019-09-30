@@ -478,6 +478,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ActiveAll:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Check);
                     break;
+                case eImageType.ExpandToFullScreen:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Expand);
+                    break;
                 case eImageType.Export:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ShareAlt);
                     break;

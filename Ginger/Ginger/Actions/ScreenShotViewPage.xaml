@@ -28,7 +28,7 @@
                 <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
                     <Label x:Name="xNameLabel" DockPanel.Dock="Left" Margin="10,0,0,0" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"  FontWeight="Bold">Name</Label>
 
-                    <UserControls:ucButton x:Name="xEnlargeButton" DockPanel.Dock="Right" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Search" Click="EnlargeButton_Click" ToolTip="Enlarge Image" VerticalAlignment="Center"/>
+                    <UserControls:ucButton x:Name="xEnlargeButton" DockPanel.Dock="Right" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="ExpandToFullScreen" Click="EnlargeButton_Click" VerticalAlignment="Center" ToolTip="View in full screen"/>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
                         <Label x:Name="xZoomPercentLabel" FontSize="14">100%</Label>
                         <Button x:Name="xZoomMinus" Click="ZoomMinus_Click"  Width="25" ClickMode="Press" >-</Button>
