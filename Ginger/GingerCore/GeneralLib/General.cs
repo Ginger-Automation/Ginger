@@ -68,7 +68,7 @@ namespace GingerCore
                     genWindow.Left = 50;
                     genWindow.Top = 200;
                 }
-                if (winStyle == eWindowShowStyle.Dialog)
+                if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
                     genWindow.ShowDialog();
                 else
                     genWindow.Show();

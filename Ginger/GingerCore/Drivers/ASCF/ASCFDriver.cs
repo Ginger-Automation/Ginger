@@ -443,7 +443,7 @@ namespace GingerCore.Drivers.ASCF
                     HandleBrowserElementAction(AABC);
                     break;
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 

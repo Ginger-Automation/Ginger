@@ -64,6 +64,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return nameof(ActivitiesGroup.Description);
         }
 
+        public string GetItemErrorField()
+        {
+            return null;
+        }
+
         public string GetItemNameExtentionField()
         {
             return null;

@@ -505,7 +505,7 @@ namespace Ginger.Run
                         bool isScreenshotButtonEnabled = false;
                         if ((action.ScreenShots != null) && (action.ScreenShots.Count > 0))
                         {
-                            screenShotsPathes = action.ScreenShots;
+                            screenShotsPathes = action.ScreenShots.ToList();
                             isScreenshotButtonEnabled = true;
                         }
                         // 
