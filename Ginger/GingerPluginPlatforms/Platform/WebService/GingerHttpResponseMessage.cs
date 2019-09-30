@@ -9,6 +9,7 @@ namespace Ginger.Plugin.Platform.WebService
     {
 
         public string Resposne;
+        public string RequestBodyString;
         public HttpStatusCode StatusCode { get; set; }
         public Dictionary<string, string> Headers;
     }
