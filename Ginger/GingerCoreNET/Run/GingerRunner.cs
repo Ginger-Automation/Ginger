@@ -372,7 +372,10 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
-            RunListeners.Add(new TelemetryRunListener());
+            if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
+            {
+                RunListeners.Add(new TelemetryRunListener());
+            }
         }
 
 
@@ -1794,7 +1797,7 @@ namespace Ginger.Run
 
                                         else
                                         {
-                                            act.Error = "Current Plugin Agent doesnot support execution for " + act.ActionDescription;
+                                            act.Error = "Current Plugin Agent does not support execution for " + act.ActionDescription;
                                             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                                             
                                         }

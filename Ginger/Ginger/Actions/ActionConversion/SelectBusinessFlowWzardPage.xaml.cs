@@ -59,6 +59,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 case EventType.Init:
                     mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
+                    ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:

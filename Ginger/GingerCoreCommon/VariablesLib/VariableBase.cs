@@ -295,6 +295,7 @@ namespace GingerCore.Variables
 
         public static void GetListOfUsedVariables(object item, ref List<string> usedVariables)
         {
+            // TODO: cache the reflection item needed
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
@@ -326,7 +327,9 @@ namespace GingerCore.Variables
                 if (value is IObservableList)
                 {
                     foreach (object o in (IObservableList)value)
+                    {
                         GetListOfUsedVariables(o, ref usedVariables);
+                    }
                 }
                 else
                 {
@@ -334,7 +337,8 @@ namespace GingerCore.Variables
                     {
                         try
                         {
-                            if((PI.DeclaringType).FullName == "GingerCore.Actions.ActSetVariableValue" && mi.Name == "VariableName")
+                            //TODO: Use nameof !!!!!
+                            if ((PI.DeclaringType).FullName == "GingerCore.Actions.ActSetVariableValue" && mi.Name == "VariableName")
                             {
                                 usedVariables.Add(value.ToString());
                             }

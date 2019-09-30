@@ -36,8 +36,15 @@ namespace Amdocs.Ginger.Common.GeneralLib
             get
             {
                 if (mAppDataFolder == null)
-                {                    
-                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                {
+                    // DoNotVerify so on Linux it will not return empty
+                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
+
+                    if (!Directory.Exists(appDataFolder))  // on Linux it sometimes not exist like on Azure build
+                    {
+                        Directory.CreateDirectory(appDataFolder);
+                    }
+
                     appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
 
                     if (!Directory.Exists(appDataFolder))
@@ -65,13 +72,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
-        public static string GingerLogFile
-        {
-            get
-            {
-                return Path.Combine(LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
-            }
-        }
+        
 
 
 

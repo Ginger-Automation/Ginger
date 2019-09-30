@@ -105,9 +105,9 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 response = true;
             }
-            catch (Exception ec)
+            catch (Exception ex)
             {
-                // TODO:  at lease log exception !!!
+                Reporter.ToLog(eLogLevel.ERROR, "Error in RunClientApp", ex);
             }
             return response;
         }

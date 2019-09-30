@@ -73,11 +73,12 @@
             <StackPanel Grid.Row="3" Grid.Column="0" x:Name="RowLabelPanel" Visibility="Visible">
                 <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Top">Row:</Label>
             </StackPanel>
-            <StackPanel Grid.Row="3" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0,0,0" Visibility="Visible">
-                <RadioButton Name="RowNum" Content="Row Number" Checked="RowNum_Checked" Tag="RowNum" Unchecked="RowNum_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
-                <RadioButton Name="AnyRow" Content="Any Row" Checked="AnyRow_Checked" Tag="AnyRow" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
-                <RadioButton Name="BySelectedRow" Content="Selected Row" Tag="BySelectedRow" Checked="BySelectedRow_Checked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
-                <RadioButton Name="Where" Content="Where" Tag="Where" Checked="Where_Checked" Unchecked="Where_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+            <StackPanel Grid.Row="3" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0,0,0" Visibility="Visible">               
+                <RadioButton Name="RowNum" Content="Row Number" Checked="RowNum_Checked" Tag="Row Number" Unchecked="RowNum_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+                <RadioButton Name="AnyRow" Content="Any Row" Checked="AnyRow_Checked" Tag="Any Row" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+                <RadioButton Name="BySelectedRow" Content="Selected Row" Tag="By Selected Row" Checked="BySelectedRow_Checked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+                <RadioButton Name="Where" Content="Where" Tag="Where" Checked="Where_Checked" Unchecked="Where_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>                
+                <!--<UserControlsLib:UCRadioButtons x:Name="xLocateRowTypeRadioButtonGroup" ></UserControlsLib:UCRadioButtons>-->
             </StackPanel>
             <StackPanel Grid.Row="3" Grid.Column="2"  Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24" x:Name="RowSelectorValuePanel" Visibility="Visible"> 
                 

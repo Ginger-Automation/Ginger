@@ -295,16 +295,16 @@ public class EditorHelper {
 					Element CellComponent = getTableCellComponent(CurrentTable,rowNum, colNum);		
 					PayLoad Response = new PayLoad("ComponentValue");
 					List<String> val = new ArrayList<String>();
-					String val1;
+					String val1=null;
 
 					if (CellComponent != null) {
 						GingerAgent.WriteLog("CellComponent = " + CellComponent);
 						
 						val1 = CellComponent.val();      
-						if(val1==null ||val1=="")
+						if(val1==null ||val1.equals(""))
                         {
                                val1=CellComponent.text();
-                               if(val1==null ||val1=="")
+                               if(val1==null ||val1.equals(""))
                                {
                                       Element el=CellComponent.select("input").first();
                                       if(el!=null)
@@ -312,9 +312,6 @@ public class EditorHelper {
                                }
                                                     
                         }
-
-
-
 						GingerAgent.WriteLog("getCellValue ::" + val1);
 						val.add(val1);
 					} else
@@ -332,15 +329,20 @@ public class EditorHelper {
 				 GingerAgent.WriteLog("CellComponent : " + CellComponent);
 				 if(CellComponent!=null)
 				 {
-					 Elements inputElements = CellComponent.getElementsByTag("input ");
-					 if (inputElements != null)
+					 try
 					 {
-						 GingerAgent.WriteLog("inputElements : " + inputElements.attr("value", Value));
-						 inputElements.attr("value");						
-						    GingerAgent.WriteLog("inputElements : " + inputElements);
-							GingerAgent.WriteLog("CellComponent ::" + CellComponent);
-							GingerAgent.WriteLog("htmldoc ::" + htmlDoc);
-					 }					 
+						 Elements inputElements = CellComponent.getElementsByTag("input ");
+						 if (inputElements != null)
+						 {
+							 inputElements.attr("value", Value);							 
+							 return PayLoad.OK("Value set to "+ Value);
+						 }		 
+					 }
+					 catch(Exception ex)
+					 {
+						 PayLoad.Error("Exception during set value of editor cell");
+					 }
+					 			 
 				 }
 				 else
 				 {
@@ -460,7 +462,7 @@ public class EditorHelper {
 						}
 					}
 				}
-			}
+			}	
 			if (response[0] == false)
 				return PayLoad.Error("Fail to perform click operation");
 			else
