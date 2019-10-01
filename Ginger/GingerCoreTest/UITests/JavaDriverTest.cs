@@ -45,7 +45,8 @@ namespace UnitTests.UITests.JavaDriverTest
     public class JavaDriverTest
     {
         static BusinessFlow mBF;
-
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
         // make it static for reuse so no need to init every time when running test by click test button
         static JavaDriver mDriver = null;
         static GingerRunner mGR = null;
@@ -96,6 +97,19 @@ namespace UnitTests.UITests.JavaDriverTest
                 //{
                 //   throw new Exception(LJA.Error);
                 //}
+                mTestHelper.ClassInitialize(context);
+                string fileName = mTestHelper.GetTempFileName("JavaLaunch.txt");
+
+              
+                System.IO.File.AppendAllText(fileName, "Launch Action Status " + LJA.Status);
+                System.IO.File.AppendAllText(fileName, "Launch Action error details " + LJA.Status);
+                System.IO.File.AppendAllText(fileName, "Launch Action exe info details " + LJA.ExInfo);
+                
+
+                //Artifacts
+                mTestHelper.AddTestArtifact(fileName);
+              
+
                 var portOutpuValue = LJA.ReturnValues.Where(x => x.Param == "Port").FirstOrDefault();
                 mDriver = new JavaDriver(mBF);
                 mDriver.JavaAgentHost = "127.0.0.1";
