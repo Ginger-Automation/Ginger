@@ -50,7 +50,7 @@ namespace UnitTest
         public static void ClassInit(TestContext context)
         {
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, nameof(PBDriverTest));
+            WorkSpace.Init(WSEH);
 
             // launch PB Test App
             if (proc == null || proc.HasExited)
@@ -97,9 +97,9 @@ namespace UnitTest
                 // Do Switch Window, to be ready for actions
                 ActSwitchWindow c = new ActSwitchWindow();
                 c.LocateBy = eLocateBy.ByTitle;                
-                c.LocateValueCalculated = "Simple Page";
+                c.LocateValue = "Simple Page";
                 c.WaitTime = 10;
-                mDriver.RunAction(c);
+                mGR.RunAction(c,false);
         }
 
         [ClassCleanup()]
@@ -118,7 +118,7 @@ namespace UnitTest
             }
             finally
             {
-                WorkSpace.Instance.ReleaseWorkspace();
+                
             }
             
 
@@ -133,8 +133,8 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;            
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "sle_acc_text";         
+            c.AddNewReturnParams = true;                   
+            c.LocateValue = "sle_acc_text";
             c.Value =  "Jenny";
             c.Active = true;
 
@@ -146,8 +146,8 @@ namespace UnitTest
 
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
-            act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "sle_acc_text";
+            act.ControlAction = ActPBControl.eControlAction.GetValue;          
+            act.LocateValue = "sle_acc_text";
             act.AddNewReturnParams = true;
             act.Active = true;
 
@@ -175,7 +175,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "sle_acc_text";
+            c.LocateValue = "sle_acc_text";            
             c.Value = "ABCDEF";
             mGR.RunAction(c);
 
@@ -185,7 +185,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "sle_acc_text";
+            act.LocateValue = "sle_acc_text";            
             act.Active = true;
 
             mBF.CurrentActivity.Acts.Add(act);
@@ -207,7 +207,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.SendKeys;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "/mle_acc_notes";
+            c.LocateValue = "/mle_acc_notes";            
             c.Value = "Ginger";
             c.Active = true;
 
@@ -220,7 +220,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByXPath;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "/mle_acc_notes";
+            act.LocateValue = "/mle_acc_notes";           
             act.AddNewReturnParams = true;
             act.Active = true;
 
@@ -247,7 +247,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "address";
+            c.LocateValue = "address";
             c.Value = "Value";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -273,7 +273,7 @@ namespace UnitTest
             // Window Maximize
             ActWindow actWinMax = new ActWindow();
             actWinMax.LocateBy = eLocateBy.ByTitle;
-            actWinMax.LocateValueCalculated = "Simple Page";
+            actWinMax.LocateValue = "Simple Page";
             actWinMax.WindowActionType = ActWindow.eWindowActionType.Maximize;
             actWinMax.Active = true;
             
@@ -288,7 +288,7 @@ namespace UnitTest
             // Window minimize
             ActWindow actWinMin = new ActWindow();
             actWinMin.LocateBy = eLocateBy.ByTitle;
-            actWinMin.LocateValueCalculated = "Simple Page";
+            actWinMin.LocateValue = "Simple Page";
             actWinMin.WindowActionType = ActWindow.eWindowActionType.Minimize;
             actWinMin.Active = true;
 
@@ -303,7 +303,7 @@ namespace UnitTest
             // Window Restore
             ActWindow actWinRes = new ActWindow();
             actWinRes.LocateBy = eLocateBy.ByTitle;
-            actWinRes.LocateValueCalculated = "Simple Page";
+            actWinRes.LocateValue = "Simple Page";
             actWinRes.WindowActionType = ActWindow.eWindowActionType.Restore;
             actWinRes.Active = true;
 
@@ -327,7 +327,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.Click;
-            act.LocateValueCalculated = "Click Me";
+            act.LocateValue = "Click Me";
             // act.LocateValueCalculated = "1021";
             act.Active = true;
 
@@ -335,7 +335,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "OK";
+            c.LocateValue = "OK";
             c.Active = true;
 
             //Act
@@ -365,7 +365,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.ClickXY;
-            act.LocateValueCalculated = "Click Me";
+            act.LocateValue = "Click Me";
             act.Value = "2,2";
             // act.LocateValueCalculated = "1021";
             act.Active = true;
@@ -374,7 +374,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "OK";
+            c.LocateValue = "OK";
             c.Active = true;
 
             //Act
@@ -404,7 +404,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.DoubleClick;
-            act.LocateValueCalculated = "Click Me";
+            act.LocateValue = "Click Me";
             // act.LocateValueCalculated = "1021";
             act.Active = true;
 
@@ -412,7 +412,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "OK";
+            c.LocateValue = "OK";
             c.Active = true;
 
             //Act
@@ -441,7 +441,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Value = "AutomationId";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -464,7 +464,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Value = "ClassName";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -487,7 +487,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Value = "IsKeyboardFocusable";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -510,7 +510,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.IsExist;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Tabbed";            
+            c.LocateValue = "Tabbed";            
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -530,7 +530,7 @@ namespace UnitTest
             ActSmartSync act = new ActSmartSync();
             act.LocateBy = eLocateBy.ByName;
             act.SmartSyncAction = ActSmartSync.eSmartSyncAction.WaitUntilDisplay;
-            act.LocateValueCalculated = "Click Me";            
+            act.LocateValue = "Click Me";            
             act.Active = true;            
             mBF.CurrentActivity.Acts.Add(act);
             mBF.CurrentActivity.Acts.CurrentItem = act;
@@ -552,7 +552,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "Works in Amdocs";
+            c.LocateValue = "Works in Amdocs";
             //c.ValueForDriver = "Checked";
             c.Value = "Checked";
             c.Active = true;
@@ -565,7 +565,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "Works in Amdocs";
+            act.LocateValue = "Works in Amdocs";
             act.Active = true;
             act.AddNewReturnParams = true;
 
@@ -596,7 +596,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "Works in Amdocs";
+            c.LocateValue = "Works in Amdocs";
             c.Value = "Checked";
             c.AddNewReturnParams = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -607,7 +607,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "Works in Amdocs";
+            act.LocateValue = "Works in Amdocs";
             act.Active = true;
             act.AddNewReturnParams = true;
 
@@ -631,7 +631,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "cbx_acc_check";
+            c.LocateValue = "cbx_acc_check";
             c.ValueForDriver = "Checked";
             c.Value = "Checked";
             c.AddNewReturnParams = true;
@@ -643,7 +643,7 @@ namespace UnitTest
             ActPBControl c1 = new ActPBControl();
             c1.LocateBy = eLocateBy.ByName;
             c1.ControlAction = ActPBControl.eControlAction.Toggle;
-            c1.LocateValueCalculated = "cbx_acc_check";
+            c1.LocateValue = "cbx_acc_check";
             c1.AddNewReturnParams = true;
             c1.ItemName = "Toggle Checkbox cbx_acc_check";
             c1.Active = true;
@@ -659,7 +659,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "cbx_acc_check";
+            act.LocateValue = "cbx_acc_check";
             c1.ItemName = "Toggle Checkbox cbx_acc_check";
             act.AddNewReturnParams = true;
             act.Active = true;
@@ -684,7 +684,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.IsEnabled;
-            c.LocateValueCalculated = "Works in Amdocs";
+            c.LocateValue = "Works in Amdocs";
             c.Active = true;
 
             mBF.CurrentActivity.Acts.Add(c);
@@ -704,7 +704,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetValue;
-            act.LocateValueCalculated = "Illinois Resident";
+            act.LocateValue = "Illinois Resident";
             act.Active = true;
             act.AddNewReturnParams = true;
 
@@ -722,7 +722,7 @@ namespace UnitTest
                 act = new ActPBControl();
                 act.LocateBy = eLocateBy.ByName;
                 act.ControlAction = ActPBControl.eControlAction.SetValue;
-                act.LocateValueCalculated = "Illinois Resident";
+                act.LocateValue = "Illinois Resident";
                 act.Value = "Unchecked";
                 act.Active = true;
                 act.AddNewReturnParams = true;
@@ -745,7 +745,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "Bachelors";
+            c.LocateValue = "Bachelors";
             c.Active = true;
 
             mBF.CurrentActivity.Acts.Add(c);
@@ -756,7 +756,7 @@ namespace UnitTest
             ActPBControl act = new ActPBControl();
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.IsSelected;
-            act.LocateValueCalculated = "Bachelors";
+            act.LocateValue = "Bachelors";
             act.AddNewReturnParams = true;
             act.Active = true;
 
@@ -781,7 +781,7 @@ namespace UnitTest
             ActPBControl c1 = new ActPBControl();
             c1.LocateBy = eLocateBy.ByName;
             c1.ControlAction = ActPBControl.eControlAction.Select;
-            c1.LocateValueCalculated = "Bachelors";
+            c1.LocateValue = "Bachelors";
             c1.Active = true;
 
             mBF.CurrentActivity.Acts.Add(c1);
@@ -793,7 +793,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.IsSelected;
-            c.LocateValueCalculated = "Bachelors";
+            c.LocateValue = "Bachelors";
             c.AddNewReturnParams = true;
             c.Active = true;
 
@@ -815,7 +815,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "Masters";
+            c.LocateValue = "Masters";
             c.Active = true;
 
             mBF.CurrentActivity.Acts.Add(c);
@@ -827,7 +827,7 @@ namespace UnitTest
 
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.IsSelected;
-            c.LocateValueCalculated = "Masters";
+            c.LocateValue = "Masters";
             c.Active = true;
 
             mGR.RunAction(c, false);
@@ -848,7 +848,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByAutomationID;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "1010";
+            c.LocateValue = "1010";
             c.Active = true;
 
             mBF.CurrentActivity.Acts.Add(c);
@@ -869,7 +869,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "name_t";
+            c.LocateValue = "name_t";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -890,7 +890,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "ddlb_acc_nationality";
+            c.LocateValue = "ddlb_acc_nationality";
             c.Value = "Indian";
             c.AddNewReturnParams = true;
             c.Active = true;
@@ -907,7 +907,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValueCalculated = "/[AutomationId:1021]";
+            c.LocateValue = "/[AutomationId:1021]";
             c.AddNewReturnParams = true;
             c.Active = true;
 
@@ -927,7 +927,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "/[AutomationId:1021]";
+            c.LocateValue = "/[AutomationId:1021]";
             c.Value = "India";
             c.AddNewReturnParams = true;
 
@@ -940,7 +940,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValueCalculated = "/[AutomationId:1021]";
+            c.LocateValue = "/[AutomationId:1021]";
             c.AddNewReturnParams = true;
             c.Active = true;
 
@@ -959,7 +959,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValueCalculated = "/[AutomationId:1004]";
+            c.LocateValue = "/[AutomationId:1004]";
             c.Active = true;
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -979,7 +979,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "English";
+            c.LocateValue = "English";
             c.ItemName = "Select item English";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -991,7 +991,7 @@ namespace UnitTest
             act.LocateBy = eLocateBy.ByName;
             act.ControlAction = ActPBControl.eControlAction.GetSelected;
             act.LocateValue = "lb_acc_language";
-            act.LocateValueCalculated = "lb_acc_language";
+            act.LocateValue = "lb_acc_language";
             act.AddNewReturnParams = true;
             act.Active = true;
             mBF.CurrentActivity.Acts.Add(act);
@@ -1013,7 +1013,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "English";
+            c.LocateValue = "English";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -1023,7 +1023,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValueCalculated = "lb_acc_language";
+            c.LocateValue = "lb_acc_language";
             c.AddNewReturnParams = true;
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1045,7 +1045,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "lb_acc_language";
+            c.LocateValue = "lb_acc_language";
             c.AddNewReturnParams = true;
             c.Active = true;
             //Act
@@ -1066,7 +1066,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "IsOffScreen";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1089,7 +1089,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "Name";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1112,7 +1112,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "LocalizedControlType";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1135,7 +1135,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "IsPassword";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1158,7 +1158,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "IsEnabled";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1181,7 +1181,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "IsSelected";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1204,7 +1204,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Spanish";
+            c.LocateValue = "Spanish";
             c.Value = "XPATH";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1227,7 +1227,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetFieldValue;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "lb_acc_language";
+            c.LocateValue = "lb_acc_language";
             c.Value = "English";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1252,7 +1252,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Active = true;
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -1262,7 +1262,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetTitle;
-            c.LocateValueCalculated = "MsgBox Test";
+            c.LocateValue = "MsgBox Test";
             c.AddNewReturnParams = true;
             c.Active = true;
             //Act
@@ -1277,7 +1277,7 @@ namespace UnitTest
             
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "OK";
+            c.LocateValue = "OK";
             c.Active = true;
             //Act
             mGR.RunAction(c, false);
@@ -1289,7 +1289,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Active = true;
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -1299,7 +1299,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "MsgBox Test";
+            c.LocateValue = "MsgBox Test";
             c.AddNewReturnParams = true;
             c.Active = true;
             //Act
@@ -1316,7 +1316,7 @@ namespace UnitTest
             //To Handle click me button dialog 
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "OK";
+            c.LocateValue = "OK";
             c.Active = true;
             //Act
             mGR.RunAction(c, false);
@@ -1330,7 +1330,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "Application";
+            c.LocateValue = "Application";
             c.AddNewReturnParams = true;
             c.Active = true;
             //Act
@@ -1350,7 +1350,7 @@ namespace UnitTest
             ActMenuItem c = new ActMenuItem();
             c.LocateBy = eLocateBy.ByName;
             c.MenuAction = ActMenuItem.eMenuAction.Click;
-            c.LocateValueCalculated = "File|New";            
+            c.LocateValue = "File|New";            
             c.AddNewReturnParams = true;
             c.Active = true;
 
@@ -1365,7 +1365,7 @@ namespace UnitTest
             ActPBControl pbAct = new ActPBControl();
             pbAct.LocateBy = eLocateBy.ByXPath;
             pbAct.ControlAction = ActPBControl.eControlAction.Click;
-            pbAct.LocateValueCalculated = "/Menu/OK";
+            pbAct.LocateValue = "/Menu/OK";
             pbAct.Wait = 5;
             pbAct.Active = true;
             //Act
@@ -1385,7 +1385,7 @@ namespace UnitTest
             ActMenuItem c = new ActMenuItem();
             c.LocateBy = eLocateBy.ByName;
             c.MenuAction = ActMenuItem.eMenuAction.Expand;
-            c.LocateValueCalculated = "File";
+            c.LocateValue = "File";
             c.AddNewReturnParams = true;
             c.Active = true;
 
@@ -1400,7 +1400,7 @@ namespace UnitTest
             ActPBControl pbAct = new ActPBControl();
             pbAct.LocateBy = eLocateBy.ByName;
             pbAct.ControlAction = ActPBControl.eControlAction.IsExist;
-            pbAct.LocateValueCalculated = "New";
+            pbAct.LocateValue = "New";
             pbAct.Wait = 5;
             pbAct.Active = true;
             pbAct.AddNewReturnParams = true;
@@ -1423,7 +1423,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "sle_acc_text";
+            c.LocateValue = "sle_acc_text";
             c.Value = "Hello From Xpath";
             c.AddNewReturnParams = true;
             c.Active = true;
@@ -1436,7 +1436,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "sle_acc_text";
+            c.LocateValue = "sle_acc_text";
             c.AddNewReturnParams = true;
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1456,7 +1456,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "sle_acc_text";
+            c.LocateValue = "sle_acc_text";
             c.Value = "Hello From Xpath";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1467,7 +1467,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "[AutomationId:1026]";
+            c.LocateValue = "[AutomationId:1026]";
             c.AddNewReturnParams = true;
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1488,7 +1488,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.SetValue;
-            c.LocateValueCalculated = "sle_acc_text";
+            c.LocateValue = "sle_acc_text";
             c.Value = "Jinendra";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1499,7 +1499,7 @@ namespace UnitTest
             c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetValue;
-            c.LocateValueCalculated = "[Value:Jinendra]";
+            c.LocateValue = "[Value:Jinendra]";
             c.AddNewReturnParams = true;
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1520,7 +1520,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.Select;
-            c.LocateValueCalculated = "/[[AutomationId:1006][Name:]]";
+            c.LocateValue = "/[[AutomationId:1006][Name:]]";
             c.Value = "India";
             c.AddNewReturnParams = true;
             c.Active = true;
@@ -1533,7 +1533,7 @@ namespace UnitTest
 
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetSelected;
-            c.LocateValueCalculated = "/[[AutomationId:1006][Name:]]";
+            c.LocateValue = "/[[AutomationId:1006][Name:]]";
             c.AddNewReturnParams = true;
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -1566,7 +1566,7 @@ namespace UnitTest
             actGrid.WhereColumnValue = "Yaron";
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
@@ -1599,7 +1599,7 @@ namespace UnitTest
             
             actGrid1.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid1.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid1.LocateValueCalculated = "dw_acc_grd";
+            actGrid1.LocateValue = "dw_acc_grd";
             actGrid1.LocateBy = eLocateBy.ByName;
             actGrid1.Value = "3909 Inverness Rd";
             actGrid1.Active = true;
@@ -1629,7 +1629,7 @@ namespace UnitTest
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.AddNewReturnParams = true;
             actGrid.Active = true;
@@ -1667,7 +1667,7 @@ namespace UnitTest
 
              actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
              actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-             actGrid.LocateValueCalculated = "dw_acc_grd";
+             actGrid.LocateValue = "dw_acc_grd";
              actGrid.LocateBy = eLocateBy.ByName;
              actGrid.Value = "Amdocs - Pune, India";
              actGrid.Active = true;
@@ -1704,7 +1704,7 @@ namespace UnitTest
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;            
             actGrid.Active = true;
 
@@ -1741,7 +1741,7 @@ namespace UnitTest
 
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
 
@@ -1774,8 +1774,7 @@ namespace UnitTest
             actGrid.LocateColTitle = "0";
             actGrid.LocateRowType = "Row Number";//
             actGrid.LocateRowValue = "1";//
-            actGrid.LocateValueCalculated = "none";
-            actGrid.LocateValue = "none";
+            actGrid.LocateValue = "none";           
 
             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
             actGrid.WhereColSelector = ActTableElement.eRunColSelectorValue.ColTitle;
@@ -1809,8 +1808,7 @@ namespace UnitTest
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.LocateColTitle = "name";
             actGrid.LocateRowType = "Row Number";//
-            actGrid.LocateRowValue = "1";//
-            actGrid.LocateValueCalculated = "none";
+            actGrid.LocateRowValue = "1";//       
             actGrid.LocateValue = "none";
 
             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
@@ -1844,8 +1842,7 @@ namespace UnitTest
             actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.LocateColTitle = "1";
-            actGrid.LocateRowType = "Any Row";//            
-            actGrid.LocateValueCalculated = "none";
+            actGrid.LocateRowType = "Any Row";// 
             actGrid.LocateValue = "none";
 
             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
@@ -1884,8 +1881,7 @@ namespace UnitTest
             actGrid.ControlAction = ActTableElement.eTableAction.GetValue;
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.LocateColTitle = "name";
-            actGrid.LocateRowType = "Any Row";//            
-            actGrid.LocateValueCalculated = "none";
+            actGrid.LocateRowType = "Any Row";// 
             actGrid.LocateValue = "none";
 
             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
@@ -1930,7 +1926,7 @@ namespace UnitTest
             actGrid.WhereColumnValue = "Yaron";
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
@@ -1962,7 +1958,7 @@ namespace UnitTest
             actGrid.WhereColumnValue = "Yaron";
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Equals;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
@@ -1993,7 +1989,7 @@ namespace UnitTest
             actGrid.WhereColumnValue = "Yaron";
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Contains;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
@@ -2024,7 +2020,7 @@ namespace UnitTest
             actGrid.WhereColumnValue = "Yaron";
             actGrid.WhereOperator = ActTableElement.eRunColOperator.Contains;
             actGrid.WhereProperty = ActTableElement.eRunColPropertyValue.Value;
-            actGrid.LocateValueCalculated = "dw_acc_grd";
+            actGrid.LocateValue = "dw_acc_grd";
             actGrid.LocateBy = eLocateBy.ByName;
             actGrid.Active = true;
             mBF.CurrentActivity.Acts.Add(actGrid);
@@ -2051,7 +2047,6 @@ namespace UnitTest
             actGrid.LocateColTitle = "1";
             actGrid.LocateRowType = "Row Number";//
             actGrid.LocateRowValue = "1";//
-            actGrid.LocateValueCalculated = "none";
             actGrid.LocateValue = "none";
 
             actGrid.RunActionOn = ActTableElement.eRunActionOn.OnCellRowNumColNum;
@@ -2147,7 +2142,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Active = true;
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -2278,7 +2273,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "Exit";
+            c.LocateValue = "Exit";
             c.Active = true;
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -2298,7 +2293,7 @@ namespace UnitTest
             ActPBControl c = new ActPBControl();
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
-            c.LocateValueCalculated = "Click Me";
+            c.LocateValue = "Click Me";
             c.Active = true;
             //Act
             mBF.CurrentActivity.Acts.Add(c);
@@ -2377,7 +2372,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.GetControlProperty;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "name_t";
+            c.LocateValue = "name_t";
             c.Value = "Text";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
@@ -2400,7 +2395,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByXPath;
             c.ControlAction = ActPBControl.eControlAction.GetTitle;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "/st_acc_label";            
+            c.LocateValue = "/st_acc_label";            
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2424,7 +2419,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.Click;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Tabbed";
+            c.LocateValue = "Tabbed";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2435,7 +2430,7 @@ namespace UnitTest
             c.LocateBy = eLocateBy.ByName;
             c.ControlAction = ActPBControl.eControlAction.IsExist;
             c.AddNewReturnParams = true;
-            c.LocateValueCalculated = "Check if you live in USA";
+            c.LocateValue = "Check if you live in USA";
             c.Active = true;
             mBF.CurrentActivity.Acts.Add(c);
             mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2450,7 +2445,7 @@ namespace UnitTest
                 c.LocateBy = eLocateBy.ByXPath;
                 c.ControlAction = ActPBControl.eControlAction.SelectByIndex;
                 c.AddNewReturnParams = true;
-                c.LocateValueCalculated = "/Tabbed Page/[AutomationId:1002]";
+                c.LocateValue = "/Tabbed Page/[AutomationId:1002]";
                 c.Value = "2";
                 c.Active = true;
                 mBF.CurrentActivity.Acts.Add(c);
@@ -2462,7 +2457,7 @@ namespace UnitTest
                 c.LocateBy = eLocateBy.ByName;
                 c.ControlAction = ActPBControl.eControlAction.IsExist;
                 c.AddNewReturnParams = true;
-                c.LocateValueCalculated = "none";                
+                c.LocateValue = "none";                
                 c.Active = true;
                 mBF.CurrentActivity.Acts.Add(c);
                 mBF.CurrentActivity.Acts.CurrentItem = c;
@@ -2480,7 +2475,7 @@ namespace UnitTest
             ActPBControl c1 = new ActPBControl();
             c1.LocateBy = eLocateBy.ByName;
             c1.ControlAction = ActPBControl.eControlAction.Click;
-            c1.LocateValueCalculated = "Exit";
+            c1.LocateValue = "Exit";
             c1.AddNewReturnParams = true;            
             c1.Active = true;
             mBF.CurrentActivity.Acts.Add(c1);

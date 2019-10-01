@@ -36,19 +36,42 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     {
         private enum eGridView { All, NonSimulation }
         ApplicationAPIModel mApplicationAPIModel;
+        Ginger.General.eRIPageViewMode mPageViewMode;
 
-        public OutputTemplatePage(ApplicationAPIModel applicationAPIModel)
+        public OutputTemplatePage(ApplicationAPIModel applicationAPIModel, Ginger.General.eRIPageViewMode pageViewMode = Ginger.General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
             mApplicationAPIModel = applicationAPIModel;
 
-            xOutputValuesGrid.AddToolbarTool("@Share_16x16.png", "Push Changes to All Relevant Actions", new RoutedEventHandler(PushChangesClicked));
-            xOutputValuesGrid.AddToolbarTool("@Import_16x16.png", "Import output values from Response sample file", new RoutedEventHandler(ImpurtButtonClicked));
-            
-            xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
-            xOutputValuesGrid.AddSeparator();
+            mPageViewMode = pageViewMode;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
+            if (pageViewMode == Ginger.General.eRIPageViewMode.View)
+            {
+                xOutputValuesGrid.ShowAdd = Visibility.Collapsed;
+                xOutputValuesGrid.ShowUpDown = Visibility.Collapsed;
+                xOutputValuesGrid.ShowDelete = Visibility.Collapsed;
+                xOutputValuesGrid.ShowSearch = Visibility.Collapsed;
+                xOutputValuesGrid.ShowClearAll = Visibility.Collapsed;
+                xOutputValuesGrid.ShowCopy = Visibility.Visible;
+
+                xOutputValuesGrid.IsReadOnly = true;
+            }
+            else
+            {
+                xOutputValuesGrid.AddToolbarTool("@Share_16x16.png", "Push Changes to All Relevant Actions", new RoutedEventHandler(PushChangesClicked));
+                xOutputValuesGrid.AddToolbarTool("@Import_16x16.png", "Import output values from Response sample file", new RoutedEventHandler(ImpurtButtonClicked));
+
+                xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
+                xOutputValuesGrid.AddSeparator();
+
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
+            }
+
+            if(pageViewMode == Ginger.General.eRIPageViewMode.Add)
+            {
+                xOutputValuesGrid.ShowPaste = Visibility.Visible;
+            }
+
             SetActReturnValuesGrid();
 
             xOutputValuesGrid.DataSourceList = mApplicationAPIModel.ReturnValues;
@@ -83,7 +106,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
                     mApplicationAPIModel.ReturnValues.Add(ReturnValue);
                 }
-                
+
             }
         }
 
@@ -97,7 +120,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void AddReturnValue(object sender, RoutedEventArgs e)
         {
-            mApplicationAPIModel.ReturnValues.Add(new ActReturnValue() { Active = true, DoNotConsiderAsTemp=true });
+            mApplicationAPIModel.ReturnValues.Add(new ActReturnValue() { Active = true, DoNotConsiderAsTemp = true });
         }
 
         private void RefreshOutputColumns(object sender, RoutedEventArgs e)
@@ -113,23 +136,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             SimView.GridColsView = viewCols;
+            bool setColumnsReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
 
             //Simulation view
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Param, Header = "Parameter", WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Path, WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"] });          
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
-            viewCols.Add(new GridColView() { Field = "Clear Store To", Header = "Clear Store To", WidthWeight = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearStoreToBtnTemplate"] });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = setColumnsReadOnly });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Param, Header = "Parameter", WidthWeight = 150, ReadOnly = setColumnsReadOnly });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Path, WidthWeight = 150, ReadOnly = setColumnsReadOnly });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Header = "Simulated Value", WidthWeight = 150, ReadOnly = setColumnsReadOnly });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Expected, Header = "Expected Value", WidthWeight = 150, ReadOnly = setColumnsReadOnly });
+            viewCols.Add(new GridColView() { Field = "...", Header = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ValueExpressionButton"], ReadOnly = setColumnsReadOnly });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To", ReadOnly = setColumnsReadOnly, WidthWeight = 150, StyleType = GridColView.eGridColStyleType.ComboBox, ComboboxDisplayMemberField = nameof(GlobalAppModelParameter.PlaceHolder), ComboboxSelectedValueField = nameof(GlobalAppModelParameter.Guid), CellValuesList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>() });
+            viewCols.Add(new GridColView() { Field = "Clear Store To", Header = "Clear Store To", ReadOnly = setColumnsReadOnly, WidthWeight = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ClearStoreToBtnTemplate"] });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
             defView.GridColsView = new ObservableList<GridColView>();
             ObservableList<GridColView> defviewCols = new ObservableList<GridColView>();
-            defView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Visible = false });
-            defView.GridColsView.Add(new GridColView() { Field = "....", Visible = false });
+            defView.GridColsView.Add(new GridColView() { Field = ActReturnValue.Fields.SimulatedActual, Visible = false, ReadOnly = setColumnsReadOnly });
+            defView.GridColsView.Add(new GridColView() { Field = "....", Visible = false, ReadOnly = setColumnsReadOnly });
 
             xOutputValuesGrid.SetAllColumnsDefaultView(SimView);
             xOutputValuesGrid.AddCustomView(defView);
@@ -182,7 +206,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             if (selectedParam != null)
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).Path = GetParamWithStringTemplate(selectedParam);
         }
-        
+
         private string GetParamWithStringTemplate(AppModelParameter param)
         {
             return "{AppModelParam Name = " + param.PlaceHolder + "}";
@@ -195,7 +219,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void DSConfig(object sender, RoutedEventArgs e)
         {
         }
-        
+
         public void BindUiControls()
         {
         }

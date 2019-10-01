@@ -22,11 +22,7 @@ using Amdocs.Ginger.Repository;
 namespace GingerCore.Actions
 {
     public class WebAPIKeyBodyValues : ActInputValue
-    {
-        public new static partial class Fields
-        {
-            public static string ValueType = "ValueType";
-        }
+    {        
 
         public enum eValueType
         {
@@ -45,7 +41,7 @@ namespace GingerCore.Actions
             set
             {
                 mValueType = value;
-                OnPropertyChanged(Fields.ValueType);
+                OnPropertyChanged(nameof(ValueType));
                 OnPropertyChanged(nameof(IsBrowseNeeded));
             }
         }
@@ -60,5 +56,8 @@ namespace GingerCore.Actions
                     return false;
             }
         }
+
+
+        
     }
 }

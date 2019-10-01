@@ -1,13 +1,19 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using Ginger.Reports.GingerExecutionReport;
+using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
+using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
@@ -23,10 +29,8 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             //operationHandlerObj.CreateChart(y, chartName, title, tempfolder);
         }
-
-        public void CreateCustomerLogo(object a, string t)
+        public void CreateCustomerLogo(object a, string tempFolder)
         {
-            operationHandlerObj.CreateCustomerLogo(a, t);
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
@@ -64,10 +68,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        public void DownloadSolution(string v)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {
@@ -89,9 +90,28 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        public void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf)
+        public bool GetLatest(string path, SourceControlBase SourceControl)
         {
-            throw new NotImplementedException();
+          return  SourceControlIntegration.GetLatest(path, SourceControl);
+        }
+
+        public SourceControlBase GetNewSVnRepo()
+        {
+            throw new PlatformNotSupportedException("SVN Repositories are not supported yet on Ginger CLI");
+        }
+
+        public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
+        {
+            EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
+            HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
+       
+                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+                reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                                                                                                                        false,
+                                                                                                                        HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                        extraInformationCalculated + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+            
         }
 
         public bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null)
@@ -100,8 +120,13 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
 
         public void ShowAutoRunWindow()
+        {            
+            Reporter.ToLog(eLogLevel.WARN, "Show UI is set to true but not supported when running with GingerConsole");
+        }
+
+        public void WaitForAutoRunWindowClose()
         {
-            throw new NotImplementedException();
+            // NA for GingerConsole
         }
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
@@ -118,5 +143,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             throw new NotImplementedException();
         }
+
+
     }
 }

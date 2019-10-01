@@ -41,7 +41,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
         {
             string json = WorkSpace.Instance.RunsetExecutor.CreateSummary();
             string timestamp = DateTime.Now.ToString("MMddyyyy_HHmmss");
-            string fileName = Path.Combine(WorkSpace.Instance.Solution.Folder, "ExecutionResults", WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?
+            string testArtifactsFolder = WorkSpace.Instance.TestArtifactsFolder;            
+            string fileName = Path.Combine(testArtifactsFolder, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?                
             System.IO.File.WriteAllText(fileName, json);
         }
 
@@ -59,7 +60,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

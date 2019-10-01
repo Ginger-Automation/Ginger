@@ -23,12 +23,17 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
     public class JavaPlatform : PlatformInfoBase
     {
+
+
+        private List<eElementType> mJavaPlatformElementActionslist { get; set; } = null;
+
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()
         {
             throw new NotImplementedException();
@@ -46,35 +51,44 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageURL);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
-           
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchFrame);
+            browserActElementList.Add(ActBrowserElement.eControlAction.RunJavaScript);
             return browserActElementList;
         }
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()
         {
             if (mElementLocatorsTypeList == null)
             {
+                //Arrange locator on priority basis
                 mElementLocatorsTypeList = new List<eLocateBy>();
+                mElementLocatorsTypeList.Add(eLocateBy.POMElement);
+                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
+                mElementLocatorsTypeList.Add(eLocateBy.ByName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);
+                mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByTitle);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
-                mElementLocatorsTypeList.Add(eLocateBy.ByID);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSSSelector);
+                mElementLocatorsTypeList.Add(eLocateBy.ByValue);
             }
             return mElementLocatorsTypeList;
         }
 
         public override ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)
         {
-            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
-            eElementType elementType = GetElementType(elementInfo.ElementType);
-
-            if (elementType.Equals(eElementType.Table))
+            if (elementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                //get all action list supported to tablecell action
+                return GetWidgetUIElementList(elementInfo);
+            }
+
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();         
+
+            if (elementInfo.ElementTypeEnum==eElementType.Table)
+            {
+                //get all action list supported to table
                 var tableActionList = new[] { ActUIElement.eElementAction.TableCellAction, ActUIElement.eElementAction.TableAction, ActUIElement.eElementAction.TableRowAction }
                                             .SelectMany(action => GetTableControlActions(action))
                                             .ToList();
@@ -100,8 +114,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, action.ToString());
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                     if (!action.Equals(ActUIElement.eElementAction.TableAction))
-                    {
-                        actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.RowSelectorRadioParam, "RowNum");
+                    {                        
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
 
@@ -113,20 +126,13 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             else
             {
-                var actionList = GetPlatformUIElementActionsList(elementType);
+                var actionList = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
 
                 if (actionList.Count > 0)
                 {
                     foreach (var action in actionList)
                     {
-                        UIElementsActionsList.Add(
-                            new ActUIElement()
-                            {
-                                Description = action + " : " + elementInfo.ElementTitle,
-                                ElementAction = (ActUIElement.eElementAction)action,
-                                ElementType = elementType,
-                            }
-                            );
+                        UIElementsActionsList.Add(CreateUIElementAction(elementInfo, action));
                     }
                 }
             }
@@ -134,62 +140,120 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
-
-        private eElementType GetElementType(string elementType)
+        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo,ActUIElement.eElementAction action)
         {
-            eElementType element;
+            return new ActUIElement()
+            {
+                Description = action + " : " + elementInfo.ElementTitle,
+                ElementAction = action,
+                ElementType = elementInfo.ElementTypeEnum
+            };
+        }
+
+        private ObservableList<Act> GetWidgetUIElementList(ElementInfo elementInfo)
+        {
+            var widgetsActionList = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
+
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
+
+            if (widgetsActionList.Count > 0)
+            {
+                foreach (var action in widgetsActionList)
+                {
+                    var widgetsAction = CreateUIElementAction(elementInfo, action);
+
+                    widgetsAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
+
+                    UIElementsActionsList.Add(widgetsAction);
+                }
+            }
+
+            return UIElementsActionsList;
+        }
+
+        public static eElementType GetElementType(string elementType)
+        {
+            //TODO: J.G all this logic should be moved to java side 
+            //and payload should return simply element type as Buttton or TextBox etc.
+            eElementType elementTypeEnum;
 
             switch (elementType)
             {
                 case "javax.swing.JTextField":
                 case "javax.swing.JTextPane":
                 case "javax.swing.JTextArea":
-                    element = eElementType.TextBox;
+                    elementTypeEnum = eElementType.TextBox;
                     break;
                 case "javax.swing.JButton":
-                    element = eElementType.Button;
+                    elementTypeEnum = eElementType.Button;
                     break;
                 case "javax.swing.JLabel":
-                    element = eElementType.Label;
+                    elementTypeEnum = eElementType.Label;
                     break;
+
+                case "com.amdocs.uif.widgets.browser.JxBrowserBrowserComponent":  //  added to support live spy in JxBrowserBrowserComponent
+                case "com.amdocs.uif.widgets.browser.JExplorerBrowserComponent":// "com.jniwrapper.win32.ie.aw" :
+                    elementTypeEnum = eElementType.Browser;
+                    break;
+
                 case "javax.swing.JCheckBox":
-                    element = eElementType.CheckBox;
+                    elementTypeEnum = eElementType.CheckBox;
                     break;
                 case "javax.swing.JRadioButton":
-                    element = eElementType.RadioButton;
+                    elementTypeEnum = eElementType.RadioButton;
                     break;
+
+                case "com.amdocs.uif.widgets.CalendarComponent":
+                case "com.amdocs.uif.widgets.DateTimeNative$2":
+                case "lt.monarch.swing.JDateField$Editor":
+                    elementTypeEnum = eElementType.DatePicker;
+                    break;
+
                 case "javax.swing.JComboBox":
-                    element = eElementType.ComboBox;
+                case "com.amdocs.uif.widgets.ComboBoxNative$1":
+                    elementTypeEnum = eElementType.ComboBox;
                     break;
+
+
                 case "javax.swing.JList":
-                    element = eElementType.List;
+                    elementTypeEnum = eElementType.List;
                     break;
                 case "javax.swing.JTable":
-                    element = eElementType.Table;
+                case "com.amdocs.uif.widgets.search.SearchJTable":
+                    elementTypeEnum = eElementType.Table;
                     break;
+
                 case "javax.swing.JScrollPane":
                 case "javax.swing.JScrollPane$ScrollBar":
-                    element = eElementType.ScrollBar;
+                    elementTypeEnum = eElementType.ScrollBar;
                     break;
                 case "javax.swing.JTree":
-                    element = eElementType.TreeView;
+                case "com.amdocs.uif.widgets.TreeNative$SmartJTree":
+                    elementTypeEnum = eElementType.TreeView;
                     break;
                 case "javax.swing.JMenu":
-                    element = eElementType.MenuItem;
+                    elementTypeEnum = eElementType.MenuItem;
                     break;
                 case "javax.swing.JTabbedPane":
-                    element = eElementType.Tab;
+                case "com.amdocs.uif.widgets.JXTabbedPane":
+                    elementTypeEnum = eElementType.Tab;
                     break;
                 case "javax.swing.JEditorPane":
-                    element = eElementType.EditorPane;
+                    elementTypeEnum = eElementType.EditorPane;
                     break;
+
+                case "javax.swing.JInternalFrame":
+                case "com.amdocs.uif.workspace.MDIWorkspace$27":
+                    elementTypeEnum = eElementType.Iframe;
+                    break;
+
                 default:
-                    element = eElementType.Unknown;
+                    elementTypeEnum = eElementType.Unknown;
                     break;
             }
 
 
-            return element;
+            return elementTypeEnum;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
@@ -303,11 +367,94 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
                     break;
             }
+
             return javaPlatformElementActionslist;
         }
 
+        public override List<ActUIElement.eElementAction> GetPlatformWidgetsUIActionsList(eElementType ElementType)
+        {
+            List<ActUIElement.eElementAction> widgetsActionslist = new List<ActUIElement.eElementAction>();
+            
+            //common action type for all elementType
+            widgetsActionslist.Add(ActUIElement.eElementAction.IsVisible);
+            widgetsActionslist.Add(ActUIElement.eElementAction.RunJavaScript);
+            switch (ElementType)
+            {
+                case eElementType.Button:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Click);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    break;
+
+                case eElementType.TextBox:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    break;
+
+                case eElementType.ComboBox:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Select);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    break;
+
+
+                case eElementType.ScrollBar:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    break;
+
+                case eElementType.RadioButton:
+                case eElementType.CheckBox:
+                case eElementType.Span:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Click);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                case eElementType.Label:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    break;
+
+                default:
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Click);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.Select);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    break;
+            }
+
+            return widgetsActionslist;
+        }
+
+        public override List<eElementType> GetPlatformWidgetsUIElementsType()
+        {
+            var mWidgetsElementsTypeList = new List<eElementType>();
+            mWidgetsElementsTypeList.Add(eElementType.Unknown);
+            mWidgetsElementsTypeList.Add(eElementType.Button);
+            mWidgetsElementsTypeList.Add(eElementType.ScrollBar);
+            mWidgetsElementsTypeList.Add(eElementType.ComboBox);
+            mWidgetsElementsTypeList.Add(eElementType.RadioButton);
+            mWidgetsElementsTypeList.Add(eElementType.TextBox);
+            mWidgetsElementsTypeList.Add(eElementType.CheckBox);
+            mWidgetsElementsTypeList.Add(eElementType.Label);
+            mWidgetsElementsTypeList.Add(eElementType.Span);
+
+            return mWidgetsElementsTypeList;
+        }
         public override string GetPlatformGenericElementEditControls()
         {
             return "UIElementJavaPlatformPage";
@@ -326,16 +473,117 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<eElementType> GetPlatformUIElementsType()
         {
-            List<eElementType> javaPlatformElementTypelist = base.GetPlatformUIElementsType();
-
-            //Why below condition is needed ? 
-            if (javaPlatformElementTypelist == null || !javaPlatformElementTypelist.Exists( e => e == eElementType.EditorPane))
+            if(mJavaPlatformElementActionslist==null)
             {
-                javaPlatformElementTypelist.Add(eElementType.EditorPane);
+                mJavaPlatformElementActionslist = base.GetPlatformUIElementsType();
+                mJavaPlatformElementActionslist.Add(eElementType.EditorPane);
+                mJavaPlatformElementActionslist.Add(eElementType.TreeView);
             }
-            javaPlatformElementTypelist.Add(eElementType.TreeView);
+            return mJavaPlatformElementActionslist;
+        }
 
-            return javaPlatformElementTypelist;
+        public List<ElementTypeData> GetPlatformElementTypesData()
+        {
+            if (mPlatformElementTypeOperations == null)
+            {
+                mPlatformElementTypeOperations = new List<ElementTypeData>();                
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Unknown,
+                    IsCommonElementType = false           
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Button,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ScrollBar,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.ComboBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.RadioButton,
+                    IsCommonElementType = true
+                });
+               
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TextBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.CheckBox,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Image,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Label,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.List,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Table,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.MenuItem,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Window,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Tab,
+                    IsCommonElementType = true
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.EditorPane,
+                    IsCommonElementType = false
+                });
+
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.TreeView,
+                    IsCommonElementType = true
+                });
+            }
+            return mPlatformElementTypeOperations;
         }
 
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
@@ -433,7 +681,25 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            return null;
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();            
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
+            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Recommended (sensitive to page design changes)" });
+            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes)" });
+            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Recommended (sensitive to page design changes)" });            
+            
+
+            return learningLocatorsList;
+        }
+
+        public override string GetPageUrlRadioLabelText()
+        {
+            return "Window Title";
+        }
+
+        public override string GetNextBtnToolTip()
+        {
+            return "Switch Window";
         }
     }
 }

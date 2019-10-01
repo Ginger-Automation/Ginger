@@ -17,9 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
@@ -29,7 +27,6 @@ using Ginger.Reports.GingerExecutionReport;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.Environments;
 using GingerCore.FlowControlLib;
 using LiteDB;
 using Newtonsoft.Json;
@@ -63,24 +60,13 @@ namespace Ginger.Run
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         uint meventtime;
-        //IValueExpression mVE;
-        ProjEnvironment mExecutionEnvironment = null;
+        
 
         int mBusinessFlowCounter { get; set; }
         public Context mContext;
         public ExecutionLogger mExecutionLogger;
         public ExecutionLoggerHelper executionLoggerHelper;
-        //public ProjEnvironment ExecutionEnvironment
-        //{
-        //    get
-        //    {
-        //        return mExecutionEnvironment;
-        //    }
-        //    set
-        //    {
-        //        mExecutionEnvironment = value;
-        //    }
-        //}
+        
 
         private GingerReport gingerReport = new GingerReport();
 
@@ -98,29 +84,41 @@ namespace Ginger.Run
                 if (value != null)
                 {
                     mConfiguration = value;
-                    mConfiguration.ExecutionLoggerConfigurationExecResultsFolder = executionLoggerHelper.GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
-                    switch (this.ExecutedFrom)
+                    mConfiguration.CalculatedLoggerFolder = executionLoggerHelper.GetLoggerDirectory(mConfiguration.ExecutionLoggerConfigurationExecResultsFolder);
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                     {
-                        case Amdocs.Ginger.Common.eExecutedFrom.Automation:
-                            mExecutionLogger.ExecutionLogfolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder + @"\\" + defaultAutomationTabLogName;
-                            break;
-                        case Amdocs.Ginger.Common.eExecutedFrom.Run:
 
-                            if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != null) && (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != string.Empty))
-                            {
-                                mLogsFolderName = folderNameNormalazing(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name) + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
-                            }
-                            else
-                            {
-                                RunSetReport.Name = defaultRunTabLogName;
-                                mLogsFolderName = defaultRunTabLogName + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
-                            }
-                            mExecutionLogger.ExecutionLogfolder = mConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + mLogsFolderName + "\\" + this.GingerData.Seq.ToString() + " " + this.GingerData.GingerName + "\\";
+                        switch (this.ExecutedFrom)
+                        {
+                            case Amdocs.Ginger.Common.eExecutedFrom.Automation:
+                                mExecutionLogger.ExecutionLogfolder = Path.Combine(mConfiguration.CalculatedLoggerFolder, defaultAutomationTabLogName);
+                                break;
+                            case Amdocs.Ginger.Common.eExecutedFrom.Run:
 
-                            break;
+                                if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != null) && (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != string.Empty))
+                                {
+                                    mLogsFolderName = folderNameNormalazing(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name) + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
+                                }
+                                else
+                                {
+                                    RunSetReport.Name = defaultRunTabLogName;
+                                    mLogsFolderName = defaultRunTabLogName + "_" + mCurrentExecutionDateTime.ToString("MMddyyyy_HHmmss");
+                                }
+                                mExecutionLogger.ExecutionLogfolder = Path.Combine(mConfiguration.CalculatedLoggerFolder, mLogsFolderName, this.GingerData.Seq.ToString() + " " + this.GingerData.GingerName);
+
+                                break;
+                        }
+                        mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
+                        executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
                     }
-                    mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
-                    executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
+                    else
+                    {
+                        if (ExecutedFrom == eExecutedFrom.Run)
+                        {
+                            RunSetReport.Name = defaultRunTabLogName;
+                        }
+                    }
+
                 }
 
             }
@@ -186,7 +184,7 @@ namespace Ginger.Run
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, AGR);
         }
 
-        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner)
+        public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
@@ -204,21 +202,30 @@ namespace Ginger.Run
                         break;
                 }
                 mExecutionLogger.CreateNewDirectory(gingerReport.LogFolder);
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+
+                if (!offlineMode)
+                {
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+                }
             }
         }
 
 
 
-        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0)
+        public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
+            gingerRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerConfigurationIsEnabled = Configuration.ExecutionLoggerConfigurationIsEnabled;
+            mExecutionLogger.SetReportRunner(gingerRunner, gingerReport, GingerData, mContext, filename, runnerCount);
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
-                mExecutionLogger.SetReportRunner(gingerRunner, gingerReport, GingerData, mContext, filename, runnerCount);
                 this.ExecutionLogBusinessFlowsCounter = 0;
                 mExecutionLogger.ExecutionLogBusinessFlowsCounter = 0;
                 this.BFCounter = 0;
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Runner", gingerRunner.Name, gingerReport);
+
+                if (!offlineMode)
+                {
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Runner", gingerRunner.Name, gingerReport);
+                }
             }
         }
 
@@ -243,10 +250,13 @@ namespace Ginger.Run
                 mExecutionLogger.SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
             }
 
-            ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, null);
+            if (!offline)
+            {
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, null);
+            }
         }
 
-        public void RunSetEnd(string LogFolder = null)
+        public void RunSetEnd(string LogFolder = null, bool offline = false)
         {
             if (RunSetReport != null)
             {
@@ -264,7 +274,10 @@ namespace Ginger.Run
                 }
                 //App.RunPage.RunSetConfig.LastRunsetLoggerFolder = RunSetReport.LogFolder;
 
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, RunSetReport);
+                if (!offline)
+                {
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, RunSetReport);
+                }
                 RunSetReport = null;
             }
         }
@@ -291,8 +304,7 @@ namespace Ginger.Run
                     case Amdocs.Ginger.Common.eExecutedFrom.Automation:
                         //if (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.BussinessFlowRun) // Not Sure why it is added, not working at some points, removing it for now
                         //{
-                        mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
-                        executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
+                        mExecutionLogger.ExecutionLogfolder = mExecutionLogger.SetExecutionLogFolder(mExecutionLogger.ExecutionLogfolder, true);
                         // }
 
                         break;
@@ -309,15 +321,17 @@ namespace Ginger.Run
                 businessFlow.VariablesBeforeExec = businessFlow.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
                 businessFlow.SolutionVariablesBeforeExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
                 businessFlow.ExecutionLogFolder = BFFolder;
-                mExecutionLogger.CreateNewDirectory(mExecutionLogger.ExecutionLogfolder + BFFolder);
+                mExecutionLogger.CreateNewDirectory(Path.Combine(Configuration.CalculatedLoggerFolder,BFFolder));
+
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, null);
             }
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            //BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
+            mContext.BusinessFlow = businessFlow;
             Object BFR = mExecutionLogger.SetReportBusinessFlow(mContext, offlineMode, ExecutedFrom, this.Configuration.ExecutionLoggerConfigurationIsEnabled);
+
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
@@ -329,7 +343,9 @@ namespace Ginger.Run
             }
 
             if (!offlineMode)
+            {                
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, BFR);
+            }
         }
         // fix add to listener/loader class
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
@@ -338,22 +354,18 @@ namespace Ginger.Run
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActivityFolder = string.Empty;
-
                 if ((this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation) && (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ActivityRun))
                 {
-                    mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
-                    executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
+                    mExecutionLogger.ExecutionLogfolder = mExecutionLogger.SetExecutionLogFolder(mExecutionLogger.ExecutionLogfolder, true);
                     Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.None;
                 }
                 else if ((Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun))
                 {
-                    mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
-                    executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder, false);
+                    mExecutionLogger.ExecutionLogfolder = mExecutionLogger.SetExecutionLogFolder(mExecutionLogger.ExecutionLogfolder, false);
                     Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.None;
                     mCurrentBusinessFlow.ExecutionLogActivityCounter++;
 
-                    // use Path.combine !!!!
-                    ActivityFolder = mCurrentBusinessFlow.ExecutionLogFolder + @"\" + mCurrentBusinessFlow.ExecutionLogActivityCounter + " " + folderNameNormalazing(activity.ActivityName);
+                    ActivityFolder = Path.Combine(mCurrentBusinessFlow.ExecutionLogFolder,mCurrentBusinessFlow.ExecutionLogActivityCounter + " " + folderNameNormalazing(activity.ActivityName));
                 }
                 else
                 {
@@ -366,25 +378,34 @@ namespace Ginger.Run
                         mCurrentBusinessFlow.ExecutionLogActivityCounter++;
                     }
 
-                    // use Path.combine !!!!
-                    ActivityFolder = mCurrentBusinessFlow.ExecutionLogFolder + @"\" + mCurrentBusinessFlow.ExecutionLogActivityCounter + " " + folderNameNormalazing(activity.ActivityName);
+                    ActivityFolder = Path.Combine(mCurrentBusinessFlow.ExecutionLogFolder,mCurrentBusinessFlow.ExecutionLogActivityCounter + " " + folderNameNormalazing(activity.ActivityName));
                 }
 
-                activity.ExecutionLogFolder = ActivityFolder;
-                mExecutionLogger.CreateNewDirectory(mExecutionLogger.ExecutionLogfolder + ActivityFolder);
+                activity.ExecutionLogFolder = mExecutionLogger.GetLogFolder(ActivityFolder);
+                // TODO: cleanup after all execution move to LiteDB
+                if (mExecutionLogger.ExecutionLogfolder != null)
+                {
+                    mExecutionLogger.CreateNewDirectory(Path.Combine(mExecutionLogger.ExecutionLogfolder,
+                        ActivityFolder));
+                }
+
                 activity.VariablesBeforeExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
             }
 
             ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, null);
         }
+
         // fix
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            //ActivityReport AR = new ActivityReport(activity);
             object AR = mExecutionLogger.SetReportActivity(activity, mContext, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
+
             if (!offlineMode)
+            {               
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, AR);
+            }
         }
+
         // same function in extention
         private static string folderNameNormalazing(string folderName)
         {
@@ -413,29 +434,29 @@ namespace Ginger.Run
             if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
             {
                 string ActionFolder = string.Empty;
-                if ((this.ExecutedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation) && (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ActionRun))
+                if ((this.ExecutedFrom == eExecutedFrom.Automation) && (Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ActionRun))
                 {
-                    mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
-                    executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
+                    mExecutionLogger.ExecutionLogfolder = mExecutionLogger.SetExecutionLogFolder(mExecutionLogger.ExecutionLogfolder, true);
                     Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.None;
                 }
                 else if ((Configuration.ExecutionLoggerAutomationTabContext == ExecutionLoggerConfiguration.AutomationTabContext.ContinueRun))
                 {
-                    mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
-                    executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
+                    mExecutionLogger.ExecutionLogfolder = mExecutionLogger.SetExecutionLogFolder(mExecutionLogger.ExecutionLogfolder, true);
                     Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.None;
                     mCurrentActivity.ExecutionLogActionCounter++;
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    ActionFolder = mCurrentActivity.ExecutionLogFolder + @"\" + mCurrentActivity.ExecutionLogActionCounter + " " + folderNameNormalazing(action.Description);
+                    ActionFolder = Path.Combine(mCurrentActivity.ExecutionLogFolder,mCurrentActivity.ExecutionLogActionCounter + " " + folderNameNormalazing(action.Description));
                 }
                 else
                 {
                     mCurrentActivity.ExecutionLogActionCounter++;
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    ActionFolder = mCurrentActivity.ExecutionLogFolder + @"\" + mCurrentActivity.ExecutionLogActionCounter + " " + folderNameNormalazing(action.Description);
+                    ActionFolder = Path.Combine(mCurrentActivity.ExecutionLogFolder,mCurrentActivity.ExecutionLogActionCounter + " " + folderNameNormalazing(action.Description));
                 }
-                action.ExecutionLogFolder = ActionFolder;
-                mExecutionLogger.CreateNewDirectory(mExecutionLogger.ExecutionLogfolder + ActionFolder);
+                action.ExecutionLogFolder = mExecutionLogger.GetLogFolder(ActionFolder);
+                if (mExecutionLogger.ExecutionLogfolder != null)
+                {
+                    mExecutionLogger.CreateNewDirectory(Path.Combine(mExecutionLogger.ExecutionLogfolder,
+                        ActionFolder));
+                }
 
             }
         }
@@ -459,12 +480,12 @@ namespace Ginger.Run
                 //if offline mode then execution logger path exists in action object so making executionLogFolder empty to avoid duplication of path.
                 if (!offlineMode)
                     executionLogFolder = mExecutionLogger.ExecutionLogfolder;
-                //ActionReport AR = new ActionReport(action, mContext);
-                Object AR = null;
+                //ActionReport AR = new ActionReport(action, mContext);                
                 mContext.Activity = mCurrentActivity; //!!!!
+                Object AR = null;
                 if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
                 {
-                    AR = mExecutionLogger.SetReportAction(action, mContext, this.ExecutedFrom,offlineMode);
+                    AR = mExecutionLogger.SetReportAction(action, mContext, this.ExecutedFrom, offlineMode);
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)
                     //
@@ -484,7 +505,7 @@ namespace Ginger.Run
                         bool isScreenshotButtonEnabled = false;
                         if ((action.ScreenShots != null) && (action.ScreenShots.Count > 0))
                         {
-                            screenShotsPathes = action.ScreenShots;
+                            screenShotsPathes = action.ScreenShots.ToList();
                             isScreenshotButtonEnabled = true;
                         }
                         // 
@@ -535,7 +556,9 @@ namespace Ginger.Run
                 }
 
                 if (!offlineMode)
+                {                    
                     ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Action", action.Description, AR);
+                }
             }
             catch (Exception ex)
             {
@@ -562,14 +585,14 @@ namespace Ginger.Run
                 }
 
                 string exec_folder = folderNameNormalazing(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name) + "_" + DateTime.Now.ToString("MMddyyyy_HHmmss");
-                exec_folder = executionLoggerHelper.GetLoggerDirectory(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder + "\\" + exec_folder);
+                exec_folder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder,exec_folder));
                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = exec_folder;
                 int RunnerCount = 1;
                 RunSetStart(exec_folder, _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize, CurrentExecutionDateTime, true);
 
                 foreach (GingerRunner gingerrunner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
                 {
-                    string folder = exec_folder + "\\" + RunnerCount.ToString() + " " + gingerrunner.Name + "\\";
+                    string folder = Path.Combine(exec_folder,RunnerCount.ToString() + " " + gingerrunner.Name);
                     if (System.IO.Directory.Exists(folder))
                     {
                         executionLoggerHelper.CleanDirectory(folder);
@@ -589,11 +612,11 @@ namespace Ginger.Run
                     Configuration.ExecutionLoggerConfigurationIsEnabled = true;
                     mExecutionLogger.ExecutionLogfolder = folder;
                     gingerReport = new GingerReport();
-                    RunnerRunStart(0, gingerrunner);
+                    RunnerRunStart(0, gingerrunner, true);
                     OfflineRunnerExecutionLog(gingerrunner, folder, RunnerCount);
                     RunnerCount++;
                 }
-                RunSetEnd(exec_folder);
+                RunSetEnd(exec_folder, true);
                 return exec_folder;
             }
         }
@@ -676,7 +699,7 @@ namespace Ginger.Run
                 return string.Empty;
             }
             string exec_folder = string.Empty;
-            exec_folder = GenerateBusinessFlowOfflineFolder(_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder, context.BusinessFlow.Name, RunsetName);
+            exec_folder = GenerateBusinessFlowOfflineFolder(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, context.BusinessFlow.Name, RunsetName);
             Configuration.ExecutionLoggerConfigurationIsEnabled = true;
             context.Runner.SetBFOfflineData(context.BusinessFlow, (context.Runner.RunListeners[0] as ExecutionLoggerManager), exec_folder);
             return exec_folder;
@@ -690,7 +713,7 @@ namespace Ginger.Run
                 int counter = 1;
                 foreach (BusinessFlow bf in listBF)
                 {
-                    string reportpath = logFolderPath + "\\" + counter.ToString() + " " + folderNameNormalazing(bf.Name);
+                    string reportpath = Path.Combine(logFolderPath,counter.ToString() + " " + folderNameNormalazing(bf.Name));
                     System.IO.Directory.CreateDirectory(reportpath);
                     this.ExecutionLogBusinessFlowsCounter = counter;
                     mExecutionLogger.ExecutionLogBusinessFlowsCounter = counter;
@@ -702,10 +725,10 @@ namespace Ginger.Run
                     }
                     runner.SetBFOfflineData(bf, this, reportpath);
                     mBusinessFlowCounter++;
-                    runner.ExecutionLogFolder = runner.ExecutionLogFolder + @"\" + mBusinessFlowCounter + " " + folderNameNormalazing(bf.Name);
+                    runner.ExecutionLogFolder = Path.Combine(logFolderPath, mBusinessFlowCounter + " " + folderNameNormalazing(bf.Name));
                     counter++;
                 }
-                RunnerRunEnd(meventtime, runner, logFolderPath, runnerCount);
+                RunnerRunEnd(meventtime, runner, logFolderPath, runnerCount, true);
                 // GingerEnd(runner, logFolderPath, runnerCount);  // !!!!!!!!!!!!!!!!!!!!! FIXME
                 runner.ExecutionLogFolder = string.Empty;
                 return true;
@@ -771,7 +794,7 @@ namespace Ginger.Run
                             continue;
                         }
                         activity.ExecutionLogActionCounter++;
-                        action.ExecutionLogFolder = activity.ExecutionLogFolder + @"\" + activity.ExecutionLogActionCounter + " " + ExtensionMethods.folderNameNormalazing(action.Description);
+                        action.ExecutionLogFolder = Path.Combine(activity.ExecutionLogFolder,activity.ExecutionLogActionCounter + " " + ExtensionMethods.folderNameNormalazing(action.Description));
                         System.IO.Directory.CreateDirectory(action.ExecutionLogFolder);
 
                         ActionEnd(meventtime, action, true);

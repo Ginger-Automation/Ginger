@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -29,17 +30,34 @@ namespace GingerCoreCommonTest.Repository
     [Level1]
     public class DirtyTest
     {
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }        
+
+        [ClassInitialize()]
+        public static void ClassInit(TestContext TestContext)
         {
-
-
-
+            mTestHelper.ClassInitialize(TestContext);
+            
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(MyComplextRepositoryItem).Assembly);
         }
+
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+            mTestHelper.ClassCleanup();
+        }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
+
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mTestHelper.TestCleanup();
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -79,6 +97,7 @@ namespace GingerCoreCommonTest.Repository
             //Arrange
             MyComplextRepositoryItem item = new MyComplextRepositoryItem();
             item.Name = "aaa";            
+
             item.StartDirtyTracking();
 
             //Act            
@@ -106,7 +125,7 @@ namespace GingerCoreCommonTest.Repository
             child1.Name = "def";
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item dirty status changedt to modified");
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus,  "item dirty status changed to modified");
             Assert.AreEqual(eDirtyStatus.Modified, child1.DirtyStatus,  "child item dirty status changed to modified");
             Assert.IsTrue(DirtyStatusChangedTriggered, "DirtyStatusChangedTriggered=true");
         }
@@ -153,22 +172,22 @@ namespace GingerCoreCommonTest.Repository
             Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified since one child was removed");            
         }
 
-        //[Ignore]  // Need repsoitory serializer to work
-        //[TestMethod]  [Timeout(60000)]
-        //public void CopyItem()
-        //{
-        //    //Arrange
-        //    MyComplextRepositoryItem item = new MyComplextRepositoryItem();            
-        //    item.Name = "abc";            
-        //    item.StartDirtyTracking();
+        
+        [TestMethod]
+        [Timeout(60000)]
+        public void CopyItemIsDirty()
+        {
+            //Arrange
+            MyComplextRepositoryItem item = new MyComplextRepositoryItem();
+            item.Name = "abc";
+            item.StartDirtyTracking();
 
-        //    //Act                        
-        //    MyComplextRepositoryItem item2 = (MyComplextRepositoryItem)item.CreateCopy();
-        //    item2.StartDirtyTracking();
+            //Act                        
+            MyComplextRepositoryItem item2 = (MyComplextRepositoryItem)item.CreateCopy();            
 
-        //    //Assert  
-        //    Assert.AreEqual(eDirtyStatus.Modified, item2.DirtyStatus, "item dirty status changed to modified since it is a copy");
-        //}
+            //Assert  
+            Assert.AreEqual(eDirtyStatus.Modified, item2.DirtyStatus, "item dirty status changed to modified since it is a copy");
+        }
 
 
         [TestMethod]  [Timeout(60000)]
@@ -209,7 +228,7 @@ namespace GingerCoreCommonTest.Repository
             newChild.Name = "NewName"; //expecting parent to show as dirty again because one of it's childs modified
 
             //Assert  
-            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changedt to modified since one child was added and then child was modified");
+            Assert.AreEqual(eDirtyStatus.Modified, item.DirtyStatus, "item dirty status changed to modified since one child was added and then child was modified");
         }
 
 

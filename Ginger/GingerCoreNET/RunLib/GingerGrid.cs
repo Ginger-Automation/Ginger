@@ -41,12 +41,11 @@ namespace GingerCoreNET.RunLib
         }
 
         /// <summary>
-        /// Create nwe GingerGrid and auto select free port
+        /// Create new GingerGrid and auto select free port
         /// </summary>
         public GingerGrid()
         {           
-             mPort = SocketHelper.GetOpenPort(); 
-            //  mPort = 15001;
+             mPort = SocketHelper.GetOpenPort();             
         }
 
         public void Start()
@@ -112,6 +111,31 @@ namespace GingerCoreNET.RunLib
                         gingerSocketInfo.Response = RC;
                         break;
                     }
+
+
+                    // Combine find and send to one - send session id or how to find
+                    // Change to reserve node
+                case SocketMessages.FindNode:  // Find node which match criteria, used for remote grid
+                    string ServiceID = p.GetValueString();
+
+                    // !!! find first or use better algorithm
+                    GingerNodeInfo gingerNodeInfo1 = (from x in NodeList where x.ServiceId == ServiceID select x).FirstOrDefault();
+
+                    // Reserve
+                    // TODO: lock !!!!!!!!!!!!!!!!!!!!
+                    gingerNodeInfo1.Status = GingerNodeInfo.eStatus.Reserved; // TODO: release !!!!!!!!!!!!!!!!
+                    NewPayLoad RC2 = new NewPayLoad("NodeInfo", gingerNodeInfo1.SessionID);
+                    gingerSocketInfo.Response = RC2;
+                    break;
+                case SocketMessages.SendToNode:  // Send action to Node, used when Grid is remote
+                    Guid SessionID2 = p.GetGuid();
+                    GingerNodeInfo gingerNodeInfo = (from x in NodeList where x.SessionID == SessionID2 select x).SingleOrDefault();
+                    NewPayLoad actionPayload = p.ReadPayload();
+                    NewPayLoad remoteNodeActionResponce = SendRequestPayLoad(gingerNodeInfo.SessionID, actionPayload);
+                    remoteNodeActionResponce.Truncate();                    
+                    gingerSocketInfo.Response = remoteNodeActionResponce;
+                    gingerNodeInfo.Status = GingerNodeInfo.eStatus.Ready;  //TODO: in case of session to do not release
+                    break;
                 default:
                     throw new Exception("GingerSocketServerMessageHandler: Unknown Message type: " + p.Name);
             }
@@ -136,7 +160,7 @@ namespace GingerCoreNET.RunLib
 
         public void Stop()
         {
-            //TODO: notify all clinets that server is closing,
+            //TODO: notify all clients that server is closing,            
             mGingerSocketServer.Shutdown();
         }
 

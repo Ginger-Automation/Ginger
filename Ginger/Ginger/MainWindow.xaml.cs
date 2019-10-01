@@ -362,6 +362,8 @@ namespace Ginger
 
         private void AppCleanUp()
         {
+            Telemetry.eventHandler -= TelemetryEventHandler;
+
             ClosingWindow CW = new ClosingWindow();
             CW.Show();
             GingerCore.General.DoEvents();
@@ -563,7 +565,7 @@ namespace Ginger
             if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.Folder))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest( WorkSpace.Instance.Solution.Folder,  WorkSpace.Instance.Solution.SourceControl);
+                SourceControlUI.GetLatest( WorkSpace.Instance.Solution.Folder,  WorkSpace.Instance.Solution.SourceControl);
 
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAppAgentsMapping,null);
             Reporter.HideStatusMessage();
@@ -646,15 +648,14 @@ namespace Ginger
         }
 
         private void ShowGingerLog()
-        {
-            string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
-            if (System.IO.File.Exists(mLogFilePath))
+        {                        
+            if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
-                Process.Start(mLogFilePath);
+                Process.Start(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found in the Path:'" + Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile + "'");
             }
         }
 
@@ -668,8 +669,8 @@ namespace Ginger
 
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
         {
-            string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
-            string folder = System.IO.Path.GetDirectoryName(mLogFilePath);
+                        
+            string folder = System.IO.Path.GetDirectoryName(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             if (System.IO.Directory.Exists(folder))
             {
                 Process.Start(folder);

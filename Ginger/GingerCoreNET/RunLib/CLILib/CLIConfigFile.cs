@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Ginger.Run;
@@ -31,11 +30,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     {
         bool ICLI.IsFileBasedConfig { get { return true; } }
 
-        public string Identifier
+        public string Verb
         {
             get
-            {
-                return "ConfigFile";
+            {                
+                return ConfigFileOptions.Verb;
             }
         }
 
@@ -47,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        public async void Execute(RunsetExecutor runsetExecutor)
+        public void Execute(RunsetExecutor runsetExecutor)
         {            
             runsetExecutor.RunRunset();            
         }
@@ -82,18 +81,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     }
                 }
             }
-            sConfig += "Solution=" + solution.Folder + Environment.NewLine;
-            sConfig += "Env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
-            sConfig += "RunSet=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
-            sConfig += "RunAnalyzer=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
-            sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
+            sConfig += "solution=" + solution.Folder + Environment.NewLine;
+            sConfig += "env=" + runsetExecutor.RunsetExecutionEnvironment.Name + Environment.NewLine;
+            sConfig += "runset=" + runsetExecutor.RunSetConfig.Name + Environment.NewLine;
+            sConfig += "analyze=" + cliHelper.RunAnalyzer.ToString() + Environment.NewLine;
+            if (!string.IsNullOrEmpty(cliHelper.TestArtifactsFolder))
+            {
+                sConfig += "artifacts-path=" + cliHelper.TestArtifactsFolder + Environment.NewLine;
+            }
+            
+            //OLD sConfig += "ShowAutoRunWindow=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
+            sConfig += CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)) + "=" + cliHelper.ShowAutoRunWindow.ToString() + Environment.NewLine;
 
             return sConfig;
         }
 
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            cliHelper.ShowAutoRunWindow = true; // // default is true to keep backword compatibility
+            cliHelper.ShowAutoRunWindow = true; // // default is true to keep backward compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
             {
                 string arg;
@@ -127,19 +132,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                             cliHelper.SourceControlProxyPort(value);                            
                             break;
                         case "Solution":
+                        case "solution":
                             cliHelper.Solution = value;                            
                             break;
                         case "Env":
+                        case "env":
                             cliHelper.Env = value;                        
                             break;
                         case "RunSet":
+                        case "runset":
                             cliHelper.Runset = value;                            
                             break;
-                        case "ShowAutoRunWindow":
+                        case "ShowAutoRunWindow": // Support old style
+                        case "showui": // TODO: use CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)):
                             cliHelper.ShowAutoRunWindow = bool.Parse(value);
                             break;
                         case "RunAnalyzer":
+                        case "analyze":
                             cliHelper.RunAnalyzer = bool.Parse(value);                            
+                            break;
+                        case "artifacts-path":
+                            cliHelper.TestArtifactsFolder = value;
                             break;
                         default:
                             Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");

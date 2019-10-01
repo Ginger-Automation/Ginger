@@ -46,7 +46,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         StackPanel ITreeViewItem.Header()
         {
             string ImageFile = "@Folder2_16x16.png";  //TODO: find icon for Applications
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -73,7 +73,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Applications", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowAddSubFolder: false, allowRenameFolder: false, allowDeleteFolder:false);
+            AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Applications", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowAddSubFolder: false, allowRenameFolder: false, allowDeleteFolder:false, allowDeleteAllItems: true);
             AddSourceControlOptions(mContextMenu, false, false);
         }
     }

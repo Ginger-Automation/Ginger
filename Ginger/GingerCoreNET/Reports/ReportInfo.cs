@@ -126,7 +126,7 @@ namespace Ginger.Reports
             BFES.BusinessFlow = BF;
             BFES.Selected = true;
             if(GR!=null)
-            BFES.BusinessFlowExecLoggerFolder = GR.ExecutionLoggerManager.ExecutionLogfolder + "\\" + BF.ExecutionLogFolder;
+            BFES.BusinessFlowExecLoggerFolder = Path.Combine(GR.ExecutionLoggerManager.ExecutionLogfolder,BF.ExecutionLogFolder);
 
             if (mBFESs!=null)  mBFESs.Clear();
             mBFESs.Add(BFES);
@@ -172,7 +172,7 @@ namespace Ginger.Reports
                 switch (txtFileName)
                 {
                     case "RunSet.txt":
-                        curFileWithPath = folder + @"\RunSet.txt";
+                        curFileWithPath = Path.Combine(folder,"RunSet.txt");
                         ReportInfoRootObject = (RunSetReport)JsonLib.LoadObjFromJSonFile(curFileWithPath, typeof(RunSetReport));
                         ((RunSetReport)ReportInfoRootObject).LogFolder = folder;
                         reportInfoLevel = ReportInfo.ReportInfoLevel.RunSetLevel;

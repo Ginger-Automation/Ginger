@@ -150,7 +150,7 @@ namespace Ginger.Reports
                 {
                     if (mAction.StatusConverter == eStatusConverterOptions.IgnoreFail && mAction.Status==Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                     {
-                        return eStatusConverterOptions.IgnoreFail.ToString();
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored.ToString();
                     }
                     else
                     {
@@ -340,7 +340,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Section)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public List<string> ScreenShots { get { return mAction != null ? mAction.ScreenShots : screenShotsList; } set { screenShotsList = value; } }
+        public List<string> ScreenShots { get { return mAction != null ? mAction.ScreenShots.ToList() : screenShotsList; } set { screenShotsList = value; } }
 
         public bool Active { get { return mAction.Active; } }
 

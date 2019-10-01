@@ -135,7 +135,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add Page Objects Model", AddPOM, null, eImageType.Add);
             if (mPOMModelFolder.IsRootFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Page Objects Model", allowAddNew: false, allowRefresh: false);
 
@@ -143,7 +143,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
-        {            
+        {
+            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
             WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder),1000,700, DoNotShowAsDialog:true);            
         }
     }

@@ -132,14 +132,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
+                string args = mAutoRunConfiguration.ConfigArgs;
+                string prefix = "";
                 if (ExecutorType == eExecutorType.GingerConsole)
                 {
-                    return "dotnet " + ExecuterFullPath + " " + mAutoRunConfiguration.SelectedCLI.Identifier + "=\"" + mAutoRunConfiguration.ConfigArgs + "\"";
-                }
-                else
-                {
-                    return ExecuterFullPath + " " + mAutoRunConfiguration.SelectedCLI.Identifier + "=\"" + mAutoRunConfiguration.ConfigArgs + "\"";
-                }
+                    //TODO: After moving to .net core 3 with self contain exe like remove the dotnet prefix
+                    prefix = "dotnet ";
+                }                
+                string command = prefix + "\"" + ExecuterFullPath + "\" " + args;
+                return command;
+                
             }
         }
     }

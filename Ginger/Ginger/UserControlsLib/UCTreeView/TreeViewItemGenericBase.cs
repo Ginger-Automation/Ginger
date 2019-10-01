@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
-using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -98,7 +97,7 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Open Containing Folder", OpenTreeItemFolderHandler, null, "@Folder_16x16.png");
                 mTreeView.AddToolbarTool("@Folder_16x16.png", "Open Containing Folder", OpenTreeItemFolderHandler);
-            }
+            }            
         }
 
         public abstract bool SaveTreeItem(object item, bool saveOnlyIfDirty = false);
@@ -184,7 +183,7 @@ namespace GingerWPF.TreeViewItemsLib
         }
 
         
-        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true)
+        public void AddFolderNodeBasicManipulationsOptions(ContextMenu CM, string nodeItemTypeName, bool allowRefresh = true, bool allowAddNew = true, bool allowPaste = true, bool allowSaveAll = true, bool allowCutItems = true, bool allowCopyItems = true, bool allowRenameFolder = true, bool allowAddSubFolder = true, bool allowDeleteFolder = true, bool allowOpenFolder = true, bool allowDeleteAllItems = false)
         {
             if (allowRefresh)
             {
@@ -215,6 +214,11 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 TreeViewUtils.AddMenuItem(CM, "Save All", SaveAllTreeFolderItemsHandler, null, "@SaveAll_16x16.png");
                 mTreeView.AddToolbarTool("@SaveAll_16x16.png", "Save All", SaveAllTreeFolderItemsHandler);
+            }
+            if (allowDeleteAllItems)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Delete All Items", DeleteAllTreeItemsHandler, null, "@Trash_16x16.png");
+                mTreeView.AddToolbarTool("@Trash_16x16.png", "Delete All Items", DeleteAllTreeItemsHandler);
             }
             if (allowAddSubFolder)
             {
@@ -305,6 +309,13 @@ namespace GingerWPF.TreeViewItemsLib
             PostDeleteTreeItemHandler();
         }
 
+        public abstract void DeleteAllTreeItems();
+        private void DeleteAllTreeItemsHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            DeleteAllTreeItems();
+            PostDeleteTreeItemHandler();
+        }
+
         public abstract void RefreshTreeFolder(Type itemType, string path);
         private void RefreshTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)
         {
@@ -338,6 +349,8 @@ namespace GingerWPF.TreeViewItemsLib
                 }
             }
         }
+
+        
 
         public abstract bool RenameTreeFolder(string originalName, string newFolderName, string newPath);
         private void RenameTreeFolderHandler(object sender, System.Windows.RoutedEventArgs e)

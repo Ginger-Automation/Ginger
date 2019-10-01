@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
@@ -43,8 +42,7 @@ namespace Ginger.GeneralLib
         eLogShowLevel mLogLevel { get; set; }
         string mLogText;
         TextBlockHelper mTextBlockHelper;
-        GenericWindow mPageGenericWin;
-        string mLogFilePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\\amdocs\\Ginger\\WorkingFolder\\Logs\\Ginger_Log.txt";
+        GenericWindow mPageGenericWin;                
 
         /// <summary>
         /// Log Details Page
@@ -79,12 +77,12 @@ namespace Ginger.GeneralLib
         private void FillLogData()
         {
             //get the log file text            
-            using (StreamReader sr = new StreamReader(mLogFilePath))
+            using (StreamReader sr = new StreamReader(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
                 mLogText = sr.ReadToEnd();
             }
 
-            //cut all log not relevent to last application launch
+            //cut all log not relevant to last application launch
             int indexOfStart = mLogText.LastIndexOf("######################## Application version");
 
             if(indexOfStart==-1)
@@ -211,9 +209,9 @@ namespace Ginger.GeneralLib
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (System.IO.File.Exists(mLogFilePath))
+            if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
-                Process.Start(mLogFilePath);
+                Process.Start(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             }
             else
             {
@@ -233,9 +231,9 @@ namespace Ginger.GeneralLib
                 mail.MailTo = "GingerCoreTeam@int.amdocs.com";
 
                 //add Full log
-                if (System.IO.File.Exists(mLogFilePath))
+                if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
                 {
-                    mail.Attachments.Add(mLogFilePath);
+                    mail.Attachments.Add(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
                 }               
 
                 mail.DisplayAsOutlookMail();

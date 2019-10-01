@@ -33,7 +33,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
-using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Actions
@@ -176,34 +175,54 @@ namespace GingerCore.Actions
             }
         }
 
-        private eLocateBy mLocateBy;
-
-        [IsSerializedForLocalRepository]
-        public eLocateBy LocateBy
+        public virtual eLocateBy LocateBy
         {
-            get { return mLocateBy; }
-            set
+            get
             {
-                if (mLocateBy != value)
+                // Avoid creating new LcoateBy if this action doesn't need it
+                if (this.ObjectLocatorConfigsNeeded)
                 {
-                    mLocateBy = value;
-                    OnPropertyChanged(Fields.LocateBy);
-                    OnPropertyChanged(Fields.Details);
+                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+                }
+                else
+                {
+                    return eLocateBy.NA;
                 }
             }
-        }
-
-
-        private string mLocateValue;
-        [IsSerializedForLocalRepository]
-        public string LocateValue
-        {
-            get { return mLocateValue; }
             set
             {
-                mLocateValue = value;
-                OnPropertyChanged(Fields.LocateValue);
-                OnPropertyChanged(Fields.Details);
+                if(this.ObjectLocatorConfigsNeeded)
+                {
+                    AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                    OnPropertyChanged(Fields.LocateBy);
+                    OnPropertyChanged(Fields.Details);
+                }                
+            }
+        }
+     
+     
+        public virtual string LocateValue
+        {
+            get
+            {
+                // Avoid creating new LcoateBy if this action doesn't need it
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    return GetOrCreateInputParam(Fields.LocateValue).Value;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (this.ObjectLocatorConfigsNeeded)
+                {
+                    AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                    OnPropertyChanged(Fields.LocateValue);
+                    OnPropertyChanged(Fields.Details);
+                }
             }
         }
 
@@ -321,8 +340,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> FlowControls { get; set; } = new ObservableList<FlowControl>();
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<ActInputValue> InputValues { get; set; } = new ObservableList<ActInputValue>();
+       [IsSerializedForLocalRepository]
+        public ObservableList<ActInputValue> InputValues { get; set; } =new ObservableList<ActInputValue>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
@@ -513,8 +532,8 @@ namespace GingerCore.Actions
 
         //Keeping screen shot in memory will eat up the memory - so we save to files and keep file name
 
-        public List<String> ScreenShots { get; set; } = new List<String>();
-        public List<String> ScreenShotsNames = new List<String>();
+        public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
+        public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
 
 
         // No need to back because the list is saved to backup
@@ -696,6 +715,17 @@ namespace GingerCore.Actions
             return AIV;
         }
 
+        public TEnum GetOrCreateInputParam<TEnum>(string Param, string DefaultValue = null) where TEnum : struct
+        {
+
+            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
+
+            TEnum result;
+       _ = Enum.TryParse<TEnum>(AIV.Value, out result);
+         
+            return result;
+
+        }
 
         //YW - removed as it was causing problem - need to rethink better.
         //public ActInputValueEnum GetOrCreateEnumInputParam(string Param, object DefaultValue = null)
@@ -1205,9 +1235,17 @@ namespace GingerCore.Actions
 
         protected void AddAllPlatforms()
         {
-            foreach (object v in Enum.GetValues(typeof(ePlatformType)))
+            lock (mPlatforms)   // Handle reentry 
             {
-                mPlatforms.Add((ePlatformType)v);
+                if (mPlatforms.Count != 0)
+                {
+                    return;
+                }
+
+                foreach (object v in Enum.GetValues(typeof(ePlatformType)))
+                {
+                    mPlatforms.Add((ePlatformType)v);
+                }
             }
         }
 
@@ -1614,7 +1652,7 @@ namespace GingerCore.Actions
                 // Show old LocateBy, LocateValue
                 // TODO: remove when locate by removed from here
                 ActionDetails AD = new ActionDetails();
-                if (this.LocateBy != eLocateBy.NA)
+                if (this.ObjectLocatorConfigsNeeded)                
                 {
                     AD.Info = this.LocateBy + "=" + this.LocateValue;
                 }
@@ -1704,17 +1742,17 @@ namespace GingerCore.Actions
             }
         }
 
-        public string ReturnValuesInfo
+        public int ReturnValuesCount
         {
             get
             {
-                if (ReturnValues != null && ReturnValues.Count > 0)
+                if (ReturnValues != null)
                 {
-                    return string.Format("{0} Output Values", ReturnValues.Count);
+                    return ReturnValues.Count;
                 }
                 else
                 {
-                    return string.Empty;
+                    return 0;
                 }
             }
         }
@@ -1743,5 +1781,9 @@ namespace GingerCore.Actions
         /// should be object from type 'Context' which should include in context objects
         /// </summary>
         public object Context { get; set; }
+
+
+
+
     }
 }

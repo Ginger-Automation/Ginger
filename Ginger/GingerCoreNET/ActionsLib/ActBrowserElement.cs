@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
@@ -96,16 +97,20 @@ namespace GingerCore.Actions
             UrlPOM,
         }
 
-        [IsSerializedForLocalRepository]
+
         public eGotoURLType GotoURLRadioButton
         {
-            get { return gotoURLRadioButton; }
+            get {
+
+                return GetOrCreateInputParam<eGotoURLType>(Fields.GotoURLType);
+            }
             set
             {
-                gotoURLRadioButton = value;
+                GetOrCreateInputParam(Fields.GotoURLType).Value = value.ToString();
             }
         }
-        private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
+
+        // private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
 
         private int mImplicitWait = 60;
         [IsSerializedForLocalRepository]
@@ -175,9 +180,53 @@ namespace GingerCore.Actions
             RunJavaScript
         }
 
+        //TODO: For ActBroswer ObjectLocatrosConfigNeeded is false 
+        //But still for Switch frame , intialize browser etc the locate by and locate value is binded with Act.cs LocateBy and LocateValue fields
+        //We override this field to ignore ObjectConfigNeeded check only for this action
+        //Need to remove all of this once restructring Act.cs
+        public override eLocateBy LocateBy
+        {
+            get
+            {
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateBy, value.ToString());
+                OnPropertyChanged(Act.Fields.LocateBy);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+        public override string LocateValue
+        {
+            get
+            {
+                return GetOrCreateInputParam(Act.Fields.LocateValue).Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(Act.Fields.LocateValue, value);
+                OnPropertyChanged(Act.Fields.LocateValue);
+                OnPropertyChanged(Act.Fields.Details);
+            }
+        }
+
+
+
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction);
+            }
+            set
+            {
+                 AddOrUpdateInputParamValue(Fields.ControlAction, value.ToString());
+     
+                OnPropertyChanged(nameof(ControlAction));
+            }
+        }
 
         public override String ToString()
         {
@@ -284,9 +333,20 @@ namespace GingerCore.Actions
 
         public PlatformAction GetAsPlatformAction()
         {
-            PlatformAction platformAction = new PlatformAction(actionHandler: "BrowserActions", action: "GotoURL" );                                    
-            platformAction.InputParams.Add("GotoURLType", GotoURLRadioButton);            
-            platformAction.InputParams.Add("URL", Value);
+            PlatformAction platformAction = new PlatformAction(this);
+
+
+
+
+            foreach (ActInputValue aiv in this.InputValues)
+            {
+                if (!platformAction.InputParams.ContainsKey(aiv.Param))
+                {
+                    platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
+                }
+            }
+     
+
             return platformAction;            
         }
 

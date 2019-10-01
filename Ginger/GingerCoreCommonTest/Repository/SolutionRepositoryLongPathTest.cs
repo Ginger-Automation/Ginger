@@ -32,12 +32,12 @@ namespace GingerCoreCommonTest.Repository
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //
-    // >>>>>>>>>>>>>>>>>> ALL test marked with ingore failing, when moving to .NET core 3 they should work - remove commented after move, DO NOT DELELTE !!!
+    // >>>>>>>>>>>>>>>>>> ALL test marked with ignore failing, when moving to .NET core 3 they should work - remove commented after move, DO NOT DELETE !!!
     // 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    [Ignore]
+    [Ignore] // Fail on Linux with File watcher when moving to .net core 3 hopefully will be resolved
     [TestClass]    
     public class SolutionRepositoryLongPathTest
     {

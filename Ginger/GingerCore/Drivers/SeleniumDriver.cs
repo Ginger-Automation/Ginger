@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -840,7 +841,7 @@ namespace GingerCore.Drivers
         public override void RunAction(Act act)
         {
             // if alert exist then any action on driver throwing exception and dismissing the pop up
-            // so keeping handle browswer as first step.
+            // so keeping handle browser as first step.
             if (act.GetType() == typeof(ActHandleBrowserAlert))
             {
                 HandleBrowserAlert((ActHandleBrowserAlert)act);
@@ -850,7 +851,7 @@ namespace GingerCore.Drivers
             //implicityWait must be done on actual window so need to make sure the driver is pointing on window
             try
             {
-                // if ActBrowserElement and conrol action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
+                // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
                 if (act.GetType() == typeof(ActBrowserElement))
                 {
                     ActBrowserElement ABE = (ActBrowserElement)act;
@@ -890,7 +891,7 @@ namespace GingerCore.Drivers
                 //TODO: call GetHARData and add it as screen shot or...
                 // GetHARData();
 
-                // TODO: save it in the dolutionm docs... 
+                // TODO: save it in the solution docs... 
                 string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
                 BMPClient.SaveHAR(filename);
                 act.ExInfo += "Action HAR file saved at: " + filename;
@@ -1336,7 +1337,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        private void SmartSyncHandler(ActSmartSync act)
+        public void SmartSyncHandler(ActSmartSync act)
         {
             IWebElement e = LocateElement(act, true);
             Stopwatch st = new Stopwatch();
@@ -2260,7 +2261,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
 
             }
         }
@@ -3090,30 +3091,22 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                string[] pOMandElementGUIDs = locateValue.ToString().Split('_');
-                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                if (currentPOM == null)
+                var pomExcutionUtil = new POMExecutionUtils(act);
+                var currentPOM = pomExcutionUtil.GetCurrentPOM();
+
+                if (currentPOM != null)
                 {
-                    act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                    return null;
-                }
-                else
-                {
-                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                    if (selectedPOMElement == null)
-                    {
-                        act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                        return null;
-                    }
-                    else
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    if (currentPOMElementInfo != null)
                     {
                         if (HandelIFramShiftAutomaticallyForPomElement)
-                            SwitchFrame(selectedPOMElement);
-                        elem = LocateElementByLocators(selectedPOMElement.Locators);
-                        selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                        {
+                            SwitchFrame(currentPOMElementInfo);
+                        }
+                        elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                        currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                     }
+                    
                 }
             }
             else
@@ -6223,7 +6216,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 
@@ -6302,7 +6295,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
         // ----------------------------------------------------------------------------------------------------------------------------------
@@ -7525,6 +7518,11 @@ namespace GingerCore.Drivers
         public string GetElementXpath(ElementInfo EI)
         {
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

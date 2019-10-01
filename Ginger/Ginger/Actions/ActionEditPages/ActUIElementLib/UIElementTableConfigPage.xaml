@@ -1,0 +1,131 @@
+    <Page x:Class="Ginger.Actions._Common.ActUIElementLib.UIElementTableConfigPage"  xmlns:Actions="clr-namespace:Ginger.Actions"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Actions._Common.ActUIElementLib"
+         xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      mc:Ignorable="d" 
+      d:DesignHeight="430" d:DesignWidth="820"
+      Title="TableActionConfigPage">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="subElementTypeRow" Height="65*"/>  
+                <RowDefinition x:Name="OperationTypeRow" Height="40*"/>
+                <RowDefinition x:Name="ColumnType" Height="50*"/>
+                <RowDefinition x:Name="RowType" Height="100*"/>
+                <RowDefinition x:Name="WhereDataRow" Height="80*"/>
+                <RowDefinition x:Name="DescriptionType" Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="125"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="207"/>
+                <ColumnDefinition Width="246"/>
+                <ColumnDefinition Width="326"/>
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel x:Name="SubElementDetailsPanel" Grid.Row="0"  Grid.ColumnSpan="2" VerticalAlignment="Center" Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" 
+                           Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">Sub-element Type</Label>
+                    <UserControlsLib:UCComboBox x:Name="SubElementTypeComboBox" Grid.Row="0" Grid.Column="1"/>
+
+                    <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" 
+                           Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">Sub Element Action</Label>
+                    <UserControlsLib:UCComboBox x:Name="SubElementActionComboBox" Grid.Row="1" Grid.Column="1" />
+
+                </Grid>
+            </StackPanel>
+
+            <Label  Grid.Row="1"  HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" 
+                    x:Name="OperationLabel" Content="Control Action:" />
+            <StackPanel x:Name="ControlActionPanel" Grid.Row="1"  Grid.Column="1" VerticalAlignment="Center">
+                <UserControlsLib:UCComboBox x:Name="ControlActionComboBox" Margin="15" />
+            </StackPanel>
+            <Frame x:Name="ControlActionFrame" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2"  Visibility="Visible"/>
+            
+            <StackPanel Grid.Row="2" Grid.Column="0"  x:Name="ColumnLabelPanel" Visibility="Visible" VerticalAlignment="Center">
+                <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Center">Column:</Label>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="1"  x:Name="cmbColSelectorValuePanel" Visibility="Visible"  VerticalAlignment="Center">
+                <UserControlsLib:UCComboBox x:Name="cmbColSelectorValue" Margin="15"/>
+               
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="2"   x:Name="cmbColumnValuePanel" Visibility="Visible" VerticalAlignment="Center">
+                <UserControlsLib:UCComboBox x:Name="cmbColumnValue"  Margin="15"/>
+                
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="3" Grid.Column="0" x:Name="RowLabelPanel" Visibility="Visible">
+                <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Top">Row:</Label>
+            </StackPanel>
+            <StackPanel Grid.Row="3" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0,0,0" Visibility="Visible">               
+                <RadioButton Name="RowNum" Content="Row Number" Checked="RowNum_Checked" Tag="Row Number" Unchecked="RowNum_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+                <RadioButton Name="AnyRow" Content="Any Row" Checked="AnyRow_Checked" Tag="Any Row" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+                <RadioButton Name="BySelectedRow" Content="Selected Row" Tag="By Selected Row" Checked="BySelectedRow_Checked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
+                <RadioButton Name="Where" Content="Where" Tag="Where" Checked="Where_Checked" Unchecked="Where_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>                
+                <!--<UserControlsLib:UCRadioButtons x:Name="xLocateRowTypeRadioButtonGroup" ></UserControlsLib:UCRadioButtons>-->
+            </StackPanel>
+            <StackPanel Grid.Row="3" Grid.Column="2"  Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24" x:Name="RowSelectorValuePanel" Visibility="Visible"> 
+                
+                    <UserControlsLib:UCComboBox x:Name="RowSelectorValue"  Width="150"  />
+                    
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="4" Grid.Column="1" x:Name="WherePanel" Visibility="Visible" Grid.RowSpan="1" Grid.ColumnSpan="3">
+                <Grid Margin="0,5,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
+                    <UserControlsLib:UCComboBox x:Name="WhereColumn" Grid.Row="0" Grid.Column="0" Margin="10,5,0,0"/>
+                    
+                    <UserControlsLib:UCComboBox x:Name="WhereColumnTitle" Grid.Row="0" Grid.Column="1" Margin="10,5,0,0"/>
+                    
+                    <UserControlsLib:UCComboBox x:Name="WhereProperty" Grid.Row="1" Grid.Column="0" Margin="10,5,0,0"/>
+                    
+                    <UserControlsLib:UCComboBox x:Name="WhereOperator" Grid.Row="1" Grid.Column="1" Margin="10,5,0,0"/>
+                    
+                    <Actions:UCValueExpression x:Name="WhereColumnValue" Grid.Row="1" Grid.Column="2" Height="25"  Margin="10,5,0,0" ToolTip="Enter the Value to be search by given Condition"/>
+                </Grid>
+            </StackPanel>
+
+
+            <Label  Grid.Row="5" Grid.Column="0" Content="Description:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}"
+                    HorizontalAlignment="Stretch" Margin="0,10,0,0" x:Name="DescriptionLabel"/>
+            <StackPanel Grid.Row="6" Grid.Column="1" x:Name="DescriptionPanel" Visibility="Visible" Margin="0,10,0,0" Grid.RowSpan="1" Grid.ColumnSpan="3" >
+                <Grid Margin="0,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70"/>
+                    </Grid.RowDefinitions>
+                    <DockPanel x:Name="Description" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="1" >
+                        <ScrollViewer Background="White">
+                            <TextBlock x:Name="txtDescription" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" ></TextBlock>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Grid>
+            </StackPanel>
+
+        </Grid>
+    </ScrollViewer>
+</Page>

@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -28,7 +24,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using GingerCore.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -152,9 +151,9 @@ namespace Amdocs.Ginger.Repository
                 DirtyCheck(name);
             }
         }
-
-
-
+        
+        public bool AllowAutoSave { get; set; }
+        
         Guid mGuid = Guid.Empty;
         [IsSerializedForLocalRepository]
         public Guid Guid
@@ -495,10 +494,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void RestoreFromBackup(bool isLocalBackup = false)
+        public void RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
         {
             RestoreBackup(isLocalBackup);
-            ClearBackup(isLocalBackup);
+            if (clearBackup)
+            {
+                ClearBackup(isLocalBackup); 
+            }
         }
 
         private string mFileName = null;
@@ -566,7 +568,7 @@ namespace Amdocs.Ginger.Repository
 
         private DateTime GetUTCDateTime()
         {
-            // We remove the seconds and millis as we don't save them and we want the load date time to match exectly when parsed          
+            // We remove the seconds and millis as we don't save them and we want the load date time to match exactly when parsed          
             DateTime dt = DateTime.UtcNow;
             DateTime dt2 = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
             return dt2;
@@ -574,11 +576,10 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase CreateCopy(bool setNewGUID = true)
         {
-            // Create a copy by serailized and load from the text, it will not copy all attrs only the one which are saved to XML
+            // Create a copy by serialized and load from the text, it will not copy all attrs only the one which are saved to XML
             string s = RepositorySerializer.SerializeToString(this);
             // TODO: fixme not good practice and not safe, add param to handle in function or another solution...
-            RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:this.FilePath);
-
+            RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:this.FilePath);            
             //change the GUID of duplicated item
             if (setNewGUID && duplicatedItem != null)
             {
@@ -591,9 +592,9 @@ namespace Amdocs.Ginger.Repository
                 //set new GUID also to child items
                 UpdateRepoItemGuids(duplicatedItem,  guidMappingList);
                 duplicatedItem= duplicatedItem.GetUpdatedRepoItem(guidMappingList);
-
             }
 
+            duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
 
 
             return duplicatedItem;
@@ -787,12 +788,12 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async Task RefreshSourceControlStatus()
+        public void RefreshSourceControlStatus()
         {
             if (mSourceControlStatus != eImageType.Null)
-            {
-                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath).ConfigureAwait(true);
-                OnPropertyChanged(nameof(SourceControlStatus));
+            {                
+                mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
+                OnPropertyChanged(nameof(SourceControlStatus));                                
             }
         }
 

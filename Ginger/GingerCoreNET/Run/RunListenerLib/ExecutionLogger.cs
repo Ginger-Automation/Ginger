@@ -37,12 +37,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
     public abstract class ExecutionLogger
     {
-        static JsonSerializer mJsonSerializer;
+        // static JsonSerializer mJsonSerializer;
         public static string mLogsFolder;      //!!!!!!!!!!!!!!!!!!!
         public string ExecutionLogfolder { get; set; }
         string mLogsFolderName;
         DateTime mCurrentExecutionDateTime;
-        private eExecutedFrom ExecutedFrom;
+        
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
@@ -70,11 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             get { return mLogsFolder; }
         }
-
-        public string CurrentLoggerFolderName
-        {
-            get { return mLogsFolderName; }
-        }
+        
 
         public DateTime CurrentExecutionDateTime
         {
@@ -171,15 +167,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             return BFR;
         }
-        public static object LoadObjFromJSonFile(string FileName, Type t)
-        {
-            return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
-        }
+        //public static object LoadObjFromJSonFile(string FileName, Type t)
+        //{
+        //    return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
+        //}
 
-        public static object LoadObjFromJSonString(string str, Type t)
-        {
-            return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
-        }
+        //public static object LoadObjFromJSonString(string str, Type t)
+        //{
+        //    return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
+        //}
 
         public abstract object SetReportActivity(Activity activity, Context context, bool offlineMode = false, bool isConfEnable = false);
 
@@ -234,5 +230,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);
         internal abstract void StartRunSet();
         internal abstract void EndRunSet();
+
+        public abstract string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
+        public abstract string GetLogFolder(string folder);
     }
 }

@@ -649,15 +649,35 @@ namespace Ginger.UserControlsLib.UCListView
         {
             // Get the item under the mouse, or nothing, avoid selecting scroll bars. or empty areas etc..
             Info.DragSource = this;
-            if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is ListViewItem)
+
+            var rowItem = ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource);
+            if (rowItem != null)
             {
-                Info.Data = ((ListViewItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource)).Content;
-                Info.Header = Info.Data.ToString();
-            }
-            else if (ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource) is GroupItem)
-            {
-                Info.Data = ((GroupItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource)).Content;
-                Info.Header = Info.Data.GetType().GetProperty("Name").GetValue(Info.Data).ToString();
+                if (rowItem is ListViewItem)
+                {
+                    int selectedItemsCount = this.GetSelectedItems().Count;
+
+                    if (selectedItemsCount > 1)
+                    {
+                        Info.Data = this.GetSelectedItems();
+                        int identityTextLength = (rowItem as ListViewItem).Content.ToString().ToCharArray().Length;
+                        if (identityTextLength > 16)
+                        {
+                            identityTextLength = 16;
+                        }
+                        Info.Header = (rowItem as ListViewItem).Content.ToString().Substring(0, identityTextLength) + ".. + " + (selectedItemsCount - 1);
+                    }
+                    else
+                    {
+                        Info.Data = (rowItem as ListViewItem).Content;
+                        Info.Header = Info.Data.ToString();
+                    }
+                }
+                else if (rowItem is GroupItem)
+                {
+                    Info.Data = ((GroupItem)ItemsControl.ContainerFromElement(this.xListView, (DependencyObject)Info.OriginalSource)).Content;
+                    Info.Header = Info.Data.GetType().GetProperty("Name").GetValue(Info.Data).ToString();
+                }
             }
         }
 
@@ -708,7 +728,7 @@ namespace Ginger.UserControlsLib.UCListView
 
             if (Info.DragSource == Info.DragTarget)
             {
-                DragDrop2.DragInfo.DragIcon = DragInfo.eDragIcon.Move;
+                DragDrop2.DrgInfo.DragIcon = DragInfo.eDragIcon.Move;
             }
             else
             {
@@ -923,7 +943,10 @@ namespace Ginger.UserControlsLib.UCListView
             ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
             foreach (object selectedItem in xListView.SelectedItems)
             {
-                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                if (selectedItem is RepositoryItemBase)
+                {
+                    selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                }
             }
             return selectedItemsList;
         }

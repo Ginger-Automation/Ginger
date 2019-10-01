@@ -34,6 +34,15 @@ function GingerPayLoad(Name) {
     this.WriteString(Name);
 }
 
+function GingerErrorPayLoad(ErrorCode, ErrorMessage) {
+    var payload = new GingerPayLoad("ERROR");
+    payload.AddValueInt(ErrorCode);
+    payload.AddValueString(ErrorMessage);
+    payload.ClosePackage();
+
+    return payload;
+}
+
     GingerPayLoad.prototype.GetPackage = function () {
         //return only bytes used   
         return new Uint8Array(this.mBuffer, 0, this.mBufferIndex);
@@ -77,7 +86,8 @@ function GingerPayLoad(Name) {
         return len;
     }
 
-    GingerPayLoad.prototype.WriteInt = function (val) {
+GingerPayLoad.prototype.WriteInt = function (val) {
+    //TODO: Merge with WriteIntValue
     }
 
     //Public 
@@ -164,6 +174,13 @@ function GingerPayLoad(Name) {
         this.WriteString(s);
     }
 
+GingerPayLoad.prototype.AddValueInt = function (value) {
+
+    this.CheckBuffer(5); //  type(1) + int size 4
+ 
+    this.WriteValueType(2);// 2 = Int type
+    this.WriteIntValue(value);
+}
 
     //read string
     //var dataView = new DataView(buf);
@@ -235,6 +252,18 @@ function GingerPayLoad(Name) {
         this.mBufferIndex++;
     }
 
+ GingerPayLoad.prototype.WriteIntValue = function(value)
+    {
+     this.dataView.setUint8(this.mBufferIndex, (value >> 24));
+     this.mBufferIndex++;
+     this.dataView.setUint8(this.mBufferIndex, (value >> 16));
+     this.mBufferIndex++;
+     this.dataView.setUint8(this.mBufferIndex, (value >> 8));
+     this.mBufferIndex++;
+     this.dataView.setUint8(this.mBufferIndex, (value));
+     this.mBufferIndex++;
+    }
+
     GingerPayLoad.prototype.CheckBuffer = function (Len) {
         try{
             if (this.mBufferIndex + Len > this.mBuffer.byteLength)
@@ -281,12 +310,13 @@ function GingerPayLoadFromBytes(Bytes) {
     PL.mBufferUint8 = new Uint8Array(PL.mBuffer);
     PL.mBufferIndex = 0;
     PL.AddBytes(Bytes);
-    PL.mBufferIndex = 4;    
+    PL.mBufferIndex = 4;
     var PLName = PL.ReadString();
     PL.mName = PLName;
     PL.Name = PLName;
     return PL;
 }
+
 
 function GingerPayLoadFromHexString(str) {
     var a = [];
@@ -294,4 +324,59 @@ function GingerPayLoadFromHexString(str) {
         a.push("0x" + str.substr(i, 2));
     }
     return GingerPayLoadFromBytes(a);
+}
+
+GingerPayLoad.prototype.GetListPayLoad = function()
+{
+    var listPayload =[];
+    var b = this.ReadValueType();
+
+    //Verify it is List Payload  = 6
+    if (b === 6) {
+        // How many Payload we have
+        var count = this.ReadLen(); 
+
+        for (var i = 0; i < count; i++)
+        {
+            var PL = this.ReadPayLoad();
+            listPayload.push(PL);
+        }
+        return listPayload;
+    }
+    else {
+        return null;
+    }
+}
+
+GingerPayLoad.prototype.ReadPayLoad = function ()
+{
+    var len = this.ReadLen();
+    this.mBufferIndex -= 4;
+
+    var byteArray = new Uint8Array(this.mBuffer);
+
+    //create array with size = len + 4
+    var Bytes = new Uint8Array(len + 4);
+
+    //copy data from byteArray to Bytes
+    for (var i = 0, j = this.mBufferIndex; i < len + 4; i++ , j++) {
+        Bytes[i] = byteArray[j];
+    }
+
+    this.mBufferIndex += len + 4;
+    var PLResp = new GingerPayLoadFromBytes(Bytes);
+
+    return PLResp;
+}
+GingerPayLoad.prototype.GetInputValues = function (paramList)
+{
+    var mapList = {};
+    for (var i = 0; i < paramList.length; i++)
+    {
+        var pl = paramList[i];
+        paramKey = pl.GetValueString();
+        paramValue = paramList[i].GetValueString();
+        mapList[paramKey] = paramValue;
+    }
+    return mapList;
 }

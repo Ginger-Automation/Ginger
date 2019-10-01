@@ -31,13 +31,18 @@ namespace GingerTest
     [TestClass]
     public class WizardTest
     {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
+
         static GingerAutomator mGingerAutomator;        
         Mutex mutex = new Mutex();
 
         [ClassInitialize]
-        public static void ClassInit(TestContext TC)
+        public static void ClassInit(TestContext TestContext)
         {
-            //Arrange
+            mTestHelper.ClassInitialize(TestContext);
+            
             mGingerAutomator = GingerAutomator.StartSession();
         }
 
@@ -45,11 +50,14 @@ namespace GingerTest
         public static void ClassCleanup()
         {
             GingerAutomator.EndSession();
+
+            mTestHelper.ClassCleanup();
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
+            mTestHelper.TestInitialize(TestContext);
             mutex.WaitOne();
         }
 
@@ -57,6 +65,7 @@ namespace GingerTest
         public void TestCleanUp()
         {
             mutex.ReleaseMutex();
+            mTestHelper.TestCleanup();
         }
 
 
@@ -91,6 +100,9 @@ namespace GingerTest
             bool finishButtonEnabled = mWizard.FinishButton.IsEnabled;            
             mWizard.CancelButton.Click();
             bool WizardOpen = WizardPOM.IsWizardOpen;
+            mGingerAutomator.MainWindowPOM.TakeScreenShot(mTestHelper.GetTempFileName("Wizard Screen Shot.png"));
+            //Artifacts
+
 
             //Assert
             Assert.IsTrue(nextButtonEnabled, "Next button is enabled");

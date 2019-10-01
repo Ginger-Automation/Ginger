@@ -98,45 +98,46 @@ namespace Amdocs.Ginger.GingerConsole
         private void CreatePluginServicesinfojson()
         {
             Console.WriteLine("!!! Obsolete !!! - Plugin Package Services json is automatically created - no need to generate");
-            //Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
-            //string folder = Console.ReadLine();
-            //if (System.IO.Directory.Exists(folder))
-            //{
-            //    PluginPackage p = new PluginPackage(folder);
-            //    p.CreateServicesInfo();
-            //}
-            //else
-            //{
-            //    Console.WriteLine("folder not found");
-            //}
+            Console.WriteLine("BUT it must be packed in plugin package");
+            Console.WriteLine("Use Create Plugin package feature which will zip it");
+            Console.WriteLine("Plugin Package folder? (use plugin publish folder bin/debug)");
+            string folder = Console.ReadLine();
+            if (System.IO.Directory.Exists(folder))
+            {
+                PluginPackage p = new PluginPackage(folder);
+                p.CreateServicesInfo();
+            }
+            else
+            {
+                Console.WriteLine("folder not found");
+            }
         }
 
        
 
-        private void StartService()
-        {
+        //private void StartService()
+        //{
             
-            //TODO: let the user choose
-            // Console.WriteLine("Starting Selenium Chrome Driver");
-            // g.StartNode("Selenium Chrome Driver", "Chrome1");
+        //    //TODO: let the user choose
+        //    // Console.WriteLine("Starting Selenium Chrome Driver");
+        //    // g.StartNode("Selenium Chrome Driver", "Chrome1");
 
-            Console.WriteLine("Service Class full name?");
-            string serviceClass = Console.ReadLine();
-            string DLLFile = Path.Combine(p.Folder, p.StartupDLL);
-            Assembly assembly = Assembly.LoadFrom(DLLFile);
-            object service = assembly.CreateInstance(serviceClass);
-            GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
-            Console.WriteLine("Node name?");
-            string nodeName = Console.ReadLine();
-            Console.WriteLine("IP Address?");
-            string ipAddr = Console.ReadLine();
-            Console.WriteLine("Port Number?");
-            string portNumber = Console.ReadLine();
+        //    Console.WriteLine("Service Class full name?");
+        //    string serviceClass = Console.ReadLine();
+        //    string DLLFile = Path.Combine(p.Folder, p.StartupDLL);
+        //    Assembly assembly = Assembly.LoadFrom(DLLFile);
+        //    object service = assembly.CreateInstance(serviceClass);
+        //    GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
+        //    Console.WriteLine("Node name?");
+        //    string nodeName = Console.ReadLine();
+        //    Console.WriteLine("IP Address?");
+        //    string ipAddr = Console.ReadLine();
+        //    Console.WriteLine("Port Number?");
+        //    string portNumber = Console.ReadLine();
 
-            gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
-        }
-
-        PluginPackage p;
+        //    gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
+        //}
+        
 
        
     }

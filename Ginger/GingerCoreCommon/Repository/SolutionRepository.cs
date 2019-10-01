@@ -30,20 +30,16 @@ namespace Amdocs.Ginger.Repository
 {
     public class SolutionRepository
     {
-        // This class will be the only one to read/write Repo items to disk
+        // This class will be the only one to read/write Repository items to disk
         // It will know the solution structure and will be able to load items, search and cache
-        // It will cache each item loaded and will make sure only one item exist in mememory so all list and places have refenerence to the same object 
-        // And will use cache when items are reuquested first, if not found will load from disk
+        // It will cache each item loaded and will make sure only one item exist in memory so all list and places have reference to the same object 
+        // And will use cache when items are requested first, if not found will load from disk
         // when item is deleted it will be removed from cache and disk
         // It will also cache items list, so if same list is requested again it will be from cache
-        // items Added or removed, the corresponsing folder will be updated including the folder cache
-        // Item can be refenced more than once - as stand alone and in Folder cache
-
-        //TODO; need init
-        // public static IRepositorySerializer mRepositorySerializer;  //  = new RepositorySerializer2();   // We create one instance
-
+        // items Added or removed, the corresponding folder will be updated including the folder cache
+        // Item can be referenced more than once - as stand alone and in Folder cache
+        
         public const string cSolutionRootFolderSign = @"~\"; // + Path.DirectorySeparatorChar;
-
 
         /// <summary>
         /// List of files and folders to exclude from solution load and Source Control
@@ -251,7 +247,7 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
             if (repoFolder != null)
             {
-                repoFolder.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                repoFolder.RefreshFolderSourceControlStatus();
                 RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath)?.FullName);
             }
         }
@@ -486,9 +482,7 @@ namespace Amdocs.Ginger.Repository
         // ------------------------------------------------------------------------------------------------
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
-        {
-          // Type type = RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(typeof(T));
-          
+        {          
             SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
@@ -501,10 +495,7 @@ namespace Amdocs.Ginger.Repository
 
         private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
         {
-            SolutionRepositoryItemInfoBase SRII;
-
-           //type= RepositoryItemHelper.RepositoryItemFactory.GetRepositoryItemTypeFromInterface(type);
-
+            SolutionRepositoryItemInfoBase SRII;           
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
 
             if (SRII == null)

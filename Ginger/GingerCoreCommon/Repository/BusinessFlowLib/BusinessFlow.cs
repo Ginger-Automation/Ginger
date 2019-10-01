@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.EnumsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -86,7 +85,7 @@ namespace GingerCore
             Selenium,   // From Selenium Import
             Gherkin     // From Gherking Feature file
         }
-
+        
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }
@@ -186,7 +185,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository(true)]
+        [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool Active
         {
             get { return mActive; }
@@ -266,6 +265,7 @@ namespace GingerCore
                 if (mActivities.LazyLoad)
                 {
                     mActivities.GetItemsInfo();
+                    AttachActivitiesGroupsAndActivities();
                 }
                 return mActivities;
             }
@@ -304,13 +304,12 @@ namespace GingerCore
                 }
             }
         }
-
-
+        
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
 
-        static public ObservableList<VariableBase> SolutionVariables;
+        public static ObservableList<VariableBase> SolutionVariables;
 
         public VariableBase GetVariable(string name)
         {
@@ -528,7 +527,7 @@ namespace GingerCore
                 CurrentActivity.Acts.Move(CurrentActivity.Acts.Count - 1, selectedActIndex + 1);
             }
         }
-
+        
         public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null, int insertIndex = -1, bool setAsCurrent = true)
         {
             if (activity == null)
@@ -566,10 +565,10 @@ namespace GingerCore
                             }
                         }
                     }
-                }
-                else
-                {
-                    CurrentActivity = activity;
+                    else
+                    {
+                        insertIndex = Activities.IndexOf(CurrentActivity) + 1;
+                    }
                 }
             }
 
@@ -578,13 +577,8 @@ namespace GingerCore
                 activitiesGroup.AddActivityToGroup(activity);
             }
 
-            if (insertIndex > 0)
+            if (insertIndex >= 0)
             {
-                Activities.Insert(insertIndex, activity);
-            }
-            else if (insertIndex == 0)
-            {
-                insertIndex = Activities.IndexOf(CurrentActivity) + 1;
                 Activities.Insert(insertIndex, activity);
             }
             else
@@ -766,7 +760,7 @@ namespace GingerCore
                 }
             }
 
-            //Attach mapped activities to groups nad clear missing Activities
+            //Attach mapped activities to groups and clear missing Activities
             foreach (ActivitiesGroup group in this.ActivitiesGroups)
             {
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
@@ -1198,11 +1192,26 @@ namespace GingerCore
             // if nothing was changed and we are in lazy load then no added activities, so safe to ignore, saving time/perf
             if (Activities.LazyLoad) return;
 
+
+            //Remove dynamically added activities from groups identifies
+            foreach (var activitiesGroup in ActivitiesGroups)
+            {
+                for(int index=0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
+                {
+                    if(activitiesGroup.ActivitiesIdentifiers[index].AddDynamicly)
+                    {
+                        activitiesGroup.ActivitiesIdentifiers.RemoveAt(index);
+                        index--;
+                    }
+                }
+            }
+
+            //Remove dynamically added activities from Business flow
             for (int i = 0; i < Activities.Count; i++)
             {
                 if (Activities[i].AddDynamicly)
                 {
-                    Activities.RemoveAt(i);
+                    Activities.RemoveAt(i);                   
                     i--;
                 }
             }
@@ -1210,7 +1219,7 @@ namespace GingerCore
 
 
         public string ExecutionFullLogFolder { get; set; }
-        public string ExecutionLogFolder { get; set; }
+        public string ExecutionLogFolder { get; set; } = string.Empty;
         public bool BusinessFlowExecLoggerPopulated
         {
             get

@@ -30,7 +30,8 @@ namespace Ginger
     {
         Free,
         FreeMaximized,
-        Dialog        
+        Dialog,
+        OnlyDialog
     }
 
     /// <summary>
@@ -55,7 +56,7 @@ namespace Ginger
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
                                 Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null)
         {
-            InitializeComponent();   
+            InitializeComponent();
             this.Owner = Owner;
             if (this.Owner != null)
             {
@@ -314,7 +315,8 @@ namespace Ginger
 
 
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
+                                        ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", 
+                                        RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false)
         {
             //GenericWindow win = null;
             genWindow = null;
@@ -339,7 +341,7 @@ namespace Ginger
                     genWindow.Left = 50;
                     genWindow.Top = 200;
                 }
-                if (winStyle == eWindowShowStyle.Dialog)
+                if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
                     genWindow.ShowDialog();
                 else
                     genWindow.Show();

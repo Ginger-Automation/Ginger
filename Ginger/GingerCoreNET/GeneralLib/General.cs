@@ -18,18 +18,20 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using log4net;
+using log4net.Config;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security;
 using System.Xml;
 
@@ -43,7 +45,7 @@ namespace GingerCoreNET.GeneralLib
         {
             List<string> l = new List<string>();
             foreach (object item in Enum.GetValues(EnumType))
-            {          
+            {
                 l.Add(GetEnumValueDescription(EnumType, item));
             }
             return l;
@@ -84,7 +86,7 @@ namespace GingerCoreNET.GeneralLib
             }
         }
 
-        
+
 
         public class XmlNodeItem
         {
@@ -112,20 +114,20 @@ namespace GingerCoreNET.GeneralLib
             public string path { get; set; }
         }
 
-        
+
         #endregion ENUM
-        
-        
+
+
         public static T ParseEnum<T>(string value)
         {
             return (T)Enum.Parse(typeof(T), value, true);
         }
-        
+
         public static bool IsNumeric(string sValue)
         {
             // simple method to check is strign is number
             // there are many other alternatives, just keep it simple and make sure it run fast as it is going to be used a lot, for every return value calc     
-            
+
             foreach (char c in sValue)
             {
                 if (!char.IsDigit(c) && c != '.')
@@ -145,7 +147,7 @@ namespace GingerCoreNET.GeneralLib
             XmlReader rdr = XmlReader.Create(new System.IO.StringReader(xmlDoc.InnerXml));
             XmlReader subrdr = null;
             string Elm = "";
-            
+
             ArrayList ls = new ArrayList();
             Dictionary<string, int> lspath = new Dictionary<string, int>();
             List<string> DeParams = new List<string>();
@@ -196,7 +198,7 @@ namespace GingerCoreNET.GeneralLib
             }
             return returnDict;
         }
-        
+
         //HTML Report related methods added here 
         public static string TimeConvert(string s)
         {
@@ -309,7 +311,7 @@ namespace GingerCoreNET.GeneralLib
             {
                 DataSource.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 ObservableList<DataSourceTable> dsTables = DataSource.GetTablesList();
-               
+
                 foreach (DataSourceTable dst in dsTables)
                 {
                     if (dst.Name == DSTableName)
@@ -354,7 +356,7 @@ namespace GingerCoreNET.GeneralLib
         public static void SetUniqueNameToRepoItem(ObservableList<RepositoryItemBase> itemsList, RepositoryItemBase item, string suffix = "")
         {
             string originalName = item.ItemName;
-            if (itemsList.Where(x=>x.ItemName == item.ItemName).FirstOrDefault() == null)
+            if (itemsList.Where(x => x.ItemName == item.ItemName).FirstOrDefault() == null)
             {
                 return;//name is unique
             }
@@ -382,7 +384,49 @@ namespace GingerCoreNET.GeneralLib
                 }
             }
         }
+        /// <summary>
+        /// This method is used to export the data to excel 
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="filePath"></param>
+        /// <param name="sheetName"></param>
+        /// <returns></returns>
+        public static bool ExportToExcel(System.Data.DataTable dataTable, string filePath, string sheetName)
+        {
+            try
+            {
+                using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
+                {
+                    if (File.Exists(filePath))
+                    {
+                        using (var stream = File.OpenRead(filePath))
+                        {
+                            xlPackage.Load(stream);
+                        }
+                        var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
+                        ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                        File.WriteAllBytes(filePath, xlPackage.GetAsByteArray());
+                    }
+                    else
+                    {
+                        var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
+                        ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                        xlPackage.SaveAs(new FileInfo(filePath));
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error Occurred while exporting to excel", ex);
+                return false;
+            }
+        }
+
+
+      
     }
+
 }
 
 

@@ -478,6 +478,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ActiveAll:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Check);
                     break;
+                case eImageType.ExpandToFullScreen:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Expand);
+                    break;
                 case eImageType.Export:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ShareAlt);
                     break;
@@ -534,6 +537,9 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.CLI:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLink);
+                    break;
+                case eImageType.WindowRestore:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.WindowRestore);
                     break;
                 #endregion
 
@@ -899,8 +905,12 @@ namespace Amdocs.Ginger.UserControls
             // Reset All do defaults
             xFAImage.Visibility = Visibility.Collapsed;
             xFAImage.Spin = false;
+            xFAImage.StopSpin();
+            xFAImage.Rotation = 0;
             xFAFont.Visibility = Visibility.Collapsed;
             xFAFont.Spin = false;
+            xFAFont.StopSpin();
+            xFAFont.Rotation = 0;
             xStaticImage.Visibility = Visibility.Collapsed;
             xViewBox.Visibility = Visibility.Collapsed;
             this.Background = null;
@@ -939,6 +949,7 @@ namespace Amdocs.Ginger.UserControls
                 xFAFont.Spin = true;
                 xFAFont.SpinDuration = spinDuration;
             }
+
 
             if (!string.IsNullOrEmpty(toolTip) && string.IsNullOrEmpty(ImageToolTip))
             {

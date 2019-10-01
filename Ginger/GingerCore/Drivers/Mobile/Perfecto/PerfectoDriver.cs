@@ -274,7 +274,11 @@ namespace GingerCore.Drivers.Mobile.Perfecto
                 mSeleniumDriver.ActBrowserElementHandler((ActBrowserElement)act);
                 return;
             }
-
+            if (ActType == typeof(ActSmartSync))
+            {
+                mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
+                return;
+            }
         }
 
 

@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Drivers.CommunicationProtocol;
@@ -30,11 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.Run;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using System.Reflection;
 
 namespace GingerCore.Actions.Common
@@ -105,8 +100,7 @@ namespace GingerCore.Actions.Common
             public static string XCoordinate = "XCoordinate";
             public static string YCoordinate = "YCoordinate";
             public static string ValueToSelect = "ValueToSelect";
-            public static string Value = "Value";
-            public static string RowSelectorRadioParam = "RowSelectorRadioParam";
+            public static string Value = "Value";            
 
             //Used for Drag & Drop Action
             public static string TargetElementType = "TargetElementType";
@@ -119,6 +113,8 @@ namespace GingerCore.Actions.Common
 
             //used for Java
             public static string WaitforIdle = "WaitforIdle";
+            public static string IsWidgetsElement = "IsWidgetsElement";
+            public static string IsMouseEvent = "IsMouseEvent";
 
             //used for TableElementAction
             public static string ControlAction = "ControlAction";
@@ -170,10 +166,10 @@ namespace GingerCore.Actions.Common
             Checked,
             UnChecked
         }
-        public enum eRadioButtonValueType
+        public enum eLocateRowTypeOptions
         {
             [EnumValueDescription("Row Number")]
-            RowNum,
+            RowNumber,
             [EnumValueDescription("Any Row")]
             AnyRow,
             [EnumValueDescription("By Selected Row")]
@@ -319,7 +315,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Does not exist")]
             NotExist,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Enabled")]
+            [EnumValueDescription("Enabled")]  //Need to check ???
             Enabled,
             [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Name")]
@@ -507,6 +503,12 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Is Checked")]
             IsChecked,
 
+            [EnumValueDescription("Get selected node child Items")]
+            GetSelectedNodeChildItems,
+
+            [EnumValueDescription("Trigger JavaScript Event")]
+            TriggerJavaScriptEvent,
+
             //Below should NOT be used- only kept for old action types support
             #region NOT TO USE Action Types
             [EnumValueDescription("Simple Click")]
@@ -526,52 +528,95 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Mouse Drag Drop")]
             MouseDragDrop,
         }
-
-        eElementType mElementType;
-        [IsSerializedForLocalRepository]
+        
+       
         public eElementType ElementType
         {
-            get { return mElementType; }
+            get { return GetOrCreateInputParam<eElementType>(Fields.ElementType); }
             set
             {
-                if (mElementType != value)
-                {
-                    mElementType = value;
-                    OnPropertyChanged(nameof(ActUIElement.ElementType));
-                }
+                GetOrCreateInputParam(Fields.ElementType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.ElementType));
+
             }
         }
 
-        eElementAction mElementAction;
-        [IsSerializedForLocalRepository]
+
+
         public eElementAction ElementAction
         {
-            get { return mElementAction; }
+            get { return GetOrCreateInputParam<eElementAction>(Fields.ElementAction); }
             set
             {
-                if (mElementAction != value)
-                {
-                    mElementAction = value;
-                    OnPropertyChanged(nameof(ActUIElement.ElementAction));
-                }
+                GetOrCreateInputParam(Fields.ElementAction).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.ElementAction));
+
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public eLocateBy ElementLocateBy { get; set; }
+ 
+        public eLocateBy ElementLocateBy
+        {
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.ElementLocateBy); }
+            set
+            {
+                GetOrCreateInputParam(Fields.ElementLocateBy).Value = value.ToString();
 
-        [IsSerializedForLocalRepository]
-        public eLocateBy TargetLocateBy { get; set; }
+                OnPropertyChanged(nameof(ActUIElement.ElementLocateBy));
 
-        [IsSerializedForLocalRepository]
-        public eElementType TargetElementType { get; set; }
+            }
+        }
 
-        [IsSerializedForLocalRepository]
-        public eElementType HandleElementType { get; set; }
+     
+        public eLocateBy TargetLocateBy
+        {
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.TargetLocateBy); }
+            set
+            {
+                GetOrCreateInputParam(Fields.TargetLocateBy).Value = value.ToString();
 
-        [IsSerializedForLocalRepository]
-        public eElementAction HandleActionType { get; set; }
+                OnPropertyChanged(nameof(ActUIElement.TargetLocateBy));
 
+            }
+        }
+
+        public eElementType TargetElementType
+        {
+            get { return GetOrCreateInputParam<eElementType>(Fields.TargetElementType); }
+            set
+            {
+                GetOrCreateInputParam(Fields.TargetElementType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.TargetElementType));
+
+            }
+        }
+      
+        public eElementType HandleElementType
+        {
+            get { return GetOrCreateInputParam<eElementType>(Fields.HandleElementType); }
+            set
+            {
+                GetOrCreateInputParam(Fields.HandleElementType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.HandleElementType));
+
+            }
+        }
+  
+        public eElementAction HandleActionType
+        {
+            get { return GetOrCreateInputParam<eElementAction>(Fields.HandleActionType); }
+            set
+            {
+                GetOrCreateInputParam(Fields.HandleActionType).Value = value.ToString();
+
+                OnPropertyChanged(nameof(ActUIElement.HandleActionType));
+
+            }
+        }
         #region TableElementConfigs
         public enum eTableElementRunColSelectorValue
         {
@@ -864,13 +909,14 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public Drivers.CommunicationProtocol.PayLoad GetPayLoad()
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ElementLocator elementLocator=null)
         {
-            PayLoad PL = new PayLoad("UIElementAction");
-            PL.AddValue(this.ElementLocateBy.ToString());
-            PL.AddValue(GetOrCreateInputParam(Fields.ElementLocateValue).ValueForDriver); // Need Value for driver
-            PL.AddValue(this.ElementType.ToString());
-            PL.AddValue(this.ElementAction.ToString());
+            string payLoadName = @"UIElementAction";
+            if (Convert.ToBoolean(this.GetInputParamValue(Fields.IsWidgetsElement)))
+            {
+                payLoadName = @"WidgetsUIElementAction";
+            }
+            PayLoad PL = new PayLoad(payLoadName);           
             // Make it generic function in Act.cs to be used by other actions
             List<PayLoad> PLParams = new List<PayLoad>();
             foreach (ActInputValue AIV in this.InputValues)
@@ -882,6 +928,13 @@ namespace GingerCore.Actions.Common
                 }
             }
             PL.AddListPayLoad(PLParams);
+
+            //for Java POM Element
+            if(elementLocator != null)
+            {
+                PL.AddKeyValuePair(elementLocator.LocateBy.ToString(), elementLocator.LocateValue);
+            }
+            
             PL.ClosePackage();
 
             return PL;
@@ -1015,31 +1068,66 @@ namespace GingerCore.Actions.Common
             public string By;
             public string Value;
         }
-        
+
 
         public PlatformAction GetAsPlatformAction()
         {
-            // !!!!!!!!!!!!!!!!!!!!!  need to pack correctly and use ValueForDriver?
+            PlatformAction platformAction = new PlatformAction(this);
 
-            PlatformAction platformAction = new PlatformAction(actionHandler:"UIElementAction", action: "UIElementAction");            
-            platformAction.InputParams.Add("ElementAction", ElementAction.ToString());
-            platformAction.InputParams.Add("ElementType", ElementType.ToString());            
 
-            // Add elem type POM data etc.
-            List<Locator> locators = new List<Locator>();
-            locators.Add(new Locator() { By = ElementLocateBy.ToString(), Value = ElementLocateValue});
-            
-            platformAction.InputParams.Add("Locators", locators);
 
-            if (!string.IsNullOrEmpty(Value))
+
+            foreach (ActInputValue aiv in this.InputValues)
             {
-                platformAction.InputParams.Add(nameof(Value), Value);
-            }
-            
-            //TODO: bsaed on elementtpye and action type add the extra fields
 
+                string ValueforDriver = aiv.ValueForDriver;
+                if (!platformAction.InputParams.ContainsKey(aiv.Param) && !String.IsNullOrEmpty(ValueforDriver))
+                {
+                    platformAction.InputParams.Add(aiv.Param, ValueforDriver);
+                }
+            }
+        
+
+            Dictionary<string, string> Locators = new Dictionary<string, string>();
+            Locators.Add(ElementLocateBy.ToString(), ElementLocateValueForDriver);
+
+
+            platformAction.InputParams.Add("Locators", Locators);
 
             return platformAction;
         }
+
+
+        public override void PostSerialization()
+        {
+            //Row selection options Row Number, Any Row, By Selected Row and Where
+            //Earlier these were stored in fields differently RowSelectorRadioParam and LocateRowType
+            //Below code is for backward compatibility
+            //It will move the correct value to "LocateRowType" and remove the other fields
+            string currentValue = this.GetInputParamValue("RowSelectorRadioParam");
+            if(!string.IsNullOrEmpty(currentValue))
+            {
+
+                switch(currentValue)
+                {
+                    case "RowNum":
+                        currentValue = "Row Number";
+                        break;
+
+                    case "AnyRow":
+                        currentValue = "Any Row";
+                        break;
+
+                    case "BySelectedRow":
+                        currentValue = "By Selected Row";
+                        break;                        
+                }
+                this.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, currentValue);
+                this.RemoveInputParam("RowSelectorRadioParam");
+            }
+        }
+
+
+
     }
 }

@@ -18,12 +18,10 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -83,7 +81,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public string GetLoggerDirectory(string logsFolder)
         {
-            logsFolder = logsFolder.Replace(@"~", WorkSpace.Instance.Solution.Folder);
+            if (logsFolder.StartsWith(@"~"))
+            {
+                logsFolder = SetAbsolutePath(logsFolder);
+            }
             try
             {
                 if (CheckOrCreateDirectory(logsFolder))
@@ -95,9 +96,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
                     {
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                        logsFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"ExecutionResults\");
-                        System.IO.Directory.CreateDirectory(logsFolder);
-                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                        logsFolder = WorkSpace.Instance.TestArtifactsFolder;                        
+                        WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
                     }
                 }
             }
@@ -108,6 +108,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             return logsFolder;
         }
+
+        private string SetAbsolutePath(string logsFolder)
+        {
+            char[] delimiterChars = { '\\', '/' };
+            logsFolder = logsFolder.TrimStart('~').TrimStart(delimiterChars);
+            string[] pathArray = logsFolder.Split(delimiterChars);
+            logsFolder = Path.Combine(pathArray);
+            logsFolder = Path.Combine(WorkSpace.Instance.Solution.Folder, logsFolder);
+            return logsFolder;
+        }
+
         public Boolean CheckOrCreateDirectory(string directoryPath)
         {
             try

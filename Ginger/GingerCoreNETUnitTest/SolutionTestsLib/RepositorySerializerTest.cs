@@ -16,46 +16,57 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
-{    
+{
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
+        public static void ClassInit(TestContext TestContext)
         {
-            WorkspaceHelper.InitWS(nameof(RepositorySerializerTest));            
+            mTestHelper.ClassInitialize(TestContext);
         }
-
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            mTestHelper.ClassCleanup();
         }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+            mTestHelper.TestCleanup();
         }
 
-        [Ignore] // FIXME why it give differen tlength on different machines?
+        // [Ignore] // different length on Linux Mac, Win...
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -63,18 +74,26 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Arrange
             BusinessFlow BF = new BusinessFlow("BF1");
 
+            // Since we can run this test on local user, Azure windows/Linux - we change the user name since we check total length and want it to be same
+            BF.InitHeader();
+            BF.RepositoryItemHeader.CreatedBy = "UnitTest";
+            BF.RepositoryItemHeader.LastUpdateBy = "UnitTest";
+
             //Act
             string xml = RS.SerializeToString(BF);
 
-
-            /// to see the xml as file uncomment below line
-            // System.IO.File.WriteAllText(@"c:\temp\1.xml", xml);
+            //Artifacts
+            mTestHelper.CreateTestArtifact("BF1.txt", xml);
 
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            Assert.AreEqual(776, xml.Length);  // 776 was verified and OK on 7/13/2019  
+            int lt = xml.Count(f => f == '<');
+            int gt = xml.Count(f => f == '>');
+            Assert.IsTrue(xml.Length < 800, "Verify minimal xml is less than 800 bytes");   
+            Assert.AreEqual(9, lt, "XML Elements count <"); 
+            Assert.AreEqual(9, gt, "XML Elements count >"); 
 
             //Verify the major element of the expected xml
             Assert.IsTrue(xml.Contains("utf-8"));
@@ -92,6 +111,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
             Assert.IsTrue(xml.Contains("</Activities>"));
             Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
+
+            //TODO: do not containts "00000000-0000-0000-0000-000000000000"
 
         }
 
@@ -372,6 +393,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         //    //Assert
         //    Assert.AreEqual(5, RSC.RunSetActions.Count);
         //}
+
+        
 
 
     }

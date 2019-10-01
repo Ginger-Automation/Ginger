@@ -69,7 +69,6 @@ namespace GingerTest
             SessionCount--;
             TestMutex.ReleaseMutex();
 
-
             if (SessionCount == 0)
             {
                 gingerAutomatorInstance.CloseGinger();                
@@ -91,7 +90,7 @@ namespace GingerTest
                 Application.ResourceAssembly = asm1;
                 
                 app = new Ginger.App();
-                WorkSpace.Init(new WorkSpaceEventHandler(), nameof(GingerAutomator));
+                WorkSpace.Init(new WorkSpaceEventHandler());
                 WorkSpace.Instance.RunningFromUnitTest = true;
                 WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());
                 
@@ -116,7 +115,7 @@ namespace GingerTest
             mGingerThread.IsBackground = true;
             mGingerThread.Start();
 
-            //max 60 seconds for Mainwindow to be ready
+            //max 60 seconds for Main window to be ready
             int i = 0;
             while (MainWindowPOM == null && i <600)
             {
@@ -130,12 +129,12 @@ namespace GingerTest
         }
 
         
+
         void CloseGinger()
         {
             // app.Shutdown(0);
             MainWindowPOM.Close();
-            Thread.Sleep(5000);
-            WorkSpace.Instance.ReleaseWorkspace();            
+            Thread.Sleep(5000);            
         }
 
 

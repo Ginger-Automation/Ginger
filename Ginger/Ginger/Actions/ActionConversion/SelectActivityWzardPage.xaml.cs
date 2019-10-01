@@ -16,19 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Windows.Controls;
-using static Ginger.ExtensionMethods;
 
 namespace Ginger.Actions.ActionConversion
 {
@@ -49,6 +44,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 case EventType.Init:
                     mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
+                    ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
                     SetGridsView();
                     break;
             }
@@ -64,7 +60,8 @@ namespace Ginger.Actions.ActionConversion
             xGrdGroups.InitViewItems();
             xGrdGroups.SetTitleLightStyle = true;
             xGrdGroups.btnMarkAll.Visibility = System.Windows.Visibility.Visible;
-
+            xGrdGroups.btnMarkAll.ToolTip = "Mark All As Active";
+            xGrdGroups.SetBtnImage(xGrdGroups.btnMarkAll, "@CheckAllColumn_16x16.png");
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.Context.BusinessFlow);
             xGrdGroups.DataSourceList = lst;
@@ -75,6 +72,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 ucGrid.eUcGridValidationRules.CheckedRowCount
             };
+            xGrdGroups.ActiveStatus = true;
         }
 
         private void grdGroups_RowChangedEvent(object sender, EventArgs e)

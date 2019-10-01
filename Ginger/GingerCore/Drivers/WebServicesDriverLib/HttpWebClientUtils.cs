@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
@@ -84,11 +85,26 @@ namespace GingerCore.Actions.WebAPI
 
             //Headers
             AddHeadersToClient();
-            
+
+            //SetAutoDecompression
+            SetAutoDecompression();
+                        
             if (act.GetType() == typeof(ActWebAPISoap))
                 return RequestConstracotSOAP((ActWebAPISoap)act);
             else
                 return RequestConstractorREST((ActWebAPIRest)act);
+        }
+
+        private void SetAutoDecompression()
+        {
+            if (mAct.HttpHeaders.Count() > 0)
+            {
+                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.Value.ToUpper() == "GZIP,DEFLATE");
+                if (encodType != null)
+                {
+                    Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                }
+            }
         }
 
         private void AddHeadersToClient()
@@ -352,7 +368,7 @@ namespace GingerCore.Actions.WebAPI
                     }
                 }
 
-                string FileFullPath = SaveToFile("Request", RequestFileContent, SaveDirectory);
+                string FileFullPath = Webserviceplatforminfo.SaveToFile("Request", RequestFileContent, SaveDirectory,mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Request File Name", Path.GetFileName(FileFullPath));
             }
         }
@@ -401,60 +417,7 @@ namespace GingerCore.Actions.WebAPI
             return Encoding.Default.GetString(data);
         }
 
-        private string SaveToFile(string fileType, string fileContent, string saveDirectory)
-        {
-            string extension = string.Empty;
-            string contentType = string.Empty;
-            string actName = string.Empty;
-
-            if (fileType == "Request")
-            {
-                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType);
-            }
-            else if (fileType == "Response")
-            {
-                contentType = mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType);
-            }
-
-            if (contentType == ApplicationAPIUtils.eContentType.XML.ToString())
-            {
-                extension = "xml";
-            }
-            else if (contentType == ApplicationAPIUtils.eContentType.JSon.ToString())
-            {
-                extension = "json";
-            }
-            else if (contentType == ApplicationAPIUtils.eContentType.PDF.ToString())
-            {
-                extension = "pdf";
-            }
-            else
-            {
-                extension = "txt";
-            }
-               
-            string directoryFullPath =Path.Combine(saveDirectory.Replace("~//", mAct.SolutionFolder), fileType + "s");
-            if (!Directory.Exists(directoryFullPath))
-            {
-                Directory.CreateDirectory(directoryFullPath);
-            }
-
-            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
-            actName = PathHelper.CleanInValidPathChars(mAct.Description);            
-            string fullFileName =Path.Combine(directoryFullPath, actName +"_"+ timeStamp + "_" + fileType + "." + extension);
-
-            if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
-            {
-                File.WriteAllText(fullFileName, fileContent);
-            }
-            else
-            {
-                byte[] bytes = Encoding.Default.GetBytes(fileContent);
-                File.WriteAllBytes(fullFileName, bytes);
-            }
-
-            return fullFileName;
-        }
+       
 
         public bool ValidateResponse()
         {
@@ -500,16 +463,15 @@ namespace GingerCore.Actions.WebAPI
                 mAct.AddOrUpdateReturnParamActual("Respond", "Respond returned as null");
             }
 
-            bool XMLResponseCanBeParsed = false;
-            XMLResponseCanBeParsed = XMLStringCanBeParsed(ResponseMessage);
+          
             
-            Reporter.ToLog(eLogLevel.DEBUG, "XMLResponseCanBeParsed Indicator: " + XMLResponseCanBeParsed);
+          
 
             string prettyResponse = XMLDocExtended.PrettyXml(ResponseMessage);
 
             mAct.AddOrUpdateReturnParamActual("Response:", prettyResponse);
 
-            if (!ParseNodesToReturnParams(XMLResponseCanBeParsed))
+            if (!ActWebAPIBase.ParseNodesToReturnParams(mAct, ResponseMessage))
                 return false;
 
             return true;
@@ -547,130 +509,14 @@ namespace GingerCore.Actions.WebAPI
 
                 ResponseFileContent = Amdocs.Ginger.Common.XMLDocExtended.PrettyXml(ResponseFileContent);
 
-                string FileFullPath = SaveToFile("Response", ResponseFileContent, savePath);
+                string FileFullPath = Webserviceplatforminfo.SaveToFile("Response", ResponseFileContent, savePath, mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Response File Name", Path.GetFileName(FileFullPath));
             }
         }
 
-        private bool ParseNodesToReturnParams(bool XMLResponseCanBeParsed)
-        {
-            if (XMLResponseCanBeParsed && mAct.GetType() == typeof(ActWebAPISoap))
-            {
-                return ParseXMLNodesToReturnParams();
-            }
-            else if (mAct.GetType() == typeof(ActWebAPIRest))
-            {
-                if (string.IsNullOrEmpty(ResponseMessage))
-                {
-                    return false;
-                }
 
-                string ResponseContentType = mAct.GetInputParamCalculatedValue(ActWebAPIRest.Fields.ResponseContentType);
-                bool jsonParsinFailed = false;
 
-                if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
-                {
-                    if (!ParseJsonNodesToReturnParams())
-                        jsonParsinFailed = true;//will try XML parsing instead
-                    else
-                        return true;
-                }
 
-                if (XMLResponseCanBeParsed && (
-                   (mAct.GetInputParamValue(ActWebAPIRest.Fields.ResponseContentType) == ApplicationAPIUtils.eContentType.XML.ToString()) || jsonParsinFailed))
-                {
-                   return ParseXMLNodesToReturnParams();
-                }
-            }
-
-            return false;
-        }
-
-        private bool ParseJsonNodesToReturnParams()
-        {
-            XmlDocument doc = null;
-
-            try
-            {
-                var JsonCheck = JToken.Parse(ResponseMessage);
-            }
-            catch (JsonReaderException)
-            {
-                return false;
-            }
-
-            if (mAct.UseLegacyJSONParsing)
-            {
-
-                if (((ResponseMessage[0] == '[') && (ResponseMessage[ResponseMessage.Length - 1] == ']')))
-                {
-                    doc = JsonConvert.DeserializeXmlNode("{\"root\":" + ResponseMessage + "}", "root");
-                }
-                else
-                {
-                    try
-                    {
-                        doc = JsonConvert.DeserializeXmlNode(ResponseMessage, "root");
-                    }
-                    catch
-                    {
-                        doc = JsonConvert.DeserializeXmlNode(General.CorrectJSON(ResponseMessage), "root");
-                    }
-
-                }
-
-                List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
-                outputTagsList = General.GetXMLNodesItems(doc, true);
-                foreach (General.XmlNodeItem outputItem in outputTagsList)
-                {
-                    mAct.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
-                }
-            }
-            else
-            {
-                try
-                {
-                    mAct.ParseJSONToOutputValues(ResponseMessage, 1);
-                }
-                catch
-                {
-                    mAct.ParseJSONToOutputValues(General.CorrectJSON(ResponseMessage), 1);
-                }
-            }
-            return true;
-        }
-
-        private bool ParseXMLNodesToReturnParams()
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(ResponseMessage);
-
-                if (mAct.UseLegacyJSONParsing)
-                {
-                    List<General.XmlNodeItem> outputTagsList = new List<General.XmlNodeItem>();
-                    outputTagsList = General.GetXMLNodesItems(doc, true);
-                    foreach (General.XmlNodeItem outputItem in outputTagsList)
-                    {
-                        mAct.AddOrUpdateReturnParamActualWithPath(outputItem.param, outputItem.value, outputItem.path);
-                    }
-                }
-                else
-                {
-                    XMLDocExtended XDE = new XMLDocExtended(doc);
-                    foreach (XMLDocExtended XDN in XDE.GetEndingNodes())
-                    {
-                        mAct.AddOrUpdateReturnParamActualWithPath(XDN.LocalName, XDN.Value, XDN.XPathWithoutNamspaces);
-                    }
-                }
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
 
         public void HandlePostExecutionOperations()
         {
@@ -699,20 +545,7 @@ namespace GingerCore.Actions.WebAPI
             }
         }
 
-        private bool XMLStringCanBeParsed(string responseMessage)
-        {
-            try
-            {
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.LoadXml(responseMessage);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace);
-                return false;
-            }
-        }
+ 
         
         private bool RequestConstractorREST(ActWebAPIRest act)
         {

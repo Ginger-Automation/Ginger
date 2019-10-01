@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 ImageFile = "@Folder2_16x16.png";
             }
 
-            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader(Folder, ImageFile, Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -109,7 +109,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private string GetExecutionResultsFolder()
         {
             if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
-                return new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                return new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             else
                 return string.Empty;
         }

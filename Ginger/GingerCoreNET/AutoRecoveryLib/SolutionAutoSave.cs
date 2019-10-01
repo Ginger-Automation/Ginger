@@ -43,7 +43,8 @@ namespace Ginger.Functionalties
         }
 
         string mSolutionFolderPath;
-        
+
+        public bool WaitForAutoSave = false;      
         public SolutionAutoSave()
         {
             AutoSaveTimer = new Timer();            
@@ -75,11 +76,14 @@ namespace Ginger.Functionalties
             AutoSaveTimer.Start();
         }
 
-        public void SolutionAutoSaveStop()
+        public void StopSolutionAutoSave()
         {
             AutoSaveTimer.Stop();            
         }
-
+        public void ResumeSolutionAutoSave()
+        {
+            AutoSaveTimer.Start();
+        }
 
         private void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
@@ -88,52 +92,62 @@ namespace Ginger.Functionalties
                 DoAutoSave();
             }
         }
-
+        
         public void DoAutoSave()
-        {
+        {           
             Task.Run(() =>
             {
-                if (Directory.Exists(AutoSaveFolderPath))
+                try
                 {
-                    try
+                    WaitForAutoSave = true;                  
+                    if (Directory.Exists(AutoSaveFolderPath))
                     {
-                        Directory.Delete(AutoSaveFolderPath, true);
+                        try
+                        {
+                            Directory.Delete(AutoSaveFolderPath, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, "AutoSave: Failed to clear the AutoSave folder before doing new save", ex);
-                    }
-                }
 
-                if (WorkSpace.Instance.SolutionRepository == null)
-                {
-                    return;
-                }
-
-                //get all dirty items for AutoSave
-                //BusinesFlows           
-                foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
-                {
-                    if (bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                    if (WorkSpace.Instance.SolutionRepository == null)
                     {
-                        DirtyFileAutoSave(bf);
+                        return;
+                    }
+
+                    //get all dirty items for AutoSave
+                    //BusinesFlows           
+                    foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
+                    {
+                        if (bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                        {
+                            DirtyFileAutoSave(bf);
+                        }
+                    }
+
+                    //Run Sets           
+                    ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
+                    foreach (RunSetConfig runSet in RunSets)
+                    {
+                        if (runSet.AllowAutoSave && runSet.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                        {                      
+                            runSet.UpdateRunnersBusinessFlowRunsList();
+                            DirtyFileAutoSave(runSet);
+                        }                    
                     }
                 }
-
-                //Run Sets           
-                ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                foreach (RunSetConfig runSet in RunSets)
+                catch (Exception ex)
                 {
-                    if (runSet.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
-                    {
-                        runSet.UpdateRunnersBusinessFlowRunsList();
-                        DirtyFileAutoSave(runSet);
-                    }
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to do Auto Save : ", ex);
                 }
-                
-            });
+                finally
+                {
+                    WaitForAutoSave = false;
+                }
+            });           
         }
-
         public void SolutionAutoSaveEnd()
         {
             AutoSaveTimer.Stop();
@@ -167,7 +181,7 @@ namespace Ginger.Functionalties
                 }
 
                 //save item
-                itemCopy.RepositorySerializer.SaveToFile(itemCopy, itemAutoSavePath);                
+                itemCopy.RepositorySerializer.SaveToFile(itemCopy, itemAutoSavePath);
             }
             catch (Exception ex)
             {

@@ -87,8 +87,8 @@
     <Reference Include="appium-dotnet-driver, Version=4.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Appium.WebDriver.4.0.0.4-beta\lib\net45\appium-dotnet-driver.dll</HintPath>
     </Reference>
-    <Reference Include="AutoMapper, Version=8.1.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.8.1.0\lib\net461\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
@@ -105,8 +105,8 @@
     <Reference Include="Common.Logging.Core, Version=3.4.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.Core.3.4.1\lib\net40\Common.Logging.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Couchbase.NetClient, Version=2.7.7.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\CouchbaseNetClient.2.7.7\lib\net452\Couchbase.NetClient.dll</HintPath>
+    <Reference Include="Couchbase.NetClient, Version=2.7.11.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\CouchbaseNetClient.2.7.11\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
     <Reference Include="CssParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\CssParser.dll</HintPath>
@@ -117,19 +117,14 @@
     <Reference Include="DocumentFormat.OpenXml, Version=2.9.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\packages\DocumentFormat.OpenXml.2.9.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
+    <Reference Include="EPPlus, Version=4.5.3.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.5.3.1\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="Eyes.Images.DotNet, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Images.2.4.0\lib\net45\Eyes.Images.DotNet.dll</HintPath>
     </Reference>
     <Reference Include="Eyes.Sdk.DotNet, Version=2.22.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.UIA3, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.UIA3.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -333,6 +328,7 @@
     </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.1\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -357,8 +353,8 @@
     <Reference Include="System.Threading.Tasks.Dataflow, Version=4.6.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Dataflow.4.9.0\lib\netstandard2.0\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -487,7 +483,6 @@
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
     <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIModel.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
     <Compile Include="Actions\Common\ActPhone.cs" />
@@ -531,7 +526,6 @@
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActSmartSync.cs" />
     <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActMultiselectList.cs" />
@@ -560,9 +554,6 @@
       <DependentUpon>LocatorImageCaptureWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIBase.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPIRest.cs" />
-    <Compile Include="Actions\WebServices\WebAPI\ActWebAPISoap.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
     <Compile Include="Actions\REST\ActREST.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
@@ -701,7 +692,6 @@
     <Compile Include="Drivers\Mobile\Perfecto\PerfectoDriver.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
-    <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
@@ -734,7 +724,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SourceControl\GITSourceControl.cs" />
     <Compile Include="SourceControl\SVNSourceControl.cs" />
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
@@ -829,27 +818,27 @@
     </Content>
     <Content Include="DLLs\ACL_Data_Contract.dll" />
     <Content Include="DLLs\ALMRepository.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALMRestClient.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\ALM_Common.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\Interop.TDAPIOLELib.dll" />
     <Content Include="DLLs\LibGit2Sharp.dll" />
     <Content Include="DLLs\ObjectsUtils.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\QCRestClient.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\RQMExport.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\RQM_Repository.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="ALM\JIRA\JiraSettings\Export\test.json" />
     <None Include="ALM\JIRA\JiraSettings\Export\testexecution.json" />
@@ -921,9 +910,6 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\ActionConversion\" />
-    <Folder Include="Actions\PlugIns\" />
-    <Folder Include="Actions\Simulators\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />

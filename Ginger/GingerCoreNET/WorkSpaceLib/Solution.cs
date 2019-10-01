@@ -16,11 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Utils;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Platforms;
@@ -44,7 +42,7 @@ namespace Ginger.SolutionGeneral
 
         [IsSerializedForLocalRepository]
 
-        public bool ShowIndicationkForLockedItems { get; set; }
+        public bool ShowIndicationkForLockedItems { get; set; }   // TODO: fix typo - note serialized attr
 
         public Solution()
         {
@@ -289,7 +287,7 @@ namespace Ginger.SolutionGeneral
                     LoggerConfigurations.IsSelected = true;
                     LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled = true;
                     LoggerConfigurations.ExecutionLoggerConfigurationMaximalFolderSize = 250;
-                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = @"~\ExecutionResults\";
+                    LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
                 }
 
                 if ((this.HTMLReportsConfigurationSetList == null) || (this.HTMLReportsConfigurationSetList.Count == 0))
@@ -298,12 +296,12 @@ namespace Ginger.SolutionGeneral
                     HTMLReportsConfiguration HTMLReportsConfiguration = new HTMLReportsConfiguration();
                     HTMLReportsConfiguration.IsSelected = true;
                     HTMLReportsConfiguration.HTMLReportTemplatesSeq = 1;
-                    HTMLReportsConfiguration.HTMLReportsFolder = @"~\HTMLReports\";
+                    HTMLReportsConfiguration.HTMLReportsFolder = SolutionRepository.cSolutionRootFolderSign + "HTMLReports";
                     HTMLReportsConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
                     HTMLReportsConfigurationSetList.Add(HTMLReportsConfiguration);
                 }
 
-
+                LoggerConfigurations.CalculatedLoggerFolder = LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
                 ExecutionLoggerConfiguration executionLoggerConfiguration = this.LoggerConfigurations;
 

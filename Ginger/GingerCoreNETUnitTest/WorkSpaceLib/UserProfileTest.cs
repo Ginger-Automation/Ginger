@@ -16,14 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Ginger;
 using Ginger.SolutionGeneral;
-using GingerCoreNETUnitTest.RunTestslib;
-using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace GingerCoreNETUnitTest.WorkSpaceLib
 {
@@ -35,13 +33,13 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            WorkspaceHelper.CreateDummyWorkSpace(nameof(UserProfileTest));            
+            WorkspaceHelper.CreateDummyWorkSpace();            
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
 
@@ -53,7 +51,7 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
 
         [Ignore]
         [TestMethod]
-         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects 
+         // Failing !!! needs fix!!! in UserProfile have one list of recent as string and one as objects causin exception
         public void NewProfileSaveLoad()
         {
             //Arrange                        
@@ -78,21 +76,24 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
             //Assert
             Assert.AreEqual(LastSolutionFolder, UP2.RecentSolutions[0]);
         }
-
-        [Ignore] // will not work on Linux
+        
         [TestMethod]
         [Timeout(60000)]
         public void CreateUserProfileFileName()
         {
-            // Arrange            
+            // Arrange                                    
+            string UserAppDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string expected = Path.Combine(UserAppDataFolder, "amdocs", "Ginger", "Ginger.UserProfile.xml");
 
             //Act
-            string s = UserProfile.UserProfileFilePath.ToLower();
+            string userProfileFilePath = UserProfile.UserProfileFilePath;
+
 
             //Assert
-            string expected = @"C:\Users\" + Environment.UserName + @"\AppData\Roaming\Amdocs\Ginger\" + "Ginger.UserProfile.xml"; //  Linux!!!!!!!!!!!
-            Assert.AreEqual(expected, s);   
+            Assert.AreEqual(expected, userProfileFilePath, "UserProfileFilePath");   
         }
+
+    
 
     }
 }

@@ -249,8 +249,10 @@ namespace GingerCoreCommonTest.VariableTests
             bool Hit5 = false;
             bool Hit10 = false;
 
-            //Act            
-            for (int i = 0; i < 100;i++ )
+            //Act   
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            // Run until we hit all numbers or 10 seconds
+            while (!(Hit0 && Hit5 && Hit10) && stopwatch.ElapsedMilliseconds < 10000)            
             {
                 variableRandomString.GenerateAutoValue();
                 Assert.IsTrue(variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10, "variableRandomString.Value.Length >= 0 && variableRandomString.Value.Length <= 10");                
@@ -259,7 +261,7 @@ namespace GingerCoreCommonTest.VariableTests
                 if (variableRandomString.Value.Length == 10) Hit10 = true;                
             }
 
-            //Verify we hit the boundries at least once
+            //Verify we hit the boundaries at least once
             Assert.IsTrue(Hit0, "Hit0");
             Assert.IsTrue(Hit5, "Hit5");
             Assert.IsTrue(Hit10, "Hit10");
@@ -333,39 +335,41 @@ namespace GingerCoreCommonTest.VariableTests
             Assert.IsTrue(num1 >= 1.5M && num1 <= 1.7M, "num1 >= 1.5M && num1 <= 1.7M");            
         }
 
-        //[Ignore]
-        //[TestMethod]  [Timeout(60000)]
-        //public void Random_Check_Hit_All_Numbers()
-        //{
-        //    //Arrange
-        //    // array to keep hits per number [0]-21, [1]-22 etc..
-        //    int[] a = new int[20];
+        
+        [TestMethod]
+        [Timeout(60000)]
+        public void Random_Check_Hit_All_Numbers()
+        {
+            //Arrange
+            // array to keep hits per number [0]-21, [1]-22 etc..
+            int[] numbers = new int[20];
 
-        //    VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
-        //    variableRandomNumber.Min = decimal.Parse("21");  
-        //    variableRandomNumber.Max = decimal.Parse("40");
-        //    variableRandomNumber.IsInteger = true;
+            VariableRandomNumber variableRandomNumber = new VariableRandomNumber();
+            variableRandomNumber.Min = decimal.Parse("21");
+            variableRandomNumber.Max = decimal.Parse("40");
+            variableRandomNumber.IsInteger = true;
 
-        //    //Act
-        //    for (int i = 0; i < 200;i++)
-        //    {
-        //        variableRandomNumber.GenerateAutoValue();
-        //        int num1 = int.Parse(variableRandomNumber.Value);
-        //        a[num1 - 21]++;
-        //    }
-                
-        //    //Assert        
+            //Act
 
-        //    // We check that each number was hit at least 2 times, and not more than 20 - should be more or less fare distribution 
-        //    //TODO: calculate STD instead distance from 30 on avaergae should be small
-        //    for (int i=0;i<20;i++)
-        //    {
-        //        //TODO: fix rnd algo - fair range should be >=4 <=16 -- or calc range that 1 in 1000 might fail = run 1000 tests and check distribution
-        //        Assert.IsTrue(a[i] >= 0, "a[i]>=2");
-        //        Assert.IsTrue(a[i] <= 18, "a[i]<=22");
-        //    }
-            
-        //}
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            // Run until we hit all numbers or 10 seconds
+            while (!CheckHits(numbers) && stopwatch.ElapsedMilliseconds < 10000)
+            {
+                variableRandomNumber.GenerateAutoValue();
+                int num1 = int.Parse(variableRandomNumber.Value);
+                numbers[num1 - 21]++;
+            }
+
+            //Assert        
+
+            // We check that each number was hit            
+            for (int i = 0; i < 20; i++)
+            {                
+                Assert.IsTrue(numbers[i] > 0, "Hit count a[i]>0 i=" + i);                
+            }                        
+        }
+
+        
 
         [TestMethod]  [Timeout(60000)]
         public void RandomStringVar_Digit_5_8()

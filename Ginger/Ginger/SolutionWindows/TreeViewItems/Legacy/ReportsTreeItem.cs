@@ -49,7 +49,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader("Report Templates", "@Report2_16x16.png", Ginger.SourceControl.SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader("Report Templates", "@Report2_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
         
         List<ITreeViewItem> ITreeViewItem.Childrens()

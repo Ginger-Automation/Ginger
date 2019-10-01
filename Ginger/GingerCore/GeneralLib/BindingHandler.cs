@@ -10,9 +10,9 @@ namespace GingerCore.GeneralLib
     public class BindingHandler
     {
         #region Binding
-        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, BindingMode BindingMode = BindingMode.TwoWay)
+        public static void ActInputValueBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, ActInputValue actInputValue, IValueConverter bindingConvertor=null, BindingMode BindingMode = BindingMode.TwoWay)
         {
-            ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), BindingMode);
+            ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), bindingConvertor, BindingMode);
         }
 
         public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay)
@@ -51,7 +51,7 @@ namespace GingerCore.GeneralLib
         public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
-            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            //TODO: check perf impact + reuse existing binding on same obj.prop
             try
             {
                 Binding b = new Binding();
@@ -102,11 +102,63 @@ namespace GingerCore.GeneralLib
                 textBlockControl.Background = System.Windows.Media.Brushes.LightPink;
                 textBlockControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
-        }        
+        }
+
+        public static void ObjFieldBinding(Panel panelControl, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay)
+        {
+            //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
+            //TODO: check perf impact + reuse exisitng binding on same obj.prop
+            try
+            {
+                System.Windows.Data.Binding b = new System.Windows.Data.Binding();
+                b.Source = obj;
+                b.Path = new PropertyPath(property);
+                b.Mode = BindingMode;
+                if (bindingConvertor != null)
+                    b.Converter = bindingConvertor;
+                b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                panelControl.SetBinding(dependencyProperty, b);
+            }
+            catch (Exception ex)
+            {
+                //it is possible we load an old enum or something else which will cause the binding to fail
+                // Can happen also if the bind field name is incorrect
+                // mark the control in red, instead of not openning the Page
+                // Set a tool tip with the error
+
+                // control.IsEnabled = false; // Do not disable as the red will not show
+                panelControl.Style = null; // remove style so red will show
+                //control.Foreground = System.Windows.Media.Brushes.Red;
+                panelControl.Background = System.Windows.Media.Brushes.LightPink;
+
+                panelControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
+            }
+        }
         #endregion Binding
     }
 
     #region Binding Convertors
+
+    public class LongStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                return long.Parse(value.ToString());
+            }
+            catch(Exception ex)
+            {
+                return 0;
+            }
+        }
+    }
+
     public class StringVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -126,6 +178,27 @@ namespace GingerCore.GeneralLib
             throw new NotImplementedException();
         }       
     }
+
+    public class OutPutValuesCountConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((int)value == 0)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
     public class IntVisibilityConverter : IValueConverter
     {
@@ -164,6 +237,30 @@ namespace GingerCore.GeneralLib
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public class InputValueToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value.ToString().ToLower().Equals("true"))
+            {
+                return true;
+            }
+            else if(value.ToString().ToLower().Equals("false"))
+            {
+                return false;
+            }
+            else
+            {
+                throw new System.ArgumentException("Invalid input value for boolean conversion.");
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.ToString();
         }
     }
     #endregion Binding Convertors

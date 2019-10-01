@@ -25,7 +25,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
     // This struct must match exectly to PlatformAction - so json deserialize witl match
 
     public struct NodePlatformAction
-    {        
+    {
+        public string Platform;
         public string ActionHandler;
         public string ActionType;
 

@@ -26,6 +26,7 @@ using System.Text;
 using System.Linq;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -37,11 +38,13 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         }
 
+        // TODO: Remove  browserNewPath
         public WebReportGenerator(string browserNewPath)
         {
             this.browserPath = browserNewPath;
         }
 
+        // TODO: Make this function to just generate the report folder !!!
         public LiteDbRunSet RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
             LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
@@ -53,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     return lightDbRunSet;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder);
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 var result = dbManager.GetRunSetLiteData();
                 List<LiteDbRunSet> filterData = null;
                 if (!string.IsNullOrEmpty(runSetGuid))
@@ -74,6 +77,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
             return lightDbRunSet;
         }
 
+
+        // TODO: Remove from here as this class is WebReportGenerator - not viewer
         private bool RunClientApp(string json, string clientAppFolderPath, WebReportFilter openObject, bool shouldDisplayReport)
         {
             bool response = false;
@@ -100,13 +105,16 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 }
                 response = true;
             }
-            catch (Exception ec)
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error in RunClientApp", ex);
             }
             return response;
         }
-        
+
+        // param name clientAppFolderPath ??
+        // have method to delete assets - it is called from 2 places 
+        // call the method DeleteReportAssetsFolder and delete Execution_Data and screenshot 
         public void DeleteFoldersData(string clientAppFolderPath)
         {
             DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
@@ -117,6 +125,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
         }
 
         //TODO move it to utils class
+        // Create test class
+
         private void PopulateMissingFields(LiteDbRunSet liteDbRunSet, string clientAppPath)
         {
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");

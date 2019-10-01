@@ -27,7 +27,9 @@ using GingerCoreNET.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -437,7 +439,7 @@ namespace GingerWPF.TreeViewItemsLib
             if (string.IsNullOrEmpty(this.NodePath()))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(this.NodePath(), WorkSpace.Instance.Solution.SourceControl);
+                SourceControlUI.GetLatest(this.NodePath(), WorkSpace.Instance.Solution.SourceControl);
             Reporter.HideStatusMessage();
         }
 
@@ -505,11 +507,17 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
-                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));
-                repoItem.RefreshSourceControlStatus();
+                sourceControlImage.BindControl(repoItem, nameof(RepositoryItemBase.SourceControlStatus));                
                 sourceControlImage.Width = 8;
                 sourceControlImage.Height = 8;
                 stack.Children.Add(sourceControlImage);
+
+                // Since it might take time to get the item status from SCM server 
+                // we run it on task so update will happen when status come back and we do not block the UI
+                Task.Factory.StartNew(() =>
+                {
+                    repoItem.RefreshSourceControlStatus();
+                });
             }
 
             // Add Item Image            
@@ -572,12 +580,18 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 // Source control image
                 ImageMakerControl sourceControlImage = new ImageMakerControl();
-                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));
-                repoItemFolder.RefreshFolderSourceControlStatus();
+                sourceControlImage.BindControl(repoItemFolder, nameof(RepositoryFolderBase.SourceControlStatus));                
                 sourceControlImage.Width = 8;
                 sourceControlImage.Height = 8;
                 sourceControlImage.Margin = new Thickness(0, 0, 2, 0);
                 stack.Children.Add(sourceControlImage);
+
+                // Since it might take time to get the item status from SCM server 
+                // we run it on task so update will happen when status come back and we do not block the UI
+                Task.Factory.StartNew(() =>
+                {
+                    repoItemFolder.RefreshFolderSourceControlStatus();
+                });
             }
 
             // Add Item Image            
@@ -604,5 +618,45 @@ namespace GingerWPF.TreeViewItemsLib
             return stack;
         }
 
+        public override void DeleteAllTreeItems()
+        {
+            if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, mTreeView.Tree.GetSelectedTreeNodeName()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            {
+                List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
+                childNodes.Reverse();
+                foreach (ITreeViewItem node in childNodes)
+                {
+                    if (node == null) continue;
+                    if (node.NodeObject() != null)
+                    {
+                        if (node.NodeObject() is RepositoryFolderBase)
+                        {
+                            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItemFolder((RepositoryFolderBase)node.NodeObject());
+                        }
+                        else if(node.NodeObject() is RepositoryItemBase)
+                        {
+                            ((NewTreeViewItemBase)node).DeleteTreeItem(node.NodeObject(), true, false);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception while deleting" + node.NodeObject());
+                        }
+                    }
+                    else
+                    {
+                        if (Directory.Exists(this.NodePath()))
+                        {
+                           String [] DocFolderChildItems = Directory.GetDirectories(this.NodePath());
+                            foreach(String path in DocFolderChildItems)
+                            {
+                                Directory.Delete(path, true);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
+        }    
     }
 }

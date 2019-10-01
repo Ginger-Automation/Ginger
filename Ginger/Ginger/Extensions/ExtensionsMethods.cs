@@ -49,7 +49,7 @@ namespace Ginger
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Refresh progress bar failed", ex); // !!!!!!!!!!!!!!!!!!!!!!
+                Reporter.ToLog(eLogLevel.ERROR, "Refresh uiElement failed - " + uiElement.GetType().Name, ex); 
             }
 
         }
@@ -78,7 +78,7 @@ namespace Ginger
         }
 
         // Bind Combo for enum type, but provide the subset list of enums/valid values to show
-        public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist)
+        public static void BindControl(this ComboBox ComboBox, Object obj, string Field, dynamic enumslist,bool isSorted=true)
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ComboBox, ComboBox.SelectedValueProperty, obj, Field, BindingMode.TwoWay);
             List<object> l = new List<object>();
@@ -91,7 +91,7 @@ namespace Ginger
             PropertyInfo PI = obj.GetType().GetProperty(Field);
             object CurrentFieldEnumValue = PI.GetValue(obj);
 
-            GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, l);
+            GingerCore.General.FillComboFromEnumObj(ComboBox, CurrentFieldEnumValue, l, isSorted);
         }
 
         // Bind Combo for enum type, but provide the subset list of enums/valid values to show

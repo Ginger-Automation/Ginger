@@ -43,6 +43,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -57,68 +58,99 @@ namespace amdocs.ginger.GingerCoreNET
         {
             get
             {                
-                return mWorkSpace;
+                return mWorkSpace;                
             }
         }
 
+        static bool lockit;
 
-        static readonly Mutex mMutex = new Mutex();
-
-        private static string mHoldBy;
-
-        public static void Init(IWorkSpaceEventHandler WSEH, string HoldBy)
-        {                        
-            if (mWorkSpace != null)
-            {                
-                Console.WriteLine("Workspace is locked by: " + HoldBy + Environment.NewLine + "Waiting for workspace to be released");                
-            }
-            bool b = mMutex.WaitOne(new TimeSpan(0,10,0));   // Wait for the workspace to be released max 10 minutes
-
-            if (!b)
+        public static void LockWS()
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
+            
+            Task.Factory.StartNew(() =>
             {
-                Console.WriteLine("Workspace remained locked and timed out after 10 minutes, hold by: " + mHoldBy);
-                throw new Exception("Workspace is locked by: '" + mHoldBy + "' and was already initialized, timeout 10 minutes, if running from unit test make sure to release workspace in Class cleanup");               
-            }
-            mHoldBy = HoldBy;
+                lock (WorkSpace.Instance)
+                {                    
+                    lockit = true;
+                    while (lockit)  // TODO: add timeout max 60 seconds
+                    {
+                        Thread.Sleep(100);
+                    }
+                }
+            });
+        }
 
-            mWorkSpace = new WorkSpace();
+        public static void RelWS()
+        {
+            lockit = false;
+            Reporter.ToLog(eLogLevel.DEBUG, "Workspace released");
+        }
+
+
+        public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
+        {
+            mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
 
-            mWorkSpace.InitLocalGrid();
-
+            if (startLocalGrid)
+            {
+                mWorkSpace.InitLocalGrid();
+            }
+            AddLazyLoad();            
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
         }
 
+        private static void AddLazyLoad()
+        {
+            // TODO: add RI type, and use attr on field
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
+            //TODO: see impact of acts - remember to add also handle in attr see others
+            //NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
+        }
 
+      
 
-        public void ReleaseWorkspace()
+        public void StartLocalGrid()
+        {
+            if (LocalGingerGrid == null)
+            {
+                InitLocalGrid();
+            }
+            else
+            {
+                Reporter.ToConsole(eLogLevel.ERROR, "StartLocalGrid requested but grid is already running");
+            }
+        }
+
+        public void CloseWorkspace()
         {
             try
             {
-
-                CloseSolution();
-                LocalGingerGrid.Stop();
-                Close();
-                mHoldBy = null;                
+                if (Solution != null)
+                {
+                    CloseSolution();
+                }
+                if (LocalGingerGrid != null)
+                {
+                    LocalGingerGrid.Stop();
+                }
+                Close();             
             }
             catch (Exception ex)
             {
-
-            }
-            finally
-            {
-
-                mMutex.ReleaseMutex();
+                Reporter.ToLog(eLogLevel.DEBUG, "ReleaseWorkspace error - " + ex.Message, ex);
             }            
-         
         }
 
 
         public void Close()
         {
-            AppSolutionAutoSave.SolutionAutoSaveStop();
+            AppSolutionAutoSave.StopSolutionAutoSave();
             if (SolutionRepository != null)
             {
                 CloseAllRunningAgents();
@@ -133,13 +165,16 @@ namespace amdocs.ginger.GingerCoreNET
                 AppSolutionAutoSave.CleanAutoSaveFolders();
             }
 
-            WorkSpace.Instance.LocalGingerGrid.Stop();
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                WorkSpace.Instance.LocalGingerGrid.Stop();
+            }
             WorkSpace.Instance.Telemetry.SessionEnd();
             mWorkSpace = null;            
         }
 
         private void InitLocalGrid()
-        {
+        {            
             mLocalGingerGrid = new GingerGrid();
             mLocalGingerGrid.Start();
         }
@@ -231,6 +266,11 @@ namespace amdocs.ginger.GingerCoreNET
             UserProfile.LoadUserTypeHelper();            
                         
             CheckWebReportFolder();
+
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                Reporter.ToConsole(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
+            }
         }
 
         private void CheckWebReportFolder()
@@ -238,7 +278,9 @@ namespace amdocs.ginger.GingerCoreNET
             try
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.DEBUG, "Copying from web report from: "+ clientAppFolderPath);
                 string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.DEBUG, "Copying to web report from: " + userAppFolder);
                 if (Directory.Exists(clientAppFolderPath))
                 {
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
@@ -249,7 +291,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch(Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.DEBUG, "CheckWebReportFolder Error: " + ex.Message, ex);
             }
         }
 
@@ -261,7 +303,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch (Exception ex)
             {
-
+               Reporter.ToLog(eLogLevel.DEBUG, "TryFolderDelete error - " + ex.Message, ex);
             }
         }
 
@@ -270,7 +312,7 @@ namespace amdocs.ginger.GingerCoreNET
            // FIX Message not shown !!!!!!!!!!!
 
             Reporter.ToStatus(eStatusMsgKey.GingerLoadingInfo, text);
-            Console.WriteLine("Loading Info: " + text);
+            Reporter.ToLog(eLogLevel.DEBUG, "Loading Info: " + text);
         }
 
         private void BetaFeatureChanged(object sender, PropertyChangedEventArgs e)
@@ -286,7 +328,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // happen when we close Ginger from unit tests
                 if (e.ExceptionObject is System.Runtime.InteropServices.InvalidComObjectException || e.ExceptionObject is System.Threading.Tasks.TaskCanceledException)
                 {
-                    Console.WriteLine("StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
+                    Reporter.ToLog(eLogLevel.DEBUG, "StandAloneThreadExceptionHandler: Running from unit test ignoring error on ginger close");
                     return;
                 }
             }
@@ -370,9 +412,9 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-                Solution = solution;
+                Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
-
+                
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -497,20 +539,20 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
-                }
+                }                
             }
 
             //Reset values
-            mPluginsManager = null;
+            mPluginsManager = new PluginsManager();
             SolutionRepository = null;
             SourceControl = null;            
             Solution = null;
 
             EventHandler.SolutionClosed();
-        }        
+        }
 
         public UserProfile UserProfile { get; set; }
-       
+
 
         public IWorkSpaceEventHandler EventHandler { get; set; }
 
@@ -660,24 +702,22 @@ namespace amdocs.ginger.GingerCoreNET
 
         public BusinessFlow GetNewBusinessFlow(string Name, bool setTargetApp = false)
         {
-            BusinessFlow biz = new BusinessFlow();
-            biz.Name = Name;
-            biz.Activities = new ObservableList<Activity>();
-            biz.Variables = new ObservableList<VariableBase>();
-            Activity a = new Activity() { Active = true };
-            a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
-            a.Acts = new ObservableList<IAct>();
-            biz.Activities.Add(a);
-            biz.Activities.CurrentItem = a;
-            biz.CurrentActivity = a;
+            BusinessFlow newBF = new BusinessFlow();
+            newBF.Name = Name;
+            
+            Activity defActivity = new Activity() { Active = true };
+            defActivity.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
+            newBF.AddActivity(defActivity, newBF.AddActivitiesGroup());
+            newBF.Activities.CurrentItem = defActivity;
+            newBF.CurrentActivity = defActivity;
 
             if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
             {
-                biz.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
-                biz.CurrentActivity.TargetApplication = biz.TargetApplications[0].Name;
+                newBF.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                newBF.CurrentActivity.TargetApplication = newBF.TargetApplications[0].Name;
             }
 
-            return biz;
+            return newBF;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -690,6 +730,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        
         bool mLoadingSolution;
         public bool LoadingSolution
         {
@@ -708,5 +749,42 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public Telemetry Telemetry { get; internal set; }
+
+        // Unified ;location to get the ExecutionResults Folder
+        // Enable to redirect all test artifacts to another folder used in CLI, include json summary, report, execution results
+        private string mTestArtifactsFolder;
+
+        /// <summary>
+        /// Return full path for folder to save execution results and any test artifacts like json summary, if folder do not exist it will be created
+        /// </summary>
+        public string TestArtifactsFolder
+        {
+            get
+            {
+                string folder;
+
+                if (string.IsNullOrEmpty(mTestArtifactsFolder))
+                {
+                    folder =  Path.Combine(WorkSpace.Instance.Solution.Folder, "ExecutionResults");
+                }
+                else
+                {
+                    folder = mTestArtifactsFolder;
+                }
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                return folder;
+            }
+            set
+            {
+                mTestArtifactsFolder = value;
+            }
+        }
+
+        
+
     }
 }

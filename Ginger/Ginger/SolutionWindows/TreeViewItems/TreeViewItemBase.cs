@@ -113,7 +113,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (string.IsNullOrEmpty(this.NodePath()))
                 Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Invalid Path provided");
             else
-                SourceControlIntegration.GetLatest(this.NodePath(),  WorkSpace.Instance.Solution.SourceControl);
+                SourceControlUI.GetLatest(this.NodePath(),  WorkSpace.Instance.Solution.SourceControl);
             
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
             Reporter.HideStatusMessage();
@@ -533,10 +533,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     else
                     {
                         if (Directory.Exists(((TreeViewItemBase)node).NodePath()))
-                           Directory.Delete(((TreeViewItemBase)node).NodePath(), true);
+                            Directory.Delete(((TreeViewItemBase)node).NodePath(), true);
                     }
                 }
-
                 //delete root and refresh tree                    
                 Directory.Delete(this.NodePath(), true);
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();                
@@ -546,6 +545,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override void AddTreeItem()
         {
             Reporter.ToUser(eUserMsgKey.MissingImplementation2);
+        }
+
+        public override void DeleteAllTreeItems()
+        {
+            throw new NotImplementedException();
         }
     }
 }

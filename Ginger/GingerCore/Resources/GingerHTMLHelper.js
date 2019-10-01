@@ -69,16 +69,13 @@ function define_GingerLib() {
 		
 		try
 		{
-			 var RequestPL = GingerPayLoadFromHexString(InputHexString);    
-			var pl = GingerLib.ProcessCommand(RequestPL);
-			return pl.GetHexString();
+            var RequestPL = GingerPayLoadFromHexString(InputHexString);
+            var pl = GingerLib.ProcessCommand(RequestPL);
+            return pl.GetHexString();
 		}
 		catch (error) 
 		{			
-			var pl = new GingerPayLoad("Error");
-			pl.AddValueString("Failed to execute command. Error :"+error.message);
-			pl.ClosePackage();
-			return pl;
+            return new GingerErrorPayLoad(0, "Failed to execute command. Error :" + error.message);
         }	
       
     }
@@ -117,6 +114,59 @@ function define_GingerLib() {
         if (Command == "Echo") {
             var txt = PayLoad.GetValueString();
             return GingerLib.Echo(txt);
+        }
+        else if (Command === "WidgetsUIElementAction")
+        {
+           var list = PayLoad.GetListPayLoad();
+           var inputValues = PayLoad.GetInputValues(list);
+
+           var ElementAction = inputValues["ElementAction"];
+           var ElementLocateBy = inputValues["ElementLocateBy"];
+           var ElementLocateValue = inputValues["ElementLocateValue"];
+           var Value = inputValues["Value"];
+
+            if (ElementAction === "TriggerJavaScriptEvent")
+            {
+                var IsMouseEvent = inputValues["IsMouseEvent"];
+
+                var element = "undefined";
+
+                element = GingerLib.GetElementWithImplicitSync(ElementLocateBy, ElementLocateValue);
+
+                if (element === undefined) {
+
+                    if (ErrorMessage == "")
+                        ErrorMessage = "ERROR|Web Element not Found: " + LocateBy + " " + LocateValue;
+
+                    return new GingerErrorPayLoad(404, ErrorMessage);
+                }
+
+                if (IsMouseEvent.toLowerCase() == "true")
+                {
+                    return GingerLib.fireMouseEvent(element, Value);               
+                }
+                else
+                {
+                    return GingerLib.fireSpecialEvent(element, Value);
+                }
+            }
+
+            if (ElementAction === "IsVisible")
+            {
+                ElementAction = "Visible";
+            }
+            if (ElementAction === "IsEnabled")
+            {
+                ElementAction = "Enabled";
+            }
+            if (ElementAction === "Select") {
+                ElementAction = "SelectFromDropDown";
+            }
+            else if (ElementAction === "SelectByIndex") {
+                ElementAction = "SelectFromDropDownByIndex";
+            }
+
+           return GingerLib.HandleHTMLControlAction(ElementAction, ElementLocateBy, ElementLocateValue, Value);
         }
         else if (Command == "HTMLElementAction") {
             var ControlAction = PayLoad.GetValueString();
@@ -163,10 +213,11 @@ function define_GingerLib() {
 
 			if(img!=undefined)
 			{
-				if (img.indexOf("ERROR") == -1)
-					pl = new GingerPayLoad("HTMLScreenShot");
-				else
-					pl = new GingerPayLoad("Error");
+                if (img.indexOf("ERROR") == -1)
+                    pl = new GingerPayLoad("HTMLScreenShot");
+                else {
+                    return new GingerErrorPayLoad(0, img);
+                }
 
 				pl.AddValueString(img);
 				pl.AddValueString("ScreenShot successfully");
@@ -213,10 +264,7 @@ function define_GingerLib() {
             return PLResp;
         }
         else {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("Unknown Command - " + Command);
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "Unknown Command - " + Command);
         }
     }
 
@@ -312,10 +360,7 @@ function define_GingerLib() {
             if (ErrorMessage == "")
                ErrorMessage = "ERROR|Web Element not Found: " + LocateBy + " " + LocateValue;
 
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString(ErrorMessage);
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(404, ErrorMessage);
         }
         else {
 
@@ -363,10 +408,7 @@ function define_GingerLib() {
                 //TODO: Add More actions handling here
 
             else {
-                var pl = new GingerPayLoad("ERROR");
-                pl.AddValueString("Action: "+ControlAction+" Not implemented Yet" );
-                pl.ClosePackage();
-                return pl;
+                return new GingerErrorPayLoad(0, "Action: " + ControlAction + " Not implemented Yet");
             }
         }
     }
@@ -1050,10 +1092,7 @@ function define_GingerLib() {
         }
 
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at SelectFromDropDown");
-            pl.ClosePackage();
-            return pl;
+           return new GingerErrorPayLoad(0, "ERROR: " + err + " at SelectFromDropDown");
         }
     }
 
@@ -1109,10 +1148,7 @@ function define_GingerLib() {
             }
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at SetElementValue");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at SetElementValue");
         }
     }
     GingerLib.FindReact = function (dom) {
@@ -1172,10 +1208,7 @@ function define_GingerLib() {
             return pl;
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at fireSpecialEvent");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at fireSpecialEvent");
         }
     }
 
@@ -1221,10 +1254,7 @@ function define_GingerLib() {
             return Response;
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at SelectFromDropDownByIndex");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at SelectFromDropDownByIndex");
         }
     }
 
@@ -1248,10 +1278,7 @@ function define_GingerLib() {
             return Response;
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at GetElementValue");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at GetElementValue");
         }
     }
 
@@ -1268,10 +1295,8 @@ function define_GingerLib() {
 
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at Switch Frame");
-            pl.ClosePackage();
-            return pl;
+  
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at Switch Frame");
         }
 
     }
@@ -1285,10 +1310,7 @@ function define_GingerLib() {
 
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at IsVisible");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at IsVisible");
         }
     }
 
@@ -1302,10 +1324,8 @@ function define_GingerLib() {
 
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at IsVisible");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at IsVisible");
+
         }
     }
 	
@@ -1330,10 +1350,7 @@ function define_GingerLib() {
             return Response;
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at Fire mouse event");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at Fire mouse event");
         }
     }
     
@@ -1444,10 +1461,7 @@ function define_GingerLib() {
 
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at ClickElement");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at ClickElement");
         }
     }
 
@@ -1504,10 +1518,7 @@ function define_GingerLib() {
 
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at AsnycClickElement");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at AsnycClickElement");
         }
     }
     GingerLib.ScrollDown = function (el, Value) {
@@ -1520,10 +1531,7 @@ function define_GingerLib() {
             }, speed);
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at ScrollDown");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at ScrollDown");
         }
         var Response = new GingerPayLoad("OK");
         Response.AddValueString("Scroll down ended successfully")
@@ -1540,10 +1548,7 @@ function define_GingerLib() {
             }, speed);
         }
         catch (err) {
-            var pl = new GingerPayLoad("ERROR");
-            pl.AddValueString("ERROR: " + err + " at ScrollUp");
-            pl.ClosePackage();
-            return pl;
+            return new GingerErrorPayLoad(0, "ERROR: " + err + " at ScrollDown");
         }
         var Response = new GingerPayLoad("OK");
         Response.AddValueString("Scroll Up ended successfully")

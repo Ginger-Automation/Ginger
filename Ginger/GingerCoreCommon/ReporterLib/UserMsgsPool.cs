@@ -71,6 +71,7 @@ namespace Amdocs.Ginger.Common
         ConfirmToAddTreeItem,
         FailedToAddTreeItem,
         SureWantToDeleteAll, SureWantToDeleteSelectedItems, SureWantToDelete, NoItemToDelete, SelectItemToDelete, FailedToloadTheGrid,
+        SureWantToContinue, BaseAPIWarning,
         ErrorReadingRepositoryItem,
         EnvNotFound, SelectItemToAdd, CannotAddGinger,
         ShortcutCreated, ShortcutCreationFailed, CannotRunShortcut,
@@ -140,7 +141,7 @@ namespace Amdocs.Ginger.Common
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
-        PluginDownloadInProgress,
+        PluginDownloadInProgress, SaveRunsetChanges
     }
 
     public static class UserMsgsPool
@@ -372,7 +373,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderExistsWithName, new UserMsg(eUserMsgType.WARN, "Folder Creation Failed", "Folder with same name already exists. Please choose a different name for the folder.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateApplicationNameChangeInSolution, new UserMsg(eUserMsgType.WARN, "Target Application Name Change", "Do you want to automatically update the Target Application name in all Solution items?" + Environment.NewLine + Environment.NewLine + "Note: If you choose 'Yes', changes won't be saved, for saving them please click 'SaveAll'", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "There are unsaved changes in runset, Do you want to save it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             #endregion Solution Messages
 
             #region Activities
@@ -443,6 +444,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToAddTreeItem, new UserMsg(eUserMsgType.ERROR, "Add Tree Item", "Failed to add the tree item '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteAll, new UserMsg(eUserMsgType.QUESTION, "Delete All", "Are you sure you want to delete all?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteSelectedItems, new UserMsg(eUserMsgType.QUESTION, "Delete Selected", "Are you sure you want to delete all selected items?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToContinue, new UserMsg(eUserMsgType.QUESTION, "Replace Existing", "Are you sure you want to delete the existing '{1}' ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BaseAPIWarning, new UserMsg(eUserMsgType.WARN, "Base API Not found", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete", "Are you sure you want to delete '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete All", "Didn't found item to delete", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SelectItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete", "Please select items to delete", eUserMsgOption.OK, eUserMsgSelection.None));

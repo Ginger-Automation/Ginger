@@ -279,28 +279,8 @@ namespace GingerCoreNET.DataSource
         {
             DataTable table = GetTable(TableName);
             table.Columns.Remove("_id");
-            //open file
-            
-            string excelFilepath = sExcelPath;
-            excelFilepath = excelFilepath.Replace(@"~", amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.Folder);
 
-            if(File.Exists(excelFilepath))
-            {
-                var file = new FileInfo(excelFilepath);
-                using (OfficeOpenXml.ExcelPackage xlPackage = new OfficeOpenXml.ExcelPackage())
-                {
-                    var ws = xlPackage.Workbook.Worksheets.Add(sSheetName);
-                    ws.Cells["A1"].LoadFromDataTable(table, true);
-
-                    // save
-                    xlPackage.SaveAs(new FileInfo(excelFilepath));
-                }
-            }
-            else
-            {
-                return false;
-            }
-            return true;
+            return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sExcelPath, sSheetName);
         }
 
         public override List<string> GetColumnList(string tableName)
@@ -473,7 +453,7 @@ namespace GingerCoreNET.DataSource
 
                         foreach (DataRow dr in dt.Rows)
                         {
-                            if (dr["GINGER_ID"] == "")
+                            if ((string)dr["GINGER_ID"] == "")
                             {
                                 dosort = false;
                             }
@@ -548,7 +528,7 @@ namespace GingerCoreNET.DataSource
 
                             foreach (DataRow dr in dataTable.Rows)
                             {
-                                if (dr["GINGER_ID"] == "")
+                                if ((string)dr["GINGER_ID"] == "")
                                 {
                                     dosort = false;
                                 }
@@ -582,7 +562,7 @@ namespace GingerCoreNET.DataSource
                 }
                 catch(Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred: ", ex);
                 }
             }
             dataTable.AcceptChanges();

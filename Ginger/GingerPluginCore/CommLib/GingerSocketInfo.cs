@@ -72,8 +72,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         // When request arrived
         // 1. ReceviedRequest
-        // 1. ProcessingRequest
-        // 1. SendingResponse
+        // 2. ProcessingRequest
+        // 3. SendingResponse
         // Back to Ready
 
         public eProcessingStatus mProcessingStatus = eProcessingStatus.Ready;
@@ -85,6 +85,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             // get stuck when Ginger close
             while (mProcessingStatus != eProcessingStatus.Ready && mProcessingStatus != eProcessingStatus.ResponseCompleted)
             {
+
                 Thread.Sleep(new TimeSpan(1));  //TODO: add timeout!!! or??
             }            
             

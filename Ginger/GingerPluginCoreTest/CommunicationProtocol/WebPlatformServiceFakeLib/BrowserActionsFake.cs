@@ -28,6 +28,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
 
         string mURL;
 
+        public void AcceptAlert()
+        {
+            throw new NotImplementedException();
+        }
+
         public void AcceptMessageBox()
         {
             // dummy change 25 check AppVeyor VS 2019
@@ -49,6 +54,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new NotImplementedException();
         }
 
+        public void DismissAlert()
+        {
+            throw new NotImplementedException();
+        }
+
         public void DismissMessageBox()
         {
             throw new NotImplementedException();
@@ -64,9 +74,19 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new NotImplementedException();
         }
 
+        public string GetAlertText()
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetCurrentUrl()
         {
             return mURL;
+        }
+
+        public string GetPageSource()
+        {
+            throw new NotImplementedException();
         }
 
         public string GetTitle()
@@ -114,11 +134,20 @@ namespace GingerPluginCoreTest.CommunicationProtocol.WebPlatformServiceFakeLib
             throw new NotImplementedException();
         }
 
+        public void SendAlertText(string Text)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SetAlertBoxText(string value)
         {
             throw new NotImplementedException();
         }
 
+        public void SwitchToDefaultContent()
+        {
+            throw new NotImplementedException();
+        }
 
         public void SwitchToFrame(IGingerWebElement WebElement)
         {

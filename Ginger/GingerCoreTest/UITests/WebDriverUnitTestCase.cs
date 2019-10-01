@@ -93,14 +93,14 @@ namespace UnitTests.UITests
             // use helper !!!!
             Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");            
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH, nameof(WebDriverUnitTest));
+            WorkSpace.Init(WSEH);
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -1064,6 +1064,8 @@ namespace UnitTests.UITests
             //assert
             Assert.AreEqual(true, actBrowser2.ReturnValues.FirstOrDefault().Actual.Contains("iPad"));
         }
+
+
     }
 }
 

@@ -18,7 +18,6 @@ limitations under the License.
 
 using Ginger.SourceControl;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.ApplicationPlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -29,7 +28,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
     public class ApplicationTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         ApplicationPlatform mApplicationPlatform;
-        ApplicationEditPage mApplicationEditPage = null;
+        //ApplicationEditPage mApplicationEditPage = null;
 
         public ApplicationTreeItem(ApplicationPlatform ApplicationModel)
         {
@@ -54,7 +53,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             string ImageFile = "@Folder2_16x16.png";  // TODO: find icon for Apps
             string Path = "?";
-            return TreeViewUtils.CreateItemHeader(mApplicationPlatform.AppName, ImageFile, SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader(mApplicationPlatform.AppName, ImageFile, SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -69,11 +68,12 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
-            if (mApplicationEditPage == null)
-            {
-                mApplicationEditPage =  new ApplicationEditPage(mApplicationPlatform);
-            }
-            return mApplicationEditPage;
+            //if (mApplicationEditPage == null)
+            //{
+            //    mApplicationEditPage =  new ApplicationEditPage(mApplicationPlatform);
+            //}
+            //return mApplicationEditPage;
+            return null;
         }
 
         ContextMenu ITreeViewItem.Menu()

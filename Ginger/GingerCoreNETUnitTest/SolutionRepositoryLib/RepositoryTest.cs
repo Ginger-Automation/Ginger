@@ -45,14 +45,14 @@ namespace UnitTests.NonUITests
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            WorkspaceHelper.InitWS(nameof(RepositoryTest));            
+            
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            WorkSpace.Instance.ReleaseWorkspace();
+            
         }
 
         [TestInitialize]
@@ -1134,6 +1134,7 @@ namespace UnitTests.NonUITests
 
         }
 
+        
 
     }
 }

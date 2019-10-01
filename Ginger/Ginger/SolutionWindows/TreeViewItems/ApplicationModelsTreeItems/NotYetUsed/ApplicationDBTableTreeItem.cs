@@ -56,7 +56,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
                 ImageFile = "@Folder2_16x16.png";
             }
 
-            return TreeViewUtils.CreateItemHeader(Name, ImageFile, SourceControlIntegration.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
+            return TreeViewUtils.CreateItemHeader(Name, ImageFile, SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -114,7 +114,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mContextMenu = new ContextMenu();
 
             if (IsGingerDefualtFolder)
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
             AddSourceControlOptions(mContextMenu, false, false);

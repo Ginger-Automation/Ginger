@@ -471,7 +471,7 @@ namespace Amdocs.Ginger.Common.UIElement
             NA,
             [EnumValueDescription("")]
             Unknown,
-            [EnumValueDescription("An Page Objects Model Element")]
+            [EnumValueDescription("Page Objects Model Element")]
             POMElement,
             [EnumValueDescription("By ID")]
             ByID,
@@ -579,7 +579,10 @@ namespace Amdocs.Ginger.Common.UIElement
             //HTML Elements
             Div,
             Span,
-            Form
+            Form,
+            Browser,
+            [EnumValueDescription("Date Picker")]
+            DatePicker
         }
 
     

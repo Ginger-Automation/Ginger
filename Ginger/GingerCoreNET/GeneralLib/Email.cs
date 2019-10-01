@@ -16,22 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using GingerCore.DataSource;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Ginger.Run.RunSetActions;
 
 namespace GingerCore.GeneralLib
-{
+{    
+
     public class Email : RepositoryItemBase
-    {
-        //OutLook.MailItem mOutlookMail;        
+    { 
+        static bool InitSmtpAuthenticationManagerDone = false;
+        public Email()
+        {
+            Attachments = new List<string>();
+            if (!InitSmtpAuthenticationManagerDone)
+            {
+                // For Linux we need to fix the auth
+                GingerUtils.OSHelper.Current.InitSmtpAuthenticationManager();
+                InitSmtpAuthenticationManagerDone = true;
+            }
+        }
 
         public enum eEmailMethod
         {
@@ -111,7 +120,7 @@ namespace GingerCore.GeneralLib
             }
             set
             {
-                if(mBody!=value)
+                if (mBody != value)
                 {
                     mBody = value;
                     OnPropertyChanged(nameof(Body));
@@ -165,6 +174,7 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public string SMTPPass { get { return mSMTPPass; } set { if (mSMTPPass != value) { mSMTPPass = value; OnPropertyChanged(nameof(SMTPPass)); } } }
 
+        // TODO: why we serialize? is it error report? check/fix
         [IsSerializedForLocalRepository]
         public string Event { get; set; }
 
@@ -212,13 +222,10 @@ namespace GingerCore.GeneralLib
             }
         }
         public bool IsBodyHTML { get; set; } = true;
-        public Email()
-        {
-            Attachments = new List<string>();
-        }
+        
 
         public bool Send()
-        {           
+        {
             //If Outlook Option is selected
             if (EmailMethod == eEmailMethod.OUTLOOK)
             {
@@ -243,9 +250,9 @@ namespace GingerCore.GeneralLib
         {
             Send_Outlook(false);
             RepositoryItemHelper.RepositoryItemFactory.DisplayAsOutlookMail();
-           // mOutlookMail.Display();
+            // mOutlookMail.Display();
         }
-        
+
         public bool Send_SMTP()
         {
             try
@@ -315,7 +322,7 @@ namespace GingerCore.GeneralLib
                 if (!String.IsNullOrEmpty(MailCC))
                 {
                     Array arrCCEmails = MailCC.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string MailCC1 in arrCCEmails) //arrEmails) // Updated by Preeti for defect 2464
+                    foreach (string MailCC1 in arrCCEmails) 
                     {
                         myMail.CC.Add(MailCC1);
                     }
@@ -327,7 +334,7 @@ namespace GingerCore.GeneralLib
                 mVE.Value = Body;
                 string body = mVE.ValueCalculated;
 
-                myMail.From = fromAddress;                
+                myMail.From = fromAddress;
                 myMail.IsBodyHtml = IsBodyHTML;
 
                 myMail.Subject = subject.Replace('\r', ' ').Replace('\n', ' ');
@@ -345,6 +352,7 @@ namespace GingerCore.GeneralLib
                 {
                     myMail.AlternateViews.Add(alternateView);
                 }
+                
                 smtp.Send(myMail);
 
                 return true;
@@ -367,6 +375,8 @@ namespace GingerCore.GeneralLib
                 {
                     Event = "Failed: " + ex.Message;
                 }
+                Reporter.ToLog(eLogLevel.DEBUG, "Failed to send mail", ex);
+
                 return false;
             }
         }
@@ -382,5 +392,9 @@ namespace GingerCore.GeneralLib
                 return;
             }
         }
+
+
+        
+
     }
 }

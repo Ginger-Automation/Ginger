@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using OpenQA.Selenium;
@@ -658,6 +659,12 @@ namespace GingerCore.Drivers.Appium
                     GenElementHandler((ActGenElement)act);
                     return;
                 }
+
+                if (ActType == typeof(ActSmartSync))
+                {
+                    mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
+                    return;
+                }
                 if (ActType == typeof(ActScreenShot))
                 {
                     TakeScreenShot(act);
@@ -982,8 +989,24 @@ namespace GingerCore.Drivers.Appium
                     case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
                         Driver.LaunchApp();
                         break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+
+                       
+                            string[] arr = act.ValueForDriver.Split(',');
+                            int x1 = Int32.Parse(arr[0]);
+                        int y1 = Int32.Parse( arr[1]);
+                        int x2 = Int32.Parse( arr[2]);
+                        int y2 = Int32.Parse( arr[3]);
+                        ITouchAction swipe;
+
+                        swipe = BuildDragAction(Driver, x1, y1,x2,y2, 1000);
+                        swipe.Perform();
+
+                    
+                        break;
                     default:
-                        throw new Exception("Action unknown/Not Implemented in Driver: '" + this.GetType().ToString() + "'");
+                        throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
             }
             catch (Exception ex)
@@ -1550,6 +1573,11 @@ namespace GingerCore.Drivers.Appium
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
             return EI;
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

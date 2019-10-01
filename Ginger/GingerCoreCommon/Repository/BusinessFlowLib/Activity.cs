@@ -25,6 +25,7 @@ using GingerCore.Actions;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -819,7 +820,7 @@ namespace GingerCore
 
         public bool AddDynamicly { get; set; }
 
-        public string ExecutionLogFolder { get; set; }
+        public string ExecutionLogFolder { get; set; } = string.Empty;
 
         public int ExecutionLogActionCounter { get; set; }
 
@@ -831,7 +832,7 @@ namespace GingerCore
         {
             base.UpdateItemFieldForReposiotryUse();
             ActivitiesGroupID = null;
-            //ActivitiesGroupColor = null;
+            AutomationStatus = eActivityAutomationStatus.Automated;
         }
 
         public ObservableList<VariableBase> GetVariables()
@@ -869,7 +870,7 @@ namespace GingerCore
         public void OfflinePropertiesPrep(string executionLogFolder, int executionLogActivityCounter, string activityName)
         {
             ExecutionLogActionCounter = 0;
-            ExecutionLogFolder = executionLogFolder + @"\" + executionLogActivityCounter + " " + activityName;
+            ExecutionLogFolder = Path.Combine(executionLogFolder,executionLogActivityCounter + " " + activityName);
             VariablesBeforeExec = Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList();
         }
 
