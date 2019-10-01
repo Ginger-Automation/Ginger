@@ -15,7 +15,7 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="500*"/>
         </Grid.RowDefinitions>
 
@@ -85,15 +85,16 @@
             </DockPanel>
         </Grid>
 
-        <Grid Grid.Row="1">
+        <!--<Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100*"></ColumnDefinition>
                 <ColumnDefinition Width="50"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="xDescriptionTextBlock"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
             <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" HorizontalAlignment="Right"/>
-        </Grid>
-        
+        </Grid>-->
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1"  Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Activity Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="16" Style="{StaticResource $TextBlockStyle}"/>
+
         <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xActionsTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
@@ -119,12 +120,12 @@
                 <Frame x:Name="xVariabelsTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
             </TabItem>
 
-            <TabItem x:Name="xConfigurationsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
+            <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="3">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
                         <DockPanel >
                             <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config" Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
-                            <TextBlock  Text="Configurations" Style="{StaticResource $CoolTabTextBlockStyle}" />
+                            <TextBlock  Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
                         </DockPanel>
                     </Border>
                 </TabItem.Header>

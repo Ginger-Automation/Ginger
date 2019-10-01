@@ -104,7 +104,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Configurations Tab Bindings
-            if (mConfigurationsPage != null && xConfigurationsTab.IsSelected)
+            if (mConfigurationsPage != null && xDetailsTab.IsSelected)
             {
                 mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
             }
@@ -154,12 +154,12 @@ namespace GingerWPF.BusinessFlowsLib
                         mVariabelsPage.UpdateParent(mBusinessFlow);
                     }
                 }
-                else if (xConfigurationsTab.IsSelected == true)
+                else if (xDetailsTab.IsSelected == true)
                 {
                     if (mConfigurationsPage == null)
                     {
                         mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
-                        xConfigurationsTabFrame.SetContent(mConfigurationsPage);
+                        xDetailsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else
                     {

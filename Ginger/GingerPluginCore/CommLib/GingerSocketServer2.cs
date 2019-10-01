@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             isClosing = true;
             allDone.Reset();
             if (mServerSocketlistener != null)
-            {
+            {                
                 mServerSocketlistener.Close();
             }
              
@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public void AcceptCallback(IAsyncResult ar)
         {
             try
-            {
+            {                
                 // Signal the main thread to continue.  
                 allDone.Set();
 
@@ -131,9 +131,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 gingerSocketInfo.MessageHandler = MessageHandler;
                 gingerSocketInfo.Receive();
                 Clients.Add(gingerSocketInfo);
-            }
+            }                        
             catch(Exception ex)
-            {
+            {                
+                if (isClosing)
+                {
+                    return;
+                }
                 Console.WriteLine("AcceptCallback Error: " + ex.Message);
             }
         }

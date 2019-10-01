@@ -140,7 +140,7 @@ namespace Amdocs.Ginger.GingerConsole
             InitWorkSpace(false);                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);
+            CLI.ExecuteArgs(args);            
         }
 
        

@@ -376,5 +376,12 @@ namespace GingerWPF.BusinessFlowsLib
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
+
+        private void xExpandActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mActionEditPage.ShowAsWindow(windowStyle:eWindowShowStyle.OnlyDialog);
+            mActionEditPage.Width = xMainFrame.ActualWidth;
+            xMainFrame.Refresh();            
+        }
     }
 }

@@ -133,7 +133,7 @@ public class SwingHelper implements IXPath {
 
 			comp = FindElementRecursive(window, LocateBy, LocateValue);									
 		}
-		else if(LocateBy.equals("ByContainerName"))
+		else if(LocateBy.equals("ByContainerName"))//only for ASCF converted action
 		{
 			Component tblComp = null;
 

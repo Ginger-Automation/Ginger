@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -35,6 +36,8 @@ namespace Amdocs.Ginger.Common.UIElement
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
 
         ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo);
+
+        ObservableList<OptionalValue> GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
 
         // Get the data of the element
         // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>
