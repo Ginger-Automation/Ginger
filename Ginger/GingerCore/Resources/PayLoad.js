@@ -34,6 +34,15 @@ function GingerPayLoad(Name) {
     this.WriteString(Name);
 }
 
+function GingerErrorPayLoad(ErrorCode, ErrorMessage) {
+    var payload = new GingerPayLoad("ERROR");
+    payload.AddValueInt(ErrorCode);
+    payload.AddValueString(ErrorMessage);
+    payload.ClosePackage();
+
+    return payload;
+}
+
     GingerPayLoad.prototype.GetPackage = function () {
         //return only bytes used   
         return new Uint8Array(this.mBuffer, 0, this.mBufferIndex);
@@ -77,7 +86,8 @@ function GingerPayLoad(Name) {
         return len;
     }
 
-    GingerPayLoad.prototype.WriteInt = function (val) {
+GingerPayLoad.prototype.WriteInt = function (val) {
+    //TODO: Merge with WriteIntValue
     }
 
     //Public 
@@ -164,6 +174,13 @@ function GingerPayLoad(Name) {
         this.WriteString(s);
     }
 
+GingerPayLoad.prototype.AddValueInt = function (value) {
+
+    this.CheckBuffer(5); //  type(1) + int size 4
+ 
+    this.WriteValueType(2);// 2 = Int type
+    this.WriteIntValue(value);
+}
 
     //read string
     //var dataView = new DataView(buf);
@@ -233,6 +250,18 @@ function GingerPayLoad(Name) {
     {
         this.dataView.setUint8(this.mBufferIndex, b);   
         this.mBufferIndex++;
+    }
+
+ GingerPayLoad.prototype.WriteIntValue = function(value)
+    {
+     this.dataView.setUint8(this.mBufferIndex, (value >> 24));
+     this.mBufferIndex++;
+     this.dataView.setUint8(this.mBufferIndex, (value >> 16));
+     this.mBufferIndex++;
+     this.dataView.setUint8(this.mBufferIndex, (value >> 8));
+     this.mBufferIndex++;
+     this.dataView.setUint8(this.mBufferIndex, (value));
+     this.mBufferIndex++;
     }
 
     GingerPayLoad.prototype.CheckBuffer = function (Len) {

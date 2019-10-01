@@ -101,27 +101,46 @@ namespace Amdocs.Ginger.CoreNET
             {
                 foreach (BusinessFlowToConvert businessFlowToConvert in lst)
                 {
-                    for (int activityIndex = 0; activityIndex <= businessFlowToConvert.BusinessFlow.Activities.Count; activityIndex++)
+                    for (int activityIndex = 0; activityIndex < businessFlowToConvert.BusinessFlow.Activities.Count; activityIndex++)
                     {
                         Activity activity = businessFlowToConvert.BusinessFlow.Activities[activityIndex];
                         ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == activity.TargetApplication select x.Platform).FirstOrDefault();
-                        if (activity.Active)
+                        bool isRemoved = false;
+                        //if activity not active then check if all the actions are obsolete then remove the complete activity
+                        if (!activity.Active)
                         {
+                            var count = activity.Acts.Where(act => !act.Active && (act is IObsoleteAction) &&
+                                                            (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform))).Count();
+                            
+                            //Checks if the activity have all the action as obsolete then removes activity directly
+                            if (count == activity.Acts.Count)
+                            {
+                                businessFlowToConvert.BusinessFlow.Activities.RemoveAt(activityIndex);
+                                isRemoved = true;
+                                activityIndex--;
+                            }
+                        }
+
+                        if (!isRemoved)
+                        {
+                            //check the actions if it is obsolete then remove the action
                             for (int actIndex = 0; actIndex < activity.Acts.Count; actIndex++)
                             {
                                 Act act = (Act)activity.Acts[actIndex];
-                                if((act.Active &&
-                                   (act is IObsoleteAction) && 
-                                   (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform)) &&
-                                   (((IObsoleteAction)act).TargetAction()) != null))
+                                if (((act.Active == false) && (act is IObsoleteAction) &&
+                                   (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform))))
                                 {
                                     activity.Acts.RemoveAt(actIndex);
+                                    actIndex--;
                                 }
                             }
-                            if(activity.Acts.Count <= 0 || activity.Acts.Where(x => x.Active == true).Count() <= 0)
+
+                            //check if all the actions removed from activity the remove the activity
+                            if (activity.Acts.Count <= 0 || activity.Acts.Where(x => x.Active == true).Count() <= 0)
                             {
                                 businessFlowToConvert.BusinessFlow.Activities.RemoveAt(activityIndex);
-                            }
+                                activityIndex--;
+                            } 
                         }
                     }
                 }   
@@ -419,6 +438,7 @@ namespace Amdocs.Ginger.CoreNET
                                 if (existingConvertibleActionType == null)
                                 {
                                     ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();
+                                    newConvertibleActionType.Selected = true;
                                     newConvertibleActionType.SourceActionTypeName = act.ActionDescription.ToString();
                                     newConvertibleActionType.SourceActionType = act.GetType();
                                     newConvertibleActionType.TargetActionType = ((IObsoleteAction)act).TargetAction();

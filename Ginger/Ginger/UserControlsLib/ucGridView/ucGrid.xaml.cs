@@ -1459,7 +1459,7 @@ public void RemoveCustomView(string viewName)
         }
 
         public static DataTemplate GetGridComboBoxTemplate(string valuesListField, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, 
-                                                            string readonlyfield ="", bool isreadonly=false)
+                                                            string readonlyfield ="", bool isreadonly=false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory combo = new FrameworkElementFactory(typeof(ComboBox));         
@@ -1489,6 +1489,9 @@ public void RemoveCustomView(string viewName)
             {
                 combo.SetValue(ComboBox.SelectedIndexProperty, 0);
             }
+
+            if (comboSelectionChangedHandler != null)
+                combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
 
             template.VisualTree = combo;
             return template;
@@ -1734,6 +1737,7 @@ public void RemoveCustomView(string viewName)
             ShowUpDown = System.Windows.Visibility.Collapsed;
         }
 
+
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
         {
             Image image = new Image();
@@ -1741,11 +1745,11 @@ public void RemoveCustomView(string viewName)
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
-        public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, int imageSize = 16)
         {
             ImageMakerControl image = new ImageMakerControl();
-            image.Width = 16;
-            image.Height = 16;
+            image.Width = imageSize;
+            image.Height = imageSize;
             image.ImageType = imageType;
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
@@ -2137,7 +2141,10 @@ public void RemoveCustomView(string viewName)
             ObservableList<RepositoryItemBase> selectedItemsList = new ObservableList<RepositoryItemBase>();
             foreach (object selectedItem in grdMain.SelectedItems)
             {
-                selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                if (selectedItem is RepositoryItemBase)
+                {
+                    selectedItemsList.Add((RepositoryItemBase)selectedItem);
+                }
             }
             return selectedItemsList;
         }

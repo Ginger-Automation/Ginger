@@ -531,7 +531,6 @@ namespace Ginger
 
                 foreach (VariableBase v in WorkSpace.Instance.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
-                InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
 
             if (mContext!= null && mContext.BusinessFlow != null)

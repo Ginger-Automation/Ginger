@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
@@ -142,7 +143,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false);
 
                 MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Exchange);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Reject);
 
                 AddSourceControlOptions(mContextMenu, false, false);
 
@@ -166,22 +168,35 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void ActionsConversionHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             ObservableList<BusinessFlow> lst = new ObservableList<BusinessFlow>();
-            if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
+            var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
+            foreach (var bf in items)
             {
-                lst.Add((GingerCore.BusinessFlow)((ITreeViewItem)this).NodeObject());
-            }
-            else
-            {
-                var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
-                foreach (var bf in items)
-                {
-                    lst.Add(bf);
-                }
+                lst.Add(bf);
             }
 
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.MultipleBusinessFlow, new Context(), lst), 900, 700, true);
         }
-                
+
+        /// <summary>
+        /// This method helps to execute the funcationality of removeing the legacy actions from the businessflow
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
+            var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
+            foreach (var bf in items)
+            {
+                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
+                flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)bf;
+                lstBFToConvert.Add(flowToConvert);
+            }
+
+            ActionConversionUtils utils = new ActionConversionUtils();
+            utils.RemoveLegacyActionsHandler(lstBFToConvert);
+        }
+
         private void ImportSeleniumScript(object sender, System.Windows.RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();

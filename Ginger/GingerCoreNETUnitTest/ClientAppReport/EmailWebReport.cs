@@ -97,7 +97,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             CLIProcessor CLI = new CLIProcessor();
 
             // Act
-            CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Identifier + "=" + runSetAutoRunConfiguration.ConfigFileContent });
+            CLI.ExecuteArgs(new string[] { runSetAutoRunConfiguration.SelectedCLI.Verb + "=" + runSetAutoRunConfiguration.CLIContent });
             string clientAppFilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "assets", "Execution_Data", "executiondata.js");
             bool isFileExists = File.Exists(clientAppFilePath);
             string jsDataStr = File.ReadAllText(clientAppFilePath);

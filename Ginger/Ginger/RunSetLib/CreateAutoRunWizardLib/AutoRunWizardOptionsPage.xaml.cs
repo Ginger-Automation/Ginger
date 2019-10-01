@@ -17,11 +17,9 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
@@ -59,6 +57,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     BindingHandler.ObjFieldBinding(xDownloadsolutionCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.DownloadUpgradeSolutionFromSourceControl));
                     BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
+                    xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);
                     break;
             }
         }

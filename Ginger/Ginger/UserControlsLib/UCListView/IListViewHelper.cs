@@ -40,6 +40,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemTagsField();
 
+        string GetItemErrorField();
+
         string GetItemIconField();
 
         string GetItemIconTooltipField();

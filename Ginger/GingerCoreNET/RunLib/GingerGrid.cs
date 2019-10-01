@@ -160,7 +160,7 @@ namespace GingerCoreNET.RunLib
 
         public void Stop()
         {
-            //TODO: notify all clinets that server is closing,
+            //TODO: notify all clients that server is closing,            
             mGingerSocketServer.Shutdown();
         }
 

@@ -46,5 +46,7 @@ namespace Ginger.Plugin.Platform.WebService
         public List<KeyValuePair<String, string>> Headers = new List<KeyValuePair<string, string>>();
 
         public eContentType BodyContentType;
+      
+       
     }
 }
