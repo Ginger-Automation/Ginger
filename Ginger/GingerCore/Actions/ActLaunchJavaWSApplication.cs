@@ -889,6 +889,11 @@ namespace GingerCore.Actions
                 //Status = eStatus.Fail;
                 Error = "Failed to execute the command, Error: " + ex.Message;
             }
+            finally
+            {
+                Console.WriteLine("*************Launch Java Command************************");
+                Console.WriteLine(ExInfo);
+            }
         }
 
 
