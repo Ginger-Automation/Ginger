@@ -53,7 +53,8 @@ namespace Ginger.Plugin.Platform.WebService.Execution
                     platformAction.Output.Add("Header: " + RespHeader.Key,RespHeader.Value);
                 }
 
-                platformAction.Output.Add("Response", Response.Resposne);
+                platformAction.Output.Add("Request:", Response.RequestBodyString);
+                platformAction.Output.Add("Response:", Response.Resposne);
 
             }
 

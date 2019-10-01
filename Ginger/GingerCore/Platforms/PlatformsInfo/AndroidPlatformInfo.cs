@@ -143,6 +143,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return null;
         }
+
         // TODO: provide type of values per property - true/false, string, number bounds etc...       
     }
 }

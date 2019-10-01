@@ -131,8 +131,14 @@ namespace amdocs.ginger.GingerCoreNET
         {
             try
             {
-                CloseSolution();
-                LocalGingerGrid.Stop();
+                if (Solution != null)
+                {
+                    CloseSolution();
+                }
+                if (LocalGingerGrid != null)
+                {
+                    LocalGingerGrid.Stop();
+                }
                 Close();             
             }
             catch (Exception ex)
@@ -533,7 +539,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
-                }
+                }                
             }
 
             //Reset values

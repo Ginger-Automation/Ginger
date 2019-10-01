@@ -25,7 +25,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,9 +35,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         public Guid Guid { get; set; } // keep public
         public bool DoNotCollect { get; set; } = true; // keep public, default is do not collect
 
-        TelemetrySession TelemetrySession;
+        TelemetrySession mTelemetrySession;
 
-        static HttpClient client;
+        static HttpClient mClient;
 
         public delegate void TelemetryEventHandler(object sender, TelemetryEventArgs e);
 
@@ -104,16 +103,16 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
         private static void InitClient()
         {
-            client = new HttpClient();            
-            client.BaseAddress = new Uri("https://" + "gingertelemetry.azurewebsites.net" );            
+            mClient = new HttpClient();            
+            mClient.BaseAddress = new Uri("https://" + "gingertelemetry.azurewebsites.net" );            
         }
 
 
         void ResetClient()
         {
             // Use when needed to clear headers            
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.ExpectContinue = true;
+            mClient.DefaultRequestHeaders.Accept.Clear();
+            mClient.DefaultRequestHeaders.ExpectContinue = true;
         }
 
 
@@ -166,7 +165,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
         {            
             try
             {                
-                HttpResponseMessage response = await client.GetAsync("api/version/" + currver);        
+                HttpResponseMessage response = await mClient.GetAsync("api/version/" + currver);        
                 if (response.IsSuccessStatusCode)
                 {
                     string gingerVersionAndNews = await response.Content.ReadAsStringAsync();
@@ -187,25 +186,38 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
 
 
         public void SessionStarted()
-        {            
-            TelemetrySession = new TelemetrySession(Guid);
-            Add("sessionstart", TelemetrySession);
+        {
+            if (WorkSpace.Instance.Telemetry.DoNotCollect)  return;
+
+            mTelemetrySession = new TelemetrySession(Guid);
+
+            Add("sessionstart", mTelemetrySession);
+
+            // TODO: add selective collection per user permission
+            //Add("sessionstart", new
+            //{
+            //    id = mTelemetrySession.Guid,
+            //    zz = mTelemetrySession.Debugger
+            //});
         }
         
         public void SessionEnd()
-        {         
-            TelemetrySession.EndTime = Time;
-            TimeSpan ts = TelemetrySession.EndTime - TelemetrySession.StartTime;
-            TelemetrySession.Elapsed = ts.ToString(@"hh\:mm\:ss");
-            Add("sessionend", TelemetrySession);
+        {
+            if (WorkSpace.Instance.Telemetry.DoNotCollect) return;
+
+            mTelemetrySession.EndTime = Time;
+            TimeSpan ts = mTelemetrySession.EndTime - mTelemetrySession.StartTime;
+            mTelemetrySession.Elapsed = ts.ToString(@"hh\:mm\:ss");
+            Add("sessionend", mTelemetrySession);
 
             Add("dummy", new { a = 1}); // add another dummy to make sure session is written
 
-            TelemetryRecords.CompleteAdding();            
+            TelemetryRecords.CompleteAdding();
+            
             
             Task.Factory.StartNew(() => {
                 // TODO: add timeout to wait
-                while(!TelemetryRecords.IsCompleted) // Wait for all pending records to process
+                while(!TelemetryRecords.IsCompleted) // Wait for all records to process
                 {
                     Thread.Sleep(100);
                 }
@@ -215,9 +227,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 {
                     Thread.Sleep(100);
                 }
-            }).Wait(30000);  // Max 30 seconds to wait   
-
-            Thread.Sleep(500);
+            }).Wait(30000);  // Max 30 seconds to wait
         }
 
 
@@ -254,9 +264,9 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             {                                
                 string indexHeader = JsonConvert.SerializeObject(telemetryRecord);
                 string objJSON = JsonConvert.SerializeObject(telemetryRecord.getTelemetry());
-
-                // Adding timestamp, uid and sid                
-                string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + TelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
+                
+                // Adding timestamp, uid and sid
+                string controlfields = "\"timestamp\":\"" + Time + "\",\"sid\":\"" + mTelemetrySession.Guid.ToString() + "\",\"uid\":\"" + Guid.ToString() + "\",";
                 string fullobj = indexHeader + Environment.NewLine + "{" + controlfields + objJSON.Substring(1) + Environment.NewLine;
                              
                 //TODO: add try catch
@@ -305,7 +315,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     StreamContent content = new StreamContent(fileStream);
                     try
                     {
-                        HttpResponseMessage response = await client.PostAsync("api/Telemetry/" + zipFileName.Replace(".", "_"), content);
+                        HttpResponseMessage response = await mClient.PostAsync("api/Telemetry/" + zipFileName.Replace(".", "_"), content);
                         string rc = await response.Content.ReadAsStringAsync();
                         fileStream.Close();
 

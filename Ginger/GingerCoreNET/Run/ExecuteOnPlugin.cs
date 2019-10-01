@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Platform;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using GingerCore;
@@ -196,7 +197,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             NewPayLoad RC = agent.GingerNodeProxy.RunAction(payload);
 
 
-
+       
             
             ParseActionResult(RC, (Act)actPlugin);
 
@@ -205,8 +206,20 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 ActPluginPostRun.ParseOutput();
             }
+#warning get the follinging from platform in fo 
+            /*   IPlatformInfo Platforminfo = null;
 
-            
+               if(Platforminfo is IPlatformPluginPostRun PluginPostrun)
+               {
+                   PluginPostrun.PostExecute(agent, (Act)actPlugin);
+               }
+               */
+
+            if(agent.Platform==GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.WebServices)
+            {
+                Webserviceplatforminfo Platfrominfo = new Webserviceplatforminfo();
+                Platfrominfo.PostExecute(agent, (Act)actPlugin);
+            }
 
         }
 

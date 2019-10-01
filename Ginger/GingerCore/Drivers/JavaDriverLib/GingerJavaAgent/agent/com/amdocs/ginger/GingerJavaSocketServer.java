@@ -215,7 +215,7 @@ public class GingerJavaSocketServer
 						String ErrMSG = "Ginger Agent Exception: " + e.getMessage();
 						GingerAgent.WriteLog(ErrMSG);						
 						e.printStackTrace();						
-						sendResponse(PayLoad.Error(ErrMSG));
+						sendResponse(PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),ErrMSG));
 					}
 				}
 				
@@ -249,7 +249,7 @@ public class GingerJavaSocketServer
 		{
 			GingerAgent.WriteLog("Error:"+e.getMessage());
 			String ErrMSG = "Error:"+ e.getMessage();		
-			PayLoad ResponseERR = PayLoad.Error(ErrMSG);
+			PayLoad ResponseERR = PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),ErrMSG);
 			sendResponse(ResponseERR);
 		}
 	}

@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using GingerCore;
-using GingerCore.Environments;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
