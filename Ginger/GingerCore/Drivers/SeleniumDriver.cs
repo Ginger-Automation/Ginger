@@ -260,7 +260,7 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-        
+
         public override void StartDriver()
         {
             if (StartBMP)
@@ -854,7 +854,12 @@ namespace GingerCore.Drivers
                 if (act.GetType() == typeof(ActBrowserElement))
                 {
                     ActBrowserElement ABE = (ActBrowserElement)act;
-                    if (ABE.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow)
+                    if (ABE.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox)
+                    {
+                        ActBrowserElementHandler((ActBrowserElement)act);
+                        return;
+                    }
+                    else if (ABE.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow)
                     {
                         Driver.SwitchTo().Window(DefaultWindowHandler);
                     }
@@ -5228,7 +5233,7 @@ namespace GingerCore.Drivers
             LastFrameID = string.Empty;
 
             Task t = new Task(() =>
-            {                
+            {
                 DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
@@ -5383,13 +5388,13 @@ namespace GingerCore.Drivers
                                 configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
                                 configArgs.Type = GetElementTypeEnum(null, type).Item2;
-                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);                               
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
                                 if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
                                     ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
-                                    
+
                                     if (eInfo != null)
                                     {
                                         configArgs.LearnedElementInfo = eInfo;
@@ -5433,7 +5438,7 @@ namespace GingerCore.Drivers
                     {
                         if (e.Message == PayLoad.PAYLOAD_PARSING_ERROR)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e); 
+                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e);
                         }
                         else
                         {
@@ -5806,7 +5811,7 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
-                             if (act.LocateBy == eLocateBy.ByIndex)
+                            if (act.LocateBy == eLocateBy.ByIndex)
                             {
                                 int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
                                 string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
@@ -6137,7 +6142,7 @@ namespace GingerCore.Drivers
 
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
-                    
+
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
@@ -6161,9 +6166,9 @@ namespace GingerCore.Drivers
                                     }
                                 }
                             }
-                            
+
                         }
-                        
+
                     }
 
                     break;
@@ -7502,7 +7507,7 @@ namespace GingerCore.Drivers
                 OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                     && (x.XPath == element.XPath)
                                                                     && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
-                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null 
+                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
                                                                         || (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null && element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null
                                                                             && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                             )
@@ -7519,7 +7524,7 @@ namespace GingerCore.Drivers
             {
                 Driver.SwitchTo().DefaultContent();
                 InjectSpyIfNotIngected();
-            }            
+            }
         }
 
         public string GetElementXpath(ElementInfo EI)
