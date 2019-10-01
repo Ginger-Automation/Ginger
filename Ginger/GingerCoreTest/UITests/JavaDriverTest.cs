@@ -84,8 +84,9 @@ namespace UnitTests.UITests.JavaDriverTest
                 LJA.LaunchWithAgent = true;
                 LJA.WaitForWindowTitle = "Java Swing Test App";
                 
-                LJA.AddOrUpdateInputParamValue(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString());
-                LJA.Port = "9898";
+                LJA.AddOrUpdateInputParamValue(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.AutoDetect.ToString());
+                LJA.AddNewReturnParams = true;
+                //LJA.Port = "9898";
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
                 activity.Acts.Add(LJA);
                 mGR.PrepActionValueExpression(LJA);
@@ -95,10 +96,10 @@ namespace UnitTests.UITests.JavaDriverTest
                 //{
                 //   throw new Exception(LJA.Error);
                 //}
-
+                var portOutpuValue = LJA.ReturnValues.Where(x => x.Param == "Port").FirstOrDefault();
                 mDriver = new JavaDriver(mBF);
                 mDriver.JavaAgentHost = "127.0.0.1";
-                mDriver.JavaAgentPort = 9898;
+                mDriver.JavaAgentPort = Int32.Parse(portOutpuValue.Actual);
                 mDriver.CommandTimeout = 120;
                 mDriver.cancelAgentLoading = false;
                 mDriver.DriverLoadWaitingTime = 30;
