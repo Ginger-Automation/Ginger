@@ -187,6 +187,7 @@ namespace Ginger.Actions
         {
             xDetailsTab.Tag = true;//marking that binding was done
 
+            BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mAction, nameof(Act.ActionType), BindingMode: BindingMode.OneWay);
             xDescriptionTextBox.BindControl(mAction, nameof(Act.Description));
             xRunDescritpionUC.Init(mContext, mAction, nameof(Act.RunDescription));
             xTagsViewer.Init(mAction.Tags);

@@ -6,7 +6,7 @@
       xmlns:Ginger="clr-namespace:Ginger" 
       mc:Ignorable="d" 
       d:DesignHeight="310" d:DesignWidth="300"
-	Title="VariableSelectionListPage">
+	Title="VariableSelectionListPage" Unloaded="Page_Unloaded">
 
     <Grid>
         <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">

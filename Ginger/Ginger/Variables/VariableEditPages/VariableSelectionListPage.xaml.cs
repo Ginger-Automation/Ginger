@@ -131,5 +131,11 @@ namespace Ginger.Variables
                 UpdateOptionalValues();
             }
         }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            grdOptionalValues.Grid.CommitEdit();
+            grdOptionalValues.Grid.CancelEdit();
+        }
     }
 }
