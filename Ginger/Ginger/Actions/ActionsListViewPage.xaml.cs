@@ -309,8 +309,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsListView.List.Items.CurrentPosition >= 1)
             {
+                int currentSelectedTabIndx = mActionEditPage.SelectedTabIndx;
                 mActionsListView.List.Items.MoveCurrentToPrevious();
                 ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+                mActionEditPage.SelectedTabIndx = currentSelectedTabIndx;
             }
             else
             {
@@ -322,8 +324,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsListView.List.Items.CurrentPosition < mActionsListView.List.Items.Count - 1)
             {
+                int currentSelectedTabIndx = mActionEditPage.SelectedTabIndx;
                 mActionsListView.List.Items.MoveCurrentToNext();
                 ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+                mActionEditPage.SelectedTabIndx = currentSelectedTabIndx;
             }
             else
             {

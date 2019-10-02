@@ -432,7 +432,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
             }
             catch (Exception ex)
