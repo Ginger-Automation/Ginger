@@ -31,14 +31,14 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
 
         public static async Task<string> GetResponseString(string url)
         {
-            Reporter.ToLog(eLogLevel.INFO, "GitHTTPClient url= " + url);
+            Reporter.ToLog(eLogLevel.DEBUG, "GitHTTPClient url= " + url);
             using (var client = new HttpClient())
             {                
                 // Simulate a browser header                
                 //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.OSHelper.Current.UserAgent);
                 client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");             
                 var result = client.GetAsync(url).Result;
-                Reporter.ToLog(eLogLevel.INFO, "result= " + result);
+                Reporter.ToLog(eLogLevel.DEBUG, "result= " + result);
                 if (result.IsSuccessStatusCode)
                 {
                     var json = await result.Content.ReadAsStringAsync();
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
 
         internal static T GetJSON<T>(string url)
         {
-            Reporter.ToLog(eLogLevel.INFO, "Git GetJSON");
+            Reporter.ToLog(eLogLevel.DEBUG, "Git GetJSON");
             try
             {
                 T t = default(T);                

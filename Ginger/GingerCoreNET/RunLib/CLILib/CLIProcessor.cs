@@ -380,7 +380,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         void ExecuteRunSet()
         {            
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));            
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Executing..."));            
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
