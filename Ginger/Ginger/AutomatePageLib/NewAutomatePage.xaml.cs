@@ -1097,6 +1097,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (Ginger.General.UndoChangesInRepositoryItem(mBusinessFlow, true))
             {
+                mActivitiesPage.ListView.UpdateGrouping();
                 mBusinessFlow.SaveBackup();
             }
         }

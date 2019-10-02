@@ -296,8 +296,8 @@
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
                                                 <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" >
-                                                    <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom"/>
-                                                    <Label x:Name="xExecutionStatusLbl" FontSize="15" FontWeight="Bold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom" />
+                                                    <Label Content="Execution Status:"  Style="{StaticResource $LabelStyle}" VerticalAlignment="Center"/>
+                                                    <Label x:Name="xExecutionStatusLbl" FontSize="15" FontWeight="Bold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Bottom" Margin="0,0,0,0" />
                                                 </StackPanel>
 
                                                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
