@@ -93,6 +93,18 @@ namespace Ginger.Actions
         ActionFlowControlPage mAFCP;
         Context mContext;
 
+        public int SelectedTabIndx
+        {
+            get
+            {
+                return xActionTabs.SelectedIndex;
+            }
+            set
+            {
+                xActionTabs.SelectedIndex = value;
+            }
+        }
+
         public General.eRIPageViewMode EditMode { get; set; }
 
         public ActionEditPage(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow actParentBusinessFlow = null, Activity actParentActivity = null)

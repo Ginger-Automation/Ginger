@@ -194,7 +194,7 @@
                                     <Expander.Header>
                                         <Label x:Name="DataSourceExpanderLabel" Style="{StaticResource $HorizontalExpanderLabelStyle}">
                                             <Label.Content>
-                                                <GingerCore:ucTextDicResource Text="Outputs to Data Source Settings"/>
+                                                <GingerCore:ucTextDicResource Text="Output Values to Data Source Settings"/>
                                             </Label.Content>
                                         </Label>
                                     </Expander.Header>
@@ -216,7 +216,7 @@
 
                                 <Expander x:Name="xOutputValuesExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" VerticalAlignment="Top">
                                     <Expander.Header>
-                                        <Label Content="Execution Output Values" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                                        <Label Content="Output Values Validations / Assignments" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                     </Expander.Header>
                                     <Expander.Content>
                                         <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
