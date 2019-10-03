@@ -223,7 +223,7 @@
                                         <Label Content="Output Values Validations / Assignments" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                                     </Expander.Header>
                                     <Expander.Content>
-                                        <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
+                                        <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Visible" />
                                     </Expander.Content>
                                 </Expander>
                             </DockPanel>

@@ -129,28 +129,27 @@ namespace Ginger.BusinessFlowPages
                 {
                     xEditAndValueChangeOperationsPnl.Visibility = Visibility.Visible;
                     BindingHandler.ObjFieldBinding(xResetValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportResetValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
-                    BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);
-                    mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
+                    BindingHandler.ObjFieldBinding(xAutoValueBtn, ucButton.VisibilityProperty, mVarBeenEdit, nameof(VariableBase.SupportAutoValue), bindingConvertor: new BooleanToVisibilityConverter(), BindingMode.OneWay);                    
                     mVarBeenEdit.SaveBackup();
                 }
 
                 if (mVariabelsParent is Solution)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Global);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Global, parent: mVariabelsParent);
                 }
                 else if (mVariabelsParent is BusinessFlow)
                 {
-                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default);
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent);
                 }
                 else if (mVariabelsParent is Activity)
                 {
                     if(mPageViewMode== General.eRIPageViewMode.View)
                     {
-                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.View);
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.View, parent: mVariabelsParent);
                     }
                     else
                     {
-                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default);
+                        mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent);
                     }
                 }                
                 xMainFrame.SetContent(mVariabelEditPage);
@@ -330,59 +329,8 @@ namespace Ginger.BusinessFlowPages
 
         private void xGoToList_Click(object sender, RoutedEventArgs e)
         {
-            if (mVarBeenEdit.NameBeforeEdit != mVarBeenEdit.Name)
-            {
-                UpdateVariableNameChange(mVarBeenEdit);
-            }
-
             ShowHideEditPage(null);
-        }
-
-        public void UpdateVariableNameChange(VariableBase variable)
-        {
-            if (variable == null) return;
-
-            if (mVariabelsParent is Solution)
-            {
-                ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                foreach (BusinessFlow bfl in allBF)
-                {
-                    bfl.SetUniqueVariableName(variable);
-                    foreach (Activity activity in bfl.Activities)
-                    {
-                        foreach (Act action in activity.Acts)
-                        {
-                            bool changedwasDone = false;
-                            VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                        }
-                    }
-                }
-            }
-            else if (mVariabelsParent is BusinessFlow)
-            {
-                BusinessFlow bf = (BusinessFlow)mVariabelsParent;
-                bf.SetUniqueVariableName(variable);
-                foreach (Activity activity in bf.Activities)
-                {
-                    foreach (Act action in activity.Acts)
-                    {
-                        bool changedwasDone = false;
-                        VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                    }
-                }
-            }
-            else if (mVariabelsParent is Activity)
-            {
-                Activity activ = (Activity)mVariabelsParent;
-                activ.SetUniqueVariableName(variable);
-                foreach (Act action in activ.Acts)
-                {
-                    bool changedwasDone = false;
-                    VariableBase.UpdateVariableNameChangeInItem(action, variable.NameBeforeEdit, variable.Name, ref changedwasDone);
-                }
-            }
-            variable.NameBeforeEdit = variable.Name;
-        }
+        }        
 
         private void xPreviousBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -412,9 +360,16 @@ namespace Ginger.BusinessFlowPages
 
         private void XUndoBtn_Click(object sender, RoutedEventArgs e)
         {
+            mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
+
             if (Ginger.General.UndoChangesInRepositoryItem(mVarBeenEdit, true))
             {
                 mVarBeenEdit.SaveBackup();
+            }
+
+            if (mVarBeenEdit.NameBeforeEdit != mVarBeenEdit.Name)
+            {
+               mVariabelEditPage.UpdateVariableNameChange();
             }
         }
 
