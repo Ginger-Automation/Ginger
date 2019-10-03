@@ -109,7 +109,10 @@ namespace Ginger.Actions.ActionConversion
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
                 flowToConvert.BusinessFlow = bf;
                 flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
-                lst.Add(flowToConvert);
+                if (flowToConvert.TotalProcessingActionsCount > 0)
+                {
+                    lst.Add(flowToConvert); 
+                }
             });
             return lst;
         }
