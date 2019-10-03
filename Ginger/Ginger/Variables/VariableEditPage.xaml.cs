@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Variables;
@@ -27,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -71,6 +73,10 @@ namespace Ginger.Variables
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            mVariable.NameBeforeEdit = mVariable.Name;            
+            xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
+            xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
+            
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarDescritpiontxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
@@ -132,6 +138,19 @@ namespace Ginger.Variables
             xTagsViewer.Init(mVariable.Tags);
 
             xDetailsExpander.IsExpanded = ExpandDetails;
+        }
+
+        private void XVarNameTxtBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            mVariable.NameBeforeEdit = mVariable.Name;
+        }
+
+        private void XVarNameTxtBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(mVariable.NameBeforeEdit != mVariable.Name)
+            {
+                UpdateVariableNameChange();
+            }
         }
 
         private void LoadVarPage()
@@ -383,6 +402,60 @@ namespace Ginger.Variables
         private void XDetailsExpander_ExpandCollapse(object sender, RoutedEventArgs e)
         {
             ExpandDetails = xDetailsExpander.IsExpanded;
+        }
+
+        public void UpdateVariableNameChange()
+        {
+            try
+            {
+                if (mVariable == null) return;
+
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Updating new {0} name '{1}' on all usage instances...", GingerDicser.GetTermResValue(eTermResKey.Variable), mVariable.Name));
+                if (mParent is Solution)
+                {
+                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    Parallel.ForEach(allBF, bfl =>
+                    {
+                        bfl.SetUniqueVariableName(mVariable);
+                        Parallel.ForEach(bfl.Activities, activity =>
+                        {
+                            Parallel.ForEach(activity.Acts, action =>
+                            {
+                                bool changedwasDone = false;
+                                VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                            });
+                        });
+                    });
+                }
+                else if (mParent is BusinessFlow)
+                {
+                    BusinessFlow bf = (BusinessFlow)mParent;
+                    bf.SetUniqueVariableName(mVariable);
+                    Parallel.ForEach(bf.Activities, activity =>
+                    {
+                        Parallel.ForEach(activity.Acts, action =>
+                        {
+                            bool changedwasDone = false;
+                            VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                        });
+                    });
+                }
+                else if (mParent is Activity)
+                {
+                    Activity activ = (Activity)mParent;
+                    activ.SetUniqueVariableName(mVariable);
+                    Parallel.ForEach(activ.Acts, action =>
+                    {
+                        bool changedwasDone = false;
+                        VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                    });
+                }
+                mVariable.NameBeforeEdit = mVariable.Name;
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
     }
 }

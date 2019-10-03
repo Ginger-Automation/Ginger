@@ -432,6 +432,36 @@ namespace Amdocs.Ginger.Common
             Move(Count - 1, 0);
         }
 
+        /// <summary>
+        /// Load the ObservableList data from provided List
+        /// </summary>
+        /// <param name="List">List with same data type</param>
+        /// <param name="clearList">Set as 'True' in case the observablelist data should be cleared first</param>
+        public void FromList(List<T> List, bool clearList= false)
+        {
+            if (clearList)
+            {
+                this.Clear();
+            }
 
+            foreach (T o in List)
+            {
+                this.Add(o);
+            }
+        }
+
+        /// <summary>
+        /// Return List with data of ObservableList
+        /// </summary>
+        /// <returns></returns>
+        public List<T> ToList()
+        {
+            List<T> list = new List<T>();
+            foreach (T o in this)
+            {
+                list.Add(o);
+            }
+            return list;
+        }
     }
 }
