@@ -445,7 +445,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteAll, new UserMsg(eUserMsgType.QUESTION, "Delete All", "Are you sure you want to delete all?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteSelectedItems, new UserMsg(eUserMsgType.QUESTION, "Delete Selected", "Are you sure you want to delete all selected items?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToContinue, new UserMsg(eUserMsgType.QUESTION, "Replace Existing", "Are you sure you want to delete the existing '{1}' ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.BaseAPIWarning, new UserMsg(eUserMsgType.WARN, "Base API Not found", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BaseAPIWarning, new UserMsg(eUserMsgType.WARN, "Merged API Not found", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete", "Are you sure you want to delete '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete All", "Didn't found item to delete", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SelectItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete", "Please select items to delete", eUserMsgOption.OK, eUserMsgSelection.None));
