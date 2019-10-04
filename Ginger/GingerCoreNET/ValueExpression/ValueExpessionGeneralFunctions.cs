@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
             }
             catch
             {
-                Reporter.ToLog(eLogLevel.INFO, "User provided invalid base 64 string for decrypt");
+                Reporter.ToLog(eLogLevel.DEBUG, "User provided invalid base 64 string for decrypt");
                 return "Invalid Base64 String";
 
             }

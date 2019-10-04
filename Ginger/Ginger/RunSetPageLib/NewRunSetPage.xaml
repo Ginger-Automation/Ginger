@@ -392,7 +392,7 @@
                             </Border.Style>
                             <DockPanel>
                                 <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Config"  Width="15" Height="15" FontWeight="Bold" />
-                                <TextBlock Text="Configurations" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0"  FontSize="15" />
+                                <TextBlock Text="Details" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0"  FontSize="15" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
