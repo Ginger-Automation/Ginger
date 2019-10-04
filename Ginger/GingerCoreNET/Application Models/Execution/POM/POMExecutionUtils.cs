@@ -1,11 +1,13 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
@@ -16,6 +18,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         public POMExecutionUtils(Act act)
         {
             mAct = (ActUIElement) act;
+        }
+
+        public POMExecutionUtils()
+        {
+
         }
 
         private string[] PomElementGUID => mAct.ElementLocateValue.ToString().Split('_');
@@ -47,6 +54,34 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
 
             return selectedPOMElementInfo;
+        }
+
+        public void SetPOMProperties(Act elementAction, ElementInfo elementInfo, ElementActionCongifuration actConfig)
+        {
+            if (actConfig.AddPOMToAction)
+            {
+                elementAction.Description = actConfig.Operation + " - " + elementInfo.ElementName;
+                PropertyInfo pLocateBy = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateBy));
+                if (pLocateBy != null)
+                {
+                    if (pLocateBy.PropertyType.IsEnum)
+                    {
+                        pLocateBy.SetValue(elementAction, Enum.Parse(pLocateBy.PropertyType, nameof(eLocateBy.POMElement)));
+                    }
+                }
+
+                PropertyInfo pLocateVal = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateValue));
+                if (pLocateVal != null)
+                {
+                    pLocateVal.SetValue(elementAction, string.Format("{0}_{1}", actConfig.POMGuid, actConfig.ElementGuid));
+                }
+
+                PropertyInfo pElementType = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementType));
+                if (pElementType != null && pElementType.PropertyType.IsEnum)
+                {
+                    pElementType.SetValue(elementAction, ((ElementInfo)actConfig.LearnedElementInfo).ElementTypeEnum);
+                }
+            }
         }
     }
 }
