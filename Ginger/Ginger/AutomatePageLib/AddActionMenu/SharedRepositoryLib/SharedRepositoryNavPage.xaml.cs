@@ -52,6 +52,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             InitializeComponent();
             mContext = context;
+
+            xActivitiesGroupsTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups);
+            xActivitiesTextBlock.Text = GingerDicser.GetTermResValue(eTermResKey.Activities);
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)

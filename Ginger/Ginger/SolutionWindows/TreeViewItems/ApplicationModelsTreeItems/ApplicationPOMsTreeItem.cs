@@ -16,17 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
 using Ginger.SourceControl;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -144,8 +147,15 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         internal void AddPOM(object sender, RoutedEventArgs e)
         {
-            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
-            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder),1000,700, DoNotShowAsDialog:true);            
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.Web).Count() > 0)
+            {
+                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Web platform based Target Application to continue adding Page Objects Models");
+            }
         }
     }
 }
