@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.Search, new StatusMsg(eStatusMsgType.PROCESS, "Searching...", "Searching {0}..."));
 
-            Reporter.StatusMsgsPool.Add(eStatusMsgKey.DownloadingMissingPluginPackages, new StatusMsg(eStatusMsgType.PROCESS, "Restoring Missing Plugin Packages", "Restoring Missing Plugin Packages..."));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.DownloadingMissingPluginPackages, new StatusMsg(eStatusMsgType.PROCESS, "Restoring Missing Plugins Packages", "Restoring Missing Plugin Packages..."));
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.GingerLoadingInfo, new StatusMsg(eStatusMsgType.PROCESS, "loading", "{0}"));
             

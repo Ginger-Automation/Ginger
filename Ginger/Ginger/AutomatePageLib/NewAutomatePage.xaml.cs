@@ -93,41 +93,6 @@ namespace GingerWPF.BusinessFlowsLib
         ObjectId mRunnerLiteDbId;
         ObjectId mRunSetLiteDbId;
 
-        bool mAutoRunAnalyzer = true;
-        public bool AutoRunAnalyzer
-        {
-            get
-            {
-                return mAutoRunAnalyzer;
-            }
-            set
-            {
-                if (mAutoRunAnalyzer != value)
-                {
-                    mAutoRunAnalyzer = value;
-                    OnPropertyChanged(nameof(AutoRunAnalyzer));
-                }
-            }
-        }
-
-        bool mAutoGenerateReport = false;
-        public bool AutoGenerateReport
-        {
-            get
-            {
-                return mAutoGenerateReport;
-            }
-            set
-            {
-                if (mAutoGenerateReport != value)
-                {
-                    mAutoGenerateReport = value;
-                    OnPropertyChanged(nameof(AutoGenerateReport));
-                }
-            }
-        }
-
-
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
         {
@@ -234,8 +199,10 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.Items.Add("Configurations");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
-            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+
+
 
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mRunner, mContext);
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
@@ -812,7 +779,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = true;
                 //SetUIElementsBehaverDuringExecution();
 
-                if (AutoRunAnalyzer)
+                if (WorkSpace.Instance.UserProfile.AutoRunAutomatePageAnalyzer)
                 {
                     //Run Analyzer check if not including any High or Critical issues before execution
                     Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
@@ -847,7 +814,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (AutoGenerateReport)
+                    if (WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport)
                     {
                         GenerateReport();
                     }
@@ -1130,6 +1097,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (Ginger.General.UndoChangesInRepositoryItem(mBusinessFlow, true))
             {
+                mActivitiesPage.ListView.UpdateGrouping();
                 mBusinessFlow.SaveBackup();
             }
         }
@@ -1362,12 +1330,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutoAnalyzeConfigMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            AutoRunAnalyzer = !AutoRunAnalyzer;
+            WorkSpace.Instance.UserProfile.AutoRunAutomatePageAnalyzer = !WorkSpace.Instance.UserProfile.AutoRunAutomatePageAnalyzer;
         }
 
         private void xAutoReportConfigMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            AutoGenerateReport = !AutoGenerateReport;
+            WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport = !WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport;
         }
 
         private void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)

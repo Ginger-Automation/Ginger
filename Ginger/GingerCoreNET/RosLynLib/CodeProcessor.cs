@@ -134,7 +134,7 @@ namespace GingerCoreNET.RosLynLib
             }
             catch(Exception EvalExcep)
             {
-                Reporter.ToLog(eLogLevel.INFO, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
+                Reporter.ToLog(eLogLevel.DEBUG, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
 
 
                 result = false;

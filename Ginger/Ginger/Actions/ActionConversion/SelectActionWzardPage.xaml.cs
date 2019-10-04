@@ -114,7 +114,7 @@ namespace Ginger.Actions.ActionConversion
                 }
                 else
                 {                    
-                    Reporter.ToLog(eLogLevel.INFO, "No Convertible Actions Found");
+                    Reporter.ToLog(eLogLevel.DEBUG, "No Convertible Actions Found");
                     return;
                 }
             }

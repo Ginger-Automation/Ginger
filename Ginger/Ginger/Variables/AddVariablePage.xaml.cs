@@ -117,6 +117,9 @@ namespace Ginger.Variables
             addVarBtn.Content = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
             addVarBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
 
+            this.Width = 400;
+            this.Height = 400;
+
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { addVarBtn });
         }
 
