@@ -54,6 +54,11 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public abstract ObservableList<ElementLocator> GetLearningLocators();
 
+        public virtual string GetDefaultElementOperation(eElementType ElementTypeEnum)
+        {
+            return string.Empty;
+        }
+
         public virtual string GetPageUrlRadioLabelText()
         {
             return "URL";

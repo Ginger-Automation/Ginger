@@ -1075,7 +1075,7 @@ namespace Ginger.Actions
                     else if (Customized.IsChecked == true)
                     {
                         mActDSTblElem.IsKeyValueTable = false;
-                        TBH.AddText(" Cust ICOLVAL=");
+                        TBH.AddText(" IDEN=Cust ICOLVAL=");
                         if (cmbColumnValue.SelectedIndex != -1)
                             TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString());
                         else

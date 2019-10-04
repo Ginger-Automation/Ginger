@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.Plugin.Core;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
@@ -84,9 +86,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 return GetWidgetUIElementList(elementInfo);
             }
 
-            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();         
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
 
-            if (elementInfo.ElementTypeEnum==eElementType.Table)
+            if (elementInfo.ElementTypeEnum == eElementType.Table)
             {
                 //get all action list supported to table
                 var tableActionList = new[] { ActUIElement.eElementAction.TableCellAction, ActUIElement.eElementAction.TableAction, ActUIElement.eElementAction.TableRowAction }
@@ -114,7 +116,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, action.ToString());
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                     if (!action.Equals(ActUIElement.eElementAction.TableAction))
-                    {                        
+                    {
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
 
@@ -136,8 +138,80 @@ namespace GingerCore.Platforms.PlatformsInfo
                     }
                 }
             }
-            
+
             return UIElementsActionsList;
+        }
+
+        public override Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
+        {
+            var pomExcutionUtil = new POMExecutionUtils();
+            Act elementAction = null;
+            if (elementInfo != null)
+            {
+                List<ActUIElement.eElementAction> elementTypeOperations = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
+                if (actConfig != null)
+                {
+                    if (string.IsNullOrWhiteSpace(actConfig.Operation))
+                        actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
+                }
+                if ((elementTypeOperations != null) && (elementTypeOperations.Count > 0))
+                {
+                    elementAction = new ActUIElement()
+                    {
+                        Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
+                        ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                        ElementLocateValue = actConfig.LocateValue,
+                        Value = actConfig.ElementValue
+                    };
+
+                    pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
+                }
+            }
+            else
+            {
+                elementAction = new ActUIElement()
+                {
+                    Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
+                    ElementLocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
+                    ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                    ElementLocateValue = actConfig.LocateValue,
+                    ElementType = (eElementType)System.Enum.Parse(typeof(eElementType), Convert.ToString(actConfig.Type)),
+                    Value = actConfig.ElementValue
+                };
+            }
+            return elementAction;
+        }
+
+        public override string GetDefaultElementOperation(eElementType ElementTypeEnum)
+        {
+            switch (ElementTypeEnum)
+            {
+                case eElementType.TreeView:
+                case eElementType.MenuItem:
+                case eElementType.List:
+                case eElementType.RadioButton:
+                case eElementType.CheckBox:
+                case eElementType.Button:
+                    return  ActUIElement.eElementAction.Click.ToString();
+                    
+                case eElementType.TextBox:
+                    return ActUIElement.eElementAction.SetValue.ToString();
+                case eElementType.Tab:
+                case eElementType.ComboBox:
+                    return ActUIElement.eElementAction.Select.ToString();
+                case eElementType.Span:
+                case eElementType.Label:                    
+                    return ActUIElement.eElementAction.GetValue.ToString();                    
+                case eElementType.Window:
+                    return ActUIElement.eElementAction.Switch.ToString();                                    
+                case eElementType.EditorPane:
+                    return ActUIElement.eElementAction.InitializeJEditorPane.ToString();                                                       
+               
+                case eElementType.ScrollBar:
+                   return ActUIElement.eElementAction.ScrollDown.ToString();
+                default:                    
+                    return ActUIElement.eElementAction.Unknown.ToString();
+            }
         }
 
         private static ActUIElement CreateUIElementAction(ElementInfo elementInfo,ActUIElement.eElementAction action)
