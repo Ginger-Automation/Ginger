@@ -840,71 +840,59 @@ namespace GingerCore.Drivers
 
         public override void RunAction(Act act)
         {
+            bool isActBrowser = act is ActBrowserElement;
+            ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
+
+            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
+
             // if alert exist then any action on driver throwing exception and dismissing the pop up
             // so keeping handle browser as first step.
-            if (act.GetType() == typeof(ActHandleBrowserAlert))
+            if (!runActHandlerDirect)
             {
-                HandleBrowserAlert((ActHandleBrowserAlert)act);
-                return;
-            }
-
-            //implicityWait must be done on actual window so need to make sure the driver is pointing on window
-            try
-            {
-                // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
-                if (act.GetType() == typeof(ActBrowserElement))
+                //implicityWait must be done on actual window so need to make sure the driver is pointing on window
+                try
                 {
-                    ActBrowserElement ABE = (ActBrowserElement)act;
-                    if (ABE.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox)
-                    {
-                        ActBrowserElementHandler((ActBrowserElement)act);
-                        return;
-                    }
-                    else if (ABE.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow)
-                    {
-                        Driver.SwitchTo().Window(DefaultWindowHandler);
-                    }
+                    // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
+                    string aa = Driver.Title;//just to make sure window attributes do not throw exception
+                }
+                catch (Exception ex)
+                {
+                    if (Driver.WindowHandles.Count == 1)
+                        Driver.SwitchTo().Window(Driver.WindowHandles[0]);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 }
 
-                string aa = Driver.Title;//just to make sure window attributes do not throw exception
-            }
-            catch (Exception ex)
-            {
-                if (Driver.WindowHandles.Count == 1)
-                    Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                if (act.Timeout != null && act.Timeout != 0)
+                {
+                    //if we have time out on action then set it on the driver
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)act.Timeout);
+                }
+                else
+                {
+                    // use the driver config timeout
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                }
+
+                if (StartBMP)
+                {
+                    // Create new HAR for each action, so it will clean the history
+                    BMPClient.NewHar("aaa");
+
+                    DoRunAction(act);
+
+                    //TODO: call GetHARData and add it as screen shot or...
+                    // GetHARData();
+
+                    // TODO: save it in the solution docs... 
+                    string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
+                    BMPClient.SaveHAR(filename);
+                    act.ExInfo += "Action HAR file saved at: " + filename;
+                }
             }
 
-            if (act.Timeout != null && act.Timeout != 0)
-            {
-                //if we have time out on action then set it on the driver
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)act.Timeout);
-            }
-            else
-            {
-                // use the driver config timeout
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
-            }
-
-            if (StartBMP)
-            {
-                // Create new HAR for each action, so it will clean the history
-                BMPClient.NewHar("aaa");
-
-                DoRunAction(act);
-
-                //TODO: call GetHARData and add it as screen shot or...
-                // GetHARData();
-
-                // TODO: save it in the solution docs... 
-                string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
-                BMPClient.SaveHAR(filename);
-                act.ExInfo += "Action HAR file saved at: " + filename;
-            }
-            else
-            {
-                DoRunAction(act);
-            }
+            DoRunAction(act);
         }
 
         private void DoRunAction(Act act)
