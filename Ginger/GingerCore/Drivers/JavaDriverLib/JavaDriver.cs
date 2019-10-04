@@ -2138,8 +2138,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 case "LABEL":
                     return eElementType.Label;
 
-                case "SELECT":
-                case "JAVAX.SWING.JCOMBOBOX":
+                case "SELECT":                
                     return eElementType.ComboBox;
 
                 case "TABLE":
