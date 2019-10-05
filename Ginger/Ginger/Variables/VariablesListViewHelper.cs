@@ -47,7 +47,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public General.eRIPageViewMode PageViewMode { get; set; }
 
-        public UcListView ListView { get; set; }
+        UcListView mListView = null;
+        public UcListView ListView
+        {
+            get
+            {
+                return mListView;
+            }
+            set
+            {               
+                if (mListView != value)
+                {
+                    //if (mListView != null)
+                    //{
+                    //    mListView.UcListViewEvent -= ListView_UcListViewEvent;
+                    //}
+                    mListView = value;
+                    //if (mListView != null)
+                    //{
+                    //    mListView.UcListViewEvent += ListView_UcListViewEvent;
+                    //}
+                }
+            }
+        }        
 
         public delegate void VariabelListItemEventHandler(VariabelListItemEventArgs EventArgs);
         public event VariabelListItemEventHandler VariabelListItemEvent;
@@ -157,7 +179,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             deleteSelected.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             deleteSelected.AutomationID = "deleteSelected";
             deleteSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            deleteSelected.ToolTip = "Delete Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables);
+            deleteSelected.ToolTip = "Delete Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " (Del)";
             deleteSelected.OperationHandler = DeleteSelectedHandler;
             operationsList.Add(deleteSelected);
 
@@ -209,7 +231,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             copySelected.AutomationID = "copySelected";
             copySelected.Group = "Clipboard";
             copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copySelected.Header = "Copy Selected Items";
+            copySelected.Header = "Copy Selected Items (Ctrl+C)";
             copySelected.OperationHandler = CopySelectedHandler;
             extraOperationsList.Add(copySelected);
 
@@ -218,7 +240,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             cutSelected.AutomationID = "cutSelected";
             cutSelected.Group = "Clipboard";
             cutSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cutSelected.Header = "Cut Selected Items";
+            cutSelected.Header = "Cut Selected Items (Ctrl+X)";
             cutSelected.OperationHandler = CutSelectedHandler;
             extraOperationsList.Add(cutSelected);
 
@@ -227,7 +249,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasteInList.AutomationID = "pasteInList";
             pasteInList.Group = "Clipboard";
             pasteInList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasteInList.Header = "Paste";
+            pasteInList.Header = "Paste (Ctrl+V)";
             pasteInList.OperationHandler = PasteInListHandler;
             extraOperationsList.Add(pasteInList);
 
@@ -663,6 +685,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
             RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(mVariable);
             usagePage.ShowAsWindow();
+        }
+
+        public void CopySelected()
+        {
+            CopySelectedHandler(null, null);
+        }
+
+        public void CutSelected()
+        {
+            CutSelectedHandler(null, null);
+        }
+
+        public void Paste()
+        {
+            PasteInListHandler(null, null);
+        }
+
+        public void DeleteSelected()
+        {
+            DeleteSelectedHandler(null, null);
         }
     }
 
