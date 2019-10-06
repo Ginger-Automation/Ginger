@@ -66,6 +66,14 @@ namespace Ginger.UserControlsLib.UCListView
 
         List<ListItemOperation> GetItemExtraOperationsList(object item);
 
-        List<ListItemOperation> GetItemExecutionOperationsList(object item);        
+        List<ListItemOperation> GetItemExecutionOperationsList(object item);
+
+        void CopySelected();
+
+        void CutSelected();
+
+        void Paste();
+
+        void DeleteSelected();
     }
 }
