@@ -78,8 +78,8 @@ namespace Ginger.Actions.WebServices
 
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Param), Header = "Parameter", WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Description), Header = "Description", WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Value), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(EnhancedActInputValue.OptionalValues), nameof(EnhancedActInputValue.Value), true), WidthWeight = 20 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["ValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Value), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(EnhancedActInputValue.OptionalValues), nameof(EnhancedActInputValue.Value), true), WidthWeight = 40 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5,  StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["ValueExpressionButton"] });
             APIModelParamsValueUCGrid.SetTitleLightStyle = true;
             APIModelParamsValueUCGrid.SetAllColumnsDefaultView(view);
             APIModelParamsValueUCGrid.InitViewItems();
@@ -136,6 +136,11 @@ namespace Ginger.Actions.WebServices
 
                         paramToUpdate.Param = AMDP.PlaceHolder;
                         paramToUpdate.Description = AMDP.Description;
+                        //re-use selected value
+                        if (OldAPIModelParamsValue.Where(x => x.Param == paramToUpdate.Param).FirstOrDefault() != null)
+                        {
+                            paramToUpdate.Value = OldAPIModelParamsValue.Where(x => x.Param == paramToUpdate.Param).FirstOrDefault().Value;
+                        }
                         mAct.APIModelParamsValue.Add(paramToUpdate);
                     }
                 }
@@ -204,15 +209,15 @@ namespace Ginger.Actions.WebServices
             if (showNewMappingMessage)
                 Reporter.ToUser(eUserMsgKey.APIMappedToActionIsMissing);
 
-            if (apiModelPage == null)
-            {
+            //if (apiModelPage == null)
+            //{
                 RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
                 AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, 
                                                                                                     new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
                                                                                                                 nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
-                                                                                                                Convert.ToString(AAMB.TargetApplicationKey)));
-            }
+                                                                                                                Convert.ToString(AAMB.TargetApplicationKey.ItemName)), UCTreeView.eFilteroperationType.Equals);
+            //}
             List<object> selectedList = apiModelPage.ShowAsWindow();
 
             if (selectedList != null && selectedList.Count == 1)

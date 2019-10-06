@@ -67,11 +67,11 @@
                                                         <ColumnDefinition Width="100"/>
                                                     </Grid.ColumnDefinitions>
                                                     <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
-                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" Margin="0,0,0,0" />
+                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" ToolTip="{Binding Name}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" Margin="0,0,0,0" />
                                                         <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
-                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" >(</TextBlock>
-                                                            <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
-                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" Margin="0,0,0,0">)</TextBlock>
+                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" FontSize="11" >(</TextBlock>
+                                                            <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="11" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
+                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" FontSize="11" Margin="0,0,0,0">)</TextBlock>
                                                         </StackPanel>
                                                         <DockPanel x:Name="xGroupNotificationsPnl" Tag="{Binding Name}" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
                                                     </DockPanel>
