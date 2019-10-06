@@ -95,11 +95,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 xPageUrlRadioBtn.Content = platformInfoBase.GetPageUrlRadioLabelText();
             }
         }
-
-        public void setPage()
-        {
-            SetDefaultPage();
-        }
+        
         public void ShowScreenShot()
         {
             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
