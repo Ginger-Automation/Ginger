@@ -2608,18 +2608,17 @@ namespace Ginger.Run
 
                 switch (ARC.Operator)
                 {
-
                     case eOperator.Contains:
                         status = ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + " Does not Contains " + ARC.ExpectedCalculated;
+                        ErrorInfo = string.Format("'{0}' does not Contains '{1}'" ,ARC.Actual, ARC.ExpectedCalculated);
                         break;
                     case eOperator.DoesNotContains:
                         status = !ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + " Contains " + ARC.ExpectedCalculated;
+                        ErrorInfo = string.Format("'{0}' contains '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
                         break;
                     case eOperator.Equals:
                         status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + " Does not equals " + ARC.ExpectedCalculated;
+                        ErrorInfo = string.Format("'{0}' does not equals '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
                         break;
                     case eOperator.Evaluate:
                         Expression = ARC.ExpectedCalculated;
@@ -2634,7 +2633,7 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + " is not greater than " + ARC.ExpectedCalculated;
+                            ErrorInfo = string.Format("'{0}' is not greater than '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
                         }
                         break;
                     case eOperator.GreaterThanEquals:
@@ -2647,7 +2646,7 @@ namespace Ginger.Run
                         {
                             Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
 
-                            ErrorInfo = ARC.Actual + " is not greater than equals to " + ARC.ExpectedCalculated;
+                            ErrorInfo = string.Format("'{0}' is not greater or equals to '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
                         }
                         break;
                     case eOperator.LessThan:
@@ -2659,7 +2658,7 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + " is not less than " + ARC.ExpectedCalculated;
+                            ErrorInfo = string.Format("'{0}' is not less than '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
 
                         }
                         break;
@@ -2672,12 +2671,12 @@ namespace Ginger.Run
                         else
                         {
                             Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
-                            ErrorInfo = ARC.Actual + " is not less than equals to " + ARC.ExpectedCalculated;
+                            ErrorInfo = string.Format("'{0}' is not less or equals to '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
                         }
                         break;
                     case eOperator.NotEquals:
                         status = !string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = ARC.Actual + " is equals to " + ARC.ExpectedCalculated;
+                        ErrorInfo = string.Format("'{0}' is equals to '{1}'", ARC.Actual, ARC.ExpectedCalculated); 
                         break;
                     default:
                         ErrorInfo = "Not Supported Operation";
