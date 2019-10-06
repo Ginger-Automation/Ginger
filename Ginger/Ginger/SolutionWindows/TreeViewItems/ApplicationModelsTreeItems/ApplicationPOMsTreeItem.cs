@@ -146,16 +146,9 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.Web).Count() > 0)
-            {
+        {           
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
-                WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Web platform based Target Application to continue adding Page Objects Models");
-            }
+                WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);           
         }
     }
 }
