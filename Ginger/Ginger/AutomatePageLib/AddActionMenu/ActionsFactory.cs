@@ -137,7 +137,7 @@ namespace Ginger.BusinessFlowPages
         /// <returns></returns>
         static Act GenerateSelectedAction(Act selectedAction, Context mContext)
         {
-            if (selectedAction.AddActionWizardPage != null)
+            if (selectedAction.AddActionWizardPage != null && !selectedAction.ContainingFolder.Contains("SharedRepository"))
             {
                 string classname = selectedAction.AddActionWizardPage;
                 Type t = System.Reflection.Assembly.GetExecutingAssembly().GetType(classname);
