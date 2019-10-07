@@ -225,6 +225,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     {
                         overrideFile = false;
                     }
+                    else
+                    {
+                        //In case File exists and user selects to overwrite the existing.
+                        File.Delete(fileName);
+                    }
                 }
 
                 if (overrideFile)
