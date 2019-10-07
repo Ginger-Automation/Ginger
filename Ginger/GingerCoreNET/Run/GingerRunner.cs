@@ -4462,6 +4462,7 @@ namespace Ginger.Run
         public bool SetBFOfflineData(BusinessFlow BF, ExecutionLoggerManager executionLoggerManager, string logFolderPath)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+            Context.BusinessFlow.ExecutionLogActivityCounter = 1;
             try
             {
                 if (System.IO.Directory.Exists(logFolderPath))
@@ -4492,7 +4493,7 @@ namespace Ginger.Run
                     {
                         continue;
                     }
-                    activity.OfflinePropertiesPrep(BF.ExecutionLogFolder, BF.ExecutionLogActivityCounter, Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(activity.ActivityName));
+                    activity.OfflinePropertiesPrep(BF.ExecutionLogFolder, Context.BusinessFlow.ExecutionLogActivityCounter, Ginger.Reports.GingerExecutionReport.ExtensionMethods.folderNameNormalazing(activity.ActivityName));
                     System.IO.Directory.CreateDirectory(activity.ExecutionLogFolder);
                     foreach (Act action in activity.Acts)
                     {
@@ -4511,7 +4512,8 @@ namespace Ginger.Run
                         executionLoggerManager.ActionEnd(eventTime, action, true);
                     }
                     executionLoggerManager.ActivityEnd(eventTime, activity, true);
-                    BF.ExecutionLogActivityCounter++;
+                    //BF.ExecutionLogActivityCounter++;
+                    Context.BusinessFlow.ExecutionLogActivityCounter++;
                 }
                 this.SetActivityGroupsExecutionStatus(BF, true);
                 this.CalculateBusinessFlowFinalStatus(BF);
