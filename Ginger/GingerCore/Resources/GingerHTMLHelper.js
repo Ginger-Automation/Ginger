@@ -128,6 +128,7 @@ function define_GingerLib() {
             if (ElementAction === "TriggerJavaScriptEvent")
             {
                 var IsMouseEvent = inputValues["IsMouseEvent"];
+                var javaEvent = inputValues["ValueToSelect"];
 
                 var element = "undefined";
 
@@ -143,11 +144,11 @@ function define_GingerLib() {
 
                 if (IsMouseEvent.toLowerCase() == "true")
                 {
-                    return GingerLib.fireMouseEvent(element, Value);               
+                    return GingerLib.fireMouseEvent(element, javaEvent);               
                 }
                 else
                 {
-                    return GingerLib.fireSpecialEvent(element, Value);
+                    return GingerLib.fireSpecialEvent(element, javaEvent);
                 }
             }
 
