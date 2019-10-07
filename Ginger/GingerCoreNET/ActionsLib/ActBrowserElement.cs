@@ -218,7 +218,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction);
+                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction, eControlAction.GotoURL.ToString());
             }
             set
             {
