@@ -1046,35 +1046,50 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void CutSelected()
         {
-            CutSelectedHandler(null, null);
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                CutSelectedHandler(null, null);
+            }
         }
 
         public void Paste()
         {
-            if (ListView.List.SelectedItems.Count > 0)
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
             {
-                PasteAfterCurrentHandler(null, null);
-            }
-            else
-            {
-                PasteInListHandler(null, null);
+                if (ListView.List.SelectedItems.Count > 0)
+                {
+                    PasteAfterCurrentHandler(null, null);
+                }
+                else
+                {
+                    PasteInListHandler(null, null);
+                }
             }
         }
 
         public void DeleteSelected()
         {
-            if (ListView.List.SelectedItems.Count == 0)
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
             {
-                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
-                return;
-            }
-
-            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems) == eUserMsgSelection.Yes)
-            {
-                List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
-                foreach (Activity activity in SelectedItemsList)
+                if (ListView.List.SelectedItems.Count == 0)
                 {
-                    mContext.BusinessFlow.DeleteActivity(activity);
+                    Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
+                    return;
+                }
+
+                if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems, GingerDicser.GetTermResValue(eTermResKey.Activities), ((Activity)ListView.List.SelectedItems[0]).ActivityName) == eUserMsgSelection.Yes)
+                {
+                    List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
+                    foreach (Activity activity in SelectedItemsList)
+                    {
+                        mContext.BusinessFlow.DeleteActivity(activity);
+                    }
                 }
             }
         }

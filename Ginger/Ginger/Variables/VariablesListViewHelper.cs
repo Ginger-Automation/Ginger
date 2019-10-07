@@ -501,7 +501,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 return;
             }
 
-            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems) == eUserMsgSelection.Yes)
+            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems, GingerDicser.GetTermResValue(eTermResKey.Variables), ((VariableBase)ListView.List.SelectedItems[0]).Name) == eUserMsgSelection.Yes)
             {
                 List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
                 foreach (VariableBase var in SelectedItemsList)
@@ -694,17 +694,32 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void CutSelected()
         {
-            CutSelectedHandler(null, null);
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                   PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                CutSelectedHandler(null, null);
+            }
         }
 
         public void Paste()
         {
-            PasteInListHandler(null, null);
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                   PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                PasteInListHandler(null, null);
+            }
         }
 
         public void DeleteSelected()
         {
-            DeleteSelectedHandler(null, null);
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                   PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                DeleteSelectedHandler(null, null);
+            }
         }
     }
 
