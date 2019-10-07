@@ -1175,7 +1175,7 @@ namespace GingerWPF.BusinessFlowsLib
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700, true);
         }
 
-        private void xLegacyActionsRemoveMenuItem_Click(object sender, RoutedEventArgs e)
+        private async void xLegacyActionsRemoveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -1186,7 +1186,8 @@ namespace GingerWPF.BusinessFlowsLib
             lstBFToConvert.Add(flowToConvert);
 
             ActionConversionUtils utils = new ActionConversionUtils();
-            utils.RemoveLegacyActionsHandler(lstBFToConvert);
+
+            await Task.Run(() => utils.RemoveLegacyActionsHandler(lstBFToConvert));
         }
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)

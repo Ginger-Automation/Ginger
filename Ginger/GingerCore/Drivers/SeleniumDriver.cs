@@ -840,28 +840,27 @@ namespace GingerCore.Drivers
 
         public override void RunAction(Act act)
         {
+            //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
             bool isActBrowser = act is ActBrowserElement;
             ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
-
             bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
                                     || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
                                         || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
 
-            // if alert exist then any action on driver throwing exception and dismissing the pop up
-            // so keeping handle browser as first step.
             if (!runActHandlerDirect)
             {
                 //implicityWait must be done on actual window so need to make sure the driver is pointing on window
                 try
                 {
-                    // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
                     string aa = Driver.Title;//just to make sure window attributes do not throw exception
                 }
                 catch (Exception ex)
                 {
                     if (Driver.WindowHandles.Count == 1)
+                    {
                         Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    }
+                    Reporter.ToLog(eLogLevel.ERROR, "Selenium Driver is not accessible, probably because there is Alert window open", ex);
                 }
 
                 if (act.Timeout != null && act.Timeout != 0)
