@@ -33,6 +33,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -976,7 +977,32 @@ namespace Ginger.UserControlsLib.UCListView
             PasteItemEvent?.Invoke(new PasteItemEventArgs(pasteType, item));
         }
 
-
+        private void UserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (Keyboard.IsKeyDown(Key.C))
+                {
+                    //Do Copy
+                    mListViewHelper.CopySelected();
+                }
+                else if(Keyboard.IsKeyDown(Key.X))
+                {
+                    //Do Cut
+                    mListViewHelper.CutSelected();
+                }
+                else if (Keyboard.IsKeyDown(Key.V))
+                {
+                    //Do Paste
+                    mListViewHelper.Paste();
+                }
+            }
+            else if(Keyboard.IsKeyDown(Key.Delete))
+            {
+                //delete selected
+                mListViewHelper.DeleteSelected();
+            }
+        }
     }
 
     public class UcListViewEventArgs

@@ -337,12 +337,11 @@ namespace Ginger.Actions
 
             //execution details section
             if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
-            {
+            {                
+                BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+                BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
 
-
-                BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
                 BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
-                UpdateExecutionStatusControls();
 
                 BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);
                 BindingHandler.ObjFieldBinding(xExecutionExtraInfoPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.ExInfo), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
@@ -1548,83 +1547,32 @@ namespace Ginger.Actions
             }
         }
 
-        private void ShowHideRunSimulation()
-        {
-            if (mAction.SupportSimulation)
-                mSimulateRunBtn.Visibility = Visibility.Visible;
-            else
-                mSimulateRunBtn.Visibility = Visibility.Collapsed;
-        }
+        //private void ShowHideRunSimulation()
+        //{
+        //    if (mAction.SupportSimulation)
+        //        mSimulateRunBtn.Visibility = Visibility.Visible;
+        //    else
+        //        mSimulateRunBtn.Visibility = Visibility.Collapsed;
+        //}
 
         private void ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Act.SupportSimulation))
-            {
-                ShowHideRunSimulation();
-            }
-            else if (e.PropertyName == nameof(Act.Status))
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    //ShowHideRunStopButtons();
+            //if (e.PropertyName == nameof(Act.SupportSimulation))
+            //{
+            //    ShowHideRunSimulation();
+            //}
+            //else if (e.PropertyName == nameof(Act.Status))
+            //{
+            //    this.Dispatcher.Invoke(() =>
+            //    {
+            //        //ShowHideRunStopButtons();
 
-                    UpdateExecutionStatusControls();
-                });
-            }
+            //        UpdateExecutionStatusControls();
+            //    });
+            //}
         }
 
-        private void UpdateExecutionStatusControls()
-        {
-            Brush mStatusBrush = null;
-            eImageType mStatusImage = eImageType.Pending;
-
-            switch (mAction.Status)
-            {
-                case eRunStatus.Passed:
-                    mStatusBrush = FindResource("$PassedStatusColor") as Brush;
-                    mStatusImage = eImageType.Passed;
-                    break;
-                case eRunStatus.Failed:
-                    mStatusBrush = FindResource("$FailedStatusColor") as Brush;
-                    mStatusImage = eImageType.Failed;
-                    break;
-                case eRunStatus.Pending:
-                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
-                    mStatusImage = eImageType.Pending;
-                    break;
-                case eRunStatus.Running:
-                    mStatusBrush = FindResource("$RunningStatusColor") as Brush;
-                    mStatusImage = eImageType.Running;
-                    break;
-                case eRunStatus.Stopped:
-                    mStatusBrush = FindResource("$StoppedStatusColor") as Brush;
-                    mStatusImage = eImageType.Stop;
-                    break;
-                case eRunStatus.Blocked:
-                    mStatusBrush = FindResource("$BlockedStatusColor") as Brush;
-                    mStatusImage = eImageType.Blocked;
-                    break;
-                case eRunStatus.Skipped:
-                    mStatusBrush = FindResource("$SkippedStatusColor") as Brush;
-                    mStatusImage = eImageType.Skipped;
-                    break;
-                default:
-                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
-                    mStatusImage = eImageType.Pending;
-                    break;
-            }
-
-            xExecutionStatusImagePnl.Children.Clear();
-            xExecutionStatusLbl.Foreground = mStatusBrush;
-            Amdocs.Ginger.UserControls.ImageMakerControl xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
-            xExecutionStatusImage.SetAsFontImageWithSize = 50;
-            xExecutionStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
-            xExecutionStatusImage.ImageType = mStatusImage;
-            xExecutionStatusImage.Width = 50;
-            xExecutionStatusImage.Height = 50;
-            xExecutionStatusImage.ToolTip = mAction.Status.ToString();
-            xExecutionStatusImagePnl.Children.Add(xExecutionStatusImage);
-        }
+       
 
         private void InitActionLog()
         {
@@ -1686,7 +1634,6 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xLocateByCombo);
             BindingOperations.ClearAllBindings(xWindowsToCaptureCombo);
             BindingOperations.ClearAllBindings(xLocateValueVE);
-            BindingOperations.ClearAllBindings(xExecutionStatusLbl);
             BindingOperations.ClearAllBindings(xExecutionTimeLbl);
             BindingOperations.ClearAllBindings(xExecutionErrorDetailsText);
             BindingOperations.ClearAllBindings(xExecutionExtraInfoText);

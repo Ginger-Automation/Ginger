@@ -45,7 +45,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public General.eRIPageViewMode PageViewMode { get; set; }
 
-        public UcListView ListView { get; set; }
+        UcListView mListView = null;
+        public UcListView ListView
+        {
+            get
+            {
+                return mListView;
+            }
+            set
+            {
+                if (mListView != value)
+                {
+                    //if (mListView != null)
+                    //{
+                    //    mListView.UcListViewEvent -= ListView_UcListViewEvent;
+                    //}
+                    mListView = value;
+                    //if (mListView != null)
+                    //{
+                    //    mListView.UcListViewEvent += ListView_UcListViewEvent;
+                    //}
+                }
+            }
+        }
 
         public delegate void ActivityListItemEventHandler(ActivityListItemEventArgs EventArgs);
         public event ActivityListItemEventHandler ActivityListItemEvent;
@@ -224,7 +246,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             copySelected.AutomationID = "copySelected";
             copySelected.Group = "Clipboard";
             copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copySelected.Header = "Copy Selected Items";
+            copySelected.Header = "Copy Selected Items (Ctrl+C)";
             copySelected.OperationHandler = CopySelectedHandler;
             extraOperationsList.Add(copySelected);
 
@@ -233,7 +255,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             cutSelected.AutomationID = "cutSelected";
             cutSelected.Group = "Clipboard";
             cutSelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cutSelected.Header = "Cut Selected Items";
+            cutSelected.Header = "Cut Selected Items (Ctrl+X)";
             cutSelected.OperationHandler = CutSelectedHandler;
             extraOperationsList.Add(cutSelected);
 
@@ -242,7 +264,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasteInList.AutomationID = "pasteInList";
             pasteInList.Group = "Clipboard";
             pasteInList.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasteInList.Header = "Paste";
+            pasteInList.Header = "Paste (Ctrl+V)";
             pasteInList.OperationHandler = PasteInListHandler;
             extraOperationsList.Add(pasteInList);
 
@@ -851,11 +873,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void PasteAfterCurrentHandler(object sender, RoutedEventArgs e)
         {
-            SetItem(sender);
-
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mActivity.ActivitiesGroupID).FirstOrDefault();
-            int insertIndex = mContext.BusinessFlow.Activities.IndexOf(mActivity) + 1;
-            DoActivitiesPaste(activitiesGroup, insertIndex);
+            ActivitiesGroup activitiesGroup = null;
+            if (sender != null)
+            {
+                SetItem(sender);
+                activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mActivity.ActivitiesGroupID).FirstOrDefault();
+            }
+            else if (ListView.List.SelectedItems.Count > 0)
+            {
+                activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((Activity)(ListView.List.SelectedItems[0])).ActivitiesGroupID).FirstOrDefault();
+            }
+            if (activitiesGroup != null)
+            {
+                int insertIndex = mContext.BusinessFlow.Activities.IndexOf(mActivity) + 1;
+                DoActivitiesPaste(activitiesGroup, insertIndex);
+            }
         }
 
         private void CopyGroupHandler(object sender, RoutedEventArgs e)
@@ -1007,6 +1039,60 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return list;
         }
 
+        public void CopySelected()
+        {
+            CopySelectedHandler(null, null);
+        }
+
+        public void CutSelected()
+        {
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                CutSelectedHandler(null, null);
+            }
+        }
+
+        public void Paste()
+        {
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                if (ListView.List.SelectedItems.Count > 0)
+                {
+                    PasteAfterCurrentHandler(null, null);
+                }
+                else
+                {
+                    PasteInListHandler(null, null);
+                }
+            }
+        }
+
+        public void DeleteSelected()
+        {
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                if (ListView.List.SelectedItems.Count == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
+                    return;
+                }
+
+                if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems, GingerDicser.GetTermResValue(eTermResKey.Activities), ((Activity)ListView.List.SelectedItems[0]).ActivityName) == eUserMsgSelection.Yes)
+                {
+                    List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
+                    foreach (Activity activity in SelectedItemsList)
+                    {
+                        mContext.BusinessFlow.DeleteActivity(activity);
+                    }
+                }
+            }
+        }
     }
 
     public class ActivityListItemEventArgs

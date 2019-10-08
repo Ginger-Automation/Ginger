@@ -2174,5 +2174,44 @@ public void RemoveCustomView(string viewName)
         {
             grdMain.SelectedIndex = index;
         }
+
+        private void DoKeyboardCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (Keyboard.IsKeyDown(Key.C))
+                {
+                    //Do Copy
+                    if (ShowCopy == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.CopySelectedItems(this);
+                    }
+                }
+                else if (Keyboard.IsKeyDown(Key.X))
+                {
+                    //Do Cut
+                    if (ShowCut == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.CutSelectedItems(this);
+                    }
+                }
+                else if (Keyboard.IsKeyDown(Key.V))
+                {
+                    //Do Paste
+                    if (ShowPaste == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.PasteItems(this);
+                    }
+                }
+            }
+            else if (Keyboard.IsKeyDown(Key.Delete))
+            {
+                //delete selected
+                if (ShowDelete == Visibility.Visible)
+                {
+                    btnDelete_Click(null, null);
+                }
+            }
+        }
     }  
 }
