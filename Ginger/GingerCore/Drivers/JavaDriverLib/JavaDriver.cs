@@ -3100,7 +3100,15 @@ namespace GingerCore.Drivers.JavaDriverLib
             act.Description = "Switch Window - " + windowTitle;
             act.LocateBy = eLocateBy.ByTitle;
             act.LocateValue = windowTitle;
-            BusinessFlow.AddAct(act, true);
+            if (BusinessFlow != null)
+            {
+                BusinessFlow.AddAct(act, true);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.RestartAgent);
+            }
+            
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)
