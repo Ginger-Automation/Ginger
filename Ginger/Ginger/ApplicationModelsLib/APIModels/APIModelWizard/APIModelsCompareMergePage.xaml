@@ -13,7 +13,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="500*" />
-            <RowDefinition Height="30" x:Name="xMergerTextRow" />
+            <RowDefinition Height="50" x:Name="xMergerTextRow" />
             <RowDefinition Height="400*" x:Name="xMergerAPIRow" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -36,18 +36,20 @@
 
         <Frame Grid.Row="1" Grid.Column="1" x:Name="xLearnedAPIFrame" NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="False"/>
 
-        <Border Grid.Row="2" Grid.Column="0" x:Name="xMatchedAPIAsBaseBtn" Background="{StaticResource $BackgroundColor_LightGray}">
-            <Button Width="120" Content="Take Existing API" ToolTip="Select the Existing API Model as the Base for Merged API Model" Click="XMatchedAPIAsBaseBtn_Click" Style="{StaticResource $RoundTextAndImageButtonStyle}" />
+        <Border BorderThickness="10" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}"></Border>
+
+        <Border Grid.Row="2" Grid.Column="0" x:Name="xMatchedAPIAsBaseBtn" Background="GhostWhite">
+            <Button Width="150" Height="35" FontSize="15" FontWeight="Bold" Content="Take Existing API" ToolTip="Select the Existing API Model as the Base for Merged API Model" Click="XMatchedAPIAsBaseBtn_Click" Style="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}" />
         </Border>
 
-        <Border Grid.Row="2" Grid.Column="2" x:Name="xLearnedAPIAsBaseBtn" Background="{StaticResource $BackgroundColor_LightGray}">
-            <Button Width="120" Content="Take New API" ToolTip="Select the New API Model as the Base for Merged API Model" Click="XLearnedAPIAsBaseBtn_Click" Style="{StaticResource $RoundTextAndImageButtonStyle}" />
+        <Border Grid.Row="2" Grid.Column="2" x:Name="xLearnedAPIAsBaseBtn" Background="GhostWhite">
+            <Button Width="150" Height="35" FontSize="15" FontWeight="Bold" Content="Take New API" ToolTip="Select the New API Model as the Base for Merged API Model" Click="XLearnedAPIAsBaseBtn_Click" Style="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}" />
         </Border>
 
         <GridSplitter x:Name="xMergerSplitter" Visibility="Collapsed" ResizeDirection="Rows" Grid.Row="2" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
 
         <Border x:Name="xMergerWindowTxtBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" Background="{StaticResource $BackgroundColor_DarkBlue}">
-            <TextBlock Style="{StaticResource $TextBlockTitle}" Text="Merged API Model Preview" />
+            <TextBlock Style="{StaticResource $TextBlockTitle}" Text="Merged API Model Preview" FontSize="16" />
         </Border>
 
         <Frame x:Name="xMergedAPIFrame" NavigationUIVisibility="Hidden" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" />

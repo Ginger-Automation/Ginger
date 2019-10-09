@@ -31,7 +31,29 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public General.eRIPageViewMode PageViewMode { get; set; }
 
-        public UcListView ListView { get; set; }
+        UcListView mListView = null;
+        public UcListView ListView
+        {
+            get
+            {
+                return mListView;
+            }
+            set
+            {
+                if (mListView != value)
+                {
+                    //if (mListView != null)
+                    //{
+                    //    mListView.UcListViewEvent -= ListView_UcListViewEvent;
+                    //}
+                    mListView = value;
+                    //if (mListView != null)
+                    //{
+                    //    mListView.UcListViewEvent += ListView_UcListViewEvent;
+                    //}
+                }
+            }
+        }
 
         public bool AllowExpandItems { get; set; } = true;
 
@@ -219,6 +241,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             return null;
         }
 
+        public void CopySelected()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void CutSelected()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Paste()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteSelected()
+        {
+            throw new System.NotImplementedException();
+        }
+
         //private void EditHandler(object sender, RoutedEventArgs e)
         //{
         //    SetItem(sender);
@@ -234,5 +276,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         //    SetItem(sender);
         //    mAction.Active = !mAction.Active;
         //}
+
+
     }
 }

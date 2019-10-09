@@ -139,20 +139,10 @@
             <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="2" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <TabItem x:Name="xRunnersTab" Style="{StaticResource $CoolTab}" TabIndex="1">
                     <TabItem.Header>
-                        <Border BorderThickness="0 0 0 4"  Margin="0" x:Name="RunnerBorder" >
-                            <Border.Style>
-                                <Style>
-                                    <Setter Property="Border.BorderBrush" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="Border.IsMouseOver" Value="True">
-                                            <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+                        <Border x:Name="RunnerBorder" Style="{StaticResource $CoolTabBorderStyle}" >
                             <DockPanel>
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Runner"  Width="15" Height="15" FontWeight="Bold" />
-                                <TextBlock Text="Runners"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0" FontSize="15"  x:Name="RunnerTextblock" />
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Runner"  Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock x:Name="RunnerTextblock" Text="Runners" Style="{StaticResource $CoolTabTextBlockStyle}"   />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -335,20 +325,10 @@
 
                 <TabItem  x:Name="xOperationsTab" Style="{StaticResource $CoolTab}" TabIndex="2">
                     <TabItem.Header>
-                        <Border BorderThickness="0 0 0 4"  Margin="0" x:Name="OperationsBorder" >
-                            <Border.Style>
-                                <Style>
-                                    <Setter Property="Border.BorderBrush" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="Border.IsMouseOver" Value="True">
-                                            <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+                        <Border x:Name="OperationsBorder" Style="{StaticResource $CoolTabBorderStyle}" >
                             <DockPanel >
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Operations"  Width="20" Height="15" FontWeight="Bold" />
-                                <TextBlock x:Name="RunsetActionTextbox" Text="Operations" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0" FontSize="15" />
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Operations"  Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"/>
+                                <TextBlock x:Name="RunsetActionTextbox" Text="Operations" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -357,42 +337,22 @@
 
                 <TabItem x:Name="xALMDefectsOpening" Style="{StaticResource $CoolTab}" TabIndex="3" IsEnabled="true">
                     <TabItem.Header>
-                        <Border BorderThickness="0 0 0 4" Margin="0" x:Name="ALMDefectsBorder">
-                            <Border.Style>
-                                <Style>
-                                    <Setter Property="Border.BorderBrush" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="Border.IsMouseOver" Value="True">
-                                            <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+                        <Border x:Name="ALMDefectsBorder" Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel >
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Bug"  Width="15" Height="15" FontWeight="Bold" />
-                                <TextBlock x:Name="ALMDefects" Text="ALM Defects Opening" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0"  FontSize="15" />
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Bug"  Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock x:Name="ALMDefects" Text="ALM Defects Opening" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
-                    <Frame x:Name="mALMDefectsOpening" Content="ALMDefectsOpening" Grid.Column="0" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                    <Frame x:Name="mALMDefectsOpening" Grid.Column="0" HorizontalAlignment="Stretch"  Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
 
                 <TabItem  x:Name="xConfigurationTab" Style="{StaticResource $CoolTab}" TabIndex="4">
                     <TabItem.Header>
-                        <Border BorderThickness="0 0 0 4" Margin="0" x:Name="ConfigurationBorder">
-                            <Border.Style>
-                                <Style>
-                                    <Setter Property="Border.BorderBrush" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="Border.IsMouseOver" Value="True">
-                                            <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+                        <Border x:Name="ConfigurationBorder" Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel>
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="Config"  Width="15" Height="15" FontWeight="Bold" />
-                                <TextBlock Text="Details" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0"  FontSize="15" />
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Config"  Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock Text="Details" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
                     </TabItem.Header>
@@ -408,20 +368,10 @@
 
                 <TabItem  x:Name="xExecution_SummaryTab" Style="{StaticResource $CoolTab}" TabIndex="5">
                     <TabItem.Header>
-                        <Border BorderThickness="0 0 0 4" Margin="0" x:Name="ExecutionBorder">
-                            <Border.Style>
-                                <Style>
-                                    <Setter Property="Border.BorderBrush" Value="Transparent"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="Border.IsMouseOver" Value="True">
-                                            <Setter Property="Border.BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+                        <Border x:Name="ExecutionBorder" Style="{StaticResource $CoolTabBorderStyle}">
                             <DockPanel >
-                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="15" ImageType="History"  Width="15" Height="15" FontWeight="Bold" />
-                                <TextBlock x:Name="ExecutionSummary" Text="Executions History" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5 0 0 0"  FontSize="15" />
+                                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="History"  Width="20" Height="16" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" />
+                                <TextBlock x:Name="ExecutionSummary" Text="Executions History" Style="{StaticResource $CoolTabTextBlockStyle}" />
                             </DockPanel>
                         </Border>
 
