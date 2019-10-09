@@ -54,7 +54,22 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
-        private string mMatchingAPIName = "No Matching API Found !";
+        public string ShowMergerLink
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(MatchingAPIName))
+                {
+                    return "False";
+                }
+                else
+                {
+                    return "True";
+                }
+            }
+        }
+
+        private string mMatchingAPIName = "";
         public string MatchingAPIName
         {
             get

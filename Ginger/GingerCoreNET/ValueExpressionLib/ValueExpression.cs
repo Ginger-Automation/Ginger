@@ -549,6 +549,10 @@ namespace GingerCore
                 if (Query != "")
                 {
                     DataTable dt = DataSource.GetQueryOutput(Query);
+                    if (dt == null)
+                    {
+                        return;//need to check why it return null
+                    }
                     if (dt.Rows.Count == 0 && IRow == "NxtAvail" && bUpdate == true)
                     {
                         DataSource.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");

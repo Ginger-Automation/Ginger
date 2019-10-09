@@ -63,7 +63,16 @@ namespace Ginger.Actions.ActionConversion
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
-                    PrepareBFsForConversion();
+                    if (ListOfBusinessFlow.Where(x => x.IsSelected && x.TotalProcessingActionsCount > 0).ToList().Count == 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Please select {0} which contains legacy Actions to convert.", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+                    else
+                    {
+                        PrepareBFsForConversion();
+                    }
                     break;
             }
         }

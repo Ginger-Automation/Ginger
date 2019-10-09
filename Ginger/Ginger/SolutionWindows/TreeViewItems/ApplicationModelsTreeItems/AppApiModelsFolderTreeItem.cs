@@ -30,6 +30,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 {
@@ -170,8 +172,15 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
         {
-            mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
-            WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.WebServices).Count() > 0)
+            {
+                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Web Service platform based Target Application to continue adding API Models");
+            }
         }
 
         public override bool PasteCopiedTreeItem(object nodeItemToCopy, TreeViewItemGenericBase targetFolderNode, bool toRefreshFolder = true)
