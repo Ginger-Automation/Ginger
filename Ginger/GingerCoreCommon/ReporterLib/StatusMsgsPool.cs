@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.Common
         Search, DownloadingMissingPluginPackages,
         GingerLoadingInfo,
         StaticStatusMessage, StaticStatusProcess, PasteProcess,
-        NewVersionAvailable
+        NewVersionAvailable, CleaningLegacyActions
     }
 
     public static class StatusMsgsPool
@@ -104,6 +104,7 @@ namespace Amdocs.Ginger.Common
             #region BusinessFlows Messages
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.CreateBusinessFlowTip, new StatusMsg(eStatusMsgType.INFO, "Tip!", "Start automating by creating a new '" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "' and shifting to the 'Automate' tab"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.BusinessFlowConversion, new StatusMsg(eStatusMsgType.PROCESS, "Converting Actions", "Converting the Actions of the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.CleaningLegacyActions, new StatusMsg(eStatusMsgType.PROCESS, "Cleaning Legacy Actions", "Cleaning Legacy Actions..."));
             #endregion BusinessFlows Messages
 
             #region Execution Messages
