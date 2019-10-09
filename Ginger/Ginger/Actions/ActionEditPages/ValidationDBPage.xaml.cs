@@ -32,6 +32,7 @@ using Amdocs.Ginger.Common;
 using System.Windows.Data;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Ginger.Actions
 {
@@ -264,19 +265,29 @@ namespace Ginger.Actions
 
         private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            TablesComboBox.Items.Clear();
-            string DBName = DBNameComboBox.Text; 
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-            if (db == null) return;
-            string KeySpace = KeySpaceComboBox.Text;
-            List<string> Tables = db.GetTablesList(KeySpace);
-            if (Tables == null)
-            { 
-                return;
-            }
-            foreach (string s in Tables)
+                TablesComboBox.Items.Clear();
+                string DBName = DBNameComboBox.Text; 
+                db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                if (db == null) return;
+                string KeySpace = KeySpaceComboBox.Text;
+            try
             {
-                TablesComboBox.Items.Add(s);
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
+                List<string> Tables = db.GetTablesList(KeySpace);
+                if (Tables == null)
+                {
+                    return;
+                }
+                foreach (string s in Tables)
+                {
+                    TablesComboBox.Items.Add(s);
+                }
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+                Reporter.HideStatusMessage();
             }
         }
         
