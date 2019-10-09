@@ -5,10 +5,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="60" d:DesignWidth="60">
+             d:DesignHeight="50" d:DesignWidth="60">
 
-    <StackPanel >
-        <DockPanel x:Name="xPolygonStatusPnl" Visibility="Collapsed">
+    <StackPanel>
+        <DockPanel x:Name="xPolygonStatusPnl" Visibility="Collapsed" >
             <Polygon x:Name="xPolygon" DockPanel.Dock="Right" Points="0,0,24,0,0,25"  Stroke="{StaticResource $PendingStatusColor}" Fill="{StaticResource $PendingStatusColor}" HorizontalAlignment="Right" >
                 <Polygon.RenderTransform>
                     <TransformGroup>
@@ -22,6 +22,8 @@
             <usercontrols:ImageMakerControl x:Name="xPolygonStatusImage" DockPanel.Dock="Right" Margin="0,-8,-25,0"  SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
         </DockPanel>
 
-        <usercontrols:ImageMakerControl x:Name="xStatusImage" SetAsFontImageWithSize="16" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Orange"/>
+        <DockPanel x:Name="xStatusImagePnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+
+        <Label x:Name="xStatusLbl" FontWeight="Bold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Margin="0,0,0,0" Content="Status" Visibility="Collapsed"/>
     </StackPanel>
 </UserControl>

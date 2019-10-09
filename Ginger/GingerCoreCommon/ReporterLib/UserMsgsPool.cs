@@ -141,7 +141,7 @@ namespace Amdocs.Ginger.Common
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
-        PluginDownloadInProgress, SaveRunsetChanges
+        PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup
     }
 
     public static class UserMsgsPool
@@ -384,6 +384,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DependenciesMissingVariables, new UserMsg(eUserMsgType.INFO, "Missing " + GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.Variables) + " not found." + System.Environment.NewLine + "Please add " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type 'Selection List' to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DuplicateVariable, new UserMsg(eUserMsgType.WARN, "Duplicated " + GingerDicser.GetTermResValue(eTermResKey.Variable), "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " name '{0}' and value '{1}' exist more than once." + System.Environment.NewLine + "Please make sure only one instance exist in order to set the " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingActivityAppMapping, new UserMsg(eUserMsgType.WARN, "Missing " + GingerDicser.GetTermResValue(eTermResKey.Activity) + "-Application Mapping", "Target Application was not mapped to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " so the required Actions platform is unknown." + System.Environment.NewLine + System.Environment.NewLine + "Map Target Application to the Activity by double clicking the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " record and select the application you want to test using it.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.LegacyActionsCleanup, new UserMsg(eUserMsgType.INFO, "Legacy Actions Cleanup", "Legacy Actions cleanup was ended." + Environment.NewLine + Environment.NewLine + "Cleanup Statistics:" + Environment.NewLine + "Number of Processed " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + ": {0}" + Environment.NewLine + "Number of Deleted " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": {1}" + Environment.NewLine + "Number of Deleted Actions: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Activities
 
             #region Support Messages
@@ -444,9 +445,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ConfirmToAddTreeItem, new UserMsg(eUserMsgType.QUESTION, "Add New Item to Tree", "Are you Sure you want to add new item to tree?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToAddTreeItem, new UserMsg(eUserMsgType.ERROR, "Add Tree Item", "Failed to add the tree item '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteAll, new UserMsg(eUserMsgType.QUESTION, "Delete All", "Are you sure you want to delete all?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteSelectedItems, new UserMsg(eUserMsgType.QUESTION, "Delete Selected", "Are you sure you want to delete all selected items?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDeleteSelectedItems, new UserMsg(eUserMsgType.QUESTION, "Delete Selected", "Are you sure you want to delete selected {0} like '{1}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToContinue, new UserMsg(eUserMsgType.QUESTION, "Replace Existing", "Are you sure you want to delete the existing '{1}' ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.BaseAPIWarning, new UserMsg(eUserMsgType.WARN, "Base API Not found", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BaseAPIWarning, new UserMsg(eUserMsgType.WARN, "Merged API Not found", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SureWantToDelete, new UserMsg(eUserMsgType.QUESTION, "Delete", "Are you sure you want to delete '{0}'?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete All", "Didn't found item to delete", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SelectItemToDelete, new UserMsg(eUserMsgType.WARN, "Delete", "Please select items to delete", eUserMsgOption.OK, eUserMsgSelection.None));

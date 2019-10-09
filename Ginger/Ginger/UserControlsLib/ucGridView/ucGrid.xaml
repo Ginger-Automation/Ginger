@@ -130,6 +130,18 @@
                         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
                     </Style>
                 </DataGrid.RowHeaderStyle>
+                <DataGrid.CommandBindings>
+                    <CommandBinding Command="Copy" Executed="DoKeyboardCommand" />
+                    <CommandBinding Command="Cut" Executed="DoKeyboardCommand" />
+                    <CommandBinding Command="Paste" Executed="DoKeyboardCommand" />
+                    <CommandBinding Command="Delete" Executed="DoKeyboardCommand" />
+                </DataGrid.CommandBindings>
+                <DataGrid.InputBindings>
+                    <KeyBinding Key="C" Modifiers="Control" Command="Copy" />
+                    <KeyBinding Key="X" Modifiers="Control" Command="Cut" />
+                    <KeyBinding Key="V" Modifiers="Control" Command="Paste" />
+                    <KeyBinding Key="Delete" Modifiers="Control" Command="Delete" />
+                </DataGrid.InputBindings>
             </DataGrid>
         </Grid>
     </DockPanel>

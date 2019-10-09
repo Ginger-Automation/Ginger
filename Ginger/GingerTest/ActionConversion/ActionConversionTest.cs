@@ -224,7 +224,7 @@ namespace GingerTest
                 TotalProcessingActionsCount = mBF.Activities[0].Acts.Count
             };
 
-            utils.ConvertToActions(statusLst, addNewActivity, lst, convertableTargetApplications, convertToPOMAction, poms);
+            utils.ConvertBusinessFlowLegacyActions(statusLst, addNewActivity, lst, convertableTargetApplications, convertToPOMAction, poms);
         }
 
         private static void ExecuteActionConversionForMultipleBF(bool addNewActivity, bool convertoSameTA = true, 
