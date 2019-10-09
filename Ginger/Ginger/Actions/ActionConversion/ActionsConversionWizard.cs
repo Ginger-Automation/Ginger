@@ -218,7 +218,7 @@ namespace Ginger.Actions.ActionConversion
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Legacy Actions conversion process.", ex);
                 Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
             }
             finally

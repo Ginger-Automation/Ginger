@@ -33,6 +33,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -107,9 +108,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
-                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Exchange);
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Reject);
+                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Clean Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Delete);
 
                 AddSourceControlOptions(mContextMenu);
 
@@ -139,7 +140,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
+        private async void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
             if (((ITreeViewItem)this).NodeObject().GetType().Equals(typeof(GingerCore.BusinessFlow)))
@@ -150,7 +151,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
 
             ActionConversionUtils utils = new ActionConversionUtils();
-            utils.RemoveLegacyActionsHandler(lstBFToConvert);
+            await Task.Run(() => utils.RemoveLegacyActionsHandler(lstBFToConvert));
         }
 
         private void VisualAutomate(object sender, RoutedEventArgs e)

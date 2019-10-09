@@ -790,7 +790,7 @@ namespace Amdocs.Ginger.Repository
 
         public void RefreshSourceControlStatus()
         {
-            if (mSourceControlStatus != eImageType.Null)
+            if (SourceControl != null && mSourceControlStatus != eImageType.Null)
             {                
                 mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
                 OnPropertyChanged(nameof(SourceControlStatus));                                

@@ -55,9 +55,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         {
             if (mDeltaAPIModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
             {
-                xMergerTextRow.Height = new GridLength(30);
                 if (mDeltaAPIModel.MergedAPIModel == null)
                 {
+                    xMergerTextRow.Height = new GridLength(50);
+
                     xMatchedAPIAsBaseBtn.Visibility = Visibility.Visible;
                     xLearnedAPIAsBaseBtn.Visibility = Visibility.Visible;
 
@@ -69,6 +70,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 }
                 else
                 {
+                    xMergerTextRow.Height = new GridLength(30);
+
                     xMatchedAPIAsBaseBtn.Visibility = Visibility.Collapsed;
                     xLearnedAPIAsBaseBtn.Visibility = Visibility.Collapsed;
 
@@ -96,6 +99,9 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         private void XLearnedAPIAsBaseBtn_Click(object sender, RoutedEventArgs e)
         {
             mDeltaAPIModel.MergedAPIModel = LearnAPIModelsUtils.CreateAPIModelObject(mDeltaAPIModel.learnedAPI);
+            mDeltaAPIModel.MergedAPIModel.TargetApplicationKey = mDeltaAPIModel.matchingAPIModel.TargetApplicationKey;
+            mDeltaAPIModel.MergedAPIModel.TagsKeys = mDeltaAPIModel.matchingAPIModel.TagsKeys;
+
             ToggleSections();
         }
 

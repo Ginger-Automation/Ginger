@@ -546,6 +546,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             delete.OperationHandler = DeleteGroupHandler;
             groupOperationsList.Add(delete);
 
+            ListItemGroupOperation disable = new ListItemGroupOperation();
+            disable.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            disable.AutomationID = "disableGroup";
+            disable.Header = "Disable Group";
+            disable.ImageSize = 14;
+            disable.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InActive;
+            disable.ToolTip = "Disable all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            disable.OperationHandler = DisableGroupHandler;
+            groupOperationsList.Add(disable);
+
+            ListItemGroupOperation activate = new ListItemGroupOperation();
+            activate.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            activate.AutomationID = "activateGroup";
+            activate.Header = "Activate Group";
+            activate.ImageSize = 14;
+            activate.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+            activate.ToolTip = "Activate all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            activate.OperationHandler = ActivateGroupHandler;
+            groupOperationsList.Add(activate);
+
             ListItemGroupOperation copyGroup = new ListItemGroupOperation();
             copyGroup.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copyGroup.AutomationID = "copyGroup";
@@ -574,23 +594,25 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasteInGroup.OperationHandler = PasteInGroupHandler;
             groupOperationsList.Add(pasteInGroup);
 
+            ListItemGroupOperation export = new ListItemGroupOperation();
+            export.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            export.AutomationID = "exportGroup";
+            export.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.ALM;
+            export.Group = "ALM Operations";
+            export.Header = "Export Group";
+            export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+            export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
+            export.OperationHandler = ExportGroupHandler;
+            groupOperationsList.Add(export);
+
             ListItemGroupOperation addToSR = new ListItemGroupOperation();
-            addToSR.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            addToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addToSR.AutomationID = "addGroupToSR";
             addToSR.Header = "Add Group to Shared Repository";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.ToolTip = "Add group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to Shared Repository";
             addToSR.OperationHandler = AddGroupToSRHandler;
             groupOperationsList.Add(addToSR);
-
-            ListItemGroupOperation export = new ListItemGroupOperation();
-            export.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            export.AutomationID = "exportGroup";
-            export.Header = "Export Group";
-            export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
-            export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
-            export.OperationHandler = ExportGroupHandler;
-            groupOperationsList.Add(export);
 
             return groupOperationsList;
         }
@@ -790,6 +812,24 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteGroup, activitiesGroup.Name) == eUserMsgSelection.Yes)
             {                
                 mContext.BusinessFlow.DeleteActivitiesGroup(activitiesGroup);
+            }
+        }
+
+        private void DisableGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            foreach(ActivityIdentifiers activityIdt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                activityIdt.IdentifiedActivity.Active = false;
+            }
+        }
+
+        private void ActivateGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            foreach (ActivityIdentifiers activityIdt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                activityIdt.IdentifiedActivity.Active = true;
             }
         }
 
@@ -1046,35 +1086,50 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public void CutSelected()
         {
-            CutSelectedHandler(null, null);
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
+            {
+                CutSelectedHandler(null, null);
+            }
         }
 
         public void Paste()
         {
-            if (ListView.List.SelectedItems.Count > 0)
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
             {
-                PasteAfterCurrentHandler(null, null);
-            }
-            else
-            {
-                PasteInListHandler(null, null);
+                if (ListView.List.SelectedItems.Count > 0)
+                {
+                    PasteAfterCurrentHandler(null, null);
+                }
+                else
+                {
+                    PasteInListHandler(null, null);
+                }
             }
         }
 
         public void DeleteSelected()
         {
-            if (ListView.List.SelectedItems.Count == 0)
+            if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.SharedReposiotry ||
+                 PageViewMode == General.eRIPageViewMode.Child || PageViewMode == General.eRIPageViewMode.ChildWithSave ||
+                    PageViewMode == General.eRIPageViewMode.Standalone)
             {
-                Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
-                return;
-            }
-
-            if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems) == eUserMsgSelection.Yes)
-            {
-                List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
-                foreach (Activity activity in SelectedItemsList)
+                if (ListView.List.SelectedItems.Count == 0)
                 {
-                    mContext.BusinessFlow.DeleteActivity(activity);
+                    Reporter.ToUser(eUserMsgKey.SelectItemToDelete);
+                    return;
+                }
+
+                if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteSelectedItems, GingerDicser.GetTermResValue(eTermResKey.Activities), ((Activity)ListView.List.SelectedItems[0]).ActivityName) == eUserMsgSelection.Yes)
+                {
+                    List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
+                    foreach (Activity activity in SelectedItemsList)
+                    {
+                        mContext.BusinessFlow.DeleteActivity(activity);
+                    }
                 }
             }
         }
