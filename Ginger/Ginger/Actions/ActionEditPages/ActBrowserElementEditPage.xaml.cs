@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -51,6 +50,11 @@ namespace Ginger.Actions
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
 
             List<ActBrowserElement.eControlAction> supportedControlActions = mPlatform.GetPlatformBrowserControlOperations();
+            //validate operation is valid
+            if (supportedControlActions.Contains(mAct.ControlAction) == false)
+            {
+                mAct.ControlAction = supportedControlActions[0];
+            }
 
             //bind controls
             GingerCore.General.FillComboFromEnumObj(xControlActionComboBox, mAct.ControlAction, supportedControlActions.Cast<object>().ToList());

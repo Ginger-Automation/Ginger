@@ -1262,21 +1262,6 @@
                                         ContentSource="Header"
                                         Margin="50,2" />
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
-                            <Setter TargetName="Border" Property="VerticalAlignment"  Value="Top" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter Property="FontWeight" Value="Normal"/>
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1296,21 +1281,6 @@
                                         ContentSource="Header"
                                         Margin="20,2" />
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
-                            <Setter TargetName="Border" Property="VerticalAlignment"  Value="Top" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="False">
-                            <Setter Property="FontWeight" Value="Normal"/>
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1405,6 +1375,15 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Margin" Value="5 0 0 0"/>
         <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Path=IsSelected}" Value="True">
+                <Setter Property="FontWeight" Value="Bold"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Path=IsSelected}" Value="False">
+                <Setter Property="FontWeight" Value="Normal"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
 

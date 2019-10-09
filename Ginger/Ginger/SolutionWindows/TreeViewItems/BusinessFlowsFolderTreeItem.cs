@@ -38,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -142,9 +143,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 else
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), allowRefresh: false);
 
-                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion");
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions", ActionsConversionHandler, null, eImageType.Exchange);
-                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Remove Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Reject);
+                MenuItem actConversionMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Conversion", eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Legacy Actions Conversion", ActionsConversionHandler, null, eImageType.Convert);
+                TreeViewUtils.AddSubMenuItem(actConversionMenu, "Clean Inactive Legacy Actions", LegacyActionsRemoveHandler, null, eImageType.Delete);
 
                 AddSourceControlOptions(mContextMenu, false, false);
 
@@ -182,7 +183,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
+        private async void LegacyActionsRemoveHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             ObservableList<BusinessFlowToConvert> lstBFToConvert = new ObservableList<BusinessFlowToConvert>();
             var items = ((Amdocs.Ginger.Repository.RepositoryFolder<GingerCore.BusinessFlow>)((ITreeViewItem)this).NodeObject()).GetFolderItemsRecursive();
@@ -192,9 +193,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 flowToConvert.BusinessFlow = (GingerCore.BusinessFlow)bf;
                 lstBFToConvert.Add(flowToConvert);
             }
-
             ActionConversionUtils utils = new ActionConversionUtils();
-            utils.RemoveLegacyActionsHandler(lstBFToConvert);
+
+            await Task.Run(() => utils.RemoveLegacyActionsHandler(lstBFToConvert));
         }
 
         private void ImportSeleniumScript(object sender, System.Windows.RoutedEventArgs e)
