@@ -1864,86 +1864,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
-        {
-            if (filteredElementType.Count == 0 && foundElementsList == null)
-            {
-                return GetVisibleJavaControls();
-            }
-
-            List<ElementInfo> list = new List<ElementInfo>();
-
-            PayLoad Response = GetCurrentJavaWindowVisibleControls();
-
-            List<PayLoad> ControlsPL = Response.GetListPayLoad();
-            foreach (PayLoad pl in ControlsPL)
-            {
-                JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
-                ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
-                ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);
-                ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
-                if (ci.OptionalValuesObjectsList.Count > 0)
-                {
-                    ci.OptionalValuesObjectsList[0].IsDefault = true;
-                }
-                // set the Flag in case you wish to learn the element or not
-                bool learnElement = true;
-                if (filteredElementType != null)
-                {
-                    if (!filteredElementType.Contains(ci.ElementTypeEnum))
-                        learnElement = false;
-                }
-                if (learnElement)
-                {
-                    ci.IsAutoLearned = true;
-                    foundElementsList.Add(ci);
-                }
-            }
-            list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-
-            return list;
-        }
-
-        private List<ElementInfo> GetVisibleJavaControls()
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
-            PayLoad Response = GetCurrentJavaWindowVisibleControls();
-
-            List<PayLoad> ControlsPL = Response.GetListPayLoad();
-            foreach (PayLoad pl in ControlsPL)
-            {
-                JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
-                list.Add(ci);
-                if (ci.ElementTypeEnum == eElementType.Browser)
-                {
-                    PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
-                    String flag = PL.GetValueString();
-
-                    if (flag.Contains("True"))
-                    {
-                        InitializeBrowser(ci);
-
-                        List<ElementInfo> HTMLControlsPL = GetBrowserVisibleControls();
-                        if (HTMLControlsPL != null)
-                            list.AddRange(HTMLControlsPL);
-
-                    }
-                }
-                else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
-                {
-                    InitializeJEditorPane(ci);
-                    List<ElementInfo> HTMLControlsPL = GetBrowserVisibleControls();
-                    if (HTMLControlsPL != null)
-                        list.AddRange(HTMLControlsPL);
-                }
-            }
-
-            return list;
-        }
-
-        private PayLoad GetCurrentJavaWindowVisibleControls()
-        {
             PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
             Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
             Request.ClosePackage();
@@ -1954,9 +1878,74 @@ namespace GingerCore.Drivers.JavaDriverLib
                 string ErrMsg = Response.GetValueString();
                 throw new Exception(ErrMsg);
             }
+            else
+            {
+                List<PayLoad> ControlsPL = Response.GetListPayLoad();
+                foreach (PayLoad pl in ControlsPL)
+                {
+                    JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
 
-            return Response;
+                    if(isPOMLearn)
+                    {
+                        ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
+                        ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);
+                        ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
+                        if (ci.OptionalValuesObjectsList.Count > 0)
+                        {
+                            ci.OptionalValuesObjectsList[0].IsDefault = true;
+                        }
+                        // set the Flag in case you wish to learn the element or not
+                        bool learnElement = true;
+                        if (filteredElementType != null)
+                        {
+                            if (!filteredElementType.Contains(ci.ElementTypeEnum))
+                                learnElement = false;
+                        }
+                        if (learnElement)
+                        {
+                            ci.IsAutoLearned = true;
+                            foundElementsList.Add(ci);
+                        }
+                    }
+                    else
+                    {
+                        list.Add(ci);
+                        List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                        if (ci.ElementTypeEnum == eElementType.Browser)
+                        {
+                            PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
+                            String flag = PL.GetValueString();
+
+                            if (flag.Contains("True"))
+                            {
+                                InitializeBrowser(ci);
+
+                                HTMLControlsPL = GetBrowserVisibleControls();
+                                if (HTMLControlsPL != null)
+                                    list.AddRange(HTMLControlsPL);
+                            }
+                        }
+                        //TODO: J.G. use elementTypeEnum instead of contains
+                        else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
+                        {
+                            InitializeJEditorPane(ci);
+                            HTMLControlsPL = GetBrowserVisibleControls();
+                            if (HTMLControlsPL != null)
+                                list.AddRange(HTMLControlsPL);
+                        }
+                    }
+                    
+                }
+            }
+
+            if(isPOMLearn)
+            {
+                list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+            }            
+            return list;
+
         }
+
 
         public List<ElementInfo> GetBrowserVisibleControls()
         {
