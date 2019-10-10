@@ -57,6 +57,7 @@ namespace GingerCore
         }
 
         string mDescription;
+        [IsSerializedForLocalRepository]
         public string Description { get { return mDescription; } set { if (mDescription != value) { mDescription = value; OnPropertyChanged(nameof(Description)); } } }
 
         public override string ItemName

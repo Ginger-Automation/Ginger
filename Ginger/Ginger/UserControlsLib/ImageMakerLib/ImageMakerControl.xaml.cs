@@ -740,7 +740,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Browser:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Firefox);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Chrome);
                     break;
 
                 case eImageType.KeyboardLayout:
@@ -872,6 +872,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.LinkSquare:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ExternalLinkSquare);
+                    break;
+                case eImageType.DatePicker:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Calendar);
+                    break;
+                case eImageType.TreeView:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
                 #endregion
 

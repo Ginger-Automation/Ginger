@@ -80,11 +80,11 @@ namespace GingerCoreNET.Application_Models
                 PrepareCurrentPOMElementsData();
                 if (PomLearnUtils.LearnOnlyMappedElements)
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.AutoMapElementTypesList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements);
+                    mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.AutoMapElementTypesList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true);
                 }
                 else
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements);
+                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
