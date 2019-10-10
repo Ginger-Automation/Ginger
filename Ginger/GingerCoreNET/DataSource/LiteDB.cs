@@ -668,7 +668,10 @@ namespace GingerCoreNET.DataSource
         {
             using (var db = new LiteDatabase(FileFullPath))
             {
-                db.RenameCollection(tableName, newTableName);
+                if (tableName != newTableName)
+                {
+                    db.RenameCollection(tableName, newTableName);
+                }
             }
             bool changedwasDone = false;
             this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref changedwasDone);

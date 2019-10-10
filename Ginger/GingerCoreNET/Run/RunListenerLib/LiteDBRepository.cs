@@ -135,11 +135,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private object MapActivityToLiteDb(Activity activity, Context context, eExecutedFrom executedFrom)
         {
             LiteDbActivity AR = new LiteDbActivity();
-            context.Activity = activity;
             context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             AR.Seq = ++this.activitySeq;
+            actionSeq = 0;
             if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = activity.LiteDbId;
@@ -287,6 +287,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         private void SetBfobjects(Context context, eExecutedFrom executedFrom)
         {
+            activitySeq = 0;
             var bf = context.BusinessFlow;
             bf.Activities.ToList().ForEach(activity => this.MapActivityToLiteDb(activity, context, executedFrom));
             bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
