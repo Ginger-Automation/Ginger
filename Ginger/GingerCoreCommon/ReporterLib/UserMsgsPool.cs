@@ -291,7 +291,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.GoToUrlFailure, new UserMsg(eUserMsgType.ERROR, "Go To URL Error", "Failed to go to the URL: '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HookLinkEventError, new UserMsg(eUserMsgType.ERROR, "Hook Link Event Error", "The link type is unknown.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToStartAgent, new UserMsg(eUserMsgType.WARN, "Missing Agent", "Please start/select agent.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.RestartAgent, new UserMsg(eUserMsgType.WARN, "Agent config error", "Agent Restart needed.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RestartAgent, new UserMsg(eUserMsgType.WARN, "Agent Restart needed", "Please restart agent.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ASCFNotConnected, new UserMsg(eUserMsgType.ERROR, "Not Connected to ASCF", "Please Connect first.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SetDriverConfigTypeNotHandled, new UserMsg(eUserMsgType.ERROR, "Set Driver configuration", "Unknown Type {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DriverConfigUnknownDriverType, new UserMsg(eUserMsgType.ERROR, "Driver Configuration", "Unknown Driver Type {0}", eUserMsgOption.OK, eUserMsgSelection.None));
