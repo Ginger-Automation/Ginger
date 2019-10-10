@@ -6320,7 +6320,17 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.GetValue:
-                        act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        if (act.ElementType == eElementType.HyperLink)
+                        {
+                            if (e != null)
+                                act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
+                            else
+                                act.AddOrUpdateReturnParamActual("Actual", "");
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        }
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
