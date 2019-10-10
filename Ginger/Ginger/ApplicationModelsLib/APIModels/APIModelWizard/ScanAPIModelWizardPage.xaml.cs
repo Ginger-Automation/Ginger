@@ -81,12 +81,16 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
-            AddAPIModelWizard.DeltaModelsList = APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList);
+            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList).OrderBy(d => d.comparisonStatus));
 
             xApisSelectionGrid.InitViewItems();
 
             xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Collapsed;
             xCompareBtnRow.Height = new GridLength(0);
+
+            //In case any item was selected on the Import Grid throws exception/error 
+            //as selected Item won't anymore exist after updating the DataSource, hence, setting to null
+            xApisSelectionGrid.grdMain.SelectedItem = null;
 
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.DeltaModelsList;
         }

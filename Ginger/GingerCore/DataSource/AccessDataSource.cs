@@ -242,6 +242,10 @@ namespace GingerCore.DataSource
         {
             using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
             {
+                if (connObj.State == ConnectionState.Closed)
+                {
+                    connObj.Open();
+                }
                 DataTable dt = connObj.GetSchema("Tables");
                 foreach (DataRow row in dt.Rows)
                 {
@@ -267,11 +271,11 @@ namespace GingerCore.DataSource
         }
         public override void RenameTable(string TableName, string NewTableName)
         {
-            if(TableName != NewTableName)
+            if(!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
             {
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
                 RunQuery(query);
-            }            
+            }
         }
         
         public override void DeleteTable(string TableName)
