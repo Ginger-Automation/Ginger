@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
-        SuccessfullyConnectedToAgent, FailedToConnectAgent, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent,
+        SuccessfullyConnectedToAgent, FailedToConnectAgent, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
