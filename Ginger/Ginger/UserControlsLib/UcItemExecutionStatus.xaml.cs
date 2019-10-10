@@ -29,7 +29,7 @@ namespace Ginger.UserControlsLib.UCListView
     /// </summary>
     public partial class UcItemExecutionStatus : UserControl
     {
-        public enum eStatusViewMode { Polygon, Image}
+        public enum eStatusViewMode { Polygon, Image, Label}
 
         public static readonly DependencyProperty StatusViewModeProperty = DependencyProperty.Register("StatusViewMode", typeof(eStatusViewMode), typeof(UcItemExecutionStatus),
                              new FrameworkPropertyMetadata(OnStatusViewModePropertyChanged));
@@ -49,7 +49,7 @@ namespace Ginger.UserControlsLib.UCListView
             uc.StatusViewMode = (eStatusViewMode)e.NewValue;
         }
         
-        public double StatusImageSize
+        public double StatusSize
         {
             get
             {
@@ -57,9 +57,13 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     return xPolygonStatusImage.SetAsFontImageWithSize;
                 }
-                else
+                else if (StatusViewMode == eStatusViewMode.Image)
                 {
-                    return xStatusImage.SetAsFontImageWithSize;
+                    return xStatusImagePnl.Height;
+                }
+                else//label
+                {
+                    return xStatusLbl.FontSize;
                 }
             }
             set
@@ -68,9 +72,13 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     xPolygonStatusImage.SetAsFontImageWithSize = value;
                 }
-                else
+                else if (StatusViewMode == eStatusViewMode.Image)
                 {
-                    xStatusImage.SetAsFontImageWithSize = value;
+                    xStatusImagePnl.Height = value;
+                }
+                else//label
+                {
+                    xStatusLbl.FontSize = value;
                 }
             }
         }
@@ -113,15 +121,25 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetViewModeControls()
         {
-            if (StatusViewMode == eStatusViewMode.Polygon)
+            switch(StatusViewMode)
             {
-                xPolygonStatusPnl.Visibility = Visibility.Visible;
-                xStatusImage.Visibility = Visibility.Collapsed;
-            }
-            else//image view mode
-            {
-                xPolygonStatusPnl.Visibility = Visibility.Collapsed;
-                xStatusImage.Visibility = Visibility.Visible;
+                case eStatusViewMode.Polygon:
+                    xPolygonStatusPnl.Visibility = Visibility.Visible;
+                    xStatusImagePnl.Visibility = Visibility.Collapsed;
+                    xStatusLbl.Visibility = Visibility.Collapsed;
+                    break;
+
+                case eStatusViewMode.Image:
+                    xPolygonStatusPnl.Visibility = Visibility.Collapsed;
+                    xStatusImagePnl.Visibility = Visibility.Visible;
+                    xStatusLbl.Visibility = Visibility.Collapsed;
+                    break;
+
+                case eStatusViewMode.Label:
+                    xPolygonStatusPnl.Visibility = Visibility.Collapsed;
+                    xStatusImagePnl.Visibility = Visibility.Collapsed;
+                    xStatusLbl.Visibility = Visibility.Visible;
+                    break;
             }
         }
 
@@ -163,29 +181,41 @@ namespace Ginger.UserControlsLib.UCListView
                     break;
             }
 
-            if (StatusViewMode == eStatusViewMode.Polygon)
+            switch (StatusViewMode)
             {
-                xPolygon.Fill = mStatusBrush;
-                xPolygon.Stroke = mStatusBrush;
-                xPolygon.ToolTip = Status.ToString();
+                case eStatusViewMode.Polygon:
+                    xPolygon.Fill = mStatusBrush;
+                    xPolygon.Stroke = mStatusBrush;
+                    xPolygon.ToolTip = Status.ToString();
+                    if (Status == eRunStatus.Stopped)
+                    {
+                        StatusSize = 10;
+                    }
+                    xPolygonStatusImage.ImageType = mStatusImage;
+                    xPolygonStatusImage.Width = StatusSize;
+                    xPolygonStatusImage.Height = StatusSize;
+                    xPolygonStatusImage.ToolTip = Status.ToString();
+                    break;
 
-                if (Status == eRunStatus.Stopped)
-                {
-                    StatusImageSize = 10;
-                }
+                case eStatusViewMode.Image:
+                    xStatusImagePnl.Children.Clear();
+                    Amdocs.Ginger.UserControls.ImageMakerControl xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
+                    xExecutionStatusImage.ImageType = mStatusImage;
+                    xExecutionStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
+                    xExecutionStatusImage.SetAsFontImageWithSize = StatusSize;
+                    xExecutionStatusImage.Width = StatusSize;
+                    xExecutionStatusImage.Height = StatusSize;
+                    xExecutionStatusImage.HorizontalAlignment = HorizontalAlignment.Center;
+                    xExecutionStatusImage.VerticalAlignment = VerticalAlignment.Center;
+                    xExecutionStatusImage.ToolTip = Status.ToString();
+                    xStatusImagePnl.Children.Add(xExecutionStatusImage);
+                    break;
 
-                xPolygonStatusImage.ImageType = mStatusImage;
-                xPolygonStatusImage.Width = StatusImageSize;
-                xPolygonStatusImage.Height = StatusImageSize;
-                xPolygonStatusImage.ToolTip = Status.ToString();
-            }
-            else//image view mode
-            {
-                xStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
-                xStatusImage.ImageType = mStatusImage;
-                xStatusImage.Width = StatusImageSize;
-                xStatusImage.Height = StatusImageSize;
-                xStatusImage.ToolTip = Status.ToString();
+                case eStatusViewMode.Label:
+                    xStatusLbl.Content = Status.ToString();
+                    xStatusLbl.Foreground = (SolidColorBrush)mStatusBrush;
+                    xStatusLbl.FontSize = StatusSize;
+                    break;
             }
         }
     }

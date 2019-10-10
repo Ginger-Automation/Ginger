@@ -314,7 +314,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    DataSourceBase mDSDetails = (((DataSourceTable)selectedRunSet[0]).DSC);
+
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
                     im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName);

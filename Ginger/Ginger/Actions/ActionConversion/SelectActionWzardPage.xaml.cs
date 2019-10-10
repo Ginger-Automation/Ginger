@@ -49,6 +49,10 @@ namespace Ginger.Actions.ActionConversion
                 case EventType.Active:
                     Init();
                     break;
+                case EventType.Prev:
+                    mWizard.LstSelectedActivities = null;
+                    mWizard.ActionToBeConverted = null;
+                    break;
                 case EventType.LeavingForNextPage:
                     SetSelectedActionsForConversion();
                     break;
