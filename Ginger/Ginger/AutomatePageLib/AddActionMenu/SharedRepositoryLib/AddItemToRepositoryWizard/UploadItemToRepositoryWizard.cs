@@ -96,19 +96,19 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
         public virtual Type GetTypeOfItemParts(RepositoryItemBase item)
         {
-            if (item.GetType() == typeof(Activity))
+            if (item is Activity)
             {
                 return typeof(eItemParts);   
             }
-            else if (item.GetType() == typeof(Act))
+            else if (item is Act)
             {
                 return typeof(Act.eItemParts);
             }
-            else if (item.GetType() == typeof(ActivitiesGroup))
+            else if (item is ActivitiesGroup)
             { 
                 return typeof(ActivitiesGroup.eItemParts);
             }
-            else if (item.GetType() == typeof(VariableBase))
+            else if (item is VariableBase)
             { 
                 return typeof(VariableBase.eItemParts);
             }
