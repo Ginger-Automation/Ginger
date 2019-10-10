@@ -721,7 +721,10 @@ namespace Ginger.Actions
                 }
             }
 
-            mStoreToVarsList.Move(mStoreToVarsList.IndexOf(string.Empty), 0);//making sure the empty option is first
+            if (mStoreToVarsList.Count > 0)
+            {
+                mStoreToVarsList.Move(mStoreToVarsList.IndexOf(string.Empty), 0);//making sure the empty option is first
+            }
         }
 
         private void SetActInputValuesGrid()
