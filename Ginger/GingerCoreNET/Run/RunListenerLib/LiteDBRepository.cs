@@ -140,6 +140,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             AR.Seq = ++this.activitySeq;
+            actionSeq = 0;
             if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = activity.LiteDbId;
