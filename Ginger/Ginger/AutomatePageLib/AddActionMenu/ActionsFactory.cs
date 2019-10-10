@@ -129,6 +129,11 @@ namespace Ginger.BusinessFlowPages
             return targetIndex;
         }
 
+        static bool ItemFromSharedRepository(Act thisAct)
+        {
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>().Any(a => a == thisAct);
+        }
+
         /// <summary>
         /// In case object of type Act was passed, adds relevant action being Legacy/PlugIn/One that Adds via Wizard
         /// </summary>
@@ -137,7 +142,13 @@ namespace Ginger.BusinessFlowPages
         /// <returns></returns>
         static Act GenerateSelectedAction(Act selectedAction, Context mContext)
         {
-            if (selectedAction.AddActionWizardPage != null && !selectedAction.ContainingFolder.Contains("SharedRepository"))
+            Act instance = null;
+
+            if (ItemFromSharedRepository(selectedAction))
+            {
+                instance = (Act)selectedAction.CreateInstance(true);
+            }
+            else if (selectedAction.AddActionWizardPage != null)
             {
                 string classname = selectedAction.AddActionWizardPage;
                 Type t = System.Reflection.Assembly.GetExecutingAssembly().GetType(classname);
@@ -153,16 +164,7 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                Act instance = null;
-
-                if (selectedAction.IsSharedRepositoryInstance || selectedAction.ContainingFolder.Contains("SharedRepository"))
-                {
-                    instance = (Act)selectedAction.CreateInstance(true);
-                }
-                else
-                {
-                    instance = (Act)selectedAction.CreateCopy();
-                }
+                instance = (Act)selectedAction.CreateCopy();
 
                 if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
@@ -207,9 +209,9 @@ namespace Ginger.BusinessFlowPages
                         // if agent not found auto add or ask user 
                     }
                 }
-
-                return instance;
             }
+
+            return instance;
         }
 
         /// <summary>
@@ -223,7 +225,7 @@ namespace Ginger.BusinessFlowPages
             Act instance;
             IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
             string elementVal = string.Empty;
-            if(elementInfo.OptionalValuesObjectsList.Count > 0)
+            if (elementInfo.OptionalValuesObjectsList.Count > 0)
             {
                 elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
             }
@@ -248,7 +250,7 @@ namespace Ginger.BusinessFlowPages
         /// </summary>
         /// <param name="sharedActivitiesToAdd">Shared Repository Activities to Add Instances from</param>
         /// <param name="businessFlow">Business Flow to add to</param>
-        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex=-1)
+        public static void AddActivitiesFromSRHandler(List<Activity> sharedActivitiesToAdd, BusinessFlow businessFlow, string ActivitiesGroupID = null, int insertIndex = -1)
         {
             ActivitiesGroup parentGroup = null;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
@@ -266,8 +268,8 @@ namespace Ginger.BusinessFlowPages
                 {
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
-                    businessFlow.SetActivityTargetApplication(activityIns);                    
-                    businessFlow.AddActivity(activityIns, parentGroup,insertIndex);
+                    businessFlow.SetActivityTargetApplication(activityIns);
+                    businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
                     //mBusinessFlow.CurrentActivity = droppedActivityIns;
                 }
             }
