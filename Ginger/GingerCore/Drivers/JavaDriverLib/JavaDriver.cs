@@ -2078,16 +2078,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             EI.ElementTypeEnum = GetHTMLElementType(EI.ElementType);
             EI.Path = PL.GetValueString();
             EI.XPath = PL.GetValueString();
-            EI.RelXpath = PL.GetValueString();
-            string IsExpandable = PL.GetValueString();
-            if (IsExpandable == "Y")
-            {
-                EI.IsExpandable = true;
-            }
-            else
-            {
-                EI.IsExpandable = false;
-            }
+            EI.RelXpath = PL.GetValueString();        
             return EI;
         }
 
