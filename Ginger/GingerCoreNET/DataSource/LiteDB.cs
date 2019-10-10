@@ -198,7 +198,7 @@ namespace GingerCoreNET.DataSource
                                 if (!dt.Columns.Contains(property.Key))
                                 {
                                     dt.Columns.Add(property.Key, typeof(string));
-                                    
+
                                 }
                                 switch (property.Value.Type)
                                 {
@@ -291,7 +291,7 @@ namespace GingerCoreNET.DataSource
             {
                 if (tableName == "")
                 { return mColumnNames; }
-                    
+
                 var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
                 var dt = new LiteDataTable(results.ToString());
                 foreach (var doc in results)
@@ -401,7 +401,7 @@ namespace GingerCoreNET.DataSource
             DataTable dataTable = new DataTable();
             bool duplicate = false;
             using (var db = new LiteDatabase(FileFullPath))
-            { 
+            {
                 var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
                 try
                 {
@@ -666,12 +666,24 @@ namespace GingerCoreNET.DataSource
 
         public override void RenameTable(string tableName, string newTableName)
         {
+            bool renameSuccess = false;
+            bool tableExist = false;
             using (var db = new LiteDatabase(FileFullPath))
             {
-                db.RenameCollection(tableName, newTableName);
+                tableExist = db.CollectionExists(newTableName);
+                if (!tableExist)
+                {
+                    renameSuccess = db.RenameCollection(tableName, newTableName);
+                }
             }
-            bool changedwasDone = false;
-            this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref changedwasDone);
+            if (renameSuccess)
+            {
+                this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
+            }
+            else if(tableExist)
+            {
+                Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
+            }
         }
 
         public override void RunQuery(string query)
@@ -767,7 +779,7 @@ namespace GingerCoreNET.DataSource
             }
             return result;
         }
-        
+
 
         public string GetResut(string query, string DSTableName, bool MarkUpdate)
         {
@@ -812,7 +824,7 @@ namespace GingerCoreNET.DataSource
                         {
                             dr["GINGER_ID"]= dtChange.Rows.IndexOf(dr) + 1;
                         }
-                        
+
                         var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
 
                         var mapper = new BsonMapper();
@@ -826,7 +838,7 @@ namespace GingerCoreNET.DataSource
                 }
                 dtChange.AcceptChanges();
                 var result = db.GetCollection(table.Name).Find(Query.All()).ToList();
-                
+
                 if (dataTable.Rows.Count > result.Count)
                 {
                     table.Upsert(batch);
@@ -845,7 +857,7 @@ namespace GingerCoreNET.DataSource
         {
             return GetQueryOutput(TableName);
         }
-        
+
         public override void AddRow(List<string> mColumnNames, DataSourceTable mDSTableDetails)
         {
             DataRow dr = mDSTableDetails.DataTable.NewRow();
@@ -925,7 +937,7 @@ namespace GingerCoreNET.DataSource
                 DSCondition = actDSTable.ActDSConditions.Count;
             }
             DataTable dt = new DataTable();
-            
+
             switch (actDSTable.ControlAction)
             {
                 case ActDSTableElement.eControlAction.GetValue:
@@ -936,7 +948,7 @@ namespace GingerCoreNET.DataSource
                         bool nextavail = actDSTable.ByNextAvailable;
                         if (actDSTable.IsKeyValueTable)
                         {
-                           string result= GetResultString(Query);
+                            string result= GetResultString(Query);
                             actDSTable.AddOrUpdateReturnParamActual("Output", result);
                         }
                         else if (nextavail)
@@ -968,7 +980,7 @@ namespace GingerCoreNET.DataSource
                         }
                     }
                     // By Selected Cell
-                    else 
+                    else
                     {
                         dt = GetQueryOutput(Query);
                         dt.TableName = actDSTable.DSTableName;
@@ -1079,7 +1091,7 @@ namespace GingerCoreNET.DataSource
                 case eControlAction.DeleteAll:
                     List<object> AllItemsList = null;
                     DeleteAll(AllItemsList, actDSTable.DSTableName);
-                    
+
                     actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     break;
                 default:
@@ -1133,24 +1145,26 @@ namespace GingerCoreNET.DataSource
                 List<string> ColumnList = GetColumnList(TName);
                 table.Delete(Query.All());
                 List<BsonDocument> batch = new List<BsonDocument>();
-                bool b = ColumnList.Any(s=>s.Contains("GINGER_USED"));
-                string[] List = null;
-                if (b)
-                {
-                     List = AddNewCustomizedTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                }
-                else
-                {
-                    List = AddNewKeyValueTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                }
+
+                //bool b = ColumnList.Any(s => s.Contains("GINGER_USED"));
+                //string[] List = null;
+                //if (b)
+                //{
+                //    List = AddNewCustomizedTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                //}
+                //else
+                //{
+                //    List = AddNewKeyValueTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                //}
+
                 var doc = new BsonDocument();
-                
-                    for(int i=0; i<ColumnList.Count;i++)
-                    {
-                        doc[List[i]] = "";
-                    }
+
+                for (int i = 0; i < ColumnList.Count; i++)
+                {
+                    doc[ColumnList[i]] = "";
+                }
                 table.Insert(doc);
-                
+
             }
         }
 
@@ -1172,7 +1186,7 @@ namespace GingerCoreNET.DataSource
                 if (collist.Length == vallist.Length)
                 {
                     string[] items2 = vallist.Select(x => x.Replace("'", "\"")).ToArray();
-                    
+
                     for(int j=0; j<i;j++)
                     {
                         colvalues = colvalues+ collist[j] + ":" + items2[j]  + ",";

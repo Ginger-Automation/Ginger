@@ -279,7 +279,8 @@ namespace GingerCore.SourceControl
                             continue;
 
 
-                        if (relativePath == string.Empty || item.FilePath.StartsWith(relativePath))
+                        //sometimes remote file path uses / otherwise \  our code should be path independent 
+                        if (relativePath == string.Empty || System.IO.Path.GetFullPath(System.IO.Path.Combine(RepositoryRootFolder,item.FilePath)).StartsWith(System.IO.Path.GetFullPath(Path)))
                         {
                             SourceControlFileInfo SCFI = new SourceControlFileInfo();
                             SCFI.Path = RepositoryRootFolder + @"\" + item.FilePath;
@@ -554,7 +555,7 @@ namespace GingerCore.SourceControl
                     foreach (var item in repo.RetrieveStatus())
                     {
 
-                        if (relativePath == item.FilePath)
+                        if (Path.GetFullPath(path) == Path.GetFullPath(Path.Combine(RepositoryRootFolder, item.FilePath)))
                         {
                             if (item.State != FileStatus.Ignored)
                                 SCIID.HasUncommittedChanges = "true";

@@ -265,7 +265,7 @@ namespace GingerCore
                 if (mActivities.LazyLoad)
                 {
                     mActivities.GetItemsInfo();
-                    AttachActivitiesGroupsAndActivities();
+                    AttachActivitiesGroupsAndActivities(mActivities);
                 }
                 return mActivities;
             }
@@ -745,10 +745,15 @@ namespace GingerCore
             return false;
         }
 
-        public void AttachActivitiesGroupsAndActivities()
+        public void AttachActivitiesGroupsAndActivities(ObservableList<Activity> activitiesList=null)
         {
+            if (activitiesList == null)
+            {
+                activitiesList = this.Activities;
+            }
+
             //Free Activities which attached to missing group
-            foreach (Activity activity in this.Activities)
+            foreach (Activity activity in activitiesList)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault();
                 if (group != null)
@@ -761,19 +766,19 @@ namespace GingerCore
             }
 
             //Attach mapped activities to groups and clear missing Activities
-            foreach (ActivitiesGroup group in this.ActivitiesGroups)
+            foreach (ActivitiesGroup group in ActivitiesGroups)
             {
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
-                    Activity activ = this.Activities.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
                     {
-                        activ = this.Activities.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     }
                     if (activ == null)
                     {
-                        activ = this.Activities.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
                     }
                     if (activ != null)
                     {
@@ -789,40 +794,40 @@ namespace GingerCore
 
                 //re-add the activities in correct order
                 group.ActivitiesIdentifiers.Clear();
-                foreach (Activity activity in Activities.Where(x => x.ActivitiesGroupID == group.Name).ToList())
+                foreach (Activity activity in activitiesList.Where(x => x.ActivitiesGroupID == group.Name).ToList())
                 {
                     group.AddActivityToGroup(activity);
                 }
             }
 
             //Attach free Activities + make sure Activities groups having valid order
-            foreach (Activity activity in this.Activities)
+            foreach (Activity activity in activitiesList)
             {
                 if (string.IsNullOrEmpty(activity.ActivitiesGroupID) == true
                                 || ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault() == null)
                 {
                     //attach to Activity Group
-                    if (Activities.IndexOf(activity) == 0)
+                    if (activitiesList.IndexOf(activity) == 0)
                     {
                         ActivitiesGroup group = AddActivitiesGroup(null, 0);
                         group.AddActivityToGroup(activity);
                     }
                     else
                     {
-                        ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == Activities[Activities.IndexOf(activity) - 1].ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activitiesList[activitiesList.IndexOf(activity) - 1].ActivitiesGroupID).FirstOrDefault();
                         group.AddActivityToGroup(activity);
                     }
                 }
                 else
                 {
-                    if (Activities.IndexOf(activity) != 0 &&
-                           activity.ActivitiesGroupID != Activities[Activities.IndexOf(activity) - 1].ActivitiesGroupID)
+                    if (activitiesList.IndexOf(activity) != 0 &&
+                           activity.ActivitiesGroupID != activitiesList[activitiesList.IndexOf(activity) - 1].ActivitiesGroupID)
                     {
                         bool activityGroupIsOutOfSync = false;
                         //validate it is attached in correct order
-                        for (int indx = 0; indx < (Activities.IndexOf(activity) - 1); indx++)
+                        for (int indx = 0; indx < (activitiesList.IndexOf(activity) - 1); indx++)
                         {
-                            if (Activities[indx].ActivitiesGroupID == activity.ActivitiesGroupID)
+                            if (activitiesList[indx].ActivitiesGroupID == activity.ActivitiesGroupID)
                             {
                                 activityGroupIsOutOfSync = true;
                                 break;
@@ -855,7 +860,7 @@ namespace GingerCore
             //Make sure groups order is according to flow
             Dictionary<ActivitiesGroup, int> groupsOrderDic = new Dictionary<ActivitiesGroup, int>();
             int index = 0;
-            foreach (Activity activity in Activities)
+            foreach (Activity activity in activitiesList)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                 if (!groupsOrderDic.ContainsKey(group))
@@ -872,48 +877,6 @@ namespace GingerCore
                 }
             }
         }
-
-        //public enum eUpdateActivitiesGroupDetailsType { All, ClearUnExistedGroups, FreeUnAttachedActivities }
-        //public void UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType updateType)
-        //{
-        //    switch (updateType)
-        //    {
-        //        case (eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups):
-        //            foreach (Activity act in this.Activities)
-        //            {
-        //                if (act.ActivitiesGroupID != null && act.ActivitiesGroupID != string.Empty)
-        //                {
-        //                    if ((this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault()) == null)
-        //                    {
-        //                        act.ActivitiesGroupID = string.Empty;
-        //                        //act.ActivitiesGroupColor = string.Empty;
-        //                    }
-        //                }
-        //            }
-        //            break;
-
-        //        case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
-        //            foreach (Activity act in this.Activities)
-        //            {
-        //                ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
-        //                if (group != null)
-        //                {
-        //                    if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
-        //                    {
-        //                        act.ActivitiesGroupID = string.Empty;
-        //                        //act.ActivitiesGroupColor = string.Empty;
-        //                    }
-        //                }
-        //            }
-        //            break;
-
-        //        case (eUpdateActivitiesGroupDetailsType.All):
-        //            UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
-        //            UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
-        //            break;
-        //    }
-        //}
-
 
         public int GetActionsCount()
         {

@@ -458,7 +458,11 @@ namespace Amdocs.Ginger.Common.UIElement
                     return eImageType.TextBox;
                 case eElementType.Window:
                 case eElementType.Dialog:
-                    return eImageType.Window;                
+                    return eImageType.Window;
+                case eElementType.DatePicker:
+                    return eImageType.DatePicker;
+                case eElementType.TreeView:
+                    return eImageType.TreeView;
             }
 
             return eImageType.Element;
@@ -567,6 +571,7 @@ namespace Amdocs.Ginger.Common.UIElement
             TreeView,
             Window,
             HyperLink,
+            [EnumValueDescription("Scroll Bar")]
             ScrollBar,
             Iframe,
             Canvas,

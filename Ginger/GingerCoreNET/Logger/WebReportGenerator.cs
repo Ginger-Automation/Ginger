@@ -132,7 +132,16 @@ namespace Amdocs.Ginger.CoreNET.Logger
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
 
             int totalRunners = liteDbRunSet.RunnersColl.Count;
-            int totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
+            int totalPassed = 0;
+            if (liteDbRunSet.RunStatus == eRunStatus.Automated.ToString())
+            {
+                totalPassed = liteDbRunSet.RunnersColl[0].BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
+                liteDbRunSet.RunnersColl[0].RunStatus = liteDbRunSet.RunnersColl[0].BusinessFlowsColl[0].RunStatus;
+            }
+            else
+            {
+                totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
+            }
             int totalExecuted = totalRunners - liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString()).Count();
             if (totalRunners != 0)
                 liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (totalExecuted * 100 / totalRunners).ToString());
@@ -173,12 +182,12 @@ namespace Amdocs.Ginger.CoreNET.Logger
                         if (totalExecutedActions != 0)
                             liteDbActivity.PassRate = string.Format("{0:F1}", (totalPassedActions * 100 / totalExecutedActions).ToString());
                         if (liteDbActivity.Elapsed.HasValue)
-                            liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value, 2);
+                            liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
                         foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
                         {
                             List<string> newScreenShotsList = new List<string>();
                             if (liteDbAction.Elapsed.HasValue)
-                                liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value, 2);
+                                liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value / 1000, 4);
                             if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
                                 liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
                             foreach (string screenshot in liteDbAction.ScreenShots)

@@ -30,8 +30,8 @@ namespace Amdocs.Ginger.Common
         NoItemWasSelected, AskToAddCheckInComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
-        ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbQueryError, DbConnSucceed, DbConnFailed,
-        SuccessfullyConnectedToAgent, FailedToConnectAgent, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent,
+        ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
+        SuccessfullyConnectedToAgent, FailedToConnectAgent, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
@@ -141,7 +141,7 @@ namespace Amdocs.Ginger.Common
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
-        PluginDownloadInProgress, SaveRunsetChanges
+        PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup
     }
 
     public static class UserMsgsPool
@@ -270,6 +270,7 @@ namespace Amdocs.Ginger.Common
             #region DataBase Messages
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorConnectingToDataBase, new UserMsg(eUserMsgType.ERROR, "Cannot connect to database", "DB Connection error." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorClosingConnectionToDataBase, new UserMsg(eUserMsgType.ERROR, "Error in closing connection to database", "DB Close Connection error" + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableNameError, new UserMsg(eUserMsgType.ERROR, "Invalid DB Table Name", "Table with the name '{0}' already exist in the Database. Please try another name.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbTableError, new UserMsg(eUserMsgType.ERROR, "DB Table Error", "Error occurred while trying to get the {0}." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbQueryError, new UserMsg(eUserMsgType.ERROR, "DB Query Error", "The DB Query returned error, please double check the table name and field name." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DbConnFailed, new UserMsg(eUserMsgType.ERROR, "DB Connection Status", "Connect to the DB failed.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -291,6 +292,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.GoToUrlFailure, new UserMsg(eUserMsgType.ERROR, "Go To URL Error", "Failed to go to the URL: '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HookLinkEventError, new UserMsg(eUserMsgType.ERROR, "Hook Link Event Error", "The link type is unknown.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToStartAgent, new UserMsg(eUserMsgType.WARN, "Missing Agent", "Please start/select agent.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RestartAgent, new UserMsg(eUserMsgType.WARN, "Agent Restart needed", "Please restart agent.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ASCFNotConnected, new UserMsg(eUserMsgType.ERROR, "Not Connected to ASCF", "Please Connect first.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SetDriverConfigTypeNotHandled, new UserMsg(eUserMsgType.ERROR, "Set Driver configuration", "Unknown Type {0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DriverConfigUnknownDriverType, new UserMsg(eUserMsgType.ERROR, "Driver Configuration", "Unknown Driver Type {0}", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -383,6 +385,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DependenciesMissingVariables, new UserMsg(eUserMsgType.INFO, "Missing " + GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.Variables) + " not found." + System.Environment.NewLine + "Please add " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type 'Selection List' to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DuplicateVariable, new UserMsg(eUserMsgType.WARN, "Duplicated " + GingerDicser.GetTermResValue(eTermResKey.Variable), "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " name '{0}' and value '{1}' exist more than once." + System.Environment.NewLine + "Please make sure only one instance exist in order to set the " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingActivityAppMapping, new UserMsg(eUserMsgType.WARN, "Missing " + GingerDicser.GetTermResValue(eTermResKey.Activity) + "-Application Mapping", "Target Application was not mapped to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " so the required Actions platform is unknown." + System.Environment.NewLine + System.Environment.NewLine + "Map Target Application to the Activity by double clicking the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " record and select the application you want to test using it.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.LegacyActionsCleanup, new UserMsg(eUserMsgType.INFO, "Legacy Actions Cleanup", "Legacy Actions cleanup was ended." + Environment.NewLine + Environment.NewLine + "Cleanup Statistics:" + Environment.NewLine + "Number of Processed " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + ": {0}" + Environment.NewLine + "Number of Deleted " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": {1}" + Environment.NewLine + "Number of Deleted Actions: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Activities
 
             #region Support Messages

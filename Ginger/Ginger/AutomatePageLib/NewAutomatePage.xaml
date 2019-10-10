@@ -215,18 +215,18 @@
                                 </MenuItem.Header>
                                 <MenuItem x:Name="xLegacyActionsMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsMenuItem_Click">
                                     <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Exchange" SetAsFontImageWithSize="18" />
+                                        <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="18" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Convert Legacy [BusinessFlow] Actions into New Actions" />
+                                        <GingerCore:ucTextDicResource Text="Legacy Actions Conversion" />
                                     </MenuItem.Header>
                                 </MenuItem>
                                 <MenuItem x:Name="xLegacyActionsRemoveMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsRemoveMenuItem_Click">
                                     <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Reject" SetAsFontImageWithSize="18" />
+                                        <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="18" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Remove Inactive Legacy Actions" />
+                                        <GingerCore:ucTextDicResource Text="Clean Inactive Legacy Actions" />
                                     </MenuItem.Header>
                                 </MenuItem>
                             </MenuItem>

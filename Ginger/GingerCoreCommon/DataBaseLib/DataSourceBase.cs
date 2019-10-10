@@ -34,11 +34,11 @@ namespace GingerCore.DataSource
     {
         public enum eDSType
         {
-            // Access
-            [EnumValueDescription("MS Access")]
-            MSAccess,
             [EnumValueDescription("LiteDataBase")]
             LiteDataBase,
+            // Access
+            [EnumValueDescription("MS Access")]
+            MSAccess,           
         }
 
         public  static class Fields

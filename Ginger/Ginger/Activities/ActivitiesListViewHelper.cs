@@ -397,7 +397,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             copy.Group = "Clipboard";
             copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
             copy.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copy.Header = "Copy";
+            copy.Header = "Copy (Ctrl+C)";
             copy.OperationHandler = CopyHandler;
             extraOperationsList.Add(copy);
 
@@ -406,7 +406,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             cut.AutomationID = "cut";
             cut.Group = "Clipboard";
             cut.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cut.Header = "Cut";
+            cut.Header = "Cut (Ctrl+X)";
             cut.OperationHandler = CutHandler;
             extraOperationsList.Add(cut);
 
@@ -415,7 +415,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasterAfterCurrent.AutomationID = "pasterAfterCurrent";
             pasterAfterCurrent.Group = "Clipboard";
             pasterAfterCurrent.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasterAfterCurrent.Header = "Paste";
+            pasterAfterCurrent.Header = "Paste (Ctrl+V)";
             pasterAfterCurrent.OperationHandler = PasteAfterCurrentHandler;
             extraOperationsList.Add(pasterAfterCurrent);
 
@@ -546,6 +546,26 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             delete.OperationHandler = DeleteGroupHandler;
             groupOperationsList.Add(delete);
 
+            ListItemGroupOperation disable = new ListItemGroupOperation();
+            disable.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            disable.AutomationID = "disableGroup";
+            disable.Header = "Disable Group";
+            disable.ImageSize = 14;
+            disable.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InActive;
+            disable.ToolTip = "Disable all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            disable.OperationHandler = DisableGroupHandler;
+            groupOperationsList.Add(disable);
+
+            ListItemGroupOperation activate = new ListItemGroupOperation();
+            activate.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            activate.AutomationID = "activateGroup";
+            activate.Header = "Activate Group";
+            activate.ImageSize = 14;
+            activate.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+            activate.ToolTip = "Activate all group " + GingerDicser.GetTermResValue(eTermResKey.Activities);
+            activate.OperationHandler = ActivateGroupHandler;
+            groupOperationsList.Add(activate);
+
             ListItemGroupOperation copyGroup = new ListItemGroupOperation();
             copyGroup.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.View, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copyGroup.AutomationID = "copyGroup";
@@ -574,23 +594,25 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasteInGroup.OperationHandler = PasteInGroupHandler;
             groupOperationsList.Add(pasteInGroup);
 
+            ListItemGroupOperation export = new ListItemGroupOperation();
+            export.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            export.AutomationID = "exportGroup";
+            export.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.ALM;
+            export.Group = "ALM Operations";
+            export.Header = "Export Group";
+            export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+            export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
+            export.OperationHandler = ExportGroupHandler;
+            groupOperationsList.Add(export);
+
             ListItemGroupOperation addToSR = new ListItemGroupOperation();
-            addToSR.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            addToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addToSR.AutomationID = "addGroupToSR";
             addToSR.Header = "Add Group to Shared Repository";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.ToolTip = "Add group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to Shared Repository";
             addToSR.OperationHandler = AddGroupToSRHandler;
             groupOperationsList.Add(addToSR);
-
-            ListItemGroupOperation export = new ListItemGroupOperation();
-            export.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
-            export.AutomationID = "exportGroup";
-            export.Header = "Export Group";
-            export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
-            export.ToolTip = "Export group and it " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " to ALM";
-            export.OperationHandler = ExportGroupHandler;
-            groupOperationsList.Add(export);
 
             return groupOperationsList;
         }
@@ -790,6 +812,24 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteGroup, activitiesGroup.Name) == eUserMsgSelection.Yes)
             {                
                 mContext.BusinessFlow.DeleteActivitiesGroup(activitiesGroup);
+            }
+        }
+
+        private void DisableGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            foreach(ActivityIdentifiers activityIdt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                activityIdt.IdentifiedActivity.Active = false;
+            }
+        }
+
+        private void ActivateGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            foreach (ActivityIdentifiers activityIdt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                activityIdt.IdentifiedActivity.Active = true;
             }
         }
 
