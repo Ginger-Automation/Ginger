@@ -99,7 +99,7 @@ namespace Ginger.WindowExplorer.Java
             PayLoad Response = d.Send(Request);
             if (Response.IsErrorPayLoad())
             {
-                string ErrMSG = Response.GetValueString();
+                string ErrMSG = Response.GetErrorValue();
                 return null;  
             }
             
