@@ -29,6 +29,7 @@ using GingerWPF.TreeViewItemsLib;
 using Amdocs.Ginger.Common;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using System.Linq;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -214,24 +215,41 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 return;
             }
             string oldName = DSTableDetails.Name;
-            RenameItem("Table Name:", DSTableDetails, DataSourceTable.Fields.Name);
-            try
+            string newName = DSTableDetails.Name;
+
+            bool wasRenamed = GingerCore.GeneralLib.InputBoxWindow.OpenDialog("Rename", "Table Name:", ref newName);
+            if (wasRenamed)
             {
-                DSTableDetails.DSC.RenameTable(oldName, DSTableDetails.Name);
-                if (mDataSourceTablePage != null)
+                try
                 {
-                    mDataSourceTablePage.RefreshGrid();
-                }                
-                DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.RenameItemError, ex.Message);
-                DSTableDetails.Name = oldName;
+                    if (!newName.Equals(oldName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        bool tableExist = DSDetails.DSTableList.Any(t => t.Name == newName);
+
+                        if (tableExist)
+                        {
+                            Reporter.ToUser(eUserMsgKey.DbTableNameError, newName);
+                        }
+                        else
+                        {
+                            DSTableDetails.DSC.RenameTable(oldName, newName);
+                            DSTableDetails.Name = newName;
+                            if (mDataSourceTablePage != null)
+                            {
+                                mDataSourceTablePage.RefreshGrid();
+                            }
+                        }
+                    }
+                    DSTableDetails.DirtyStatus = eDirtyStatus.NoChange;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.RenameItemError, ex.Message);
+                    DSTableDetails.Name = oldName;
+                }
             }
         }
 
-       
          private void Duplicate(object sender, RoutedEventArgs e)
          {
             if (Reporter.ToUser(eUserMsgKey.LooseLocalChanges) == Amdocs.Ginger.Common.eUserMsgSelection.No)

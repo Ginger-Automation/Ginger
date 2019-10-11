@@ -532,7 +532,7 @@ namespace Ginger
             return tagsDesc;
         }
 
-        public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false)
+        public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false, bool clearBackup = true)
         {
             if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
             {
@@ -540,7 +540,7 @@ namespace Ginger
                 {
                     Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", item.ItemName));
-                    item.RestoreFromBackup(isLocalBackup);
+                    item.RestoreFromBackup(isLocalBackup, clearBackup);
                     return true;
                 }
                 catch (Exception ex)
