@@ -1887,13 +1887,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if(isPOMLearn)
                     {
-                        ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
-                        ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);
-                        ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
-                        if (ci.OptionalValuesObjectsList.Count > 0)
-                        {
-                            ci.OptionalValuesObjectsList[0].IsDefault = true;
-                        }
+                        ((IWindowExplorer)this).LearnElementInfoDetails(ci);
                         // set the Flag in case you wish to learn the element or not
                         bool learnElement = true;
                         if (filteredElementType != null)
@@ -2487,8 +2481,18 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
         {
+            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+            if(ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
+            {
+                EI.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(EI, eLocateBy.ByXPath, EI.XPath);
+            }            
+            if (EI.OptionalValuesObjectsList.Count > 0)
+            {
+                EI.OptionalValuesObjectsList[0].IsDefault = true;
+            }
             return EI;
         }
 
@@ -3334,16 +3338,13 @@ namespace GingerCore.Drivers.JavaDriverLib
             PLListDetails.AddValue(eElementType.ComboBox.ToString());
             PLListDetails.ClosePackage();
             PayLoad RespListDetails = Send(PLListDetails);
-            if (RespListDetails.IsErrorPayLoad())
+            if (!RespListDetails.IsErrorPayLoad())
             {
-                string ErrMSG = RespListDetails.GetValueString();
-                //throw new Exception(ErrMSG);               
-                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching optional values :" + ErrMSG);
-            }
-            foreach (string res in RespListDetails.GetListString())
-            {
-                props.Add(new OptionalValue { Value = res, IsDefault = false });
-            }
+                foreach (string res in RespListDetails.GetListString())
+                {
+                    props.Add(new OptionalValue { Value = res, IsDefault = false });
+                }
+            }           
             return props;
         }
     }

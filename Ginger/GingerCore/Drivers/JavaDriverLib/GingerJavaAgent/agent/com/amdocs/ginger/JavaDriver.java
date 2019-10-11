@@ -802,7 +802,10 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			String LocateBy = PL.GetValueString();
 			String LocateValue = PL.GetValueString();		
 			Component c = mSwingHelper.FindElement(LocateBy, LocateValue);		
-			
+			if(c==null)
+			{
+				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Not able to locate Element");
+			}
 			PayLoad PLResp = new PayLoad("ControlProperties");
 			List<PayLoad> list = GetComponentProperties(c);
 			PLResp.AddListPayLoad(list);
@@ -2674,7 +2677,20 @@ private PayLoad GetComponentState(Component c)
 	{	
 		GingerAgent.WriteLog("Inside GetComponentValue");
 		PayLoad Response = new PayLoad("ComponentValue");
-		List<String> val = GetComboBoxValues(c);
+		List<String> val = new ArrayList<String>();
+		if(c instanceof JComboBox)
+		{
+			val = GetComboBoxValues(c);	
+		}		
+		else if(c instanceof JList)
+		{			
+			JList JL= (JList)c;
+			ListModel JLm=JL.getModel();			
+			for(int i =0;i<JLm.getSize();i++)
+			{
+				val.add(JLm.getElementAt(i).toString());
+			}			
+		}
 		GingerAgent.WriteLog("val: " +val);	
 		Response.AddValue(val);		
 		Response.ClosePackage();
@@ -3864,36 +3880,7 @@ private PayLoad SetComponentFocus(Component c)
     	PL4.AddValue(mSwingHelper.GetComponentSwingClass(comp));
     	PL4.ClosePackage();
     	FieldProperties.add(PL4);
-    	   
-		// Add all generic fields
-	    Field[] allFields = comp.getClass().getFields();	    
-	    for (Field field : allFields) {
-	    	PayLoad PL = new PayLoad("ComponentProperty");
-	    	field.setAccessible(true);
-	    	PL.AddValue(field.getName());
-	    	Object value = null;
-			try {				
-				value = field.get(comp);
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if (value == null)
-			{
-				PL.AddValue("");
-			}
-			else
-			{
-				PL.AddValue(value.toString());
-			}
-	    	PL.ClosePackage();
-	    	FieldProperties.add(PL);
-	    }
-	    
-	    
+    	   		
 	    return FieldProperties;
 	}
 	private List<String> GetComboBoxValues(Component comp)
