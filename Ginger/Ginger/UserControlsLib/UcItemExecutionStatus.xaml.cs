@@ -145,6 +145,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetStatus()
         {
+            string statusLbl = Status.ToString();
             switch (Status)
             {
                 case eRunStatus.Passed:
@@ -154,6 +155,11 @@ namespace Ginger.UserControlsLib.UCListView
                 case eRunStatus.Failed:
                     mStatusBrush = FindResource("$FailedStatusColor") as Brush;
                     mStatusImage = eImageType.Failed;
+                    break;
+                case eRunStatus.FailIgnored:
+                    mStatusBrush = FindResource("$IgnoredStatusColor") as Brush;
+                    mStatusImage = eImageType.Failed;
+                    statusLbl = "Ignored Failed";
                     break;
                 case eRunStatus.Pending:
                     mStatusBrush = FindResource("$PendingStatusColor") as Brush;
@@ -186,7 +192,7 @@ namespace Ginger.UserControlsLib.UCListView
                 case eStatusViewMode.Polygon:
                     xPolygon.Fill = mStatusBrush;
                     xPolygon.Stroke = mStatusBrush;
-                    xPolygon.ToolTip = Status.ToString();
+                    xPolygon.ToolTip = statusLbl;
                     if (Status == eRunStatus.Stopped)
                     {
                         StatusSize = 10;
@@ -194,7 +200,8 @@ namespace Ginger.UserControlsLib.UCListView
                     xPolygonStatusImage.ImageType = mStatusImage;
                     xPolygonStatusImage.Width = StatusSize;
                     xPolygonStatusImage.Height = StatusSize;
-                    xPolygonStatusImage.ToolTip = Status.ToString();
+                    xPolygonStatusImage.ImageToolTip= statusLbl;
+                    xPolygonStatusImage.ToolTip = statusLbl;
                     break;
 
                 case eStatusViewMode.Image:
@@ -207,14 +214,16 @@ namespace Ginger.UserControlsLib.UCListView
                     xExecutionStatusImage.Height = StatusSize;
                     xExecutionStatusImage.HorizontalAlignment = HorizontalAlignment.Center;
                     xExecutionStatusImage.VerticalAlignment = VerticalAlignment.Center;
-                    xExecutionStatusImage.ToolTip = Status.ToString();
+                    xExecutionStatusImage.ImageToolTip = statusLbl;
+                    xExecutionStatusImage.ToolTip = statusLbl;
                     xStatusImagePnl.Children.Add(xExecutionStatusImage);
                     break;
 
                 case eStatusViewMode.Label:
-                    xStatusLbl.Content = Status.ToString();
+                    xStatusLbl.Content = statusLbl;
                     xStatusLbl.Foreground = (SolidColorBrush)mStatusBrush;
                     xStatusLbl.FontSize = StatusSize;
+                    xStatusLbl.ToolTip = statusLbl;
                     break;
             }
         }

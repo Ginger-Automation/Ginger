@@ -35,6 +35,8 @@ namespace Ginger.AnalyzerLib
     public class AnalyzerUtils
     {
         private readonly object mAddIssuesLock = new object();
+        private readonly object mUsedVariableLock = new object();
+        private readonly object mMissingVariableIssueLock = new object();
 
         public void RunSolutionAnalyzer(Solution solution, ObservableList<AnalyzerItemBase> issuesList)
         {
@@ -51,10 +53,7 @@ namespace Ginger.AnalyzerLib
             Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
             {
                 List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
-                lock (mAddIssuesLock)
-                {
-                    usedVariablesInSolution.AddRange(tempList);
-                }
+                MergeVariablesList(usedVariablesInSolution, tempList);   
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -107,7 +106,7 @@ namespace Ginger.AnalyzerLib
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
-
+            List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow))
             {
@@ -133,38 +132,56 @@ namespace Ginger.AnalyzerLib
                          foreach (AnalyzerItemBase issue in AnalyzeAction.Analyze(businessFlow, activity, action, DSList))
                          {
                              AddIssue(issuesList, issue);
+                             if (issue.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable)
+                             {
+                                 lock(mMissingVariableIssueLock)
+                                 {
+                                     missingVariableIssueList.Add(issue);
+                                 }
+                             }
+                               
                          }
 
                      }
 
-                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                     usedVariablesInActivity.AddRange(tempList);
+                     List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);                     
+                     MergeVariablesList(usedVariablesInActivity,tempList);
                  });
 
                  List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-                 usedVariablesInActivity.AddRange(activityVarList);
-                 ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
-                 usedVariablesInBF.AddRange(usedVariablesInActivity);
+         
+                MergeVariablesList(usedVariablesInActivity, activityVarList);
+                ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);              
+                MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
+             
+                 
                  usedVariablesInActivity.Clear();
             });
 
             //Get all the missing variable issues Grouped by Variable name
-            var missingVariableIssuesGroupList= issuesList.Where(x => x.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable).GroupBy(x=>x.IssueReferenceObject);        
-
-            foreach(var variableIssueGroup in missingVariableIssuesGroupList)
-            {           
-                //If for specific variable, all the issues are for set variable action then we support Auto Fix
-                var canAutoFix= variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
-                
-                if(canAutoFix)
+            lock (mMissingVariableIssueLock)
+            {
+                if(missingVariableIssueList.Count!=0)
                 {
-                    foreach(AnalyzeAction issue in variableIssueGroup)
+                    var missingVariableIssuesGroupList = missingVariableIssueList.GroupBy(x => x.IssueReferenceObject);
+
+                    foreach (var variableIssueGroup in missingVariableIssuesGroupList)
                     {
-                        issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-                        issue.FixItHandler += MarkSetVariableActionAsInactive;
+                        //If for specific variable, all the issues are for set variable action then we support Auto Fix
+                        var canAutoFix = variableIssueGroup.All(x => x is AnalyzeAction && ((AnalyzeAction)x).mAction.GetType() == typeof(ActSetVariableValue));
+
+                        if (canAutoFix)
+                        {
+                            foreach (AnalyzeAction issue in variableIssueGroup)
+                            {
+                                issue.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
+                                issue.FixItHandler += MarkSetVariableActionAsInactive;
+                            }
+                        }
+
                     }
                 }
-
+           
             }
 
             ReportUnusedVariables(businessFlow, usedVariablesInBF, issuesList);
@@ -319,6 +336,14 @@ namespace Ginger.AnalyzerLib
             }
         }
 
+
+        private void MergeVariablesList(List<string> sourceList, List<string> listToMerge)
+        {
+            lock (mUsedVariableLock)
+            {
+                sourceList.AddRange(listToMerge);
+            }
+        }
         /// <summary>
         /// Run Runset Analyzer process and return true in case High+ issues were found, also allows to write the High+ found issues to log/console
         /// </summary>

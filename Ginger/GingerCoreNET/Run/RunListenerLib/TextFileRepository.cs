@@ -115,11 +115,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             if (isConfEnable)
             {
                 if (offlineMode)
-                    // use Path.combine !!!!
-                    SaveObjToReporsitory(AR, Path.Combine(activity.ExecutionLogFolder,"Activity.txt"));
+                {
+                    SaveObjToReporsitory(AR, Path.Combine(activity.ExecutionLogFolder, "Activity.txt"));
+                }
                 else
-                    // use Path.combine !!!!
-                    SaveObjToReporsitory(AR, Path.Combine(ExecutionLogfolder,activity.ExecutionLogFolder,"Activity.txt"));
+                {
+                    SaveObjToReporsitory(AR, Path.Combine(ExecutionLogfolder, activity.ExecutionLogFolder, "Activity.txt"));
+                }
             }
             return AR; 
         }

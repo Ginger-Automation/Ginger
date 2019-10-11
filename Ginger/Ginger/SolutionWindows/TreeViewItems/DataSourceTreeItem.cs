@@ -25,6 +25,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Windows;
+using System.Linq;
 using System.Windows.Controls;
 using Amdocs.Ginger.Common.Enums;
 using GingerWPF.TreeViewItemsLib;
@@ -37,9 +38,9 @@ using GingerCoreNET.DataSource;
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class DataSourceTreeItem : NewTreeViewItemBase, ITreeViewItem
-    {        
+    {
         public DataSourceBase DSDetails { get; set; }
-        private DataSourcePage mDataSourcePage;       
+        private DataSourcePage mDataSourcePage;
 
         public DataSourceFolderTreeItem.eDataTableView TableTreeView { get; set; }
 
@@ -70,27 +71,27 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             return NewTVItemHeaderStyle(DSDetails);
         }
-               
+
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
+            List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
 
             //Get Data Source Tables List
             DSDetails.DSTableList = DSDetails.GetTablesList();
             if (DSDetails.DSTableList == null)
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
-            
+
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
-            {    
+            {
                 if(TableTreeView == DataSourceFolderTreeItem.eDataTableView.All || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Key && dsTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue) || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Customized && dsTable.DSTableType == DataSourceTable.eDSTableType.Customized))
                 {
                     DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
                     DSTTI.DSTableDetails = dsTable;
                     DSTTI.DSDetails= DSDetails;
                     Childrens.Add(DSTTI);
-                }                
+                }
             }
-            return Childrens;    
+            return Childrens;
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -154,7 +155,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 WizardWindow.ShowWizard(new ImportDataSourceFromExcelWizard(DSDetails), 860);
-                mTreeView.Tree.RefresTreeNodeChildrens(this);                
+                mTreeView.Tree.RefresTreeNodeChildrens(this);
                 //   RefreshTreeItems();
             }
             catch (Exception ex)
@@ -205,7 +206,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
                     CreateTable(name, DSDetails.AddNewKeyValueTableQuery(), DataSourceTable.eDSTableType.GingerKeyValue);
-                   
+
                 }
             }
             catch (Exception ex)
@@ -218,23 +219,30 @@ namespace Ginger.SolutionWindows.TreeViewItems
         /// This method is used to create the table
         /// </summary>
         /// <param name="query"></param>
-        private string CreateTable(string name, string query, DataSourceTable.eDSTableType DSTableType=DataSourceTable.eDSTableType.GingerKeyValue)
-        {           
+        private string CreateTable(string tableName, string query, DataSourceTable.eDSTableType DSTableType = DataSourceTable.eDSTableType.GingerKeyValue)
+        {
             string fileName = string.Empty;
             try
             {
-                DataSourceTable dsTableDetails = new DataSourceTable();                
-                dsTableDetails.Name = name;
-                dsTableDetails.DSC = DSDetails;
-                dsTableDetails.DSTableType = DSTableType;
-                DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
-                DSTTI.DSTableDetails = dsTableDetails;
-                DSTTI.DSDetails = DSDetails;
-                dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
-                mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
-                DSDetails.DSTableList.Add(dsTableDetails);
+                if (DSDetails.DSTableList.Any(d => d.Name.Equals(tableName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Reporter.ToUser(eUserMsgKey.DbTableNameError, tableName);
+                }
+                else
+                {
+                    DataSourceTable dsTableDetails = new DataSourceTable();
+                    dsTableDetails.Name = tableName;
+                    dsTableDetails.DSC = DSDetails;
+                    dsTableDetails.DSTableType = DSTableType;
+                    DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
+                    DSTTI.DSTableDetails = dsTableDetails;
+                    DSTTI.DSDetails = DSDetails;
+                    dsTableDetails.DSC.AddTable(dsTableDetails.Name, query);
+                    mTreeView.Tree.AddChildItemAndSelect(this, DSTTI);
+                    DSDetails.DSTableList.Add(dsTableDetails);
 
-                fileName = this.DSDetails.FileFullPath;                
+                    fileName = this.DSDetails.FileFullPath;
+                }
             }
             catch (Exception ex)
             {
@@ -245,7 +253,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void ExportToExcel(object sender, System.Windows.RoutedEventArgs e)
-        {                      
+        {
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel();
             DSEE.ShowAsWindow();
 
@@ -272,14 +280,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
                 Reporter.ToStatus(eStatusMsgKey.ExportItem, null, dsTable.Name, "Data Source Table");
-                dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);                                    
+                dsTable.DSC.ExporttoExcel(dsTable.Name, sExcelPath, dsTable.Name);
             }
             Reporter.HideStatusMessage();
-            Reporter.ToUser(eUserMsgKey.ExportDetails);            
+            Reporter.ToUser(eUserMsgKey.ExportDetails);
         }
 
         private void RefreshItems(object sender, RoutedEventArgs e)
-        {            
+        {
             RefreshTreeItems();
         }
         private void RefreshTreeItems()
@@ -330,23 +338,23 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-                private void CommitAll(object sender, RoutedEventArgs e)
+        private void CommitAll(object sender, RoutedEventArgs e)
         {
-            SaveTreeItem(DSDetails);            
+            SaveTreeItem(DSDetails);
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
-                
+
             foreach (ITreeViewItem node in childNodes)
             {
                 if (node != null && node is DataSourceTableTreeItem)
                 {
                     if(((DataSourceTable)node.NodeObject()).DirtyStatus == eDirtyStatus.Modified)
-                    { 
+                    {
                         ((DataSourceTableTreeItem)node).SaveTreeItem();
                     }
-                }                
+                }
             }
-        }        
-        
+        }
+
         private void Duplicate(object sender, RoutedEventArgs e)
         {
             //TODO: Need to move code from if else to the respective classes.
@@ -375,8 +383,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     return;
                 }
-                    dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".db";
-                    dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".db";
+                dsDetailsCopy.FilePath = DSDetails.ContainingFolder + "\\" + dsDetailsCopy.Name + ".db";
+                dsDetailsCopy.FileFullPath = DSDetails.ContainingFolderFullPath + "\\" + dsDetailsCopy.Name + ".db";
 
                 if (File.Exists(dsDetailsCopy.FileFullPath))
                 { Reporter.ToUser(eUserMsgKey.DuplicateDSDetails, dsDetailsCopy.FileFullPath); return; }
@@ -390,12 +398,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Rename(object sender, RoutedEventArgs e)
         {
             RenameItem("DataSource Name:", DSDetails, DataSourceBase.Fields.Name);
-           
+
         }
         private void InitDSConnection()
         {
             DSDetails.InitConnection();
-           
+
         }
     }
 }

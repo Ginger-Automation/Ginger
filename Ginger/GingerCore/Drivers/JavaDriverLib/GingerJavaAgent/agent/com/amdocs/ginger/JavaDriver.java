@@ -1831,11 +1831,13 @@ private PayLoad TypeKeys(Component c,String Value) {
 			node=nodes.get(i);
 			tree.expandRow(row);	
 			matchingNodePath = tree.getNextMatch(node.trim(), row, Position.Bias.Forward);		
-						
+					
 			if(matchingNodePath==null)
 			{
-				searchResult.append("Node: "+ node +" was not found");
-				break;
+				//searchResult.append("Node: "+ node +" was not found");
+				//break;
+				row++;
+				continue;
 			}
 			else if(parentNodePath!=null && !matchingNodePath.getParentPath().equals(parentNodePath))
 			{
@@ -1859,7 +1861,19 @@ private PayLoad TypeKeys(Component c,String Value) {
 			}
 			else
 			{
-				row= tree.getRowForPath(matchingNodePath)+1;				
+				int newrow= tree.getRowForPath(matchingNodePath)+1;
+				if(newrow<=row)//|| newrow>=tree.getRowCount())
+				{
+					//searchResult.append("Node was found but full name do not match");
+					row=tree.getRowForPath(matchingNodePath);
+					parentNodePath= matchingNodePath;
+					i++;					
+				}			
+				else
+				{
+					row= newrow;
+				}
+				
 			}
 			
 		}	

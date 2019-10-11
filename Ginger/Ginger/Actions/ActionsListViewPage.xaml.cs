@@ -298,11 +298,13 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void XUndoBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
+            if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, isLocalBackup: true, clearBackup: false))
             {
-                mActionBeenEdit.SaveBackup();
+                //mActionBeenEdit.SaveBackup();
+                int selectedTabIndx = mActionEditPage.SelectedTabIndx;
                 ShowHideEditPage(mActionBeenEdit);
-            }
+                mActionEditPage.SelectedTabIndx = selectedTabIndx;
+            }            
         }
 
         private void xPreviousActionBtn_Click(object sender, RoutedEventArgs e)
@@ -385,7 +387,18 @@ namespace GingerWPF.BusinessFlowsLib
         {
             mActionEditPage.ShowAsWindow(windowStyle:eWindowShowStyle.OnlyDialog);
             mActionEditPage.Width = xMainFrame.ActualWidth;
+            mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             xMainFrame.Refresh();            
+        }
+
+        private void xMainFrame_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (mActionEditPage != null)
+            {
+                mActionEditPage.Width = xMainFrame.ActualWidth;
+                mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                xMainFrame.Refresh();
+            }
         }
     }
 }
