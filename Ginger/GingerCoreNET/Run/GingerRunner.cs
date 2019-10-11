@@ -2217,7 +2217,7 @@ namespace Ginger.Run
                 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
-                if (!IsStopLoop)
+                if (!IsStopLoop) //Why we move next here???
                 {
                     if (!IsLastActionOfActivity())
                     {
@@ -2227,7 +2227,7 @@ namespace Ginger.Run
                             if (!mStopRun)
                             {
                                 GotoNextAction();
-                                ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                                //((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                             }
                         }
                     }

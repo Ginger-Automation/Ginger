@@ -138,7 +138,7 @@ namespace GingerCore.Actions
             MapMenuActionItems(this.LocateValue, newAct);
 
             // if Locate value = Create/Contact
-            if (newAct.LocateBy.Equals(eLocateBy.ByTitle) && !this.LocateValue.ToLower().StartsWith("menu"))
+            if (newAct.ElementLocateBy.Equals(eLocateBy.ByTitle) && !this.LocateValue.ToLower().StartsWith("menu"))
             {
                 newAct.ElementLocateBy = eLocateBy.ByName;
                 newAct.ElementLocateValue = string.Concat(@"menu", newAct.ElementLocateValue);

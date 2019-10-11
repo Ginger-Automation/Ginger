@@ -427,7 +427,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             copy.Group = "Clipboard";
             copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
             copy.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
-            copy.Header = "Copy";
+            copy.Header = "Copy (Ctrl+C)";
             copy.OperationHandler = CopyHandler;
             extraOperationsList.Add(copy);
 
@@ -436,7 +436,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             cut.AutomationID = "cut";
             cut.Group = "Clipboard";
             cut.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Cut;
-            cut.Header = "Cut";
+            cut.Header = "Cut (Ctrl+X)";
             cut.OperationHandler = CutHandler;
             extraOperationsList.Add(cut);
 
@@ -445,7 +445,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasterAfterCurrent.AutomationID = "pasterAfterCurrent";
             pasterAfterCurrent.Group = "Clipboard";
             pasterAfterCurrent.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Paste;
-            pasterAfterCurrent.Header = "Paste";
+            pasterAfterCurrent.Header = "Paste (Ctrl+V)";
             pasterAfterCurrent.OperationHandler = PasteAfterCurrentHandler;
             extraOperationsList.Add(pasterAfterCurrent);
 

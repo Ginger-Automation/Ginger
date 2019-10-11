@@ -67,6 +67,6 @@
             </StackPanel>
         </Grid>
 
-        <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="xMainFrame" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" SizeChanged="xMainFrame_SizeChanged"/>
     </DockPanel>
 </Page>
