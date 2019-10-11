@@ -142,6 +142,7 @@ public class BasicSwingApp extends javax.swing.JFrame {
         DefaultMutableTreeNode USNode = new DefaultMutableTreeNode("US");
         USNode.add(new DefaultMutableTreeNode("California/Texas"));
         USNode.add(new DefaultMutableTreeNode("Florida"));
+        USNode.add(new DefaultMutableTreeNode("Texa"));
         USNode.add(new DefaultMutableTreeNode("Texas & Florida"));
         USNode.add(new DefaultMutableTreeNode("Texas"));
         
