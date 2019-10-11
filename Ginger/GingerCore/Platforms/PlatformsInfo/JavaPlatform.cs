@@ -477,6 +477,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
                     break;
+                case eElementType.Table:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TableAction);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TableCellAction);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TableRowAction);
+                    break;
                 case eElementType.DatePicker:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetDate);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
