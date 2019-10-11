@@ -74,10 +74,19 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         }
 
         private void XTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
         {
             if (mWizard.mPomLearnUtils.POM.TargetApplicationKey != null)
             {
                 mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mWizard.mPomLearnUtils.POM.TargetApplicationKey);
+            }
+            else
+            {
+
+                if (xTargetApplicationComboBox.SelectedItem is ApplicationPlatform selectedplatform)
+                {
+                    mAppPlatform = selectedplatform.Platform;
+                }
             }
             mWizard.OptionalAgentsList = GingerCore.General.ConvertListToObservableList((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where x.Platform == mAppPlatform select x).ToList());
             foreach (Agent agent in mWizard.OptionalAgentsList)
