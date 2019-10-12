@@ -45,9 +45,9 @@ namespace GingerCoreNET.Application_Models
                 if (existingAPIModels == null)
                 {
                     if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
-                        matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
                     else
-                        matchingAPIModels = existingAPIModelsList.Where(m => m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
+                        matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
                 }
                 else
                 {
