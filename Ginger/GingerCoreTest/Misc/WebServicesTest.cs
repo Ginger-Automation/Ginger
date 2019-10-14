@@ -420,7 +420,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-      //  [Timeout(10000)]
+        [Timeout(10000)]
         public void WebServices_SoapWrapperActionTest()
         {
             WebServicesDriver mDriver = new WebServicesDriver(mBF);
