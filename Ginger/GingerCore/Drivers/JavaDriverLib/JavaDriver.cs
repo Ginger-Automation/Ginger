@@ -813,12 +813,9 @@ namespace GingerCore.Drivers.JavaDriverLib
         private void SetActionStatusFromResponse(Act act, PayLoad Response)
         {
             if (Response.IsErrorPayLoad())
-            {
-                //reading errorcode
-                var errorCode = Response.GetValueInt();
-
-                string ErrMsg = Response.GetValueString();
-                act.Error = string.Format("'{0}' -Error Code : '{1}'", ErrMsg, errorCode);
+            {                            
+                string ErrMsg = Response.GetErrorValue();
+                act.Error = ErrMsg;
             }
             else if (Response.IsOK())
             {
@@ -1875,7 +1872,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response.IsErrorPayLoad())
             {
-                string ErrMsg = Response.GetValueString();
+                string ErrMsg = Response.GetErrorValue();
                 throw new Exception(ErrMsg);
             }
             else
@@ -1886,7 +1883,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
 
                     if(isPOMLearn)
-                    {
+                    {                   
                         ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
                         ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);
                         ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
@@ -2278,8 +2275,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             List<PayLoad> PropertiesPLs = new List<PayLoad>();
             if (response.IsErrorPayLoad())
-            {
-                string ErrMSG = response.GetValueString();
+            {                
+                string ErrMSG = response.GetErrorValue();
                 Reporter.ToLog(eLogLevel.ERROR, "Error while fetching properties :" + ErrMSG);
             }
             else
@@ -2362,7 +2359,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad Response = Send(Request);
                 if (Response.IsErrorPayLoad())
                 {
-                    Response.GetValueString();
+                    Response.GetErrorValue();
                     return null;
                 }
 
@@ -2388,7 +2385,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad Response = d.Send(Request);
                 if (Response.IsErrorPayLoad())
                 {
-                    Response.GetValueString();
+                    Response.GetErrorValue();
                     return null;
                 }
 
@@ -3218,7 +3215,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad Response = Send(PLLocateElement);
             if (Response.IsErrorPayLoad())
             {
-                string ErrMSG = Response.GetValueString();
+                string ErrMSG = Response.GetErrorValue();
                 return null;
             }
             else
@@ -3336,9 +3333,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad RespListDetails = Send(PLListDetails);
             if (RespListDetails.IsErrorPayLoad())
             {
-                string ErrMSG = RespListDetails.GetValueString();
-                //throw new Exception(ErrMSG);               
+                string ErrMSG = RespListDetails.GetErrorValue();                             
                 Reporter.ToLog(eLogLevel.ERROR, "Error while fetching optional values :" + ErrMSG);
+                return props;
             }
             foreach (string res in RespListDetails.GetListString())
             {
