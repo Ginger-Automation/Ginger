@@ -26,11 +26,11 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -362,7 +362,7 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void XUndoBtn_Click(object sender, RoutedEventArgs e)
+        private async void XUndoBtn_Click(object sender, RoutedEventArgs e)
         {
             mVarBeenEdit.NameBeforeEdit = mVarBeenEdit.Name;
 
@@ -373,7 +373,7 @@ namespace Ginger.BusinessFlowPages
 
             if (mVarBeenEdit.NameBeforeEdit != mVarBeenEdit.Name)
             {
-               mVariabelEditPage.UpdateVariableNameChange();
+                await Task.Run(() =>  mVariabelEditPage.UpdateVariableNameChange());
             }
         }
 
