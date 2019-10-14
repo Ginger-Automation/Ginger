@@ -66,6 +66,9 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
             ToggleSections();
 
+            this.Width = 1200;
+            this.Height = 800;
+
             GingerCore.General.LoadGenericWindow(ref mWin, mOwnerWindow, windowStyle, @"Compare & Merge", this, null, true, "OK");
         }
 
@@ -82,6 +85,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                     xMergerSplitter.Visibility = Visibility.Collapsed;
                     xMergerWindowTxtBlock.Visibility = Visibility.Collapsed;
+                    xMergedAPIBorder.Visibility = Visibility.Collapsed;
                     xMergedAPIFrame.Visibility = Visibility.Collapsed;
 
                     xMergerAPIRow.Height = new GridLength(0);
@@ -95,6 +99,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                     xMergerSplitter.Visibility = Visibility.Visible;
                     xMergerWindowTxtBlock.Visibility = Visibility.Visible;
+                    xMergedAPIBorder.Visibility = Visibility.Visible;
                     xMergedAPIFrame.Visibility = Visibility.Visible;
 
                     xMergerAPIRow.Height = new GridLength(400, GridUnitType.Star);
