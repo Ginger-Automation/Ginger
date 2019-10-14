@@ -3345,7 +3345,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             else
             {
                 string ErrMSG = RespListDetails.GetErrorValue();
-                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching optional values :" + ErrMSG);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while fetching optional values :" + ErrMSG);
             }
             return props;
         }
