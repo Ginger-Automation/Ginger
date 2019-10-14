@@ -448,6 +448,12 @@ namespace GingerCore.Drivers.CommunicationProtocol
             }
             return result;
         }
+
+        public string GetErrorValue()
+        {
+            return "Error:- " + GetValueInt() + ":" + GetValueString();
+        }
+
         public string GetValueString()
         {
             byte b = ReadValueType();
