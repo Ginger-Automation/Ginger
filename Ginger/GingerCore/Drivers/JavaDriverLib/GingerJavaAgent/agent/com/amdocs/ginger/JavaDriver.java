@@ -804,7 +804,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			Component c = mSwingHelper.FindElement(LocateBy, LocateValue);		
 			if(c==null)
 			{
-				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Not able to locate Element");
+				return PayLoad.Error(404,"Not able to locate Element");
 			}
 			PayLoad PLResp = new PayLoad("ControlProperties");
 			List<PayLoad> list = GetComponentProperties(c);
