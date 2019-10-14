@@ -2253,7 +2253,7 @@
     </Content>
     <Resource Include="Agents\AddAgentWizardLib\AddAgentIntro.md" />
     <Resource Include="Actions\ActionConversion\ActionConversionIntro.md" />
-    <None Include="ALM\ALMRESTConfiguration\appsettings.json">
+    <None Include="ALMRESTConfiguration\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
