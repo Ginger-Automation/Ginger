@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -404,6 +405,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void ReLearnClicked(object sender, RoutedEventArgs e)
         {
+            if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java)
+            {
+                Reporter.ToUser(eUserMsgKey.MissingImplementationForPlatform, "Java");
+                return;
+            }
             if (mWinExplorer == null)
             {
                 Reporter.ToUser(eUserMsgKey.POMAgentIsNotRunning);

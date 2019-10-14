@@ -141,7 +141,8 @@ namespace Amdocs.Ginger.Common
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
-        PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup
+        PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
+        MissingImplementationForPlatform
     }
 
     public static class UserMsgsPool
@@ -169,6 +170,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.GeneralErrorOccured, new UserMsg(eUserMsgType.ERROR, "Error Occurred", "Application error occurred." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingImplementation, new UserMsg(eUserMsgType.WARN, "Missing Implementation", "The {0} functionality hasn't been implemented yet.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingImplementation2, new UserMsg(eUserMsgType.WARN, "Missing Implementation", "The functionality hasn't been implemented yet.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingImplementationForPlatform, new UserMsg(eUserMsgType.WARN, "Missing Implementation", "Functionality hasn't been implemented yet for {0} platform.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ApplicationInitError, new UserMsg(eUserMsgType.ERROR, "Application Initialization Error", "Error occurred during application initialization." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.PageLoadError, new UserMsg(eUserMsgType.ERROR, "Page Load Error", "Failed to load the page '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UserProfileLoadError, new UserMsg(eUserMsgType.ERROR, "User Profile Load Error", "Error occurred during user profile loading." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
