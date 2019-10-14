@@ -145,11 +145,11 @@ namespace Ginger.Variables
             mVariable.NameBeforeEdit = mVariable.Name;
         }
 
-        private void XVarNameTxtBox_LostFocus(object sender, RoutedEventArgs e)
+        private async void XVarNameTxtBox_LostFocus(object sender, RoutedEventArgs e)
         {
             if(mVariable.NameBeforeEdit != mVariable.Name)
             {
-                UpdateVariableNameChange();
+                await Task.Run(() => UpdateVariableNameChange());
             }
         }
 
