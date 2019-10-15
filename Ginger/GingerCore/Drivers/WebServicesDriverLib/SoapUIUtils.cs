@@ -33,6 +33,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 {
     public class SoapUIUtils
     {
+
+        private const char Quotationmark = '\u0022';
         private ActSoapUI mAct;
         private string SoapUIDirectoryPath { get; set; }
         private string ReportExportDirectoryPath { get; set; }
@@ -100,7 +102,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             try
             {
-                if (mAct.AllProperties.Count == 0 && mAct.TestSuitePlaceHolder.Count == 0 )
+                if (mAct.AllProperties.Count == 0 && mAct.TestSuitePlaceHolder.Count == 0)
                 {
                     //Getting the file XML to run.
                     string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
@@ -108,48 +110,64 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     {
                         XMLFiledValue = System.IO.Path.Combine(mAct.SolutionFolder, XMLFiledValue.Substring(2));
                     }
-                    commandParam = '\u0022' + XMLFiledValue + '\u0022';
+                    commandParam = Quotationmark + XMLFiledValue + Quotationmark;
                 }
                 else
                 {
-                    commandParam = '\u0022' + UpdateXMLProperty() + '\u0022';
+                    commandParam = Quotationmark + UpdateXMLProperty() + Quotationmark;
                 }
 
 
                 //The TestSuite to run, used to narrow down the tests to run
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestSuite)))
-                    commandParam = commandParam + " -s" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestSuite) + '\u0022';
+                {
+                    commandParam = commandParam + " -s" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestSuite) + Quotationmark;
+                }
+
                 //The TestCase to run, used to narrow down the tests to run
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestCase)))
-                    commandParam = commandParam + " -c" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestCase) + '\u0022';
+                {
+                    commandParam = commandParam + " -c" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.TestCase) + Quotationmark;
+                }
                 //Enables SoapUI UI-related components, required if you use the UISupport class for prompting or displaying information
-                if (Boolean.Parse((mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.UIrelated))))
-                //if ((Boolean)mAct.GetValueForDriverParamWithCustomType(ActSoapUI.Fields.UIrelated, typeof(Boolean)) == true)
+                bool mUIrelated;
+                bool.TryParse((mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.UIrelated)), out mUIrelated);
+                if (mUIrelated)
+                {
                     commandParam = commandParam + " -i";
+                }
                 //Overrides the endpoint
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.EndPoint)))
-                    commandParam = commandParam + " -e" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.EndPoint) + '\u0022';
+                {
+                    commandParam = commandParam + " -e" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.EndPoint) + Quotationmark;
+                }
                 //The host:port to use when invoking test-requests, overrides only the host part of the endpoint set in the project file
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.HostPort)))
-                    commandParam = commandParam + " -h" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.HostPort) + '\u0022';
+                { commandParam = commandParam + " -h" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.HostPort) + Quotationmark; }
+               
                 //The username to use in any authentications, overrides any username set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username)))
-                    commandParam = commandParam + " -u" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username) + '\u0022';
+                { commandParam = commandParam + " -u" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username) + Quotationmark; }
+                
                 //The password to use in any authentications, overrides any password set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password)))
-                    commandParam = commandParam + " -p" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password) + '\u0022';
+                { commandParam = commandParam + " -p" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password) + Quotationmark; }
+               
                 //The domain to use in any authentications, overrides any domain set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain)))
-                    commandParam = commandParam + " -d" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain) + '\u0022';
+                { commandParam = commandParam + " -d" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain) + Quotationmark; }
+              
                 //Sets the WSS password type, either 'Text' or 'Digest'
                 if (!(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.PasswordWSSType).Equals("")) && !string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password)))
-                    commandParam = commandParam + " -w" + '\u0022' + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.PasswordWSSType) + '\u0022';
+                {
+                    commandParam = commandParam + " -w" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.PasswordWSSType) + Quotationmark;
+                }  
                 //Sets system property with name=value
                 if (mAct.SystemProperties.Count() > 0)
                 {
                     foreach (ActInputValue row in mAct.SystemProperties)
                     {
-                        commandParam = commandParam + " -D" + '\u0022' + row.ItemName + "=" + row.ValueForDriver + '\u0022';
+                        commandParam = commandParam + " -D" + Quotationmark + row.ItemName + "=" + row.ValueForDriver + Quotationmark;
                     }
                 }
                 //Sets global property with name=value
@@ -157,31 +175,38 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     foreach (ActInputValue row in mAct.GlobalProperties)
                     {
-                        commandParam = commandParam + " -G" + '\u0022' + row.ItemName + "=" + row.ValueForDriver + '\u0022';
+                        commandParam = commandParam + " -G" + Quotationmark + row.ItemName + "=" + row.ValueForDriver + Quotationmark;
                     }
                 }
                 //Sets the soapui-settings.xml file to use, required if you have custom proxy, ssl, http, etc setting
                 if (!string.IsNullOrEmpty(SoapUISettingFile))
-                    commandParam = commandParam + " -t" + '\u0022' + SoapUISettingFile + '\u0022';
+                {
+                    commandParam = commandParam + " -t" + Quotationmark + SoapUISettingFile + Quotationmark;
+                }
+
                 // Sets password for soapui-settings.xml file
                 if (!string.IsNullOrEmpty(SoapUISettingFilePassword))
-                    commandParam = commandParam + " -v" + '\u0022' + SoapUISettingFilePassword + '\u0022';
+                {
+                    commandParam = commandParam + " -v" + Quotationmark + SoapUISettingFilePassword + Quotationmark;
+                }
+                    
                 //Sets project password for decryption if project is encrypted
                 if (!string.IsNullOrEmpty(ProjectPassword))
-                    commandParam = commandParam + " -x" + '\u0022' + ProjectPassword + '\u0022';
-
+                {
+                    commandParam = commandParam + " -x" + Quotationmark + ProjectPassword + Quotationmark;
+                }
                 // r : Turns on printing of a small summary report (see below)
                 // I : Do not stop if error occurs, ignore them: Execution does not stop if error occurs, but no detailed information about errors are stored to the log. (If you need full information about errors, do not use this option). 
                 // a : Turns on exporting of all test results, not only errors
                 // M : Creates a Test Run Log Report in XML format
                 // f : Specifies the root folder to which test results should be exported (see below)
-                commandParam = commandParam + " -r -I -a -M -f" + '\u0022' + ReportPath + '\u0022';
+                commandParam = commandParam + " -r -I -a -M -f" + Quotationmark + ReportPath + Quotationmark;
                 return true;
             }
             catch (Exception ex)
             {
                 mAct.Error = "An Error Occurred while creating the command.";
-                mAct.ExInfo = ex.Message;               
+                mAct.ExInfo = ex.Message;
                 return false;
             }
         }
@@ -257,9 +282,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             //Handling test result from report XML file.
             //creating the report path string
-            bool ignoreValidation = Boolean.Parse(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.IgnoreValidation));
+            bool ignoreValidation;
+            bool.TryParse(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.IgnoreValidation), out ignoreValidation);
             if (ignoreValidation)
+            {
                 return;
+            }
 
             string testCaseRunLogReport = ReportPath + "\\test_case_run_log_report.xml";
 

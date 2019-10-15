@@ -410,7 +410,7 @@ namespace Ginger.Run.RunSetActions
                     alternativeView.TransferEncoding = TransferEncoding.SevenBit;
                     string beatLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@BeatLogo.png");
                     string gingerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
-                    string customerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
+                    string customerLogoPath = Path.Combine(tempFolder, "CustomerLogo.png");
 
 
                     if (File.Exists(beatLogoPath))

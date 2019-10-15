@@ -813,12 +813,9 @@ namespace GingerCore.Drivers.JavaDriverLib
         private void SetActionStatusFromResponse(Act act, PayLoad Response)
         {
             if (Response.IsErrorPayLoad())
-            {
-                //reading errorcode
-                var errorCode = Response.GetValueInt();
-
-                string ErrMsg = Response.GetValueString();
-                act.Error = string.Format("'{0}' -Error Code : '{1}'", ErrMsg, errorCode);
+            {                            
+                string ErrMsg = Response.GetErrorValue();
+                act.Error = ErrMsg;
             }
             else if (Response.IsOK())
             {
@@ -1875,7 +1872,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response.IsErrorPayLoad())
             {
-                string ErrMsg = Response.GetValueString();
+                string ErrMsg = Response.GetErrorValue();
                 throw new Exception(ErrMsg);
             }
             else
@@ -1887,13 +1884,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if(isPOMLearn)
                     {
-                        ci.Locators = ((IWindowExplorer)this).GetElementLocators(ci);
-                        ci.Properties = ((IWindowExplorer)this).GetElementProperties(ci);
-                        ci.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(ci, eLocateBy.ByXPath, ci.XPath);
-                        if (ci.OptionalValuesObjectsList.Count > 0)
-                        {
-                            ci.OptionalValuesObjectsList[0].IsDefault = true;
-                        }
+                        ((IWindowExplorer)this).LearnElementInfoDetails(ci);
                         // set the Flag in case you wish to learn the element or not
                         bool learnElement = true;
                         if (filteredElementType != null)
@@ -2278,8 +2269,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             List<PayLoad> PropertiesPLs = new List<PayLoad>();
             if (response.IsErrorPayLoad())
-            {
-                string ErrMSG = response.GetValueString();
+            {                
+                string ErrMSG = response.GetErrorValue();
                 Reporter.ToLog(eLogLevel.ERROR, "Error while fetching properties :" + ErrMSG);
             }
             else
@@ -2362,7 +2353,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad Response = Send(Request);
                 if (Response.IsErrorPayLoad())
                 {
-                    Response.GetValueString();
+                    Response.GetErrorValue();
                     return null;
                 }
 
@@ -2388,7 +2379,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 PayLoad Response = d.Send(Request);
                 if (Response.IsErrorPayLoad())
                 {
-                    Response.GetValueString();
+                    Response.GetErrorValue();
                     return null;
                 }
 
@@ -2487,8 +2478,18 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI)
+        ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI)
         {
+            EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
+            EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
+            if(ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
+            {
+                EI.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(EI, eLocateBy.ByXPath, EI.XPath);
+            }            
+            if (EI.OptionalValuesObjectsList.Count > 0)
+            {
+                EI.OptionalValuesObjectsList[0].IsDefault = true;
+            }
             return EI;
         }
 
@@ -3218,7 +3219,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad Response = Send(PLLocateElement);
             if (Response.IsErrorPayLoad())
             {
-                string ErrMSG = Response.GetValueString();
+                string ErrMSG = Response.GetErrorValue();
                 return null;
             }
             else
@@ -3334,15 +3335,17 @@ namespace GingerCore.Drivers.JavaDriverLib
             PLListDetails.AddValue(eElementType.ComboBox.ToString());
             PLListDetails.ClosePackage();
             PayLoad RespListDetails = Send(PLListDetails);
-            if (RespListDetails.IsErrorPayLoad())
+            if (!RespListDetails.IsErrorPayLoad())
             {
-                string ErrMSG = RespListDetails.GetValueString();
-                //throw new Exception(ErrMSG);               
-                Reporter.ToLog(eLogLevel.ERROR, "Error while fetching optional values :" + ErrMSG);
-            }
-            foreach (string res in RespListDetails.GetListString())
+                foreach (string res in RespListDetails.GetListString())
+                {
+                    props.Add(new OptionalValue { Value = res, IsDefault = false });
+                }
+            }   
+            else
             {
-                props.Add(new OptionalValue { Value = res, IsDefault = false });
+                string ErrMSG = RespListDetails.GetErrorValue();
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while fetching optional values :" + ErrMSG);
             }
             return props;
         }
