@@ -61,6 +61,8 @@ namespace Amdocs.Ginger.Repository
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
 
+        public bool ItemBeenReloaded;
+
         //DO Not save
         protected Dictionary<string, object> mBackupDic;
 
