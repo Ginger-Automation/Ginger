@@ -193,7 +193,7 @@ namespace Ginger.DataSource
                 } 
                 else if (colName == "GINGER_USED")
                 {
-                    view.GridColsView.Add(new GridColView() { Field = colName, Order = 1, Header = colHeader, WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
+                    view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
                 }
                 else
                 {
@@ -219,20 +219,10 @@ namespace Ginger.DataSource
                     mCellSetter = new Setter(DataGridCell.BackgroundProperty, new SolidColorBrush(Colors.LightGray));
                     sCol.CellStyle.Setters.Add(mCellSetter);
                 }
-                //if (sCol.Header.ToString() == "GINGER__USED")
-                //{
-                //    try
-                //    {
-                //        i++;
-                //        sCol.DisplayIndex = i;
-                        
-                //    }
-                //    catch(Exception ex)
-                //    {
-                //        i = 0;
-                //        sCol.DisplayIndex = i++;
-                //    }
-                //}
+                if (sCol.Header.ToString() == "GINGER__USED")
+                {
+                        sCol.DisplayIndex = 1;
+                }
                 if (sCol.Header.ToString() == "GINGER__LAST__UPDATED__BY" || sCol.Header.ToString() == "GINGER__LAST__UPDATE__DATETIME")
                 {
                     if (sCol.DisplayIndex != -1)
@@ -302,6 +292,7 @@ namespace Ginger.DataSource
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
                 mDSTableDetails.DSC.DeleteAll(AllItemsList, mDSTableDetails.Name);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Click 'Commit' to reflect the changes in the Database Or 'Refresh' to get the deleted rows back in the view.");
                 //RefreshGrid();
             }            
         }
