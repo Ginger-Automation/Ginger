@@ -130,7 +130,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
         private void PopulateMissingFields(LiteDbRunSet liteDbRunSet, string clientAppPath)
         {
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
-
+            List<string> runSetEnv = new List<string>();
             int totalRunners = liteDbRunSet.RunnersColl.Count;
             int totalPassed = 0;
             if (liteDbRunSet.RunStatus == eRunStatus.Automated.ToString())
@@ -151,7 +151,10 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
-
+                if (!runSetEnv.Contains(liteDbRunner.Environment))
+                {
+                    runSetEnv.Add(liteDbRunner.Environment);
+                }
                 int totalBFs = liteDbRunner.BusinessFlowsColl.Count;
                 int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
                 int totalExecutedBFs = totalBFs - liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString()).Count();
@@ -205,6 +208,10 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     }
 
                 }
+            }
+            if (runSetEnv.Count > 0)
+            {
+                liteDbRunSet.Environment = string.Join(",", runSetEnv);
             }
         }
 
