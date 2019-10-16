@@ -736,6 +736,9 @@ namespace GingerWPF.BusinessFlowsLib
                 case AutomateEventArgs.eEventType.RunCurrentAction:
                     RunAutomatePageAction((Tuple<Activity,Act>)args.Object,  false);
                     break;
+                case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
+                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false, true);
+                    break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
                     RunAutomatePageActivity((Activity)args.Object);
                     break;
@@ -874,7 +877,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true, bool moveToNextAction=false)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -912,15 +915,18 @@ namespace GingerWPF.BusinessFlowsLib
                 mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
-                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);
-
-               
+                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     mRunner.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
                     mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                }
+
+                if (moveToNextAction)
+                {
+                    mContext.Runner.GotoNextAction();
                 }
             }
             finally
