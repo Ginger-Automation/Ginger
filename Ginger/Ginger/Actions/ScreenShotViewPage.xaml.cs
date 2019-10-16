@@ -218,10 +218,18 @@ namespace Ginger.Actions.UserControls
 
             ScreenShotViewPage p = null;
             if (mBitmapImage != null)
+            {
                 p = new ScreenShotViewPage(mName, mBitmapImage);
+            }
             else if (mBitmapSource != null)
+            {
                 p = new ScreenShotViewPage(mName, mBitmapSource);
-            p.ShowAsWindow(mName, false);
+            }
+
+            if (p != null)
+            {
+                p.ShowAsWindow(mName, false);
+            }
         }
        
         //TODO: the zoom slider is dup with FlowDiagrmaPage - create User control to use for both
