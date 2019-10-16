@@ -2343,7 +2343,7 @@ namespace Ginger.Run
             }
         }
 
-        private bool GotoNextAction()
+        public bool GotoNextAction()
         {
             return CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
         }
