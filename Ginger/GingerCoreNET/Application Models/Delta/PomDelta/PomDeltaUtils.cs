@@ -294,7 +294,7 @@ namespace GingerCoreNET.Application_Models
                     latestProperty.Guid = matchingExistingProperty.Guid;
                     deltaProperty.ElementProperty = latestProperty;
                     if ((string.IsNullOrWhiteSpace(matchingExistingProperty.Value) == true && string.IsNullOrWhiteSpace(latestProperty.Value) == true) 
-                        ||  matchingExistingProperty.Value.Equals(latestProperty.Value, StringComparison.OrdinalIgnoreCase))//Unchanged
+                        || (matchingExistingProperty.Value != null &&  matchingExistingProperty.Value.Equals(latestProperty.Value, StringComparison.OrdinalIgnoreCase)))//Unchanged
                     {
                         deltaProperty.DeltaStatus = eDeltaStatus.Unchanged;
                     }

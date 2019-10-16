@@ -134,6 +134,12 @@ namespace Ginger.Actions
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
                 {
+
+                    if((ActivityPlatform == ePlatformType.Java))
+                    {
+                        xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
+                        SetLocateValueControls();
+                    }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
                     xValueLabel.Content = "Script:";
                 }

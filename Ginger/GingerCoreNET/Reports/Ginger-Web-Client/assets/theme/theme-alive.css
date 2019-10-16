@@ -7,7 +7,7 @@
 }
 
 body .ui-widget {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 15px;
   text-decoration: none;
 }
@@ -305,7 +305,7 @@ body .ui-autocomplete.ui-autocomplete-multiple .ui-autocomplete-multiple-contain
   padding: 0.143em 0;
 }
 body .ui-autocomplete.ui-autocomplete-multiple .ui-autocomplete-multiple-container .ui-autocomplete-input-token input {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 15px;
   padding: 0;
   margin: 0;
@@ -376,7 +376,7 @@ body .ui-chips > ul.ui-inputtext .ui-chips-input-token {
   padding: 0.143em 0;
 }
 body .ui-chips > ul.ui-inputtext .ui-chips-input-token input {
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 15px;
   padding: 0;
   margin: 0;
@@ -1831,7 +1831,7 @@ body .ui-table .ui-sortable-column.ui-state-highlight .ui-sortable-column-icon {
 }
 body .ui-table .ui-editable-column input {
   font-size: 15px;
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 body .ui-table .ui-editable-column input:focus {
   outline: 1px solid #0071bc;
@@ -2380,7 +2380,7 @@ body .ui-treetable .ui-sortable-column.ui-state-highlight .ui-sortable-column-ic
 }
 body .ui-treetable .ui-editable-column input {
   font-size: 15px;
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
 }
 body .ui-treetable .ui-editable-column input:focus {
   outline: 1px solid #0071bc;
@@ -3425,7 +3425,7 @@ body .ui-terminal {
 }
 body .ui-terminal .ui-terminal-input {
   font-size: 15px;
-  font-family: "Source Sans Pro", Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   height: 16px;
 }
 body .ui-terminal .ui-terminal-command {
