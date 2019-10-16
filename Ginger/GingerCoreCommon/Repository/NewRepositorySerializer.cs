@@ -587,15 +587,17 @@ namespace Amdocs.Ginger.Repository
         {
             // read list of object into the list, add one by one, like activities, actions etc.
 
+            if (ParentObj is RepositoryItemBase && ((RepositoryItemBase)ParentObj).ItemBeenReloaded)
+            {
+                observableList.Clear();//clearing existing list items in case it is been reloaded
+            }
+
             //TODO: Think/check if we want to make all observe as lazy load
-            if (LazyLoadAttr.Contains(xdr.Name))
-            // if (FastLoad) // && xdr.Name == nameof(BusinessFlow.Activities) || xdr.Name != nameof(Activity.Acts))
+            if (LazyLoadAttr.Contains(xdr.Name) && observableList.AvoidLazyLoad == false)
             {
                 // We can save line/col and reload later when needed
-
                 string s = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
                 observableList.DoLazyLoadItem(s);
-
                 return;
             }
 
@@ -1401,7 +1403,15 @@ namespace Amdocs.Ginger.Repository
         internal static void ReloadObjectFromFile(RepositoryItemBase repositoryItem)
         {
             string txt = File.ReadAllText(repositoryItem.FilePath);
-            DeserializeFromText(txt, repositoryItem, filePath: repositoryItem.FilePath);                        
+            try
+            {
+                repositoryItem.ItemBeenReloaded = true;
+                DeserializeFromText(txt, repositoryItem, filePath: repositoryItem.FilePath);
+            }
+            finally
+            {
+                repositoryItem.ItemBeenReloaded = false;
+            }                                   
         }
 
 

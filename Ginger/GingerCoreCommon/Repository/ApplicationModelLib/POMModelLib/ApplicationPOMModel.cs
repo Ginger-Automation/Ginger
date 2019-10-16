@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 if (mUnMappedElements.LazyLoad)
                 {
-                    mUnMappedElements.GetItemsInfo();
+                    mUnMappedElements.LoadLazyInfo();
                 }
                 return mUnMappedElements;
             }
@@ -119,7 +119,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 if (mMappedElements.LazyLoad)
                 {
-                    mMappedElements.GetItemsInfo();
+                    mMappedElements.LoadLazyInfo();
                 }
                 return mMappedElements;
             }
