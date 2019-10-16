@@ -38,6 +38,8 @@ namespace Amdocs.Ginger.Common
 
         bool LazyLoad { get; set; }
 
+        bool AvoidLazyLoad { get; set; }
+
         string StringData { get; set; }
 
         MemoryStream StringDataMS { get; set; }

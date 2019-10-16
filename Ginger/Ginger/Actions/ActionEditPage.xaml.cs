@@ -183,7 +183,8 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
-            else if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
+            
+            if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
                 xActionTabs.SelectedItem = xExecutionReportTab;

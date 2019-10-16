@@ -85,7 +85,7 @@ namespace GingerCore
             Selenium,   // From Selenium Import
             Gherkin     // From Gherking Feature file
         }
-        
+
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }
@@ -264,7 +264,7 @@ namespace GingerCore
                 }
                 if (mActivities.LazyLoad)
                 {
-                    mActivities.GetItemsInfo();
+                    mActivities.LoadLazyInfo();
                     AttachActivitiesGroupsAndActivities(mActivities);
                 }
                 return mActivities;
@@ -304,7 +304,7 @@ namespace GingerCore
                 }
             }
         }
-        
+
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
@@ -527,7 +527,7 @@ namespace GingerCore
                 CurrentActivity.Acts.Move(CurrentActivity.Acts.Count - 1, selectedActIndex + 1);
             }
         }
-        
+
         public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null, int insertIndex = -1, bool setAsCurrent = true)
         {
             if (activity == null)
@@ -548,7 +548,7 @@ namespace GingerCore
                     else
                     {
                         insertIndex = Activities.Count;//last
-                    }                    
+                    }
                 }
                 else if (CurrentActivity != null)
                 {
@@ -598,7 +598,7 @@ namespace GingerCore
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
                 SetUniqueVariableName(v);
-                
+
                 if (insertIndex < 0 || insertIndex > Variables.Count - 1)
                 {
                     Variables.Add(v);
@@ -636,7 +636,7 @@ namespace GingerCore
                 activitiesGroup = new ActivitiesGroup();
                 activitiesGroup.Name = "Group";
             }
-            SetUniqueActivitiesGroupName(activitiesGroup);     
+            SetUniqueActivitiesGroupName(activitiesGroup);
 
             if ((index != -1) && (ActivitiesGroups.Count > index))
             {
@@ -709,13 +709,13 @@ namespace GingerCore
                     {
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
-                        
+
                         if (keepOriginalTargetApplicationMapping == false)
                         {
                             SetActivityTargetApplication(actInstance);
                         }
 
-                        this.AddActivity(actInstance, insertIndex:this.Activities.Count);
+                        this.AddActivity(actInstance, insertIndex: this.Activities.Count);
                         actIdent.IdentifiedActivity = actInstance;
                     }
                     else
@@ -745,7 +745,8 @@ namespace GingerCore
             return false;
         }
 
-        public void AttachActivitiesGroupsAndActivities(ObservableList<Activity> activitiesList=null)
+        private bool mAttachActivitiesGroupsWasDone = false;
+        public void AttachActivitiesGroupsAndActivities(ObservableList<Activity> activitiesList = null)
         {
             if (activitiesList == null)
             {
@@ -798,6 +799,8 @@ namespace GingerCore
                 {
                     group.AddActivityToGroup(activity);
                 }
+
+                mAttachActivitiesGroupsWasDone = true;
             }
 
             //Attach free Activities + make sure Activities groups having valid order
@@ -1159,9 +1162,9 @@ namespace GingerCore
             //Remove dynamically added activities from groups identifies
             foreach (var activitiesGroup in ActivitiesGroups)
             {
-                for(int index=0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
+                for (int index = 0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
                 {
-                    if(activitiesGroup.ActivitiesIdentifiers[index].AddDynamicly)
+                    if (activitiesGroup.ActivitiesIdentifiers[index].AddDynamicly)
                     {
                         activitiesGroup.ActivitiesIdentifiers.RemoveAt(index);
                         index--;
@@ -1174,7 +1177,7 @@ namespace GingerCore
             {
                 if (Activities[i].AddDynamicly)
                 {
-                    Activities.RemoveAt(i);                   
+                    Activities.RemoveAt(i);
                     i--;
                 }
             }
@@ -1412,7 +1415,7 @@ namespace GingerCore
         public void MoveActivityInGroup(Activity activityToMove, int newIndx)
         {
             int currentIndx = Activities.IndexOf(activityToMove);
-            if (newIndx >= 0 && newIndx <= (Activities.Count-1) && Activities[newIndx].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+            if (newIndx >= 0 && newIndx <= (Activities.Count - 1) && Activities[newIndx].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
             {
                 //move Activity in BF
                 Activities.Move(currentIndx, newIndx);
@@ -1430,7 +1433,7 @@ namespace GingerCore
             }
         }
 
-        public void MoveActivityBetweenGroups(Activity activityToMove, ActivitiesGroup targetGroup, int targetIndex=-1)
+        public void MoveActivityBetweenGroups(Activity activityToMove, ActivitiesGroup targetGroup, int targetIndex = -1)
         {
             if (targetGroup == null)
             {
@@ -1442,10 +1445,10 @@ namespace GingerCore
             if (existingGroup.Item1 != null && existingGroup.Item2 != null)
             {
                 existingGroup.Item1.RemoveActivityFromGroup(activityToMove);
-                
+
                 //add to target group                               
                 if (targetIndex >= 0)
-                {                    
+                {
                     //move in group
                     Activity currentActivityInTargetIndx = Activities[targetIndex];
                     int targetIndxInGroup = targetGroup.ActivitiesIdentifiers.IndexOf(targetGroup.GetActivityIdentifiers(currentActivityInTargetIndx));
@@ -1455,14 +1458,14 @@ namespace GingerCore
                     {
                         targetIndex--;
                     }
-                    Activities.Move(Activities.IndexOf(activityToMove), targetIndex);                    
+                    Activities.Move(Activities.IndexOf(activityToMove), targetIndex);
                 }
                 else
-                {                    
+                {
                     int indxToMoveInBF = Activities.Count - 1;
                     if (targetGroup.ActivitiesIdentifiers.Count > 0)
                     {
-                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[targetGroup.ActivitiesIdentifiers.Count-1].IdentifiedActivity) + 1;
+                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[targetGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
                     }
                     //move in group
                     targetGroup.AddActivityToGroup(activityToMove);
@@ -1475,6 +1478,14 @@ namespace GingerCore
                 }
             }
 
+        }
+
+        public override void PostSerialization()
+        {
+            if (mAttachActivitiesGroupsWasDone)
+            {
+                AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
+            }
         }
 
     }

@@ -208,10 +208,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 BFR._id = lastBfObjId;
                 ClearSeq();
             }
+            SetBfobjects(context, executedFrom);
             context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
             BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
             BFR.Seq = ++this.bfSeq;
-            SetBfobjects(context, executedFrom);
             if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
                 BFR._id = context.BusinessFlow.LiteDbId;

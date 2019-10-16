@@ -907,7 +907,7 @@ namespace Ginger.Run
 
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
-                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);
+                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
                 if (act.EnableRetryMechanism & mStopRun == false)
                 {
                     while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
@@ -923,7 +923,7 @@ namespace Ginger.Run
                             break;
 
                         //Run Again
-                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun);                        
+                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);                        
                     }
                 }
                 if (mStopRun)
@@ -971,7 +971,7 @@ namespace Ginger.Run
             }
         }
 
-        private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true)
+        private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution=false)
         {
             try
             {
@@ -1092,7 +1092,7 @@ namespace Ginger.Run
                 Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
                 Act action = act;
 
-                DoFlowControl(act);
+                DoFlowControl(act, standaloneExecution);
                 DoStatusConversion(act);   //does it need to be here or earlier?
             }
             finally
@@ -2055,7 +2055,7 @@ namespace Ginger.Run
             act.Reset();
         }
 
-        private void DoFlowControl(Act act)
+        private void DoFlowControl(Act act, bool standaloneExecution= false)
         {            
             try
             {                                                 
@@ -2217,17 +2217,17 @@ namespace Ginger.Run
                 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
-                if (!IsStopLoop) //Why we move next here???
+                if (!IsStopLoop) 
                 {
                     if (!IsLastActionOfActivity())
                     {
-                        if (act.IsSingleAction == null || act.IsSingleAction == false)
+                        if (!standaloneExecution)// if running single action we don't want to move to next action
                         {
                             // if execution has been stopped externally, stop at current action
                             if (!mStopRun)
                             {
                                 GotoNextAction();
-                                //((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                                ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                             }
                         }
                     }
@@ -2343,7 +2343,7 @@ namespace Ginger.Run
             }
         }
 
-        private bool GotoNextAction()
+        public bool GotoNextAction()
         {
             return CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
         }

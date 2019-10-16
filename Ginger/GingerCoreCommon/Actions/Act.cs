@@ -370,7 +370,7 @@ namespace GingerCore.Actions
         //private int mSmartWait;
         //public int SmartWait { get; set; }  
 
-        public bool? IsSingleAction { get; set; }
+       // public bool? IsSingleAction { get; set; }
 
         public DateTime StartTimeStamp { get; set; }
         public DateTime EndTimeStamp { get; set; }

@@ -256,6 +256,7 @@ namespace Ginger.Run.RunSetActions
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).Elapsed = liteDbRunSet.Elapsed;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = liteDbRunSet.ExecutionRate;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = liteDbRunSet.PassRate;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).EnvironmentsDetails = liteDbRunSet.Environment;
                         CreateSummaryViewReportForEmailAction(offlineReportInfo);
                         // TODO: check multi run on same machine/user
                     }
@@ -411,7 +412,6 @@ namespace Ginger.Run.RunSetActions
                     string beatLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@BeatLogo.png");
                     string gingerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
                     string customerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
-
 
                     if (File.Exists(beatLogoPath))
                         alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(beatLogoPath), "beat"));
