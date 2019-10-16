@@ -178,7 +178,7 @@ namespace Ginger.Actions.WebServices
                 EIV.Value = value;
             }
         }
-        
+
         private void ValueExpressionButton_Click(object sender, RoutedEventArgs e)
         {
             EnhancedActInputValue AIV = (EnhancedActInputValue)APIModelParamsValueUCGrid.CurrentItem;
@@ -211,12 +211,17 @@ namespace Ginger.Actions.WebServices
 
             //if (apiModelPage == null)
             //{
-                RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
-                AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
-                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, 
-                                                                                                    new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
-                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
-                                                                                                                Convert.ToString(AAMB.TargetApplicationKey.ItemName)), UCTreeView.eFilteroperationType.Equals);
+            RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+            AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
+            if (AAMB.TargetApplicationKey != null)
+            {
+                var apisFilterTuple = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), Convert.ToString(AAMB.TargetApplicationKey.ItemName));
+                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, apisFilterTuple, UCTreeView.eFilteroperationType.Equals);
+            }
+            else
+            {
+                apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
+            }
             //}
             List<object> selectedList = apiModelPage.ShowAsWindow();
 
