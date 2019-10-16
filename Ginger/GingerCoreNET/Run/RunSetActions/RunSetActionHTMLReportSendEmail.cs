@@ -256,6 +256,7 @@ namespace Ginger.Run.RunSetActions
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).Elapsed = liteDbRunSet.Elapsed;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = liteDbRunSet.ExecutionRate;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = liteDbRunSet.PassRate;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).EnvironmentsDetails = liteDbRunSet.Environment;
                         CreateSummaryViewReportForEmailAction(offlineReportInfo);
                         // TODO: check multi run on same machine/user
                     }
