@@ -106,7 +106,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             Seq = runSetReport.Seq;
             GUID = Guid.Parse(runSetReport.GUID);
-            Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+            Name = runSetReport.Name;
             Description = runSetReport.Description;
             Environment = runSetReport.EnvironmentsDetails;
             StartTimeStamp = runSetReport.StartTimeStamp;

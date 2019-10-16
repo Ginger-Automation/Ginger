@@ -111,14 +111,6 @@ namespace Ginger.Run
                         mExecutionLogger.ExecutionLogfolder = executionLoggerHelper.GetLoggerDirectory(mExecutionLogger.ExecutionLogfolder);
                         executionLoggerHelper.CleanDirectory(mExecutionLogger.ExecutionLogfolder);
                     }
-                    else
-                    {
-                        if (ExecutedFrom == eExecutedFrom.Run)
-                        {
-                            RunSetReport.Name = defaultRunTabLogName;
-                        }
-                    }
-
                 }
 
             }
