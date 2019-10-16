@@ -1051,7 +1051,7 @@ namespace Ginger.Actions
             xOutputValuesGrid.DisableGridColoumns();
 
             xExecutionReportConfigPnl.IsEnabled = false;
-            xActionRunDetailsPnl.IsEnabled = false;
+            //xActionRunDetailsPnl.IsEnabled = false;
         }
 
         private void UndoChangesAndClose()
