@@ -256,13 +256,18 @@ namespace GingerCore.Drivers.JavaDriverLib
             try
             {
                 if (!mConnected)
-                    return PayLoad.Error("Failed to connect to Java agent");
+                {
+                    return ErrorPayLoadMessage("Failed to connect to Java agent");
+                }
+                    
 
                 // If connection failed then try to reconnect and if reconnect failed then go out of here
                 if (!SocketConnected(clientSocket))
                 {
                     if (!Reconnect())
-                        return PayLoad.Error("The connection to Ginger Java Agent was closed and reconnect failed");
+                    {
+                        return ErrorPayLoadMessage("The connection to Ginger Java Agent was closed and reconnect failed");
+                    }
                 }
 
                 byte[] bytes = pl.GetPackage();
@@ -283,11 +288,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Thread.Sleep(10);
                     if (!SocketConnected(clientSocket))
                     {
-                        PayLoad payLoad = new PayLoad("ERROR");
-                        payLoad.AddValue(0);
-                        payLoad.AddValue("ERROR| Lost connection or Not connected to Ginger Agent !!!");
-                        payLoad.ClosePackage();
-                        return payLoad;
+                        return ErrorPayLoadMessage("ERROR | Lost connection or Not connected to Ginger Agent!!!");
                     }
                     //TODO: J.G: If current run stopped then notify Java Driver 
                     //if (PreviousRunStopped)
@@ -323,6 +324,15 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 return PayLoad.Error(e.Message);
             }
+        }
+
+        private static PayLoad ErrorPayLoadMessage(string message)
+        {
+            PayLoad payLoad = new PayLoad("ERROR");
+            payLoad.AddValue(0);
+            payLoad.AddValue(message);
+            payLoad.ClosePackage();
+            return payLoad;
         }
 
         bool SocketConnected(TcpClient s)
