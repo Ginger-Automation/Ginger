@@ -686,12 +686,14 @@ namespace GingerCoreNET.DataSource
             }
         }
 
-        public override void RunQuery(string query)
+        public override bool RunQuery(string query)
         {
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
                 var result = db.Engine.Run(query);
             }
+
+            return true;
         }
 
         public void RunQuery(string query, int LocateRowValue, string DSTableName, bool MarkUpdate = false, bool NextAvai = false)

@@ -199,7 +199,7 @@ namespace GingerCore.DataSource
 
         }
 
-        public override void RunQuery(string query)
+        public override bool RunQuery(string query)
         {
             try
             {
@@ -218,7 +218,10 @@ namespace GingerCore.DataSource
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Execute Query", ex);
+                return false;
             }
+
+            return true;
         }
 
         public override void AddTable(string TableName,string columnlist="")
@@ -274,8 +277,10 @@ namespace GingerCore.DataSource
             if(!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
             {
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
-                RunQuery(query);
-                DeleteTable(TableName);//Access does not support rename using alter query so we copy data to new table and delete old
+                if (RunQuery(query))
+                {
+                    DeleteTable(TableName);
+                }
             }
         }
         
