@@ -223,25 +223,21 @@ namespace Ginger.Run
 
         public void RunSetStart(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline = false)
         {
-            if (RunSetReport == null)
+            RunSetReport = new RunSetReport();
+
+            if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != null) && (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != string.Empty))
             {
-                RunSetReport = new RunSetReport();
-
-                if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != null) && (WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name != string.Empty))
-                {
-                    RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
-                }
-                else
-                {
-                    RunSetReport.Name = defaultRunTabLogName;
-                }
-                RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
-                RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
-                RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
-                RunSetReport.Watch.Start();
-                mExecutionLogger.SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
+                RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
             }
-
+            else
+            {
+                RunSetReport.Name = defaultRunTabLogName;
+            }
+            RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+            RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
+            RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            RunSetReport.Watch.Start();
+            mExecutionLogger.SetRunsetFolder(execResultsFolder, maxFolderSize, currentExecutionDateTime, offline);
             if (!offline)
             {
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, null);
