@@ -1497,17 +1497,18 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        public static DataTemplate GetStoreToTemplate(string StoreTo, string StoretoValue, List<string> mVariableList, string VariableList = "", string SupportSetValue = "", string varLabel = "", ObservableList<GlobalAppModelParameter> mAppGlobalParamList = null)//Actreturnva
+        public static DataTemplate GetStoreToTemplate(string StoreTo, string StoretoValue, ObservableList<string> mVariableList, string VariableList = "", string SupportSetValue = "", string varLabel = "", ObservableList<GlobalAppModelParameter> mAppGlobalParamList = null)//Actreturnva
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory Storeto = new FrameworkElementFactory(typeof(UCStoreTo));
 
             if (mVariableList != null)
             {
-                ObservableList<string> varList = new ObservableList<string>();
-                foreach (string str in mVariableList)
-                    varList.Add(str);
-                Storeto.SetValue(UCStoreTo.ItemsSourceProperty, varList);
+                //ObservableList<string> varList = new ObservableList<string>();
+                //foreach (string str in mVariableList)
+                //    varList.Add(str);
+                //Storeto.SetValue(UCStoreTo.ItemsSourceProperty, varList);
+                Storeto.SetValue(UCStoreTo.ItemsSourceProperty, mVariableList);
             }                
             else
             {
@@ -2172,6 +2173,45 @@ public void RemoveCustomView(string viewName)
         public void SetSelectedIndex(int index)
         {
             grdMain.SelectedIndex = index;
+        }
+
+        private void DoKeyboardCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (Keyboard.IsKeyDown(Key.C))
+                {
+                    //Do Copy
+                    if (ShowCopy == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.CopySelectedItems(this);
+                    }
+                }
+                else if (Keyboard.IsKeyDown(Key.X))
+                {
+                    //Do Cut
+                    if (ShowCut == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.CutSelectedItems(this);
+                    }
+                }
+                else if (Keyboard.IsKeyDown(Key.V))
+                {
+                    //Do Paste
+                    if (ShowPaste == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.PasteItems(this);
+                    }
+                }
+            }
+            else if (Keyboard.IsKeyDown(Key.Delete))
+            {
+                //delete selected
+                if (ShowDelete == Visibility.Visible)
+                {
+                    btnDelete_Click(null, null);
+                }
+            }
         }
     }  
 }

@@ -68,30 +68,45 @@ namespace Ginger.DataSource
             
         }
         
-        private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        void SetAccessDataSource()
         {
-            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString() && mDSDetails.GetType() != typeof(AccessDataSource))               
+            if (!(mDSDetails is AccessDataSource))
+            {
                 mDSDetails = new AccessDataSource();
-            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString())
-            {
-                mFileType = "mdb";
-                mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
-                FilePathTextBox.Text = mDSDetails.FilePath;
-                DSName.Text = "GingerDataSource";
-            }
-            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.LiteDataBase.ToString() && mDSDetails.GetType() != typeof(GingerLiteDB))
-            {
-                mDSDetails = new GingerLiteDB();
-                mDSDetails.DSType = DataSourceBase.eDSType.LiteDataBase;
-            }
-            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.LiteDataBase.ToString())
-            {
-                mFileType = "db";
-                mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\LiteDB.db";
-                FilePathTextBox.Text = mDSDetails.FilePath;
-                DSName.Text = "LiteDB";
             }
 
+            mDSDetails.DSType = DataSourceBase.eDSType.MSAccess;
+            mFileType = "mdb";
+            mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
+            FilePathTextBox.Text = mDSDetails.FilePath;
+            DSName.Text = "GingerDataSource";
+
+        }
+
+        void SetLiteDBDataSource()
+        {
+            if (!(mDSDetails is GingerLiteDB))
+            {
+                mDSDetails = new GingerLiteDB();
+            }
+
+            mDSDetails.DSType = DataSourceBase.eDSType.LiteDataBase;
+            mFileType = "db";
+            mDSDetails.FilePath = mTargetFolder.FolderRelativePath + @"\LiteDB.db";
+            FilePathTextBox.Text = mDSDetails.FilePath;
+            DSName.Text = "LiteDB";
+        }
+
+        private void DSTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.MSAccess.ToString())
+            {
+                SetAccessDataSource();
+            }
+            else if (DSTypeComboBox.SelectedValue.ToString() == DataSourceBase.eDSType.LiteDataBase.ToString())
+            {
+                SetLiteDBDataSource();
+            }
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -208,6 +223,8 @@ namespace Ginger.DataSource
             DSName.IsEnabled = false;
 
             DSTypeComboBox.SelectedValue = DataSourceBase.eDSType.MSAccess;
+            SetAccessDataSource();
+
             DSName.Text = "GingerDataSource";            
             FilePathTextBox.Text = mTargetFolder.FolderRelativePath + @"\GingerDataSource.mdb";
             
@@ -222,12 +239,12 @@ namespace Ginger.DataSource
             DSName.IsEnabled = true;
             FilePathTextBox.IsEnabled = true;
             FileBrowseButton.IsEnabled = true;
-            
 
             DSTypeComboBox.SelectedValue = DataSourceBase.eDSType.MSAccess;
+            SetAccessDataSource();
+
             DSName.Text = "";
             FilePathTextBox.Text = "";
-            
         }
 
         private void DSName_TextChanged(object sender, TextChangedEventArgs e)

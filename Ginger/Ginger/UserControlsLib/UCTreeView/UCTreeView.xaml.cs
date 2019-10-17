@@ -774,10 +774,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (parentTVI != null)
             {
                 TreeViewItem toDeleteTVI = SearchTVIByObjectRecursive(parentTVI, itemObject);
-                TreeViewItem parent = (TreeViewItem)toDeleteTVI.Parent;
-
-                parent.Items.Remove(toDeleteTVI);
-                parent.Focus();
+                if (toDeleteTVI != null)
+                {
+                    TreeViewItem parent = (TreeViewItem)toDeleteTVI.Parent;
+                    parent.Items.Remove(toDeleteTVI);
+                    parent.Focus();
+                }
             }
         }
 

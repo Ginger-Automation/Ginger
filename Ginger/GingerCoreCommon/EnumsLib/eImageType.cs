@@ -313,6 +313,8 @@ namespace Amdocs.Ginger.Common.Enums
         Text,
         CLI,
         LinkSquare,
+        DatePicker,
+        TreeView
         #endregion
     }
 }

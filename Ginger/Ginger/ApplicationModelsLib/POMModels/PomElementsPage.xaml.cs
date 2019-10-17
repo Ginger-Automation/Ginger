@@ -55,6 +55,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public eElementsContext mContext;
         ApplicationPOMModel mPOM;
         ObservableList<ElementInfo> mElements;
+        const string parentFramePropertyName = "Parent IFrame";
 
         bool IsFirstSelection = true;
 
@@ -313,7 +314,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    DataSourceBase mDSDetails = (((DataSourceTable)selectedRunSet[0]).DSC);
+
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
                     im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName);
@@ -530,18 +532,44 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75 });
 
             xPropertiesGrid.SetAllColumnsDefaultView(view);
             xPropertiesGrid.InitViewItems();
             xPropertiesGrid.SetTitleLightStyle = true;
             xPropertiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddPropertyHandler));
+            xPropertiesGrid.grdMain.PreparingCellForEdit += PropertiesGrid_PreparingCellForEdit;
+            xPropertiesGrid.grdMain.CellEditEnding += PropertiesGrid_CellEditEnding;
+        }
+
+        private void PropertiesGrid_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
+        {
+            if(mSelectedElement.IsAutoLearned == true || e.Column.Header.ToString() == nameof(ControlProperty.Name))
+            {
+                e.EditingElement.IsEnabled = false;
+            }
+        }
+
+        private void PropertiesGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.Column.Header.ToString() == nameof(ControlProperty.Value))
+            {
+                ControlProperty ctrlProp = e.EditingElement.DataContext as ControlProperty;
+                mSelectedElement.Path = ctrlProp != null ? ctrlProp.Value : "";
+            }
         }
 
         private void AddPropertyHandler(object sender, RoutedEventArgs e)
         {
-            mSelectedElement.Properties.Add(new ControlProperty());
+            xPropertiesGrid.Grid.CommitEdit();
+
+            ControlProperty elemProp = new ControlProperty() { Name = parentFramePropertyName };
+            mSelectedElement.Properties.Add(elemProp);
+            xPropertiesGrid.Grid.SelectedItem = elemProp;
+            xPropertiesGrid.ScrollToViewCurrentItem();
+
+            xPropertiesGrid.ShowAdd = Visibility.Collapsed;
         }
 
         private void HandelElementSelectionChange()
@@ -581,6 +609,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
                 xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
+                if(!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.Where(c => c.Name == "Parent IFrame").FirstOrDefault() == null)
+                {
+                    xPropertiesGrid.ShowAdd = Visibility.Visible;
+                }
+                else
+                {
+                    xPropertiesGrid.ShowAdd = Visibility.Collapsed;
+                }
                 UpdatePropertiesHeader();
 
             }

@@ -146,6 +146,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     {
                         elem.ParentGuid = mPOM.Guid;
                     }
+                    mPOM.StartDirtyTracking();
                     xMainElementsGrid.DataSourceList = mPOM.MappedUIElements;
                     xMainElementsGrid.Visibility = Visibility.Visible;
                     xPOMSplitter.Visibility = Visibility.Visible;

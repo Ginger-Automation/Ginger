@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.GeneralLib;
 using Ginger.Actions._Common.ActUIElementLib;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -51,6 +50,11 @@ namespace Ginger.Actions
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
 
             List<ActBrowserElement.eControlAction> supportedControlActions = mPlatform.GetPlatformBrowserControlOperations();
+            //validate operation is valid
+            if (supportedControlActions.Contains(mAct.ControlAction) == false)
+            {
+                mAct.ControlAction = supportedControlActions[0];
+            }
 
             //bind controls
             GingerCore.General.FillComboFromEnumObj(xControlActionComboBox, mAct.ControlAction, supportedControlActions.Cast<object>().ToList());
@@ -130,6 +134,12 @@ namespace Ginger.Actions
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.InjectJS || mAct.ControlAction == ActBrowserElement.eControlAction.RunJavaScript)
                 {
+
+                    if((ActivityPlatform == ePlatformType.Java))
+                    {
+                        xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
+                        SetLocateValueControls();
+                    }
                     xValueGrid.Visibility = System.Windows.Visibility.Visible;
                     xValueLabel.Content = "Script:";
                 }

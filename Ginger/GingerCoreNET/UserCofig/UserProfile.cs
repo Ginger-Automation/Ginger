@@ -93,7 +93,7 @@ namespace Ginger
         {
             public string Name { get; set; }
             public int Width { get; set; }
-        }             
+        }
 
         public List<UserProfileGrid> Grids = new List<UserProfileGrid>();
 
@@ -225,7 +225,7 @@ namespace Ginger
             {
                 RecentSolutions.Insert(0, solution.Folder);
             }
-            
+
             RecentSolutionsAsObjects.AddToFirstIndex(solution);
 
             while (RecentSolutions.Count > 10)//to keep list of 10
@@ -276,7 +276,7 @@ namespace Ginger
         [IsSerializedForLocalRepository]
         public string SolutionSourceControlProxyPort { get; set; }
 
-        
+
         [IsSerializedForLocalRepository(80)]
         public int SolutionSourceControlTimeout { get; set; }
 
@@ -291,6 +291,36 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public string ReportTemplateName { get; set; }
+
+        bool mAutoRunAutomatePageAnalyzer = true;
+        [IsSerializedForLocalRepository(true)]
+        public bool AutoRunAutomatePageAnalyzer
+        {
+            get
+            {
+                return mAutoRunAutomatePageAnalyzer;
+            }
+            set
+            {
+                mAutoRunAutomatePageAnalyzer = value;
+                OnPropertyChanged(nameof(AutoRunAutomatePageAnalyzer));
+            }
+        }
+
+        bool mAutoGenerateAutomatePageReport;
+        [IsSerializedForLocalRepository]
+        public bool AutoGenerateAutomatePageReport
+        {
+            get
+            {
+                return mAutoGenerateAutomatePageReport;
+            }
+            set
+            {
+                mAutoGenerateAutomatePageReport = value;
+                OnPropertyChanged(nameof(AutoGenerateAutomatePageReport));
+            }
+        }
 
         public string SourceControlPass
         {

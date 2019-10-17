@@ -5,82 +5,83 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       xmlns:Ginger="clr-namespace:Ginger"
-      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Variable"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="Variable"
       mc:Ignorable="d" 
       d:DesignHeight="1000" d:DesignWidth="800">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="250" />
-            <RowDefinition x:Name="VarTypeConfigsRow" Height="130*" MinHeight="130"/>
-            <RowDefinition Height="150"/>
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0">
-            <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
-                <StackPanel Orientation="Vertical" >
-                    <Label Style="{StaticResource @InputFieldLabelStyle}">Name:</Label>
-                    <Grid>
+    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}">
+        <DockPanel >
+            <Expander x:Name="xDetailsExpander" DockPanel.Dock="Top" Margin="0,10,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" Expanded="XDetailsExpander_ExpandCollapse" Collapsed="XDetailsExpander_ExpandCollapse">
+                <Expander.Header>
+                    <Label Content="General Details" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <Grid Margin="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition x:Name="SharedRepoInstanceUC_Col"  Width="50"/>
+                            <ColumnDefinition x:Name="SharedRepoInstanceUC_Col" Width="50"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox x:Name="txtVarName" AutomationProperties.AutomationId="Variable Name AID" Grid.Column="0" Style="{StaticResource @TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="50"></TextBox>
-                        <Ginger:ucSharedRepoInstance x:Name="SharedRepoInstanceUC" Grid.Column="1" />
+                        <StackPanel Orientation="Vertical" Grid.Column="0">
+                            <StackPanel Orientation="Horizontal"  Margin="0,0,0,5">
+                                <Label Style="{StaticResource $LabelStyle}">
+                                    <Label.Content>
+                                        <GingerCore:ucTextDicResource Text="[Variable] Type:"/>
+                                    </Label.Content>
+                                </Label>
+                                <Label x:Name="xTypeLbl" Style="{StaticResource $LabelStyle}" Content="Variable Type" Margin="-5,0,0,0"/>
+                            </StackPanel>
+                            <Label Style="{StaticResource $LabelStyle}">Name:</Label>
+                            <TextBox x:Name="xVarNameTxtBox" AutomationProperties.AutomationId="Variable Name AID" Style="{StaticResource $MultiRowsTextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                            <Label Style="{StaticResource $LabelStyle}">Description:</Label>
+                            <TextBox x:Name="xVarDescritpiontxtBox" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50" Margin="0,0,0,0"/>
+                            <Ginger:ucTagsViewer x:Name="xTagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
+                            <StackPanel  Orientation="Vertical" >
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Content="Set as Input" HorizontalAlignment="Left" Margin="5,0,0,0" />
+                                    <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="5,10,0,10" VerticalAlignment="Center">
+                                    <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
+                                        <Label.Content>
+                                            <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
+                                        </Label.Content>
+                                    </Label>
+                                    <usercontrols:ImageMakerControl ImageType="Info" Height="12" Width="12" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5,0,0" >
+                                        <usercontrols:ImageMakerControl.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="The actual [Variable] which will be used/manipulate in run time"/>
+                                        </usercontrols:ImageMakerControl.ToolTip>
+                                    </usercontrols:ImageMakerControl>
+                                    <ComboBox x:Name="xLinkedvariableCombo" Width="200" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="linkedvariableCombo_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5"/>
+                                    <usercontrols:ucButton x:Name="xPublishValueToLinkedVarBtn" ButtonType="ImageButton" ButtonImageType="LinkSquare" Click="publishValueToLinkedBtn_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" ButtonFontImageSize="16" >
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Set linked [Variable] value to be the same as current [Variable] value"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" />
                     </Grid>
-                </StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Description:</Label>
-                <TextBox x:Name="txtVarDescritpion" Style="{StaticResource @MultiRowsTextBoxStyle}" Height="40" Margin="0,0,50,5"></TextBox>
-                <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,0,0,0" HorizontalAlignment="Left" />
-            </StackPanel>
-            <StackPanel Margin="0,10,0,0" >
-                <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" Margin="0,0,0,5">
-                    <CheckBox x:Name="cbSetAsInputValue" Style="{StaticResource @InputCheckBoxStyle}" DockPanel.Dock="Left" VerticalAlignment="Center" Content="Set As Input Value" HorizontalAlignment="Left" Margin="5,0,0,0" Padding="4,0,0,0"/>
-                    <CheckBox x:Name="cbSetAsOutputValue" Style="{StaticResource @InputCheckBoxStyle}" DockPanel.Dock="Left" VerticalAlignment="Center" Content="Set As Output Value" HorizontalAlignment="Left" Margin="5,0,0,0" Padding="4,0,0,0"/>
-                </DockPanel>
-                <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch">
-                    <Label Style="{StaticResource @InputFieldLabelStyle}" DockPanel.Dock="Left" VerticalAlignment="Center">
+                </Expander.Content>
+            </Expander>
+
+            <Border Margin="0,10,0,0" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="3" HorizontalAlignment="Stretch">
+                <DockPanel DockPanel.Dock="Top" Margin="5,5,5,5">
+                    <Label HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
                         <Label.Content>
-                            <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
+                            <GingerCore:ucTextDicResource Text="[Variable] Type Configurations:"/>
                         </Label.Content>
                     </Label>
-                    <Image x:Name="infoImage"  Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,1,0,0" >
-                        <Image.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Actual [Variable] which will be used/manipulate in run time"/>
-                        </Image.ToolTip>
-                    </Image>
-                    <ComboBox x:Name="linkedvariableCombo" Width="200" Style="{StaticResource $FlatEditInputComboBoxStyle}" SelectionChanged="linkedvariableCombo_SelectionChanged" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0"/>
-                    <Button x:Name="publishValueToLinkedBtn" Content="Publish Value" Click="publishValueToLinkedBtn_Click" Style="{StaticResource @InputButtonStyle}" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="7,0,0,0" Height="23">
-                        <Button.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Set linked [Variable] value to be the same as current [Variable] value"/>
-                        </Button.ToolTip>
-                    </Button>
-                </DockPanel>
-            </StackPanel>
-        </StackPanel>
-        <ScrollViewer Grid.Row="1">
-            <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" >
-                <Label  HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
-                    <Label.Content>
-                        <GingerCore:ucTextDicResource Text="[Variable] Type Configurations:"/>
-                    </Label.Content>
-                </Label>
-                <Frame x:Name="frmVarTypeInfo" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,40,0"/>
-            </DockPanel>
-        </ScrollViewer>
 
-        <ScrollViewer Grid.Row="3">
-            <DockPanel>
-                <Label HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
-                    <Label.Content>
-                        <GingerCore:ucTextDicResource Text="[Variable] Auto Configurations:"/>
-                    </Label.Content>
-                </Label>
-                <Label DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}">Formula:</Label>
-                <TextBox x:Name="txtFormula" DockPanel.Dock="Top" IsReadOnly="True" Style="{StaticResource @TextBoxStyle}" Background="#FFEFEFF2"></TextBox>
-                <Label DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}">Current Value:</Label>
-                <TextBox x:Name="txtCurrentValue" DockPanel.Dock="Top" Style="{StaticResource @TextBoxStyle}" Background="#FFEFEFF2" IsReadOnly="True"></TextBox>
-            </DockPanel>
-        </ScrollViewer>
-    </Grid>
+                    <Frame x:Name="xVarTypeConfigFrame" Content="Variable Configs" DockPanel.Dock="Top" NavigationUIVisibility="Hidden" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,50,0"/>
+
+                    <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,20,0,0">Formula:</Label>
+                    <TextBox x:Name="xFormulaTxtBox" DockPanel.Dock="Top" IsReadOnly="True" Style="{StaticResource $TextBoxStyle}" Background="#FFEFEFF2" Margin="0,0,50,0"/>
+                    <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,5,0,0">Current Value:</Label>
+                    <TextBox x:Name="xCurrentValueTextBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" Height="50" VerticalAlignment="Top" Background="#FFEFEFF2" IsReadOnly="True" Margin="0,0,50,0"/>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+    </ScrollViewer>
 </Page>

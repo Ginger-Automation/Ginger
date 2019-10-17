@@ -192,15 +192,15 @@ namespace Ginger.DataSource
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 20, BindingMode = BindingMode.OneWay });                        
                 } 
                 else if (colName == "GINGER_USED")
-                {                    
+                {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
-                } 
+                }
                 else
                 {
                     view.GridColsView.Add(new GridColView() { Field = colName, Header = colHeader, WidthWeight = 30 });
                 }
             }
-            
+
             if (bUpdate == false)
             {
                 grdTableData.SetAllColumnsDefaultView(view);
@@ -221,21 +221,11 @@ namespace Ginger.DataSource
                 }
                 if (sCol.Header.ToString() == "GINGER__USED")
                 {
-                    try
-                    {
-                        i++;
-                        sCol.DisplayIndex = i;
-                        
-                    }
-                    catch(Exception ex)
-                    {
-                        i = 0;
-                        sCol.DisplayIndex = i++;
-                    }
+                        sCol.DisplayIndex = 1;
                 }
                 if (sCol.Header.ToString() == "GINGER__LAST__UPDATED__BY" || sCol.Header.ToString() == "GINGER__LAST__UPDATE__DATETIME")
                 {
-                    if (!(sCol.DisplayIndex == -1)&& sCol.DisplayIndex== null)
+                    if (sCol.DisplayIndex != -1)
                     {
                         sCol.DisplayIndex = iColIndex;
                         iColIndex--;
@@ -302,6 +292,7 @@ namespace Ginger.DataSource
             {
                 List<object> AllItemsList = grdTableData.Grid.Items.Cast<object>().ToList();
                 mDSTableDetails.DSC.DeleteAll(AllItemsList, mDSTableDetails.Name);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Click 'Commit' to reflect the changes in the Database Or 'Refresh' to get the deleted rows back in the view.");
                 //RefreshGrid();
             }            
         }
@@ -451,11 +442,27 @@ namespace Ginger.DataSource
             {
                 return;
             }
-            string oldName = mDSTableDetails.Name;
-            InputBoxWindow.OpenDialog("Rename", "Table Name:", mDSTableDetails, DataSourceBase.Fields.Name);
-            mDSTableDetails.DSC.RenameTable(oldName, mDSTableDetails.Name);
-            RefreshGrid();
+
+            string newName = mDSTableDetails.Name;
+            InputBoxWindow.OpenDialog("Rename", "Table Name:", ref newName);
+
+            ValidateAndUpdateDBTableName(newName);
+
             mDSTableDetails.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange;
+        }
+
+        void ValidateAndUpdateDBTableName(string newName)
+        {
+            if (mDSTableDetails.DSC.DSTableList.Any(t => t.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)))
+            {
+                Reporter.ToUser(eUserMsgKey.DbTableNameError, newName);
+            }
+            else
+            {
+                mDSTableDetails.DSC.RenameTable(mDSTableDetails.Name, newName);
+                mDSTableDetails.Name = newName;
+                RefreshGrid();
+            }
         }
     }
 }
