@@ -279,7 +279,7 @@ namespace GingerCore.DataSource
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
                 if (RunQuery(query))
                 {
-                    DeleteTable(TableName);
+                    DeleteTable(TableName);     // AccessDB does not support renaming table using alter query so we copy data to new table and delete old
                 }
             }
         }
