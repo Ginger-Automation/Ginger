@@ -1270,7 +1270,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 				PayLoad s = mBrowserHelper.getScreenShot();
 				
 				if (s.Name.equalsIgnoreCase("ERROR")) {
-				
+					int errorCode= s.GetValueInt();// This is needed for payload buffer index to move before reading message
 					String errMsg = s.GetValueString();
 					GingerAgent.WriteLog("Error:" + errMsg);
 					
