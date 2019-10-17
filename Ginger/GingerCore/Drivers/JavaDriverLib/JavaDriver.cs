@@ -283,7 +283,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Thread.Sleep(10);
                     if (!SocketConnected(clientSocket))
                     {
-                        return PayLoad.Error("ERROR| Lost connection or Not connected to Ginger Agent !!!");
+                        PayLoad payLoad = new PayLoad("ERROR");
+                        payLoad.AddValue(0);
+                        payLoad.AddValue("ERROR| Lost connection or Not connected to Ginger Agent !!!");
+                        payLoad.ClosePackage();
+                        return payLoad;
                     }
                     //TODO: J.G: If current run stopped then notify Java Driver 
                     //if (PreviousRunStopped)
@@ -1626,7 +1630,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                     {
                         if (payLoad.IsErrorPayLoad())
                         {
-                            String error = payLoad.GetValueString();
+                            
+                            String error = payLoad.GetErrorValue();
                             if (error.IndexOf("ERROR: Handle : ") != -1)
                             {
                                 String ErrorTitle = error.Replace("ERROR: Handle : ", "");
@@ -1843,7 +1848,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad RC = Send(PL);
             if (RC.IsErrorPayLoad())
             {
-                string ErrMsg = RC.GetValueString();
+                string ErrMsg = RC.GetErrorValue();
                 throw new Exception(ErrMsg);
             }
 
@@ -2164,7 +2169,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad RC = Send(PL);
             if (RC.IsErrorPayLoad())
             {
-                string errmsg = RC.GetValueString();
+                string errmsg = RC.GetErrorValue();
                 throw new Exception(errmsg);
             }
         }
