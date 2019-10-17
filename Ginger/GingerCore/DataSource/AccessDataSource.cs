@@ -275,7 +275,7 @@ namespace GingerCore.DataSource
             {
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
                 RunQuery(query);
-                DeleteTable(TableName);
+                DeleteTable(TableName);//Access does not support rename using alter query so we copy data to new table and delete old
             }
         }
         
