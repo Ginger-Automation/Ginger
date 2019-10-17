@@ -33,6 +33,7 @@ namespace Ginger.BusinessFlowWindows
             UpdateAppAgentsMapping,
             SetupRunnerForExecution,
             RunCurrentAction,
+            RunCurrentActionAndMoveOn,
             RunCurrentActivity,
             ContinueActionRun,
             ContinueActivityRun,

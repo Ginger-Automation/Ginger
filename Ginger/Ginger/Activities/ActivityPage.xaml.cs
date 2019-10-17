@@ -363,7 +363,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsPage.ListView.CurrentItem != null)
             {
-                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, (Act)mActionsPage.ListView.CurrentItem));
+               App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act>(mActivity, (Act)mActionsPage.ListView.CurrentItem));                
             }
             else
             {
