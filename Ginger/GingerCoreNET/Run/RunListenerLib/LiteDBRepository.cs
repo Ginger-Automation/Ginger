@@ -363,16 +363,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void StartRunSet()
         {
-            if (ExecutionLoggerManager.RunSetReport == null)
-            {
-                ExecutionLoggerManager.RunSetReport = new RunSetReport();
-                ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+            ExecutionLoggerManager.RunSetReport = new RunSetReport();
+            ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
 
-                ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
-                ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
-                ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
-                ExecutionLoggerManager.RunSetReport.Watch.Start();
-            }
+            ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+            ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
+            ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            ExecutionLoggerManager.RunSetReport.Watch.Start();
         }
 
         internal override void EndRunSet()
