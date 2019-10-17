@@ -275,6 +275,7 @@ namespace GingerCore.DataSource
             {
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
                 RunQuery(query);
+                DeleteTable(TableName);
             }
         }
         

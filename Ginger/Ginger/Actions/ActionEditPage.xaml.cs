@@ -183,7 +183,7 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
-            
+
             if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
@@ -309,8 +309,8 @@ namespace Ginger.Actions
 
             //Output Values
             xOutputValuesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshOutputValuesGridElements));
-            xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));            
-            xOutputValuesGrid.AddSeparator();           
+            xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
+            xOutputValuesGrid.AddSeparator();
 
             xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
@@ -322,6 +322,11 @@ namespace Ginger.Actions
             if (mAction.ActReturnValues.Count > 0)
             {
                 xOutputValuesExpander.IsExpanded = true;
+            }
+
+            if (EditMode == General.eRIPageViewMode.View)
+            {
+                xOutputValuesGrid.DisableGridColoumns();
             }
         }
 
@@ -338,7 +343,7 @@ namespace Ginger.Actions
 
             //execution details section
             if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
-            {                
+            {
                 BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
 
@@ -713,7 +718,7 @@ namespace Ginger.Actions
             }
 
             //remove old
-            for(int indx=0;indx< mStoreToVarsList.Count;indx++)
+            for (int indx = 0; indx < mStoreToVarsList.Count; indx++)
             {
                 if (tempList.Contains(mStoreToVarsList[indx]) == false)
                 {
@@ -733,7 +738,7 @@ namespace Ginger.Actions
             //Show/hide if needed
             xInputValuesGrid.SetTitleLightStyle = true;
             xInputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
-          
+
             xInputValuesGrid.ClearTools();
             xInputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
 
@@ -1046,7 +1051,7 @@ namespace Ginger.Actions
 
             xAddOutputToDataSourcePnl.IsEnabled = false;
             xDataSourceConfigGrid.ToolsTray.Visibility = Visibility.Collapsed;
-            xDataSourceConfigGrid.DisableGridColoumns();            
+            xDataSourceConfigGrid.DisableGridColoumns();
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Collapsed;
             xOutputValuesGrid.DisableGridColoumns();
 
@@ -1576,7 +1581,7 @@ namespace Ginger.Actions
             //}
         }
 
-       
+
 
         private void InitActionLog()
         {
@@ -1701,7 +1706,7 @@ namespace Ginger.Actions
         {
             if (xTakeScreenShotCheckBox.IsChecked == true)
             {
-                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;              
+                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;
             }
             else
             {
