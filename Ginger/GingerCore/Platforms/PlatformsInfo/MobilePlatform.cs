@@ -377,5 +377,6 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return null;
         }
+
     }
 }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
@@ -188,5 +189,6 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return null;
         }
+
     }
 }

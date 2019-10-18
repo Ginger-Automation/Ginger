@@ -247,7 +247,7 @@ namespace Amdocs.Ginger.Repository
             RepositoryFolderBase repoFolder = GetRepositoryFolderByPath(folderPath);
             if (repoFolder != null)
             {
-                repoFolder.RefreshFolderSourceControlStatus().ConfigureAwait(true);
+                repoFolder.RefreshFolderSourceControlStatus();
                 RefreshParentFoldersSoucerControlStatus(Directory.GetParent(folderPath)?.FullName);
             }
         }

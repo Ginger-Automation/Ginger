@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -39,9 +39,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         InvertStatus = 3,
     }
     public interface IAct
-    {
-       
-  
+    {      
         Guid Guid { get; set; }
         string ItemName { get; set; }
         string Description { get; set; }
@@ -59,7 +57,7 @@ namespace Amdocs.Ginger.Common.InterfacesLib
         ObservableList<ActInputValue> InputValues { get; set; }
         ObservableList<ActReturnValue> ReturnValues { get;  }
         ObservableList<FlowControl> FlowControls { get; set; }
-        List<String> ScreenShots  { get; set; }
+        ObservableList<String> ScreenShots  { get; set; }
         bool Active { get; set; }
         bool FailIgnored { get; set; }
         ObservableList<ActReturnValue> ActReturnValues { get;  }

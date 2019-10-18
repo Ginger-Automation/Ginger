@@ -272,24 +272,24 @@ namespace GingerCore.Actions
                         {
                             string row = rowSelector.Split('\"')[1];
                             if ("random".Equals(row))
-                            {
-                                newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, ActUIElement.eRadioButtonValueType.AnyRow.ToString());
+                            {                                
+                                newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Any Row");
                             }
                             else
-                            {
-                                newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, ActUIElement.eRadioButtonValueType.RowNum.ToString());
+                            {                                
+                                newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");
                                 newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, row);
                             }
                         }
                         else if (rowSelector.All(char.IsDigit))
                         {
                             int rowNum = Convert.ToInt32(rowSelector);
-                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, ActUIElement.eRadioButtonValueType.RowNum.ToString());
+                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Row Number");                            
                             newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowValue, rowNum.ToString());
                         }
                         else if (rowSelector.Equals("random"))
                         {
-                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, ActUIElement.eRadioButtonValueType.AnyRow.ToString());
+                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Any Row");
                         }
                         else
                         {
@@ -360,7 +360,7 @@ namespace GingerCore.Actions
                                     }
                                 }
                             }
-                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.RowSelectorRadioParam, ActUIElement.eRadioButtonValueType.Where.ToString());
+                            newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, "Where");
                         }
                     }
                     foreach (ActUIElement.eElementAction x in Enum.GetValues(typeof(ActUIElement.eElementAction)))

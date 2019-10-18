@@ -23,7 +23,6 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -38,8 +37,7 @@ namespace Ginger.GeneralLib
     {        
         GenericWindow _pageGenericWin;
         Exception mException;
-        bool _ShowingFull;
-        string mLogFilePath = Amdocs.Ginger.Common.GeneralLib.General.GingerLogFile;
+        bool _ShowingFull;        
 
         public static void ShowError(Exception ex)
         {
@@ -138,10 +136,11 @@ namespace Ginger.GeneralLib
         }
 
         private void ViewLogBtn_Click(object sender, RoutedEventArgs e)
-        {            
-            if (System.IO.File.Exists(mLogFilePath))
+        {
+            
+            if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
-                Process.Start(mLogFilePath);
+                Process.Start(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             }
             else
             {
@@ -161,9 +160,9 @@ namespace Ginger.GeneralLib
                 mail.MailTo = "GingerCoreTeam@int.amdocs.com";
 
                 //add log
-                if (System.IO.File.Exists(mLogFilePath))
+                if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
                 {
-                    mail.Attachments.Add(mLogFilePath);
+                    mail.Attachments.Add(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
                 }
                 //add screen shot
                 string screenShot = TakeScreenShot();

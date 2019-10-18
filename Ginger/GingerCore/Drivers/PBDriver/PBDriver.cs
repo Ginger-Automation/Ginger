@@ -31,6 +31,7 @@ using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -77,13 +78,7 @@ namespace GingerCore.Drivers.PBDriver
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
                     ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = UIAComWrapperHelper.ePlatform.PowerBuilder;
                     break;
-
-                case eUIALibraryType.FlaUI:
-                    mUIAutomationHelper = new FlaUIHelper();
-                    ((FlaUIHelper)mUIAutomationHelper).WindowExplorer = this;
-                    ((FlaUIHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
-                    ((FlaUIHelper)mUIAutomationHelper).mPlatform = UIAutomationHelperBase.ePlatform.PowerBuilder;
-                    break;
+                                   
             }
         }
 
@@ -240,7 +235,7 @@ namespace GingerCore.Drivers.PBDriver
                     break;
 
                     default:
-                        throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());                        
+                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());                        
                 }
             }
             catch (System.Runtime.InteropServices.COMException e)
@@ -969,7 +964,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             return mUIAutomationHelper.GetVisibleControls();
         }
@@ -1106,6 +1101,11 @@ namespace GingerCore.Drivers.PBDriver
         }
 
         public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
         }

@@ -24,6 +24,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
+
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
     public class POMTAValidationRule : ValidationRule
@@ -31,9 +33,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if ( WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.Web).ToList().Count() == 0)
+            if(WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList().Count() == 0)
             {
-                return new ValidationResult(false, "Web Platform Target Application is required");
+                return new ValidationResult(false, "POM supported Target Application platform is required");
             }
 
             if (value == null || string.IsNullOrEmpty(value.ToString()))

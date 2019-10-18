@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger"
-      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
@@ -14,12 +13,17 @@
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="PageGrid">
         <Grid.Resources>
             <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />
+            <local:ConversionStatusForgroundColorConverter x:Key="ConversionStatusConverter" />
 
-            <DataTemplate  x:Key="xTestStatusIconTemplate">
-                <usercontrols:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding ConversionStatus}" SetAsFontImageWithSize="16"  Width="16" Height="16" />                
+            <DataTemplate  x:Key="xConversionStatusIconTemplate">
+                <usercontrols:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding Path=StatusIcon}" 
+                                                Foreground="{Binding Path=StatusIcon, Converter={StaticResource ConversionStatusConverter}}" 
+                                                SetAsFontImageWithSize="16"  Width="16" Height="16" />                
             </DataTemplate>
-            <DataTemplate  x:Key="xTestSaveStatusIconTemplate">
-                <usercontrols:ImageMakerControl x:Name="xSaveStatusIconImageMakerControl" ImageType="{Binding SaveStatusIcon}" ImageToolTip="{Binding SaveStatus}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+            <DataTemplate  x:Key="xConversionSaveStatusIconTemplate">
+                <usercontrols:ImageMakerControl x:Name="xSaveStatusIconImageMakerControl" ImageType="{Binding Path=SaveStatusIcon}" 
+                                                Foreground="{Binding Path=SaveStatusIcon, Converter={StaticResource ConversionStatusConverter}}"
+                                                SetAsFontImageWithSize="16"  Width="16" Height="16" />
             </DataTemplate>
         </Grid.Resources>
         <Grid.RowDefinitions>

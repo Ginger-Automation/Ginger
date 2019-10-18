@@ -45,7 +45,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA)
+            if (platform == ePlatformType.Web || platform == ePlatformType.Java)
             {
                 return true;
             }
@@ -55,11 +55,32 @@ namespace GingerCore.Actions
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return new List<ePlatformType>() { ePlatformType.Web }; } }
+        public override List<ePlatformType> LegacyActionPlatformsList {
+            get {
+                var legacyPlatform = new List<ePlatformType>();
+                legacyPlatform.Add(ePlatformType.Web);
+                legacyPlatform.Add(ePlatformType.Java);
+                return legacyPlatform;
+            }
+        }
 
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
-            return ePlatformType.Web;
+            ePlatformType targetPlatform;
+            switch(this.Platform)
+            {
+                case ePlatformType.Web:
+                    targetPlatform = ePlatformType.Web;
+                    break;
+
+                case ePlatformType.Java:
+                    targetPlatform = ePlatformType.Java;
+                    break;
+
+                default:
+                    throw new PlatformNotSupportedException();
+            }
+            return targetPlatform;
         }
 
         Type IObsoleteAction.TargetAction()
@@ -87,15 +108,128 @@ namespace GingerCore.Actions
         }
         Act IObsoleteAction.GetNewAction()
         {
-            bool uIElementTypeAssigned = false;
+            Act convertedUIElementAction = null;
+            switch(this.Platform)
+            {
+                case ePlatformType.Web:
+                    convertedUIElementAction = GetNewActionForWeb();
+                    break;
+                case ePlatformType.Java:
+                    convertedUIElementAction = GetNewActionForJava();
+                    break;
+                default:
+                    throw new PlatformNotSupportedException();
+            }
 
+            return convertedUIElementAction;
+        }
+
+        private Act GetNewActionForJava()
+        {
+            if(GenElementAction.Equals(eGenElementAction.SwitchFrame) || GenElementAction.Equals(eGenElementAction.RunJavaScript))
+            {
+                ActBrowserElement NewActBrowserElement = GetNewBrowserElementFromAutoMapper();
+
+                if (GenElementAction.Equals(eGenElementAction.SwitchFrame))
+                {
+                    NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.SwitchFrame;
+                }
+                else if (GenElementAction.Equals(eGenElementAction.RunJavaScript))
+                {
+                    NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.RunJavaScript;
+                }
+
+                return NewActBrowserElement;
+            }
+            else
+            {
+                ActUIElement newActUIElement = GetNewUIElementFromAutoMapper();
+
+                newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
+                newActUIElement.ElementLocateBy = this.LocateBy;
+                newActUIElement.ElementLocateValue = this.LocateValue;
+
+                newActUIElement.ElementAction = MapJavaGenericElementAction(GenElementAction);
+                newActUIElement.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, this.Value);
+
+                if (this.ReturnValues.Count > 0)
+                {
+                    if (this.ReturnValues[0].Param == "Actual")
+                    {
+                        newActUIElement.ReturnValues[0].Param = "Actual0";
+                    }
+                }
+                return newActUIElement;
+            }
+
+        }
+
+        private ActUIElement GetNewUIElementFromAutoMapper()
+        {
             AutoMapper.MapperConfiguration mapConfigUIElement = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
-            ActUIElement NewActUIElement = mapConfigUIElement.CreateMapper().Map<Act, ActUIElement>(this);
+            ActUIElement newActUIElement = mapConfigUIElement.CreateMapper().Map<Act, ActUIElement>(this);
+            return newActUIElement;
+        }
 
+
+        private ActBrowserElement GetNewBrowserElementFromAutoMapper()
+        {
             AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
             ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
+            return NewActBrowserElement;
+        }
 
-            Type currentType = GetActionTypeByElementActionName(GenElementAction);            
+        private ActUIElement.eElementAction MapJavaGenericElementAction(eGenElementAction genElementAction)
+        {
+            ActUIElement.eElementAction elementAction;
+            switch (genElementAction)
+            {
+                case eGenElementAction.SetValue:
+                case eGenElementAction.GetValue:
+                case eGenElementAction.Click:
+                case eGenElementAction.AsyncClick:
+                case eGenElementAction.RunJavaScript:
+                case eGenElementAction.ScrollDown:
+                case eGenElementAction.ScrollUp:
+                    elementAction = (ActUIElement.eElementAction)Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
+                    break;
+
+                case eGenElementAction.Enabled:
+                    elementAction = ActUIElement.eElementAction.IsEnabled;
+                    break;
+                case eGenElementAction.Visible:
+                    elementAction = ActUIElement.eElementAction.IsVisible;
+                    break;
+
+                case eGenElementAction.SelectFromDropDownByIndex:
+                    elementAction = ActUIElement.eElementAction.SelectByIndex;
+                    break;
+
+                case eGenElementAction.SelectFromDropDown:
+                    elementAction = ActUIElement.eElementAction.Select;
+                    break;
+
+                case eGenElementAction.FireMouseEvent:
+                case eGenElementAction.FireSpecialEvent:
+                    elementAction = ActUIElement.eElementAction.TriggerJavaScriptEvent;
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
+
+            return elementAction;
+        }
+
+        private Act GetNewActionForWeb()
+        {
+            bool uIElementTypeAssigned = false;
+
+            ActUIElement NewActUIElement = GetNewUIElementFromAutoMapper();
+
+            ActBrowserElement NewActBrowserElement = GetNewBrowserElementFromAutoMapper();
+
+            Type currentType = GetActionTypeByElementActionName(GenElementAction);
             if (currentType == typeof(ActBrowserElement))
             {
                 switch (GenElementAction)
@@ -106,12 +240,23 @@ namespace GingerCore.Actions
                     case eGenElementAction.CloseBrowser:
                         NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.Close;
                         break;
+                    case eGenElementAction.StartBrowser:
+                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.InitializeBrowser;
+                        break;
                     default:
-                        NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
+                        try
+                        {
+                            NewActBrowserElement.ControlAction = (ActBrowserElement.eControlAction)System.Enum.Parse(typeof(ActBrowserElement.eControlAction), GenElementAction.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the operation to action while conversion", ex);
+                            throw;
+                        }
                         break;
                 }
             }
-            else if(currentType == typeof(ActUIElement))
+            else if (currentType == typeof(ActUIElement))
             {
                 switch (GenElementAction)
                 {
@@ -127,7 +272,7 @@ namespace GingerCore.Actions
                     case eGenElementAction.SelectFromListScr:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
                         NewActUIElement.ElementType = eElementType.List;
-                        uIElementTypeAssigned = true;                        
+                        uIElementTypeAssigned = true;
                         break;
                     case eGenElementAction.AsyncSelectFromDropDownByIndex:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.SelectByIndex;
@@ -178,8 +323,19 @@ namespace GingerCore.Actions
                     case eGenElementAction.RunJavaScript:
                         NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
                         break;
+                    case eGenElementAction.SetAttributeUsingJs:
+                        NewActUIElement.ElementAction = ActUIElement.eElementAction.RunJavaScript;
+                        break;
                     default:
-                        NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
+                        try
+                        {
+                            NewActUIElement.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), GenElementAction.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the operation to action while conversion", ex);
+                            throw;
+                        }
                         break;
                 }
             }
@@ -188,9 +344,17 @@ namespace GingerCore.Actions
             {
                 NewActUIElement.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
                 if (!string.IsNullOrEmpty(this.LocateValue))
-                    NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue);
+                {
+                    if (GenElementAction == eGenElementAction.SetAttributeUsingJs)
+                    {
+                        NewActUIElement.Value = string.Format("arguments[0].{0}", this.Value);
+                    }
+                    else
+                    {
+                        NewActUIElement.ElementLocateValue = String.Copy(this.LocateValue); 
+                    }
+                }
                
-                    
                 if (!uIElementTypeAssigned)
                     NewActUIElement.ElementType = eElementType.Unknown;
                 if (!NewActUIElement.Platforms.Contains(this.Platform))
@@ -264,6 +428,12 @@ namespace GingerCore.Actions
                 case eGenElementAction.RunJavaScript:
                 case eGenElementAction.AsyncSelectFromDropDownByIndex:
                 case eGenElementAction.SetAttributeUsingJs:
+                //Added for Java
+                case eGenElementAction.SelectFromDropDownByIndex:
+                case eGenElementAction.FireSpecialEvent:
+                case eGenElementAction.FireMouseEvent:
+                case eGenElementAction.ScrollDown:
+                case eGenElementAction.ScrollUp:
                     currentType =  typeof(ActUIElement);
                     break;
 

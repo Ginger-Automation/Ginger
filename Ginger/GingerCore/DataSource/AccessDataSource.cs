@@ -199,7 +199,7 @@ namespace GingerCore.DataSource
 
         }
 
-        public override void RunQuery(string query)
+        public override bool RunQuery(string query)
         {
             try
             {
@@ -218,7 +218,10 @@ namespace GingerCore.DataSource
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to Execute Query", ex);
+                return false;
             }
+
+            return true;
         }
 
         public override void AddTable(string TableName,string columnlist="")
@@ -242,6 +245,10 @@ namespace GingerCore.DataSource
         {
             using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
             {
+                if (connObj.State == ConnectionState.Closed)
+                {
+                    connObj.Open();
+                }
                 DataTable dt = connObj.GetSchema("Tables");
                 foreach (DataRow row in dt.Rows)
                 {
@@ -267,11 +274,14 @@ namespace GingerCore.DataSource
         }
         public override void RenameTable(string TableName, string NewTableName)
         {
-            if(TableName != NewTableName)
+            if(!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
             {
                 var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
-                RunQuery(query);
-            }            
+                if (RunQuery(query))
+                {
+                    DeleteTable(TableName);     // AccessDB does not support renaming table using alter query so we copy data to new table and delete old
+                }
+            }
         }
         
         public override void DeleteTable(string TableName)

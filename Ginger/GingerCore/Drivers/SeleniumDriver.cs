@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -260,7 +261,7 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-        
+
         public override void StartDriver()
         {
             if (StartBMP)
@@ -839,66 +840,58 @@ namespace GingerCore.Drivers
 
         public override void RunAction(Act act)
         {
-            // if alert exist then any action on driver throwing exception and dismissing the pop up
-            // so keeping handle browser as first step.
-            if (act.GetType() == typeof(ActHandleBrowserAlert))
-            {
-                HandleBrowserAlert((ActHandleBrowserAlert)act);
-                return;
-            }
+            //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
+            bool isActBrowser = act is ActBrowserElement;
+            ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
+            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
 
-            //implicityWait must be done on actual window so need to make sure the driver is pointing on window
-            try
+            if (!runActHandlerDirect)
             {
-                // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
-                if (act.GetType() == typeof(ActBrowserElement))
+                //implicityWait must be done on actual window so need to make sure the driver is pointing on window
+                try
                 {
-                    ActBrowserElement ABE = (ActBrowserElement)act;
-                    if (ABE.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow)
+                    string aa = Driver.Title;//just to make sure window attributes do not throw exception
+                }
+                catch (Exception ex)
+                {
+                    if (Driver.WindowHandles.Count == 1)
                     {
-                        Driver.SwitchTo().Window(DefaultWindowHandler);
+                        Driver.SwitchTo().Window(Driver.WindowHandles[0]);
                     }
+                    Reporter.ToLog(eLogLevel.ERROR, "Selenium Driver is not accessible, probably because there is Alert window open", ex);
                 }
 
-                string aa = Driver.Title;//just to make sure window attributes do not throw exception
-            }
-            catch (Exception ex)
-            {
-                if (Driver.WindowHandles.Count == 1)
-                    Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                if (act.Timeout != null && act.Timeout != 0)
+                {
+                    //if we have time out on action then set it on the driver
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)act.Timeout);
+                }
+                else
+                {
+                    // use the driver config timeout
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                }
+
+                if (StartBMP)
+                {
+                    // Create new HAR for each action, so it will clean the history
+                    BMPClient.NewHar("aaa");
+
+                    DoRunAction(act);
+
+                    //TODO: call GetHARData and add it as screen shot or...
+                    // GetHARData();
+
+                    // TODO: save it in the solution docs... 
+                    string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
+                    BMPClient.SaveHAR(filename);
+                    act.ExInfo += "Action HAR file saved at: " + filename;
+                }
             }
 
-            if (act.Timeout != null && act.Timeout != 0)
-            {
-                //if we have time out on action then set it on the driver
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)act.Timeout);
-            }
-            else
-            {
-                // use the driver config timeout
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
-            }
-
-            if (StartBMP)
-            {
-                // Create new HAR for each action, so it will clean the history
-                BMPClient.NewHar("aaa");
-
-                DoRunAction(act);
-
-                //TODO: call GetHARData and add it as screen shot or...
-                // GetHARData();
-
-                // TODO: save it in the solution docs... 
-                string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
-                BMPClient.SaveHAR(filename);
-                act.ExInfo += "Action HAR file saved at: " + filename;
-            }
-            else
-            {
-                DoRunAction(act);
-            }
+            DoRunAction(act);
         }
 
         private void DoRunAction(Act act)
@@ -2260,7 +2253,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
 
             }
         }
@@ -3090,30 +3083,22 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                string[] pOMandElementGUIDs = locateValue.ToString().Split('_');
-                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                if (currentPOM == null)
+                var pomExcutionUtil = new POMExecutionUtils(act);
+                var currentPOM = pomExcutionUtil.GetCurrentPOM();
+
+                if (currentPOM != null)
                 {
-                    act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                    return null;
-                }
-                else
-                {
-                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                    if (selectedPOMElement == null)
-                    {
-                        act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                        return null;
-                    }
-                    else
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    if (currentPOMElementInfo != null)
                     {
                         if (HandelIFramShiftAutomaticallyForPomElement)
-                            SwitchFrame(selectedPOMElement);
-                        elem = LocateElementByLocators(selectedPOMElement.Locators);
-                        selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                        {
+                            SwitchFrame(currentPOMElementInfo);
+                        }
+                        elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                        currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                     }
+                    
                 }
             }
             else
@@ -3684,7 +3669,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             mIsDriverBusy = true;
 
@@ -5228,7 +5213,7 @@ namespace GingerCore.Drivers
             LastFrameID = string.Empty;
 
             Task t = new Task(() =>
-            {                
+            {
                 DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
@@ -5383,13 +5368,13 @@ namespace GingerCore.Drivers
                                 configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
                                 configArgs.Type = GetElementTypeEnum(null, type).Item2;
-                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);                               
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
                                 if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
                                     ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
-                                    
+
                                     if (eInfo != null)
                                     {
                                         configArgs.LearnedElementInfo = eInfo;
@@ -5433,7 +5418,7 @@ namespace GingerCore.Drivers
                     {
                         if (e.Message == PayLoad.PAYLOAD_PARSING_ERROR)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e); 
+                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e);
                         }
                         else
                         {
@@ -5806,7 +5791,7 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
-                             if (act.LocateBy == eLocateBy.ByIndex)
+                            if (act.LocateBy == eLocateBy.ByIndex)
                             {
                                 int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
                                 string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
@@ -6137,7 +6122,7 @@ namespace GingerCore.Drivers
 
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
-                    
+
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
@@ -6161,9 +6146,9 @@ namespace GingerCore.Drivers
                                     }
                                 }
                             }
-                            
+
                         }
-                        
+
                     }
 
                     break;
@@ -6223,7 +6208,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 
@@ -6302,7 +6287,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
         // ----------------------------------------------------------------------------------------------------------------------------------
@@ -6335,7 +6320,17 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.GetValue:
-                        act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        if (act.ElementType == eElementType.HyperLink)
+                        {
+                            if (e != null)
+                                act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
+                            else
+                                act.AddOrUpdateReturnParamActual("Actual", "");
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        }
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
@@ -7502,7 +7497,7 @@ namespace GingerCore.Drivers
                 OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                     && (x.XPath == element.XPath)
                                                                     && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
-                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null 
+                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
                                                                         || (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null && element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null
                                                                             && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                             )
@@ -7519,12 +7514,17 @@ namespace GingerCore.Drivers
             {
                 Driver.SwitchTo().DefaultContent();
                 InjectSpyIfNotIngected();
-            }            
+            }
         }
 
         public string GetElementXpath(ElementInfo EI)
         {
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

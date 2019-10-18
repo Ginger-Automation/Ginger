@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             WorkSpace.Instance.OpenSolution(solutionFolder);
         }
 
-        public async void OpenRunSet(string runSetName, string envName)
+        public void OpenRunSet(string runSetName, string envName)
         {
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             var envs = SR.GetAllRepositoryItems<ProjEnvironment>();

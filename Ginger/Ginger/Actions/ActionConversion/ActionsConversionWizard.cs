@@ -23,6 +23,7 @@ using GingerCore;
 using GingerCore.Actions.Common;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
@@ -37,9 +38,11 @@ namespace Ginger.Actions.ActionConversion
 
         public bool NewActivityChecked { get; set; }
 
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
+        public bool IsConversionDoneOnce { get; set; }
+
         ActionConversionUtils mConversionUtils = new ActionConversionUtils();
 
+        public List<Activity> LstSelectedActivities { get; set; }
         public enum eActionConversionType
         {
             SingleBusinessFlow,
@@ -47,8 +50,21 @@ namespace Ginger.Actions.ActionConversion
         }
 
         public eActionConversionType ConversionType { get; set; }
-                
+
         public bool ConvertToPOMAction { get; set; }
+
+        ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
+        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
+        {
+            get
+            {
+                return mListOfBusinessFlow;
+            }
+            set
+            {
+                mListOfBusinessFlow = value;
+            }
+        }
 
         ConversionStatusReportPage mReportPage = null;
 
@@ -57,7 +73,7 @@ namespace Ginger.Actions.ActionConversion
             Context = context;
             ConversionType = conversionType;
             ListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);
-            
+
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
             if (ConversionType == eActionConversionType.MultipleBusinessFlow)
@@ -76,7 +92,7 @@ namespace Ginger.Actions.ActionConversion
             if (ConversionType == eActionConversionType.MultipleBusinessFlow)
             {
                 mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
-                AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage); 
+                AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage);
             }
         }
 
@@ -88,13 +104,24 @@ namespace Ginger.Actions.ActionConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert(ObservableList<BusinessFlow> businessFlows)
         {
             ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
-            foreach (BusinessFlow bf in businessFlows)
+            Parallel.ForEach(businessFlows, bf =>
             {
                 BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
                 flowToConvert.BusinessFlow = bf;
+                flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
                 lst.Add(flowToConvert);
-            }
+            });
             return lst;
+        }
+
+        /// <summary>
+        /// This method is used to get the Convertible Actions Count From BusinessFlow
+        /// </summary>
+        /// <param name="bf"></param>
+        /// <returns></returns>
+        public int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf)
+        {
+            return mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
         }
 
         /// <summary>
@@ -103,7 +130,7 @@ namespace Ginger.Actions.ActionConversion
         public override void Finish()
         {
             if (ConversionType == eActionConversionType.SingleBusinessFlow)
-            {               
+            {
                 BusinessFlowsActionsConversion(ListOfBusinessFlow);
             }
         }
@@ -123,6 +150,7 @@ namespace Ginger.Actions.ActionConversion
         /// <param name="isReConvert"></param>
         public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
         {
+            IsConversionDoneOnce = true;
             ProcessStarted();
             try
             {
@@ -133,7 +161,7 @@ namespace Ginger.Actions.ActionConversion
                     {
                         if (bf.IsSelected)
                         {
-                            bf.BusinessFlow.RestoreFromBackup(true);
+                            bf.BusinessFlow.RestoreFromBackup(clearBackup: false);
                             bf.ConversionStatus = eConversionStatus.Pending;
                             bf.SaveStatus = eConversionSaveStatus.Pending;
                             selectedLst.Add(bf);
@@ -170,6 +198,7 @@ namespace Ginger.Actions.ActionConversion
         {
             try
             {
+                IsConversionDoneOnce = true;
                 ProcessStarted();
 
                 mConversionUtils.ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy);
@@ -189,21 +218,41 @@ namespace Ginger.Actions.ActionConversion
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Legacy Actions conversion process.", ex);
                 Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
             }
             finally
             {
-                Reporter.HideStatusMessage();               
+                Reporter.HideStatusMessage();
             }
         }
 
         /// <summary>
-        /// This method is used to cancle the wizard
+        /// This method will restore the conversion done
         /// </summary>
         public override void Cancel()
         {
-            base.Cancel();
+            try
+            {
+                if (IsConversionDoneOnce)
+                {
+                    foreach (BusinessFlowToConvert bfToConvert in ListOfBusinessFlow)
+                    {
+                        try
+                        {
+                            bfToConvert.BusinessFlow.RestoreFromBackup();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Restoring from backup - " + bfToConvert.BusinessFlowName + " - ", ex);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                base.Cancel();
+            }
         }
     }
 }

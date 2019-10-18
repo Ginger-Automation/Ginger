@@ -40,7 +40,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         ApplicationAPIModel mApplicationAPIModel;
         ModelParamsPage page;
         private bool saveWasDone = false;
-        public APIModelPage(ApplicationAPIModel applicationAPIModelBase)
+        General.eRIPageViewMode mPageViewMode;
+        public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             mApplicationAPIModel = applicationAPIModelBase;
 
@@ -52,10 +53,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             SecondRow.MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight - 380;
 
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
-            page = new ModelParamsPage(mApplicationAPIModel);
+            page = new ModelParamsPage(mApplicationAPIModel, viewMode);
             xDynamicParamsFrame.Content = page;
 
-            OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel);
+            OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
             xOutputTemplateFrame.Content = outputTemplatePage;
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -63,6 +64,64 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             UpdateModelParametersTabHeader();
             mApplicationAPIModel.ReturnValues.CollectionChanged += ReturnValues_CollectionChanged;
             UpdateOutputTemplateTabHeader();
+
+            mPageViewMode = viewMode;
+
+            if (mPageViewMode == General.eRIPageViewMode.View)
+                UpdatePageAsReadOnly();
+
+            if (mPageViewMode == General.eRIPageViewMode.Add)
+                HttpHeadersGrid.ShowPaste = Visibility.Visible;
+        }
+
+        void UpdatePageAsReadOnly()
+        {
+            txtName.IsReadOnly = true;
+            txtDescription.IsReadOnly = true;
+            xTagsViewer.IsEnabled = false;
+            xTargetApplicationComboBox.IsEnabled = false;
+            xAPITypeComboBox.IsEnabled = false;
+            EndPointURLTextBox.IsReadOnly = true;
+            RequestTypeComboBox.IsEnabled = false;
+            HttpVersioncombobox.IsEnabled = false;
+            ResponseTypeComboBox.IsEnabled = false;
+            CookieMode.IsEnabled = false;
+            NetworkCeredentials.IsEnabled = false;
+            SP_CustomCreds.IsEnabled = false;
+            SoapActionTextBox.IsReadOnly = true;
+            DoNotFailActionOnBadRespose.IsEnabled = false;
+
+            HttpHeadersGrid.IsReadOnly = true;
+            HttpHeadersGrid.ShowCopy = Visibility.Visible;
+            HttpHeadersGrid.ShowAdd = Visibility.Collapsed;
+            HttpHeadersGrid.ShowDelete = Visibility.Collapsed;
+            HttpHeadersGrid.ShowClearAll = Visibility.Collapsed;
+
+            ContentTypeComboBox.IsEnabled = false;
+            BodySelection.IsEnabled = false;
+            UseWSSecurityHeader.IsEnabled = false;
+            RequestBodyTextBox.IsReadOnly = true;
+            TemplateFileNameFileBrowser.IsReadOnly = true;
+            TemplateFileBrowseButton.IsEnabled = false;
+            DoNotImportRequestFile.IsEnabled = false;
+
+            controlGrid.IsEnabled = false;
+
+            FormDataGrid.IsReadOnly = true;
+            FormDataGrid.ShowCopy = Visibility.Visible;
+            FormDataGrid.ShowAdd = Visibility.Collapsed;
+            FormDataGrid.ShowDelete = Visibility.Collapsed;
+            FormDataGrid.ShowClearAll = Visibility.Collapsed;
+
+            CertificateSelection.IsEnabled = false;
+            CertificateFileGrid.IsEnabled = false;
+            DoNotCertificateImportFile.IsEnabled = false;
+            CertificatePasswordUCValueExpression.IsReadOnly = true;
+            SecurityTypeComboBox.IsEnabled = false;
+            AuthTypeComboBox.IsEnabled = false;
+            AuthUserTextBox.IsReadOnly = true;
+            AuthPasswordTextBox.IsReadOnly = true;
+
         }
 
         private void InitializeUIByActionType()
@@ -136,7 +195,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms;
+            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=>x.Platform == ePlatformType.WebServices).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
@@ -294,13 +353,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetHTTPHeadersGrid()
         {
+            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View);
+
             HttpHeadersGrid.Title = "Request Headers";
             HttpHeadersGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Param), Header = "Header", WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Value), Header = "Value", WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Param), Header = "Header", ReadOnly = isFieldReadOnly, WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(APIModelKeyValue.Value), Header = "Value", ReadOnly = isFieldReadOnly, WidthWeight = 100 });
 
             HttpHeadersGrid.SetAllColumnsDefaultView(view);
             HttpHeadersGrid.InitViewItems();

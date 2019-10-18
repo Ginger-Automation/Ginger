@@ -155,6 +155,7 @@ namespace Amdocs.Ginger.Common.Enums
         ExpandAll,
         CollapseAll,
         ActiveAll,
+        ExpandToFullScreen,
         Exchange,
         Export,
         Filter,
@@ -312,6 +313,8 @@ namespace Amdocs.Ginger.Common.Enums
         Text,
         CLI,
         LinkSquare,
+        DatePicker,
+        TreeView
         #endregion
     }
 }

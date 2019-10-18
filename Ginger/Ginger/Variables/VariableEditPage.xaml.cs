@@ -16,22 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using Ginger.Repository;
+using Ginger.SolutionGeneral;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using GingerCore.Variables;
-using GingerCore;
-using System.Reflection;
-using Ginger.Repository;
-using GingerCore.Actions;
-using Amdocs.Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Variables
 {
@@ -43,14 +44,14 @@ namespace Ginger.Variables
         private VariableBase mVariable;
         private RepositoryItemBase mParent;
         bool saveWasDone = false;
+        static bool ExpandDetails = false;
 
         GenericWindow _pageGenericWin = null;
 
         public enum eEditMode
         {
             SharedRepository = 0,
-            BusinessFlow = 1,
-            Activity = 2,
+            Default=1,
             Global = 4,
             FindAndReplace = 5,
             View = 6
@@ -60,7 +61,7 @@ namespace Ginger.Variables
 
         Context mContext;
 
-        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.BusinessFlow, RepositoryItemBase parent = null)
+        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null)
         {
             InitializeComponent();
            
@@ -70,48 +71,60 @@ namespace Ginger.Variables
             editMode = mode;
             mParent = parent;
             mContext = context;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtVarName, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtVarDescritpion, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtFormula, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtCurrentValue, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsInputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cbSetAsOutputValue, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            mVariable.NameBeforeEdit = mVariable.Name;            
+            xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
+            xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
+            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarDescritpiontxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsInputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
 
             if (mode ==eEditMode.Global)
             {
-                cbSetAsInputValue.Visibility = Visibility.Hidden;
-                cbSetAsOutputValue.Visibility = Visibility.Hidden;
-                SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                xSetAsInputValueCheckBox.Visibility = Visibility.Hidden;
+                xSetAsOutputValueCheckBox.Visibility = Visibility.Hidden;
+                xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
             else
             {       
                 if(mode == eEditMode.SharedRepository)
                 {
-                    SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
+                    xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                     SharedRepoInstanceUC_Col.Width = new GridLength(0);
                 }
-                cbSetAsInputValue.Visibility=Visibility.Visible;
-                cbSetAsOutputValue.Visibility = Visibility.Visible;
+                xSetAsInputValueCheckBox.Visibility=Visibility.Visible;
+                xSetAsOutputValueCheckBox.Visibility = Visibility.Visible;
                 if (mContext != null && mContext.BusinessFlow != null)
                 {
-                    SharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
+                    xSharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
                 }
 
             }
      
             if (setGeneralConfigsAsReadOnly)
             {
-                txtVarName.IsEnabled = false;
-                txtVarDescritpion.IsEnabled = false;
-                TagsViewer.IsEnabled = false;
-                SharedRepoInstanceUC.IsEnabled = false;
-                cbSetAsInputValue.IsEnabled = false;
-                cbSetAsOutputValue.IsEnabled = false;
-                linkedvariableCombo.IsEnabled = false;
-                publishValueToLinkedBtn.IsEnabled = false;
-                frmVarTypeInfo.IsEnabled = false;
-            }             
+                xVarNameTxtBox.IsEnabled = false;
+                xVarDescritpiontxtBox.IsEnabled = false;
+                xTagsViewer.IsEnabled = false;
+                xSharedRepoInstanceUC.IsEnabled = false;
+                xSetAsInputValueCheckBox.IsEnabled = false;
+                xSetAsOutputValueCheckBox.IsEnabled = false;
+                xLinkedvariableCombo.IsEnabled = false;
+                xPublishValueToLinkedVarBtn.IsEnabled = false;
+            }
+            if (editMode == eEditMode.View)
+            {
+                xVarTypeConfigFrame.IsEnabled = false;
+            }
+            else
+            {
+                xVarTypeConfigFrame.IsEnabled = true;
+            }
             
             mVariable.PropertyChanged += mVariable_PropertyChanged;
             LoadVarPage();
@@ -122,9 +135,22 @@ namespace Ginger.Variables
             {
                 mVariable.Tags = new ObservableList<Guid>();
             }
-            TagsViewer.Init(mVariable.Tags);
+            xTagsViewer.Init(mVariable.Tags);
 
-           
+            xDetailsExpander.IsExpanded = ExpandDetails;
+        }
+
+        private void XVarNameTxtBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            mVariable.NameBeforeEdit = mVariable.Name;
+        }
+
+        private async void XVarNameTxtBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(mVariable.NameBeforeEdit != mVariable.Name)
+            {
+                await Task.Run(() => UpdateVariableNameChange());
+            }
         }
 
         private void LoadVarPage()
@@ -147,7 +173,7 @@ namespace Ginger.Variables
                     
                     if (varTypeConfigsPage != null)
                     {              
-                        frmVarTypeInfo.Content = varTypeConfigsPage;
+                        xVarTypeConfigFrame.Content = varTypeConfigsPage;
                     }                    
                 }
             }
@@ -181,8 +207,7 @@ namespace Ginger.Variables
 
             switch (editMode)
             {                
-                case VariableEditPage.eEditMode.BusinessFlow:
-                case VariableEditPage.eEditMode.Activity:
+                case VariableEditPage.eEditMode.Default:
                 case VariableEditPage.eEditMode.Global:
                 case VariableEditPage.eEditMode.View:
                     Button okBtn = new Button();
@@ -305,10 +330,10 @@ namespace Ginger.Variables
 
         private void SetLinkedVarCombo()
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(linkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xLinkedvariableCombo, ComboBox.SelectedValueProperty, mVariable, nameof(VariableBase.LinkedVariableName));
 
             List<string> varsList = new List<string>();
-            linkedvariableCombo.ItemsSource = varsList;
+            xLinkedvariableCombo.ItemsSource = varsList;
             varsList.Add(string.Empty); //added to allow unlinking of variable
 
             //get all similar variables from upper level to link to
@@ -334,8 +359,8 @@ namespace Ginger.Variables
                 {
                     varsList.Add(mVariable.LinkedVariableName);
                 }
-                linkedvariableCombo.SelectedValue = mVariable.LinkedVariableName;
-                linkedvariableCombo.Text = mVariable.LinkedVariableName;
+                xLinkedvariableCombo.SelectedValue = mVariable.LinkedVariableName;
+                xLinkedvariableCombo.Text = mVariable.LinkedVariableName;
             }
         }
 
@@ -372,6 +397,65 @@ namespace Ginger.Variables
         private void linkedvariableCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mVariable.OnPropertyChanged(nameof(VariableBase.LinkedVariableName));
+        }
+
+        private void XDetailsExpander_ExpandCollapse(object sender, RoutedEventArgs e)
+        {
+            ExpandDetails = xDetailsExpander.IsExpanded;
+        }
+
+        public void UpdateVariableNameChange()
+        {
+            try
+            {
+                if (mVariable == null) return;
+
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Updating new {0} name '{1}' on all usage instances...", GingerDicser.GetTermResValue(eTermResKey.Variable), mVariable.Name));
+                if (mParent is Solution)
+                {
+                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    Parallel.ForEach(allBF, bfl =>
+                    {
+                        bfl.SetUniqueVariableName(mVariable);
+                        Parallel.ForEach(bfl.Activities, activity =>
+                        {
+                            Parallel.ForEach(activity.Acts, action =>
+                            {
+                                bool changedwasDone = false;
+                                VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                            });
+                        });
+                    });
+                }
+                else if (mParent is BusinessFlow)
+                {
+                    BusinessFlow bf = (BusinessFlow)mParent;
+                    bf.SetUniqueVariableName(mVariable);
+                    Parallel.ForEach(bf.Activities, activity =>
+                    {
+                        Parallel.ForEach(activity.Acts, action =>
+                        {
+                            bool changedwasDone = false;
+                            VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                        });
+                    });
+                }
+                else if (mParent is Activity)
+                {
+                    Activity activ = (Activity)mParent;
+                    activ.SetUniqueVariableName(mVariable);
+                    Parallel.ForEach(activ.Acts, action =>
+                    {
+                        bool changedwasDone = false;
+                        VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                    });
+                }
+                mVariable.NameBeforeEdit = mVariable.Name;
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
     }
 }

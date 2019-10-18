@@ -40,6 +40,7 @@ namespace Ginger.Reports
             public static string ExecutionDuration = "ExecutionDuration";
             public static string RunSetExecutionStatus = "RunSetExecutionStatus";
             public static string GingerRunnersPassRate = "GingerRunnersPassRate";
+            public static string RunSetExecutionRate = "RunSetExecutionRate";
             public static string EnvironmentsDetails = "EnvironmentsDetails";
             public static string ExecutionStatisticsDetails = "ExecutionStatisticsDetails";
             public static string ExecutedBusinessFlowsDetails = "ExecutedBusinessFlowsDetails";
@@ -65,20 +66,6 @@ namespace Ginger.Reports
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public string Description { get; set; }
-
-        [JsonProperty]
-        [FieldParams]
-        [FieldParamsNameCaption("Used Environment/s")]
-        [FieldParamsFieldType(FieldsType.Field)]
-        [FieldParamsIsNotMandatory(true)]
-        [FieldParamsIsSelected(true)]
-        public string EnvironmentsDetails { get; set; }
-
-        [JsonProperty]
-        public string GUID { get; set; }
-
-        public float? ElapsedSecs { get; set; }
-
         [JsonProperty]
         [FieldParams]
         [FieldParamsNameCaption("Execution Start Time")]
@@ -94,6 +81,12 @@ namespace Ginger.Reports
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public DateTime EndTimeStamp { get; set; }
+        
+        [JsonProperty]
+        public string GUID { get; set; }
+
+        public float? ElapsedSecs { get; set; }
+
 
         [FieldParams]
         [FieldParamsNameCaption("Execution Duration")]
@@ -108,6 +101,26 @@ namespace Ginger.Reports
             }
         }
 
+        [FieldParams]
+        [FieldParamsNameCaption("RunSet Execution Pass Rate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string GingerRunnersPassRate { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("RunSet Execution Rate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string RunSetExecutionRate { get; set; }
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Used Environment/s")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string EnvironmentsDetails { get; set; }
         [JsonProperty]
         [FieldParams]
         [FieldParamsNameCaption("Executed on Ginger Version")]
@@ -260,14 +273,6 @@ namespace Ginger.Reports
             get
             {
                 return GingerReports.Count();
-            }
-        }
-
-        public double GingerRunnersPassRate
-        {
-            get
-            {
-                return TotalGingerRunnersPassed * 100 / TotalGingerRunners;
             }
         }
 

@@ -188,7 +188,6 @@ namespace Ginger.Run
                     BFCopy.Reset();
                     BFCopy.Active = businessFlowRun.BusinessFlowIsActive;
                     BFCopy.Mandatory = businessFlowRun.BusinessFlowIsMandatory;
-                    BFCopy.AttachActivitiesGroupsAndActivities();
                     if (businessFlowRun.BusinessFlowInstanceGuid == Guid.Empty)
                     {
                         BFCopy.InstanceGuid = Guid.NewGuid();
@@ -440,7 +439,7 @@ namespace Ginger.Run
                 CreateGingerExecutionReportAutomaticly();
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CloseAllEnvironments();
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             }
             finally
             {

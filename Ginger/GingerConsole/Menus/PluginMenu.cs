@@ -115,30 +115,29 @@ namespace Amdocs.Ginger.GingerConsole
 
        
 
-        private void StartService()
-        {
+        //private void StartService()
+        //{
             
-            //TODO: let the user choose
-            // Console.WriteLine("Starting Selenium Chrome Driver");
-            // g.StartNode("Selenium Chrome Driver", "Chrome1");
+        //    //TODO: let the user choose
+        //    // Console.WriteLine("Starting Selenium Chrome Driver");
+        //    // g.StartNode("Selenium Chrome Driver", "Chrome1");
 
-            Console.WriteLine("Service Class full name?");
-            string serviceClass = Console.ReadLine();
-            string DLLFile = Path.Combine(p.Folder, p.StartupDLL);
-            Assembly assembly = Assembly.LoadFrom(DLLFile);
-            object service = assembly.CreateInstance(serviceClass);
-            GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
-            Console.WriteLine("Node name?");
-            string nodeName = Console.ReadLine();
-            Console.WriteLine("IP Address?");
-            string ipAddr = Console.ReadLine();
-            Console.WriteLine("Port Number?");
-            string portNumber = Console.ReadLine();
+        //    Console.WriteLine("Service Class full name?");
+        //    string serviceClass = Console.ReadLine();
+        //    string DLLFile = Path.Combine(p.Folder, p.StartupDLL);
+        //    Assembly assembly = Assembly.LoadFrom(DLLFile);
+        //    object service = assembly.CreateInstance(serviceClass);
+        //    GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
+        //    Console.WriteLine("Node name?");
+        //    string nodeName = Console.ReadLine();
+        //    Console.WriteLine("IP Address?");
+        //    string ipAddr = Console.ReadLine();
+        //    Console.WriteLine("Port Number?");
+        //    string portNumber = Console.ReadLine();
 
-            gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
-        }
-
-        PluginPackage p;
+        //    gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
+        //}
+        
 
        
     }

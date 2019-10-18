@@ -34,11 +34,11 @@ namespace GingerCore.DataSource
     {
         public enum eDSType
         {
-            // Access
-            [EnumValueDescription("MS Access")]
-            MSAccess,
             [EnumValueDescription("LiteDataBase")]
             LiteDataBase,
+            // Access
+            [EnumValueDescription("MS Access")]
+            MSAccess,           
         }
 
         public  static class Fields
@@ -139,7 +139,7 @@ namespace GingerCore.DataSource
         public abstract string UpdateDSReturnValues(string Name, string sColList, string sColVals);
         public abstract string GetExtension();
         public abstract string AddNewKeyValueTableQuery();
-        public abstract void RunQuery(string query);
+        public abstract bool RunQuery(string query);
 
         public abstract int GetRowCount(string TableName);
         public abstract void AddTable(string tableName, string columnList = "");

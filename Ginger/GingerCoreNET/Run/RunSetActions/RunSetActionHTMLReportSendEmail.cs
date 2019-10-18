@@ -154,8 +154,7 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(ReportInfo RI)
         {
-
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email Staring execute");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email Staring execute");
             mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             string calculatedName = string.Empty;
@@ -167,7 +166,7 @@ namespace Ginger.Run.RunSetActions
 
             if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
+                //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
                 liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
             }
@@ -177,7 +176,7 @@ namespace Ginger.Run.RunSetActions
             // !!!!!!!!!!!!!!!!!!! Linux
             TemplatesFolder = Path.Combine(ExtensionMethods.getGingerEXEFileName(), "Reports", "GingerExecutionReport").Replace("Ginger.exe", "");
 
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
 
             string runSetFolder = string.Empty;
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
@@ -194,7 +193,7 @@ namespace Ginger.Run.RunSetActions
 
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder=" + runSetFolder);
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder=" + runSetFolder);
 
             var ReportItem = EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
 
@@ -219,7 +218,13 @@ namespace Ginger.Run.RunSetActions
                     {
                         if (selectedHTMLReportTemplateID > -1)
                         {
-                            CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
+                            int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
+                            int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).Count();
+                            int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked).Count();
+                            ReportInfo offlineReportInfo = new ReportInfo(runSetFolder);
+                            ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
+                            ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
+                            CreateSummaryViewReportForEmailAction(offlineReportInfo);
                         }
                         else
                         {
@@ -239,18 +244,31 @@ namespace Ginger.Run.RunSetActions
                 }
                 else if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: loggerMode is LiteDB");
-                    WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
-                    GingerRunner gr = new GingerRunner();  // Why we create new GR here !!!!!!!!!!!!!!!
-                    runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
-                    CreateSummaryViewReportForEmailAction(new ReportInfo(runSetFolder));
-                    WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                    // TODO: check multi run on same machine/user
-                    Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
-                    if (Directory.Exists(runSetFolder))
+                    //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: loggerMode is LiteDB");
+                    try
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder exist deleting folder: " + runSetFolder);
-                        Directory.Delete(runSetFolder, true);
+                        WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+                        GingerRunner gr = new GingerRunner();  // Why we create new GR here !!!!!!!!!!!!!!!
+                        runSetFolder = gr.ExecutionLoggerManager.GetRunSetLastExecutionLogFolderOffline();
+                        ReportInfo offlineReportInfo = new ReportInfo(runSetFolder);
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).StartTimeStamp = liteDbRunSet.StartTimeStamp;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).EndTimeStamp = liteDbRunSet.EndTimeStamp;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).Elapsed = liteDbRunSet.Elapsed;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = liteDbRunSet.ExecutionRate;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = liteDbRunSet.PassRate;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).EnvironmentsDetails = liteDbRunSet.Environment;
+                        CreateSummaryViewReportForEmailAction(offlineReportInfo);
+                        // TODO: check multi run on same machine/user
+                    }
+                    finally
+                    {
+                        WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+                        //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
+                        if (Directory.Exists(runSetFolder))
+                        {
+                            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder exist deleting folder: " + runSetFolder);
+                            Directory.Delete(runSetFolder, true);
+                        }
                     }
                 }
             }
@@ -395,7 +413,6 @@ namespace Ginger.Run.RunSetActions
                     string gingerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
                     string customerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
 
-
                     if (File.Exists(beatLogoPath))
                         alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(beatLogoPath), "beat"));
                     if (File.Exists(gingerLogoPath))
@@ -437,7 +454,7 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
             }
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Preparing email");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Preparing email");
             mValueExpression.Value = MailFrom;
             Email.MailFrom = mValueExpression.ValueCalculated;
             mValueExpression.Value = MailTo;
@@ -455,9 +472,9 @@ namespace Ginger.Run.RunSetActions
             bool isSuccess=false;
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Before send email");
+                //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Before send email");
                 isSuccess = Email.Send();
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: After send email result = " + isSuccess);
+                //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: After send email result = " + isSuccess);
             }
             catch (Exception ex)
             {
@@ -517,7 +534,7 @@ namespace Ginger.Run.RunSetActions
             StringBuilder fieldsValuesHTMLTableCellsm = new StringBuilder();
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
-                if (currentTemplate.EmailSummaryViewFieldsToSelect.IndexOf(selectedField) <= 5)
+                if (currentTemplate.EmailSummaryViewFieldsToSelect.IndexOf(selectedField) <= 6)
                 {
                     fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField.FieldName + "</td>");
 
@@ -540,11 +557,15 @@ namespace Ginger.Run.RunSetActions
 
                         if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
                         {
-                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(General.TimeConvert(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString())) + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + 's') + "</td>");
                         }
-                        else if ((selectedField.FieldKey == ActionReport.Fields.StartTimeStamp) || (selectedField.FieldKey == ActionReport.Fields.EndTimeStamp))
+                        else if ((selectedField.FieldKey == RunSetReport.Fields.StartTimeStamp) || (selectedField.FieldKey == RunSetReport.Fields.EndTimeStamp))
                         {
-                            fieldsValuesHTMLTableCells.Append("<td>" + DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + "</td>");
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd' >" +  DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + " </td>");
+                        }
+                        else if ((selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate) || (selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate))
+                        {
+                            fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + '%') + "</td>");
                         }
                         else
                         {
@@ -1169,7 +1190,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch(Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.WARN, "Error in GetImageStream", ex);
             }
             return arr;
         }

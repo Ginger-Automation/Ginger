@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.Repository
         public const int cLearnScreenWidth= 1000;
         public const int cLearnScreenHeight = 1000;
 
-        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web };
+        public static readonly List<ePlatformType> PomSupportedPlatforms = new List<ePlatformType>() { ePlatformType.Web , ePlatformType.Java };
 
         private string mPageURL = string.Empty;
 
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 if (mUnMappedElements.LazyLoad)
                 {
-                    mUnMappedElements.GetItemsInfo();
+                    mUnMappedElements.LoadLazyInfo();
                 }
                 return mUnMappedElements;
             }
@@ -119,7 +119,7 @@ namespace Amdocs.Ginger.Repository
                 }
                 if (mMappedElements.LazyLoad)
                 {
-                    mMappedElements.GetItemsInfo();
+                    mMappedElements.LoadLazyInfo();
                 }
                 return mMappedElements;
             }

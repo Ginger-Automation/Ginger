@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Common
     /// <summary>
     /// Base class for implementation of WorkSpace reporter
     /// For Ginger WPF it will be implemented with MessageBox, write to log and console
-    /// For GingerConsole, the message will apear in console
+    /// For GingerConsole, the message will appear in console
     /// For Unit Test there is no UI all goes to console with default response
     /// </summary>
     public abstract class WorkSpaceReporterBase : IReporter
@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.Common
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
                 
         public void ToConsole(eLogLevel logLevel, string message)
-        {
+        {            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[").Append(logLevel).Append("]").Append(message).Append(Environment.NewLine);
 
@@ -57,6 +57,7 @@ namespace Amdocs.Ginger.Common
                
             }
             Console.WriteLine(stringBuilder.ToString());
+            Console.ResetColor();
         }
 
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);

@@ -219,8 +219,12 @@ namespace Amdocs.Ginger.Repository
         }
 
         public void CloseAllRunningPluginProcesses()
-        {
-            WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
+        {            
+            Reporter.ToConsole(eLogLevel.DEBUG, "Closing all Running Plugin Processes");
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
+            }
             foreach (PluginProcessWrapper process in mProcesses)
             {
                 process.Close();
@@ -242,7 +246,7 @@ namespace Amdocs.Ginger.Repository
 
             // raw url to get the file content            
             string url = "https://raw.githubusercontent.com/Ginger-Automation/Ginger-Plugins-Index/master/PluginsList.json";
-            Reporter.ToLog(eLogLevel.INFO, "Getting Plugins list from " + url);
+            Reporter.ToLog(eLogLevel.DEBUG, "Getting Plugins list from " + url);
 
             ObservableList<OnlinePluginPackage> list = GitHTTPClient.GetJSON<ObservableList<OnlinePluginPackage>>(url);
             Reporter.ToLog(eLogLevel.INFO, "Online Plugins count=" + list.Count);
@@ -316,23 +320,23 @@ namespace Amdocs.Ginger.Repository
                 ObservableList<OnlinePluginPackage> OnlinePlugins = null;
                 foreach (PluginPackage SolutionPlugin in mPluginPackages)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Check PluginId: " + SolutionPlugin.PluginId);
-                    Reporter.ToLog(eLogLevel.INFO, "Check Plugin folder: " + SolutionPlugin.Folder);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Check PluginId: " + SolutionPlugin.PluginId);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Check Plugin folder: " + SolutionPlugin.Folder);
                     if (Directory.Exists(SolutionPlugin.Folder))
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Plugin folder exist so no need to download");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Plugin folder exist so no need to download");
                         continue;   // Plugin folder exist so no need to download
                     }
 
                     if (isPrivatePlugin(SolutionPlugin))
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Private plugin folder no need to download");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Private plugin folder no need to download");
                         continue;   // this is private plugin located on the developer machine will not be able to download from online
                     }
 
                     if (OnlinePlugins == null)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Getting online plugins index");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Getting online plugins index");
                         OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
                     }
 
@@ -344,12 +348,12 @@ namespace Amdocs.Ginger.Repository
                         continue;
                     }
 
-                    Reporter.ToLog(eLogLevel.INFO, "Checking plugin release: version=" + SolutionPlugin.PluginPackageVersion);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Checking plugin release: version=" + SolutionPlugin.PluginPackageVersion);
                     OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
 
                     if (OPR != null)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Plugin version found starting install");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Plugin version found starting install");
                         OnlinePlugin.InstallPluginPackage(OPR);
                     }
                     else
