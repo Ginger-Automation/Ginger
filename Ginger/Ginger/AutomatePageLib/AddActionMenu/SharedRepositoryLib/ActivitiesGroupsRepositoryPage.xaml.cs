@@ -104,7 +104,7 @@ namespace Ginger.Repository
             {
                 if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItems != null && xActivitiesGroupsRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
-                    if (mContext!=null && mContext.BusinessFlow == null)
+                    if (mContext==null && mContext.BusinessFlow == null)
                     {
                         return;
                     }

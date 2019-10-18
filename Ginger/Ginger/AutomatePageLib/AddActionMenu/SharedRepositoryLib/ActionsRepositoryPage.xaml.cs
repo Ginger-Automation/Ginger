@@ -131,7 +131,7 @@ namespace Ginger.Repository
         
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {            
-            if (mContext!=null && mContext.BusinessFlow == null)
+            if (mContext==null && mContext.BusinessFlow == null)
             {
                 return;
             }
