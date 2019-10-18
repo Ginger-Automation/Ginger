@@ -45,7 +45,7 @@ namespace GingerCore.Platforms
 
     /// <summary>
     ///  Use this struct to pack platform action before sending to Ginger node
-    //  Fields must match exectly PlatformActionData
+    //  Fields must match exactly PlatformActionData
     /// </summary>
     public struct PlatformAction
     {        
