@@ -91,7 +91,14 @@ namespace Ginger.ApiModelsFolder
                                                                                                                 nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
                                                                                                                 System.Convert.ToString(mContext.Activity.TargetApplication)));
             }
-            List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow(ownerWindow: ((WizardWindow)mAddApiModelActionWizardPage.mWizardWindow));
+
+            Window selectionPageOwenr = App.MainWindow;
+            if (((WizardWindow)mAddApiModelActionWizardPage.mWizardWindow).IsVisible)
+            {
+                selectionPageOwenr = ((WizardWindow)mAddApiModelActionWizardPage.mWizardWindow);
+            }
+
+            List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow(ownerWindow: selectionPageOwenr);
 
             if (selectedList != null)
             {
