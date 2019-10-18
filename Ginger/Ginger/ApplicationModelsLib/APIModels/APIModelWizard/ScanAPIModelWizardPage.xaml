@@ -43,18 +43,9 @@
             </DataTemplate>
 
             <DataTemplate x:Key="xCompareAndMergeTemplate">
-                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="False" Margin="0" Padding="0" Height="23"
+                <UserControls:ucButton x:Name="xCompareAndMergeButton" VerticalAlignment="Center" IsEnabled="{Binding ShowMergerLink}" Margin="0" Padding="0" Height="23"
                       ButtonType="ImageButton" Click="xCompareAndMergeButton_Click" ButtonText="" ToolTip="Compare and Merge"  ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Columns" />
-
-                <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Merge Changes">
-                        <Setter Property="IsEnabled" TargetName="xCompareAndMergeButton" Value="True" />
-                    </DataTrigger>
-                    <DataTrigger Binding="{Binding SelectedOperation}" Value="Replace Existing with New">
-                        <Setter Property="IsEnabled" TargetName="xCompareAndMergeButton" Value="True" />
-                    </DataTrigger>
-                </DataTemplate.Triggers>
             </DataTemplate>
 
             <DataTemplate  x:Key="xDeltaStatusIconTemplate">

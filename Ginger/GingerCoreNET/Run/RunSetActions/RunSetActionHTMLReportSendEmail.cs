@@ -154,8 +154,7 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(ReportInfo RI)
         {
-
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email Staring execute");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email Staring execute");
             mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
             string extraInformationCalculated = string.Empty;
             string calculatedName = string.Empty;
@@ -167,7 +166,7 @@ namespace Ginger.Run.RunSetActions
 
             if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
+                //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
                 liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
             }
@@ -177,7 +176,7 @@ namespace Ginger.Run.RunSetActions
             // !!!!!!!!!!!!!!!!!!! Linux
             TemplatesFolder = Path.Combine(ExtensionMethods.getGingerEXEFileName(), "Reports", "GingerExecutionReport").Replace("Ginger.exe", "");
 
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
 
             string runSetFolder = string.Empty;
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
@@ -194,7 +193,7 @@ namespace Ginger.Run.RunSetActions
 
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder=" + runSetFolder);
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder=" + runSetFolder);
 
             var ReportItem = EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
 
@@ -245,7 +244,7 @@ namespace Ginger.Run.RunSetActions
                 }
                 else if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: loggerMode is LiteDB");
+                    //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: loggerMode is LiteDB");
                     try
                     {
                         WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
@@ -257,16 +256,17 @@ namespace Ginger.Run.RunSetActions
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).Elapsed = liteDbRunSet.Elapsed;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = liteDbRunSet.ExecutionRate;
                         ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = liteDbRunSet.PassRate;
+                        ((RunSetReport)offlineReportInfo.ReportInfoRootObject).EnvironmentsDetails = liteDbRunSet.Environment;
                         CreateSummaryViewReportForEmailAction(offlineReportInfo);
                         // TODO: check multi run on same machine/user
                     }
                     finally
                     {
                         WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                        Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
+                        //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
                         if (Directory.Exists(runSetFolder))
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: runSetFolder exist deleting folder: " + runSetFolder);
+                            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder exist deleting folder: " + runSetFolder);
                             Directory.Delete(runSetFolder, true);
                         }
                     }
@@ -413,7 +413,6 @@ namespace Ginger.Run.RunSetActions
                     string gingerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
                     string customerLogoPath = Path.Combine(TemplatesFolder, "assets", "img", "@Ginger.png");
 
-
                     if (File.Exists(beatLogoPath))
                         alternativeView.LinkedResources.Add(GetLinkedResource(GetImageStream(beatLogoPath), "beat"));
                     if (File.Exists(gingerLogoPath))
@@ -455,7 +454,7 @@ namespace Ginger.Run.RunSetActions
                     }
                 }
             }
-            Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Preparing email");
+            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Preparing email");
             mValueExpression.Value = MailFrom;
             Email.MailFrom = mValueExpression.ValueCalculated;
             mValueExpression.Value = MailTo;
@@ -473,9 +472,9 @@ namespace Ginger.Run.RunSetActions
             bool isSuccess=false;
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: Before send email");
+                //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Before send email");
                 isSuccess = Email.Send();
-                Reporter.ToLog(eLogLevel.INFO, "Run set operation send Email: After send email result = " + isSuccess);
+                //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: After send email result = " + isSuccess);
             }
             catch (Exception ex)
             {

@@ -92,41 +92,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         ObjectId mRunnerLiteDbId;
         ObjectId mRunSetLiteDbId;
-
-        bool mAutoRunAnalyzer = true;
-        public bool AutoRunAnalyzer
-        {
-            get
-            {
-                return mAutoRunAnalyzer;
-            }
-            set
-            {
-                if (mAutoRunAnalyzer != value)
-                {
-                    mAutoRunAnalyzer = value;
-                    OnPropertyChanged(nameof(AutoRunAnalyzer));
-                }
-            }
-        }
-
-        bool mAutoGenerateReport = false;
-        public bool AutoGenerateReport
-        {
-            get
-            {
-                return mAutoGenerateReport;
-            }
-            set
-            {
-                if (mAutoGenerateReport != value)
-                {
-                    mAutoGenerateReport = value;
-                    OnPropertyChanged(nameof(AutoGenerateReport));
-                }
-            }
-        }
-
+        RunSetReport mRunSetReport;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string name)
@@ -163,20 +129,21 @@ namespace GingerWPF.BusinessFlowsLib
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
-                if (ExecutionLoggerManager.RunSetReport == null)
+                if (mRunSetReport == null)
                 {
-                    ExecutionLoggerManager.RunSetReport = new RunSetReport();
-                    ExecutionLoggerManager.RunSetReport.SetDataForAutomateTab();
+                    mRunSetReport = new RunSetReport();
+                    mRunSetReport.SetDataForAutomateTab();
                     if (!isAutoRunSetExists)
                     {
                         mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner, offlineMode:true);
-                        mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
+                        mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(mRunSetReport, "");
                         isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                         return;
                     }
                     DeleteRunSetBFRefData();
-                }
+                    ExecutionLoggerManager.RunSetReport = mRunSetReport;
+                }                
             }
         }
 
@@ -234,8 +201,10 @@ namespace GingerWPF.BusinessFlowsLib
             xBusinessFlowItemComboBox.Items.Add("Configurations");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
-            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoRunAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, this, nameof(AutoGenerateReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
+
+
 
             mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mRunner, mContext);
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
@@ -434,7 +403,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
 
-                if (AutoRunSetDocumentExistsInLiteDB() && ExecutionLoggerManager.RunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (AutoRunSetDocumentExistsInLiteDB() && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     DeleteRunSetBFRefData();
                     ClearAutomatedId(businessFlowToLoad);
@@ -769,6 +738,9 @@ namespace GingerWPF.BusinessFlowsLib
                 case AutomateEventArgs.eEventType.RunCurrentAction:
                     RunAutomatePageAction((Tuple<Activity,Act>)args.Object,  false);
                     break;
+                case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
+                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false, true);
+                    break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
                     RunAutomatePageActivity((Activity)args.Object);
                     break;
@@ -812,7 +784,7 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = true;
                 //SetUIElementsBehaverDuringExecution();
 
-                if (AutoRunAnalyzer)
+                if (WorkSpace.Instance.UserProfile.AutoRunAutomatePageAnalyzer)
                 {
                     //Run Analyzer check if not including any High or Critical issues before execution
                     Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
@@ -847,7 +819,7 @@ namespace GingerWPF.BusinessFlowsLib
                 }
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (AutoGenerateReport)
+                    if (WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport)
                     {
                         GenerateReport();
                     }
@@ -907,7 +879,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true, bool moveToNextAction=false)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -945,15 +917,18 @@ namespace GingerWPF.BusinessFlowsLib
                 mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
-                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);
-
-               
+                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     mRunner.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
                     mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                }
+
+                if (moveToNextAction)
+                {
+                    mContext.Runner.GotoNextAction();
                 }
             }
             finally
@@ -1130,6 +1105,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (Ginger.General.UndoChangesInRepositoryItem(mBusinessFlow, true))
             {
+                mActivitiesPage.ListView.UpdateGrouping();
                 mBusinessFlow.SaveBackup();
             }
         }
@@ -1207,7 +1183,7 @@ namespace GingerWPF.BusinessFlowsLib
             WizardWindow.ShowWizard(new ActionsConversionWizard(ActionsConversionWizard.eActionConversionType.SingleBusinessFlow, mContext, lst), 900, 700, true);
         }
 
-        private void xLegacyActionsRemoveMenuItem_Click(object sender, RoutedEventArgs e)
+        private async void xLegacyActionsRemoveMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -1218,7 +1194,8 @@ namespace GingerWPF.BusinessFlowsLib
             lstBFToConvert.Add(flowToConvert);
 
             ActionConversionUtils utils = new ActionConversionUtils();
-            utils.RemoveLegacyActionsHandler(lstBFToConvert);
+
+            await Task.Run(() => utils.RemoveLegacyActionsHandler(lstBFToConvert));
         }
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1362,12 +1339,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xAutoAnalyzeConfigMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            AutoRunAnalyzer = !AutoRunAnalyzer;
+            WorkSpace.Instance.UserProfile.AutoRunAutomatePageAnalyzer = !WorkSpace.Instance.UserProfile.AutoRunAutomatePageAnalyzer;
         }
 
         private void xAutoReportConfigMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            AutoGenerateReport = !AutoGenerateReport;
+            WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport = !WorkSpace.Instance.UserProfile.AutoGenerateAutomatePageReport;
         }
 
         private void xContinueRunsetBtn_Click(object sender, RoutedEventArgs e)
@@ -1512,6 +1489,13 @@ namespace GingerWPF.BusinessFlowsLib
         {
             Ginger.Export.GingerToCSV.BrowseForFilename();
             Ginger.Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
+        }
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (mRunSetReport != null)//Workaround for LiteDB report issue
+            {
+                ExecutionLoggerManager.RunSetReport = mRunSetReport;
+            }
         }
     }
 

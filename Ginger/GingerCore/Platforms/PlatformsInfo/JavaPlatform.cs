@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.Plugin.Core;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
@@ -84,9 +86,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 return GetWidgetUIElementList(elementInfo);
             }
 
-            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();         
+            ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
 
-            if (elementInfo.ElementTypeEnum==eElementType.Table)
+            if (elementInfo.ElementTypeEnum == eElementType.Table)
             {
                 //get all action list supported to table
                 var tableActionList = new[] { ActUIElement.eElementAction.TableCellAction, ActUIElement.eElementAction.TableAction, ActUIElement.eElementAction.TableRowAction }
@@ -114,7 +116,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, action.ToString());
                     actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                     if (!action.Equals(ActUIElement.eElementAction.TableAction))
-                    {                        
+                    {
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
                         actUITableAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
 
@@ -136,8 +138,90 @@ namespace GingerCore.Platforms.PlatformsInfo
                     }
                 }
             }
-            
+
             return UIElementsActionsList;
+        }
+
+        public override Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
+        {
+            var pomExcutionUtil = new POMExecutionUtils();
+            Act elementAction = null;
+            if (elementInfo != null)
+            {
+                List<ActUIElement.eElementAction> elementTypeOperations = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
+                if (actConfig != null)
+                {
+                    if (string.IsNullOrWhiteSpace(actConfig.Operation))
+                        actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
+                }
+                if ((elementTypeOperations != null) && (elementTypeOperations.Count > 0))
+                {
+                    elementAction = new ActUIElement()
+                    {
+                        Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
+                        ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                        ElementLocateValue = actConfig.LocateValue,
+                        Value = actConfig.ElementValue
+                    };
+
+                    pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
+                }
+            }
+            else
+            {
+                elementAction = new ActUIElement()
+                {
+                    Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
+                    ElementLocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
+                    ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                    ElementLocateValue = actConfig.LocateValue,
+                    ElementType = (eElementType)System.Enum.Parse(typeof(eElementType), Convert.ToString(actConfig.Type)),
+                    Value = actConfig.ElementValue
+                };
+            }
+            return elementAction;
+        }
+
+        public override string GetDefaultElementOperation(eElementType ElementTypeEnum)
+        {
+            switch (ElementTypeEnum)
+            {
+                case eElementType.TreeView:
+                case eElementType.MenuItem:
+                case eElementType.List:
+                case eElementType.RadioButton:                
+                case eElementType.Button:
+                    return  ActUIElement.eElementAction.Click.ToString();
+
+                case eElementType.CheckBox:
+                    return ActUIElement.eElementAction.Toggle.ToString();
+
+                case eElementType.TextBox:
+                    return ActUIElement.eElementAction.SetValue.ToString();
+                case eElementType.Tab:
+                case eElementType.ComboBox:
+                    return ActUIElement.eElementAction.Select.ToString();
+                case eElementType.Span:
+                case eElementType.Label:                    
+                    return ActUIElement.eElementAction.GetValue.ToString();                    
+                case eElementType.Window:
+                    return ActUIElement.eElementAction.Switch.ToString();                                    
+                case eElementType.EditorPane:
+                    return ActUIElement.eElementAction.InitializeJEditorPane.ToString();
+                case eElementType.Table:
+                    return ActUIElement.eElementAction.TableCellAction.ToString();
+
+                case eElementType.DatePicker:
+                    return ActUIElement.eElementAction.SetDate.ToString();
+
+                case eElementType.Dialog:
+                    return ActUIElement.eElementAction.AcceptDialog.ToString();
+
+                case eElementType.ScrollBar:
+                   return ActUIElement.eElementAction.ScrollDown.ToString();
+                default:                    
+                    return ActUIElement.eElementAction.Unknown.ToString();
+            }
         }
 
         private static ActUIElement CreateUIElementAction(ElementInfo elementInfo,ActUIElement.eElementAction action)
@@ -258,84 +342,107 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
-            List<ActUIElement.eElementAction> javaPlatformElementActionslist = base.GetPlatformUIElementActionsList(ElementType);
-          
+            List<ActUIElement.eElementAction> javaPlatformElementActionslist = new List<ActUIElement.eElementAction>();
+
             switch (ElementType)
             {
                 case eElementType.Button:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.winDoubleClick);
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.winDoubleClick);
                     break;
                 case eElementType.TextBox:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
+          
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeyPressRelease);
+                    //
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     break;
                 case eElementType.ComboBox:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncSelect);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SelectByIndex);                  
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
+                    
+                   
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetAllValues);
+                    //
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+
+
                     break;
                 case eElementType.CheckBox:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);                    
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    //
+                    
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsChecked);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsChecked);
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
+
                     break;
                 case eElementType.RadioButton:
-                   
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncSelect);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);                  
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+          
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
+
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
+
                     break;
                 case eElementType.List:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
+                
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
+
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
+                    //javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
                     break;
                 case eElementType.Label:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
@@ -357,6 +464,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
                     break;
                 case eElementType.EditorPane:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.InitializeJEditorPane);
@@ -368,6 +476,73 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
+                    break;
+                case eElementType.Table:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TableAction);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TableCellAction);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.TableRowAction);
+                    break;
+                case eElementType.DatePicker:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetDate);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);           
+                    break;
+
+                case eElementType.ScrollBar:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollLeft);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollRight);
+                    break;
+
+                case eElementType.Dialog:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AcceptDialog);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DismissDialog);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetDialogText);
+                    break;
+
+                case eElementType.Unknown:
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MousePressRelease);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeyPressRelease);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DoubleClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetSelectedNodeChildItems);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollDown);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollUp);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollLeft);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.ScrollRight);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncSelect);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetAllValues);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);                   
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Switch);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.CloseWindow);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.InitializeJEditorPane);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.JEditorPaneElementAction);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetDate);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AcceptDialog);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.DismissDialog);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetDialogText);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsChecked);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.WinClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.winDoubleClick);
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetFocus);
                     break;
             }
 
@@ -478,6 +653,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mJavaPlatformElementActionslist = base.GetPlatformUIElementsType();
                 mJavaPlatformElementActionslist.Add(eElementType.EditorPane);
                 mJavaPlatformElementActionslist.Add(eElementType.TreeView);
+                mJavaPlatformElementActionslist.Add(eElementType.DatePicker);
+                mJavaPlatformElementActionslist.Add(eElementType.Dialog);
             }
             return mJavaPlatformElementActionslist;
         }
@@ -581,6 +758,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.TreeView,
                     IsCommonElementType = true
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.DatePicker,
+                    IsCommonElementType = true
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Dialog,
+                    IsCommonElementType = false
                 });
             }
             return mPlatformElementTypeOperations;

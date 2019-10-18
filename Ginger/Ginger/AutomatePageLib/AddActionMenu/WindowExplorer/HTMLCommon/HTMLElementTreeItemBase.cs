@@ -67,7 +67,7 @@ namespace Ginger.WindowExplorer.HTMLCommon
         
         bool ITreeViewItem.IsExpandable()
         {
-            return this.ElementInfo.IsExpandable;
+            return true;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)

@@ -153,7 +153,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Trying to connect ASCF Agent on address:" + serverAddress);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Trying to connect ASCF Agent on address:" + serverAddress);
                         Thread.Sleep(500);
                     }
                 }
@@ -1417,7 +1417,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();

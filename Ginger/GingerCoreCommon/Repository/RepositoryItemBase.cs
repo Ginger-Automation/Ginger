@@ -61,6 +61,8 @@ namespace Amdocs.Ginger.Repository
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
 
+        public bool ItemBeenReloaded;
+
         //DO Not save
         protected Dictionary<string, object> mBackupDic;
 
@@ -790,7 +792,7 @@ namespace Amdocs.Ginger.Repository
 
         public void RefreshSourceControlStatus()
         {
-            if (mSourceControlStatus != eImageType.Null)
+            if (SourceControl != null && mSourceControlStatus != eImageType.Null)
             {                
                 mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
                 OnPropertyChanged(nameof(SourceControlStatus));                                

@@ -159,6 +159,11 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 {
                     overrideFile = false;
                 }
+                else
+                {
+                    //In case File exists and user selects to overwrite the existing.
+                    File.Delete(fileName);
+                }
             }
 
             if (overrideFile)
@@ -180,10 +185,11 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
                 {
                     ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
-                    AccessDataSource mDSDetails = (AccessDataSource)(((DataSourceTable)selectedRunSet[0]).DSC);
+                    DataSourceBase dataSource = (((DataSourceTable)selectedRunSet[0]).DSC);
+
                     string tableName = ((DataSourceTable)selectedRunSet[0]).FileName;
                     List<AppParameters> parameters = GetParameterList();
-                    im.ExportSelectedParametersToDataSouce(parameters, mDSDetails, tableName);
+                    im.ExportSelectedParametersToDataSouce(parameters, dataSource, tableName);
                 }
             }
             catch (System.Exception ex)

@@ -135,11 +135,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private object MapActivityToLiteDb(Activity activity, Context context, eExecutedFrom executedFrom)
         {
             LiteDbActivity AR = new LiteDbActivity();
-            context.Activity = activity;
             context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             AR.Seq = ++this.activitySeq;
+            actionSeq = 0;
             if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = activity.LiteDbId;
@@ -208,10 +208,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 BFR._id = lastBfObjId;
                 ClearSeq();
             }
+            SetBfobjects(context, executedFrom);
             context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
             BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
             BFR.Seq = ++this.bfSeq;
-            SetBfobjects(context, executedFrom);
             if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
                 BFR._id = context.BusinessFlow.LiteDbId;
@@ -287,6 +287,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         private void SetBfobjects(Context context, eExecutedFrom executedFrom)
         {
+            activitySeq = 0;
             var bf = context.BusinessFlow;
             bf.Activities.ToList().ForEach(activity => this.MapActivityToLiteDb(activity, context, executedFrom));
             bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
@@ -362,16 +363,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void StartRunSet()
         {
-            if (ExecutionLoggerManager.RunSetReport == null)
-            {
-                ExecutionLoggerManager.RunSetReport = new RunSetReport();
-                ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+            ExecutionLoggerManager.RunSetReport = new RunSetReport();
+            ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
 
-                ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
-                ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
-                ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
-                ExecutionLoggerManager.RunSetReport.Watch.Start();
-            }
+            ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+            ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
+            ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            ExecutionLoggerManager.RunSetReport.Watch.Start();
         }
 
         internal override void EndRunSet()

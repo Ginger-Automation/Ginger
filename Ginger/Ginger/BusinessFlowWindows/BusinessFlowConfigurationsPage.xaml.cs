@@ -49,8 +49,17 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
+            mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
             TrackBusinessFlowAutomationPrecentage();
             BindControls();
+        }
+
+        private void TargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xTargetsListBox.ItemsSource = mBusinessFlow.TargetApplications.ToList();
+            });
         }
 
         private void TrackBusinessFlowAutomationPrecentage()
@@ -129,7 +138,7 @@ namespace GingerWPF.BusinessFlowsLib
             //    SourceFrame.Content = SGP;
             //}
 
-            xTargetsListBox.ItemsSource = mBusinessFlow.TargetApplications;
+            xTargetsListBox.ItemsSource = mBusinessFlow.TargetApplications.ToList();
             xTargetsListBox.DisplayMemberPath = nameof(TargetApplication.AppName);
         }
 

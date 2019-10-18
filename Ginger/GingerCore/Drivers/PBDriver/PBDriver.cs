@@ -964,7 +964,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             return mUIAutomationHelper.GetVisibleControls();
         }

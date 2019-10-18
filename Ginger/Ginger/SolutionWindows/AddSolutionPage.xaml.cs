@@ -178,23 +178,23 @@ namespace Ginger.SolutionWindows
 
         void AddDefaultDataSource()
         {
-            byte[] obj= Properties.Resources.GingerDataSource;
+            //byte[] obj= Properties.Resources.GingerDataSource;
 
-            if(!File.Exists(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb")))
-            {
-                Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
-                System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
-                fs.Write(obj, 0, obj.Count());
-                fs.Close();
-                fs.Dispose();
-            }         
+            //if(!File.Exists(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb")))
+            //{
+            //    Directory.CreateDirectory(System.IO.Path.Combine(mSolution.Folder, "DataSources"));
+            //    System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.Combine(mSolution.Folder, @"DataSources\GingerDataSource.mdb"), System.IO.FileMode.Create, System.IO.FileAccess.Write);
+            //    fs.Write(obj, 0, obj.Count());
+            //    fs.Close();
+            //    fs.Dispose();
+            //}         
 
-            DataSourceBase a = new AccessDataSource();
-            a.Name = "GingerDataSource";             
-            a.FilePath = @"~\DataSources\GingerDataSource.mdb";
-            a.DSType = DataSourceBase.eDSType.MSAccess;
-            RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
-            dsTargetFolder.AddRepositoryItem(a);
+            //DataSourceBase a = new AccessDataSource();
+            //a.Name = "GingerDataSource";             
+            //a.FilePath = @"~\DataSources\GingerDataSource.mdb";
+            //a.DSType = DataSourceBase.eDSType.MSAccess;
+            //RepositoryFolder<DataSourceBase> dsTargetFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
+            //dsTargetFolder.AddRepositoryItem(a);
 
             // TODO: Try not to use resources, we can put the file in folder and copy
             // adding LiteDB while adding solution
@@ -210,12 +210,12 @@ namespace Ginger.SolutionWindows
             }
 
             DataSourceBase lite = new GingerCoreNET.DataSource.GingerLiteDB();
-            lite.Name = "LiteDB";
+            lite.Name = "DefaultDataSource";
             lite.FilePath = @"~\DataSources\LiteDB.db";
             lite.DSType = DataSourceBase.eDSType.LiteDataBase;
 
             RepositoryFolder<DataSourceBase> dsTargetFolder1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>();
-            dsTargetFolder.AddRepositoryItem(lite);
+            dsTargetFolder1.AddRepositoryItem(lite);
             
         }
 

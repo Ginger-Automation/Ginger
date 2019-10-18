@@ -27,7 +27,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
-using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
@@ -45,7 +44,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -81,6 +79,7 @@ namespace Ginger.Actions
         private string mDataSourceName;
         List<String> mColNames = null;
         ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
+        ObservableList<String> mStoreToVarsList = new ObservableList<string>();
 
         private BusinessFlow mActParentBusinessFlow = null;
         private Activity mActParentActivity = null;
@@ -92,6 +91,18 @@ namespace Ginger.Actions
         private bool saveWasDone = false;
         ActionFlowControlPage mAFCP;
         Context mContext;
+
+        public int SelectedTabIndx
+        {
+            get
+            {
+                return xActionTabs.SelectedIndex;
+            }
+            set
+            {
+                xActionTabs.SelectedIndex = value;
+            }
+        }
 
         public General.eRIPageViewMode EditMode { get; set; }
 
@@ -172,7 +183,8 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
-            else if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
+
+            if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
                 xActionTabs.SelectedItem = xExecutionReportTab;
@@ -187,6 +199,7 @@ namespace Ginger.Actions
         {
             xDetailsTab.Tag = true;//marking that binding was done
 
+            BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mAction, nameof(Act.ActionType), BindingMode: BindingMode.OneWay);
             xDescriptionTextBox.BindControl(mAction, nameof(Act.Description));
             xRunDescritpionUC.Init(mContext, mAction, nameof(Act.RunDescription));
             xTagsViewer.Init(mAction.Tags);
@@ -295,8 +308,9 @@ namespace Ginger.Actions
             xDataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
 
             //Output Values
+            xOutputValuesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshOutputValuesGridElements));
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
-            xOutputValuesGrid.AddSeparator();           
+            xOutputValuesGrid.AddSeparator();
 
             xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Un-used Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
             BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
@@ -308,6 +322,11 @@ namespace Ginger.Actions
             if (mAction.ActReturnValues.Count > 0)
             {
                 xOutputValuesExpander.IsExpanded = true;
+            }
+
+            if (EditMode == General.eRIPageViewMode.View)
+            {
+                xOutputValuesGrid.DisableGridColoumns();
             }
         }
 
@@ -325,11 +344,10 @@ namespace Ginger.Actions
             //execution details section
             if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
             {
+                BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+                BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
 
-
-                BindingHandler.ObjFieldBinding(xExecutionStatusLbl, Label.ContentProperty, mAction, nameof(Act.Status), BindingMode.OneWay);
                 BindingHandler.ObjFieldBinding(xExecutionTimeLbl, Label.ContentProperty, mAction, nameof(Act.ElapsedSecs), BindingMode.OneWay);
-                UpdateExecutionStatusControls();
 
                 BindingHandler.ObjFieldBinding(xExecutionExtraInfoText, TextBox.TextProperty, mAction, nameof(Act.ExInfo), BindingMode.OneWay);
                 BindingHandler.ObjFieldBinding(xExecutionExtraInfoPnl, StackPanel.VisibilityProperty, mAction, nameof(Act.ExInfo), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
@@ -580,6 +598,12 @@ namespace Ginger.Actions
             mAction.ReturnValues.Add(new ActReturnValue() { Active = true, Operator = eOperator.Equals });
         }
 
+        private void RefreshOutputValuesGridElements(object sender, RoutedEventArgs e)
+        {
+            //refresh Variabels StoreTo options
+            GenerateStoreToVarsList();
+        }
+
         private void AddInputValue(object sender, RoutedEventArgs e)
         {
             mAction.InputValues.Add(new ActInputValue() { Param = "p" + mAction.InputValues.Count });
@@ -631,29 +655,10 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, MaxWidth = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
 
-            List<String> varsCollc;
-            if (mActParentBusinessFlow != null)
-            {
-                varsCollc = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
-            }
-            else
-            {
-                varsCollc = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
-                if (mActParentActivity != null)
-                {
-                    foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)
-                    {
-                        varsCollc.Add(var.Name);
-                    }
-                }
-            }
-            varsCollc.Sort();
-            if (varsCollc.Count > 0)
-                varsCollc.Insert(0, string.Empty);//to be used for clearing selection
-
+            GenerateStoreToVarsList();
             ObservableList<GlobalAppModelParameter> appsModelsGlobalParamsList = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, varsCollc, mAppGlobalParamList: appsModelsGlobalParamsList) });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, mStoreToVarsList, mAppGlobalParamList: appsModelsGlobalParamsList) });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
@@ -677,12 +682,63 @@ namespace Ginger.Actions
             xOutputValuesGrid.DataSourceList = mAction.ReturnValues;
         }
 
+        private void GenerateStoreToVarsList()
+        {
+            List<string> tempList = new List<string>();
+            if (mActParentBusinessFlow != null)
+            {
+                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+            }
+            else
+            {
+                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                if (mActParentActivity != null)
+                {
+                    foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)
+                    {
+                        tempList.Add(var.Name);
+                    }
+                }
+            }
+            tempList.Sort();
+            if (tempList.Count > 0)
+            {
+                tempList.Insert(0, string.Empty);//to be used for clearing selection
+            }
+
+            //mStoreToVarsList.LoadDataFromList(tempList, true);
+
+            //Add new
+            foreach (string var in tempList)
+            {
+                if (mStoreToVarsList.Contains(var) == false)
+                {
+                    mStoreToVarsList.Add(var);
+                }
+            }
+
+            //remove old
+            for (int indx = 0; indx < mStoreToVarsList.Count; indx++)
+            {
+                if (tempList.Contains(mStoreToVarsList[indx]) == false)
+                {
+                    mStoreToVarsList.RemoveAt(indx);
+                    indx--;
+                }
+            }
+
+            if (mStoreToVarsList.Count > 0)
+            {
+                mStoreToVarsList.Move(mStoreToVarsList.IndexOf(string.Empty), 0);//making sure the empty option is first
+            }
+        }
+
         private void SetActInputValuesGrid()
         {
             //Show/hide if needed
+            xInputValuesGrid.SetTitleLightStyle = true;
             xInputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddInputValue));//?? going to be hide in next line code
 
-            xInputValuesGrid.SetTitleLightStyle = true;
             xInputValuesGrid.ClearTools();
             xInputValuesGrid.ShowDelete = System.Windows.Visibility.Visible;
 
@@ -995,12 +1051,12 @@ namespace Ginger.Actions
 
             xAddOutputToDataSourcePnl.IsEnabled = false;
             xDataSourceConfigGrid.ToolsTray.Visibility = Visibility.Collapsed;
-            xDataSourceConfigGrid.DisableGridColoumns();            
+            xDataSourceConfigGrid.DisableGridColoumns();
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Collapsed;
             xOutputValuesGrid.DisableGridColoumns();
 
             xExecutionReportConfigPnl.IsEnabled = false;
-            xActionRunDetailsPnl.IsEnabled = false;
+            //xActionRunDetailsPnl.IsEnabled = false;
         }
 
         private void UndoChangesAndClose()
@@ -1500,83 +1556,32 @@ namespace Ginger.Actions
             }
         }
 
-        private void ShowHideRunSimulation()
-        {
-            if (mAction.SupportSimulation)
-                mSimulateRunBtn.Visibility = Visibility.Visible;
-            else
-                mSimulateRunBtn.Visibility = Visibility.Collapsed;
-        }
+        //private void ShowHideRunSimulation()
+        //{
+        //    if (mAction.SupportSimulation)
+        //        mSimulateRunBtn.Visibility = Visibility.Visible;
+        //    else
+        //        mSimulateRunBtn.Visibility = Visibility.Collapsed;
+        //}
 
         private void ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Act.SupportSimulation))
-            {
-                ShowHideRunSimulation();
-            }
-            else if (e.PropertyName == nameof(Act.Status))
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    //ShowHideRunStopButtons();
+            //if (e.PropertyName == nameof(Act.SupportSimulation))
+            //{
+            //    ShowHideRunSimulation();
+            //}
+            //else if (e.PropertyName == nameof(Act.Status))
+            //{
+            //    this.Dispatcher.Invoke(() =>
+            //    {
+            //        //ShowHideRunStopButtons();
 
-                    UpdateExecutionStatusControls();
-                });
-            }
+            //        UpdateExecutionStatusControls();
+            //    });
+            //}
         }
 
-        private void UpdateExecutionStatusControls()
-        {
-            Brush mStatusBrush = null;
-            eImageType mStatusImage = eImageType.Pending;
 
-            switch (mAction.Status)
-            {
-                case eRunStatus.Passed:
-                    mStatusBrush = FindResource("$PassedStatusColor") as Brush;
-                    mStatusImage = eImageType.Passed;
-                    break;
-                case eRunStatus.Failed:
-                    mStatusBrush = FindResource("$FailedStatusColor") as Brush;
-                    mStatusImage = eImageType.Failed;
-                    break;
-                case eRunStatus.Pending:
-                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
-                    mStatusImage = eImageType.Pending;
-                    break;
-                case eRunStatus.Running:
-                    mStatusBrush = FindResource("$RunningStatusColor") as Brush;
-                    mStatusImage = eImageType.Running;
-                    break;
-                case eRunStatus.Stopped:
-                    mStatusBrush = FindResource("$StoppedStatusColor") as Brush;
-                    mStatusImage = eImageType.Stop;
-                    break;
-                case eRunStatus.Blocked:
-                    mStatusBrush = FindResource("$BlockedStatusColor") as Brush;
-                    mStatusImage = eImageType.Blocked;
-                    break;
-                case eRunStatus.Skipped:
-                    mStatusBrush = FindResource("$SkippedStatusColor") as Brush;
-                    mStatusImage = eImageType.Skipped;
-                    break;
-                default:
-                    mStatusBrush = FindResource("$PendingStatusColor") as Brush;
-                    mStatusImage = eImageType.Pending;
-                    break;
-            }
-
-            xExecutionStatusImagePnl.Children.Clear();
-            xExecutionStatusLbl.Foreground = mStatusBrush;
-            Amdocs.Ginger.UserControls.ImageMakerControl xExecutionStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl(); //creating new each time due to Spin issue
-            xExecutionStatusImage.SetAsFontImageWithSize = 50;
-            xExecutionStatusImage.ImageForeground = (SolidColorBrush)mStatusBrush;
-            xExecutionStatusImage.ImageType = mStatusImage;
-            xExecutionStatusImage.Width = 50;
-            xExecutionStatusImage.Height = 50;
-            xExecutionStatusImage.ToolTip = mAction.Status.ToString();
-            xExecutionStatusImagePnl.Children.Add(xExecutionStatusImage);
-        }
 
         private void InitActionLog()
         {
@@ -1638,7 +1643,6 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xLocateByCombo);
             BindingOperations.ClearAllBindings(xWindowsToCaptureCombo);
             BindingOperations.ClearAllBindings(xLocateValueVE);
-            BindingOperations.ClearAllBindings(xExecutionStatusLbl);
             BindingOperations.ClearAllBindings(xExecutionTimeLbl);
             BindingOperations.ClearAllBindings(xExecutionErrorDetailsText);
             BindingOperations.ClearAllBindings(xExecutionExtraInfoText);
@@ -1666,6 +1670,7 @@ namespace Ginger.Actions
                 mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
                 mAction.FlowControls.CollectionChanged -= FlowControls_CollectionChanged;
                 mAction.ReturnValues.CollectionChanged -= ReturnValues_CollectionChanged;
+                mAction.ScreenShots.CollectionChanged -= ScreenShots_CollectionChanged;
                 mAction = null;
             }
             xFlowControlConditionsFrame.NavigationService.RemoveBackEntry();
@@ -1701,7 +1706,7 @@ namespace Ginger.Actions
         {
             if (xTakeScreenShotCheckBox.IsChecked == true)
             {
-                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;              
+                xScreenshotsCaptureTypeConfigsPnl.Visibility = Visibility.Visible;
             }
             else
             {

@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2019 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.Application_Models;
@@ -48,6 +66,9 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
             ToggleSections();
 
+            this.Width = 1200;
+            this.Height = 800;
+
             GingerCore.General.LoadGenericWindow(ref mWin, mOwnerWindow, windowStyle, @"Compare & Merge", this, null, true, "OK");
         }
 
@@ -55,25 +76,30 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         {
             if (mDeltaAPIModel.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
             {
-                xMergerTextRow.Height = new GridLength(30);
                 if (mDeltaAPIModel.MergedAPIModel == null)
                 {
+                    xMergerTextRow.Height = new GridLength(50);
+
                     xMatchedAPIAsBaseBtn.Visibility = Visibility.Visible;
                     xLearnedAPIAsBaseBtn.Visibility = Visibility.Visible;
 
                     xMergerSplitter.Visibility = Visibility.Collapsed;
                     xMergerWindowTxtBlock.Visibility = Visibility.Collapsed;
+                    xMergedAPIBorder.Visibility = Visibility.Collapsed;
                     xMergedAPIFrame.Visibility = Visibility.Collapsed;
 
                     xMergerAPIRow.Height = new GridLength(0);
                 }
                 else
                 {
+                    xMergerTextRow.Height = new GridLength(30);
+
                     xMatchedAPIAsBaseBtn.Visibility = Visibility.Collapsed;
                     xLearnedAPIAsBaseBtn.Visibility = Visibility.Collapsed;
 
                     xMergerSplitter.Visibility = Visibility.Visible;
                     xMergerWindowTxtBlock.Visibility = Visibility.Visible;
+                    xMergedAPIBorder.Visibility = Visibility.Visible;
                     xMergedAPIFrame.Visibility = Visibility.Visible;
 
                     xMergerAPIRow.Height = new GridLength(400, GridUnitType.Star);
@@ -96,6 +122,9 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         private void XLearnedAPIAsBaseBtn_Click(object sender, RoutedEventArgs e)
         {
             mDeltaAPIModel.MergedAPIModel = LearnAPIModelsUtils.CreateAPIModelObject(mDeltaAPIModel.learnedAPI);
+            mDeltaAPIModel.MergedAPIModel.TargetApplicationKey = mDeltaAPIModel.matchingAPIModel.TargetApplicationKey;
+            mDeltaAPIModel.MergedAPIModel.TagsKeys = mDeltaAPIModel.matchingAPIModel.TagsKeys;
+
             ToggleSections();
         }
 
