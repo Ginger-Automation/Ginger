@@ -41,15 +41,16 @@ namespace Ginger.Repository
         readonly RepositoryFolder<VariableBase> mVariablesFolder;
         BusinessFlow mBusinessFlow;
         Context mContext = new Context();
+        bool mIsAddToFlow = false;
 
-        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder, BusinessFlow businessFlow)
+        public VariablesRepositoryPage(RepositoryFolder<VariableBase> variablesFolder, BusinessFlow businessFlow,bool AddToFlow=false)
         {
             InitializeComponent();
 
             mVariablesFolder = variablesFolder;
             mBusinessFlow = businessFlow;
             mContext.BusinessFlow = mBusinessFlow;
-
+            mIsAddToFlow = AddToFlow;
             SetVariablesGridView();
             SetGridAndTreeData();
         }
@@ -85,8 +86,10 @@ namespace Ginger.Repository
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });           
             xVariablesGrid.SetAllColumnsDefaultView(view);
             xVariablesGrid.InitViewItems();
-            
-            xVariablesGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
+            if (mIsAddToFlow)
+            {
+                xVariablesGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
+            }
             xVariablesGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditVar));
             xVariablesGrid.ShowTagsFilter = Visibility.Visible;
             

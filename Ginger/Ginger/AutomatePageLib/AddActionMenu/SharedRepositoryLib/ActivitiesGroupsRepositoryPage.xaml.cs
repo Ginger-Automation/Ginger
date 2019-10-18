@@ -42,16 +42,16 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<ActivitiesGroup> mActivitiesGroupFolder;      
         bool mInTreeModeView = false;
-
+        bool mIsAddToFlow = false;
         Context mContext = null;
 
-        public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder, Context context)
+        public ActivitiesGroupsRepositoryPage(RepositoryFolder<ActivitiesGroup> activitiesGroupFolder, Context context, bool AddToFlow=false)
         {
             InitializeComponent();
 
             mActivitiesGroupFolder = activitiesGroupFolder;
             mContext = context;
-
+            mIsAddToFlow = AddToFlow;
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
         }
@@ -86,7 +86,10 @@ namespace Ginger.Repository
             xActivitiesGroupsRepositoryGrid.InitViewItems();
 
             xActivitiesGroupsRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
-            xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            if (mIsAddToFlow)
+            {
+                xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            }
             xActivitiesGroupsRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivityGroup));
             xActivitiesGroupsRepositoryGrid.RowDoubleClick += grdActivitiesGroupsRepository_grdMain_MouseDoubleClick;
             xActivitiesGroupsRepositoryGrid.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
@@ -101,7 +104,7 @@ namespace Ginger.Repository
             {
                 if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItems != null && xActivitiesGroupsRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
-                    if (mContext.BusinessFlow == null)
+                    if (mContext!=null && mContext.BusinessFlow == null)
                     {
                         return;
                     }

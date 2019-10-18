@@ -41,14 +41,14 @@ namespace Ginger.Repository
     {
         readonly RepositoryFolder<Act> mActionsFolder;
         Context mContext;
-
-        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, Context context)
+        bool mIsAddToFlow=false;
+        public ActionsRepositoryPage(RepositoryFolder<Act> actionsFolder, Context context, bool AddToFlow=false)
         {
             InitializeComponent();
 
             mActionsFolder = actionsFolder;
             mContext = context;
-
+            mIsAddToFlow = AddToFlow;
             SetActionsGridView();
             SetGridAndTreeData();
         }
@@ -116,7 +116,10 @@ namespace Ginger.Repository
             xActionsGrid.InitViewItems();
 
             xActionsGrid.btnRefresh.Visibility = Visibility.Collapsed;
-            xActionsGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Actions", new RoutedEventHandler(AddFromRepository));
+            if (mIsAddToFlow)
+            {
+                xActionsGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Actions", new RoutedEventHandler(AddFromRepository));
+            }
             xActionsGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditAction));
             xActionsGrid.ShowTagsFilter = Visibility.Visible;
             xActionsGrid.RowDoubleClick += grdActions_grdMain_MouseDoubleClick;
@@ -128,7 +131,7 @@ namespace Ginger.Repository
         
         private void AddFromRepository(object sender, RoutedEventArgs e)
         {            
-            if (mContext.BusinessFlow == null)
+            if (mContext!=null && mContext.BusinessFlow == null)
             {
                 return;
             }

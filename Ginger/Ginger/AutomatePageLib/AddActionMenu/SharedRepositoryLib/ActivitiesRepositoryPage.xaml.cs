@@ -42,13 +42,15 @@ namespace Ginger.Repository
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
+        bool mIsAddToFlow = false;
 
-        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null)
+        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null, bool AddToFlow = false)
         {          
             InitializeComponent();
 
             mActivitiesFolder = activitiesFolder;
             mContext = context;
+            mIsAddToFlow = AddToFlow;
             if (Tags != null)
             {
                 mTags = Tags;
@@ -93,8 +95,11 @@ namespace Ginger.Repository
             xActivitiesRepositoryGrid.InitViewItems();
 
             xActivitiesRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
-            //grdActivitiesRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivities));                       
-            xActivitiesRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(mAddActivityHandler));
+            //grdActivitiesRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivities));     
+            if (mIsAddToFlow)
+            {
+                xActivitiesRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(mAddActivityHandler));
+            }
             xActivitiesRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivity));
             
             xActivitiesRepositoryGrid.RowDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
@@ -109,7 +114,7 @@ namespace Ginger.Repository
             {
                 if (xActivitiesRepositoryGrid.Grid.SelectedItems != null && xActivitiesRepositoryGrid.Grid.SelectedItems.Count > 0)
                 {
-                    if (mContext.BusinessFlow != null)
+                    if (mContext!=null && mContext.BusinessFlow != null)
                     {
                         List<Activity> list = new List<Activity>();
                         foreach (Activity selectedItem in xActivitiesRepositoryGrid.Grid.SelectedItems)

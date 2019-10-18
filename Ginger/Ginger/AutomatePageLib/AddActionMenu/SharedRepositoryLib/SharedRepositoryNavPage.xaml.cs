@@ -89,7 +89,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (((string)xTabActivitiesGroups.Tag) != "Done")
                 {
-                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mContext);
+                    ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mContext,true);
                     xFrameActivitiesGroups.Content = ActivitiesGroupsRepoPage;
                     // Mark that this tab is loaded with info
                     xTabActivitiesGroups.Tag = "Done";
@@ -100,7 +100,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (((string)xTabActivities.Tag) != "Done")
                 {
-                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mContext);
+                    ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(),mContext,null,null,true);
                     xFrameActivities.Content = ActivitiesRepoPage;
                     // Mark that this tab is loaded with info
                     xTabActivities.Tag = "Done";
@@ -111,7 +111,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             {
                 if (((string)xTabActions.Tag) != "Done")
                 {
-                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mContext);
+                    ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mContext,true);
                     xFrameActions.Content = ActionsRepoPage;
                     // Mark that this tab is loaded with info
                     xTabActions.Tag = "Done";
