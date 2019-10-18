@@ -208,6 +208,7 @@ namespace GingerCore.Drivers
         public bool HandelIFramShiftAutomaticallyForPomElement { get; set; }
 
         protected IWebDriver Driver;
+
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
@@ -5115,6 +5116,11 @@ namespace GingerCore.Drivers
                 string script3 = GetInjectJSSCript(script);
                 var v = ((IJavaScriptExecutor)Driver).ExecuteScript(script3, null);
             }
+            catch (OpenQA.Selenium.WebDriverException e)
+            {
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, mBrowserTpe, e.Message);
+                StopRecordingIfAgentClosed();
+            }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
@@ -5414,6 +5420,11 @@ namespace GingerCore.Drivers
                             }
                         }
                     }
+                    catch (OpenQA.Selenium.WebDriverException e)
+                    {
+                        Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, mBrowserTpe, e.Message);
+                        StopRecordingIfAgentClosed();
+                    }
                     catch (Exception e)
                     {
                         if (e.Message == PayLoad.PAYLOAD_PARSING_ERROR)
@@ -5488,6 +5499,17 @@ namespace GingerCore.Drivers
         void IRecord.ResetRecordingEventHandler()
         {
             RecordingEvent = null;
+        }
+
+        /// <summary>
+        /// This method is used to stop recording if the agent is not reachable
+        /// </summary>
+        private void StopRecordingIfAgentClosed()
+        {
+            IsRecording = false;
+            RecordingEventArgs args = new RecordingEventArgs();
+            args.EventType = eRecordingEvent.StopRecording;
+            OnRecordingEvent(args);
         }
 
         public event RecordingEventHandler RecordingEvent;
@@ -5666,11 +5688,14 @@ namespace GingerCore.Drivers
         private void EndRecordings()
         {
             CurrentFrame = string.Empty;
-            Driver.SwitchTo().DefaultContent();
+            if (Driver != null)
+            {
+                Driver.SwitchTo().DefaultContent();
 
-            PayLoad pl = new PayLoad("StopRecording");
-            pl.ClosePackage();
-            PayLoad plrc = ExceuteJavaScriptPayLoad(pl);
+                PayLoad pl = new PayLoad("StopRecording");
+                pl.ClosePackage();
+                PayLoad plrc = ExceuteJavaScriptPayLoad(pl); 
+            }
             // Handle in the JS to stop recording
             IsRecording = false;
         }
