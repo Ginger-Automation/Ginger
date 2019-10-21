@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core.Drivers;
@@ -57,6 +59,47 @@ namespace GingerCoreNET.RunLib
                 isLocalGrid = false;
             }
         }
+
+        /// <summary>
+        /// Create GingerNodeProxy for Remote Grid Node
+        /// </summary>
+        /// <param name="hubClient"></param>
+        /// <param name="sessionID"></param>
+        public GingerNodeProxy(GingerSocketClient2 hubClient, Guid sessionID)
+        {            
+            this.hubClient = hubClient;
+            this.sessionID = sessionID;
+            isLocalGrid = false;
+        }
+
+        Guid sessionID;
+
+        /// <summary>
+        /// Find Node in Remote Grid and return GingerNodeProxy
+        /// </summary>
+        /// <param name="ServiceID"></param>
+        /// <param name="remoteServiceGrids"></param>
+        /// <returns></returns>
+        public static GingerNodeProxy FindRemoteNode(string ServiceID, ObservableList<RemoteServiceGrid> remoteServiceGrids)
+        {            
+            foreach (RemoteServiceGrid remoteServiceGrid in remoteServiceGrids)
+            {
+                GingerSocketClient2 hubClient = new GingerSocketClient2();
+                hubClient.Connect(remoteServiceGrid.Host, remoteServiceGrid.HostPort);                
+
+                NewPayLoad findNodePayload = new NewPayLoad(SocketMessages.FindNode, ServiceID, "ccc");    // !!!!!!!!!!!!!!!!   ccc
+                NewPayLoad RC = hubClient.SendRequestPayLoad(findNodePayload);
+                if (RC.Name == "NodeInfo")
+                {
+                    Guid sessionID = RC.GetGuid();
+                    GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(hubClient, sessionID);
+                    return gingerNodeProxy;
+                }                   
+            }
+            return null;
+        }
+
+
 
         public void StartRecordingSocketTraffic()
         {
@@ -155,36 +198,43 @@ namespace GingerCoreNET.RunLib
             }
         }
 
+        
+        private GingerSocketClient2 hubClient;
 
-        GingerSocketClient2 mHubClient;
         public NewPayLoad ExecuteActionOnRemoteGridPlugin(NewPayLoad payload)
-        {            
-            // Improve for speed keep connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! find correct service/node, session !!!!!!!!!!!!!!
-            if (mHubClient == null)
+        {
+            bool closeConn = false;            
+            if (hubClient == null)
             {
-                mHubClient = new GingerSocketClient2();
-                mHubClient.Connect(RemoteGridIP, RemoteGridPort);
+                hubClient = new GingerSocketClient2();
+                hubClient.Connect(RemoteGridIP, RemoteGridPort);
+                // For action without session
+                NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "MathService", "ccc");    // !!!!!!!!!!!!!!!!       
+                                                                                                   // NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "SeleniumChromeService", "ccc");    // !!!!!!!!!!!!!!!!         DUP REMOVE !!!!
+                NewPayLoad rc = hubClient.SendRequestPayLoad(fpl);
+
+                sessionID = rc.GetGuid();
+                closeConn = true;
+            }
+            else
+            {
+                
             }
 
             
-            NewPayLoad fpl = new NewPayLoad(SocketMessages.FindNode, "MathService", "ccc");           
-            NewPayLoad rc = mHubClient.SendRequestPayLoad(fpl);
-
-            Guid sessionID = rc.GetGuid();
-
             //  TODO: reserve if session
 
-            // NewPayLoad actionPayload = CreateActionPayload(actPlugin);
 
             NewPayLoad fpl3 = new NewPayLoad(SocketMessages.SendToNode, sessionID, payload);
             // fpl3.ClosePackage();
-            NewPayLoad rc4 = mHubClient.SendRequestPayLoad(fpl3); // Send to Ginger Grid which will send to Ginger Node to run the action
+            NewPayLoad rc4 = hubClient.SendRequestPayLoad(fpl3); // Send to Ginger Grid which will send to Ginger Node to run the action
 
-            mHubClient.CloseConnection();
+            if (closeConn)
+            {
+                hubClient.CloseConnection();   // Not for session
+            }
 
-            return rc4;
-            // rc4.DumpToConsole();
-            
+            return rc4;                        
         }
 
 
