@@ -78,7 +78,9 @@ namespace Ginger.Actions
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
             
             //Import SQL file in to solution folder
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof (ActDBValidation.ImportFile), "True"));
+
+            // !!!!!!!!!!!!!!!!!!! ??????????????????? Fix me !!??? missing causing compile err
+            // GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof (ActDBValidation.ImportFile), "True"));
 
             //OLD binding and UI 
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
@@ -119,8 +121,7 @@ namespace Ginger.Actions
                     return txt != QueryFile.ValueTextBox.Text;
                 }
                 if (await UserKeepsTyping() || QueryFile.ValueTextBox.Text == null) return;
-            }
-            string FileName = QueryFile.ValueTextBox.Text;
+            }            
             if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
             {  
                 parseScriptHeader(FileName);  

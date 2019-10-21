@@ -19,11 +19,13 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Ginger.DatabaseLib;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerWPF.WizardLib;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -244,7 +246,8 @@ namespace Ginger.Environments
             // Prep for getting list of DBs from installed plugins
 
             //TODO: Open wizard !!!
-            var v = WorkSpace.Instance.PlugInsManager.GetDatabase();
+
+            WizardWindow.ShowWizard(new AddDatabaseWizard(AppOwner));            
 
         }
 
