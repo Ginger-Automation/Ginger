@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.CoreNET.RunLib;
 using Ginger.Plugin.Platform.Web.Elements;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 
@@ -75,10 +74,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         public void ExecuteAction(ref NodePlatformAction platformAction)
         {
         
-                InputParams = platformAction.InputParams;
-       
-        
-
+            InputParams = platformAction.InputParams;       
             string Value = (string)InputParams["Value"];
             List<NodeActionOutputValue> AOVs = new List<NodeActionOutputValue>();
 
@@ -101,16 +97,9 @@ namespace Ginger.Plugin.Platform.Web.Execution
                             GotoURLType = "Current";
 
                         }
-
                         BrowserService.Navigate(Value, GotoURLType);
-
-                  
-
-                  
-                        platformAction.exInfo +=  "Navigated to: " + Value;
-            
+                        platformAction.exInfo +=  "Navigated to: " + Value;            
                         break;
-
                     case eControlAction.GetPageURL:
                         platformAction.Output.Add("PageUrl", BrowserService.GetCurrentUrl());
                         break;
@@ -198,20 +187,14 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
                         string PageSource = BrowserService.GetPageSource();
                         AOVs.Add(new NodeActionOutputValue() { Param = "PageSource", Value = PageSource });
-
                         break;
-
                     case eControlAction.InjectJS:
-
-                       
-
                         break;
                 }
             }
             catch(Exception ex)
             {
-                platformAction.addError(ex.Message);
-              
+                platformAction.addError(ex.Message);              
             }
 
             finally
