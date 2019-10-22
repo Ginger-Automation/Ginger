@@ -461,7 +461,7 @@ namespace GingerCore.DataSource
             return string.Format("[{0}] Text,", colName);
         }
 
-        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
+        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals, string fileFullPath)
         {
             return "INSERT INTO " + Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
         }

@@ -1330,7 +1330,7 @@ namespace Ginger.Run
                                     }
 
                                 }
-                                sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
+                                sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals, DataSourceTable.DSC.FileFullPath);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
                             }
                             DataSource.RunQuery(sQuery);

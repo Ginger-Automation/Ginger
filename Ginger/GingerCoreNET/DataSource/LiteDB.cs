@@ -389,7 +389,7 @@ namespace GingerCoreNET.DataSource
 
             if (mark)
             {
-                string rowID = row["GINGER_ID"].ToString();
+                string rowID = Convert.ToString(row["GINGER_ID"]);
                 datatble = GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= " + rowID);
             }
             return row[col].ToString();
@@ -453,7 +453,7 @@ namespace GingerCoreNET.DataSource
 
                         foreach (DataRow dr in dt.Rows)
                         {
-                            if ((string)dr["GINGER_ID"] == "")
+                            if (Convert.ToString(dr["GINGER_ID"]) == "")
                             {
                                 dosort = false;
                             }
@@ -528,7 +528,7 @@ namespace GingerCoreNET.DataSource
 
                             foreach (DataRow dr in dataTable.Rows)
                             {
-                                if ((string)dr["GINGER_ID"] == "")
+                                if (Convert.ToString(dr["GINGER_ID"]) == "")
                                 {
                                     dosort = false;
                                 }
@@ -700,7 +700,7 @@ namespace GingerCoreNET.DataSource
         {
             DataTable dt = GetQueryOutput("db." + DSTableName + ".find");
             DataRow row = dt.Rows[LocateRowValue];
-            string rowValue = row["GINGER_ID"].ToString();
+            string rowValue = Convert.ToString(row["GINGER_ID"]);
 
             //Rownumber
             if (!query.Contains("where"))
@@ -712,7 +712,7 @@ namespace GingerCoreNET.DataSource
             {
                 DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
                 row = datatble.Rows[LocateRowValue];
-                string rowID = row["GINGER_ID"].ToString();
+                string rowID = Convert.ToString(row["GINGER_ID"]);
 
                 string[] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
                 query = Stringsplit[0] + " where GINGER_ID = " + rowID;
@@ -743,7 +743,7 @@ namespace GingerCoreNET.DataSource
             }
             if (MarkUpdate)
             {
-                string rowID = row["GINGER_ID"].ToString();
+                string rowID = Convert.ToString(row["GINGER_ID"]);
 
                 GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= " + rowID);
             }
@@ -828,7 +828,7 @@ namespace GingerCoreNET.DataSource
                     {
                         dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
                         dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
-                        if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((dr["GINGER_ID"].ToString())))
+                        if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((Convert.ToString(dr["GINGER_ID"]))))
                         {
                             dr["GINGER_ID"] = dtChange.Rows.IndexOf(dr) + 1;
                         }
@@ -1000,7 +1000,7 @@ namespace GingerCoreNET.DataSource
                             DataTable dataTable = GetQueryOutput("db." + actDSTable.DSTableName + ".find" + tokens[1]);
                             dataTable.TableName = actDSTable.DSTableName;
                             DataRow rown = dataTable.Rows[0];
-                            string rowID = rown["GINGER_ID"].ToString();
+                            string rowID = Convert.ToString(rown["GINGER_ID"]);
                             string query = "db." + actDSTable.DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
                             RunQuery(query);
                         }
@@ -1071,7 +1071,7 @@ namespace GingerCoreNET.DataSource
                             dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find");
                             int x = Int32.Parse(actDSTable.LocateRowValue);
                             DataRow row = dt.Rows[x];
-                            string rowValue = row["GINGER_ID"].ToString();
+                            string rowValue = Convert.ToString(row["GINGER_ID"]);
                             RunQuery(Query + " GINGER_ID = \"" + rowValue + "\"");
                             actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                         }
@@ -1080,7 +1080,7 @@ namespace GingerCoreNET.DataSource
                     {
                         dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find GINGER_USED=\"False\"");
                         DataRow row = dt.Rows[0];
-                        string rowValue = row["GINGER_ID"].ToString();
+                        string rowValue = Convert.ToString(row["GINGER_ID"]);
                         string query = "db." + actDSTable.DSTableName + ".delete GINGER_ID=\"" + rowValue + "\"";
                         GetResult(query);
                         actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
@@ -1194,12 +1194,22 @@ namespace GingerCoreNET.DataSource
             return colName;
         }
 
-        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
+        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals, string fileFullPath)
         {
             string[] collist = sColList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string[] vallist = sColVals.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string query = null;
             string colvalues = null;
+
+            int rowCount = 1;
+            using (var db = new LiteDatabase(fileFullPath))
+            {
+                var results = db.GetCollection(Name).Find(Query.All(), 0).ToList();
+                if (results != null)
+                {
+                    rowCount = results.Count + 1; 
+                }
+            }
 
             if (collist != null && vallist != null)
             {
@@ -1214,7 +1224,8 @@ namespace GingerCoreNET.DataSource
                     }
                 }
             }
-            query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + ",GINGER_USED:\"False\" }";
+            query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName 
+                                 + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + ",GINGER_USED:\"False\",GINGER_ID:\"" + rowCount + "\" }";
 
             return query;
         }

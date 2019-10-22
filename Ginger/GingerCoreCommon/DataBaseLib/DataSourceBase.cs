@@ -136,7 +136,7 @@ namespace GingerCore.DataSource
         public abstract string AddNewCustomizedTableQuery();
 
         public abstract string AddColumnName(string ColunmName);
-        public abstract string UpdateDSReturnValues(string Name, string sColList, string sColVals);
+        public abstract string UpdateDSReturnValues(string Name, string sColList, string sColVals, string fileFullPath);
         public abstract string GetExtension();
         public abstract string AddNewKeyValueTableQuery();
         public abstract bool RunQuery(string query);
