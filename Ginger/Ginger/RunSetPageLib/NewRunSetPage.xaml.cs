@@ -1289,6 +1289,7 @@ namespace Ginger.Run
             {
                 mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                mRunSetConfig.UpdateRunnersBusinessFlowRunsList();
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
             finally

@@ -177,7 +177,6 @@ namespace Ginger.Run
 
         public override void UpdateBeforeSave()
         {
-            UpdateRunnersBusinessFlowRunsList();
             base.UpdateBeforeSave();
         }
     }
