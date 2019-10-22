@@ -384,15 +384,24 @@ namespace GingerCoreNET.DataSource
 
         public String GetQueryOutput(string query, string col, int rownumber, bool mark = false, string DSTableName = null)
         {
+            string returnVal = string.Empty;
             DataTable datatble = GetQueryOutput(query);
-            DataRow row = datatble.Rows[rownumber];
-
-            if (mark)
+            if (datatble != null && datatble.Rows.Count > 0)
             {
-                string rowID = Convert.ToString(row["GINGER_ID"]);
-                datatble = GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= " + rowID);
+                DataRow row = datatble.Rows[rownumber];
+
+                if (mark)
+                {
+                    string rowID = row["GINGER_ID"].ToString();
+                    datatble = GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= " + rowID);
+                }
+                returnVal = Convert.ToString(row[col]);
             }
-            return row[col].ToString();
+            else
+            {
+                returnVal = "No rows found";
+            }
+            return returnVal;
         }
 
         public override DataTable GetQueryOutput(string query)
