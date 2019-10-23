@@ -210,7 +210,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             switch (e.EventType)
             {                
                 case eRecordingEvent.StopRecording:
-                    mContext.AgentStatus =  Agent.eStatus.NotStarted.ToString();
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, mContext.Agent.Name, mContext.Environment.Name);
+                    mContext.AgentStatus = Agent.eStatus.NotStarted.ToString();
                     break;
             }
         }
