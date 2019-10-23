@@ -2063,6 +2063,24 @@
     <Compile Include="Variables\VariablesPage.xaml.cs">
       <DependentUpon>VariablesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsDatePickerTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsDialogBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsListBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsListItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsMenuBarTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsRadioButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsCheckBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsElementConverter.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsLabelTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsComboBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsMenuItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsTabItemTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsTextBoxTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsButtonTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsControlTreeItem.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowTreeItem.cs" />
     <Resource Include="Actions\ApiActionsConversion\ApiActionsConversionIntro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />

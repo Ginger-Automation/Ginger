@@ -36,18 +36,7 @@ namespace Ginger.Actions.ActionConversion
         public ObservableList<ConvertableTargetApplicationDetails> ConvertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
         public ObservableList<Guid> SelectedPOMs = new ObservableList<Guid>();
 
-        public bool NewActivityChecked { get; set; }
-
-        ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
-        public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
-        {
-            get {
-                return mListOfBusinessFlow;
-            }
-            set {
-                mListOfBusinessFlow = value;
-            }
-        }
+        public bool NewActivityChecked { get; set; }               
 
         public bool IsConversionDoneOnce { get; set; }
 
@@ -265,15 +254,15 @@ namespace Ginger.Actions.ActionConversion
                 base.Cancel();
             }
         }
-    }
 
-    public void ConversionProcessEnded()
-    {
-        ProcessEnded();
-    }
+        public void ConversionProcessEnded()
+        {
+            ProcessEnded();
+        }
 
-    public void ConversionProcessStarted()
-    {
-        ProcessStarted();
+        public void ConversionProcessStarted()
+        {
+            ProcessStarted();
+        }
     }
 }

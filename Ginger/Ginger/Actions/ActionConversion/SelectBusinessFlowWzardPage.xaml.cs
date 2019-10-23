@@ -59,7 +59,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 case EventType.Init:
                     mWizard = (WizardWindow)WizardEventArgs.Wizard.mWizardWindow;
-                    ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
+                    //((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
@@ -174,7 +174,7 @@ namespace Ginger.Actions.ActionConversion
                         flowToConversion.BusinessFlow = bf;
                         flowToConversion.ConversionStatus = eConversionStatus.Pending;
                         flowToConversion.IsSelected = true;
-                        flowToConversion.TotalProcessingActionsCount = mWizard.GetConvertibleActionsCountFromBusinessFlow(bf);
+                        //flowToConversion.TotalProcessingActionsCount = mWizard.GetConvertibleActionsCountFromBusinessFlow(bf);
                         ListOfBusinessFlow.Add(flowToConversion); 
                     }
                 } 

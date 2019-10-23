@@ -73,7 +73,7 @@ namespace Ginger.Actions.ActionConversion
                 SetBusinessFlowConversionStatusGridView();
                 SetButtonsVisibility(false);
                 xContinue.Visibility = Visibility.Collapsed;
-                mWizard.BusinessFlowsActionsConversion(ListOfBusinessFlow);
+                mConversionProcess.BusinessFlowsActionsConversion(ListOfBusinessFlow);
             });           
         }
 
@@ -265,7 +265,7 @@ namespace Ginger.Actions.ActionConversion
             xSaveButton.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
             xStopButton.Visibility = saveVisible ? Visibility.Collapsed : Visibility.Visible;
             xReConvert.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
-            ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = saveVisible;
+            //((WizardWindow)mConversionProcess.mWizardWindow).xFinishButton.IsEnabled = saveVisible;
         }
     }
 }
