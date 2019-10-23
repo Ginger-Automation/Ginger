@@ -1,0 +1,59 @@
+﻿<Page x:Class="Ginger.ApplicationModelsLib.APIModels.APIModelWizard.APIModelsCompareMergePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d" 
+      Title="API Compare And Merge" d:DesignHeight="812" d:DesignWidth="1100" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="500*" />
+            <RowDefinition Height="50" x:Name="xMergerTextRow" />
+            <RowDefinition Height="400*" x:Name="xMergerAPIRow" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300*" />
+            <ColumnDefinition Width="300*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.ColumnSpan="1" BorderThickness="1" BorderBrush="{StaticResource $SelectionColor_Pink}">
+            <TextBlock  Style="{StaticResource $TextBlockTitle}" Foreground="{StaticResource $SelectionColor_Pink}" Text="Existing API Model" FontSize="16"/>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" BorderThickness="1" BorderBrush="{StaticResource $SelectionColor_Pink}">
+            <Frame  x:Name="xExistingAPIFrame" NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="False" />
+        </Border>
+        
+        <GridSplitter x:Name="xComparerSplitter" ResizeDirection="Columns" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Height="Auto" Width="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{StaticResource $SelectionColor_Pink}" IsEnabled="True" />
+
+        <Border Grid.Row="0" Grid.Column="1"  BorderThickness="1" BorderBrush="{StaticResource $SelectionColor_Pink}">
+            <TextBlock Style="{StaticResource $TextBlockTitle}" Foreground="{StaticResource $SelectionColor_Pink}" Text="New API Model" FontSize="16" />
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $SelectionColor_Pink}">
+            <Frame  x:Name="xLearnedAPIFrame" NavigationUIVisibility="Hidden" ScrollViewer.CanContentScroll="False"/>
+        </Border>
+        
+        <!--<Border BorderThickness="10" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}"></Border>-->
+
+        <Border Grid.Row="2" Grid.Column="0" x:Name="xMatchedAPIAsBaseBtn" Background="GhostWhite">
+            <Button Width="150" Height="35" FontSize="15" FontWeight="Bold" Content="Take Existing API" ToolTip="Select the Existing API Model as the Base for Merged API Model" Click="XMatchedAPIAsBaseBtn_Click" Style="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}"  />
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="2" x:Name="xLearnedAPIAsBaseBtn" Background="GhostWhite">
+            <Button Width="150" Height="35" FontSize="15" FontWeight="Bold" Content="Take New API" ToolTip="Select the New API Model as the Base for Merged API Model" Click="XLearnedAPIAsBaseBtn_Click" Style="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}" />
+        </Border>
+
+        <GridSplitter x:Name="xMergerSplitter" Visibility="Collapsed" ResizeDirection="Rows" Grid.Row="1" Grid.ColumnSpan="2" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $SelectionColor_Pink}" IsEnabled="True" />
+
+        <Border x:Name="xMergerWindowTxtBlock" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Visibility="Collapsed" BorderBrush="{StaticResource $HighlightColor_Purple}" BorderThickness="1">
+            <TextBlock Style="{StaticResource $TextBlockTitle}" Foreground="{StaticResource $HighlightColor_Purple}" Text="Merged API Model Preview" FontSize="16" />
+        </Border>
+
+        <Border x:Name="xMergedAPIBorder" Visibility="Collapsed" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"  BorderThickness="1" BorderBrush="{StaticResource $HighlightColor_Purple}">
+            <Frame x:Name="xMergedAPIFrame" NavigationUIVisibility="Hidden"  />
+        </Border>
+        
+    </Grid>
+</Page>

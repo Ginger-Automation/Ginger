@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -97,23 +98,20 @@ namespace GingerCore.Drivers.ASCF
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Missing GingerToolBoxHost config value- Please verify Agent config parameter GingerToolBoxHost is not empty");
                 return;
             }
-          
+
             serverAddress = new IPEndPoint(IPAddress.Parse(GingerToolBoxHost), GingerToolBoxPort);
 
             IsTryingToConnect = true;
-            System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate
-            {
-                // OpenASCFDriverWindow();             
-                ConnectToGingerToolBox();
-            });
+            // OpenASCFDriverWindow();             
+            ConnectToGingerToolBox();
 
             while (IsTryingToConnect)
             {
                 General.DoEvents();
                 Thread.Sleep(100);
             }
+
         }
-        
         private void ConnectToGingerToolBox()
         {
             clientSocket = new TcpClient();
@@ -155,7 +153,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Trying to connect ASCF Agent on address:" + serverAddress);
                         Thread.Sleep(500);
                     }
                 }
@@ -446,7 +444,7 @@ namespace GingerCore.Drivers.ASCF
                     HandleBrowserElementAction(AABC);
                     break;
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 
@@ -1419,7 +1417,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1459,6 +1457,11 @@ namespace GingerCore.Drivers.ASCF
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
             return EI;
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

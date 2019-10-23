@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     {
         bool ICLI.IsFileBasedConfig { get { return true; } }
 
-        public string Identifier => throw new NotImplementedException();
+        public string Verb => throw new NotImplementedException();
 
         public string FileExtension => throw new NotImplementedException();
 

@@ -107,6 +107,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 mSendDone.WaitOne(); // blocking until send completed
             }
+
+            // TODO: for simple request of comm make the timeout smaller than 1 hour
             bool bOK = mRequestProcessingDone.WaitOne(ResponseTimeoutMS);  // wait for response - blocking
             if (!bOK)
             {

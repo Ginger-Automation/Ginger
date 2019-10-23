@@ -80,16 +80,6 @@ namespace GingerCore.Actions
             public static string AddXMLResponse = "AddXMLResponse";
         }
 
-        public ActSoapUI()
-        {
-            GetOrCreateInputParam(ActSoapUI.Fields.UIrelated, "False");
-            GetOrCreateInputParam(ActSoapUI.Fields.ImportFile, "True");
-            GetOrCreateInputParam(ActSoapUI.Fields.IgnoreValidation, "False");
-            GetOrCreateInputParam(ActSoapUI.Fields.TestCasePropertiesRequiered, "False");
-            GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse, "False");
-            GetOrCreateInputParam(ActSoapUI.Fields.TestCasePropertiesRequieredControlEnabled, "False");
-        }
-
         public bool PropertiesRequieredControlEnabled_Value
         {
             get

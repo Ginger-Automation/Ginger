@@ -116,12 +116,19 @@ namespace Ginger.UserControlsLib
         }
         private void OnItemsSourceChanged(ObservableList<string> list)
         {
-            string str = "";
-            
-            list.Remove(str);
-            if (list.Count == 0)            
-                GingerCore.General.DisableComboItem(cmbStoreTo,(object)mLabel);                           
+            //string str = "";            
+            //list.Remove(str);
+            if (list.Count == 0 || (list.Count == 1 && list[0]==string.Empty))
+            {
+                GingerCore.General.DisableComboItem(cmbStoreTo, (object)mLabel);
+            }
+            list.CollectionChanged += List_CollectionChanged;
             VariableList.ItemsSource = list;
+        }
+
+        private void List_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnTextPropertyChanged(this, new DependencyPropertyChangedEventArgs(ComboBox.TextProperty, TextProp, TextProp));
         }
 
         private void chkStoreToValid()//4

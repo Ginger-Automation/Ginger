@@ -39,6 +39,7 @@
 
   <ItemGroup>
     <None Remove="DLLS\LibGit2Sharp.dll" />
+    <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <None Remove="Reports\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
     <None Remove="Reports\Ginger-Web-Client\assets\images\SVG\action-big.svg" />
@@ -75,21 +76,13 @@
     <None Remove="Reports\Ginger-Web-Client\assets\layout\fonts\source-sans-pro-v11-latin-ext_latin-regular.svg" />
     <None Remove="Reports\Ginger-Web-Client\assets\layout\images\bars.svg" />
     <None Remove="Reports\Ginger-Web-Client\assets\theme\theme-alive.css" />
-    <None Remove="Reports\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg" />
-    <None Remove="Reports\Ginger-Web-Client\index.html" />
-    <None Remove="Reports\Ginger-Web-Client\main.620febfb342588060c0f.js" />
-    <None Remove="Reports\Ginger-Web-Client\main.9b63ef3d5bd934e6c786.js" />
-    <None Remove="Reports\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js" />
-    <None Remove="Reports\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg" />
-    <None Remove="Reports\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js" />
-    <None Remove="Reports\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js" />
-    <None Remove="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css" />
     <None Remove="Reports\GingerExecutionReport\assets\css\bootstrap.css" />
     <None Remove="Reports\GingerExecutionReport\assets\css\font-awesome.css" />
     <None Remove="Reports\GingerExecutionReport\assets\css\styles.css" />
     <None Remove="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.eot" />
     <None Remove="Reports\GingerExecutionReport\assets\fonts\fontawesome-webfont.ttf" />
     <None Remove="Reports\GingerExecutionReport\assets\fonts\SourceSansPro-Regular.ttf" />
+    <None Remove="Reports\GingerExecutionReport\assets\img\%40Ginger_old.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\@BeatLogo.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\@Ginger.png" />
     <None Remove="Reports\GingerExecutionReport\assets\img\@item_next.png" />
@@ -105,6 +98,7 @@
     <None Remove="Reports\GingerExecutionReport\assets\js\react-with-addons.min.js" />
     <None Remove="Reports\GingerExecutionReport\assets\js\Recharts.min.js" />
     <None Remove="Reports\GingerExecutionReport\EmailExecutionReport.html" />
+    <None Remove="Reports\GingerExecutionReport\EmailExecutionReportOnLinux.html" />
     <None Remove="Reports\GingerExecutionReport\Images\GingerLogo.png" />
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
@@ -221,33 +215,6 @@
     <Content Include="Reports\Ginger-Web-Client\assets\theme\theme-alive.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\main.620febfb342588060c0f.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\main.9b63ef3d5bd934e6c786.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Reports\GingerExecutionReport\assets\css\bootstrap.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -268,6 +235,7 @@
     </Content>
     <Content Include="Reports\GingerExecutionReport\assets\img\@BeatLogo.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\@Ginger.png" />
+    <Content Include="Reports\GingerExecutionReport\assets\img\@Ginger_old.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\@item_next.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\@item_prev.png" />
     <Content Include="Reports\GingerExecutionReport\assets\img\comments-icon.jpg">
@@ -300,6 +268,9 @@
     <Content Include="Reports\GingerExecutionReport\assets\js\Recharts.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Reports\GingerExecutionReport\EmailExecutionReportOnLinux.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Reports\GingerExecutionReport\EmailExecutionReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -310,6 +281,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="log4netLib\log4net.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\HTMLTemplates\SkeletonHTMLReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -320,12 +294,18 @@
 
   <ItemGroup>
   
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+  
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+  
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
 	<PackageReference Include="LiteDB" Version="4.1.4" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
+  
+    <PackageReference Include="log4net" Version="2.0.8" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.4">
       <PrivateAssets>all</PrivateAssets>
@@ -375,6 +355,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Reports\GingerExecutionReport\assets\img\%40Ginger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Reports\GingerExecutionReport\assets\img\%40Ginger_old.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Reports\GingerExecutionReport\assets\img\%40item_next.png">
@@ -711,43 +694,67 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\color.c7a33805ffda0d32bd2a.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\favicon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.674f50d287a8c48dc19b.eot">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.912ec66d7572ff821749.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.af7ae505a9eed503f8b8.woff2">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.b06871f281fee6b241d6.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\fontawesome-webfont.fee66e712a8a08eef580.woff">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\hue.0614c27197fc3ce572e1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\line.567f57385ea3dde2c9ae.gif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\loading.8732a6660b528fadfaeb.gif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.ac18b79c87efc4589d26.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\password-meter.d59e6dc2616c53ce8e77.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\polyfills.df76418418e1f9a7a012.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\primeicons.38d77552b0353684a208.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.473e2a746d3c151d7dca.ttf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.71bb3d79dcf18b45ae84.woff">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\primeicons.b8eccb1059ea5faaf6d8.eot">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\runtime.ec2944dd8b20ec099bf3.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\scripts.9aa141af6e0119c2bcf8.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

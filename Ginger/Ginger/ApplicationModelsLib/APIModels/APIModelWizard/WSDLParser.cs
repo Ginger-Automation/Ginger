@@ -97,19 +97,31 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
                     foreach (Binding b in SDExtended.mServiceDescription.Bindings)
                     {
-                        bindColl.Add(b);
+                        if (bindColl[b.Name] == null)
+                        {
+                            bindColl.Add(b);
+                        }
                     }
                     foreach (Service s in SDExtended.mServiceDescription.Services)
                     {
-                        Services.Add(s);
+                        if (Services[s.Name] == null)
+                        {
+                            Services.Add(s);
+                        }
                     }
                     foreach (PortType p in SDExtended.mServiceDescription.PortTypes)
                     {
-                        portTypColl.Add(p);
+                        if (portTypColl[p.Name] == null)
+                        {
+                            portTypColl.Add(p);
+                        }
                     }
                     foreach (Message m in SDExtended.mServiceDescription.Messages)
                     {
-                        Messages.Add(m);
+                        if (Messages[m.Name] == null)
+                        {
+                            Messages.Add(m);
+                        }
                     }
                 }
 

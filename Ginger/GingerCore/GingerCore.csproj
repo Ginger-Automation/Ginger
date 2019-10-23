@@ -87,8 +87,8 @@
     <Reference Include="appium-dotnet-driver, Version=4.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Appium.WebDriver.4.0.0.4-beta\lib\net45\appium-dotnet-driver.dll</HintPath>
     </Reference>
-    <Reference Include="AutoMapper, Version=8.1.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.8.1.0\lib\net461\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
@@ -125,14 +125,6 @@
     </Reference>
     <Reference Include="Eyes.Sdk.DotNet, Version=2.22.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FlaUI.UIA3, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ginger\DLLs\FlaUI.UIA3.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -535,7 +527,6 @@
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActSmartSync.cs" />
     <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActMultiselectList.cs" />
@@ -702,7 +693,6 @@
     <Compile Include="Drivers\Mobile\Perfecto\PerfectoDriver.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
-    <Compile Include="Drivers\WindowsLib\FlaUIHelper.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />

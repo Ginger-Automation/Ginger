@@ -53,6 +53,21 @@ namespace GingerCore.Platforms.PlatformsInfo
         public abstract List<ActUIElement.eElementDragDropType> GetPlatformDragDropTypeList();
 
         public abstract ObservableList<ElementLocator> GetLearningLocators();
+
+        public virtual string GetDefaultElementOperation(eElementType ElementTypeEnum)
+        {
+            return string.Empty;
+        }
+
+        public virtual string GetPageUrlRadioLabelText()
+        {
+            return "URL";
+        }
+        public virtual string GetNextBtnToolTip()
+        {
+            return "Go To Page";
+        }
+
         public static PlatformInfoBase GetPlatformImpl(ePlatformType Platform)
         {
             switch (Platform)
@@ -158,6 +173,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Tab);
             }
             return mElementsTypeList;
+        }
+
+        public virtual List<eElementType> GetPlatformWidgetsUIElementsType()
+        {
+            return null;
+        }
+
+        public virtual List<ActUIElement.eElementAction> GetPlatformWidgetsUIActionsList(eElementType ElementType)
+        {
+            return null;
         }
 
         public virtual ObservableList<Act> GetPlatformElementActions(ElementInfo elementInfo)

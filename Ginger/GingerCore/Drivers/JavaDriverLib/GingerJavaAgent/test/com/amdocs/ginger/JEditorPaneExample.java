@@ -36,13 +36,22 @@ public class JEditorPaneExample extends javax.swing.JFrame{
 	      jp.setEditorKit(new HTMLEditorKit());
 	      
 	      try
-	      {	    	 
-	    	  String htmlStr="Hello from Editor Pane";
-	      jp.setText(htmlStr);
+	      {	
+	    	  InputStream is = new FileInputStream("SimpleEditorHtml.html");
+	    	  
+	          BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+	          String line = buf.readLine();
+	          StringBuilder sb = new StringBuilder();
+	          for (; line != null; line = buf.readLine()) {
+	            sb.append(line).append("\n");
+	          }
+	          String fileAsString = sb.toString();
+	          jp.setText(fileAsString);
 	      }
 	      catch(Exception e)
-	      {	    	  
+	      {	   
+	    	  System.out.print(e.getMessage());
 	      }     
-	      this.add(jp);	        
+	      this.add(jp);	      
 	    }	
 }

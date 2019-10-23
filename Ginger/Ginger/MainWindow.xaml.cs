@@ -648,15 +648,14 @@ namespace Ginger
         }
 
         private void ShowGingerLog()
-        {            
-            string mLogFilePath = Amdocs.Ginger.Common.GeneralLib.General.GingerLogFile;
-            if (System.IO.File.Exists(mLogFilePath))
+        {                        
+            if (System.IO.File.Exists(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile))
             {
-                Process.Start(mLogFilePath);
+                Process.Start(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found in the Path:'" + mLogFilePath + "'");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Ginger log file was not found in the Path:'" + Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile + "'");
             }
         }
 
@@ -669,9 +668,9 @@ namespace Ginger
         }
 
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
-        {            
-            string mLogFilePath = Path.Combine(Amdocs.Ginger.Common.GeneralLib.General.LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs" , "Ginger_Log.txt");
-            string folder = System.IO.Path.GetDirectoryName(mLogFilePath);
+        {
+                        
+            string folder = System.IO.Path.GetDirectoryName(Amdocs.Ginger.CoreNET.log4netLib.GingerLog.GingerLogFile);
             if (System.IO.Directory.Exists(folder))
             {
                 Process.Start(folder);

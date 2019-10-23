@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using mshtml;
@@ -302,7 +303,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                         break;
                     default:
 
-                        throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
             }
             catch (Exception ex)
@@ -645,7 +646,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 
@@ -1217,7 +1218,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false)
         {
             //TODO: impl
             return null;
@@ -1349,6 +1350,11 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
         }

@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.EnumsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -86,7 +85,7 @@ namespace GingerCore
             Selenium,   // From Selenium Import
             Gherkin     // From Gherking Feature file
         }
-        
+
         public object Platforms { get; set; } // keep it for backword compatibility when loading old XML, or handle in RI serializer
 
         public List<string> VariablesBeforeExec { get; set; }
@@ -186,7 +185,7 @@ namespace GingerCore
         }
 
         private bool mActive = true;
-        [IsSerializedForLocalRepository(true)]
+        [IsSerializedForLocalRepository(DefaultValue: true)]
         public bool Active
         {
             get { return mActive; }
@@ -265,7 +264,8 @@ namespace GingerCore
                 }
                 if (mActivities.LazyLoad)
                 {
-                    mActivities.GetItemsInfo();
+                    mActivities.LoadLazyInfo();
+                    AttachActivitiesGroupsAndActivities(mActivities);
                 }
                 return mActivities;
             }
@@ -305,12 +305,11 @@ namespace GingerCore
             }
         }
 
-
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
 
-        static public ObservableList<VariableBase> SolutionVariables;
+        public static ObservableList<VariableBase> SolutionVariables;
 
         public VariableBase GetVariable(string name)
         {
@@ -528,7 +527,7 @@ namespace GingerCore
                 CurrentActivity.Acts.Move(CurrentActivity.Acts.Count - 1, selectedActIndex + 1);
             }
         }
-        
+
         public void AddActivity(Activity activity, ActivitiesGroup activitiesGroup = null, int insertIndex = -1, bool setAsCurrent = true)
         {
             if (activity == null)
@@ -549,7 +548,7 @@ namespace GingerCore
                     else
                     {
                         insertIndex = Activities.Count;//last
-                    }                    
+                    }
                 }
                 else if (CurrentActivity != null)
                 {
@@ -566,10 +565,10 @@ namespace GingerCore
                             }
                         }
                     }
-                }
-                else
-                {
-                    CurrentActivity = activity;
+                    else
+                    {
+                        insertIndex = Activities.IndexOf(CurrentActivity) + 1;
+                    }
                 }
             }
 
@@ -578,13 +577,8 @@ namespace GingerCore
                 activitiesGroup.AddActivityToGroup(activity);
             }
 
-            if (insertIndex > 0)
+            if (insertIndex >= 0)
             {
-                Activities.Insert(insertIndex, activity);
-            }
-            else if (insertIndex == 0)
-            {
-                insertIndex = Activities.IndexOf(CurrentActivity) + 1;
                 Activities.Insert(insertIndex, activity);
             }
             else
@@ -604,7 +598,7 @@ namespace GingerCore
             {
                 if (string.IsNullOrEmpty(v.Name)) v.Name = "NewVar";
                 SetUniqueVariableName(v);
-                
+
                 if (insertIndex < 0 || insertIndex > Variables.Count - 1)
                 {
                     Variables.Add(v);
@@ -642,7 +636,7 @@ namespace GingerCore
                 activitiesGroup = new ActivitiesGroup();
                 activitiesGroup.Name = "Group";
             }
-            SetUniqueActivitiesGroupName(activitiesGroup);     
+            SetUniqueActivitiesGroupName(activitiesGroup);
 
             if ((index != -1) && (ActivitiesGroups.Count > index))
             {
@@ -715,13 +709,13 @@ namespace GingerCore
                     {
                         Activity actInstance = (Activity)repoAct.CreateInstance(true);
                         actInstance.ActivitiesGroupID = activitiesGroup.Name;
-                        
+
                         if (keepOriginalTargetApplicationMapping == false)
                         {
                             SetActivityTargetApplication(actInstance);
                         }
 
-                        this.AddActivity(actInstance, insertIndex:this.Activities.Count);
+                        this.AddActivity(actInstance, insertIndex: this.Activities.Count);
                         actIdent.IdentifiedActivity = actInstance;
                     }
                     else
@@ -751,10 +745,16 @@ namespace GingerCore
             return false;
         }
 
-        public void AttachActivitiesGroupsAndActivities()
+        private bool mAttachActivitiesGroupsWasDone = false;
+        public void AttachActivitiesGroupsAndActivities(ObservableList<Activity> activitiesList = null)
         {
+            if (activitiesList == null)
+            {
+                activitiesList = this.Activities;
+            }
+
             //Free Activities which attached to missing group
-            foreach (Activity activity in this.Activities)
+            foreach (Activity activity in activitiesList)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault();
                 if (group != null)
@@ -766,20 +766,20 @@ namespace GingerCore
                 }
             }
 
-            //Attach mapped activities to groups nad clear missing Activities
-            foreach (ActivitiesGroup group in this.ActivitiesGroups)
+            //Attach mapped activities to groups and clear missing Activities
+            foreach (ActivitiesGroup group in ActivitiesGroups)
             {
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
-                    Activity activ = this.Activities.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     if (activ == null)
                     {
-                        activ = this.Activities.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
                     }
                     if (activ == null)
                     {
-                        activ = this.Activities.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
+                        activ = activitiesList.Where(x => x.ParentGuid == actIdentifis.ActivityGuid).FirstOrDefault();
                     }
                     if (activ != null)
                     {
@@ -795,40 +795,42 @@ namespace GingerCore
 
                 //re-add the activities in correct order
                 group.ActivitiesIdentifiers.Clear();
-                foreach (Activity activity in Activities.Where(x => x.ActivitiesGroupID == group.Name).ToList())
+                foreach (Activity activity in activitiesList.Where(x => x.ActivitiesGroupID == group.Name).ToList())
                 {
                     group.AddActivityToGroup(activity);
                 }
+
+                mAttachActivitiesGroupsWasDone = true;
             }
 
             //Attach free Activities + make sure Activities groups having valid order
-            foreach (Activity activity in this.Activities)
+            foreach (Activity activity in activitiesList)
             {
                 if (string.IsNullOrEmpty(activity.ActivitiesGroupID) == true
                                 || ActivitiesGroups.Where(actg => actg.Name == activity.ActivitiesGroupID).FirstOrDefault() == null)
                 {
                     //attach to Activity Group
-                    if (Activities.IndexOf(activity) == 0)
+                    if (activitiesList.IndexOf(activity) == 0)
                     {
                         ActivitiesGroup group = AddActivitiesGroup(null, 0);
                         group.AddActivityToGroup(activity);
                     }
                     else
                     {
-                        ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == Activities[Activities.IndexOf(activity) - 1].ActivitiesGroupID).FirstOrDefault();
+                        ActivitiesGroup group = ActivitiesGroups.Where(actg => actg.Name == activitiesList[activitiesList.IndexOf(activity) - 1].ActivitiesGroupID).FirstOrDefault();
                         group.AddActivityToGroup(activity);
                     }
                 }
                 else
                 {
-                    if (Activities.IndexOf(activity) != 0 &&
-                           activity.ActivitiesGroupID != Activities[Activities.IndexOf(activity) - 1].ActivitiesGroupID)
+                    if (activitiesList.IndexOf(activity) != 0 &&
+                           activity.ActivitiesGroupID != activitiesList[activitiesList.IndexOf(activity) - 1].ActivitiesGroupID)
                     {
                         bool activityGroupIsOutOfSync = false;
                         //validate it is attached in correct order
-                        for (int indx = 0; indx < (Activities.IndexOf(activity) - 1); indx++)
+                        for (int indx = 0; indx < (activitiesList.IndexOf(activity) - 1); indx++)
                         {
-                            if (Activities[indx].ActivitiesGroupID == activity.ActivitiesGroupID)
+                            if (activitiesList[indx].ActivitiesGroupID == activity.ActivitiesGroupID)
                             {
                                 activityGroupIsOutOfSync = true;
                                 break;
@@ -861,7 +863,7 @@ namespace GingerCore
             //Make sure groups order is according to flow
             Dictionary<ActivitiesGroup, int> groupsOrderDic = new Dictionary<ActivitiesGroup, int>();
             int index = 0;
-            foreach (Activity activity in Activities)
+            foreach (Activity activity in activitiesList)
             {
                 ActivitiesGroup group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
                 if (!groupsOrderDic.ContainsKey(group))
@@ -878,48 +880,6 @@ namespace GingerCore
                 }
             }
         }
-
-        //public enum eUpdateActivitiesGroupDetailsType { All, ClearUnExistedGroups, FreeUnAttachedActivities }
-        //public void UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType updateType)
-        //{
-        //    switch (updateType)
-        //    {
-        //        case (eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups):
-        //            foreach (Activity act in this.Activities)
-        //            {
-        //                if (act.ActivitiesGroupID != null && act.ActivitiesGroupID != string.Empty)
-        //                {
-        //                    if ((this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault()) == null)
-        //                    {
-        //                        act.ActivitiesGroupID = string.Empty;
-        //                        //act.ActivitiesGroupColor = string.Empty;
-        //                    }
-        //                }
-        //            }
-        //            break;
-
-        //        case (eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities):
-        //            foreach (Activity act in this.Activities)
-        //            {
-        //                ActivitiesGroup group = this.ActivitiesGroups.Where(actg => actg.Name == act.ActivitiesGroupID).FirstOrDefault();
-        //                if (group != null)
-        //                {
-        //                    if ((group.ActivitiesIdentifiers.Where(actidnt => actidnt.ActivityName == act.ActivityName && actidnt.ActivityGuid == act.Guid).FirstOrDefault()) == null)
-        //                    {
-        //                        act.ActivitiesGroupID = string.Empty;
-        //                        //act.ActivitiesGroupColor = string.Empty;
-        //                    }
-        //                }
-        //            }
-        //            break;
-
-        //        case (eUpdateActivitiesGroupDetailsType.All):
-        //            UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.ClearUnExistedGroups);
-        //            UpdateActivitiesGroupDetails(eUpdateActivitiesGroupDetailsType.FreeUnAttachedActivities);
-        //            break;
-        //    }
-        //}
-
 
         public int GetActionsCount()
         {
@@ -1199,12 +1159,12 @@ namespace GingerCore
             if (Activities.LazyLoad) return;
 
 
-            //Remove dyamically added activities from groups identifies
+            //Remove dynamically added activities from groups identifies
             foreach (var activitiesGroup in ActivitiesGroups)
             {
-                for(int index=0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
+                for (int index = 0; index < activitiesGroup.ActivitiesIdentifiers.Count; index++)
                 {
-                    if(activitiesGroup.ActivitiesIdentifiers[index].AddDynamicly)
+                    if (activitiesGroup.ActivitiesIdentifiers[index].AddDynamicly)
                     {
                         activitiesGroup.ActivitiesIdentifiers.RemoveAt(index);
                         index--;
@@ -1217,7 +1177,7 @@ namespace GingerCore
             {
                 if (Activities[i].AddDynamicly)
                 {
-                    Activities.RemoveAt(i);                   
+                    Activities.RemoveAt(i);
                     i--;
                 }
             }
@@ -1225,7 +1185,7 @@ namespace GingerCore
 
 
         public string ExecutionFullLogFolder { get; set; }
-        public string ExecutionLogFolder { get; set; }
+        public string ExecutionLogFolder { get; set; } = string.Empty;
         public bool BusinessFlowExecLoggerPopulated
         {
             get
@@ -1455,7 +1415,7 @@ namespace GingerCore
         public void MoveActivityInGroup(Activity activityToMove, int newIndx)
         {
             int currentIndx = Activities.IndexOf(activityToMove);
-            if (newIndx >= 0 && newIndx <= (Activities.Count-1) && Activities[newIndx].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
+            if (newIndx >= 0 && newIndx <= (Activities.Count - 1) && Activities[newIndx].ActivitiesGroupID == activityToMove.ActivitiesGroupID)
             {
                 //move Activity in BF
                 Activities.Move(currentIndx, newIndx);
@@ -1473,7 +1433,7 @@ namespace GingerCore
             }
         }
 
-        public void MoveActivityBetweenGroups(Activity activityToMove, ActivitiesGroup targetGroup, int targetIndex=-1)
+        public void MoveActivityBetweenGroups(Activity activityToMove, ActivitiesGroup targetGroup, int targetIndex = -1)
         {
             if (targetGroup == null)
             {
@@ -1485,10 +1445,10 @@ namespace GingerCore
             if (existingGroup.Item1 != null && existingGroup.Item2 != null)
             {
                 existingGroup.Item1.RemoveActivityFromGroup(activityToMove);
-                
+
                 //add to target group                               
                 if (targetIndex >= 0)
-                {                    
+                {
                     //move in group
                     Activity currentActivityInTargetIndx = Activities[targetIndex];
                     int targetIndxInGroup = targetGroup.ActivitiesIdentifiers.IndexOf(targetGroup.GetActivityIdentifiers(currentActivityInTargetIndx));
@@ -1498,14 +1458,14 @@ namespace GingerCore
                     {
                         targetIndex--;
                     }
-                    Activities.Move(Activities.IndexOf(activityToMove), targetIndex);                    
+                    Activities.Move(Activities.IndexOf(activityToMove), targetIndex);
                 }
                 else
-                {                    
+                {
                     int indxToMoveInBF = Activities.Count - 1;
                     if (targetGroup.ActivitiesIdentifiers.Count > 0)
                     {
-                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[targetGroup.ActivitiesIdentifiers.Count-1].IdentifiedActivity) + 1;
+                        indxToMoveInBF = Activities.IndexOf(targetGroup.ActivitiesIdentifiers[targetGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
                     }
                     //move in group
                     targetGroup.AddActivityToGroup(activityToMove);
@@ -1518,6 +1478,14 @@ namespace GingerCore
                 }
             }
 
+        }
+
+        public override void PostSerialization()
+        {
+            if (mAttachActivitiesGroupsWasDone)
+            {
+                AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
+            }
         }
 
     }

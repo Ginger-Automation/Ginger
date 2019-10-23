@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.Common
             {
                 if (mLazyLoad)
                 {
-                    GetItemsInfo();
+                    LoadLazyInfo();
                 }
 
                 return base.Count;
@@ -258,7 +258,7 @@ namespace Amdocs.Ginger.Common
             return Items.AsEnumerable<T>();
         }
 
-        bool mLazyLoad = false;
+        
         string mStringData = null;
         string mFilterStringData = null;
         MemoryStream mMemoryStream = null;
@@ -271,29 +271,29 @@ namespace Amdocs.Ginger.Common
             {
                 if (mLazyLoad)
                 {
-                    GetItemsInfo();
+                    LoadLazyInfo();
                 }
                 return base.Items;
             }
         }
 
+        bool mLazyLoad = false;
         bool IObservableList.LazyLoad { get { return mLazyLoad; } set { mLazyLoad = value; } }
+        public bool LazyLoad { get { return mLazyLoad; } }
+
+        bool mAvoidLazyLoad = false;
+        public bool AvoidLazyLoad { get { return mAvoidLazyLoad; } set { mAvoidLazyLoad = value; } }
 
         public string StringData { get { return mStringData; } set { mStringData = value; } }
 
         public MemoryStream StringDataMS { get { return mMemoryStream; } set { mMemoryStream = value; } }
         public int DataLen { get { return mDataLen; } set { mDataLen = value; } }
 
-        public bool LazyLoad { get { return mLazyLoad; } }
-
-
-
-
         public new IEnumerator<T> GetEnumerator()
         {
             if (mLazyLoad)
             {
-                GetItemsInfo();
+                LoadLazyInfo();
             }
             return base.GetEnumerator();
         }
@@ -316,7 +316,7 @@ namespace Amdocs.Ginger.Common
 
         bool loadingata = false;
 
-        public void GetItemsInfo()
+        public void LoadLazyInfo()
         {
             if (!mLazyLoad) return;
             if (loadingata) // //since several functions can call in parallel we might enter when status is already loadingdata, so we wait for it to complete, then return
@@ -367,7 +367,7 @@ namespace Amdocs.Ginger.Common
                 //mMemoryStream = null;
                 mLazyLoad = false;
                 loadingata = false;
-
+                mAvoidLazyLoad = true;
             }
         }
 
@@ -414,6 +414,8 @@ namespace Amdocs.Ginger.Common
             }
         }
 
+        
+
         public ObservableList<NewType> ListItemsCast<NewType>()
         {
             ObservableList<NewType> list = new ObservableList<NewType>();
@@ -432,6 +434,36 @@ namespace Amdocs.Ginger.Common
             Move(Count - 1, 0);
         }
 
+        /// <summary>
+        /// Load the ObservableList data from provided List
+        /// </summary>
+        /// <param name="List">List with same data type</param>
+        /// <param name="clearList">Set as 'True' in case the observablelist data should be cleared first</param>
+        public void FromList(List<T> List, bool clearList= false)
+        {
+            if (clearList)
+            {
+                this.Clear();
+            }
 
+            foreach (T o in List)
+            {
+                this.Add(o);
+            }
+        }
+
+        /// <summary>
+        /// Return List with data of ObservableList
+        /// </summary>
+        /// <returns></returns>
+        public List<T> ToList()
+        {
+            List<T> list = new List<T>();
+            foreach (T o in this)
+            {
+                list.Add(o);
+            }
+            return list;
+        }
     }
 }

@@ -33,7 +33,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
-using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Actions
@@ -371,7 +370,7 @@ namespace GingerCore.Actions
         //private int mSmartWait;
         //public int SmartWait { get; set; }  
 
-        public bool? IsSingleAction { get; set; }
+       // public bool? IsSingleAction { get; set; }
 
         public DateTime StartTimeStamp { get; set; }
         public DateTime EndTimeStamp { get; set; }
@@ -533,8 +532,8 @@ namespace GingerCore.Actions
 
         //Keeping screen shot in memory will eat up the memory - so we save to files and keep file name
 
-        public List<String> ScreenShots { get; set; } = new List<String>();
-        public List<String> ScreenShotsNames = new List<String>();
+        public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
+        public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
 
 
         // No need to back because the list is saved to backup
@@ -1236,9 +1235,17 @@ namespace GingerCore.Actions
 
         protected void AddAllPlatforms()
         {
-            foreach (object v in Enum.GetValues(typeof(ePlatformType)))
+            lock (mPlatforms)   // Handle reentry 
             {
-                mPlatforms.Add((ePlatformType)v);
+                if (mPlatforms.Count != 0)
+                {
+                    return;
+                }
+
+                foreach (object v in Enum.GetValues(typeof(ePlatformType)))
+                {
+                    mPlatforms.Add((ePlatformType)v);
+                }
             }
         }
 
@@ -1735,17 +1742,17 @@ namespace GingerCore.Actions
             }
         }
 
-        public string ReturnValuesInfo
+        public int ReturnValuesCount
         {
             get
             {
-                if (ReturnValues != null && ReturnValues.Count > 0)
+                if (ReturnValues != null)
                 {
-                    return string.Format("{0} Output Values", ReturnValues.Count);
+                    return ReturnValues.Count;
                 }
                 else
                 {
-                    return string.Empty;
+                    return 0;
                 }
             }
         }

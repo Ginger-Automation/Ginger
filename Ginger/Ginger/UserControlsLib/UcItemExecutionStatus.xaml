@@ -5,20 +5,25 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="25" d:DesignWidth="50">
+             d:DesignHeight="50" d:DesignWidth="60">
 
-    <DockPanel>
-        <Polygon x:Name="xPolygon" DockPanel.Dock="Right" Points="0,0,24,0,0,25"  Stroke="{StaticResource $PendingStatusColor}" Fill="{StaticResource $PendingStatusColor}" HorizontalAlignment="Right" >
-            <Polygon.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform AngleX="0"/>
-                    <RotateTransform Angle="90"/>
-                    <TranslateTransform X="25" Y="0"/>
-                </TransformGroup>
-            </Polygon.RenderTransform>
-        </Polygon>
-        <usercontrols:ImageMakerControl x:Name="xStatusIcon" DockPanel.Dock="Right" Margin="0,-8,-25,0"  Padding="0" SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
-    </DockPanel>
+    <StackPanel>
+        <DockPanel x:Name="xPolygonStatusPnl" Visibility="Collapsed" >
+            <Polygon x:Name="xPolygon" DockPanel.Dock="Right" Points="0,0,24,0,0,25"  Stroke="{StaticResource $PendingStatusColor}" Fill="{StaticResource $PendingStatusColor}" HorizontalAlignment="Right" >
+                <Polygon.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="0"/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform X="25" Y="0"/>
+                    </TransformGroup>
+                </Polygon.RenderTransform>
+            </Polygon>
+            <usercontrols:ImageMakerControl x:Name="xPolygonStatusImage" DockPanel.Dock="Right" Margin="0,-8,-25,0"  SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
+        </DockPanel>
 
+        <DockPanel x:Name="xStatusImagePnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+
+        <Label x:Name="xStatusLbl" FontWeight="Bold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Margin="0,0,0,0" Content="Status" Visibility="Collapsed"/>
+    </StackPanel>
 </UserControl>

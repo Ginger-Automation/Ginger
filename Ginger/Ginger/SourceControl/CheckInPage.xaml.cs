@@ -122,6 +122,8 @@ namespace Ginger.SourceControl
                          }
                          catch (Exception ex)
                          {
+                    
+                             //TODO: fix the path changes 
                              if (SCFI.Path.Contains('\\') && (SCFI.Path.LastIndexOf('\\') + 1 < SCFI.Path.Length - 1))
                                  SCFI.Name = SCFI.Path.Substring(SCFI.Path.LastIndexOf('\\') + 1);
                              Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);

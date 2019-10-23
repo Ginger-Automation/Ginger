@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
@@ -143,8 +142,9 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         }
 
         internal void AddPOM(object sender, RoutedEventArgs e)
-        {            
-            WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder),1000,700, DoNotShowAsDialog:true);            
+        {           
+                mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
+                WizardWindow.ShowWizard(new AddPOMWizard(mPOMModelFolder), 1000, 700, DoNotShowAsDialog: true);           
         }
     }
 }
