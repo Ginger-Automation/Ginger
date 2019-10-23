@@ -2063,24 +2063,6 @@
     <Compile Include="Variables\VariablesPage.xaml.cs">
       <DependentUpon>VariablesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowExplorer\Windows\WindowsDatePickerTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsDialogBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsListBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsListItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsMenuBarTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsRadioButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsCheckBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsElementConverter.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsLabelTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsComboBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsMenuItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsTabItemTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsTextBoxTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsButtonTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsControlTreeItem.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
-    <Compile Include="WindowExplorer\Windows\WindowTreeItem.cs" />
     <Resource Include="Actions\ApiActionsConversion\ApiActionsConversionIntro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />
