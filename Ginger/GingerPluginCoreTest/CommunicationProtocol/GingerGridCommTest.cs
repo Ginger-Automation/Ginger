@@ -263,7 +263,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //ACT
             mGR.RunAction(actUIElement, false);
             //Assert                        
-            Assert.AreEqual("Element not found",actUIElement.Error, "actUIElement.Error");            
+            Assert.IsTrue(actUIElement.Error.Contains("Element not found"), "actUIElement.Error");            
         }
 
 

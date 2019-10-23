@@ -249,7 +249,7 @@ namespace GingerCoreNET.DriversLib
                         break;
 
                     default:
-                        return NewPayLoad.Error("Service is not supporting IScreenShotSetvice cannot delegate to take screenshot");
+                        return NewPayLoad.Error("Service is not supporting IScreenShotService cannot delegate to take screen shot");
 
 
                 }
@@ -266,7 +266,7 @@ namespace GingerCoreNET.DriversLib
                 return ResponsePL;
             }
 
-            NewPayLoad err2 = NewPayLoad.Error("Service is not supporting IScreenShotSetvice cannot delegate to take screenshot");
+            NewPayLoad err2 = NewPayLoad.Error("Service is not supporting IScreenShotService cannot delegate to take screen shot");
             return err2;
         }
         static NewPayLoad BitmapToPayload(Bitmap bitmap)
