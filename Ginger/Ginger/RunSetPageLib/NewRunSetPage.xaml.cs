@@ -2498,9 +2498,9 @@ namespace Ginger.Run
                 if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
                 {
                     mRunSetConfig.SaveBackup();
+                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    LoadRunSetConfig(mRunSetConfig, true);
                 }
-                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
-                LoadRunSetConfig(mRunSetConfig, true);
             }            
             catch(Exception ex)
             {
