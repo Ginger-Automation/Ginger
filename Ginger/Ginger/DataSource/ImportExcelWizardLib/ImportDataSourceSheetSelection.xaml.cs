@@ -62,6 +62,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 
                     chkHeadingRow.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.HeadingRow));
                     chkModelParamsFile.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.IsModelParamsFile));
+                    chkExactValues.BindControl(mWizard, nameof(ImportDataSourceFromExcelWizard.IsExactValues));
                     break;
                 case EventType.Active:
                     string excelPath = ((ImportDataSourceFromExcelWizard)WizardEventArgs.Wizard).Path;
@@ -94,6 +95,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             xSheetNameComboBox.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;            
             chkHeadingRow.Checked += ChkHeadingRow_Checked;
             chkModelParamsFile.Checked += ChkModelParamsFile_Checked;            
+            chkExactValues.Checked += ChkExactValues_Checked;            
             xSheetNameComboBox.Focus();
         }
 
@@ -105,6 +107,10 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         private void ChkHeadingRow_Checked(object sender, RoutedEventArgs e)
         {
             mWizard.HeadingRow = Convert.ToBoolean(chkHeadingRow.IsChecked);
+        }
+        private void ChkExactValues_Checked(object sender, RoutedEventArgs e)
+        {
+            mWizard.IsExactValues = Convert.ToBoolean(chkExactValues.IsChecked);
         }
 
         private void XSheetNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

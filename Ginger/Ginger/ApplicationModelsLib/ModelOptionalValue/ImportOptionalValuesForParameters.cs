@@ -1093,7 +1093,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             DataSet ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
 
             DataSet dsExact = new DataSet();
-            if(exactValues)
+            if (exactValues)
             {
                 foreach (DataTable dt in ds.Tables)
                 {
@@ -1108,7 +1108,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 colEmpty = false;
                             }
                         }
-                        if(colEmpty)
+                        if (colEmpty)
                         {
                             lstColumn.Add(dc.ColumnName);
                         }
@@ -1123,6 +1123,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     dtNew.TableName = dt.TableName;
                     dsExact.Tables.Add(dtNew);
                 }
+            }
+            else
+            {
+                dsExact = ds;
             }
 
             DataSet dsPivote = new DataSet();

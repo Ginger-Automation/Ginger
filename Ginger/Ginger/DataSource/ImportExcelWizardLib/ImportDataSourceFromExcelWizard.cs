@@ -63,7 +63,11 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             get;
             set;
         }
-
+        public bool IsExactValues
+        {
+            get;
+            set;
+        }
         /// <summary>
         /// This is used to initialize the wizard
         /// </summary>
@@ -91,7 +95,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, true, IsModelParamsFile);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsExactValues, IsModelParamsFile);
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {
