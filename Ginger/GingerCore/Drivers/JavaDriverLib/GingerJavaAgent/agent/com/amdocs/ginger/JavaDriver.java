@@ -4566,7 +4566,7 @@ private PayLoad SetComponentFocus(Component c)
 		} 
 		else if (controlAction.equals("Toggle")) 
 		{			
-			Component CellComponent = getTableCellComponent(CurrentTable,rowNum, colNum);
+			Component CellComponent = getTableCellComponent(CurrentTable,rowNum, colNum,true);
 			if (CellComponent instanceof JCheckBox) 
 			{
 				return ToggleComponentValue(CellComponent);
@@ -4579,7 +4579,7 @@ private PayLoad SetComponentFocus(Component c)
 		else if (controlAction.equals("SelectDate"))
 		{		
 			GingerAgent.WriteLog("Current Table : " + CurrentTable +", Row Num : " + rowNum + ", Col Num : " +colNum +", Value : " +Value );
-			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum);
+			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum,true);
 			GingerAgent.WriteLog("CellComponent : " +CellComponent);
 			GingerAgent.WriteLog("Inside Set Date");
 			if(CellComponent!=null)
@@ -4592,7 +4592,7 @@ private PayLoad SetComponentFocus(Component c)
 			}
 		}
 		else if (controlAction.equals("IsCellEnabled")) {
-			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum);
+			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum,false);
 			if (CellComponent != null) {
 				PayLoad Response = new PayLoad("ComponentValue");
 				Response.AddValue(CellComponent.isEnabled() + "");
@@ -4602,7 +4602,7 @@ private PayLoad SetComponentFocus(Component c)
 				return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Cell component not found");
 			}
 		} else if (controlAction.equals("IsVisible")) {
-			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum);
+			Component CellComponent = getTableCellComponent(CurrentTable, rowNum, colNum,false);
 			if (CellComponent != null) {
 				PayLoad Response = new PayLoad("ComponentValue");
 				Response.AddValue(CellComponent.isVisible() + "");
@@ -4616,7 +4616,7 @@ private PayLoad SetComponentFocus(Component c)
 		else if (controlAction.equals("SetValue")) 
 		{
 			GingerAgent.WriteLog("Current Table : " +CurrentTable+", Row Num : " + rowNum + ", Col Num : " +colNum +", Value : " +Value );
-			Component CellComponent = getTableCellComponent(CurrentTable,rowNum,colNum);
+			Component CellComponent = getTableCellComponent(CurrentTable,rowNum,colNum,true);
 			GingerAgent.WriteLog("CellComponent : " +CellComponent);
 			GingerAgent.WriteLog("Inside Set Value");
 				if(CellComponent!=null)
@@ -4630,7 +4630,7 @@ private PayLoad SetComponentFocus(Component c)
 
 		}else if (controlAction.equals("SendKeys")){
 			GingerAgent.WriteLog("Current Table : " +CurrentTable+", Row Num : " + rowNum + ", Col Num : " +colNum +", Value : " +Value );
-			Component CellComponent = getTableCellComponent(CurrentTable,rowNum,colNum);
+			Component CellComponent = getTableCellComponent(CurrentTable,rowNum,colNum,true);
 			GingerAgent.WriteLog("CellComponent : " +CellComponent);
 			GingerAgent.WriteLog("Inside SendKeys");
 				if(CellComponent!=null)
@@ -4650,7 +4650,7 @@ private PayLoad SetComponentFocus(Component c)
 
 		} else if (controlAction.equals("Type")) {
 			Component CellComponent = getTableCellComponent(CurrentTable,
-					rowNum, colNum);
+					rowNum, colNum,true);
 
 			CurrentTable.grabFocus();
 			CurrentTable.scrollRectToVisible(CurrentTable.getBounds());
@@ -4686,7 +4686,7 @@ private PayLoad SetComponentFocus(Component c)
 			return PayLoad.OK("Type Activity Passed");
 		} else if (controlAction.equals("Select")) {
 			Component CellComponent = getTableCellComponent(CurrentTable,
-					rowNum, colNum);
+					rowNum, colNum,true);
 			if (CellComponent instanceof JComboBox) {
 				JComboBox cb = (JComboBox) CellComponent;
 
@@ -4805,7 +4805,7 @@ private PayLoad SetComponentFocus(Component c)
 				{
 					//TODO: Add Null object checks
 				
-					Component cellEditorComponent = getTableCellComponent(CurrentTable,rowNum, colNum);
+					Component cellEditorComponent = getTableCellComponent(CurrentTable,rowNum, colNum,true);
 					
 					if(cellEditorComponent!=null)
 					{
@@ -4970,13 +4970,13 @@ private PayLoad SetComponentFocus(Component c)
 		{
 			GingerAgent.WriteLog("controlAction.equals('IsChecked')");
 			Component CellComponent = getTableCellComponent(CurrentTable,
-					rowNum, colNum);
+					rowNum, colNum,false);
 			return IsCheckboxChecked(CellComponent);
 		}
 		else if (controlAction.equals("AsyncClick")) {
 			
 			Component CellComponent = getTableCellComponent(CurrentTable,
-					rowNum, colNum);
+					rowNum, colNum,true);
 
 			if (CellComponent instanceof JLabel) {
 				GingerAgent.WriteLog("CellComponent instanceof JLabel");
@@ -5043,7 +5043,7 @@ private PayLoad SetComponentFocus(Component c)
 		return null;
 	}
 		
-	private Component getTableCellComponent(final JTable table, final int rowNum,final int colNum)
+	private Component getTableCellComponent(final JTable table, final int rowNum,final int colNum,final boolean isGetTableCellEditorComponent)
 	{
 		
 		
@@ -5068,8 +5068,12 @@ private PayLoad SetComponentFocus(Component c)
 						TableCellEditor TCE= table.getCellEditor(rowNum, colNum);
 						GingerAgent.WriteLog("Checkpoint 6");
 						if(TCE!=null && cellDocObject!=null)
-						{							
-							cellEditorComponent[0]=TCE.getTableCellEditorComponent(table, cellDocObject, false, rowNum, colNum);
+						{	
+							//for controlAction isChecked, isVisible, isCellEnabled  : isGetTableCellEditorComponent = false
+							if(isGetTableCellEditorComponent)
+							{
+								cellEditorComponent[0]=TCE.getTableCellEditorComponent(table, cellDocObject, false, rowNum, colNum);
+							}
 							
 							GingerAgent.WriteLog("Checkpoint 7");
 						
@@ -5111,17 +5115,12 @@ private PayLoad SetComponentFocus(Component c)
 		 try
 		 {
 			 if(cellEditorComponent[0]!=null && !(cellEditorComponent[0] instanceof JPanel))
-				 return cellEditorComponent[0];		 
+			 {
+				 return cellEditorComponent[0];	
+			 }
 			 else
 			 {
-				 GingerAgent.WriteLog("Trying to find Cell component using rendered");
-				 if(table.getCellRenderer(rowNum, colNum)!=null)
-				 {
-					 cellEditorComponent[0]=table.prepareRenderer(table.getCellRenderer(rowNum, colNum), rowNum,colNum);
-					 return cellEditorComponent[0];
-				 }
-				 else 
-					 return null;
+				 return GetTableCellByRenderer(table,rowNum,colNum);
 			 }
 		 }
 		 catch(Exception ex)
@@ -5132,6 +5131,20 @@ private PayLoad SetComponentFocus(Component c)
 
 		 return cellEditorComponent[0];
 		
+	}
+	
+	private Component GetTableCellByRenderer(final JTable table,final int rowNum, final int colNum)
+	{
+		 GingerAgent.WriteLog("Trying to find Cell component using rendered");
+		 if(table.getCellRenderer(rowNum, colNum)!=null)
+		 {
+			 Component cellEditorComponent=table.prepareRenderer(table.getCellRenderer(rowNum, colNum), rowNum,colNum);
+			 return cellEditorComponent;
+		 }
+		 else 
+		 {
+			 return null;
+		 }
 	}
 	
 	private void setFocus(final JTable table, final int row, final int col)
@@ -5377,7 +5390,7 @@ private PayLoad SetComponentFocus(Component c)
 		for(iRow=0 ;iRow< TM.getRowCount();iRow++)
 		{
 			bFound = false;
-			 CellComponent = getTableCellComponent(CurrentTable,iRow, colNum);
+			 CellComponent = getTableCellComponent(CurrentTable,iRow, colNum,true);
 			 if(CellComponent ==null)
 			 {
 				 continue;
