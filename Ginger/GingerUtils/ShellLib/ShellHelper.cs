@@ -98,8 +98,41 @@ namespace GingerUtils
         }
 
 
+        /// <summary>
+        /// Shell and create new process which runs dotent and the args
+        /// </summary>
+        /// <param name="args"></param>
+        public static Process Execute(string fileName, string args)
+        {
+            ProcessStartInfo procStartInfo = new ProcessStartInfo();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.WriteLine("*** OS is Windows ***");
+                procStartInfo.FileName = fileName;
+                procStartInfo.Arguments = args;
+                procStartInfo.UseShellExecute = true;
+            }
+            // TODO: add handling for Linux and combine with above method
 
-        public static string Bash(string cmd)
+            Process process = new Process();
+            process.StartInfo = procStartInfo;
+
+            Console.WriteLine("Starting Process..");
+            bool started = process.Start();
+            if (started)
+            {
+                Console.WriteLine("Process started");
+            }
+            else
+            {
+                Console.WriteLine("No process not started");
+            }
+
+            return process;
+        }
+
+
+            public static string Bash(string cmd)
         {
             var escapedArgs = GetEscapeArgs(cmd);
 

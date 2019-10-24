@@ -28,8 +28,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
-using GingerCore.Actions.WebServices;
-using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
@@ -152,7 +150,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             // TODO: create round robin algorithm or something smarter
 
-            // Menahwile we can the first ready node with least amount of actions so balance across same service
+            // Meanwhile we can the take the first ready node with least amount of actions so balance across same service
             GingerGrid gingerGrid = WorkSpace.Instance.LocalGingerGrid;
 
             Console.WriteLine("Number of Nodes found in GingerGrid:" + gingerGrid.NodeList.Count);
@@ -464,6 +462,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             PlatformAction platformAction = ACT.GetAsPlatformAction();
 
+            // TODO: remove from here and keep this class generic
             if (ACT is ActUIElement actUi)
             {
                 if (actUi.ElementLocateBy == eLocateBy.POMElement)
@@ -574,6 +573,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             if (remoteServiceGrids.Count > 0)
             {                
+                // TODO: return RC if node found if not run on local
                 ExecuteActionOnRemotePlugin(act);
             }
             else

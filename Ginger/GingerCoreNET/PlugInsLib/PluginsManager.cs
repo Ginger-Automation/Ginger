@@ -27,6 +27,7 @@ using GingerUtils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -177,37 +178,55 @@ namespace Amdocs.Ginger.Repository
 
             Console.WriteLine("Loading Plugin Services from JSON...");
 
+            System.Diagnostics.Process proc = LoadPluginAndStartService(pluginPackage, serviceID);
+
+            mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
+            Console.WriteLine("Plug-in Running on the Process ID: " + proc.Id);
+
+            return proc;
+        }
+
+        public static Process LoadPluginAndStartService(PluginPackage pluginPackage, string serviceID)
+        {
             // TODO: only once !!!!!!!!!!!!!!!!!!!!!!!!! temp             
             pluginPackage.LoadServicesFromJSON();
 
             if (pluginPackage == null)
             {
-                throw new Exception("PluginPackage not found in solution PluginId=" + pluginId);
+                throw new Exception("PluginPackage not found in solution PluginId=" + pluginPackage.PluginId);
             }
             if (string.IsNullOrEmpty(pluginPackage.StartupDLL))
             {
-                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + pluginId);
+                throw new Exception("StartupDLL is missing in the Ginger.PluginPackage.json for: " + pluginPackage.PluginId);
             }
 
             string dll = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
             Console.WriteLine("Plug-in dll path: " + dll);
-            string nodeFileName = CreateNodeConfigFile(pluginId, serviceID);
+            string nodeFileName = CreateNodeConfigFile(pluginPackage.PluginId, serviceID);
             Console.WriteLine("nodeFileName: " + nodeFileName);
 
-            string cmd = "\"" + dll + "\" \"" + nodeFileName + "\"";
+            
 
             Console.WriteLine("Creating Process..");
 
-            System.Diagnostics.Process proc = OSHelper.Current.Dotnet(cmd);
-
-            mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
-            Console.WriteLine("Plug-in Running on the Process ID: " + proc.Id);
-            return proc;
+            Process proc;
+            if (pluginPackage.StartupDLL.EndsWith("exe", StringComparison.OrdinalIgnoreCase))
+            {
+                proc = OSHelper.Current.Execute(dll, nodeFileName);
+            }
+            else
+            {
+                string cmd = "\"" + dll + "\" \"" + nodeFileName + "\"";
+                proc = OSHelper.Current.Dotnet(cmd);
+            }
             //TODO: delete the temp file - or create temp files tracker with auto delete 
+
+            return proc;
+            
         }
 
-        int ServiceCounter = 0;
-        private string CreateNodeConfigFile(string name, string serviceId)
+        static int ServiceCounter = 0;
+        private static string CreateNodeConfigFile(string name, string serviceId)
         {
             ServiceCounter++;
             string NewName = name + " " + ServiceCounter;  // We add counter since this is auto start service and many can start so to identify

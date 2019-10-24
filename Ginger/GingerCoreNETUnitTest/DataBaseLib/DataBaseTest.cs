@@ -16,29 +16,22 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.DatabaseLib;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.Environments;
+using GingerCoreNET.RunLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Configuration;
-using Amdocs.Ginger.CoreNET.DatabaseLib;
 
 namespace UnitTests.NonUITests
 {
-    [Level3]
+
+    //  FIXME: ConfigurationManager  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     [TestClass]
-
-
-//  FIXME: ConfigurationManager  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
     public class DataBaseTest
     {
         static GingerRunner mGR = null;
@@ -47,32 +40,55 @@ namespace UnitTests.NonUITests
 
         static DatabaseManager mDatabaseManager;
 
-        [TestInitialize]
-        public void TestInitialize()
+        //[TestInitialize]
+        //public void TestInitialize()
+        //{
+
+        //}
+
+        //[ClassInitialize()]
+        //public static void ClassInit(TestContext context)
+        //{
+
+        //    //mDatabaseManager = new DatabaseManager();
+        //    //mDatabaseManager.Init();
+
+
+        //    //mGR = new GingerRunner();
+
+        //    //mBF = new BusinessFlow();
+        //    //mBF.Activities = new ObservableList<Activity>();
+        //    //mBF.Name = "DB Test";
+        //    //mBF.Active = true;
+
+        //    //Activity activity = new Activity();
+        //    //mBF.Activities.Add(activity);
+        //    //mBF.CurrentActivity = activity;
+
+        //    //mGR.CurrentBusinessFlow = mBF;
+        //}
+
+
+        [TestMethod]
+        
+        public void TestAccessPluginConnTest()
         {
+            // Start GG
+            GingerGrid gingerGrid = new GingerGrid(15001);   // Get free port !!!!!!!!!!!!!!!
+            gingerGrid.Start();
 
-        }
+            PluginPackage pluginPackage = new PluginPackage(@"C:\Users\Yaron\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug");
+            // PluginsManager pluginsManager = new PluginsManager();
+            // pluginsManager.AddPluginPackage(@"C:\Users\Yaron\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug");
+            // pluginsManager.StartService("MSAccessDatabasePlugin", "MSAccessService");
 
-        [ClassInitialize()]
-        public static void ClassInit(TestContext context)
-        {
+            // run MSAccess Plugin
 
-            //mDatabaseManager = new DatabaseManager();
-            //mDatabaseManager.Init();
+            // Send config params
+
+            // Send test db conn
 
 
-            //mGR = new GingerRunner();
-
-            //mBF = new BusinessFlow();
-            //mBF.Activities = new ObservableList<Activity>();
-            //mBF.Name = "DB Test";
-            //mBF.Active = true;
-
-            //Activity activity = new Activity();
-            //mBF.Activities.Add(activity);
-            //mBF.CurrentActivity = activity;
-
-            //mGR.CurrentBusinessFlow = mBF;
         }
 
 
@@ -84,7 +100,7 @@ namespace UnitTests.NonUITests
         }
 
 
-    //[Ignore]
+        //[Ignore]
         //[TestMethod]
         //[Timeout(60000)]
         //public void TestOracleDBConnectionAndReadAllTables()
@@ -110,25 +126,25 @@ namespace UnitTests.NonUITests
         //}
 
 
-        //[TestMethod]
-        //[Timeout(60000)]
-        //public void TestMSAccessDB()
-        //{
-        //    Database db = new Database();
-        //    db.DBType = Database.eDBTypes.MSAccess;
-        //    //    db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\SVN\GingerSolutions\SCM\Documents\MassData\MAIN_DB.mdb";          
-        //    db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + TestResources.GetTestResourcesFile(@"Database\GingerUnitTest.mdb");
-        //    string dbstr = db.ConnectionString;
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestMSAccessDB()
+        {
+            Database db = new Database();
+            db.DBType = Database.eDBTypes.MSAccess;
+            //    db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\SVN\GingerSolutions\SCM\Documents\MassData\MAIN_DB.mdb";          
+            db.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + TestResources.GetTestResourcesFile(@"Databases\Customers.accdb");
+            string dbstr = db.ConnectionString;
 
-        //    Boolean b = db.Connect();
-        //    if (b)
-        //    {
-        //        List<string> tables = db.GetTablesList();
-        //        db.CloseConnection();
-        //    }
+            bool b = db.Connect();
+            if (b)
+            {
+                List<string> tables = db.GetTablesList();
+                db.CloseConnection();
+            }
 
-        //    Assert.AreEqual(b, true);
-        //}
+            Assert.AreEqual(b, true);
+        }
         //[Ignore]
         //[TestMethod]
         //[Timeout(60000)]

@@ -1074,9 +1074,6 @@ namespace GingerCore.Actions.Common
         {
             PlatformAction platformAction = new PlatformAction(this);
 
-
-
-
             foreach (ActInputValue aiv in this.InputValues)
             {
 
@@ -1085,15 +1082,11 @@ namespace GingerCore.Actions.Common
                 {
                     platformAction.InputParams.Add(aiv.Param, ValueforDriver);
                 }
-            }
-        
+            }        
 
             Dictionary<string, string> Locators = new Dictionary<string, string>();
             Locators.Add(ElementLocateBy.ToString(), ElementLocateValueForDriver);
-
-
             platformAction.InputParams.Add("Locators", Locators);
-
             return platformAction;
         }
 

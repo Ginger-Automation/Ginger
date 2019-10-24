@@ -35,6 +35,11 @@ namespace GingerUtils.OSLib
             return ShellHelper.Dotnet(cmd);
         }
 
+        public Process Execute(string fileName, string args)
+        {
+            return ShellHelper.Execute(fileName, args);
+        }
+
         public string GetFirstLocalHostIPAddress()
         {
             string LocalHostIP = string.Empty;

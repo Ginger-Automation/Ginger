@@ -193,7 +193,7 @@ namespace GingerCoreNET.DriversLib
 
         private NewPayLoad RunPlatformAction(NewPayLoad payload)
         {
-            // GingerNode needs to remain generic so we have one entry point and delagate the work to the platform handler
+            // GingerNode needs to remain generic so we have one entry point and delegate the work to the platform handler
             if (mService is IPlatformService platformService)
             {
                 NodePlatformAction nodePlatformAction = payload.GetJSONValue<NodePlatformAction>();

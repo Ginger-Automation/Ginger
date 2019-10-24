@@ -29,7 +29,7 @@ namespace Ginger.Plugin.Platform.Web
     /// <summary>
     ///Exposes the Functionality for Implementing a plugin supporting Web Platform On Ginger Automation
     /// </summary>
-    // mark this interface to be in the json and will be visible to activities targetting Web platform
+    // mark this interface to be in the json and will be visible to activities targeting Web platform
     [GingerInterface("IWebPlatform", "Web Platform driver")]
     public interface IWebPlatform: IPlatformService
     {

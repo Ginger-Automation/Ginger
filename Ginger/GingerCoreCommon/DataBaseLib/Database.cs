@@ -1,4 +1,5 @@
-﻿#region License
+﻿
+#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -31,7 +32,8 @@ namespace GingerCore.Environments
 {
     public class Database : RepositoryItemBase 
     {
-        IDatabase database;
+        IDatabase databaseImpl;
+
         public enum eDBTypes
         {
             Oracle,
@@ -44,6 +46,8 @@ namespace GingerCore.Environments
             Couchbase,
             MongoDb,
         }
+
+        
 
         public enum eConfigType
         {
@@ -110,19 +114,30 @@ namespace GingerCore.Environments
         public string Description { get; set; }
         public eDBTypes mDBType;
         [IsSerializedForLocalRepository]
-        public eDBTypes DBType { get { return mDBType; }
-            set {
-                mDBType = value;
-                OnPropertyChanged(Fields.Type);
-                if (DBType==eDBTypes.Cassandra)
+        public eDBTypes DBType 
+        { 
+            get 
+            { 
+                return mDBType; 
+            }
+            set 
+            {
+                if (mDBType != value)
                 {
-                    DBVer = "2.2";
+                    databaseImpl = null;
+                    mDBType = value;
+                    OnPropertyChanged(Fields.Type);
+                    if (DBType == eDBTypes.Cassandra)
+                    {
+                        DBVer = "2.2";
+                    }
+                    else
+                    {
+                        DBVer = "";
+                    }
                 }
-                else
-                {
-                    DBVer = "";
-                }
-            } }
+            } 
+        }
 
 
         IValueExpression mVE = null;
@@ -250,7 +265,7 @@ namespace GingerCore.Environments
                 connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
 
                 // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                String deCryptValue = "aaaa";  // EncryptionHandler.DecryptString(PassCalculated, ref res, false);
+                String deCryptValue = "aaa"; // EncryptionHandler.DecryptString(PassCalculated, ref res, false);  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
                 else { connStr = connStr + "Password=" + PassCalculated + ";"; }
@@ -325,7 +340,7 @@ namespace GingerCore.Environments
         public Boolean TestConnection()
         {
             LoadDBAssembly();            
-            bool b = database.TestConnection();
+            bool b = databaseImpl.TestConnection();
             return b;
         }
 
@@ -333,32 +348,38 @@ namespace GingerCore.Environments
         
         void LoadDBAssembly()
         {
-            if (database != null) { };  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
+            if (databaseImpl != null) 
+            {
+                return;
+            };  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
             switch (DBType)
             {
                 case eDBTypes.MSAccess:
+
+                    // DatabaseManager databaseManager = new DatabaseManager();
+
                     // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    Assembly assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\MSAccessDB\bin\Debug\MSAccessDB.dll");
-                    database = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
+                    Assembly assembly = Assembly.LoadFrom(@"C:\Users\yaron\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug\GingerMSAccessDB.exe");
+                    databaseImpl = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
                     //database.InitReporter();
-                    database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
+                    databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
 
                 case eDBTypes.Oracle:
                     // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\GingerOracleDB\bin\Debug\netstandard2.0\GingerOracleDB.dll");
-                    database = (IDatabase)assembly.CreateInstance("Oracle.GingerOracleConnection");
+                    databaseImpl = (IDatabase)assembly.CreateInstance("Oracle.GingerOracleConnection");
                     
                     //database.InitReporter();
-                    database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
+                    databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
                 case eDBTypes.MongoDb:
                     // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\MongoDB\bin\Debug\netcoreapp2.0\GingerMongoDB.dll");
-                    database = (IDatabase)assembly.CreateInstance("MongoDB.MongoDbConnection");
+                    databaseImpl = (IDatabase)assembly.CreateInstance("MongoDB.MongoDbConnection");
 
                     //database.InitReporter();
-                    database.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
+                    databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
                     break;
                 // TODO: add the rest DBs
                 case eDBTypes.Cassandra:
@@ -371,9 +392,9 @@ namespace GingerCore.Environments
         public Boolean Connect(bool displayErrorPopup = false)
         {
             LoadDBAssembly();
-            if (database != null)
+            if (databaseImpl != null)
             {
-                return database.TestConnection();                
+                return databaseImpl.TestConnection();                
             }
             else
             {
@@ -582,7 +603,7 @@ namespace GingerCore.Environments
         public List<string> GetTablesList(string Keyspace = null)
         {
             LoadDBAssembly();
-            return database.GetTablesList();
+            return databaseImpl.GetTablesList();
             
             //List<string> rc = new List<string>() { "" };
             //if (MakeSureConnectionIsOpen())
@@ -649,7 +670,7 @@ namespace GingerCore.Environments
         public List<string> GetTablesColumns(string table)
         {
             LoadDBAssembly();
-            return database.GetTablesColumns(table);
+            return databaseImpl.GetTablesColumns(table);
 
             
             //DbDataReader reader = null;
@@ -712,7 +733,7 @@ namespace GingerCore.Environments
         {
 
             LoadDBAssembly();
-            string dataTable = database.RunUpdateCommand(updateCmd, commit);
+            string dataTable = databaseImpl.RunUpdateCommand(updateCmd, commit);
             return dataTable;
             //string result = "";
             ////if (oConn == null) Connect();
@@ -752,7 +773,7 @@ namespace GingerCore.Environments
         public string GetSingleValue(string Table, string Column, string Where)
         {
             LoadDBAssembly();
-            string vv = database.GetSingleValue(Table, Column, Where);  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            string vv = databaseImpl.GetSingleValue(Table, Column, Where);  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             return vv;
             //string sql = "SELECT {0} FROM {1} WHERE {2}";
             //sql = String.Format(sql, Column, Table, Where);
@@ -791,7 +812,7 @@ namespace GingerCore.Environments
         {
             // MakeSureConnectionIsOpen();
             LoadDBAssembly();
-            DataTable dataTable = database.DBQuery(SQL);
+            DataTable dataTable = databaseImpl.DBQuery(SQL);
             return dataTable;
 
 
@@ -855,7 +876,7 @@ namespace GingerCore.Environments
 
         internal int GetRecordCount(string SQL)
         {
-            int count = database.GetRecordCount(SQL);
+            int count = databaseImpl.GetRecordCount(SQL);
             return count;
 
             //string sql = "SELECT COUNT(1) FROM " + SQL;

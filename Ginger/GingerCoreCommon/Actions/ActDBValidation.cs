@@ -60,23 +60,7 @@ namespace GingerCore.Actions
                 return mPlatforms;
             }
         }
-        //public new static partial class Fields
-        //{
-        //    public static string AppName = "AppName";
-        //    public static string DBName = "DBName";
-        //    public static string Keyspace = "Keyspace";
-        //    public static string Table = "Table";
-        //    public static string Column = "Column";
-        //    public static string Where = "Where";
-        //    public static string SQL = "SQL";
-        //    public static string DatabaseTye = "DatabaseTye";           
-        //    public static string CommitDB = "CommitDB";
-        //    public static string DBValidationType = "DBValidationType";
-        //    public static string QueryTypeRadioButton = "QueryTypeRadioButton";
-        //    public static string QueryFile = "QueryFile";
-        //    public static string ImportFile = "ImportFile";
-        //    public static string QueryParams = "QueryParams";
-        //}
+       
         public string ImportFile
         {
             get
@@ -547,7 +531,6 @@ namespace GingerCore.Actions
 
             return DBResponse;
 
-
-        }
+        }       
     }
 }

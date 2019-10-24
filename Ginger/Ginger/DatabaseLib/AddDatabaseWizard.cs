@@ -26,7 +26,8 @@ namespace Ginger.DatabaseLib
         public override void Finish()
         {
             Database db = new Database();
-            db.ConnectionString = "???????????";
+            db.DBType = Database.eDBTypes.MSAccess;
+            db.ConnectionString = "???????????";            
             EnvApplication.Dbs.Add(db);
         }
     }

@@ -26,9 +26,11 @@ namespace GingerUtils.OSLib
     public interface IOperationgSystem
     {
         string UserAgent { get; }
+
         Process Dotnet(string cmd);
         string GetFirstLocalHostIPAddress();
 
         void InitSmtpAuthenticationManager();
+        Process Execute(string fileName, string args);
     }
 }

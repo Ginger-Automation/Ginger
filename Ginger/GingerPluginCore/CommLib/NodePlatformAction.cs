@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 {
 
     // This is the readonly platform action data executed by the Ginger node
-    // This struct must match exectly to PlatformAction - so json deserialize witl match
+    // This struct must match exactly to PlatformAction - so json deserialize will match
 
     public struct NodePlatformAction
     {
