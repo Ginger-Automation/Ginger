@@ -1043,6 +1043,8 @@ namespace Ginger.Run
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
+                    GR.IsUpdateBusinessFlowRunList = true;
                 });
             }
 
@@ -1289,7 +1291,6 @@ namespace Ginger.Run
             {
                 mRunSetConfig.AllowAutoSave = false;
                 Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                mRunSetConfig.UpdateRunnersBusinessFlowRunsList();
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mRunSetConfig);
             }
             finally
