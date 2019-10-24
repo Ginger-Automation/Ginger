@@ -116,7 +116,10 @@ namespace Ginger.Repository
             xActionsGrid.InitViewItems();
 
             xActionsGrid.btnRefresh.Visibility = Visibility.Collapsed;
-            xActionsGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Actions", new RoutedEventHandler(AddFromRepository));
+            if (mContext != null && mContext.BusinessFlow!=null)
+            {
+                xActionsGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Actions", new RoutedEventHandler(AddFromRepository));
+            }
             xActionsGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditAction));
             xActionsGrid.ShowTagsFilter = Visibility.Visible;
             xActionsGrid.RowDoubleClick += grdActions_grdMain_MouseDoubleClick;

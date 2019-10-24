@@ -223,6 +223,10 @@ namespace GingerCore
             {
                 key = ENCRYPTION_KEY;
             }
+            if (plainText == null)
+            {
+                plainText = string.Empty;
+            }
             var plainBytes = Encoding.UTF8.GetBytes(plainText);
             return Convert.ToBase64String(Encrypt(plainBytes, GetRijndaelManaged(key)));
         }
