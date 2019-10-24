@@ -69,9 +69,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     sConfig += "SourceControlUrl=" + solution.SourceControl.SourceControlURL + Environment.NewLine;
                 }
-                sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
-                sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass) + Environment.NewLine;
-                sConfig += "PasswordEncrypted=" + "Y" + Environment.NewLine;                
+                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                {
+                    sConfig += "SourceControlUser=" + solution.SourceControl.SourceControlUser + Environment.NewLine;
+                    sConfig += "SourceControlPassword=" + EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass) + Environment.NewLine;
+                    sConfig += "PasswordEncrypted=" + "Y" + Environment.NewLine;
+                }
+                else
+                {
+                    sConfig += "SourceControlUser=N/A" + Environment.NewLine;
+                    sConfig += "SourceControlPassword=N/A" + Environment.NewLine;
+                }
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
                     if (solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
