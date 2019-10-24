@@ -265,7 +265,7 @@ namespace GingerWPF.WizardLib
                 xNextButton.IsEnabled = true;
             }
 
-            if (mWizard.IsFirstPage())
+            if (mWizard.IsFirstPage() || mWizard.IsLastPage())
             {
                 xPrevButton.IsEnabled = false;
             }
