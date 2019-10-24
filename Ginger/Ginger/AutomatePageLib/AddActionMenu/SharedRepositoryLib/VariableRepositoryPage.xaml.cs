@@ -85,8 +85,10 @@ namespace Ginger.Repository
             view.GridColsView.Add(new GridColView() { Field = "Inst.", WidthWeight = 15, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ViewInstancesButton"] });           
             xVariablesGrid.SetAllColumnsDefaultView(view);
             xVariablesGrid.InitViewItems();
-            
-            xVariablesGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
+            if (mContext != null && mContext.BusinessFlow!=null)
+            {
+                xVariablesGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to " + GingerDicser.GetTermResValue(eTermResKey.Variables), new RoutedEventHandler(AddFromRepository));
+            }
             xVariablesGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditVar));
             xVariablesGrid.ShowTagsFilter = Visibility.Visible;
             
