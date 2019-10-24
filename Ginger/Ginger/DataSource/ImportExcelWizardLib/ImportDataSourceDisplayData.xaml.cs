@@ -46,7 +46,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         private string SheetName;
         private bool HeadingRow;
         private bool IsModelParamsFile;
-        private bool IsExactValues;
+        private bool IsImportEmptyColumns;
 
         private List<TabItem> _tabItems;
 
@@ -66,7 +66,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     SheetName = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).SheetName;
                     HeadingRow = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).HeadingRow;
                     IsModelParamsFile = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).IsModelParamsFile;
-                    IsExactValues = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).IsExactValues;
+                    IsImportEmptyColumns = ((ImportDataSourceFromExcelWizard)mWizardEventArgs.Wizard).IsImportEmptyColumns;
 
                     impParams.ExcelFileName = Path;
                     impParams.ExcelSheetName = SheetName;
@@ -164,7 +164,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     SelectPanel.Visibility = Visibility.Visible;
                     xExcelGridSplitter.Visibility = Visibility.Visible;
 
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsExactValues, IsModelParamsFile);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
                         if (ExcelImportData.Tables.Count == 1)
@@ -182,7 +182,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
                     tabDynamic.Visibility = Visibility.Visible;
                     xExcelDataGridDockPanel.Visibility = Visibility.Visible;
 
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsExactValues, IsModelParamsFile);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
                     if (ExcelImportData != null && ExcelImportData.Tables.Count >= 1)
                     {
                         _tabItems = new List<TabItem>();

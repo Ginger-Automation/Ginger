@@ -63,7 +63,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             get;
             set;
         }
-        public bool IsExactValues
+        public bool IsImportEmptyColumns
         {
             get;
             set;
@@ -78,7 +78,6 @@ namespace Ginger.DataSource.ImportExcelWizardLib
             AddPage(Name: "Browse File", Title: "Browse File", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceBrowseFile());
             AddPage(Name: "Sheet Selection", Title: "Sheet Selection", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceSheetSelection());
             AddPage(Name: "Display Data", Title: "Display Data", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceDisplayData());            
-            AddPage(Name: "Finish", Title: "Finish", SubTitle: "Import DataSource From Excel File", Page: new ImportDataSourceFinishPage(DSDetails));
         }
 
         /// <summary>
@@ -95,7 +94,7 @@ namespace Ginger.DataSource.ImportExcelWizardLib
 
                 if (ExcelImportData == null || ExcelImportData.Tables.Count <= 0)
                 {
-                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsExactValues, IsModelParamsFile);
+                    ExcelImportData = impParams.GetExcelAllSheetData(SheetName, HeadingRow, IsImportEmptyColumns, IsModelParamsFile);
                 }
                 foreach (DataTable dt in ExcelImportData.Tables)
                 {
