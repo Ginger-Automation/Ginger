@@ -2506,6 +2506,14 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while undoing changes", ex);
             }
+            finally
+            {
+                if (mRunSetConfig != null)
+                {
+                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                }
+            }
         }
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
