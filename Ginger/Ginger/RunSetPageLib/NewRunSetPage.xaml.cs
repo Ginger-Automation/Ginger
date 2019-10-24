@@ -2433,7 +2433,7 @@ namespace Ginger.Run
             ObservableList<Button> winButtons = new ObservableList<Button>();
             if (mEditMode)
             {
-                title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                title = "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet);
 
             }
 
