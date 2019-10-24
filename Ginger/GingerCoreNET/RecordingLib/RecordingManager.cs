@@ -32,8 +32,12 @@ using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET
 {
+    public delegate void RecordingNotificationHandler(object sender, RecordingEventArgs e);
+
     public class RecordingManager
-    {       
+    {
+        public event RecordingNotificationHandler RecordingNotificationEvent;
+
         private bool CreatePOM { get; set; }
 
         ObservableList<ApplicationPOMModel> mApplicationPOMList;
@@ -250,6 +254,9 @@ namespace Amdocs.Ginger.CoreNET
                         PageChangedEventArgs pageChanged = (PageChangedEventArgs)args.EventArgs;
                         PlatformDriverPageChangedHandler(pageChanged);
                         break;
+                    case eRecordingEvent.StopRecording:
+                        RecordingNotificationEvent?.Invoke(this, args);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -325,18 +332,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (ListPOMObjectHelper != null)
                 {                    
                     foreach (var cPom in ListPOMObjectHelper)
-                    {                        
-                        //if (!string.IsNullOrEmpty(cPom.PageTitle) && !string.IsNullOrEmpty(cPom.PageURL))
-                        //{
-                        //    try
-                        //    {
-                        //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
-                        //    }
-                        //    catch (Exception e)
-                        //    {                                
-                        //        Reporter.ToLog(eLogLevel.ERROR, "Error while saving the POM", e);
-                        //    }                            
-                        //}
+                    {    
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(cPom.ApplicationPOM);
                     }
                 }
