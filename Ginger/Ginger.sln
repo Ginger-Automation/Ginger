@@ -83,9 +83,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPostgreSQL", "Postgre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerOracleDB", "GingerOracleDB\GingerOracleDB.csproj", "{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMongoDatabase", "GingerMongoDatabase\GingerMongoDatabase.csproj", "{E0664E22-69A3-42D1-B107-649E436B067D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerOracleTest", "GingerOracleTest\GingerOracleTest.csproj", "{FB3EF6FA-57F2-4AEA-BF6D-D15951DA5F4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerOracleTest", "GingerOracleTest\GingerOracleTest.csproj", "{FB3EF6FA-57F2-4AEA-BF6D-D15951DA5F4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -292,12 +290,6 @@ Global
 		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6B5EB0A-BFD8-4CE3-A15F-5180246D80F9}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
-		{E0664E22-69A3-42D1-B107-649E436B067D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0664E22-69A3-42D1-B107-649E436B067D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E0664E22-69A3-42D1-B107-649E436B067D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E0664E22-69A3-42D1-B107-649E436B067D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E0664E22-69A3-42D1-B107-649E436B067D}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0664E22-69A3-42D1-B107-649E436B067D}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 		{FB3EF6FA-57F2-4AEA-BF6D-D15951DA5F4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FB3EF6FA-57F2-4AEA-BF6D-D15951DA5F4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB3EF6FA-57F2-4AEA-BF6D-D15951DA5F4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
