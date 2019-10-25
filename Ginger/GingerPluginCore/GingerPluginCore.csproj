@@ -6,10 +6,10 @@
     <Authors>Ginger Automation Team</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Ginger.Plugin.Core</PackageId>
-    <Version>3.5.1</Version>
+    <Version>3.5.2</Version>
     <RootNamespace>Amdocs.Ginger.Plugin.Core</RootNamespace>
-    <AssemblyVersion>3.5.1.0</AssemblyVersion>
-    <FileVersion>3.5.1.0</FileVersion>
+    <AssemblyVersion>3.5.2.0</AssemblyVersion>
+    <FileVersion>3.5.2.0</FileVersion>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
@@ -25,8 +25,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>GingerUtils.dll</IncludeAssets>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>      
+      <!--           When creating Nuget package uncomment the line below, so GingerUtils will be part of the package, then comment again so build will not fail on Azure         -->
+      <!--<IncludeAssets>GingerUtils.dll</IncludeAssets>-->
     </ProjectReference>
   </ItemGroup>
 
