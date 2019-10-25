@@ -7,11 +7,11 @@ using MongoDB;
 
 namespace GingerMongoDB
 {
-    class Program
+    class PRogram
     {
         static void Main(string[] args)
         {
-            Console.Title = "MongoDb Database plugin";
+            Console.Title = "Ginger MongoDb Database plugin";
             Console.WriteLine("Starting MongoDb Database Plugin");
 
             using (GingerNodeStarter gingerNodeStarter = new GingerNodeStarter())
