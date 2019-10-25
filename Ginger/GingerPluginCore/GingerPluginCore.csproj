@@ -6,10 +6,11 @@
     <Authors>Ginger Automation Team</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Ginger.Plugin.Core</PackageId>
-    <Version>3.4.0</Version>
+    <Version>3.5.0</Version>
     <RootNamespace>Amdocs.Ginger.Plugin.Core</RootNamespace>
-    <AssemblyVersion>3.4.0.0</AssemblyVersion>
-    <FileVersion>3.4.0.0</FileVersion>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <FileVersion>3.5.0.0</FileVersion>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +24,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
+    <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" >
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
+
+
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+    </ItemGroup>
+  </Target>
 
 </Project>
