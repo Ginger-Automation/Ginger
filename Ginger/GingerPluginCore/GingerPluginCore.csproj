@@ -26,9 +26,14 @@
   <ItemGroup>
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" >
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>GingerUtils.dll</IncludeAssets>
     </ProjectReference>
   </ItemGroup>
-  
+
+
+  <Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))"/>
+    </ItemGroup>
+  </Target>
 
 </Project>
