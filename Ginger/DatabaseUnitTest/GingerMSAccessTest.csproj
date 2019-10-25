@@ -77,10 +77,6 @@
       <Project>{0c33c26a-5f96-4060-bb1b-583be9ee8478}</Project>
       <Name>GingerCoreNET</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MSAccessDB\GingerMSAccessDB.csproj">
-      <Project>{b8bdf167-9bca-4c19-85c6-87b338781f91}</Project>
-      <Name>GingerMSAccessDB</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestResources\SignUp.accdb">
