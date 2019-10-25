@@ -8,7 +8,7 @@
       xmlns:local="clr-namespace:Ginger.DataSource"
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      Height="400" Width="500" 
+      d:DesignHeight="450" d:DesignWidth="800"
 	Title="Import DataSource from Excel">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -34,15 +34,15 @@
                 </Grid.ColumnDefinitions>
                 
                 <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
-                    <Label Name="xPathLable" Style="{StaticResource @InputFieldLabelStyle}"  Content="Path:" VerticalAlignment="Top"  />
-                    <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File." Margin="5,0,0,0"  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" Style="{StaticResource @TextBoxStyle}" />
+                    <Label Name="xPathLable" Style="{StaticResource @InputFieldLabelStyle}"  Content="Path:" VerticalAlignment="Top" Margin="10,10,0,0" />
+                    <TextBox x:Name="xPathTextBox" Background="White" ToolTip="Please Provide Full  Valid Path To Create Excel Template File." Margin="15,0,0,0"  Text="" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="true" Style="{StaticResource @TextBoxStyle}" />
                 </StackPanel>
 
                 <DockPanel Grid.Row="0" Grid.Column="2">
                     <usercontrols:ucButton x:Name="xBrowseButton" ButtonType="ImageButton" ToolTip="Browse File" ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xBrowseButton_Click"  VerticalAlignment="Bottom" Margin="0,0,0,-10" />
                 </DockPanel>
                 
-                <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="0,10,0,0" />                
+                <Label Grid.Row="1" Name="xSaveExcelLable" Style="{StaticResource @LabelStyle}"  Content="Please save and close Excel after editing it." VerticalAlignment="Bottom" Margin="10,10,0,0" />                
             </Grid>
         </StackPanel>
     </Grid>
