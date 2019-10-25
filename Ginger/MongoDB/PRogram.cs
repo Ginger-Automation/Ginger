@@ -7,7 +7,7 @@ using MongoDB;
 
 namespace GingerMongoDB
 {
-    class PRogram
+    class Program
     {
         static void Main(string[] args)
         {
