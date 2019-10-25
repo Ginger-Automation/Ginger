@@ -1044,7 +1044,6 @@ namespace Ginger.Run
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
 
-                    GR.IsUpdateBusinessFlowRunList = true;
                 });
             }
 
