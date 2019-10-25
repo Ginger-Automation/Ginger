@@ -39,6 +39,10 @@
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.2.1" />    
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.2.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.2.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NJsonSchema" Version="9.13.10" />

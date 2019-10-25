@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Common;
@@ -352,14 +353,15 @@ namespace GingerCore.Environments
             {
                 return;
             };  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
+
+            
             switch (DBType)
             {
                 case eDBTypes.MSAccess:
-
-                    // DatabaseManager databaseManager = new DatabaseManager();
-
-                    // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    Assembly assembly = Assembly.LoadFrom(@"C:\Users\yaron\source\repos\Ginger\Ginger\MSAccessDB\bin\Debug\GingerMSAccessDB.exe");
+                    // TODO: get it from plugins
+                    
+                    string fileName = Path.Combine(PluginPackage.LocalPluginsFolder, "GingerMSAccess", "GingerMSAccessDB.exe");
+                    Assembly assembly = Assembly.LoadFrom(fileName);
                     databaseImpl = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
                     //database.InitReporter();
                     databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
