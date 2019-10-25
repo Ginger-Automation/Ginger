@@ -1043,6 +1043,7 @@ namespace Ginger.Run
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
                 });
             }
 
