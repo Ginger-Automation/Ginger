@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace GingerCoreNETUnitTest.DataBaseLib
 {
+    [Ignore]
     [TestClass]
     public class MSAccessPluginTest
     {

@@ -31,6 +31,7 @@ namespace UnitTests.NonUITests
 
     //  FIXME: ConfigurationManager  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+    [Ignore]
     [TestClass]
     public class DataBaseTest
     {
