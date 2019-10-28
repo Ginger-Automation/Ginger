@@ -84,7 +84,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     try
                     {
                         screenShotCountPerAction++;
-                        if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
+                        if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation || Path.GetDirectoryName(action.ScreenShots[s]).EndsWith("LiteDBImages"))
                         {
                             System.IO.File.Copy(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"), true);
                         }

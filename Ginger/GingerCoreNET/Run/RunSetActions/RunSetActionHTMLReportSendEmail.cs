@@ -266,9 +266,9 @@ namespace Ginger.Run.RunSetActions
                         //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
                         if (Directory.Exists(runSetFolder))
                         {
-                            //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: runSetFolder exist deleting folder: " + runSetFolder);
                             Directory.Delete(runSetFolder, true);
                         }
+                        WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
                     }
                 }
             }
