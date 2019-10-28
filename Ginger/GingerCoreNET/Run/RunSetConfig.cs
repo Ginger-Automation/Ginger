@@ -171,7 +171,10 @@ namespace Ginger.Run
         {
             foreach (GingerRunner GR in GingerRunners)
             {
-                GR.UpdateBusinessFlowsRunList();
+                if (GR.IsUpdateBusinessFlowRunList)
+                {
+                    GR.UpdateBusinessFlowsRunList();
+                }
             }
         }
 
