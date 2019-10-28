@@ -163,7 +163,7 @@ namespace Ginger.Actions
 
             QueryParamsGrid.SetTitleLightStyle = true;
             QueryParamsGrid.ClearTools();
-            QueryParamsGrid.ShowDelete = System.Windows.Visibility.Visible;
+            QueryParamsGrid.ShowDelete = Visibility.Visible;
 
             //List<GridColView> view = new List<GridColView>();
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -336,13 +336,13 @@ namespace Ginger.Actions
         {
             if (ValidationCfgComboBox.SelectedItem == null)
             {
-                RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
-                TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                RadioButtonsSection.Visibility = Visibility.Visible;
+                FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                SqlFile.Visibility = Visibility.Collapsed;
+                FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                DoCommit.Visibility = Visibility.Collapsed;
+                Keyspace.Visibility = Visibility.Collapsed;
+                TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                 return;
             }
 
@@ -352,26 +352,26 @@ namespace Ginger.Actions
             switch (validationType)
             {
                 case ActDBValidation.eDBValidationType.UpdateDB:
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
+                    RadioButtonsSection.Visibility = Visibility.Visible;
                     checkQueryType();
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                     FreeSQLLabel.Content = "Update DB SQL:";
-                    DoCommit.Visibility = System.Windows.Visibility.Visible;
-                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                    DoCommit.Visibility = Visibility.Visible;
+                    Keyspace.Visibility = Visibility.Collapsed;
                     break;
                 case ActDBValidation.eDBValidationType.FreeSQL:
                     checkQueryType();
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
+                    RadioButtonsSection.Visibility = Visibility.Visible;
                     if (nameof(ActDBValidation.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
                     {
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                        SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                        FreeSQLStackPanel.Visibility = Visibility.Visible;
+                        SqlFile.Visibility = Visibility.Collapsed;
                     }
                     else
                     {
                         
-                        SqlFile.Visibility = System.Windows.Visibility.Visible;
-                        FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                        SqlFile.Visibility = Visibility.Visible;
+                        FreeSQLStackPanel.Visibility = Visibility.Visible;
 
                         if(mAct.QueryParams != null)
                         {
@@ -382,10 +382,10 @@ namespace Ginger.Actions
                             QueryParamsGrid.DataSourceList = mAct.QueryParams;
                         }
                     }
-                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    DoCommit.Visibility = Visibility.Collapsed;
+                    TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                     FreeSQLLabel.Content = "Free SQL:";
-                    Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                    Keyspace.Visibility = Visibility.Collapsed;
                     break;
                 case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
                     checkQueryType();
@@ -397,20 +397,20 @@ namespace Ginger.Actions
                         {
                             if (db.DBType == Database.eDBTypes.Cassandra)
                             {
-                                Keyspace.Visibility = System.Windows.Visibility.Visible;
+                                Keyspace.Visibility = Visibility.Visible;
                             }
                             else
                             {
-                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                                Keyspace.Visibility = Visibility.Collapsed;
                             }
                         }
                     }
                     catch { }
-                    FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;                    
+                    FreeSQLStackPanel.Visibility = Visibility.Collapsed;
+                    RadioButtonsSection.Visibility = Visibility.Collapsed;
+                    TableColWhereStackPanel.Visibility = Visibility.Visible;
+                    DoCommit.Visibility = Visibility.Collapsed;
+                    SqlFile.Visibility = Visibility.Collapsed;                    
                     break;
                 case ActDBValidation.eDBValidationType.RecordCount:
                     checkQueryType();
@@ -422,20 +422,20 @@ namespace Ginger.Actions
                         {
                             if (db.DBType == Database.eDBTypes.Cassandra)
                             {
-                                Keyspace.Visibility = System.Windows.Visibility.Visible;
+                                Keyspace.Visibility = Visibility.Visible;
                             }
                             else
                             {
-                                Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                                Keyspace.Visibility = Visibility.Collapsed;
                             }
                         }
                     }
                     catch { }
-                    RadioButtonsSection.Visibility = System.Windows.Visibility.Collapsed;
-                    FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-                    DoCommit.Visibility = System.Windows.Visibility.Collapsed;
-                    SqlFile.Visibility = System.Windows.Visibility.Collapsed;
+                    RadioButtonsSection.Visibility = Visibility.Collapsed;
+                    FreeSQLStackPanel.Visibility = Visibility.Visible;
+                    TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                    DoCommit.Visibility = Visibility.Collapsed;
+                    SqlFile.Visibility = Visibility.Collapsed;
                     FreeSQLLabel.Content = @"Record count - SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)";
                     break;
 
@@ -483,14 +483,14 @@ namespace Ginger.Actions
             if (nameof(ActDBValidation.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
             {
 
-                SqlFile.Visibility = System.Windows.Visibility.Collapsed;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
+                SqlFile.Visibility = Visibility.Collapsed;
+                FreeSQLStackPanel.Visibility = Visibility.Visible;
 
             }
             else if (nameof(ActDBValidation.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
             {
-                SqlFile.Visibility = System.Windows.Visibility.Visible;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                SqlFile.Visibility = Visibility.Visible;
+                FreeSQLStackPanel.Visibility = Visibility.Collapsed;
             }
         } //TODO populate field selection changed
 
@@ -498,13 +498,13 @@ namespace Ginger.Actions
         {
             if (nameof(ActDBValidation.QueryTypeRadioButton) == ActDBValidation.eQueryType.FreeSQL.ToString())
             {
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Visible;
-                SqlFile.Visibility = System.Windows.Visibility.Collapsed;               
+                FreeSQLStackPanel.Visibility = Visibility.Visible;
+                SqlFile.Visibility = Visibility.Collapsed;               
             }
             else 
             {
-                SqlFile.Visibility = System.Windows.Visibility.Visible;
-                FreeSQLStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                SqlFile.Visibility = Visibility.Visible;
+                FreeSQLStackPanel.Visibility = Visibility.Collapsed;
             }
         }
 
