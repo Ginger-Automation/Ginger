@@ -73,20 +73,7 @@ namespace GingerCore.Environments
             }
         }
 
-
-        // TODO: remove !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public  static class Fields
-        {
-            public static string Name = "Name";
-            public static string Description = "Description";
-            public static string Type = "DBType";
-            public static string ConnectionString = "ConnectionString";
-            public static string TNS = "TNS";
-            public static string User = "User";
-            public static string Pass = "Pass";
-            public static string KeepConnectionOpen = "KeepConnectionOpen";
-            public static string DBVer = "DBVer";
-        }
+        
 
         private DbConnection oConn = null;        
 
@@ -103,14 +90,14 @@ namespace GingerCore.Environments
             set
             {
                 mKeepConnectionOpen = value;
-                OnPropertyChanged(Fields.KeepConnectionOpen);
+                OnPropertyChanged(nameof(Database.KeepConnectionOpen));
             }
         }
 
 
         private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(Fields.Name); } }
+        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(nameof(Database.Name)); } }
 
         [IsSerializedForLocalRepository]
         public string Description { get; set; }
@@ -128,7 +115,7 @@ namespace GingerCore.Environments
                 {
                     databaseImpl = null;
                     mDBType = value;
-                    OnPropertyChanged(Fields.Type);
+                    OnPropertyChanged(nameof(Database.DBType));
 
                     // TODO: remove from here
                     if (DBType == eDBTypes.Cassandra)
@@ -173,7 +160,7 @@ namespace GingerCore.Environments
 
         private string mConnectionString;
         [IsSerializedForLocalRepository]
-        public string ConnectionString { get { return mConnectionString; } set { mConnectionString = value; OnPropertyChanged(Fields.ConnectionString); } }
+        public string ConnectionString { get { return mConnectionString; } set { mConnectionString = value; OnPropertyChanged(nameof(Database.ConnectionString)); } }
         public string ConnectionStringCalculated
         {
             get
@@ -185,7 +172,7 @@ namespace GingerCore.Environments
 
         private string mTNS;
         [IsSerializedForLocalRepository]
-        public string TNS  {  get  { return mTNS; } set { mTNS = value; OnPropertyChanged(Fields.TNS); } }
+        public string TNS  {  get  { return mTNS; } set { mTNS = value; OnPropertyChanged(nameof(Database.TNS)); } }
         public string TNSCalculated
         {
             get
@@ -197,11 +184,11 @@ namespace GingerCore.Environments
 
         private string mDBVer;
         [IsSerializedForLocalRepository]
-        public string DBVer { get { return mDBVer; } set { mDBVer = value; OnPropertyChanged(Fields.DBVer); } }
+        public string DBVer { get { return mDBVer; } set { mDBVer = value; OnPropertyChanged(nameof(Database.DBVer)); } }
 
         private string mUser;
         [IsSerializedForLocalRepository]
-        public string User { get { return mUser; } set { mUser = value; OnPropertyChanged(Fields.User); } }
+        public string User { get { return mUser; } set { mUser = value; OnPropertyChanged(nameof(Database.User)); } }
         public string UserCalculated
         {
             get
@@ -213,7 +200,7 @@ namespace GingerCore.Environments
 
         private string mPass;
         [IsSerializedForLocalRepository]
-        public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(Fields.Pass); } }
+        public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(nameof(Database.Pass)); } }
         public string PassCalculated
         {
             get
@@ -358,8 +345,8 @@ namespace GingerCore.Environments
         public string GetSingleValue(string Table, string Column, string Where)
         {
             LoadDBAssembly();
-            string vv = databaseImpl.GetSingleValue(Table, Column, Where);  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            return vv;            
+            string value = databaseImpl.GetSingleValue(Table, Column, Where);  
+            return value;            
         }
 
 

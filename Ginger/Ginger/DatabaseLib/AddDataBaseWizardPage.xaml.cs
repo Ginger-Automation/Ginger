@@ -29,7 +29,7 @@ namespace Ginger.DatabaseLib
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            var v = WorkSpace.Instance.PlugInsManager.GetDatabase();
+            var v = WorkSpace.Instance.PlugInsManager.GetDatabaseList();
             xDatabaseList.ItemsSource = v;
             //mWizard = (AddActivityWizard)WizardEventArgs.Wizard;
             //switch (WizardEventArgs.EventType)

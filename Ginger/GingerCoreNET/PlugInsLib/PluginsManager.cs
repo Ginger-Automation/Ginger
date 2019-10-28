@@ -407,7 +407,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public List<string> GetDatabase()
+        public List<string> GetDatabaseList()
         {
             List<string> DBs = new List<string>();
             foreach (PluginPackage pluginPackage in mPluginPackages)
