@@ -2,27 +2,46 @@
 using Amdocs.Ginger.Common.DataBaseLib;
 using Amdocs.Ginger.Plugin.Core.Database;
 using Amdocs.Ginger.Repository;
-using System;
-using System.Collections.Generic;
+using GingerCore.Environments;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.DatabaseLib
 {
     class DataBaseProvider : IDBProvider
     {
-        public IDatabase GetDBImpl(string serviceId)
+        public IDatabase GetDBImpl(Database database)
         {
-            PluginPackage pluginPackage = WorkSpace.Instance.PlugInsManager.GetDatabasePluginPackage(serviceId);
+            PluginPackage pluginPackage;
 
-            // TODO: if null
 
-            string fileName = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
-            Assembly assembly = Assembly.LoadFrom(fileName);
+            // TODO: 
+            // Start Plugin
+            // Save GingerNodeProxy on DatabaseImpl
+            // Provide Idatabase which goes via socket to the DB plugin to run DB actions
+            
 
-            // TODO: find the correct interface class impl
-            IDatabase databaseImpl = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");   // Temp !!!!!!!!!!!!!!!!!!
+            //TODO: FIXME: Temp until we switch to db run using sockets !!!
+
+            IDatabase databaseImpl = null;
+
+            switch (database.DBType)
+            {
+                case Database.eDBTypes.MSAccess:
+                    pluginPackage = WorkSpace.Instance.PlugInsManager.GetDatabasePluginPackage("MSAccessService");
+                    // TODO: if null
+                    string fileName = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
+                    Assembly assembly = Assembly.LoadFrom(fileName);
+                    // TODO: find the correct interface class impl
+                    databaseImpl = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");   
+
+                    break;
+
+
+                    // TODO: all the rest
+            }
+
+            
 
             return databaseImpl;
         }

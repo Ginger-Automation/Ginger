@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Amdocs.Ginger.Plugin.Core.Database;
+﻿using Amdocs.Ginger.Plugin.Core.Database;
+using GingerCore.Environments;
 
 namespace Amdocs.Ginger.Common.DataBaseLib
 {
     public interface IDBProvider
     {
-        IDatabase GetDBImpl(string serviceId);
+        IDatabase GetDBImpl(Database database);
     }
 }

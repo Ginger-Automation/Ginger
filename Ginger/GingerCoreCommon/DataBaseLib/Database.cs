@@ -361,11 +361,9 @@ namespace GingerCore.Environments
             {
                 throw new ArgumentNullException("iDBProvider cannot be null and must be initialized");
             }
-
-            // TODO: find the plugin, folder dll and load instead of witch case !!!!!!!!!!!!!!!!
-
-            databaseImpl = iDBProvider.GetDBImpl("MSAccessService");
-            databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                                
+            
+            databaseImpl = iDBProvider.GetDBImpl(this);
+            databaseImpl.ConnectionString = ConnectionString; 
         }
 
         public Boolean Connect(bool displayErrorPopup = false)
