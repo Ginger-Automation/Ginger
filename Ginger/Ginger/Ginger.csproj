@@ -171,11 +171,6 @@
       <HintPath>..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\..\..\Program Files (x86)\Microsoft Visual Studio 14.0\Visual Studio Tools for Office\PIA\Office14\Microsoft.Office.Interop.Word.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
       <Private>True</Private>
@@ -4549,10 +4544,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CouchBase\GingerCouchBase.csproj">
-      <Project>{dba81a3c-316c-4633-8cf5-c2e48ea391df}</Project>
-      <Name>GingerCouchBase</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj">
       <Project>{651e20ac-3f67-4173-811b-ac1df4d92fcd}</Project>
       <Name>GingerAutoPilot</Name>
