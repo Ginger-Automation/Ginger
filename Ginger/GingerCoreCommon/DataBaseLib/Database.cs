@@ -90,17 +90,26 @@ namespace GingerCore.Environments
             set
             {
                 mKeepConnectionOpen = value;
-                OnPropertyChanged(nameof(Database.KeepConnectionOpen));
+                OnPropertyChanged(nameof(KeepConnectionOpen));
             }
         }
 
 
         private string mName;
         [IsSerializedForLocalRepository]
-        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(nameof(Database.Name)); } }
+        public string Name { get { return mName; } set { mName = value; OnPropertyChanged(nameof(Name)); } }
 
         [IsSerializedForLocalRepository]
         public string Description { get; set; }
+
+
+        private string mServiceID;
+        [IsSerializedForLocalRepository]
+        public string ServiceID { get { return mServiceID; } set { mServiceID = value; OnPropertyChanged(nameof(ServiceID)); } }
+
+
+
+        // TODO: Obsolete remove after moving to DB pluguins
         public eDBTypes mDBType;
         [IsSerializedForLocalRepository]
         public eDBTypes DBType 
@@ -115,7 +124,7 @@ namespace GingerCore.Environments
                 {
                     databaseImpl = null;
                     mDBType = value;
-                    OnPropertyChanged(nameof(Database.DBType));
+                    OnPropertyChanged(nameof(DBType));
 
                     // TODO: remove from here
                     if (DBType == eDBTypes.Cassandra)
@@ -160,7 +169,7 @@ namespace GingerCore.Environments
 
         private string mConnectionString;
         [IsSerializedForLocalRepository]
-        public string ConnectionString { get { return mConnectionString; } set { mConnectionString = value; OnPropertyChanged(nameof(Database.ConnectionString)); } }
+        public string ConnectionString { get { return mConnectionString; } set { mConnectionString = value; OnPropertyChanged(nameof(ConnectionString)); } }
         public string ConnectionStringCalculated
         {
             get
@@ -172,7 +181,7 @@ namespace GingerCore.Environments
 
         private string mTNS;
         [IsSerializedForLocalRepository]
-        public string TNS  {  get  { return mTNS; } set { mTNS = value; OnPropertyChanged(nameof(Database.TNS)); } }
+        public string TNS  {  get  { return mTNS; } set { mTNS = value; OnPropertyChanged(nameof(TNS)); } }
         public string TNSCalculated
         {
             get
@@ -184,11 +193,11 @@ namespace GingerCore.Environments
 
         private string mDBVer;
         [IsSerializedForLocalRepository]
-        public string DBVer { get { return mDBVer; } set { mDBVer = value; OnPropertyChanged(nameof(Database.DBVer)); } }
+        public string DBVer { get { return mDBVer; } set { mDBVer = value; OnPropertyChanged(nameof(DBVer)); } }
 
         private string mUser;
         [IsSerializedForLocalRepository]
-        public string User { get { return mUser; } set { mUser = value; OnPropertyChanged(nameof(Database.User)); } }
+        public string User { get { return mUser; } set { mUser = value; OnPropertyChanged(nameof(User)); } }
         public string UserCalculated
         {
             get
@@ -200,7 +209,7 @@ namespace GingerCore.Environments
 
         private string mPass;
         [IsSerializedForLocalRepository]
-        public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(nameof(Database.Pass)); } }
+        public string Pass { get { return mPass; } set { mPass = value; OnPropertyChanged(nameof(Pass)); } }
         public string PassCalculated
         {
             get

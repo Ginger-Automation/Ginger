@@ -11,7 +11,7 @@
     <Grid>
         <StackPanel>
             <Label>Installed Database plugins</Label>
-            <ListBox x:Name="xDatabaseList"></ListBox>
+            <ComboBox x:Name="xDatabaseList"></ComboBox>
             <Label>Add New Database type</Label>
             <Button Width="200">Search Database plugins</Button>
         </StackPanel>

@@ -14,6 +14,8 @@ namespace Ginger.DatabaseLib
 
         public EnvApplication EnvApplication { get; set; }
 
+        public string ServiceID { get; set; }
+
         public AddDatabaseWizard(EnvApplication envApplication)
         {
             EnvApplication = envApplication;
@@ -25,8 +27,11 @@ namespace Ginger.DatabaseLib
 
         public override void Finish()
         {
-            Database db = new Database();
-            db.DBType = Database.eDBTypes.MSAccess;
+            // !!!!? FIXME
+
+
+            Database db = new Database();            
+            db.ServiceID = ServiceID;
             db.ConnectionString = "???????????";            
             EnvApplication.Dbs.Add(db);
         }
