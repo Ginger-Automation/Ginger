@@ -36,6 +36,15 @@ namespace Amdocs.Ginger.CoreNET.DatabaseLib
                     databaseImpl = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");   
 
                     break;
+                case Database.eDBTypes.MySQL:
+                    pluginPackage = WorkSpace.Instance.PlugInsManager.GetDatabasePluginPackage("MySQLService");
+                    // TODO: if null
+                    string fileName2 = Path.Combine(pluginPackage.Folder, pluginPackage.StartupDLL);
+                    Assembly assembly2 = Assembly.LoadFrom(fileName2);
+                    // TODO: find the correct interface class impl
+                    databaseImpl = (IDatabase)assembly2.CreateInstance("MySQLDatabase.MYSQLDBConnection");                    
+
+                    break;
 
 
                     // TODO: all the rest

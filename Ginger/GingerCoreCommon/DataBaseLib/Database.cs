@@ -239,74 +239,7 @@ namespace GingerCore.Environments
         public string NameBeforeEdit;
 
        
-        //public string GetConnectionString()
-        //{
-        //    string connStr = null;
-        //    bool res;
-        //    res = false;
-
-        //    if (String.IsNullOrEmpty(ConnectionStringCalculated) == false)
-        //    {
-                
-
-        //        connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
-
-        //        // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //        String deCryptValue = "aaa"; // EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-        //        if (res == true)                
-        //        {
-        //            connStr = connStr.Replace("{PASS}", deCryptValue);
-        //        }                
-        //        else
-        //        {
-        //            connStr = connStr.Replace("{PASS}", PassCalculated);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        String strConnString = TNSCalculated;
-        //        String strProvider;
-        //        connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
-
-        //        // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //        String deCryptValue = "aaa"; // EncryptionHandler.DecryptString(PassCalculated, ref res, false);  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        //        if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
-        //        else { connStr = connStr + "Password=" + PassCalculated + ";"; }
-
-        //        if (DBType == eDBTypes.MSAccess)
-        //        {
-        //            if (strConnString.Contains(".accdb")) strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-        //            else strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
-
-        //            connStr = strProvider + connStr;
-        //        }
-        //        else if (DBType == eDBTypes.DB2)
-        //        {
-        //            connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + "PWD=" + deCryptValue;
-        //        }
-        //        else if (DBType == eDBTypes.PostgreSQL)
-        //        {
-        //            string[] host = TNSCalculated.Split(':');
-        //            if (host.Length == 2)
-        //            {
-        //                connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], UserCalculated, deCryptValue, Name);
-        //            }
-        //            else
-        //            {
-        //                //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-        //                connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNSCalculated, UserCalculated, deCryptValue, Name);
-        //            }
-        //        }
-        //        else if (DBType == eDBTypes.MySQL)
-        //        {
-        //            connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + ";PWD=" + deCryptValue;
-        //        }
-                
-        //    }
-
-        //    return connStr;
-        //}
+        
         
         private DateTime LastConnectionUsedTime;
 
