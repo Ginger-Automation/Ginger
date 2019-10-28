@@ -18,7 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.DatabaseLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
@@ -32,7 +32,6 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
-using GingerCore.Variables;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -429,8 +428,8 @@ namespace amdocs.ginger.GingerCoreNET
                     UserProfile.AddSolutionToRecent(solution);
                 }
 
-                // PlugInsManager = new PluginsManager();
-                // mPluginsManager.Init(SolutionRepository);
+                Database.iDBProvider = new DataBaseProvider();
+
 
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;

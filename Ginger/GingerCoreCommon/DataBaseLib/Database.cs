@@ -21,10 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.DataBaseLib;
 using Amdocs.Ginger.Plugin.Core.Database;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
@@ -348,8 +347,8 @@ namespace GingerCore.Environments
             return b;
         }
 
+        public static IDBProvider iDBProvider { get; set; }
 
-        
         void LoadDBAssembly()
         {
             if (databaseImpl != null) 
@@ -357,43 +356,16 @@ namespace GingerCore.Environments
                 return;
             };  //TODO: Add check that the db is as DBType else replace or any prop change then reset conn string
 
-            
-            // TODO: find the plugin, folder dll and load instead of wwitch case
 
-            switch (DBType)
+            if (iDBProvider == null)
             {
-                case eDBTypes.MSAccess:
-                    // TODO: get it from plugins
-                    
-                    string fileName = Path.Combine(PluginPackage.LocalPluginsFolder, "GingerMSAccess", "GingerMSAccessDB.exe");
-                    Assembly assembly = Assembly.LoadFrom(fileName);
-                    databaseImpl = (IDatabase)assembly.CreateInstance("MSAccessDB.MSAccessDBCon");
-                    //database.InitReporter();
-                    databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
-                    break;
-
-                case eDBTypes.Oracle:
-                    // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\GingerOracleDB\bin\Debug\netstandard2.0\GingerOracleDB.dll");
-                    databaseImpl = (IDatabase)assembly.CreateInstance("Oracle.GingerOracleConnection");
-                    
-                    //database.InitReporter();
-                    databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
-                    break;
-                case eDBTypes.MongoDb:
-                    // FIXME Temp !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    assembly = Assembly.LoadFrom(@"C:\Users\deshpank\source\Ginger\Ginger\MongoDB\bin\Debug\netcoreapp2.0\GingerMongoDB.dll");
-                    databaseImpl = (IDatabase)assembly.CreateInstance("MongoDB.MongoDbConnection");
-
-                    //database.InitReporter();
-                    databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                    
-                    break;
-                // TODO: add the rest DBs
-                case eDBTypes.Cassandra:
-                    break;
-                default:
-                    throw new Exception("LoadAssembly failed for: " + DBType);
+                throw new ArgumentNullException("iDBProvider cannot be null and must be initialized");
             }
+
+            // TODO: find the plugin, folder dll and load instead of witch case !!!!!!!!!!!!!!!!
+
+            databaseImpl = iDBProvider.GetDBImpl("MSAccessService");
+            databaseImpl.ConnectionString = ConnectionString; // @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePath + ";";                                
         }
 
         public Boolean Connect(bool displayErrorPopup = false)

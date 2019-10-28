@@ -425,6 +425,27 @@ namespace Amdocs.Ginger.Repository
             return DBs;
         }
 
+        public PluginPackage GetDatabasePluginPackage(string serviceId)
+        {
+        
+            foreach (PluginPackage pluginPackage in mPluginPackages)
+            {
+                foreach (PluginServiceInfo pluginServiceInfo in pluginPackage.Services)
+                {
+                    if (pluginServiceInfo.Interfaces.Contains(nameof(IDatabase)))
+                    {
+
+                        if (pluginServiceInfo.ServiceId == serviceId)
+                        {
+                            return pluginPackage;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
 
 
     }

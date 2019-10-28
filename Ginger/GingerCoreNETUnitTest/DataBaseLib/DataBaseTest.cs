@@ -38,8 +38,7 @@ namespace UnitTests.NonUITests
         static GingerRunner mGR = null;
 
         static BusinessFlow mBF;
-
-        static DatabaseManager mDatabaseManager;
+        
 
         //[TestInitialize]
         //public void TestInitialize()
