@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using CouchBase;
 using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Environments;
@@ -251,27 +250,27 @@ namespace Ginger.Actions
             string DBName = DBNameComboBox.Text;
             db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null) return;
-            if (db.DBType == Database.eDBTypes.Cassandra)
-            {
-                //NoSqlBase NoSqlDriver = null;
-                //NoSqlDriver = new GingerCassandra(db);
+            //if (db.DBType == Database.eDBTypes.Cassandra)
+            //{
+            //    //NoSqlBase NoSqlDriver = null;
+            //    //NoSqlDriver = new GingerCassandra(db);
 
-                //List<string> keyspace = NoSqlDriver.GetKeyspaceList();
-                //foreach (string s in keyspace)
-                //{
-                //    KeySpaceComboBox.Items.Add(s);
-                //}
-            }
-            else if (db.DBType == Database.eDBTypes.Couchbase)
-            {
-                CouchBaseConnection couchBaseConnection = new CouchBaseConnection();
+            //    //List<string> keyspace = NoSqlDriver.GetKeyspaceList();
+            //    //foreach (string s in keyspace)
+            //    //{
+            //    //    KeySpaceComboBox.Items.Add(s);
+            //    //}
+            //}
+            //else if (db.DBType == Database.eDBTypes.Couchbase)
+            //{
+            //    CouchBaseConnection couchBaseConnection = new CouchBaseConnection();
                
-                List<string> keyspace = couchBaseConnection.GetKeyspaceList();
-                foreach (string s in keyspace)
-                {
-                    KeySpaceComboBox.Items.Add(s);
-                }
-            }
+            //    List<string> keyspace = couchBaseConnection.GetKeyspaceList();
+            //    foreach (string s in keyspace)
+            //    {
+            //        KeySpaceComboBox.Items.Add(s);
+            //    }
+            //}
         }
 
         private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
