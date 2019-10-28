@@ -645,6 +645,9 @@
     <Compile Include="Activities\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DatabaseLib\AddDatabaseConnWizardPage.xaml.cs">
+      <DependentUpon>AddDatabaseConnWizardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DatabaseLib\AddDatabaseWizard.cs" />
     <Compile Include="DatabaseLib\AddDataBaseWizardPage.xaml.cs">
       <DependentUpon>AddDataBaseWizardPage.xaml</DependentUpon>
@@ -2963,6 +2966,10 @@
     <Page Include="BusinessFlowWindows\BusinessFlowViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DatabaseLib\AddDatabaseConnWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DatabaseLib\AddDataBaseWizardPage.xaml">
       <Generator>MSBuild:Compile</Generator>

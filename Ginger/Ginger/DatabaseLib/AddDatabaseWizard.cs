@@ -1,10 +1,6 @@
 ﻿using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.DatabaseLib
 {
@@ -16,23 +12,23 @@ namespace Ginger.DatabaseLib
 
         public string ServiceID { get; set; }
 
+        public string ConnectionString { get; set; }
+
         public AddDatabaseWizard(EnvApplication envApplication)
         {
             EnvApplication = envApplication;
             AddPage(Name: "General Details", Title: "General Details", SubTitle: String.Format("Add Database to App env"), Page: new AddDataBaseWizardPage());
 
-            // AddPage(Name: String.Format("{0} Configurations", GingerDicser.GetTermResValue(eTermResKey.Activity)), Title: String.Format("{0} Configurations", GingerDicser.GetTermResValue(eTermResKey.Activity)), SubTitle: String.Format("Set New {0} Configurations", GingerDicser.GetTermResValue(eTermResKey.Activity)), Page: new AddActivityConfigsPage());
+            AddPage(Name: "Connection String", Title: "Connection String", SubTitle: String.Format("Add Database to App env"), Page: new AddDatabaseConnWizardPage());
+            
         }
         
 
         public override void Finish()
-        {
-            // !!!!? FIXME
-
-
+        {            
             Database db = new Database();            
             db.ServiceID = ServiceID;
-            db.ConnectionString = "???????????";            
+            db.ConnectionString = ConnectionString;
             EnvApplication.Dbs.Add(db);
         }
     }
