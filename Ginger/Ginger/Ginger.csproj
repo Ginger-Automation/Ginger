@@ -1725,8 +1725,8 @@
     <Compile Include="Actions\UserControls\UCFlowControlAction.xaml.cs">
       <DependentUpon>UCFlowControlAction.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\ValidationDBPage.xaml.cs">
-      <DependentUpon>ValidationDBPage.xaml</DependentUpon>
+    <Compile Include="Actions\ActionEditPages\Database\ActDatabaseEditPage.xaml.cs">
+      <DependentUpon>ActDatabaseEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ValueExpression\ValueExpressionEditorPage.xaml.cs">
       <DependentUpon>ValueExpressionEditorPage.xaml</DependentUpon>
@@ -4184,7 +4184,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActionEditPages\ValidationDBPage.xaml">
+    <Page Include="Actions\ActionEditPages\Database\ActDatabaseEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

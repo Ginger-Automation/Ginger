@@ -44,7 +44,7 @@ namespace GingerCore.Actions
             TBH.AddText("This action contains list of options which will allow you to run simple or complicated SQL.");            
         }        
 
-        public override string ActionEditPage { get { return "ValidationDBPage"; } }
+        public override string ActionEditPage { get { return "ActDatabaseEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 

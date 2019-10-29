@@ -39,7 +39,7 @@ namespace Ginger.Actions
     /// <summary>
     /// Interaction logic for ValidationDBPage.xaml
     /// </summary>
-    public partial class ValidationDBPage : Page
+    public partial class ActDatabaseEditPage : Page
     {
         private ActDBValidation mAct;
 
@@ -47,7 +47,7 @@ namespace Ginger.Actions
         EnvApplication EA;
         Database db;
 
-        public ValidationDBPage(ActDBValidation act)
+        public ActDatabaseEditPage(ActDBValidation act)
         {
             InitializeComponent();
         

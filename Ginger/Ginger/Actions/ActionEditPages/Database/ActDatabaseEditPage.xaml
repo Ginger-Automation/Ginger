@@ -1,4 +1,4 @@
-    <Page   x:Class="Ginger.Actions.ValidationDBPage"
+<Page   x:Class="Ginger.Actions.ActDatabaseEditPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,15 +9,17 @@
         mc:Ignorable="d" 
       d:DesignHeight="556.717" d:DesignWidth="728.358"
 	Title="ValidationDBPage" >
-        
+
     <Grid x:Name="pageGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="170*"/>
             <RowDefinition Height="387*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150*"/>
-            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="200*"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="300*"/>
 
         </Grid.ColumnDefinitions>
         <Grid.Resources>
@@ -27,23 +29,22 @@
         </Grid.Resources>
         <StackPanel >
             <Label Style="{StaticResource @InputFieldLabelStyle}">Environment Application Name:</Label>
-            <DockPanel HorizontalAlignment="Left" >
-                <ComboBox x:Name="AppNameComboBox" SelectionChanged="AppNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="950"></ComboBox>
-                <Button x:Name="AppNamVEButton" Content="..." Click="AppNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
-            </DockPanel>
+            <Grid>
+                <ComboBox x:Name="AppNameComboBox" Margin="0,0,35,0" SelectionChanged="AppNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" ></ComboBox>
+                <Button x:Name="AppNamVEButton" HorizontalAlignment="Right" Content="..." Click="AppNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
+            </Grid>
 
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Environment Application DB Name:</Label>
-                <DockPanel HorizontalAlignment="Left" >
-                    <ComboBox x:Name="DBNameComboBox" SelectionChanged="DBNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="950"></ComboBox>
-                    <Button x:Name="DBNamVEButton" Content="..." Click="DBNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
-                </DockPanel>
-            </StackPanel>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Environment Application DB Name:</Label>
+            <Grid>
+                <ComboBox x:Name="DBNameComboBox" Margin="0,0,35,0" SelectionChanged="DBNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left"></ComboBox>
+                <Button x:Name="DBNamVEButton" HorizontalAlignment="Right" Content="..." Click="DBNamVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,0,0" Width="30" Height="24" RenderTransformOrigin="2.119,0.674"/>
+            </Grid>
             
             <Label Style="{StaticResource @InputFieldLabelStyle}">DB Operation Type:</Label>
-            <ComboBox x:Name="ValidationCfgComboBox" SelectionChanged="ValidationCfgComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" Width="950" HorizontalAlignment="Left"></ComboBox>
+            <ComboBox x:Name="ValidationCfgComboBox" Margin="0,0,35,0" SelectionChanged="ValidationCfgComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
 
         </StackPanel>
+        
         <StackPanel Grid.Row="1">
             <StackPanel x:Name="RadioButtonsSection">
                 <Label x:Name="RadioButtonsLabel"  Style="{StaticResource @InputFieldLabelStyle}">Input type:</Label>
@@ -65,9 +66,9 @@
             </StackPanel>
             <StackPanel x:Name="FreeSQLStackPanel">
                 <Label x:Name="FreeSQLLabel"  Style="{StaticResource @InputFieldLabelStyle}">Free SQL:</Label>
-                <StackPanel Orientation="Horizontal">
-                    <Actions:UCValueExpression x:Name="SQLUCValueExpression" Width="980"/>
-                </StackPanel>
+                
+                    <Actions:UCValueExpression x:Name="SQLUCValueExpression" Height="100"/>
+                
             </StackPanel>
             <StackPanel x:Name="SqlFile">
                 <Label x:Name="SQLInputFile"  Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Default path recommended is ~\Documents\SQL">SQL File Path:</Label>
@@ -78,7 +79,7 @@
             </StackPanel>
 
             <StackPanel x:Name="TableColWhereStackPanel" Height="244">
-                
+
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Table:</Label>
                 <DockPanel HorizontalAlignment="Left"  >
                     <ComboBox x:Name="TablesComboBox" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" Width="950"></ComboBox>
@@ -90,18 +91,18 @@
                     <Button x:Name="ColumnsVEButton" Content="..." Click="ColumnsVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
                 </DockPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Where:</Label>
-                
+
                 <TextBox x:Name="txtWhere" Width="980" HorizontalAlignment="Left"></TextBox>
-               
+
             </StackPanel>
 
             <StackPanel x:Name="DoCommit">
                 <CheckBox x:Name="CommitDB"  Content="Do Commit after Update"  HorizontalAlignment="Left" Margin="10,10,0,0"/>
             </StackPanel>
-            
-            
+
+
         </StackPanel>
-        <Button x:Name="xViewButton" Click="XViewButton_Click" Grid.Column="1">View</Button>
-        <DataGrid x:Name="xDataGrid" Grid.Column="1" Grid.Row="1" ></DataGrid>
+        <Button x:Name="xViewButton" Click="XViewButton_Click" Grid.Column="2" Margin="27,140,191,10" Height="20">View</Button>
+        <DataGrid x:Name="xDataGrid" Grid.Column="2" Grid.Row="1" />
     </Grid>
 </Page>
