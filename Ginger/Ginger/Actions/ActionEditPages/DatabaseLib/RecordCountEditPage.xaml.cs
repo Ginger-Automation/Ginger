@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Ginger.Actions.ActionEditPages.Database
+namespace Ginger.Actions.ActionEditPages.DatabaseLib
 {
     /// <summary>
     /// Interaction logic for RecordCountEditPage.xaml

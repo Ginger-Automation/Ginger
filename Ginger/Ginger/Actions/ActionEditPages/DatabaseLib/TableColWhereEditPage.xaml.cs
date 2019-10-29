@@ -1,11 +1,13 @@
 ﻿using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using GingerCore.Environments;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Ginger.Actions.ActionEditPages.Database
+namespace Ginger.Actions.ActionEditPages.DatabaseLib
 {
     /// <summary>
     /// Interaction logic for TableColWhereEditPage.xaml
@@ -13,12 +15,13 @@ namespace Ginger.Actions.ActionEditPages.Database
     public partial class TableColWhereEditPage : Page
     {
         ActDBValidation mAct;
-        public TableColWhereEditPage(ActDBValidation act)
+        Database mDatabase;
+        public TableColWhereEditPage(ActDBValidation act, Database database)
         {
             InitializeComponent();
 
             mAct = act;
-
+            mDatabase = database;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, act, nameof(ActDBValidation.Table));
             // GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, act, nameof(ActDBValidation.Keyspace));
@@ -33,34 +36,24 @@ namespace Ginger.Actions.ActionEditPages.Database
             ColumnComboBox.AutoSelectIfOneItemOnly();
         }
 
-        //private void ComboAutoSelectIfOneItemOnly(ComboBox comboBox)
-        //{
-        //    if (comboBox.Items.Count == 1)
-        //    {
-        //        comboBox.SelectedItem = comboBox.Items[0];
-        //    }
-        //}
-
+        
         private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
         {
             try
             {
-                //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-                //Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
-                //// TablesComboBox.Items.Clear();
-                //string DBName = mAct.DBName;
-                //db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                //if (db == null) return;
-                //string KeySpace = KeySpaceComboBox.Text;
-                //List<string> Tables = db.GetTablesList(KeySpace);
-                //if (Tables == null)
-                //{
-                //    return;
-                //}
-                //foreach (string s in Tables)
-                //{
-                //    TablesComboBox.Items.Add(s);
-                //}
+                if (TablesComboBox.Items.Count > 0) return;
+                Mouse.OverrideCursor = Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");                
+
+                List<string> Tables = mDatabase.GetTablesList();  // !!!!!!!!!!!!!!!! "KeySpace"
+                if (Tables == null)
+                {
+                    return;
+                }
+                foreach (string table in Tables)
+                {
+                    TablesComboBox.Items.Add(table);
+                }
             }
             finally
             {
@@ -110,7 +103,9 @@ namespace Ginger.Actions.ActionEditPages.Database
             ColumnComboBox.Text = mAct.Column;
         }
 
+        private void xRefreshButton_Click(object sender, RoutedEventArgs e)
+        {
 
-
+        }
     }
 }

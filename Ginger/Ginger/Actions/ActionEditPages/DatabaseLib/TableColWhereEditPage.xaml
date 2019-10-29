@@ -1,4 +1,4 @@
-﻿<Page x:Class="Ginger.Actions.ActionEditPages.Database.TableColWhereEditPage"
+﻿<Page x:Class="Ginger.Actions.ActionEditPages.DatabaseLib.TableColWhereEditPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,13 +12,13 @@
 
             <Label Style="{StaticResource @InputFieldLabelStyle}">Table</Label>
             <Grid>
-                <ComboBox x:Name="TablesComboBox" Margin="0,0,30,0" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" ></ComboBox>
-                <Button x:Name="TablesVEButton" HorizontalAlignment="Right" Content="..." Click="TablesVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Width="30" Height="24"  />
+                <ComboBox x:Name="TablesComboBox" Margin="0,0,35,0" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" ></ComboBox>
+                <Button x:Name="TablesVEButton" HorizontalAlignment="Right" Content="..." Click="TablesVEButton_Click"  VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Width="30" Height="24"  />
             </Grid>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Column (Output value of this column)</Label>
             <Grid>
-                <ComboBox x:Name="ColumnComboBox" Margin="0,0,30,0" DropDownOpened="ColumnComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" ></ComboBox>
-                <Button x:Name="ColumnsVEButton" Content="..."  HorizontalAlignment="Right" Click="ColumnsVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24"/>
+                <ComboBox x:Name="ColumnComboBox" Margin="0,0,35,0" DropDownOpened="ColumnComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" ></ComboBox>
+                <Button x:Name="ColumnsVEButton" Content="..."  HorizontalAlignment="Right" Click="ColumnsVEButton_Click"  Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24"/>
             </Grid>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Where (example: ID=1)</Label>
 

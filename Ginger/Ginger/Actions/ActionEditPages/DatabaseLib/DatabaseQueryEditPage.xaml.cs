@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Ginger.Actions.ActionEditPages.Database
+namespace Ginger.Actions.ActionEditPages.DatabaseLib
 {
     /// <summary>
     /// Interaction logic for DatabaseQueryEditPage.xaml

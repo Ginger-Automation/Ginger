@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.DatabaseLib
 {
-    class DataBaseProvider : IDBProvider
+    class DatabaseProvider : IDBProvider
     {
         public IDatabase GetDBImpl(Database database)
         {

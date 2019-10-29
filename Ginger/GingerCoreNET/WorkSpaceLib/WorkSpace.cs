@@ -428,7 +428,7 @@ namespace amdocs.ginger.GingerCoreNET
                     UserProfile.AddSolutionToRecent(solution);
                 }
 
-                Database.iDBProvider = new DataBaseProvider();
+                Database.iDBProvider = new DatabaseProvider();
 
 
                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));

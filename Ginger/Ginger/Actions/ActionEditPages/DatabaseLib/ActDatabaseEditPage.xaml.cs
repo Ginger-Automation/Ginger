@@ -18,7 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Actions.ActionEditPages.Database;
+using Ginger.Actions.ActionEditPages.DatabaseLib;
 using GingerCore.Actions;
 using GingerCore.Environments;
 using System;
@@ -36,9 +36,9 @@ namespace Ginger.Actions
     {
         private ActDBValidation mAct;
 
-        ProjEnvironment pe;
-        EnvApplication EA;
-        Database db;
+        ProjEnvironment mProjEnvironment;
+        EnvApplication mEnvApplication;
+        Database mDatabase;
 
         public ActDatabaseEditPage(ActDBValidation act)
         {
@@ -122,13 +122,13 @@ namespace Ginger.Actions
 
             if (Context.GetAsContext(mAct.Context) != null && Context.GetAsContext(mAct.Context).Environment != null)
             {                
-                pe = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == Context.GetAsContext(mAct.Context).Environment.Name select e).FirstOrDefault();
+                mProjEnvironment = (from e in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where e.Name == Context.GetAsContext(mAct.Context).Environment.Name select e).FirstOrDefault();
 
-                if (pe == null)
+                if (mProjEnvironment == null)
                 {
                     return;
                 }
-                foreach (EnvApplication ea in pe.Applications)
+                foreach (EnvApplication ea in mProjEnvironment.Applications)
                 {
                     xAppNameComboBox.Items.Add(ea.Name);
                 }
@@ -147,8 +147,8 @@ namespace Ginger.Actions
             if ((((ComboBox)sender).SelectedItem) == null) return;
 
             string app = ((ComboBox)sender).SelectedItem.ToString();
-            EA = (from a in pe.Applications where a.Name == app select a).FirstOrDefault();
-            foreach (Database db in EA.Dbs)
+            mEnvApplication = (from a in mProjEnvironment.Applications where a.Name == app select a).FirstOrDefault();
+            foreach (Database db in mEnvApplication.Dbs)
             {
                 xDBNameComboBox.Items.Add(db.Name);
                 
@@ -173,9 +173,10 @@ namespace Ginger.Actions
             // FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             // KeySpaceComboBox.Items.Clear();
-            string DBName = xDBNameComboBox.Text;
-            db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-            if (db == null) return;
+            // string DBName = xDBNameComboBox.Text;
+            SetDatabase();
+            
+            if (mDatabase == null) return;
             //if (db.DBType == Database.eDBTypes.Cassandra)
             //{
             //    //NoSqlBase NoSqlDriver = null;
@@ -199,7 +200,10 @@ namespace Ginger.Actions
             //}
         }
 
-       
+        private void SetDatabase()
+        {
+            mDatabase = (Database)(from d in mEnvApplication.Dbs where d.Name == mAct.DBName select d).SingleOrDefault();
+        }
 
         private void ValidationCfgComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -214,7 +218,9 @@ namespace Ginger.Actions
             {                
                 return;
             }
-            
+
+            SetDatabase();
+
             ActDBValidation.eDBValidationType validationType = (ActDBValidation.eDBValidationType)xDBOperationComboBox.SelectedValue;
 
             switch (validationType)
@@ -240,8 +246,8 @@ namespace Ginger.Actions
                     //FreeSQLLabel.Content = "Free SQL:";
                     //Keyspace.Visibility = Visibility.Collapsed;
                     break;
-                case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
-                    OperationConfigFrame.SetContent(new TableColWhereEditPage(mAct));
+                case ActDBValidation.eDBValidationType.SimpleSQLOneValue:                                            
+                    OperationConfigFrame.SetContent(new TableColWhereEditPage(mAct, mDatabase));
                     
                     //checkQueryType();
                     //try

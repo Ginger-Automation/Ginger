@@ -426,16 +426,16 @@
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\Database\DatabaseQueryEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\DatabaseLib\DatabaseQueryEditPage.xaml.cs">
       <DependentUpon>DatabaseQueryEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\Database\RecordCountEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\DatabaseLib\RecordCountEditPage.xaml.cs">
       <DependentUpon>RecordCountEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\Database\TableColWhereEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\DatabaseLib\TableColWhereEditPage.xaml.cs">
       <DependentUpon>TableColWhereEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\Database\UpdateDatabaseEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\DatabaseLib\UpdateDatabaseEditPage.xaml.cs">
       <DependentUpon>UpdateDatabaseEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
@@ -1737,7 +1737,7 @@
     <Compile Include="Actions\UserControls\UCFlowControlAction.xaml.cs">
       <DependentUpon>UCFlowControlAction.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ActionEditPages\Database\ActDatabaseEditPage.xaml.cs">
+    <Compile Include="Actions\ActionEditPages\DatabaseLib\ActDatabaseEditPage.xaml.cs">
       <DependentUpon>ActDatabaseEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ValueExpression\ValueExpressionEditorPage.xaml.cs">
@@ -2683,19 +2683,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ActionEditPages\Database\DatabaseQueryEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\DatabaseLib\DatabaseQueryEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActionEditPages\Database\RecordCountEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\DatabaseLib\RecordCountEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActionEditPages\Database\TableColWhereEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\DatabaseLib\TableColWhereEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActionEditPages\Database\UpdateDatabaseEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\DatabaseLib\UpdateDatabaseEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -4212,7 +4212,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Actions\ActionEditPages\Database\ActDatabaseEditPage.xaml">
+    <Page Include="Actions\ActionEditPages\DatabaseLib\ActDatabaseEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
