@@ -151,12 +151,12 @@ namespace GingerCore.Environments
                 {
                     if (ProjEnvironment == null)
                     {
-                        ProjEnvironment = new Environments.ProjEnvironment();
+                        ProjEnvironment = new ProjEnvironment();
                     }
 
                     if (BusinessFlow == null)
                     {
-                        BusinessFlow = new GingerCore.BusinessFlow();
+                        BusinessFlow = new BusinessFlow();
                     }
 
                     mVE = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(ProjEnvironment, BusinessFlow, DSList);
@@ -273,14 +273,14 @@ namespace GingerCore.Environments
 
         public Boolean TestConnection()
         {
-            LoadDBAssembly();            
+            VerifyDBImpl();            
             bool b = databaseImpl.TestConnection();
             return b;
         }
 
         public static IDBProvider iDBProvider { get; set; }
 
-        void LoadDBAssembly()
+        void VerifyDBImpl()
         {
             if (databaseImpl != null) 
             {
@@ -299,7 +299,7 @@ namespace GingerCore.Environments
 
         public Boolean Connect(bool displayErrorPopup = false)
         {
-            LoadDBAssembly();
+            VerifyDBImpl();
             if (databaseImpl != null)
             {
                 return databaseImpl.TestConnection();                
@@ -335,43 +335,44 @@ namespace GingerCore.Environments
 
         public List<string> GetTablesList(string Keyspace = null)
         {
-            LoadDBAssembly();
+            VerifyDBImpl();
             return databaseImpl.GetTablesList();
         }
 
 
         public List<string> GetTablesColumns(string table)
         {
-            LoadDBAssembly();
+            VerifyDBImpl();
             return databaseImpl.GetTablesColumns(table);            
         }
         
-        public string fUpdateDB(string updateCmd, bool commit)
+        public string UpdateDB(string updateCmd, bool commit)
         {
-            LoadDBAssembly();
+            VerifyDBImpl();
             string dataTable = databaseImpl.RunUpdateCommand(updateCmd, commit);
             return dataTable;            
         }
 
         public string GetSingleValue(string Table, string Column, string Where)
         {
-            LoadDBAssembly();
+            VerifyDBImpl();
             string value = databaseImpl.GetSingleValue(Table, Column, Where);  
             return value;            
         }
 
 
-        public DataTable FreeSQL(string SQL, int? timeout=null)
+        public DataTable QueryDatabase(string query, int? timeout=null)
         {            
-            LoadDBAssembly();
-            DataTable dataTable = databaseImpl.DBQuery(SQL);
+            VerifyDBImpl();
+            DataTable dataTable = databaseImpl.DBQuery(query);
             return dataTable;           
         }
 
 
-        internal int GetRecordCount(string SQL)
+        internal int GetRecordCount(string query)
         {
-            int count = databaseImpl.GetRecordCount(SQL);
+            VerifyDBImpl();
+            int count = databaseImpl.GetRecordCount(query);
             return count;
         }
        

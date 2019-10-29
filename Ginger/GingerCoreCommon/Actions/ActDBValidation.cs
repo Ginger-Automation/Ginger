@@ -127,6 +127,7 @@ namespace GingerCore.Actions
             set
             {
                 AddOrUpdateInputParamValue("SQL", value);
+                OnPropertyChanged(nameof(SQL));
             }
         }
 
@@ -365,7 +366,7 @@ namespace GingerCore.Actions
                 if (string.IsNullOrEmpty(SQL))
                     Error = "Fail to run Update SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
                
-                string val = DB.fUpdateDB(SQL, CommitDB_Value);
+                string val = DB.UpdateDB(SQL, CommitDB_Value);
                     this.AddOrUpdateReturnParamActual("Impacted Lines", val);
                 
             }
@@ -418,7 +419,7 @@ namespace GingerCore.Actions
                 foreach (ActInputValue param in QueryParams)
                     SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
 
-                DataTable DBResponse = DB.FreeSQL(SQL, queryTimeout);
+                DataTable DBResponse = DB.QueryDatabase(SQL, queryTimeout);
 
                 int row = 0;
                 int col = 0;
@@ -509,13 +510,13 @@ namespace GingerCore.Actions
             bool b = SetDBConnection();
             if (!b)
             {
-                Reporter.ToUser(eUserMsgKey.ActionIDNotFound); // FIXME !!!!!!!!!!!!!!!
+                throw new Exception("GetResultView " + Error);                
             }
             // DB.Connect();
             switch (DBValidationType)
             {
                 case eDBValidationType.FreeSQL:                    
-                    DBResponse = DB.FreeSQL(SQL, 1000);                    
+                    DBResponse = DB.QueryDatabase(SQL, 1000);                    
                     break;
                 case eDBValidationType.SimpleSQLOneValue:
                     string value = GetSingleValue();
@@ -530,7 +531,8 @@ namespace GingerCore.Actions
                     DBResponse.Rows.Add(new string[] { count });
                     break;
                 case eDBValidationType.UpdateDB:
-                    // TODOL: fix me
+                    string rc = DB.UpdateDB(SQL, false); //  .FreeSQL(SQL, 1000);
+                    // TODO: fix me
                     break;
             }
 

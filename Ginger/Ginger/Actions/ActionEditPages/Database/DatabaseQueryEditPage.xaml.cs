@@ -23,9 +23,8 @@ namespace Ginger.Actions.ActionEditPages.Database
             InitializeComponent();
             
             mAct = act;
-
-            // SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActDBValidation.SQL)));
-            SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActDBValidation.SQL));
+            
+            xSQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActDBValidation.SQL));
             
 
             //Read from sql file

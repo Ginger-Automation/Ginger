@@ -58,7 +58,7 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDBOperationComboBox, ComboBox.SelectedValueProperty, act, nameof(ActDBValidation.DBValidationType));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAppNameComboBox, ComboBox.TextProperty, act, nameof( ActDBValidation.AppName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDBNameComboBox, ComboBox.TextProperty, act, nameof (ActDBValidation.DBName));            
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(nameof (ActDBValidation.CommitDB)));
+            
             
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
@@ -208,11 +208,10 @@ namespace Ginger.Actions
 
         private void SetVisibleControlsForAction()
         {
-
             OperationConfigFrame.SetContent(null);
+
             if (xDBOperationComboBox.SelectedItem == null)
-            {
-                
+            {                
                 return;
             }
             
@@ -221,12 +220,11 @@ namespace Ginger.Actions
             switch (validationType)
             {
                 case ActDBValidation.eDBValidationType.UpdateDB:
-                    
+                    OperationConfigFrame.SetContent(new UpdateDatabaseEditPage(mAct));
                     // checkQueryType();                    
                     break;
                 case ActDBValidation.eDBValidationType.FreeSQL:
-                    DatabaseQueryEditPage editPage = new DatabaseQueryEditPage(mAct);
-                    OperationConfigFrame.SetContent(editPage);
+                    OperationConfigFrame.SetContent(new DatabaseQueryEditPage(mAct));                    
                     // checkQueryType();
 
                     //{
@@ -243,6 +241,8 @@ namespace Ginger.Actions
                     //Keyspace.Visibility = Visibility.Collapsed;
                     break;
                 case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
+                    OperationConfigFrame.SetContent(new TableColWhereEditPage(mAct));
+                    
                     //checkQueryType();
                     //try
                     //{
@@ -268,30 +268,9 @@ namespace Ginger.Actions
                     //SqlFile.Visibility = Visibility.Collapsed;                    
                     break;
                 case ActDBValidation.eDBValidationType.RecordCount:
-                    //checkQueryType();
-                    //try
-                    //{
-                    //    string DBName = DBNameComboBox.Text;
-                    //    db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-                    //    if (!(db == null))
-                    //    {
-                    //        if (db.DBType == Database.eDBTypes.Cassandra)
-                    //        {
-                    //            Keyspace.Visibility = Visibility.Visible;
-                    //        }
-                    //        else
-                    //        {
-                    //            Keyspace.Visibility = Visibility.Collapsed;
-                    //        }
-                    //    }
-                    //}
-                    //catch { }
-                    //RadioButtonsSection.Visibility = Visibility.Collapsed;
-                    //FreeSQLStackPanel.Visibility = Visibility.Visible;
-                    //TableColWhereStackPanel.Visibility = Visibility.Collapsed;
-                    //DoCommit.Visibility = Visibility.Collapsed;
-                    //SqlFile.Visibility = Visibility.Collapsed;
-                    //FreeSQLLabel.Content = @"Record count - SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)";
+                    OperationConfigFrame.SetContent(new RecordCountEditPage(mAct));
+                    
+                    
                     break;
 
             }
@@ -347,10 +326,13 @@ namespace Ginger.Actions
         private void XViewButton_Click(object sender, RoutedEventArgs e)
         {
             DataTable dataTable = mAct.GetResultView();
-            xDataGrid.ItemsSource = dataTable.DefaultView;            
-            xDataGrid.IsReadOnly = true;            
-            xDataGrid.AutoGenerateColumns = true;
-            // xDataGrid.CanUserAddRows = false;
+            if (dataTable != null)
+            {
+                xDataGrid.ItemsSource = dataTable.DefaultView;
+                xDataGrid.IsReadOnly = true;
+                xDataGrid.AutoGenerateColumns = true;                
+            }
+
         }
     }
 }

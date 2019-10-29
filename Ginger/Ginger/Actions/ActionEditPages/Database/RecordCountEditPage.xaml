@@ -1,0 +1,24 @@
+﻿<Page x:Class="Ginger.Actions.ActionEditPages.Database.RecordCountEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:Actions="clr-namespace:Ginger.BusinessFlowWindows"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="RecordCountEditPage">
+
+    <Grid>
+        <StackPanel x:Name="FreeSQLStackPanel">
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Record count - SELECT COUNT(1) FROM {Table} - Enter only Table name below (+optional WHERE clause)</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">For Example:</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">TBCustomers</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Count how many records exist in TBCustomers</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">or</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">TBCustomers Where Customer ID = 1</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Use record count when you need to verify a new record was entered into the database</Label>
+            <Actions:UCValueExpression x:Name="xSQLUCValueExpression" Height="100" VerticalAlignment="Stretch"/>
+            
+        </StackPanel>
+    </Grid>
+</Page>

@@ -23,7 +23,7 @@
 
         <StackPanel x:Name="FreeSQLStackPanel">
             <Label x:Name="FreeSQLLabel"  Style="{StaticResource @InputFieldLabelStyle}">Free SQL:</Label>
-            <Actions:UCValueExpression x:Name="SQLUCValueExpression" Height="100" VerticalAlignment="Stretch"/>
+            <Actions:UCValueExpression x:Name="xSQLUCValueExpression" Height="100" VerticalAlignment="Stretch"/>
         </StackPanel>
 
         <StackPanel x:Name="SqlFile">

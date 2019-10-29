@@ -429,8 +429,14 @@
     <Compile Include="Actions\ActionEditPages\Database\DatabaseQueryEditPage.xaml.cs">
       <DependentUpon>DatabaseQueryEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\Database\RecordCountEditPage.xaml.cs">
+      <DependentUpon>RecordCountEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionEditPages\Database\TableColWhereEditPage.xaml.cs">
       <DependentUpon>TableColWhereEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionEditPages\Database\UpdateDatabaseEditPage.xaml.cs">
+      <DependentUpon>UpdateDatabaseEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
@@ -2681,7 +2687,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Actions\ActionEditPages\Database\RecordCountEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Actions\ActionEditPages\Database\TableColWhereEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Actions\ActionEditPages\Database\UpdateDatabaseEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
