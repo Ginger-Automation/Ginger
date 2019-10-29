@@ -10,8 +10,8 @@
 
     <Grid>
         <StackPanel>
-            <Label>Installed Database plugins</Label>
-            <ComboBox x:Name="xDatabaseList"></ComboBox>
+            <Label HorizontalAlignment="Left">Select database service from Installed Database plugins</Label>
+            <ComboBox x:Name="xDatabaseList" Margin="5" Width="300" HorizontalAlignment="Left"></ComboBox>
             <Label>Add New Database type</Label>
             <Button Width="200">Search Database plugins</Button>
         </StackPanel>
