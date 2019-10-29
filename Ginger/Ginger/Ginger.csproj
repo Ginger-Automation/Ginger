@@ -426,6 +426,12 @@
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\Database\DatabaseQueryEditPage.xaml.cs">
+      <DependentUpon>DatabaseQueryEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionEditPages\Database\TableColWhereEditPage.xaml.cs">
+      <DependentUpon>TableColWhereEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
@@ -2670,6 +2676,14 @@
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionEditPages\Database\DatabaseQueryEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Actions\ActionEditPages\Database\TableColWhereEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>

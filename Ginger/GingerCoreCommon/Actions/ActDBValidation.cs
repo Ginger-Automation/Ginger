@@ -506,7 +506,11 @@ namespace GingerCore.Actions
         public DataTable GetResultView()
         {
             DataTable DBResponse = null;
-            SetDBConnection();
+            bool b = SetDBConnection();
+            if (!b)
+            {
+                Reporter.ToUser(eUserMsgKey.ActionIDNotFound); // FIXME !!!!!!!!!!!!!!!
+            }
             // DB.Connect();
             switch (DBValidationType)
             {
