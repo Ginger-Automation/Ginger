@@ -120,6 +120,8 @@ namespace GingerCore.Environments
             }
             set 
             {
+                // TODO: update service ID and add relevant DB plugin
+
                 if (mDBType != value)
                 {
                     databaseImpl = null;

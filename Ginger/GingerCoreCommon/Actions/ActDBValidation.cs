@@ -92,7 +92,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string AppName { set; get; }
 
-        public string mDBName;
+        private string mDBName;
+
         [IsSerializedForLocalRepository]
         public string DBName { get { return mDBName; } set { mDBName = value; OnPropertyChanged(nameof (DBName)); } }
 
