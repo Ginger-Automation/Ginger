@@ -64,12 +64,12 @@
                 </Grid>
 
             </StackPanel>
+            
             <StackPanel x:Name="FreeSQLStackPanel">
                 <Label x:Name="FreeSQLLabel"  Style="{StaticResource @InputFieldLabelStyle}">Free SQL:</Label>
-                
-                    <Actions:UCValueExpression x:Name="SQLUCValueExpression" Height="100"/>
-                
+                <Actions:UCValueExpression x:Name="SQLUCValueExpression" Height="100"/>
             </StackPanel>
+            
             <StackPanel x:Name="SqlFile">
                 <Label x:Name="SQLInputFile"  Style="{StaticResource @InputFieldLabelStyle}" ToolTip="Default path recommended is ~\Documents\SQL">SQL File Path:</Label>
                 <Actions:UCValueExpression x:Name="QueryFile"/>
@@ -102,7 +102,13 @@
 
 
         </StackPanel>
-        <Button x:Name="xViewButton" Click="XViewButton_Click" Grid.Column="2" Margin="27,140,191,10" Height="20">View</Button>
-        <DataGrid x:Name="xDataGrid" Grid.Column="2" Grid.Row="1" />
+
+        <Grid Grid.Column="3" Grid.Row="1">
+            <Button x:Name="xViewButton" Click="XViewButton_Click" VerticalAlignment="Top" Height="30">View result</Button>
+            <DataGrid Margin="0,40,0,0" x:Name="xDataGrid"  />
+        </Grid>
+
+        <GridSplitter ResizeDirection="Columns" Grid.RowSpan="2" Grid.Column="1" Width="10" HorizontalAlignment="Right" Grid.Row="0" VerticalAlignment="Stretch" Style="{StaticResource @VerticalGridSplitterStyle}" />
+
     </Grid>
 </Page>
