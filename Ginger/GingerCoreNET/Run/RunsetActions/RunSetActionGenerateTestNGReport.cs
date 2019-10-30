@@ -58,15 +58,6 @@ namespace Ginger.Run.RunSetActions
         public string SaveResultsInSolutionFolderName { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string SaveResultstoFolderName { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool OpenExecutionResultsFolder { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool SaveindividualBFReport { get; set; }
-
-        [IsSerializedForLocalRepository]
         public bool IsStatusByActivitiesGroup { get; set; }
 
         private bool isStatusByActivity = true;
@@ -136,5 +127,16 @@ namespace Ginger.Run.RunSetActions
         }
 
         public override string Type { get { return "Produce TestNG Summary Report"; } }
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name == "SaveResultstoFolderName" || name == "OpenExecutionResultsFolder" || name == "SaveindividualBFReport")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
