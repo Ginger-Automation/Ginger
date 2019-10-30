@@ -26,6 +26,7 @@ using System.Text;
 using Ginger.Reports;
 using Amdocs.Ginger.Common;
 using GingerCore;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -72,23 +73,23 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
+                string testNGReportPath = "";
+
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-                    string testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
-                    
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, testNGReportPath, "Execution Summary");
-                    if (!Directory.Exists(testNGReportPath))
-                    {
-                        Directory.CreateDirectory(testNGReportPath);
-                    }
-                    SaveBFResults(RI, testNGReportPath, IsStatusByActivitiesGroup);
-                    Reporter.HideStatusMessage();
+                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
                 }
                 else
                 {
-                    Errors = "Folder path not provided.";
-                    Status = eRunSetActionStatus.Failed;
+                    testNGReportPath = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder;
                 }
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, testNGReportPath, "Execution Summary");
+                if (!Directory.Exists(testNGReportPath))
+                {
+                    Directory.CreateDirectory(testNGReportPath);
+                }
+                SaveBFResults(RI, testNGReportPath, IsStatusByActivitiesGroup);
+                Reporter.HideStatusMessage();
             }
             catch (Exception ex)
             {
