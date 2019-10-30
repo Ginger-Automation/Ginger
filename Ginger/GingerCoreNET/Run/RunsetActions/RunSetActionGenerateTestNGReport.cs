@@ -83,26 +83,14 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-                    if (SaveResultsInSolutionFolderName.Contains("~"))
+                    string testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
+                    
+                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, testNGReportPath, "Execution Summary");
+                    if (!Directory.Exists(testNGReportPath))
                     {
-                        SaveResultsInSolutionFolderName = SaveResultsInSolutionFolderName.Replace("~", SolutionFolder);
+                        Directory.CreateDirectory(testNGReportPath);
                     }
-
-                    //if (Path.IsPathRooted(SaveResultsInSolutionFolderName))
-                    //{
-                    //    testNGReportPath = SaveResultsInSolutionFolderName;
-                    //}
-                    //else
-                    //{
-                    //    testNGReportPath = SolutionFolder + SaveResultsInSolutionFolderName.Replace("~","");
-                    //}
-
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
-                    if (!Directory.Exists(SaveResultsInSolutionFolderName))
-                    {
-                        Directory.CreateDirectory(SaveResultsInSolutionFolderName);
-                    }
-                    SaveBFResults(RI, SaveResultsInSolutionFolderName, IsStatusByActivitiesGroup);
+                    SaveBFResults(RI, testNGReportPath, IsStatusByActivitiesGroup);
                     Reporter.HideStatusMessage();
                 }
                 else
