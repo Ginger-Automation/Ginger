@@ -213,7 +213,7 @@ namespace Ginger.Actions.WebServices
             //{
             RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
             AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
-            if (AAMB.TargetApplicationKey != null)
+            if (AAMB != null && AAMB.TargetApplicationKey != null)
             {
                 var apisFilterTuple = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), Convert.ToString(AAMB.TargetApplicationKey.ItemName));
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, apisFilterTuple, UCTreeView.eFilteroperationType.Equals);
