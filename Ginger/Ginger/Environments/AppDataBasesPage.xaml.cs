@@ -27,6 +27,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -292,6 +293,16 @@ namespace Ginger.Environments
             Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedEnvDB, nameof(Database.ConnectionString), null);
             VEEW.ShowAsWindow();
+        }
+
+        private void grdAppDbs_SelectedItemChanged(object selectedItem)
+        {
+            Database database = (Database)selectedItem;
+            ;
+            Dictionary<string, string> dic = database.Parameters;
+            dic.Add("FileName", "");
+            dic.Add("User", "");
+            xParameters.ItemsSource = dic;
         }
     }
 }

@@ -226,8 +226,7 @@ namespace Ginger.Actions
             switch (validationType)
             {
                 case ActDBValidation.eDBValidationType.UpdateDB:
-                    OperationConfigFrame.SetContent(new UpdateDatabaseEditPage(mAct));
-                    // checkQueryType();                    
+                    OperationConfigFrame.SetContent(new UpdateDatabaseEditPage(mAct));                    
                     break;
                 case ActDBValidation.eDBValidationType.FreeSQL:
                     OperationConfigFrame.SetContent(new DatabaseQueryEditPage(mAct));                    
