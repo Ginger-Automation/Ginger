@@ -75,8 +75,6 @@ namespace GingerCore.Environments
 
         
 
-        private DbConnection oConn = null;        
-
         public ObservableList<DataSourceBase> DSList { get; set; }
         public bool mKeepConnectionOpen;
         [IsSerializedForLocalRepository(true)]
@@ -242,25 +240,25 @@ namespace GingerCore.Environments
         private DateTime LastConnectionUsedTime;
 
 
-        private bool MakeSureConnectionIsOpen()
-        {
-            Boolean isCoonected = true;
+        //private bool MakeSureConnectionIsOpen()
+        //{
+        //    Boolean isCoonected = true;
 
-            if ((oConn == null) || (oConn.State != ConnectionState.Open))
-                isCoonected= Connect();
+        //    if ((oConn == null) || (oConn.State != ConnectionState.Open))
+        //        isCoonected= Connect();
 
-            //make sure that the connection was not refused by the server               
-            TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
-            if (timeDiff.TotalMinutes > 5)
-            {
-                isCoonected= Connect();                
-            }
-            else
-            {
-                LastConnectionUsedTime = DateTime.Now;                
-            }
-            return isCoonected;
-        }
+        //    //make sure that the connection was not refused by the server               
+        //    TimeSpan timeDiff = DateTime.Now - LastConnectionUsedTime;
+        //    if (timeDiff.TotalMinutes > 5)
+        //    {
+        //        isCoonected= Connect();                
+        //    }
+        //    else
+        //    {
+        //        LastConnectionUsedTime = DateTime.Now;                
+        //    }
+        //    return isCoonected;
+        //}
         
         public static string GetMissingDLLErrorDescription()
         {
@@ -273,8 +271,12 @@ namespace GingerCore.Environments
 
         public Boolean TestConnection()
         {
-            VerifyDBImpl();            
-            bool b = databaseImpl.TestConnection();
+            VerifyDBImpl();
+            bool b = databaseImpl.OpenConnection();
+            if (b)
+            {
+                databaseImpl.CloseConnection();
+            }
             return b;
         }
 
@@ -294,7 +296,7 @@ namespace GingerCore.Environments
             }
             
             databaseImpl = iDBProvider.GetDBImpl(this);
-            databaseImpl.ConnectionString = ConnectionString; 
+            // databaseImpl.ConnectionString = ConnectionString; 
         }
 
         public Boolean Connect(bool displayErrorPopup = false)
@@ -302,7 +304,7 @@ namespace GingerCore.Environments
             VerifyDBImpl();
             if (databaseImpl != null)
             {
-                return databaseImpl.TestConnection();                
+                return databaseImpl.OpenConnection(); 
             }
             else
             {
@@ -315,20 +317,13 @@ namespace GingerCore.Environments
         {
             try
             {
-                if (oConn != null)
-                {
-                    oConn.Close();
-                }
+                databaseImpl.CloseConnection();                
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to close DB Connection", e);
                 throw;
-            }
-            finally
-            {
-                oConn?.Dispose();
-            }
+            }            
         }
 
        
@@ -369,10 +364,10 @@ namespace GingerCore.Environments
         }
 
 
-        internal int GetRecordCount(string query)
+        internal Int64 GetRecordCount(string query)
         {
             VerifyDBImpl();
-            int count = databaseImpl.GetRecordCount(query);
+            Int64 count = databaseImpl.GetRecordCount(query);
             return count;
         }
        

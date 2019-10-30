@@ -334,14 +334,14 @@ namespace GingerCore.Actions
             this.AddOrUpdateReturnParamActual("Record Count", count);
         }
 
-        int GetRecordCount()
+        Int64 GetRecordCount()
         {
             string SQL = GetInputParamCalculatedValue("SQL");
             if (string.IsNullOrEmpty(SQL))
             {
                 Error = "GetRecordCount missing SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error = Missing Query";
             }
-            int count = DB.GetRecordCount(SQL);
+            Int64 count = DB.GetRecordCount(SQL);
             return count;
         }
 

@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.Common
 
         public abstract void ToStatus(eStatusMsgType messageType, string statusText);
 
-        public void ToLog2(Plugin.Core.Reporter.eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
+        public void ToLog(Plugin.Core.Reporter.eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
             throw new NotImplementedException();
         }

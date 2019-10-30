@@ -298,11 +298,8 @@ namespace Ginger.Environments
         private void grdAppDbs_SelectedItemChanged(object selectedItem)
         {
             Database database = (Database)selectedItem;
-            ;
-            Dictionary<string, string> dic = database.Parameters;
-            dic.Add("FileName", "");
-            dic.Add("User", "");
-            xParameters.ItemsSource = dic;
+            
+            // TODO: get parameters and show in frame use same mechanism like plugins
         }
     }
 }
