@@ -83,6 +83,20 @@ namespace Ginger.Run.RunSetActions
             {
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
+                    if (SaveResultsInSolutionFolderName.Contains("~"))
+                    {
+                        SaveResultsInSolutionFolderName = SaveResultsInSolutionFolderName.Replace("~", SolutionFolder);
+                    }
+
+                    //if (Path.IsPathRooted(SaveResultsInSolutionFolderName))
+                    //{
+                    //    testNGReportPath = SaveResultsInSolutionFolderName;
+                    //}
+                    //else
+                    //{
+                    //    testNGReportPath = SolutionFolder + SaveResultsInSolutionFolderName.Replace("~","");
+                    //}
+
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
                     if (!Directory.Exists(SaveResultsInSolutionFolderName))
                     {
