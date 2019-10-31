@@ -398,6 +398,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 response = HandlePOMElememntExecution(act);
             }
+            else if (act.ElementType.Equals(eElementType.Window) && act.ElementAction.Equals(ActUIElement.eElementAction.Switch))
+            {
+                response = ActUISwitchWindow(act);
+            }
             else
             {
                 PayLoad PL = act.GetPayLoad();
@@ -409,6 +413,35 @@ namespace GingerCore.Drivers.JavaDriverLib
                 List<KeyValuePair<string, string>> parsedResponse = response.GetParsedResult();
                 act.AddOrUpdateReturnParsedParamValue(parsedResponse);
             }
+            return response;
+        }
+
+        private PayLoad ActUISwitchWindow(ActUIElement act)
+        {
+            Stopwatch St = new Stopwatch();
+            St.Reset();
+            St.Start();
+            var waitTime = this.ImplicitWait;
+
+            var syncTime = Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
+            if (syncTime >= 0)
+            {
+                waitTime = syncTime;
+            }
+
+            PayLoad response;
+            PayLoad Request = act.GetPayLoad();
+            response = Send(Request);
+
+            while (!response.IsOK())
+            {
+                response = Send(Request);
+                if(St.ElapsedMilliseconds > waitTime * 1000)
+                {
+                    break;
+                }
+            }
+            St.Stop();
             return response;
         }
 

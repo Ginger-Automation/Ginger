@@ -424,7 +424,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(Fields.SyncTime)) ? new List<string>() { "30" } :
                            new List<string>() { mAction.GetInputParamValue(Fields.SyncTime) };
 
-                        elementList.Add(GetElementConfigControl("Sync time in seconds", Fields.SyncTime, eElementType.TextBox, possibleValues));
+                        elementList.Add(GetElementConfigControl("Sync Time", Fields.SyncTime, eElementType.TextBox, possibleValues,null,"Sync time in seconds."));
                     }
                     break;
 
@@ -536,7 +536,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 Width = 600,
-                Margin = new Thickness(10, 0, 0, 0)
+                Margin = new Thickness(10, 0, 0, 0),
+                ToolTip = element.ToolTip
             };
         }
 
@@ -564,7 +565,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             };
         }
 
-        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent=null)
+        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent=null,string toolTip = "")
         {
             return new ElementConfigControl()
             {
@@ -572,7 +573,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 BindedString = bindedString,
                 ControlType = elementType,
                 PossibleValues = possibleValue,
-                ElementEvent = routedEvent
+                ElementEvent = routedEvent,
+                ToolTip = toolTip
             };
         }
 
