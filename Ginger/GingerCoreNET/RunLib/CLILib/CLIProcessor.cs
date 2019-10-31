@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using GingerCore;
-using GingerCore.Environments;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -381,7 +380,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         void ExecuteRunSet()
         {            
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Executing..."));            
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Executing {0}... ", GingerDicser.GetTermResValue(eTermResKey.RunSet)));            
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();

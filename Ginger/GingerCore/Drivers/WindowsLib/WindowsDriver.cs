@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
@@ -172,7 +173,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                     default:
-                        throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }                
             }
             catch (System.Runtime.InteropServices.COMException e)
@@ -639,7 +640,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -977,6 +978,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         public void StartSpying()
+        {
+            throw new NotImplementedException();
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
         }

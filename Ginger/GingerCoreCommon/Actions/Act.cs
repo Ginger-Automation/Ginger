@@ -370,7 +370,7 @@ namespace GingerCore.Actions
         //private int mSmartWait;
         //public int SmartWait { get; set; }  
 
-        public bool? IsSingleAction { get; set; }
+       // public bool? IsSingleAction { get; set; }
 
         public DateTime StartTimeStamp { get; set; }
         public DateTime EndTimeStamp { get; set; }
@@ -532,8 +532,8 @@ namespace GingerCore.Actions
 
         //Keeping screen shot in memory will eat up the memory - so we save to files and keep file name
 
-        public List<String> ScreenShots { get; set; } = new List<String>();
-        public List<String> ScreenShotsNames = new List<String>();
+        public ObservableList<String> ScreenShots { get; set; } = new ObservableList<String>();
+        public ObservableList<String> ScreenShotsNames = new ObservableList<String>();
 
 
         // No need to back because the list is saved to backup

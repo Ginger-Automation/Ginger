@@ -18,6 +18,20 @@ jobs:
   
   steps:
   
+# ------------------------------------------------------------------------------------------------------
+# installs version 2.2.x latest
+# ------------------------------------------------------------------------------------------------------  
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk 2.2.x'
+    inputs:
+      packageType: sdk
+      version: 2.2.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+
+# ------------------------------------------------------------------------------------------------------
+# start Testing
+# ------------------------------------------------------------------------------------------------------
   - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerUtilsTest'
 

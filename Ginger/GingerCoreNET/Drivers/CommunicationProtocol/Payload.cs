@@ -448,6 +448,12 @@ namespace GingerCore.Drivers.CommunicationProtocol
             }
             return result;
         }
+
+        public string GetErrorValue()
+        {
+            return "Error:- " + GetValueInt() + ":" + GetValueString();
+        }
+
         public string GetValueString()
         {
             byte b = ReadValueType();
@@ -735,6 +741,13 @@ namespace GingerCore.Drivers.CommunicationProtocol
         public int PackageLen()
         {
             return mBuffer.Length;
+        }
+
+        public enum ErrorCode
+        {
+            ElementNotFound=404,
+            CommandTimeOut=408,
+            Unknown=0
         }
     }
 }

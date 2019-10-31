@@ -787,14 +787,10 @@ namespace GingerCore.Actions.REST
             foreach(ActInputValue httpHeader in HttpHeaders)
             {
                 WebReq.PreAuthenticate = true;
-                if (String.IsNullOrEmpty(httpHeader.ValueForDriver))
-                {
+                Ve.Value = httpHeader.Value;
+                httpHeader.ValueForDriver = Ve.ValueCalculated;
 
-                    Ve.Value=httpHeader.Value;
-                    httpHeader.ValueForDriver=Ve.ValueCalculated;
-                }
-
-                switch(httpHeader.Param.ToUpper())
+                switch (httpHeader.Param.ToUpper())
                 {
                     case "DATE":
                         WebReq.Date = DateTime.Parse(httpHeader.ValueForDriver);
@@ -815,11 +811,7 @@ namespace GingerCore.Actions.REST
                         WebReq.Headers.Add(httpHeader.Param, httpHeader.ValueForDriver);
                         break;
                 }
-
-
-
             }
-
         }
 
         private string SetDynamicValues(ActREST AR, string ReqBody)

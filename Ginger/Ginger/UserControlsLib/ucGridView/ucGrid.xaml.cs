@@ -1497,17 +1497,18 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        public static DataTemplate GetStoreToTemplate(string StoreTo, string StoretoValue, List<string> mVariableList, string VariableList = "", string SupportSetValue = "", string varLabel = "", ObservableList<GlobalAppModelParameter> mAppGlobalParamList = null)//Actreturnva
+        public static DataTemplate GetStoreToTemplate(string StoreTo, string StoretoValue, ObservableList<string> mVariableList, string VariableList = "", string SupportSetValue = "", string varLabel = "", ObservableList<GlobalAppModelParameter> mAppGlobalParamList = null)//Actreturnva
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory Storeto = new FrameworkElementFactory(typeof(UCStoreTo));
 
             if (mVariableList != null)
             {
-                ObservableList<string> varList = new ObservableList<string>();
-                foreach (string str in mVariableList)
-                    varList.Add(str);
-                Storeto.SetValue(UCStoreTo.ItemsSourceProperty, varList);
+                //ObservableList<string> varList = new ObservableList<string>();
+                //foreach (string str in mVariableList)
+                //    varList.Add(str);
+                //Storeto.SetValue(UCStoreTo.ItemsSourceProperty, varList);
+                Storeto.SetValue(UCStoreTo.ItemsSourceProperty, mVariableList);
             }                
             else
             {
@@ -1737,6 +1738,7 @@ public void RemoveCustomView(string viewName)
             ShowUpDown = System.Windows.Visibility.Collapsed;
         }
 
+
         public void AddToolbarTool(string toolImage, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
         {
             Image image = new Image();
@@ -1744,11 +1746,11 @@ public void RemoveCustomView(string viewName)
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
 
-        public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible)
+        public void AddToolbarTool(eImageType imageType, string toolTip = "", RoutedEventHandler clickHandler = null, Visibility toolVisibility = System.Windows.Visibility.Visible, int imageSize = 16)
         {
             ImageMakerControl image = new ImageMakerControl();
-            image.Width = 16;
-            image.Height = 16;
+            image.Width = imageSize;
+            image.Height = imageSize;
             image.ImageType = imageType;
             AddToolbarTool(image, toolTip, clickHandler, toolVisibility);
         }
@@ -2171,6 +2173,45 @@ public void RemoveCustomView(string viewName)
         public void SetSelectedIndex(int index)
         {
             grdMain.SelectedIndex = index;
+        }
+
+        private void DoKeyboardCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.RightCtrl) || Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (Keyboard.IsKeyDown(Key.C))
+                {
+                    //Do Copy
+                    if (ShowCopy == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.CopySelectedItems(this);
+                    }
+                }
+                else if (Keyboard.IsKeyDown(Key.X))
+                {
+                    //Do Cut
+                    if (ShowCut == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.CutSelectedItems(this);
+                    }
+                }
+                else if (Keyboard.IsKeyDown(Key.V))
+                {
+                    //Do Paste
+                    if (ShowPaste == Visibility.Visible)
+                    {
+                        ClipboardOperationsHandler.PasteItems(this);
+                    }
+                }
+            }
+            else if (Keyboard.IsKeyDown(Key.Delete))
+            {
+                //delete selected
+                if (ShowDelete == Visibility.Visible)
+                {
+                    btnDelete_Click(null, null);
+                }
+            }
         }
     }  
 }

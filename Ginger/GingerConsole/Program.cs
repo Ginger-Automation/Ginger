@@ -69,7 +69,7 @@ namespace Amdocs.Ginger.GingerConsole
                 if (args.Count() > 0)
                 {
                     ProcessArgs(args);                    
-                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments completed");
+                    Reporter.ToLog(eLogLevel.DEBUG, "Processing command line arguments completed");
                 }
                 else
                 {
@@ -140,7 +140,7 @@ namespace Amdocs.Ginger.GingerConsole
             InitWorkSpace(false);                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);
+            CLI.ExecuteArgs(args);            
         }
 
        

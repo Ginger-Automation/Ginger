@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
                 // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
                 DownloadSolutionFromSourceControl();
                 return OpenSolution();
@@ -128,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 mRunsetExecutor = runsetExecutor;
                 if (mRunsetExecutor.RunSetConfig == null)
                 {
@@ -219,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void SelectRunset()
         {            
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             mRunSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
             if (mRunSetConfig != null)
@@ -250,7 +250,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 1)
                     {
                         mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
-                        Reporter.ToLog(eLogLevel.INFO, "Auto Selected Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
+                        Reporter.ToLog(eLogLevel.DEBUG, "Auto Selected Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
                     }
                     else
                     {
@@ -319,7 +319,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyPort: '" + value + "'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
         }
 

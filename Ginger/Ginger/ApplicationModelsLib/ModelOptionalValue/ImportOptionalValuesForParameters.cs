@@ -1088,12 +1088,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// This method is used to get the excel sheet data
         /// </summary>
         /// <returns></returns>
-        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool exactValues, bool pivoteTable)
+        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool isImportEmptyColumns, bool pivoteTable)
         {
             DataSet ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
 
             DataSet dsExact = new DataSet();
-            if(exactValues)
+            if (!isImportEmptyColumns)
             {
                 foreach (DataTable dt in ds.Tables)
                 {
@@ -1108,7 +1108,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 colEmpty = false;
                             }
                         }
-                        if(colEmpty)
+                        if (colEmpty)
                         {
                             lstColumn.Add(dc.ColumnName);
                         }
@@ -1123,6 +1123,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     dtNew.TableName = dt.TableName;
                     dsExact.Tables.Add(dtNew);
                 }
+            }
+            else
+            {
+                dsExact = ds;
             }
 
             DataSet dsPivote = new DataSet();

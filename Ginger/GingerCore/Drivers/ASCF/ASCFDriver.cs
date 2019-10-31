@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -152,7 +153,7 @@ namespace GingerCore.Drivers.ASCF
                     //TODO: catch excpetion of socket not all..         
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Trying to connect ASCF Agent on address:" + serverAddress);
+                        Reporter.ToLog(eLogLevel.DEBUG, "Trying to connect ASCF Agent on address:" + serverAddress);
                         Thread.Sleep(500);
                     }
                 }
@@ -443,7 +444,7 @@ namespace GingerCore.Drivers.ASCF
                     HandleBrowserElementAction(AABC);
                     break;
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 
@@ -1416,7 +1417,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1456,6 +1457,11 @@ namespace GingerCore.Drivers.ASCF
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
             return EI;
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

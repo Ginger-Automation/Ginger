@@ -298,19 +298,23 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void XUndoBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, true))
+            if (Ginger.General.UndoChangesInRepositoryItem(mActionBeenEdit, isLocalBackup: true, clearBackup: false))
             {
-                mActionBeenEdit.SaveBackup();
+                //mActionBeenEdit.SaveBackup();
+                int selectedTabIndx = mActionEditPage.SelectedTabIndx;
                 ShowHideEditPage(mActionBeenEdit);
-            }
+                mActionEditPage.SelectedTabIndx = selectedTabIndx;
+            }            
         }
 
         private void xPreviousActionBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mActionsListView.List.Items.CurrentPosition >= 1)
             {
+                int currentSelectedTabIndx = mActionEditPage.SelectedTabIndx;
                 mActionsListView.List.Items.MoveCurrentToPrevious();
                 ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+                mActionEditPage.SelectedTabIndx = currentSelectedTabIndx;
             }
             else
             {
@@ -322,8 +326,10 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsListView.List.Items.CurrentPosition < mActionsListView.List.Items.Count - 1)
             {
+                int currentSelectedTabIndx = mActionEditPage.SelectedTabIndx;
                 mActionsListView.List.Items.MoveCurrentToNext();
                 ShowHideEditPage((Act)mActionsListView.List.Items.CurrentItem);
+                mActionEditPage.SelectedTabIndx = currentSelectedTabIndx;
             }
             else
             {
@@ -375,6 +381,24 @@ namespace GingerWPF.BusinessFlowsLib
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+        }
+
+        private void xExpandActionBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mActionEditPage.ShowAsWindow(windowStyle:eWindowShowStyle.OnlyDialog);
+            mActionEditPage.Width = xMainFrame.ActualWidth;
+            mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
+            xMainFrame.Refresh();            
+        }
+
+        private void xMainFrame_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (mActionEditPage != null)
+            {
+                mActionEditPage.Width = xMainFrame.ActualWidth;
+                mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                xMainFrame.Refresh();
+            }
         }
     }
 }

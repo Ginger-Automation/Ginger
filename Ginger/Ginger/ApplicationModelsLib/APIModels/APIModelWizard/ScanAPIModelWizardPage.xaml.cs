@@ -81,14 +81,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
-            AddAPIModelWizard.DeltaModelsList = APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList);
+            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList).OrderBy(d => d.comparisonStatus));
 
             xApisSelectionGrid.InitViewItems();
 
             xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Collapsed;
             xCompareBtnRow.Height = new GridLength(0);
 
-            xApisSelectionGrid.DataSourceList = new ObservableList<DeltaAPIModel>(AddAPIModelWizard.DeltaModelsList.OrderBy(d => d.comparisonStatus));
+            //In case any item was selected on the Import Grid throws exception/error 
+            //as selected Item won't anymore exist after updating the DataSource, hence, setting to null
+            xApisSelectionGrid.grdMain.SelectedItem = null;
+
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.DeltaModelsList;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -164,7 +168,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
                     if(mergeIssue)
                     {
-                        Reporter.ToUser(eUserMsgKey.BaseAPIWarning, "Merged API should be derived from a base API, Please update selected !");
+                        Reporter.ToUser(eUserMsgKey.BaseAPIWarning, "Please configure Merged API on Compare and Merge window.");
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
@@ -352,9 +356,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.Description), Header = "Description", WidthWeight = 250, BindingMode = BindingMode.OneWay });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 300, BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xMatchingModelTemplate"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comparison Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Difference's Handling Operation", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(DeltaAPIModel.OperationsList), nameof(DeltaAPIModel.SelectedOperation), comboSelectionChangedHandler: XHandlingOperation_SelectionChanged) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Compare & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareAndMergeTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, MaxWidth = 150, AllowSorting = true, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", WidthWeight = 200, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(DeltaAPIModel.OperationsList), nameof(DeltaAPIModel.SelectedOperation), comboSelectionChangedHandler: XHandlingOperation_SelectionChanged) });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Comp. & Merge", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareAndMergeTemplate"] });
             xApisSelectionGrid.SetAllColumnsDefaultView(view);
 
             //# Custom View - Initial View
@@ -363,9 +367,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.IsSelected), Header = "Selected", Order=0, WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xIsSelectedTemplate"] });
             initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.MatchingAPIName), Header = "Matching API Model", WidthWeight = 20, Visible = false });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comparison Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Difference's Handling Operation", Visible = false });
-            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Compare & Merge", Visible = false });
+            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.comparisonStatus), Header = "Comp. Status", WidthWeight = 150, Visible = false, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["xDeltaStatusIconTemplate"], BindingMode = System.Windows.Data.BindingMode.OneWay });
+            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.OperationsList), Header = "Comp. Operation", Visible = false });
+            initView.GridColsView.Add(new GridColView() { Field = nameof(DeltaAPIModel.SelectedOperation), Header = "Comp. & Merge", Visible = false });
 
             xApisSelectionGrid.AddCustomView(initView);
             xApisSelectionGrid.ShowViewCombo = Visibility.Collapsed;

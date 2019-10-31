@@ -30,6 +30,7 @@
     <SolidColorBrush x:Key="$RunningStatusColor" Color="#3EA7FC"/>
     <SolidColorBrush x:Key="$StoppedStatusColor" Color="#ED5588"/>
     <SolidColorBrush x:Key="$SkippedStatusColor" Color="#737373"/>
+    <SolidColorBrush x:Key="$IgnoredStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$BlockedStatusColor" Color="#A21025"/>
 
     <LinearGradientBrush x:Key="$amdocsLogoLinarGradientBrush"
@@ -341,7 +342,7 @@
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -351,7 +352,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{StaticResource $SelectionColor_Pink}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -383,7 +384,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{StaticResource $SelectionColor_Pink}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -659,6 +660,29 @@
         </Grid>
     </ControlTemplate>
 
+    <Style TargetType="Label" x:Key="$VerticalExpanderLabelStyle" >
+        <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="LayoutTransform">
+            <Setter.Value>
+                <RotateTransform Angle="90"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Label" x:Key="$HorizontalExpanderLabelStyle" >
+        <Setter Property="Foreground" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
     <Style TargetType="ListBox" x:Key="$ListBoxStyle" >
         <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="FontSize" Value="12"/>
@@ -758,6 +782,12 @@
         </Style.Triggers>
     </Style>
 
+    <Style TargetType="Expander" x:Key="$ExpanderStyle" >
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
     <Style TargetType="ComboBox" x:Key="$FlatEditInputComboBoxStyle" >
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -1233,11 +1263,49 @@
                                         ContentSource="Header"
                                         Margin="50,2" />
                     </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="TabItem" x:Key="$CoolTabInInternalPages">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <ControlTemplate.Resources>
+                        <SolidColorBrush x:Key="MouseOverBackground" Color="#DFE9F5" />
+                    </ControlTemplate.Resources>
+                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="{StaticResource $BackgroundColor_DarkBlue}">
+                        <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="20,2" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="TabItem" x:Key="$TransparentTabHeader">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <ControlTemplate.Resources>
+                        <SolidColorBrush x:Key="MouseOverBackground" Color="Transparent" />
+                    </ControlTemplate.Resources>
+                    <Border Name="Border" BorderThickness="0 0 1 0"  BorderBrush="Transparent">
+                        <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="20,2" />
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="FontWeight" Value="Bold"/>
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+                            <Setter Property="Foreground" Value="Transparent"/>
                             <Setter TargetName="Border" Property="VerticalAlignment"  Value="Top" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -1245,7 +1313,7 @@
                         <Trigger Property="IsSelected" Value="False">
                             <Setter Property="FontWeight" Value="Normal"/>
                             <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+                            <Setter Property="Foreground" Value="Transparent"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1308,6 +1376,15 @@
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Margin" Value="5 0 0 0"/>
         <Setter Property="FontSize" Value="15"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Path=IsSelected}" Value="True">
+                <Setter Property="FontWeight" Value="Bold"/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabItem}}, Path=IsSelected}" Value="False">
+                <Setter Property="FontWeight" Value="Normal"/>
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
 

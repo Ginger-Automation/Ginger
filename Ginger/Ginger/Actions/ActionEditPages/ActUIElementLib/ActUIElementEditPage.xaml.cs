@@ -59,7 +59,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             mPlatform = PlatformInfoBase.GetPlatformImpl(act.Platform);
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList);
+            ElementLocateByComboBox.BindControl(mAction, nameof(ActUIElement.ElementLocateBy), LocateByList,false);
 
             //if widgets element, only supported to java platform now.
             if (act.Platform.Equals(ePlatformType.Java))
@@ -81,17 +81,19 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (Convert.ToBoolean(mAction.GetInputParamValue(Fields.IsWidgetsElement)))
             {
                 ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformWidgetsUIElementsType());
+                xWidgetElementImage.Visibility = Visibility.Visible;
             }
             else
             {
                 ElementTypeComboBox.BindControl(mAction, nameof(ActUIElement.ElementType), mPlatform.GetPlatformUIElementsType());
+                xWidgetElementImage.Visibility = Visibility.Collapsed;
             }
         }
 
         private void ShowWidgetsElementCheckBox()
         {
             xWidgetElementCheckBox.Visibility = Visibility.Visible;
-            BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());
+            BindingHandler.ActInputValueBinding(xWidgetElementCheckBox,CheckBox.IsCheckedProperty, mAction.GetOrCreateInputParam(Fields.IsWidgetsElement, "false"),new InputValueToBoolConverter());           
         }
 
         private ePlatformType GetActionPlatform()
@@ -414,7 +416,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                         propertyListString.Add(property.ToString());
                     }
 
-                    elementList.Add(GetElementConfigControl("Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
+                    elementList.Add(GetElementConfigControl("Property Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
 
                 default:
@@ -744,7 +746,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void XWidgetsElementType_Click(object sender, RoutedEventArgs e)
         {
-            BindElementTypeComboBox();
+            BindElementTypeComboBox();            
             ShowPlatformSpecificPage();
         }
     }

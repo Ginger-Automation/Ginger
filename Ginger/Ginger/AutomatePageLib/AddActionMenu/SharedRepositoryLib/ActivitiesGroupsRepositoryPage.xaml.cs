@@ -86,7 +86,10 @@ namespace Ginger.Repository
             xActivitiesGroupsRepositoryGrid.InitViewItems();
 
             xActivitiesGroupsRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
-            xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            if (mContext != null && mContext.BusinessFlow!=null)
+            {
+                xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            }
             xActivitiesGroupsRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivityGroup));
             xActivitiesGroupsRepositoryGrid.RowDoubleClick += grdActivitiesGroupsRepository_grdMain_MouseDoubleClick;
             xActivitiesGroupsRepositoryGrid.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;

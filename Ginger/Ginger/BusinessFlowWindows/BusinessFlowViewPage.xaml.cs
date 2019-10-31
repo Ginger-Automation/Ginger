@@ -83,7 +83,11 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
             mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
-            UpdateDescription();
+            mBusinessFlow.Tags.CollectionChanged -= Tags_CollectionChanged;
+            mBusinessFlow.Tags.CollectionChanged += Tags_CollectionChanged;
+            mBusinessFlow.TargetApplications.CollectionChanged -= TargetApplications_CollectionChanged;
+            mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
+            UpdateInfoSection();
 
             //Activities Tab Bindings
             mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
@@ -104,10 +108,20 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Configurations Tab Bindings
-            if (mConfigurationsPage != null && xConfigurationsTab.IsSelected)
+            if (mConfigurationsPage != null && xDetailsTab.IsSelected)
             {
                 mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
             }
+        }
+
+        private void TargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateInfoSection();
+        }
+
+        private void Tags_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateInfoSection();
         }
 
         TabItem mLastSelectedTab = null;
@@ -154,12 +168,12 @@ namespace GingerWPF.BusinessFlowsLib
                         mVariabelsPage.UpdateParent(mBusinessFlow);
                     }
                 }
-                else if (xConfigurationsTab.IsSelected == true)
+                else if (xDetailsTab.IsSelected == true)
                 {
                     if (mConfigurationsPage == null)
                     {
                         mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
-                        xConfigurationsTabFrame.SetContent(mConfigurationsPage);
+                        xDetailsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else
                     {
@@ -194,10 +208,13 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void mBusinessFlow_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            UpdateDescription();
+            if (e.PropertyName == nameof(BusinessFlow.Description))
+            {
+                UpdateInfoSection();
+            }
         }
 
-        private void UpdateDescription()
+        private void UpdateInfoSection()
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -216,6 +233,11 @@ namespace GingerWPF.BusinessFlowsLib
                         xDescTextBlockHelper.AddText("Description: " + mBusinessFlow.Description);
                     }
                     xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mBusinessFlow.Tags));
+                    xDescTextBlockHelper.AddLineBreak();
+                }
+                else
+                {
+                    xDescTextBlockHelper.AddText("Description: " + Ginger.General.GetTagsListAsString(mBusinessFlow.Tags));
                     xDescTextBlockHelper.AddLineBreak();
                 }
                 //if (!string.IsNullOrEmpty(mBusinessFlow.RunDescription))

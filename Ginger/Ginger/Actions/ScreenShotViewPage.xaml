@@ -8,41 +8,35 @@
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="ScreenShotViewPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="500*"/>
-            <ColumnDefinition Width="250"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="281*"/>
-            <RowDefinition Height="30"/>
-        </Grid.RowDefinitions>
+    <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1">
+        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
 
-        <Label x:Name="ErrorLabel" Foreground="Red" FontSize="14" FontWeight="Bold" Grid.ColumnSpan="2" Visibility="Collapsed">Error</Label>
-        
-        <ScrollViewer x:Name="MainScrollViewer" Background="Black" Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2">
-            <Canvas x:Name="MainCanvas" Background="Gray" Margin="5">
-                <Image x:Name="MainImage" Margin="20" MouseLeftButtonDown="MainImage_MouseLeftButtonDown" MouseLeftButtonUp="MainImage_MouseLeftButtonUp" MouseMove="MainImage_MouseMove">
-                    <Image.Effect>
-                        <DropShadowEffect/>
-                    </Image.Effect>
-                </Image>
-                <Rectangle x:Name="HighLighterRectangle" Margin="50,50,0,0" Width="200" Height="50" Fill="Pink" Opacity="0.4" ></Rectangle>
-            </Canvas>
-        </ScrollViewer>
+            <Label x:Name="xErrorLabel" Foreground="Red" FontSize="14" FontWeight="Bold" Visibility="Collapsed">Error</Label>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="1">
-            <UserControls:ucButton x:Name="EnlargeButton" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Search" Click="EnlargeButton_Click" ToolTip="Enlarge Image"/>
-            <Label x:Name="SizeLabel" FontWeight="Bold" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0">800x600</Label>
-            <Label x:Name="NameLabel" Margin="20,0,0,0" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold">Name</Label>
-        </StackPanel>
+            <ScrollViewer x:Name="xMainScrollViewer" Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <Canvas x:Name="xMainCanvas" >
+                    <Image x:Name="xMainImage"  MouseLeftButtonDown="MainImage_MouseLeftButtonDown" MouseLeftButtonUp="MainImage_MouseLeftButtonUp" MouseMove="MainImage_MouseMove"/>
+                    <Rectangle x:Name="xHighLighterRectangle" Margin="50,50,0,0" Width="200" Height="50" Fill="Pink" Opacity="0.4" ></Rectangle>
+                </Canvas>
+            </ScrollViewer>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right" Grid.Column="1">
-            <Label x:Name="ZoomPercentLabel" FontSize="14">100%</Label>
-            <Button x:Name="ZoomMinus" Click="ZoomMinus_Click"  Width="25" ClickMode="Press" >-</Button>
-            <Slider x:Name="ZoomSlider" Width="100" Minimum="0.1" Maximum="5" Value="1" Margin="0,5,0,0" ValueChanged="ZoomSlider_ValueChanged"/>
-            <Button x:Name="ZoomPlus" Click="ZoomPlus_Click"  Width="25">+</Button>
-        </StackPanel>
+            <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" Grid.Row="1">
+                <DockPanel  HorizontalAlignment="Stretch" VerticalAlignment="Center" >
+                    <Label x:Name="xNameLabel" DockPanel.Dock="Left" Margin="10,0,0,0" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"  FontWeight="Bold">Name</Label>
 
-    </Grid>
+                    <UserControls:ucButton x:Name="xEnlargeButton" DockPanel.Dock="Right" ButtonType="ImageButton" HorizontalAlignment="Right" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="ExpandToFullScreen" Click="EnlargeButton_Click" VerticalAlignment="Center" ToolTip="View in full screen"/>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Label x:Name="xZoomPercentLabel" FontSize="14">100%</Label>
+                        <Button x:Name="xZoomMinus" Click="ZoomMinus_Click"  Width="25" ClickMode="Press" >-</Button>
+                        <Slider x:Name="xZoomSlider" Width="100" Minimum="0.1" Maximum="5" Value="1" Margin="0,5,0,0" ValueChanged="ZoomSlider_ValueChanged"/>
+                        <Button x:Name="xZoomPlus" Click="ZoomPlus_Click"  Width="25">+</Button>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
 </Page>
