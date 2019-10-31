@@ -418,6 +418,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
                     elementList.Add(GetElementConfigControl("Property Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
+                case eElementAction.Switch:
+                    if(mAction.ElementType.Equals(eElementType.Window))
+                    {
+                        possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(Fields.SyncTime)) ? new List<string>() { "30" } :
+                           new List<string>() { mAction.GetInputParamValue(Fields.SyncTime) };
+
+                        elementList.Add(GetElementConfigControl("Sync time in seconds", Fields.SyncTime, eElementType.TextBox, possibleValues));
+                    }
+                    break;
 
                 default:
                     Reporter.ToLog(eLogLevel.DEBUG, mAction.ElementAction.ToString() + "not required config page.");

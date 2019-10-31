@@ -105,7 +105,16 @@ namespace GingerCore.Drivers.WindowsLib
 
             if (actClass != "ActSwitchWindow" || (actClass == "ActWindow" && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
             {
-                CheckRetrySwitchWindowIsNeeded();
+                var checkWindow = true;
+                if(actClass == "Common.ActUIElement" && (((ActUIElement)act).ElementAction != ActUIElement.eElementAction.Switch))
+                {
+                    checkWindow = false;
+                }
+                if (checkWindow)
+                {
+                    CheckRetrySwitchWindowIsNeeded();
+                }
+                
             }
 
             if (act.Timeout != null)
@@ -285,37 +294,42 @@ namespace GingerCore.Drivers.WindowsLib
 
         private void HandleUIElementAction(Act actWC)
         {
-            ActUIElement actUIWC = (ActUIElement)actWC;
-
-            string locateValue = actUIWC.ElementLocateValueForDriver;
-            object AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIWC.ElementLocateBy, locateValue);
-
-            if (AE == null && actUIWC.ElementAction != ActUIElement.eElementAction.IsEnabled)
+            ActUIElement actUIElement = (ActUIElement)actWC;
+            object AE = null;
+            if (!actUIElement.ElementType.Equals(eElementType.Window) && !actUIElement.ElementAction.Equals(ActUIElement.eElementAction.Switch))
             {
-                actUIWC.Error = "Element not Found - " + actUIWC.ElementLocateBy + " " + actUIWC.ElementLocateValueForDriver;
-                return;
-            }
+                string locateValue = actUIElement.ElementLocateValueForDriver;
+                AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIElement.ElementLocateBy, locateValue);
 
-            switch (actUIWC.ElementAction)
+                if (AE == null && actUIElement.ElementAction != ActUIElement.eElementAction.IsEnabled)
+                {
+                    actUIElement.Error = "Element not Found - " + actUIElement.ElementLocateBy + " " + actUIElement.ElementLocateValueForDriver;
+                    return;
+                }
+            }
+            switch (actUIElement.ElementAction)
             {
                 case ActUIElement.eElementAction.DragDrop:
-                    mUIAutomationHelper.DragAndDrop(AE, actUIWC);
+                    mUIAutomationHelper.DragAndDrop(AE, actUIElement);
                     break;
 
                 case ActUIElement.eElementAction.ClickAndValidate:
-                    string status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIWC);
+                    string status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIElement);
                     if (!status.Contains("Clicked Successfully"))
                     {
-                        actUIWC.Error += status;
+                        actUIElement.Error += status;
                     }
                     else
                     {
-                        actUIWC.ExInfo += status;
+                        actUIElement.ExInfo += status;
                     }
+                    break;
+                case ActUIElement.eElementAction.Switch:
+                    mUIAutomationHelper.ActUISwitchWindow(actUIElement);
                     break;
 
                 default:
-                    actUIWC.Error = "Unable to perform operation";
+                    actUIElement.Error = "Unable to perform operation";
                     break;
             }
         }

@@ -221,6 +221,8 @@ namespace GingerCore.Drivers.Common
 
         public abstract void SmartSwitchWindow(ActSwitchWindow act);
 
+        public abstract void ActUISwitchWindow(Act act);
+
         public abstract void SwitchWindow(ActUIASwitchWindow act);
 
         public abstract List<ElementInfo> GetElementChilderns(object element);
