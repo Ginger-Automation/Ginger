@@ -19,6 +19,7 @@ limitations under the License.
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -78,8 +79,9 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte BoolTrue = 10;    // bool = true
         const byte Struct = 11;    // Struct for fixed struct with simple propers like int, float not for dynamic values
         const byte JSONStruct = 12;    // Struct for fixed struct with simple propers like int, float not for dynamic values
-        const byte PayLoadType = 13;
-        
+        const byte PayLoadType = 13; 
+        const byte FilePayload = 13;
+
 
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
@@ -472,7 +474,21 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }            
         }
 
-        
+        /// <summary>
+        /// Add a File to the payload
+        /// </summary>
+        /// <param name="FilePath">Provide absolute Path of the file to be added on payload </param>
+        public void AddFile(string FilePath)
+        { 
+            string FileName = Path.GetFileName(FilePath);
+         
+            Byte[] FileData= File.ReadAllBytes(FilePath);
+
+            AddStringUTF16(FileName);
+            AddBytes(FileData);
+        }
+
+
         // 11 add Struct        
         /// <summary>
         /// Add value to payload of type struct as byte array
@@ -517,7 +533,23 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             }
         }
 
+
+        public string GetFile()
+        {
+            string FileName = GetStringUTF16();
+
+            Byte[] FileData = GetBytes();
+
+            Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "Amdocs", "Ginger"));
+
+            string FilePath = Path.Combine(Path.GetTempPath(), "Amdocs", "Ginger", Guid.NewGuid().ToString()+ FileName);
         
+            File.WriteAllBytes(FilePath, FileData);
+            return FilePath;
+        
+        }
+
+
         public T GetValue<T>() where T : struct
         {
             byte b = ReadValueType();

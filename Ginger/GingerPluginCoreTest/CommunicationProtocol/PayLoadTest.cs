@@ -23,6 +23,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using static Amdocs.Ginger.Plugin.Core.ActionsLib.ActInfo;
 
 namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
@@ -249,6 +250,30 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(val, val2);
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void FilePayload()
+        {
+            //Arrange
+
+
+
+
+            NewPayLoad pl = new NewPayLoad("FilePayload");
+
+            pl.AddFile(TestResources.GetTestResourcesFile("DummyDoc.docx"));
+            pl.ClosePackage();
+
+            byte[] b = pl.GetPackage();
+
+            NewPayLoad pl2 = new NewPayLoad(b);
+
+            string filepath = pl2.GetFile();
+            //Assert
+            Assert.IsTrue(File.Exists(filepath));
+
+
+        }
 
 
 
