@@ -30,6 +30,8 @@ using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -456,11 +458,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
 
-            ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
-            if (comboItem != null)
-                locateByList.Remove(comboItem);
+            List<ComboEnumItem> locateByList = GetPlatformLocatByList();
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateBy), Header = "Locate By", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = locateByList, });
             defView.GridColsView.Add(new GridColView() { Field = nameof(ElementLocator.LocateValue), Header = "Locate Value", WidthWeight = 65 });
@@ -479,6 +478,32 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             xLocatorsGrid.grdMain.PreparingCellForEdit += LocatorsGrid_PreparingCellForEdit;
             xLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
+        }
+
+        private List<ComboEnumItem> GetPlatformLocatByList()
+        {
+            List<ComboEnumItem> locateByComboItemList = new List<ComboEnumItem>();
+            
+            var targetPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey);
+
+            if (!targetPlatform.Equals(ePlatformType.NA))
+            {
+                PlatformInfoBase platformInfoBase = PlatformInfoBase.GetPlatformImpl(targetPlatform);
+                List<eLocateBy> platformLocateByList = platformInfoBase.GetPlatformUIElementLocatorsList();
+
+                foreach (var locateBy in platformLocateByList)
+                {
+                    if (!locateBy.Equals(eLocateBy.POMElement))
+                    {
+                        ComboEnumItem comboEnumItem = new ComboEnumItem();
+                        comboEnumItem.text = GingerCore.General.GetEnumValueDescription(typeof(eLocateBy), locateBy);
+                        comboEnumItem.Value = locateBy;
+                        locateByComboItemList.Add(comboEnumItem);
+                    }
+                }
+            }
+
+            return locateByComboItemList;
         }
 
         private void DeleteLocatorClicked(object sender, RoutedEventArgs e)
