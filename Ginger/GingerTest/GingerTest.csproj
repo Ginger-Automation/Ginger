@@ -232,6 +232,7 @@
     <Compile Include="POMs\EnvironmentsPOM.cs" />
     <Compile Include="POMs\GingerPOMBase.cs" />
     <Compile Include="POMs\GlobalVariablesPOM.cs" />
+    <Compile Include="POMs\JavaPOM.cs" />
     <!--<Compile Include="GeneralLib\GingerTests.cs" />-->
     <Compile Include="POMs\MainWindowPOM.cs" />
     <Compile Include="GingerBasicsTest.cs" />
@@ -258,6 +259,9 @@
     </None>
     <None Include="TestData\Agents.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\JavaTestApp\SimpleTableDemo.jnlp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TestResources\Solutions\BasicSimple\RecentlyUsed.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -297,6 +301,15 @@
     <Content Include="TestResources\HTML\HTMLControls.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\JavaTestApp\EditorPaneTestApp.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\JavaTestApp\JavaTestApp.jar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\JavaTestApp\Test App.jar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -321,6 +334,9 @@
     </Content>
     <Content Include="TestResources\Solutions\DosConsole\Environments\Default.Ginger.Environment.xml" />
     <Content Include="TestResources\Solutions\DosConsole\Ginger.Solution.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\POMsTest\Agents\JavaAgent.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Solutions\POMsTest\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">

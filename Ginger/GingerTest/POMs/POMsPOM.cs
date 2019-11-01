@@ -24,6 +24,7 @@ using Ginger;
 using Ginger.Agents;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTest.POMs.Common;
 using GingerTestHelper;
 using GingerWPF.UserControlsLib;
@@ -60,10 +61,21 @@ namespace GingerTest.POMs
         {
             WizardPOM wizard = WizardPOM.CurrentWizard;            
             wizard.NextButton.Click();
+            
+            ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == targetApp).FirstOrDefault();
+            Execute(() =>
+            {
+                ComboBox targetAppComboBox = (ComboBox)wizard.CurrentPage["TargetApplication AID"].dependencyObject;               
+                targetAppComboBox.SelectedValue = ap.Key;               
+            });
+
             ucAgentControl ucAgentControl = (ucAgentControl)wizard.CurrentPage["ucAgentControl AID"].dependencyObject;
             ucAgentControlPOM ucAgentControlPOM = new ucAgentControlPOM(ucAgentControl);
             ucAgentControlPOM.SelectValueUCAgentControl(agent);
-            ucAgentControlPOM.UCAgentControlStatusButtonClick();
+            if(agent.Status != Agent.eStatus.Running)
+            {
+                ucAgentControlPOM.UCAgentControlStatusButtonClick();
+            }            
             SleepWithDoEvents(10000);
 
             //Process AutoMap Element Locators Grid
@@ -90,8 +102,11 @@ namespace GingerTest.POMs
 
             wizard.CurrentPage["LearnOnlyMappedElementsCheckBox AID"].SetCheckedValue(false);//to it will learn all
 
-            string html = TestResources.GetTestResourcesFile(URL);
-            agent.Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
+            if(agent.Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Web)
+            {
+                string html = TestResources.GetTestResourcesFile(URL);
+                agent.Driver.RunAction(new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, ValueForDriver = html });
+            }            
             SleepWithDoEvents(10000);
             wizard.NextButton.Click();
             SleepWithDoEvents(5000);
