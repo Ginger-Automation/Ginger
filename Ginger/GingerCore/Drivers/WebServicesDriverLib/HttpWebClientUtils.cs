@@ -99,7 +99,7 @@ namespace GingerCore.Actions.WebAPI
         {
             if (mAct.HttpHeaders.Count() > 0)
             {
-                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.Value.ToUpper() == "GZIP,DEFLATE");
+                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE");
                 if (encodType != null)
                 {
                     Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
