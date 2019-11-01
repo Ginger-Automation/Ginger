@@ -228,6 +228,7 @@ namespace Ginger.Run
                 }
             }
 
+            runner.IsUpdateBusinessFlowRunList = true;
             runner.BusinessFlows = runnerFlows;
         }
 
