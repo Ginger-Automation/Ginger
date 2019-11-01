@@ -83,13 +83,18 @@ namespace Ginger.Run.RunSetActions
                 {
                     testNGReportPath = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder;
                 }
-                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, testNGReportPath, "Execution Summary");
                 if (!Directory.Exists(testNGReportPath))
                 {
-                    Directory.CreateDirectory(testNGReportPath);
+                    try
+                    {
+                        Directory.CreateDirectory(testNGReportPath);
+                    }
+                    catch(Exception ex)
+                    {
+                        testNGReportPath = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder;
+                    }
                 }
                 SaveBFResults(RI, testNGReportPath, IsStatusByActivitiesGroup);
-                Reporter.HideStatusMessage();
             }
             catch (Exception ex)
             {
