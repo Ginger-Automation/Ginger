@@ -718,6 +718,7 @@ namespace GingerCore.SourceControl
 
         }
 
+       [MethodImpl(MethodImplOptions.Synchronized)]
         public override string GetRepositoryURL(ref string error)
         {
             if (client == null) Init();
