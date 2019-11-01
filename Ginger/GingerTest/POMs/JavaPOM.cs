@@ -74,6 +74,14 @@ namespace GingerTest.POMs
         [ClassCleanup]
         public static void ClassCleanup()
         {
+            ActWindow AWC = new ActWindow();
+            AWC.LocateBy = eLocateBy.ByTitle;
+            AWC.LocateValue = "Java";
+            AWC.WindowActionType = ActWindow.eWindowActionType.Close;
+            mGR.RunAction(AWC, false);
+            mGR.StopAgents();            
+            mDriver = null;
+            mGR = null;
             GingerAutomator.EndSession();
         }
 
