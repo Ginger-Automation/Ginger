@@ -106,7 +106,10 @@ namespace Ginger
                         mObjList.PropertyChanged -= ObjListPropertyChanged;
                     }
                     mObjList = value;
-                    BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
+                    if (mObjList != null)
+                    {
+                        BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
+                    }
 
                     mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
