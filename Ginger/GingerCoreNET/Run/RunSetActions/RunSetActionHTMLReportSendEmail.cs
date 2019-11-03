@@ -548,8 +548,9 @@ namespace Ginger.Run.RunSetActions
                         }
                     }
                     else
+                    {
                         GetExecBFDetails(liteDbRunSet, currentTemplate, out fieldsNamesHTMLTableCells, out fieldsValuesHTMLTableCells);
-
+                    }
                     ReportHTML = ReportHTML.Replace("{BusinessFlowsDetails_Headers}", fieldsNamesHTMLTableCells.ToString());
                     ReportHTML = ReportHTML.Replace("{BusinessFlowsDetails_Data}", fieldsValuesHTMLTableCells.ToString());
                 }
