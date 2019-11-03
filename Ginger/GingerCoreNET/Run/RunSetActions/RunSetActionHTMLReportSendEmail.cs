@@ -252,7 +252,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch(Exception ex)
                     {
-                        //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Checking if runSetFolder exist: " + runSetFolder);
+                        Reporter.ToLog(eLogLevel.ERROR, "Run set operation send Email ,error :" + ex.ToString());
                     }
                 }
             }
@@ -484,13 +484,10 @@ namespace Ginger.Run.RunSetActions
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
             RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
-            //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
-            //CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
-            //Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
             if (liteDbRunSet == null || (liteDbRunSet.GetType() == typeof(Object)))
             {
                 return;
@@ -611,7 +608,6 @@ namespace Ginger.Run.RunSetActions
             fieldsNamesHTMLTableCells.Remove(0, fieldsNamesHTMLTableCells.Length);
             fieldsValuesHTMLTableCells.Remove(0, fieldsValuesHTMLTableCells.Length);
             emailReadyHtml = ReportHTML;
-            //RI = null;
             ReportHTML = null;
         }
 
