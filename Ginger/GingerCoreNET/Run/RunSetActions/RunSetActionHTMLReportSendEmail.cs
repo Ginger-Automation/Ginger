@@ -974,30 +974,30 @@ namespace Ginger.Run.RunSetActions
             chartData.Add(new KeyValuePair<int, int>(totalOtherRunners, 3));
             CreateChart(chartData, "GingerRunner" + reportTimeStamp + ".jpeg", "Ginger Runners");
 
-            int totalBFs, totalPassedBFs = 0, totalStoppedBFs = 0, totalFailedBFs = 0, totalOtherBFs = 0;
+            int totalBFs = 0, totalPassedBFs = 0, totalStoppedBFs = 0, totalFailedBFs = 0, totalOtherBFs = 0;
             int totalActivities = 0, totalPassedActivities = 0, totalStoppedActivities = 0, totalFailedActivities = 0, totalOtherActivities = 0;
             int totalActions = 0, totalPassedActions = 0, totalFailedActions = 0, totalStoppedActions = 0, totalOtherActions = 0;
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
-                totalBFs = liteDbRunner.BusinessFlowsColl.Count;
-                totalPassedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
-                totalFailedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Failed.ToString()).Count();
-                totalStoppedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Stopped.ToString()).Count();
-                totalOtherBFs = totalBFs - (totalPassedBFs + totalFailedBFs + totalStoppedBFs);
+                totalBFs += liteDbRunner.BusinessFlowsColl.Count;
+                totalPassedBFs += liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
+                totalFailedBFs += liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Failed.ToString()).Count();
+                totalStoppedBFs += liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Stopped.ToString()).Count();
+                totalOtherBFs += totalBFs - (totalPassedBFs + totalFailedBFs + totalStoppedBFs);
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
-                    totalActivities = liteDbBusinessFlow.ActivitiesColl.Count;
-                    totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                    totalFailedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Failed.ToString()).Count();
-                    totalStoppedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Stopped.ToString()).Count();
-                    totalOtherActivities = totalActivities - (totalPassedActivities + totalFailedActivities + totalStoppedActivities);
+                    totalActivities += liteDbBusinessFlow.ActivitiesColl.Count;
+                    totalPassedActivities += liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
+                    totalFailedActivities += liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Failed.ToString()).Count();
+                    totalStoppedActivities += liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Stopped.ToString()).Count();
+                    totalOtherActivities += totalActivities - (totalPassedActivities + totalFailedActivities + totalStoppedActivities);
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
-                        totalActions = liteDbActivity.ActionsColl.Count;
-                        totalPassedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                        totalFailedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Failed.ToString()).Count();
-                        totalStoppedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Stopped.ToString()).Count();
-                        totalOtherActions = totalActions - (totalPassedActions + totalFailedActions + totalStoppedActions);
+                        totalActions += liteDbActivity.ActionsColl.Count;
+                        totalPassedActions += liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
+                        totalFailedActions += liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Failed.ToString()).Count();
+                        totalStoppedActions += liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Stopped.ToString()).Count();
+                        totalOtherActions += totalActions - (totalPassedActions + totalFailedActions + totalStoppedActions);
                     }
 
                 }
