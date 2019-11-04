@@ -1214,6 +1214,8 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="AutomationProperties.AutomationId" Value="{Binding AutomationID}"/>
+        <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
     </Style>
 
     <Style TargetType="{x:Type TreeViewItem}" x:Key="$TreeViewItemStyle_TrioBackground">
