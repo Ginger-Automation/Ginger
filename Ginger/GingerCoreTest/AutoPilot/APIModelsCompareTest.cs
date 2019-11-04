@@ -55,12 +55,12 @@ namespace UnitTests.NonUITests.AutoPilot
             // Initialize XML file names to be fetched from TestResources
             xmlFiles = new List<string>()
             {
-                @"XML\API_Templates_XML\Create_User.xml",
-                @"XML\API_Templates_XML\Delete_User.xml",
-                @"XML\API_Templates_XML\PhoneVerifySOAP_CheckPhoneNumber.xml",
-                @"XML\API_Templates_XML\Update_User.xml",
-                @"XML\API_Templates_XML\PhoneVerifySOAP_CheckPhoneNumbers.xml",
-                @"XML\API_Templates_XML\GetQuote_DelayedStockQuoteSoap.xml",
+                @"XML\Create_User.xml",
+                @"XML\Delete_User.xml",
+                @"XML\PhoneVerifySOAP_CheckPhoneNumber.xml",
+                @"XML\Update_User.xml",
+                @"XML\PhoneVerifySOAP_CheckPhoneNumbers.xml",
+                @"XML\GetQuote_DelayedStockQuoteSoap.xml",
             };
 
             existingAPIsList = new ObservableList<ApplicationAPIModel>();
