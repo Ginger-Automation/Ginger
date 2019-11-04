@@ -26,6 +26,7 @@ using System.Text;
 using Ginger.Reports;
 using Amdocs.Ginger.Common;
 using GingerCore;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -58,15 +59,6 @@ namespace Ginger.Run.RunSetActions
         public string SaveResultsInSolutionFolderName { get; set; }
 
         [IsSerializedForLocalRepository]
-        public string SaveResultstoFolderName { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool OpenExecutionResultsFolder { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool SaveindividualBFReport { get; set; }
-
-        [IsSerializedForLocalRepository]
         public bool IsStatusByActivitiesGroup { get; set; }
 
         private bool isStatusByActivity = true;
@@ -81,21 +73,28 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
+                string testNGReportPath = "";
+
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
-                    Reporter.ToStatus(eStatusMsgKey.SaveItem, null, SaveResultsInSolutionFolderName, "Execution Summary");
-                    if (!Directory.Exists(SaveResultsInSolutionFolderName))
-                    {
-                        Directory.CreateDirectory(SaveResultsInSolutionFolderName);
-                    }
-                    SaveBFResults(RI, SaveResultsInSolutionFolderName, IsStatusByActivitiesGroup);
-                    Reporter.HideStatusMessage();
+                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
                 }
                 else
                 {
-                    Errors = "Folder path not provided.";
-                    Status = eRunSetActionStatus.Failed;
+                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 }
+                if (!Directory.Exists(testNGReportPath))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(testNGReportPath);
+                    }
+                    catch(Exception ex)
+                    {
+                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                    }
+                }
+                SaveBFResults(RI, testNGReportPath, IsStatusByActivitiesGroup);
             }
             catch (Exception ex)
             {
@@ -134,5 +133,16 @@ namespace Ginger.Run.RunSetActions
         }
 
         public override string Type { get { return "Produce TestNG Summary Report"; } }
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name == "SaveResultstoFolderName" || name == "OpenExecutionResultsFolder" || name == "SaveindividualBFReport")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

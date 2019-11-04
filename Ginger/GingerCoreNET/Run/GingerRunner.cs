@@ -348,6 +348,8 @@ namespace Ginger.Run
             }
         }
 
+        public bool IsUpdateBusinessFlowRunList;
+
         public GingerRunner()
         {
             ExecutedFrom = eExecutedFrom.Run;

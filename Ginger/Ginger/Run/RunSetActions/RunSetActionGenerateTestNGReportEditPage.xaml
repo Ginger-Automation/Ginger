@@ -17,6 +17,8 @@
                 <TextBox x:Name="TargetTestNGReportFolderBox" Width="500" Style="{StaticResource @TextBoxStyle}" ></TextBox>
                 <Button x:Name="BrowseButton" Click="BrowseButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center">Select</Button>
             </StackPanel>
+            <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="Note: in case path is not provided or invalid the report will be saved to default reports path"/>
+
             <StackPanel x:Name="sourceRepActTypeRadioBtnsPnl" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Show Status by:</Label>
                 <StackPanel Orientation="Horizontal" >

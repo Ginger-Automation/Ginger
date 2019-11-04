@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.UserControls
             get { return xButtonText.Text.ToString(); }
             set { xButtonText.Text = value; }
         }      
-
+        
         public eImageType ButtonImageType
         {
             get { return (eImageType)GetValue(ButtonImageTypeProperty); }
@@ -155,20 +155,15 @@ namespace Amdocs.Ginger.UserControls
                     break;
             }
         }     
-
-        // Why in Preview and not on click?
+              
 
         public event RoutedEventHandler Click;
-        private void Button_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+  
+
+        private void xButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.ChangedButton != MouseButton.Left || e.ClickCount >= 2)
-            {
-                e.Handled = true;
-            }
-            else
-            {
-                Click(this, e);
-            }
+            e.Handled = true;
+            Click(this, e);
         }
 
         public void DoClick()
@@ -203,6 +198,6 @@ namespace Amdocs.Ginger.UserControls
             {
                 xButton.Style = mPreviousStyle;
             }
-        }
+        }     
     }
 }
