@@ -2669,7 +2669,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     if (isHTMLReportPermanentFolderNameUsed)
                     {
-                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(Path.Combine(mHTMLReportsFolder, System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name)));
                     }
                     gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
                 }
@@ -2677,11 +2677,11 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     if (!isHTMLReportPermanentFolderNameUsed)
                     {
-                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder));
+                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(Path.Combine(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder)));
                     }
                     else
                     {
-                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(Path.Combine(currentConf.HTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name)));
                     }
                 }
             }

@@ -117,11 +117,12 @@ namespace Ginger.Run.RunSetActions
                     string htmlReportFolderPath = "";
                     if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
                     {
-                        htmlReportFolderPath = WorkSpace.Instance.TestArtifactsFolder + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                        //htmlReportFolderPath = WorkSpace.Instance.TestArtifactsFolder + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                        htmlReportFolderPath = Path.Combine(WorkSpace.Instance.TestArtifactsFolder , System.IO.Path.GetFileName(runSetFolder));
                     }
                     else if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
                     {
-                        htmlReportFolderPath = HTMLReportFolderNameCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                        htmlReportFolderPath = Path.Combine(HTMLReportFolderNameCalculated, System.IO.Path.GetFileName(runSetFolder));
                     }
                     else
                     {
@@ -156,7 +157,7 @@ namespace Ginger.Run.RunSetActions
                             string currentHTMLFolderName = string.Empty;
                             if (!isHTMLReportPermanentFolderNameUsed)
                             {
-                                currentHTMLFolderName = HTMLReportFolderNameCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                                currentHTMLFolderName = Path.Combine(HTMLReportFolderNameCalculated, System.IO.Path.GetFileName(runSetFolder));
                             }
                             else
                             {
