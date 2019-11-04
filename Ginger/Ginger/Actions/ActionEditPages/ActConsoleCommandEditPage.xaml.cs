@@ -35,12 +35,20 @@ namespace Ginger.Actions
     {
         private ActConsoleCommand mActConsoleCommand;
 
+        private Context mContext;
+
         string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\sh\");        
 
         public ActConsoleCommandEditPage(ActConsoleCommand actConsoleCommand)
         {
             InitializeComponent();
             this.mActConsoleCommand = actConsoleCommand;
+
+            if (mActConsoleCommand.Context != null)
+            {
+                mContext = Context.GetAsContext(mActConsoleCommand.Context);
+            }
+
             List<object> list = GetActionListPlatform();            
             GingerCore.General.FillComboFromEnumObj(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
@@ -53,6 +61,19 @@ namespace Ginger.Actions
 
         private List<object> GetActionListPlatform()
         {
+            if(mActConsoleCommand.Platform== ePlatformType.NA)
+            {
+                if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity!=null)
+                {
+                    string targetapp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
+                    mActConsoleCommand.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                }    
+                //TODO: Need to handle in generic way for all actions added to SR
+                //else - if platform is NA and context is also null means we are in Shared repository
+                //So the actions list will have only free command which is wrong
+            }
+           
+
             List<object> actionList = new List<object>();
            
             actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);

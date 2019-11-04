@@ -28,6 +28,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using System.Reflection;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
@@ -168,6 +169,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
         {
+            var pomExcutionUtil = new POMExecutionUtils();
             Act elementAction = null;
             if (elementInfo != null)
             {
@@ -175,7 +177,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 if(actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
-                        actConfig.Operation = SetElementOperation(elementInfo.ElementTypeEnum, actConfig);
+                        actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
                 }
                 if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
                 {
@@ -200,30 +202,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                             Value = actConfig.ElementValue
                         };
 
-                        if (actConfig.AddPOMToAction)
-                        {
-                            elementAction.Description = actConfig.Operation + " - " + elementInfo.ElementName;
-                            PropertyInfo pLocateBy = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateBy));
-                            if (pLocateBy != null)
-                            {
-                                if (pLocateBy.PropertyType.IsEnum)
-                                {
-                                    pLocateBy.SetValue(elementAction, Enum.Parse(pLocateBy.PropertyType, nameof(eLocateBy.POMElement)));
-                                }
-                            }
-
-                            PropertyInfo pLocateVal = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementLocateValue));
-                            if (pLocateVal != null)
-                            {
-                                pLocateVal.SetValue(elementAction, string.Format("{0}_{1}", actConfig.POMGuid, actConfig.ElementGuid));
-                            }
-
-                            PropertyInfo pElementType = elementAction.GetType().GetProperty(nameof(ActUIElement.ElementType));
-                            if (pElementType != null && pElementType.PropertyType.IsEnum)
-                            {
-                                pElementType.SetValue(elementAction, ((ElementInfo)actConfig.LearnedElementInfo).ElementTypeEnum);
-                            }
-                        }
+                        pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
                     }
                 } 
             }
@@ -241,8 +220,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             return elementAction;
         }
-
-        public string SetElementOperation(eElementType ElementTypeEnum, ElementActionCongifuration actConfig)
+        public override string GetDefaultElementOperation(eElementType ElementTypeEnum)
         {
             switch (ElementTypeEnum)
             {
@@ -538,18 +516,16 @@ namespace GingerCore.Platforms.PlatformsInfo
             // We cache the results
             if (mElementLocatorsTypeList == null)
             {
+                //Arrange locator on priority basis
                 mElementLocatorsTypeList = new List<eLocateBy>();
                 mElementLocatorsTypeList.Add(eLocateBy.POMElement);
-                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByID);
+                mElementLocatorsTypeList.Add(eLocateBy.ByName);
+                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSS);
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
-                mElementLocatorsTypeList.Add(eLocateBy.ByXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByXY);
                 mElementLocatorsTypeList.Add(eLocateBy.ByMulitpleProperties);                                
-                mElementLocatorsTypeList.Add(eLocateBy.NA);
-                mElementLocatorsTypeList.Add(eLocateBy.ByName);
-                mElementLocatorsTypeList.Add(eLocateBy.Unknown);
                 mElementLocatorsTypeList.Add(eLocateBy.ByRelXPath);
                 mElementLocatorsTypeList.Add(eLocateBy.ByContainerName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByHref);
@@ -572,8 +548,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByContentDescription);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
                 mElementLocatorsTypeList.Add(eLocateBy.ByElementsRepository);
-                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByCSSSelector);
+                mElementLocatorsTypeList.Add(eLocateBy.ByModelName);//???
+                mElementLocatorsTypeList.Add(eLocateBy.NA);
+                mElementLocatorsTypeList.Add(eLocateBy.Unknown);
             }
             return mElementLocatorsTypeList;
         }
@@ -626,5 +604,6 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             return learningLocatorsList;
         }
+
     }
 }

@@ -60,6 +60,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
 
+        public override string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile)
+        {
+            executionLogfolder = executionLoggerHelper.GetLoggerDirectory(executionLogfolder);
+            executionLoggerHelper.CleanDirectory(executionLogfolder, isCleanFile);
+            return executionLogfolder;
+        }
+
         public override object SetReportAction(Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
             string executionLogFolder = string.Empty;
@@ -108,11 +115,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             if (isConfEnable)
             {
                 if (offlineMode)
-                    // use Path.combine !!!!
-                    SaveObjToReporsitory(AR, Path.Combine(activity.ExecutionLogFolder,"Activity.txt"));
+                {
+                    SaveObjToReporsitory(AR, Path.Combine(activity.ExecutionLogFolder, "Activity.txt"));
+                }
                 else
-                    // use Path.combine !!!!
-                    SaveObjToReporsitory(AR, Path.Combine(ExecutionLogfolder,activity.ExecutionLogFolder,"Activity.txt"));
+                {
+                    SaveObjToReporsitory(AR, Path.Combine(ExecutionLogfolder, activity.ExecutionLogFolder, "Activity.txt"));
+                }
             }
             return AR; 
         }
@@ -198,6 +207,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal override void EndRunSet()
         {
             return;
+        }
+
+        public override string GetLogFolder(string folder)
+        {
+            return folder;
         }
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)

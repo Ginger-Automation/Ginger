@@ -25,12 +25,11 @@ using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace Amdocs.Ginger.GingerConsole
 {
-    class Program
+    public class Program
     {
         static SolutionMenu mSolutionMenu;
         
@@ -42,12 +41,10 @@ namespace Amdocs.Ginger.GingerConsole
 
         static GingerGridMenu gingerGridMenu;
         
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-                  
-            // TODO: Console.SetOut      
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
             Console.ForegroundColor = ConsoleColor.Yellow;            
-            Console.WriteLine("Ginger Console v3.2");  // !!!!!!!!!!!! fix version take it from GingercoreNET
             Console.ResetColor();
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
 
@@ -59,12 +56,11 @@ namespace Amdocs.Ginger.GingerConsole
                 Keepalive = false;                      
             };
 
-            Console.WriteLine();
-            Console.WriteLine("---------------------------------------------------");
-            Console.WriteLine("-            Press CTRL+C to exit                 -");
-            Console.WriteLine("---------------------------------------------------");
-
+            
             Reporter.WorkSpaceReporter = new GingerConsoleWorkspaceReporter();
+
+            Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 
             // Init RepositorySerializer to use new Ginger classes
             NewRepositorySerializer RS = new NewRepositorySerializer();
@@ -72,17 +68,17 @@ namespace Amdocs.Ginger.GingerConsole
             {
                 if (args.Count() > 0)
                 {
-                    ProcessArgs(args);
-            
-                    Console.WriteLine("Closing");
-                    Thread.Sleep(1000);
+                    ProcessArgs(args);                    
+                    Reporter.ToLog(eLogLevel.DEBUG, "Processing command line arguments completed");
                 }
                 else
                 {
-                    InitWorkSpace();
+                    Console.WriteLine();
+                    Console.WriteLine("---------------------------------------------------");
+                    Console.WriteLine("-            Press CTRL+C to exit                 -");
+                    Console.WriteLine("---------------------------------------------------");
 
-                    Console.WriteLine("Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);
-
+                    InitWorkSpace(true);
                     InitMenu();
                     Keepalive = true;
                     while (Keepalive)
@@ -97,7 +93,10 @@ namespace Amdocs.Ginger.GingerConsole
                 Console.WriteLine("Exception: " + ex.Message);
                 Thread.Sleep(3000);
             }
+            WorkSpace.Instance.Close();
         }
+
+       
 
         private static void InitMenu()
         {
@@ -130,28 +129,20 @@ namespace Amdocs.Ginger.GingerConsole
         }
         
 
-        private static void InitWorkSpace()
+        private static void InitWorkSpace(bool startLocalGrid)
         {
             GingerConsoleWorkSpace ws = new GingerConsoleWorkSpace();  
-            WorkSpace.Init(ws);
+            WorkSpace.Init(ws, startLocalGrid);
         }
 
         private static void ProcessArgs(string[] args)
         {
-            InitWorkSpace();                 
+            InitWorkSpace(false);                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);
+            CLI.ExecuteArgs(args);            
         }
 
-        private static Module A_ModuleResolve1(object sender, ResolveEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static Module A_ModuleResolve(object sender, ResolveEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

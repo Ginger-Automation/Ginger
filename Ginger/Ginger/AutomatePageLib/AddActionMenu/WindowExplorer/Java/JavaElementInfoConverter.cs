@@ -26,78 +26,67 @@ namespace Ginger.WindowExplorer.Java
     {
         internal static ITreeViewItem GetTreeViewItemFor(ElementInfo CI)
         {
-            // TODO verify if pl.Name = ElementInfo
-
+          
             JavaElementInfo JEI = (JavaElementInfo)CI;
-            switch (JEI.ElementType)
+            switch (JEI.ElementTypeEnum)
             {
-                case "javax.swing.JTextField":
-                case "javax.swing.JTextPane":
+                case eElementType.TextBox:
                     JavaTextBoxTreeItem JTBTI = new JavaTextBoxTreeItem();
                     JTBTI.JavaElementInfo = JEI;                    
                     return JTBTI;
-                case "javax.swing.JButton":
+                case eElementType.Button:
                     JavaButtonTreeItem JBTI = new JavaButtonTreeItem();
                     JBTI.JavaElementInfo = JEI;                                        
                     return JBTI;
-                case "javax.swing.JLabel":
+                case eElementType.Label:
                     JavaLabelTreeItem JLTI = new JavaLabelTreeItem();
                     JLTI.JavaElementInfo = JEI;                                        
                     return JLTI;
-                case "com.amdocs.uif.widgets.browser.JxBrowserBrowserComponent":  //  added to support live spy in JxBrowserBrowserComponent
-                case "com.amdocs.uif.widgets.browser.JExplorerBrowserComponent":// "com.jniwrapper.win32.ie.aw" :
+                case eElementType.Browser:
                     JavaBrowserTreeItem JBRTI = new JavaBrowserTreeItem();
                     JBRTI.JavaElementInfo = JEI;                    
                     return JBRTI;
-                case "javax.swing.JCheckBox":
+                case eElementType.CheckBox:
                     JavaCheckBoxTreeItem JCBTI = new JavaCheckBoxTreeItem();
                     JCBTI.JavaElementInfo = JEI;                    
                     return JCBTI;
-                case "javax.swing.JRadioButton":
+                case eElementType.RadioButton:
                     JavaRadioButtonTreeItem JRBTI = new JavaRadioButtonTreeItem();
                     JRBTI.JavaElementInfo = JEI;                    
                     return JRBTI;
-                case "com.amdocs.uif.widgets.CalendarComponent":
-                case "com.amdocs.uif.widgets.DateTimeNative$2":
-                case "lt.monarch.swing.JDateField$Editor":
+                case eElementType.DatePicker:
                     JavaDatePickerTreeItem JDP = new JavaDatePickerTreeItem();
                     JDP.JavaElementInfo = JEI;
                     return JDP;
-                case "javax.swing.JComboBox":
-                case "com.amdocs.uif.widgets.ComboBoxNative$1":
+                case eElementType.ComboBox:
                     JavaComboBoxTreeItem JCoBTI = new JavaComboBoxTreeItem();
                     JCoBTI.JavaElementInfo = JEI;                    
                     return JCoBTI;
-                case "javax.swing.JList":
+                case eElementType.List:
                     JavaListTreeItem JLiTI = new JavaListTreeItem();
                     JLiTI.JavaElementInfo = JEI;                    
                     return JLiTI;
-                case "javax.swing.JTable":
-                case "com.amdocs.uif.widgets.search.SearchJTable":
+                case eElementType.Table:
                     JavaTableTreeItem JTiTI = new JavaTableTreeItem();
                     JTiTI.JavaElementInfo = JEI;                    
                     return JTiTI;
-                case "javax.swing.JScrollPane":
-                case"javax.swing.JScrollPane$ScrollBar":
+                case eElementType.ScrollBar:
                     JavaScrollTreeItem JSTI = new JavaScrollTreeItem();
                     JSTI.JavaElementInfo = JEI;                    
                     return JSTI;
-                case "javax.swing.JTree":
-                case "com.amdocs.uif.widgets.TreeNative$SmartJTree":
+                case eElementType.TreeView:
                     JavaTreeTreeItem JTRTI = new JavaTreeTreeItem();
                     JTRTI.JavaElementInfo = JEI;
                     return JTRTI;
-                case "javax.swing.JMenu":
+                case eElementType.MenuItem:
                     JavaMenuTreeItem JMTI = new JavaMenuTreeItem();
                     JMTI.JavaElementInfo = JEI;                    
                     return JMTI;
-                case "javax.swing.JTabbedPane":
-                case "com.amdocs.uif.widgets.JXTabbedPane":
+                case eElementType.Tab:
                     JavaTabTreeItem JTTI = new JavaTabTreeItem();
                     JTTI.JavaElementInfo = JEI;                    
                     return JTTI;
-                case "javax.swing.JInternalFrame":
-                case "com.amdocs.uif.workspace.MDIWorkspace$27":
+                case eElementType.Iframe:
                     JavaInternalFrameTitleTreeItem JIFTTI = new JavaInternalFrameTitleTreeItem();
                     JIFTTI.JavaElementInfo = JEI;
                     return JIFTTI;

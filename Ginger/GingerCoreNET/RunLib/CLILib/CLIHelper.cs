@@ -44,10 +44,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
-        public eAppReporterLoggingLevel AppLoggingLevel;
-        public eCLIType CLIType;
+        public eAppReporterLoggingLevel AppLoggingLevel;        
 
-        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backword compatibility        
+        bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
         {
             get
@@ -89,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 OnPropertyChanged(nameof(RunAnalyzer));
             }
         }
-
+        
         string mTestArtifactsFolder;
         public string TestArtifactsFolder
         {
@@ -113,8 +112,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution...");
-                // SetDebugLevel();//disabeling because it is overwriting the UserProfile setting for logging level
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution...");
+                // SetDebugLevel();//disabling because it is overwriting the UserProfile setting for logging level
                 DownloadSolutionFromSourceControl();
                 return OpenSolution();
             }
@@ -129,7 +128,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 mRunsetExecutor = runsetExecutor;
                 if (mRunsetExecutor.RunSetConfig == null)
                 {
@@ -148,6 +147,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Unexpected error occurred while loading the {0}", GingerDicser.GetTermResValue(eTermResKey.RunSet)), ex);
                 return false;
+            }
+        }
+
+        public void PostExecution()
+        {
+            if (ShowAutoRunWindow)
+            {                
+                RepositoryItemHelper.RepositoryItemFactory.WaitForAutoRunWindowClose();
             }
         }
 
@@ -212,7 +219,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void SelectRunset()
         {            
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             mRunSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
             if (mRunSetConfig != null)
@@ -229,7 +236,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         private void SelectEnv()
-        {           
+        {            
             Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + Env + "'");
             ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
             if (env != null)
@@ -238,9 +245,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                // TODO: throw
-                // return false;
+                if (Env == "Default")
+                {
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 1)
+                    {
+                        mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
+                        Reporter.ToLog(eLogLevel.DEBUG, "Auto Selected Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Cannot auto select default environment since solution do not contain 'Default' env and solution contains more than one env, please specify the env name using -e or --env");
+                    }
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
+                    // TODO: throw
+                    // return false;
+                }
             }
         }
 
@@ -249,18 +271,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                if (SourceControlURL.IndexOf(".git") != -1)
-                {
-                    // App.DownloadSolution(value.Substring(0, value.IndexOf(".git") + 4));
-                    SourceControlIntegration.DownloadSolution(Solution);
-                }
-                else
-                {
-                    // App.DownloadSolution(value);
-                    //RepositoryItemHelper.RepositoryItemFactory.DownloadSolution(SourceControlURL);
-
-                    SourceControlIntegration.DownloadSolution(Solution);
-                }
+                SourceControlIntegration.DownloadSolution(Solution);                
             }
         }
 
@@ -283,6 +294,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 catch(Exception ex)
                 {
+                    string mess = ex.Message; //To avoid warning of ex not used
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to decrypt the source control password");//not showing ex details for not showing the password by mistake in log
                 }
             }
@@ -307,7 +319,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
             }
 
-            Reporter.ToLog(eLogLevel.INFO, "Selected SourceControlProxyPort: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyPort: '" + value + "'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
         }
 

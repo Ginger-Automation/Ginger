@@ -18,6 +18,20 @@ jobs:
   
   steps:
   
+# ------------------------------------------------------------------------------------------------------
+# installs version 2.2.x latest
+# ------------------------------------------------------------------------------------------------------  
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk 2.2.x'
+    inputs:
+      packageType: sdk
+      version: 2.2.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+
+# ------------------------------------------------------------------------------------------------------
+# start Testing
+# ------------------------------------------------------------------------------------------------------
   - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerUtilsTest'
 
@@ -36,7 +50,17 @@ jobs:
 
   - script: dotnet test  Ginger/GingerAutoPilotTest --configuration $(buildConfiguration) --logger trx --verbosity=normal
     displayName: 'Testing GingerAutoPilotTest'
+
+# ------------------------------------------------------------------------------------------------------
+# Publish GingerConsole
+# ------------------------------------------------------------------------------------------------------
+
+  - script: dotnet publish  Ginger/GingerConsole -c Release
+    displayName: 'Publish GingerConsole'
     
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Results
+# ------------------------------------------------------------------------------------------------------
 
   - task: PublishTestResults@2
     displayName: Publish test result
@@ -46,16 +70,25 @@ jobs:
       testResultsFiles: '**/*.trx'
 
 # ------------------------------------------------------------------------------------------------------
-# Package Test Artifacts
+# Run Standalone CLI Test
 # ------------------------------------------------------------------------------------------------------
 
+  - task: PowerShell@2
+    displayName: Run Standalone CLI Test
+    inputs:
+      filePath: CLITests.ps1
+    condition: succeededOrFailed()
+
+
+# ------------------------------------------------------------------------------------------------------
+# Package Test Artifacts
+# ------------------------------------------------------------------------------------------------------
 
   - task: PowerShell@2
     displayName: Package test artifacts
     inputs:
       filePath: PackageTestArtifacts.ps1
     condition: succeededOrFailed()
-
 
 
 

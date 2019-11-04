@@ -14,7 +14,7 @@
     <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}">
         <!-- Grid Title -->
         <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}"  >
-            <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
+                <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
         </Border>
         <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5,5,5,0">
@@ -53,7 +53,7 @@
                     <Button x:Name="btnAdd" AutomationProperties.AutomationId="Add Button AID" ToolTip="Add New" Click="btnAdd_Click">
                         <Image Source="{DynamicResource @Add_16x16}" />
                     </Button>
-                    <Button x:Name="btnDelete" ToolTip="Delete Selected" Click="btnDelete_Click">
+                    <Button x:Name="btnDelete" ToolTip="Delete Selected (Del)" Click="btnDelete_Click">
                         <Image Source="{DynamicResource @Delete_16x16}" />
                     </Button>
                     <Button x:Name="btnClearAll" ToolTip="Delete All" Click="btnClearAll_Click">
@@ -62,13 +62,13 @@
                     <Button x:Name="btnDuplicate" ToolTip="Duplicate Selected" Click="btnDuplicate_Click" Visibility="Collapsed">
                         <Image Source="{DynamicResource @Duplicate_16x16.png}" />
                     </Button>
-                    <Button x:Name="btnCut" ToolTip="Cut Selected" Click="btnCut_Click" Visibility="Collapsed">
+                    <Button x:Name="btnCut" ToolTip="Cut Selected (Ctrl+X)" Click="btnCut_Click" Visibility="Collapsed">
                         <Image Source="{StaticResource @Cut_16x16}" />
                     </Button>
-                    <Button x:Name="btnCopy" ToolTip="Copy Selected" Click="btnCopy_Click" Visibility="Collapsed">
+                    <Button x:Name="btnCopy" ToolTip="Copy Selected (Ctrl+C)" Click="btnCopy_Click" Visibility="Collapsed">
                         <Image Source="{StaticResource @Duplicate_16x16.png}" />
                     </Button>
-                    <Button x:Name="btnPaste" ToolTip="Paste" Click="btnPaste_Click" Visibility="Collapsed">
+                    <Button x:Name="btnPaste" ToolTip="Paste (Ctrl+V)" Click="btnPaste_Click" Visibility="Collapsed">
                         <Image Source="{StaticResource @Paste_16x16}" />
                     </Button>
                     <Button x:Name="btnUp" ToolTip="Move Up" Click="btnUp_Click">
@@ -111,7 +111,7 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  
                   SizeChanged="grdMain_SizeChanged"        
                   ScrollViewer.ScrollChanged="grdMain_ScrollChanged"
-                  >
+                 >
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="MaxHeight" Value="70"/>
@@ -130,6 +130,18 @@
                         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
                     </Style>
                 </DataGrid.RowHeaderStyle>
+                <DataGrid.CommandBindings>
+                    <CommandBinding Command="Copy" Executed="DoKeyboardCommand" />
+                    <CommandBinding Command="Cut" Executed="DoKeyboardCommand" />
+                    <CommandBinding Command="Paste" Executed="DoKeyboardCommand" />
+                    <CommandBinding Command="Delete" Executed="DoKeyboardCommand" />
+                </DataGrid.CommandBindings>
+                <DataGrid.InputBindings>
+                    <KeyBinding Key="C" Modifiers="Control" Command="Copy" />
+                    <KeyBinding Key="X" Modifiers="Control" Command="Cut" />
+                    <KeyBinding Key="V" Modifiers="Control" Command="Paste" />
+                    <KeyBinding Key="Delete" Modifiers="Control" Command="Delete" />
+                </DataGrid.InputBindings>
             </DataGrid>
         </Grid>
     </DockPanel>

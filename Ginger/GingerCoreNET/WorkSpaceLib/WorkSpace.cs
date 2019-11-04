@@ -88,22 +88,57 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        public static void Init(IWorkSpaceEventHandler WSEH)
+        public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
             mWorkSpace = new WorkSpace();         
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-            mWorkSpace.InitLocalGrid();
+
+            if (startLocalGrid)
+            {
+                mWorkSpace.InitLocalGrid();
+            }
+            AddLazyLoad();            
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
         }
+
+        private static void AddLazyLoad()
+        {
+            // TODO: add RI type, and use attr on field
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
+            //TODO: see impact of acts - remember to add also handle in attr see others
+            //NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
+        }
+
       
+
+        public void StartLocalGrid()
+        {
+            if (LocalGingerGrid == null)
+            {
+                InitLocalGrid();
+            }
+            else
+            {
+                Reporter.ToConsole(eLogLevel.ERROR, "StartLocalGrid requested but grid is already running");
+            }
+        }
+
         public void CloseWorkspace()
         {
             try
             {
-                CloseSolution();
-                LocalGingerGrid.Stop();
+                if (Solution != null)
+                {
+                    CloseSolution();
+                }
+                if (LocalGingerGrid != null)
+                {
+                    LocalGingerGrid.Stop();
+                }
                 Close();             
             }
             catch (Exception ex)
@@ -130,13 +165,16 @@ namespace amdocs.ginger.GingerCoreNET
                 AppSolutionAutoSave.CleanAutoSaveFolders();
             }
 
-            WorkSpace.Instance.LocalGingerGrid.Stop();
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                WorkSpace.Instance.LocalGingerGrid.Stop();
+            }
             WorkSpace.Instance.Telemetry.SessionEnd();
             mWorkSpace = null;            
         }
 
         private void InitLocalGrid()
-        {
+        {            
             mLocalGingerGrid = new GingerGrid();
             mLocalGingerGrid.Start();
         }
@@ -228,6 +266,11 @@ namespace amdocs.ginger.GingerCoreNET
             UserProfile.LoadUserTypeHelper();            
                         
             CheckWebReportFolder();
+
+            if (WorkSpace.Instance.LocalGingerGrid != null)
+            {
+                Reporter.ToConsole(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
+            }
         }
 
         private void CheckWebReportFolder()
@@ -389,7 +432,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
+                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
             }
             catch (Exception ex)
@@ -496,7 +539,7 @@ namespace amdocs.ginger.GingerCoreNET
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
-                }
+                }                
             }
 
             //Reset values
@@ -706,6 +749,42 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         public Telemetry Telemetry { get; internal set; }
-        public string TestArtifactsFolder { get; internal set; }
+
+        // Unified ;location to get the ExecutionResults Folder
+        // Enable to redirect all test artifacts to another folder used in CLI, include json summary, report, execution results
+        private string mTestArtifactsFolder;
+
+        /// <summary>
+        /// Return full path for folder to save execution results and any test artifacts like json summary, if folder do not exist it will be created
+        /// </summary>
+        public string TestArtifactsFolder
+        {
+            get
+            {
+                string folder;
+
+                if (string.IsNullOrEmpty(mTestArtifactsFolder))
+                {
+                    folder =  Path.Combine(WorkSpace.Instance.Solution.Folder, "ExecutionResults");
+                }
+                else
+                {
+                    folder = mTestArtifactsFolder;
+                }
+
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+                return folder;
+            }
+            set
+            {
+                mTestArtifactsFolder = value;
+            }
+        }
+
+        
+
     }
 }

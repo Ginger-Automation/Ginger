@@ -76,7 +76,7 @@ namespace Ginger.Actions.ActionConversion
                 SetButtonsVisibility(false);
                 xContinue.Visibility = Visibility.Collapsed;
                 mWizard.BusinessFlowsActionsConversion(ListOfBusinessFlow);
-            });
+            });           
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace Ginger.Actions.ActionConversion
 
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.IsSelected), WidthWeight = 5, StyleType = GridColView.eGridColStyleType.CheckBox, Header = "Select" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.BusinessFlowName), WidthWeight = 23, ReadOnly = true, Header = "Name" });
+                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment = HorizontalAlignment.Center, Header = "Convertible Actions" });
                 view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.ConvertedActionsCount), WidthWeight = 13, ReadOnly = true, HorizontalAlignment= HorizontalAlignment.Center, Header = "Converted Actions" });
-                view.GridColsView.Add(new GridColView() { Field = nameof(BusinessFlowToConvert.TotalProcessingActionsCount), WidthWeight = 13, ReadOnly = true,
-                                                          HorizontalAlignment = HorizontalAlignment.Center, Header = "Convertible Actions" });
+                
                 view.GridColsView.Add(new GridColView()
                 {
                     Field = nameof(BusinessFlowToConvert.StatusIcon),
@@ -267,6 +267,7 @@ namespace Ginger.Actions.ActionConversion
             xSaveButton.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
             xStopButton.Visibility = saveVisible ? Visibility.Collapsed : Visibility.Visible;
             xReConvert.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
+            ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = saveVisible;
         }
     }
 }

@@ -21,6 +21,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -55,7 +56,18 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
-                     
+            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+
+            // Init SR
+            SolutionRepository  mSolutionRepository = WorkSpace.Instance.SolutionRepository;
+            Ginger.App.InitClassTypesDictionary();
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
+            mSolutionRepository.Open(TempRepositoryFolder);
+            Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
+            sol.ContainingFolderFullPath = TempRepositoryFolder;
+            WorkSpace.Instance.Solution = sol;
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF WebServices Web API";
@@ -82,11 +94,7 @@ namespace UnitTests.NonUITests
 
             mGR.BusinessFlows.Add(mBF);
 
-            Reporter.ToLog(eLogLevel.DEBUG, "Creating the GingerCoreNET WorkSpace");
-            WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-            WorkSpace.Init(WSEH);
-            WorkSpace.Instance.SolutionRepository = Amdocs.Ginger.CoreNET.Repository.GingerSolutionRepository.CreateGingerSolutionRepository();
-        }
+                   }
 
         [ClassCleanup]
         public static void ClassCleanup()
@@ -439,13 +447,41 @@ namespace UnitTests.NonUITests
             ActSoapUI actSoapUi = new ActSoapUI();
 
             var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
-
+            actSoapUi.AddNewReturnParams=true;
             actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
             
             mBF.Activities[0].Acts.Add(actSoapUi);
 
-            Assert.AreEqual(6, actSoapUi.ActInputValues.Count);
-            Assert.AreEqual(xmlFilePath, actSoapUi.ActInputValues[1].Value.ToString());
+            Assert.AreEqual(1, actSoapUi.ActInputValues.Count);
+            Assert.AreEqual(xmlFilePath, actSoapUi.ActInputValues[0].Value.ToString());
+
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void SoapUICreateCopyTest()
+        {
+            //Arrange
+            ActSoapUI actSoapUI = new ActSoapUI();
+            actSoapUI.Description = "Soap Wrapper acttion test ";
+            
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+            
+            actSoapUI.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
+            actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated, "False");
+            actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.ImportFile, "True");
+            actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.IgnoreValidation, "False");
+            actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.TestCasePropertiesRequiered, "False");
+            actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.AddXMLResponse, "False");
+            actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.TestCasePropertiesRequieredControlEnabled, "False");
+
+
+            //Act
+            var duplicateAct = (ActSoapUI)actSoapUI.CreateCopy(true);
+
+            //Assert
+            Assert.AreEqual(actSoapUI.ActInputValues.Count, duplicateAct.ActInputValues.Count);
+            Assert.AreEqual(actSoapUI.ActInputValues[1].Value.ToString(), duplicateAct.ActInputValues[1].Value.ToString());
 
         }
 
@@ -505,7 +541,7 @@ namespace UnitTests.NonUITests
         }
 
         [TestMethod]
-        [Timeout(60000)]
+        [Timeout(600000)]
         public void LegacyRestActionToNewWebApiRest_Converter_Test()
         {
             Activity oldActivity = new Activity();

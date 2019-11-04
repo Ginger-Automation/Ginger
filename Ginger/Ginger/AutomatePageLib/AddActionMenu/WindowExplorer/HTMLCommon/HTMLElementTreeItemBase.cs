@@ -33,8 +33,8 @@ namespace Ginger.WindowExplorer.HTMLCommon
 {
     public class HTMLElementTreeItemBase : TreeViewItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {        
-        public ElementInfo ElementInfo { get; set; }
-
+        public ElementInfo ElementInfo { get; set; }     
+        
         Object ITreeViewItem.NodeObject()
         {
             return ElementInfo;

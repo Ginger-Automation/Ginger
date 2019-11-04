@@ -549,6 +549,10 @@ namespace GingerCore
                 if (Query != "")
                 {
                     DataTable dt = DataSource.GetQueryOutput(Query);
+                    if (dt == null)
+                    {
+                        return;//need to check why it return null
+                    }
                     if (dt.Rows.Count == 0 && IRow == "NxtAvail" && bUpdate == true)
                     {
                         DataSource.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
@@ -652,7 +656,10 @@ namespace GingerCore
                         string[] Name = tokens[1].Split(splitchar);
 
                         string[] markasdone = tokens[0].Split(new[] { "MASD=" }, StringSplitOptions.None)[1].Split(splitchar);
-
+                        if(!bDone)
+                        {
+                            markasdone[0] = "N";
+                        }
                         string[] tableName = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
 
                         iColVal = Name[0];

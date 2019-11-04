@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Run;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
@@ -220,9 +221,9 @@ namespace GingerCore
             return false;
         }
 
-        #region Remote Agent for Ginger Grid
+        #region Remote Agent
         //Used for Remote Agent - if this is remote agent then the Host and Port should be specified
-
+        // DO NOT USE this is old, need to use new plugin in on remote grid
         [IsSerializedForLocalRepository]
         public bool Remote { get; set; }
 
@@ -248,8 +249,9 @@ namespace GingerCore
 
                 if (AgentType == eAgentType.Service)
                 {
-                    if (gingerNodeInfo != null)
+                    if (gingerNodeInfo != null || GingerNodeProxy != null)
                     {
+                        // TODO: verify the correct status from above
                         return eStatus.Running;
                     }
                     else
@@ -368,15 +370,14 @@ namespace GingerCore
         {
             WorkSpace.Instance.Telemetry.Add("startagent", new { AgentType = AgentType.ToString(), DriverType = DriverType.ToString() });
 
-            // if plugin 
             if (AgentType == eAgentType.Service)
             {
                 StartPluginService();
+                GingerNodeProxy.StartDriver();
                 OnPropertyChanged(Fields.Status);
             }
             else
-            {
-                // else
+            {                
                 RepositoryItemHelper.RepositoryItemFactory.StartAgentDriver(this);
             }
         }
@@ -392,12 +393,26 @@ namespace GingerCore
         {
             try
             {
-                // Enable to start one plugin each time so will let the plugin reserve and avoid race cond
+                // Enable to start one plugin each time so will let the plugin reserve and avoid race condition
+                // TODO: consider using lock
                 mutex.WaitOne();
                 
-                gingerNodeInfo = FindFreeNode(ServiceId);                
+                // First we try on local Ginger Grid
+                gingerNodeInfo = FindFreeNode(ServiceId);
+                
+                if (gingerNodeInfo == null)
+                {
+                    // Try to find service on Remote Grid                    
+                    ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();                                        
+                    GingerNodeProxy = GingerNodeProxy.FindRemoteNode(ServiceId, remoteServiceGrids);
+                    if (GingerNodeProxy != null)
+                    {
+                        // We found the service on remote grid
+                        return;
+                    }
+                }
 
-                // Service not found start new one
+                // Service not found start new one on local
                 // Add plugin config start if not exist and more depends on the config 
                 if (gingerNodeInfo == null)
                 {
@@ -438,6 +453,8 @@ namespace GingerCore
             }
             
         }
+
+        
 
         private GingerNodeInfo FindFreeNode(string serviceId)
         {
@@ -556,6 +573,8 @@ namespace GingerCore
         {
             DriverConfiguration.Clear();
             SetServiceMissingParams();
+           ;
+
         }
 
         private void SetServiceMissingParams()
@@ -582,8 +601,75 @@ namespace GingerCore
                     DriverConfiguration.Add(DI);
                 }
             }
-        }
 
+            SetPlatformParameters(PSI);
+
+        }
+        /// <summary>
+        /// Set AGent Configuration with default values in addition to the configurations asked by Service 
+        /// </summary>
+        /// <param name="PSI"></param>
+        private void SetPlatformParameters(PluginServiceInfo PSI)
+        {
+            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Count() > 0)
+            {
+                DriverConfigParam DI = new DriverConfigParam();
+                DI.Parameter = "Max Agent Load Time";
+                DI.Value = "30";
+                DI.Description = "Max Time allowed in seconds to start the agent0";
+             
+                DI.IsPlatformParameter = true;
+          
+                DriverConfiguration.Add(DI);
+
+
+                DriverConfigParam DI2 = new DriverConfigParam();
+                DI2.Parameter = "Auto Switch Frame";
+                DI2.Value = bool.TrueString;
+                DI2.Description = "Automatic Switch Frame for POM Element";
+
+                DI2.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI2);
+
+
+            }
+            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
+            {
+                DriverConfigParam DI = new DriverConfigParam();
+                DI.Parameter = "Save Request";
+                DI.Value = bool.FalseString;
+                DI.Description = "Save Request";
+
+                DI.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI);
+
+
+                DriverConfigParam DI2 = new DriverConfigParam();
+                DI2.Parameter = "Save Response";
+                DI2.Value = bool.TrueString;
+                DI2.Description = "Save Response";
+
+                DI2.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI2);
+
+
+                DriverConfigParam DI3 = new DriverConfigParam();
+                DI3.Parameter = "Path To Save";
+                DI3.Value = @"~\Documents";
+                DI3.Description = "Path to Save Request/Response Files";
+
+                DI3.IsPlatformParameter = true;
+
+                DriverConfiguration.Add(DI3);
+
+
+            
+       
+            }
+        }
         private void SetDriverDefualtParams(Type t)
         {
             MemberInfo[] members = t.GetMembers();
@@ -651,9 +737,11 @@ namespace GingerCore
         private GingerNodeInfo gingerNodeInfo;
 
         public void RunAction(Act act)
-        {          
+        {
             try
-            {              
+            {
+                if (Driver != null)
+                {
                     if (Driver.IsSTAThread())
                     {
                         Driver.Dispatcher.Invoke(() =>
@@ -664,12 +752,13 @@ namespace GingerCore
                     else
                     {
                         Driver.RunAction(act);
-                    }              
+                    }
+                }
             }
             catch (Exception ex)
             {
                 act.Status = eRunStatus.Failed;
-                act.Error += ex.Message;                
+                act.Error += ex.Message;
             }
         }
 
@@ -684,9 +773,9 @@ namespace GingerCore
             {
                 if (AgentType == eAgentType.Service)
                 {
-                    if (gingerNodeInfo != null)
+                    if (gingerNodeInfo != null)  
                     {
-                        // this is plugin driver
+                        // this is plugin driver on local machine
 
                         GingerNodeProxy.GingerGrid = WorkSpace.Instance.LocalGingerGrid;
                         GingerNodeProxy.CloseDriver();                        
@@ -708,6 +797,16 @@ namespace GingerCore
                         gingerNodeInfo = null;
                         
                         return;
+                    }
+                    else
+                    {
+                        if (GingerNodeProxy != null)
+                        {
+                            // Running on Remote Grid
+                            GingerNodeProxy.CloseDriver();
+                            GingerNodeProxy.Disconnect();
+                            GingerNodeProxy = null;
+                        }
                     }
                 }
                 if (Driver == null) return;

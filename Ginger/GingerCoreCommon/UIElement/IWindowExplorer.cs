@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
@@ -29,12 +30,14 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
         AppWindow GetActiveWindow();
-        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null);
+        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
 
         ObservableList<ElementLocator> GetElementLocators(ElementInfo ElementInfo);
+
+        ObservableList<OptionalValue> GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
 
         // Get the data of the element
         // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>

@@ -531,7 +531,6 @@ namespace Ginger
 
                 foreach (VariableBase v in WorkSpace.Instance.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
-                InsertAddNewVarTreeItem(solutionVars, eVariablesLevel.Solution);
             }
 
             if (mContext!= null && mContext.BusinessFlow != null)
@@ -814,13 +813,18 @@ namespace Ginger
             ValueCalculatedTextBox.Text = "";
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, Window ownerWindow = null)
         {
             Button OKButton = new Button();
             OKButton.Content = "OK";
             OKButton.Click += new RoutedEventHandler(OKButton_Click);
+
+            if (ownerWindow == null)
+            {
+                ownerWindow = App.MainWindow;
+            }
                         
-            GingerCore.General.LoadGenericWindow(ref mWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, true,"Cancel");
+            GingerCore.General.LoadGenericWindow(ref mWin, ownerWindow, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, true,"Cancel");
         }
 
         private void ClearCalculatedButton_Click(object sender, RoutedEventArgs e)

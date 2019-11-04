@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -207,6 +208,7 @@ namespace GingerCore.Drivers
         public bool HandelIFramShiftAutomaticallyForPomElement { get; set; }
 
         protected IWebDriver Driver;
+
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
@@ -260,7 +262,7 @@ namespace GingerCore.Drivers
         {
             this.Driver = (IWebDriver)driver;
         }
-        
+
         public override void StartDriver()
         {
             if (StartBMP)
@@ -673,7 +675,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while getting current element", ex);
                 return null;
             }
         }
@@ -839,66 +841,58 @@ namespace GingerCore.Drivers
 
         public override void RunAction(Act act)
         {
-            // if alert exist then any action on driver throwing exception and dismissing the pop up
-            // so keeping handle browser as first step.
-            if (act.GetType() == typeof(ActHandleBrowserAlert))
-            {
-                HandleBrowserAlert((ActHandleBrowserAlert)act);
-                return;
-            }
+            //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
+            bool isActBrowser = act is ActBrowserElement;
+            ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
+            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
 
-            //implicityWait must be done on actual window so need to make sure the driver is pointing on window
-            try
+            if (!runActHandlerDirect)
             {
-                // if ActBrowserElement and control action type SwitchToDefaultWindow it should run as first step as there are cases where doing Driver.Currentwindow will cause selenium driver to stuck
-                if (act.GetType() == typeof(ActBrowserElement))
+                //implicityWait must be done on actual window so need to make sure the driver is pointing on window
+                try
                 {
-                    ActBrowserElement ABE = (ActBrowserElement)act;
-                    if (ABE.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow)
+                    string aa = Driver.Title;//just to make sure window attributes do not throw exception
+                }
+                catch (Exception ex)
+                {
+                    if (Driver.WindowHandles.Count == 1)
                     {
-                        Driver.SwitchTo().Window(DefaultWindowHandler);
+                        Driver.SwitchTo().Window(Driver.WindowHandles[0]);
                     }
+                    Reporter.ToLog(eLogLevel.ERROR, "Selenium Driver is not accessible, probably because there is Alert window open", ex);
                 }
 
-                string aa = Driver.Title;//just to make sure window attributes do not throw exception
-            }
-            catch (Exception ex)
-            {
-                if (Driver.WindowHandles.Count == 1)
-                    Driver.SwitchTo().Window(Driver.WindowHandles[0]);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                if (act.Timeout != null && act.Timeout != 0)
+                {
+                    //if we have time out on action then set it on the driver
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)act.Timeout);
+                }
+                else
+                {
+                    // use the driver config timeout
+                    Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
+                }
+
+                if (StartBMP)
+                {
+                    // Create new HAR for each action, so it will clean the history
+                    BMPClient.NewHar("aaa");
+
+                    DoRunAction(act);
+
+                    //TODO: call GetHARData and add it as screen shot or...
+                    // GetHARData();
+
+                    // TODO: save it in the solution docs... 
+                    string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
+                    BMPClient.SaveHAR(filename);
+                    act.ExInfo += "Action HAR file saved at: " + filename;
+                }
             }
 
-            if (act.Timeout != null && act.Timeout != 0)
-            {
-                //if we have time out on action then set it on the driver
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)act.Timeout);
-            }
-            else
-            {
-                // use the driver config timeout
-                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
-            }
-
-            if (StartBMP)
-            {
-                // Create new HAR for each action, so it will clean the history
-                BMPClient.NewHar("aaa");
-
-                DoRunAction(act);
-
-                //TODO: call GetHARData and add it as screen shot or...
-                // GetHARData();
-
-                // TODO: save it in the solution docs... 
-                string filename = @"c:\temp\har\" + act.Description + " - " + DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff") + ".har";
-                BMPClient.SaveHAR(filename);
-                act.ExInfo += "Action HAR file saved at: " + filename;
-            }
-            else
-            {
-                DoRunAction(act);
-            }
+            DoRunAction(act);
         }
 
         private void DoRunAction(Act act)
@@ -1931,21 +1925,21 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex);
                             try
                             {
                                 se.SelectByValue(act.GetInputParamCalculatedValue("Value"));
                             }
                             catch (Exception ex2)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex2.Message}", ex2);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex2);
                                 try
                                 {
                                     se.SelectByIndex(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")));
                                 }
                                 catch (Exception ex3)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex3.Message}", ex3);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex3);
                                 }
                             }
                         }
@@ -1969,7 +1963,7 @@ namespace GingerCore.Drivers
                         catch (Exception ex3)
                         {
                             act.Error = "Error: Failed to select the value ' + " + value + "' for the object - " + act.LocateBy + " " + act.LocateValue;
-                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex3.Message}", ex3);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing AsyncSelectFromDropDownByIndex operation", ex3);
                             return;
                         }
                     }
@@ -1989,7 +1983,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         act.Error = "Error: Failed to select value using digit from object with ID: '" + act.LocateValue + "' and Value: '" + act.GetInputParamCalculatedValue("Value") + "'";
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDijitList operation", ex);
                         return;
                     }
                     break;
@@ -2028,7 +2022,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SetValue operation", ex);
                             }
                         }
                         else
@@ -2260,7 +2254,7 @@ namespace GingerCore.Drivers
                     }
                     break;
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
 
             }
         }
@@ -2457,7 +2451,7 @@ namespace GingerCore.Drivers
             }
             catch (System.ArgumentException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ae.Message}", ae);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured in ActDropDownListHandler", ae);
                 return;
             }
         }
@@ -3090,30 +3084,22 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                string[] pOMandElementGUIDs = locateValue.ToString().Split('_');
-                Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-                ApplicationPOMModel currentPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                if (currentPOM == null)
+                var pomExcutionUtil = new POMExecutionUtils(act);
+                var currentPOM = pomExcutionUtil.GetCurrentPOM();
+
+                if (currentPOM != null)
                 {
-                    act.ExInfo = string.Format("Failed to find the mapped element Page Objects Model with GUID '{0}'", selectedPOMGUID.ToString());
-                    return null;
-                }
-                else
-                {
-                    Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
-                    if (selectedPOMElement == null)
-                    {
-                        act.ExInfo = string.Format("Failed to find the mapped element with GUID '{0}' inside the Page Objects Model", selectedPOMElement.ToString());
-                        return null;
-                    }
-                    else
+                    ElementInfo currentPOMElementInfo = pomExcutionUtil.GetCurrentPOMElementInfo();
+                    if (currentPOMElementInfo != null)
                     {
                         if (HandelIFramShiftAutomaticallyForPomElement)
-                            SwitchFrame(selectedPOMElement);
-                        elem = LocateElementByLocators(selectedPOMElement.Locators);
-                        selectedPOMElement.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                        {
+                            SwitchFrame(currentPOMElementInfo);
+                        }
+                        elem = LocateElementByLocators(currentPOMElementInfo.Locators);
+                        currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
                     }
+                    
                 }
             }
             else
@@ -3217,7 +3203,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
                     if (AlwaysReturn)
                     {
                         elem = null;
@@ -3561,17 +3547,17 @@ namespace GingerCore.Drivers
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured while casting when we are checking IsRunning", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
                         }
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
                             throw;
                         }
 
@@ -3605,7 +3591,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3617,7 +3603,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.NoSuchWindowException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occured when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                         return true;
@@ -3629,7 +3615,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning() OpenQA.Selenium.WebDriverException ex"}, Error - {ex.ToString()}", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occured when we are checking IsRunning", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                         return true;
@@ -3642,7 +3628,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Method - {"IsRunning(): ex2"}, Error - {ex2.ToString()}", ex2);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                         return true;
 
@@ -3684,7 +3670,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             mIsDriverBusy = true;
 
@@ -5130,9 +5116,13 @@ namespace GingerCore.Drivers
                 string script3 = GetInjectJSSCript(script);
                 var v = ((IJavaScriptExecutor)Driver).ExecuteScript(script3, null);
             }
+            catch (OpenQA.Selenium.WebDriverException e)
+            {                
+                StopRecordingIfAgentClosed();
+            }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while adding javascript to page", ex);
             }
         }
 
@@ -5228,7 +5218,7 @@ namespace GingerCore.Drivers
             LastFrameID = string.Empty;
 
             Task t = new Task(() =>
-            {                
+            {
                 DoGetRecordings(learnAdditionalChanges);
 
             }, TaskCreationOptions.LongRunning);
@@ -5383,13 +5373,13 @@ namespace GingerCore.Drivers
                                 configArgs.Operation = PLR.GetValueString();
                                 string type = PLR.GetValueString();
                                 configArgs.Type = GetElementTypeEnum(null, type).Item2;
-                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);                               
+                                configArgs.Description = GetDescription(configArgs.Operation, configArgs.LocateValue, configArgs.ElementValue, type);
                                 if (learnAdditionalChanges)
                                 {
                                     string xCordinate = PLR.GetValueString();
                                     string yCordinate = PLR.GetValueString();
                                     ElementInfo eInfo = LearnRecorededElementFullDetails(xCordinate, yCordinate);
-                                    
+
                                     if (eInfo != null)
                                     {
                                         configArgs.LearnedElementInfo = eInfo;
@@ -5429,11 +5419,15 @@ namespace GingerCore.Drivers
                             }
                         }
                     }
+                    catch (OpenQA.Selenium.WebDriverException e)
+                    {                        
+                        StopRecordingIfAgentClosed();
+                    }
                     catch (Exception e)
                     {
                         if (e.Message == PayLoad.PAYLOAD_PARSING_ERROR)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e); 
+                            Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while recording", e);
                         }
                         else
                         {
@@ -5503,6 +5497,17 @@ namespace GingerCore.Drivers
         void IRecord.ResetRecordingEventHandler()
         {
             RecordingEvent = null;
+        }
+
+        /// <summary>
+        /// This method is used to stop recording if the agent is not reachable
+        /// </summary>
+        private void StopRecordingIfAgentClosed()
+        {
+            IsRecording = false;
+            RecordingEventArgs args = new RecordingEventArgs();
+            args.EventType = eRecordingEvent.StopRecording;
+            OnRecordingEvent(args);
         }
 
         public event RecordingEventHandler RecordingEvent;
@@ -5681,11 +5686,14 @@ namespace GingerCore.Drivers
         private void EndRecordings()
         {
             CurrentFrame = string.Empty;
-            Driver.SwitchTo().DefaultContent();
+            if (Driver != null)
+            {
+                Driver.SwitchTo().DefaultContent();
 
-            PayLoad pl = new PayLoad("StopRecording");
-            pl.ClosePackage();
-            PayLoad plrc = ExceuteJavaScriptPayLoad(pl);
+                PayLoad pl = new PayLoad("StopRecording");
+                pl.ClosePackage();
+                PayLoad plrc = ExceuteJavaScriptPayLoad(pl); 
+            }
             // Handle in the JS to stop recording
             IsRecording = false;
         }
@@ -5806,7 +5814,7 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
-                             if (act.LocateBy == eLocateBy.ByIndex)
+                            if (act.LocateBy == eLocateBy.ByIndex)
                             {
                                 int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
                                 string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
@@ -6137,7 +6145,7 @@ namespace GingerCore.Drivers
 
                     String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
                     var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
-                    
+
                     foreach (var item in networkLogs)
                     {
                         Dictionary<string, object> dict = item as Dictionary<string, object>;
@@ -6161,9 +6169,9 @@ namespace GingerCore.Drivers
                                     }
                                 }
                             }
-                            
+
                         }
-                        
+
                     }
 
                     break;
@@ -6223,7 +6231,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
 
@@ -6302,7 +6310,7 @@ namespace GingerCore.Drivers
                     break;
 
                 default:
-                    throw new Exception("Action unknown/Not Impl in Driver - " + this.GetType().ToString());
+                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
             }
         }
         // ----------------------------------------------------------------------------------------------------------------------------------
@@ -6335,7 +6343,17 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.GetValue:
-                        act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        if (act.ElementType == eElementType.HyperLink)
+                        {
+                            if (e != null)
+                                act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("href"));
+                            else
+                                act.AddOrUpdateReturnParamActual("Actual", "");
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", GetElementValue(e));
+                        }
                         break;
 
                     case ActUIElement.eElementAction.IsVisible:
@@ -6376,7 +6394,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}");
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when HandleActUIElement");
                             }
                         }
                         else
@@ -7502,7 +7520,7 @@ namespace GingerCore.Drivers
                 OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                     && (x.XPath == element.XPath)
                                                                     && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
-                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null 
+                                                                    && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
                                                                         || (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null && element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) != null
                                                                             && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                             )
@@ -7519,12 +7537,17 @@ namespace GingerCore.Drivers
             {
                 Driver.SwitchTo().DefaultContent();
                 InjectSpyIfNotIngected();
-            }            
+            }
         }
 
         public string GetElementXpath(ElementInfo EI)
         {
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

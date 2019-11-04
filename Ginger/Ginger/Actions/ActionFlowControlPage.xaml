@@ -8,6 +8,6 @@
 	Title="ActionFlowControlPage">
 
     <Grid>
-        <Ginger:ucGrid x:Name="FlowControlGrid" Title="Flow Control" ShowTitle="Collapsed"/>
+        <Ginger:ucGrid x:Name="FlowControlGrid" Title="Flow Control" ShowTitle="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
     </Grid>
 </Page>

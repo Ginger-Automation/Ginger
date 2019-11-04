@@ -31,6 +31,8 @@ using Ginger.UserControls;
 using Amdocs.Ginger.Common;
 using System.Windows.Data;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Ginger.Actions
 {
@@ -68,13 +70,10 @@ namespace Ginger.Actions
             SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
 
             //Read from sql file
-            QueryFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click);
+            QueryFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
             QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
-
-            //Import SQL file in to solution folder
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(ImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.ImportFile, "True"));
-
+            
             //OLD binding and UI 
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
 
@@ -98,54 +97,31 @@ namespace Ginger.Actions
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
         }
-                
-        private void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            bool ImportFileFlag = false;
-            string FileName = QueryFile.ValueTextBox.Text;
-            Boolean.TryParse(mAct.GetInputParamValue(ActDBValidation.Fields.ImportFile), out ImportFileFlag);
-            if (ImportFileFlag && !FileName.StartsWith(@"~\"))
-            {
-                //TODO import request File
-                string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\SQL");
-                if (!System.IO.Directory.Exists(targetPath))
-                {
-                    System.IO.Directory.CreateDirectory(targetPath);
-                }
-                string destFile = System.IO.Path.Combine(targetPath, FileName.Remove(0, FileName.LastIndexOf(@"\")+1));
-                int fileNum = 1;
-                string copySufix = "_Copy";
-                while (System.IO.File.Exists(destFile))
-                {
-                    fileNum++;
-                    string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
-                    if (newFileName.IndexOf(copySufix) != -1)
-                        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
-                    newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
-                    destFile = System.IO.Path.Combine(targetPath, newFileName);
-                }
-                System.IO.File.Copy(FileName, destFile, true);
-                QueryFile.ValueTextBox.Text = @"~\Documents\SQL\" + System.IO.Path.GetFileName(destFile);
-            }
-            //if (FileName != "" && File.Exists(FileName.Replace(@"~\", SolutionFolder)))
-            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
-            {   
-                mAct.QueryParams.Clear();
-                //string[] script = File.ReadAllLines(FileName.Replace(@"~\",SolutionFolder));  
-                string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
 
-                parseScriptHeader(script);               
-                if (mAct.QueryParams.Count > 0)
-                    QueryParamsPanel.Visibility = Visibility.Visible;
-                else
-                    QueryParamsPanel.Visibility = Visibility.Collapsed;
-                QueryParamsGrid.DataSourceList = mAct.QueryParams;
-               
+        private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(QueryFile.ValueTextBox.Text))
+            {
+                async Task<bool> UserKeepsTyping()
+                {
+                    string txt = QueryFile.ValueTextBox.Text;
+                    await Task.Delay(2000);
+                    return txt != QueryFile.ValueTextBox.Text;
+                }
+                if (await UserKeepsTyping() || QueryFile.ValueTextBox.Text == null) return;
+            }
+            string FileName = QueryFile.ValueTextBox.Text;
+            if (FileName != "" && File.Exists(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName)))
+            {  
+                parseScriptHeader(FileName);  
             }
         }
-        private void parseScriptHeader(string[] script)
+
+        public void parseScriptHeader(string FileName)
         {
+            mAct.QueryParams.Clear();
+            string[] script = File.ReadAllLines(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FileName));
+
             foreach (string line in script)
             {
                 var pattern = @"<<([^<^>].*?)>>"; // like div[1]
@@ -165,6 +141,12 @@ namespace Ginger.Actions
                     }                    
                 }
             }
+
+            if (mAct.QueryParams.Count > 0)
+                QueryParamsPanel.Visibility = Visibility.Visible;
+            else
+                QueryParamsPanel.Visibility = Visibility.Collapsed;
+            QueryParamsGrid.DataSourceList = mAct.QueryParams;
         }
         private void SetQueryParamsGrid()
         {
@@ -283,19 +265,29 @@ namespace Ginger.Actions
 
         private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            TablesComboBox.Items.Clear();
-            string DBName = DBNameComboBox.Text; 
-            db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
-            if (db == null) return;
-            string KeySpace = KeySpaceComboBox.Text;
-            List<string> Tables = db.GetTablesList(KeySpace);
-            if (Tables == null)
-            { 
-                return;
-            }
-            foreach (string s in Tables)
+            try
             {
-                TablesComboBox.Items.Add(s);
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
+                TablesComboBox.Items.Clear();
+                string DBName = DBNameComboBox.Text;
+                db = (Database) (from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                if (db == null) return;
+                string KeySpace = KeySpaceComboBox.Text;
+                List<string> Tables = db.GetTablesList(KeySpace);
+                if (Tables == null)
+                {
+                    return;
+                }
+                foreach (string s in Tables)
+                {
+                    TablesComboBox.Items.Add(s);
+                }
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+                Reporter.HideStatusMessage();
             }
         }
         

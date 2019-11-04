@@ -52,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private int activitySeq = 0;
         private int acgSeq = 0;
         private int bfSeq = 0;
-        private int runsetSeq = 0;
+        // private int runsetSeq = 0;
 
         public LiteDBRepository()
         {
@@ -110,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     screenShotCountPerAction--;
                 }
             }
-            liteDbAction.ScreenShots = action.ScreenShots;
+            liteDbAction.ScreenShots = action.ScreenShots.ToList();
 
             isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
             if (isActExsits)
@@ -135,11 +135,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private object MapActivityToLiteDb(Activity activity, Context context, eExecutedFrom executedFrom)
         {
             LiteDbActivity AR = new LiteDbActivity();
-            context.Activity = activity;
             context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
             AR.Seq = ++this.activitySeq;
+            actionSeq = 0;
             if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = activity.LiteDbId;
@@ -208,10 +208,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 BFR._id = lastBfObjId;
                 ClearSeq();
             }
+            SetBfobjects(context, executedFrom);
             context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
             BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
             BFR.Seq = ++this.bfSeq;
-            SetBfobjects(context, executedFrom);
             if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
                 BFR._id = context.BusinessFlow.LiteDbId;
@@ -281,12 +281,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             actionSeq = 0;
             activitySeq = 0;
             bfSeq = 0;
-            runsetSeq = 0;
+            // runsetSeq = 0;
             acgSeq = 0;
         }
 
         private void SetBfobjects(Context context, eExecutedFrom executedFrom)
         {
+            activitySeq = 0;
             var bf = context.BusinessFlow;
             bf.Activities.ToList().ForEach(activity => this.MapActivityToLiteDb(activity, context, executedFrom));
             bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
@@ -321,10 +322,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSet.SetReportData(runSetReport);
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
-            if (Directory.Exists(ExecutionLoggerManager.RunSetReport.LogFolder))
-            {
-                Directory.Delete(ExecutionLoggerManager.RunSetReport.LogFolder, true);
-            }
             ClearSeq();
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
@@ -361,24 +358,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
-            if (!offline)
-                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder, executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss")));
-            else
-                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
+            return;
         }
 
         internal override void StartRunSet()
         {
-            if (ExecutionLoggerManager.RunSetReport == null)
-            {
-                ExecutionLoggerManager.RunSetReport = new RunSetReport();
-                ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
+            ExecutionLoggerManager.RunSetReport = new RunSetReport();
+            ExecutionLoggerManager.RunSetReport.Name = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name;
 
-                ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
-                ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
-                ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
-                ExecutionLoggerManager.RunSetReport.Watch.Start();
-            }
+            ExecutionLoggerManager.RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+            ExecutionLoggerManager.RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
+            ExecutionLoggerManager.RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
+            ExecutionLoggerManager.RunSetReport.Watch.Start();
         }
 
         internal override void EndRunSet()
@@ -398,6 +389,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, ExecutionLoggerManager.RunSetReport);
                 ExecutionLoggerManager.RunSetReport = null;
             }
+        }
+
+        public override string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile)
+        {
+            return string.Empty;
+        }
+
+        public override string GetLogFolder(string folder)
+        {
+            return string.Empty;
         }
     }
 }

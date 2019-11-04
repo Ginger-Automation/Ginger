@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using OpenQA.Selenium;
@@ -1005,7 +1006,7 @@ namespace GingerCore.Drivers.Appium
                     
                         break;
                     default:
-                        throw new Exception("Action unknown/Not Implemented in Driver: '" + this.GetType().ToString() + "'");
+                        throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
             }
             catch (Exception ex)
@@ -1266,7 +1267,7 @@ namespace GingerCore.Drivers.Appium
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
             List<ElementInfo> list = new List<ElementInfo>();
 
@@ -1572,6 +1573,11 @@ namespace GingerCore.Drivers.Appium
         public ElementInfo LearnElementInfoDetails(ElementInfo EI)
         {
             return EI;
+        }
+
+        ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
         }
     }
 }

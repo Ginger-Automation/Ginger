@@ -23,37 +23,50 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
     [Level1]
     [TestClass]
     public class RepositorySerializerTest
-    {        
+    {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext TC)
+        public static void ClassInit(TestContext TestContext)
         {
-            
+            mTestHelper.ClassInitialize(TestContext);
         }
-
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            mTestHelper.ClassCleanup();
         }
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            mTestHelper.TestInitialize(TestContext);
+        }
+
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+            mTestHelper.TestCleanup();
         }
-        
-        [Ignore] // different length on Linux Mac, Win...
+
+        // [Ignore] // different length on Linux Mac, Win...
         [TestMethod]
         [Timeout(60000)]
         public void ConvertBFToString()
@@ -61,36 +74,45 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Arrange
             BusinessFlow BF = new BusinessFlow("BF1");
 
+            // Since we can run this test on local user, Azure windows/Linux - we change the user name since we check total length and want it to be same
+            BF.InitHeader();
+            BF.RepositoryItemHeader.CreatedBy = "UnitTest";
+            BF.RepositoryItemHeader.LastUpdateBy = "UnitTest";
+
             //Act
             string xml = RS.SerializeToString(BF);
 
-            /// to see the xml as file uncomment below line
-            // System.IO.File.WriteAllText(@"c:\temp\1.xml", xml);
-            
-            string compressed = xml.Replace(Environment.NewLine, "");  // For Linux it is one char new line
+            //Artifacts
+            mTestHelper.CreateTestArtifact("BF1.txt", xml);
 
             //Assert
 
             //String size should be minimal - any failure for size check means something was added
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
-            Assert.AreEqual(780, compressed.Length);  // 776 was verified and OK on 7/13/2019  
+            int lt = xml.Count(f => f == '<');
+            int gt = xml.Count(f => f == '>');
+            Assert.IsTrue(xml.Length < 800, "Verify minimal xml is less than 800 bytes");   
+            Assert.AreEqual(9, lt, "XML Elements count <"); 
+            Assert.AreEqual(9, gt, "XML Elements count >"); 
 
             //Verify the major element of the expected xml
-            Assert.IsTrue(compressed.Contains("utf-8"));
-            Assert.IsTrue(compressed.Contains("<GingerRepositoryItem>"));
-            Assert.IsTrue(compressed.Contains("CreatedBy"));
+            Assert.IsTrue(xml.Contains("utf-8"));
+            Assert.IsTrue(xml.Contains("<GingerRepositoryItem>"));
+            Assert.IsTrue(xml.Contains("CreatedBy"));
             // Verify we get the short name: 'BusinessFlow'
             // and not 'GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.BusinessFlowLib.BusinessFlow'
-            Assert.IsTrue(compressed.Contains("ItemType=\"BusinessFlow\""));
+            Assert.IsTrue(xml.Contains("ItemType=\"BusinessFlow\""));
             // Verify Object class written in short name again, and since we changed only the name no other attrs should be added
             // We do not write all attribute only the one which changed from default value            
-            Assert.IsTrue(compressed.Contains(" Name=\"BF1"));
-            Assert.IsTrue(compressed.Contains("<BusinessFlow Guid="));
-            Assert.IsTrue(compressed.Contains("<Activities>"));
+            Assert.IsTrue(xml.Contains(" Name=\"BF1"));
+            Assert.IsTrue(xml.Contains("<BusinessFlow Guid="));
+            Assert.IsTrue(xml.Contains("<Activities>"));
             // We need to have only one activity - make sure it is written squeezed to min
-            Assert.IsTrue(compressed.Contains("ActivityName=\"Activity 1\""));
-            Assert.IsTrue(compressed.Contains("</Activities>"));
-            Assert.IsTrue(compressed.Contains("</BusinessFlow></GingerRepositoryItem>"));
+            Assert.IsTrue(xml.Contains("ActivityName=\"Activity 1\""));
+            Assert.IsTrue(xml.Contains("</Activities>"));
+            Assert.IsTrue(xml.Contains("</BusinessFlow></GingerRepositoryItem>"));
+
+            //TODO: do not containts "00000000-0000-0000-0000-000000000000"
 
         }
 

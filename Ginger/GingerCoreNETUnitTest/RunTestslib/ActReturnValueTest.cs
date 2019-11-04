@@ -1,12 +1,8 @@
 ﻿using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {

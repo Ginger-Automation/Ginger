@@ -10,7 +10,7 @@
         xmlns:h="clr-namespace:Ginger.Help"
         h:GingerHelpProvider.HelpString="Automate"
         d:DesignHeight="800" d:DesignWidth="1500"
-        Title="AutomatePage">
+        Title="AutomatePage" Loaded="Page_Loaded">
 
     <Page.Resources>
         <local1:ListItemIndexConverter x:Key="RowNumberConverter" />
@@ -205,14 +205,30 @@
                         <MenuItem Cursor="Hand">
                             <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Header>
-                            <MenuItem x:Name="xActionsConvertionMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xActionsConvertionMenuItem_Click">
+                            </MenuItem.Header>                            
+                            <MenuItem x:Name="xActionConversionMenuItem" Style="{StaticResource $MenuItemStyle}">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="18" />
+                                    <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Convert Legacy [BusinessFlow] Actions into New Actions" />
+                                    <GingerCore:ucTextDicResource Text="Conversion" />
                                 </MenuItem.Header>
+                                <MenuItem x:Name="xLegacyActionsMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="18" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Legacy Actions Conversion" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xLegacyActionsRemoveMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsRemoveMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="18" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Clean Inactive Legacy Actions" />
+                                    </MenuItem.Header>
+                                </MenuItem>
                             </MenuItem>
                             <MenuItem x:Name="xALMMenuItem" Style="{StaticResource $MenuItemStyle}">
                                 <MenuItem.Icon>

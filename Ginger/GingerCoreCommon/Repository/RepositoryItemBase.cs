@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore.GeneralLib;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -28,7 +24,10 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using GingerCore.GeneralLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -61,6 +60,8 @@ namespace Amdocs.Ginger.Repository
         public LiteDB.ObjectId LiteDbId { get; set; }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
+
+        public bool ItemBeenReloaded;
 
         //DO Not save
         protected Dictionary<string, object> mBackupDic;
@@ -495,10 +496,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void RestoreFromBackup(bool isLocalBackup = false)
+        public void RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
         {
             RestoreBackup(isLocalBackup);
-            ClearBackup(isLocalBackup);
+            if (clearBackup)
+            {
+                ClearBackup(isLocalBackup); 
+            }
         }
 
         private string mFileName = null;
@@ -786,12 +790,12 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public async Task RefreshSourceControlStatus()
+        public void RefreshSourceControlStatus()
         {
-            if (mSourceControlStatus != eImageType.Null)
-            {
-                mSourceControlStatus = await SourceControl.GetFileStatusForRepositoryItemPath(mFilePath).ConfigureAwait(true);
-                OnPropertyChanged(nameof(SourceControlStatus));
+            if (SourceControl != null && mSourceControlStatus != eImageType.Null)
+            {                
+                mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
+                OnPropertyChanged(nameof(SourceControlStatus));                                
             }
         }
 

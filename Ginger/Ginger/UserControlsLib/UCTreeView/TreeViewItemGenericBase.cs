@@ -272,16 +272,17 @@ namespace GingerWPF.TreeViewItemsLib
                     break;
                 case eFolderNodePastOperations.Cut:
                     PasteCutTreeItem(mNodeManipulationsSource.NodeObject(), this);
+                    mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
                     break;
                 case eFolderNodePastOperations.CutItems:
                     PasteCutTreeItems();
+                    mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
                     break;
                 default:                    
                     Reporter.ToUser(eUserMsgKey.CopyCutOperation);
                     break;
             }
-
-            mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
+            
         }
 
         private void CopyTreeFolderItemsHandler(object sender, System.Windows.RoutedEventArgs e)

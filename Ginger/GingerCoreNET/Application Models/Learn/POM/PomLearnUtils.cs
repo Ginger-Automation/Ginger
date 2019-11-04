@@ -168,12 +168,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList);
+                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true);
                 }
             }
             else
             {
-                IWindowExplorerDriver.GetVisibleControls(null, mElementsList);
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true);
             }
         }
 

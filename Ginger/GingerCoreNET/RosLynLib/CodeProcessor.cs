@@ -134,7 +134,7 @@ namespace GingerCoreNET.RosLynLib
             }
             catch(Exception EvalExcep)
             {
-                Reporter.ToLog(eLogLevel.INFO, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
+                Reporter.ToLog(eLogLevel.DEBUG, condition + System.Environment.NewLine + " not a valid c# expression to evaluate", EvalExcep);
 
 
                 result = false;
@@ -246,7 +246,10 @@ namespace GingerCoreNET.RosLynLib
 
         public static object ExecuteNew(string code)
         {
-            Console.WriteLine("Executing script code: " + code);
+            Console.WriteLine("Executing script code: " + Environment.NewLine);
+            Console.WriteLine("====================================================================================================================" + Environment.NewLine);
+            Console.WriteLine(code + Environment.NewLine);
+            Console.WriteLine("====================================================================================================================" + Environment.NewLine);
 
             // Add ref to DLLs needed
             ScriptOptions options = ScriptOptions.Default.AddReferences(Assembly.GetAssembly(typeof(PluginPackage)));
