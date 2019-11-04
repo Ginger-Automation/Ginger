@@ -117,7 +117,6 @@ namespace Ginger.Run.RunSetActions
                     string htmlReportFolderPath = "";
                     if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
                     {
-                        //htmlReportFolderPath = WorkSpace.Instance.TestArtifactsFolder + "\\" + System.IO.Path.GetFileName(runSetFolder);
                         htmlReportFolderPath = Path.Combine(WorkSpace.Instance.TestArtifactsFolder , System.IO.Path.GetFileName(runSetFolder));
                     }
                     else if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
