@@ -1203,22 +1203,12 @@ namespace GingerCoreNET.DataSource
             return colName;
         }
 
-        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals, string fileFullPath)
+        public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
         {
             string[] collist = sColList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string[] vallist = sColVals.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
             string query = null;
             string colvalues = null;
-
-            int rowCount = 1;
-            using (var db = new LiteDatabase(fileFullPath))
-            {
-                var results = db.GetCollection(Name).Find(Query.All(), 0).ToList();
-                if (results != null)
-                {
-                    rowCount = results.Count + 1; 
-                }
-            }
 
             if (collist != null && vallist != null)
             {
@@ -1234,7 +1224,7 @@ namespace GingerCoreNET.DataSource
                 }
             }
             query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName 
-                                 + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + ",GINGER_USED:\"False\",GINGER_ID:\"" + rowCount + "\" }";
+                                 + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + ",GINGER_USED:\"False\" }";
 
             return query;
         }
