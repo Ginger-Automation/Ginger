@@ -25,6 +25,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion;
 using Ginger.Actions.ActionConversion;
 using Ginger.WizardLib;
 using GingerCore;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.Actions.ApiActionsConversion
@@ -80,11 +81,37 @@ namespace Ginger.Actions.ApiActionsConversion
             ObservableList <BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
             foreach (BusinessFlow bf in businessFlows)
             {
-                BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
-                flowToConvert.BusinessFlow = bf;
-                lst.Add(flowToConvert);
+                if (IsWebServiceTargetApplicationInFlow(bf))
+                {
+                    BusinessFlowToConvert flowToConvert = new BusinessFlowToConvert();
+                    flowToConvert.BusinessFlow = bf;
+                    flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
+                    if (flowToConvert.TotalProcessingActionsCount > 0)
+                    {
+                        lst.Add(flowToConvert);  
+                    }
+                }
             }
             return lst;
+        }
+
+        /// <summary>
+        /// This method is used to check if WebService TargetApplication is present in BusinessFlow
+        /// </summary>
+        /// <param name="bf"></param>
+        /// <returns></returns>
+        private bool IsWebServiceTargetApplicationInFlow(BusinessFlow bf)
+        {
+            bool isPresent = false;
+            foreach (var ta in bf.TargetApplications)
+            {
+                isPresent = ta.Name.Contains("Services");
+                if(isPresent)
+                {
+                    break;
+                }
+            }
+            return isPresent;
         }
 
         /// <summary>
@@ -99,7 +126,7 @@ namespace Ginger.Actions.ApiActionsConversion
         /// </summary>
         public void StopConversion()
         {
-            //mConversionUtils.StopConversion();
+            mConversionUtils.StopConversion();
         }
 
         /// <summary>
@@ -173,6 +200,16 @@ namespace Ginger.Actions.ApiActionsConversion
             {
                 Reporter.HideStatusMessage();
             }
+        }
+
+        /// <summary>
+        /// This method is used to get the Convertible Actions Count From BusinessFlow
+        /// </summary>
+        /// <param name="bf"></param>
+        /// <returns></returns>
+        public int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf)
+        {
+            return mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
         }
 
         /// <summary>

@@ -224,19 +224,19 @@ namespace Ginger.Actions.ActionConversion
                 {
                     try
                     {
-                        //if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
-                        //{
-                        //    if (bf.ConvertedActionsCount > 0)
-                        //    {
-                        //        bf.SaveStatus = eConversionSaveStatus.Saving;
-                        //        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
-                        //        bf.SaveStatus = eConversionSaveStatus.Saved; 
-                        //    }
-                        //    else
-                        //    {
-                        //        bf.SaveStatus = eConversionSaveStatus.NA;
-                        //    }
-                        //}
+                        if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
+                        {
+                            if (bf.ConvertedActionsCount > 0)
+                            {
+                                bf.SaveStatus = eConversionSaveStatus.Saving;
+                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
+                                bf.SaveStatus = eConversionSaveStatus.Saved;
+                            }
+                            else
+                            {
+                                bf.SaveStatus = eConversionSaveStatus.NA;
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -265,7 +265,7 @@ namespace Ginger.Actions.ActionConversion
             xSaveButton.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
             xStopButton.Visibility = saveVisible ? Visibility.Collapsed : Visibility.Visible;
             xReConvert.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
-            //((WizardWindow)mConversionProcess.mWizardWindow).xFinishButton.IsEnabled = saveVisible;
+            ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = saveVisible;
         }
     }
 }

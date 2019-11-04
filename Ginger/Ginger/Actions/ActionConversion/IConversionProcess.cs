@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
+using GingerCore;
 
 namespace Ginger.Actions
 {
@@ -21,5 +17,7 @@ namespace Ginger.Actions
         void ConversionProcessEnded();
 
         void ConversionProcessStarted();
+
+        int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf);
     }
 }

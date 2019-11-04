@@ -40,7 +40,7 @@ namespace Ginger.Actions.ActionConversion
     public partial class SelectBusinessFlowWzardPage : Page, IWizardPage
     {
         WizardWindow mWizard;
-        public object BusinessFlowFolder { get; set; }
+        IConversionProcess mConversionProcess;
         SingleItemTreeViewSelectionPage mBFSelectionPage = null;
         ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         Context mContext = null;
@@ -58,8 +58,8 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (WizardWindow)WizardEventArgs.Wizard.mWizardWindow;
-                    //((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
+                    mConversionProcess = (IConversionProcess)WizardEventArgs.Wizard;
+                    ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = false;
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
@@ -174,7 +174,7 @@ namespace Ginger.Actions.ActionConversion
                         flowToConversion.BusinessFlow = bf;
                         flowToConversion.ConversionStatus = eConversionStatus.Pending;
                         flowToConversion.IsSelected = true;
-                        //flowToConversion.TotalProcessingActionsCount = mWizard.GetConvertibleActionsCountFromBusinessFlow(bf);
+                        flowToConversion.TotalProcessingActionsCount = mConversionProcess.GetConvertibleActionsCountFromBusinessFlow(bf);
                         ListOfBusinessFlow.Add(flowToConversion); 
                     }
                 } 
