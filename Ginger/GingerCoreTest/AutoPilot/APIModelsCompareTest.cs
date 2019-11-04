@@ -99,7 +99,7 @@ namespace UnitTests.NonUITests.AutoPilot
         }
 
         [TestCleanup]
-        public static void TestCleanUp()
+        public void TestCleanUp()
         {
             if (textExecutedCount == 3)
             {
