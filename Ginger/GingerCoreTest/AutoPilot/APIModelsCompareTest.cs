@@ -71,7 +71,7 @@ namespace UnitTests.NonUITests.AutoPilot
                 var tempFile = TestResources.GetTestResourcesFile(fileName);
                 existingAPIsList = xmlParser.ParseDocument(tempFile, existingAPIsList);
                 existingAPIsList.Last().EndpointURL = fileName;
-            };
+            }
 
             // storing the learned API Models in Existing Models to keep intact while using for testing the Compaarison feature
             learnedAPIsList = new List<ApplicationAPIModel>();
@@ -99,7 +99,7 @@ namespace UnitTests.NonUITests.AutoPilot
         }
 
         [TestCleanup]
-        public void TestCleanUp()
+        public static void TestCleanUp()
         {
             if (textExecutedCount == 3)
             {
@@ -109,7 +109,9 @@ namespace UnitTests.NonUITests.AutoPilot
                 textExecutedCount = 0;
             }
             else
+            {
                 textExecutedCount++;
+            }
         }
 
         [TestMethod]
