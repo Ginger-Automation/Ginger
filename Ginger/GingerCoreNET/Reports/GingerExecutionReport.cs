@@ -2669,7 +2669,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     if (isHTMLReportPermanentFolderNameUsed)
                     {
-                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
+                        mHTMLReportsFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder + "\\" + System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name));
                     }
                     gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(mHTMLReportsFolder);
                 }
