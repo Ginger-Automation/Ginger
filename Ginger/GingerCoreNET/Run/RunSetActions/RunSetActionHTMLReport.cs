@@ -115,17 +115,17 @@ namespace Ginger.Run.RunSetActions
                 if (amdocs.ginger.GingerCoreNET.WorkSpace.Instance.RunningInExecutionMode)
                 {
                     string htmlReportFolderPath = "";
-                    if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
-                    {
-                        htmlReportFolderPath = Path.Combine(WorkSpace.Instance.TestArtifactsFolder , System.IO.Path.GetFileName(runSetFolder));
-                    }
-                    else if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
+                    if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
                     {
                         htmlReportFolderPath = Path.Combine(HTMLReportFolderNameCalculated, System.IO.Path.GetFileName(runSetFolder));
                     }
+                    else if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
+                    {
+                        htmlReportFolderPath = Path.Combine(WorkSpace.Instance.TestArtifactsFolder, System.IO.Path.GetFileName(runSetFolder));
+                    }
                     else
                     {
-                        htmlReportFolderPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder) + "\\" + System.IO.Path.GetFileName(runSetFolder);
+                        htmlReportFolderPath = Path.Combine(WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(ExtensionMethods.GetReportDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationHTMLReportsFolder)), System.IO.Path.GetFileName(runSetFolder));
                     }
                     if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))
                     {
