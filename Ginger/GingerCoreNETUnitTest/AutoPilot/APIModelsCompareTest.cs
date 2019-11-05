@@ -27,7 +27,7 @@ namespace GingerCoreNETUnitTest.AutoPilot
         static List<string> xmlFiles;
         static List<ApplicationAPIModel> learnedAPIsList;
         static ObservableList<ApplicationAPIModel> existingAPIsList;
-        static int textExecutedCount = 0;
+        static int testExecutedCount = 0;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
@@ -90,17 +90,22 @@ namespace GingerCoreNETUnitTest.AutoPilot
         [TestCleanup]
         public void TestCleanUp()
         {
-            if (textExecutedCount == 3)
+            if (testExecutedCount == 3)
             {
                 xmlFiles.Clear();
                 learnedAPIsList.Clear();
                 existingAPIsList.Clear();
-                textExecutedCount = 0;
+                ResetExecutionCounter();
             }
             else
             {
-                textExecutedCount++;
+                testExecutedCount++;
             }
+        }
+
+        static void ResetExecutionCounter()
+        {
+            testExecutedCount = 0;
         }
 
         [TestMethod]
