@@ -2230,11 +2230,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return minifiedString + ";";
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            CreateSwitchWindowAction(Title);
-            return true;
-        }
+
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
@@ -3124,19 +3120,35 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void CreateSwitchWindowAction(string windowTitle)
         {
-            ActSwitchWindow act = new ActSwitchWindow();
-            act.Description = "Switch Window - " + windowTitle;
-            act.LocateBy = eLocateBy.ByTitle;
-            act.LocateValue = windowTitle;
+            //ActSwitchWindow act = new ActSwitchWindow();
+            //act.Description = "Switch Window - " + windowTitle;
+            //act.LocateBy = eLocateBy.ByTitle;
+            //act.LocateValue = windowTitle;
+            //if (BusinessFlow != null)
+            //{
+            //    BusinessFlow.AddAct(act, true);
+            //}
+            //else
+            //{
+            //    Reporter.ToUser(eUserMsgKey.RestartAgent);
+            //}
+            ActUIElement actUIElement = new ActUIElement()
+            {
+                Description = "Switch Window - " + windowTitle,
+                ElementLocateBy = eLocateBy.ByTitle,
+                ElementLocateValue = windowTitle,
+                ElementType = eElementType.Window
+            };
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.SyncTime, "30");
             if (BusinessFlow != null)
             {
-                BusinessFlow.AddAct(act, true);
+                BusinessFlow.AddAct(actUIElement, true);
             }
             else
             {
                 Reporter.ToUser(eUserMsgKey.RestartAgent);
             }
-            
+
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)

@@ -198,15 +198,6 @@ namespace GingerCore.Drivers.Common
 
         public abstract void TakeScreenShot(ActScreenShot act);
 
-        public  void CreateSwitchWindowAction(string title)
-        {
-            ActSwitchWindow act = new ActSwitchWindow();
-            act.Description = "Switch Window - " + title;
-            act.LocateBy = eLocateBy.ByTitle;
-            act.LocateValue = title;
-            BusinessFlow.AddAct(act, true);
-        }
-
         public abstract List<object> GetListOfWindows();
 
         public abstract List<AppWindow> GetListOfDriverAppWindows();

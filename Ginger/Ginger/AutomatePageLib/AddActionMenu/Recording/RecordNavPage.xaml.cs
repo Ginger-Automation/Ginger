@@ -63,6 +63,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             SetDriver();
             SetRecordingControls();
             SetSelectedPOMsGridView();
+            xWindowSelectionUC.mContext = context;
         }
 
         /// <summary>

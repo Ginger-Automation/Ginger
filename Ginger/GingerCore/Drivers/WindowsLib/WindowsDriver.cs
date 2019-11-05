@@ -633,11 +633,7 @@ namespace GingerCore.Drivers.WindowsLib
             mUIAutomationHelper.SwitchToWindow(Title);
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            mUIAutomationHelper.CreateSwitchWindowAction(Title);
-            return true;
-        }
+
         
         string IWindowExplorer.GetFocusedControl()
         {

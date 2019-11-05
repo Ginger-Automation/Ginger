@@ -4429,16 +4429,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            Act switchAct = new ActBrowserElement();
-            switchAct.LocateBy = eLocateBy.ByTitle;
-            ((ActBrowserElement)switchAct).ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
-            switchAct.Description = "Switch Window to Default Window";
-            switchAct.LocateValue = Title;
-            BusinessFlow.AddAct(switchAct, true);
-            return true;
-        }
+
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {

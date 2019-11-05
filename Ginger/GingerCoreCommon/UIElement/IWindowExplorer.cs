@@ -44,8 +44,7 @@ namespace Amdocs.Ginger.Common.UIElement
         // For Table: will return list of rows data: List<TableElementItem>        
         object GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
         
-        //TODO: Why here ?
-        bool AddSwitchWindowAction(string Title);
+
 
         ObservableList<ElementInfo> GetElements(ElementLocator EL);
 

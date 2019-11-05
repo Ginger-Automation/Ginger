@@ -983,11 +983,6 @@ namespace GingerCore.Drivers.PBDriver
             mUIAutomationHelper.SwitchToWindow(Title);
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            mUIAutomationHelper.CreateSwitchWindowAction(Title);
-            return true;
-        }
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
