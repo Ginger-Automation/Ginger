@@ -42,7 +42,7 @@
                       ButtonType="ImageButton" Click="XManualMatchBtn_Click" ButtonText="" ToolTip="Manually Match an Existing API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Edit" />
 
-                    <UserControls:ucButton x:Name="xClearMatchBtn" VerticalAlignment="Center" IsEnabled="True" Grid.Column="2" Margin="0" Padding="0" Height="23"
+                    <UserControls:ucButton x:Name="xClearMatchBtn" VerticalAlignment="Center" IsEnabled="{Binding ShowMergerLink}" Grid.Column="2" Margin="0" Padding="0" Height="23"
                               ButtonType="ImageButton" Click="xClearMatchBtn_Click" ButtonText="" ToolTip="Clear Matching API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
                                            ButtonImageWidth="15" ButtonImageType="Close" />
 

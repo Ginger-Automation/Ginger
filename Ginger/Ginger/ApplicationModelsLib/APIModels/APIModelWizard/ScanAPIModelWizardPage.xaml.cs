@@ -81,7 +81,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
-            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList).OrderBy(d => d.comparisonStatus));
+            ObservableList<ApplicationAPIModel> selectedAPIModels = GingerCore.General.ConvertListToObservableList<ApplicationAPIModel>(AddAPIModelWizard.LearnedAPIModelsList.Where(m => m.IsSelected == true).ToList());
+            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
             xApisSelectionGrid.InitViewItems();
 
@@ -505,12 +506,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         {
             DeltaAPIModel deltaAPI = null;
             deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
-
-            if(deltaAPI != null)
+            //DeltaAPIModel updatedDelta = Amdocs.Ginger.CoreNET.Application_Models.LearnAPIModelsUtils.CreateAPIModelObject(deltaAPI);
+            int modelIndex = xApisSelectionGrid.DataSourceList.IndexOf(deltaAPI);
+            if (deltaAPI != null)
             {
                 if(deltaAPI.matchingAPIModel != null)
                 {
-                    deltaAPI.matchingAPIModel = null;
+                    ObservableList<ApplicationAPIModel> selectedMatchingAPIList = new ObservableList<ApplicationAPIModel>();
+                    ObservableList<ApplicationAPIModel> apiModelsLearned = new ObservableList<ApplicationAPIModel>() { deltaAPI.learnedAPI };
+                    ObservableList<DeltaAPIModel> comparisonOutput = APIDeltaUtils.DoAPIModelsCompare(apiModelsLearned, selectedMatchingAPIList);
+                    deltaAPI = comparisonOutput.FirstOrDefault();
+                    xApisSelectionGrid.DataSourceList[modelIndex] = deltaAPI;
                 }
             }
         }
