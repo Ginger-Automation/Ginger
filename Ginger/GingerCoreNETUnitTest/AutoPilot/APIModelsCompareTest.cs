@@ -52,12 +52,12 @@ namespace GingerCoreNETUnitTest.AutoPilot
             // Initialize ApplicationAPIModels XML file names to be fetched from TestResources
             xmlFiles = new List<string>()
             {
-                @"XML\Create_User.Ginger.ApplicationAPIModel.xml",
-                @"XML\Delete_User.Ginger.ApplicationAPIModel.xml",
-                @"XML\PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml",
-                @"XML\Update_User.Ginger.ApplicationAPIModel.xml",
-                @"XML\PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml",
-                @"XML\GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml",
+                @"XML" + Path.DirectorySeparatorChar + "Create_User.Ginger.ApplicationAPIModel.xml",
+                @"XML" + Path.DirectorySeparatorChar + "Delete_User.Ginger.ApplicationAPIModel.xml",
+                @"XML" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml",
+                @"XML" + Path.DirectorySeparatorChar + "Update_User.Ginger.ApplicationAPIModel.xml",
+                @"XML" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml",
+                @"XML" + Path.DirectorySeparatorChar + "GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml",
             };
 
             existingAPIsList = new ObservableList<ApplicationAPIModel>();
