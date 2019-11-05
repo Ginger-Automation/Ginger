@@ -125,10 +125,17 @@ namespace GingerCoreNET.Application_Models
             set
             {
                 mMatchingAPIModel = value;
-                string[] fPath = value.ContainingFolder.Split(new string[] { "\\" }, 4, StringSplitOptions.RemoveEmptyEntries);
-                if(fPath != null)
+                if (value != null)
                 {
-                    MatchingAPIName = "~\\" + ((fPath.Length > 3) ? fPath.Last() + "\\" : "") + value.Name;
+                    string[] fPath = value.ContainingFolder.Split(new string[] { "\\" }, 4, StringSplitOptions.RemoveEmptyEntries);
+                    if (fPath != null)
+                    {
+                        MatchingAPIName = "~\\" + ((fPath.Length > 3) ? fPath.Last() + "\\" : "") + value.Name;
+                    }
+                }
+                else
+                {
+                    MatchingAPIName = "";
                 }
             }
         }

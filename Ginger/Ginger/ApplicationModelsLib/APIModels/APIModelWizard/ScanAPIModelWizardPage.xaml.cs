@@ -455,12 +455,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
+        private object GetFrameElementDataContext(object sender)
+        {
+            var fEl = sender as FrameworkElement;
+            if (fEl != null)
+                return fEl.DataContext;
+            else
+                return null;
+        }
+
         private void XManualMatchBtn_Click(object sender, RoutedEventArgs e)
         {
             DeltaAPIModel deltaAPI = null;
-            var fEl = sender as FrameworkElement;
-            if (fEl != null)
-                deltaAPI = fEl.DataContext as DeltaAPIModel;
+            deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
 
             if (deltaAPI != null)
             {
@@ -492,6 +499,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
 
+        }
+
+        private void xClearMatchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeltaAPIModel deltaAPI = null;
+            deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
+
+            if(deltaAPI != null)
+            {
+                if(deltaAPI.matchingAPIModel != null)
+                {
+                    deltaAPI.matchingAPIModel = null;
+                }
+            }
         }
     }
 }
