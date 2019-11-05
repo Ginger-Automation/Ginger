@@ -68,7 +68,7 @@
                 <!--Main Menu- Loaded Solution Menu's-->
                 <DockPanel x:Name="xLoadedSolutionMenusPnl" DockPanel.Dock="Left" VerticalAlignment="Center">
                     <!--Main Menu- Solution Tabs-->
-                    <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_DarkBlue}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" >
+                    <ListView x:Name="xSolutionTabsListView" Background="{StaticResource $BackgroundColor_DarkBlue}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" SelectionChanged="xSolutionTopNavigationListView_SelectionChanged" Margin="0,5,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" SelectionMode="Single" >
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"></StackPanel>
