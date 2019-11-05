@@ -169,21 +169,6 @@ namespace GingerWPF.BusinessFlowsLib
             EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(mBusinessFlow);
             EBFP.ShowAsWindow();
 
-            // This section confirms if the TargetListBox associated with the current object is updated as this page is instantiated at two different places 
-            // BF Page and Automate Page, with binding BF's TA changed event (OnCollectionChanged) to refill the TargetListBox whenever fired 
-            // but for some reason (NEED TO STUDY in DEAPTH) always the instance for the BF Page is updated even if TAs added from Automate Page's BFConfigPage
-            foreach (var tApp in mBusinessFlow.TargetApplications)
-            {
-                if(xTargetsListBox.Items.Contains(tApp) && xTargetsListBox.Items.Count == mBusinessFlow.TargetApplications.Count)
-                {
-                    continue;
-                }
-                else
-                {
-                    TargetApplications_CollectionChanged(sender, null);
-                    break;
-                }
-            }
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
                 if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
