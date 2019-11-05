@@ -1,25 +1,18 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using GingerCore.Drivers.WebServicesDriverLib;
-using GingerCore.Platforms;
 using GingerCoreNET.Application_Models;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.ApplicationModelsLib.APIModels;
-using GingerWPF.WorkSpaceLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace UnitTests.NonUITests.AutoPilot
+namespace GingerCoreNETUnitTest.AutoPilot
 {
     /// <summary>
     /// API Models Comparison Utility Test
@@ -49,43 +42,39 @@ namespace UnitTests.NonUITests.AutoPilot
                 Directory.Delete(TempSolutionFolder, true);
             }
 
-            // Initialize XML Parser 
-            XMLTemplateParser xmlParser = new XMLTemplateParser();
-
-            // Initialize XML file names to be fetched from TestResources
-            xmlFiles = new List<string>()
-            {
-                @"XML\Create_User.xml",
-                @"XML\Delete_User.xml",
-                @"XML\PhoneVerifySOAP_CheckPhoneNumber.xml",
-                @"XML\Update_User.xml",
-                @"XML\PhoneVerifySOAP_CheckPhoneNumbers.xml",
-                @"XML\GetQuote_DelayedStockQuoteSoap.xml",
-            };
-
-            existingAPIsList = new ObservableList<ApplicationAPIModel>();
-
-            // Importing API Models from XML files (listed in xmlFiles)
-            foreach (String fileName in xmlFiles)
-            {
-                var tempFile = TestResources.GetTestResourcesFile(fileName);
-                existingAPIsList = xmlParser.ParseDocument(tempFile, existingAPIsList);
-                existingAPIsList.Last().EndpointURL = fileName;
-            }
-
-            // storing the learned API Models in Existing Models to keep intact while using for testing the Compaarison feature
-            learnedAPIsList = new List<ApplicationAPIModel>();
-            foreach (ApplicationAPIModel apiModel in existingAPIsList)
-            {
-                learnedAPIsList.Add(apiModel.CreateCopy() as ApplicationAPIModel);
-            }
-
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             WorkSpace.Instance.SolutionRepository.CreateRepository(TempSolutionFolder);
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
             NewRepositorySerializer.AddClassesFromAssembly(typeof(ApplicationAPIModel).Assembly);
             WorkSpace.Instance.SolutionRepository.Open(TempSolutionFolder);
+
+            // Initialize ApplicationAPIModels XML file names to be fetched from TestResources
+            xmlFiles = new List<string>()
+            {
+                @"XML\Create_User.Ginger.ApplicationAPIModel.xml",
+                @"XML\Delete_User.Ginger.ApplicationAPIModel.xml",
+                @"XML\PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml",
+                @"XML\Update_User.Ginger.ApplicationAPIModel.xml",
+                @"XML\PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml",
+                @"XML\GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml",
+            };
+
+            existingAPIsList = new ObservableList<ApplicationAPIModel>();
+            learnedAPIsList = new List<ApplicationAPIModel>();
+
+            // Importing API Models from XML files (listed in xmlFiles)
+            foreach (String fileName in xmlFiles)
+            {
+                var tempFile = TestResources.GetTestResourcesFile(fileName);
+                ApplicationAPIModel appModel = RS.DeserializeFromFile(typeof(ApplicationAPIModel), tempFile) as ApplicationAPIModel;
+
+                if (appModel != null)
+                {
+                    existingAPIsList.Add(appModel);
+                    learnedAPIsList.Add(appModel.CreateCopy() as ApplicationAPIModel);
+                }
+            }
 
             // Modifying certain API Models for testing different Comparison status and scenarios
             existingAPIsList[1].RequestBody = existingAPIsList[1].RequestBody + "This is modified";
