@@ -6,10 +6,10 @@
     <Authors>Ginger Automation Team</Authors>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Ginger.Plugin.Core</PackageId>
-    <Version>3.5.3</Version>
+    <Version>3.5.4</Version>
     <RootNamespace>Amdocs.Ginger.Plugin.Core</RootNamespace>
-    <AssemblyVersion>3.5.2.0</AssemblyVersion>
-    <FileVersion>3.5.3.0</FileVersion>
+    <AssemblyVersion>3.5.4.0</AssemblyVersion>
+    <FileVersion>3.5.4.0</FileVersion>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 

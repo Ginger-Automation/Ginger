@@ -1330,8 +1330,11 @@ namespace Ginger.Run
                                         string strActual = item.Actual == null ? "" : item.Actual.ToString();
                                         sColVals = sColVals + "'" + strActual.Replace("'", "''") + "',";
                                     }
-
                                 }
+                                sColList = sColList + "GINGER_ID,";
+                                int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
+                                sColVals = sColVals + "'" + (rowCount+1) + "',";
+
                                 sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
                             }

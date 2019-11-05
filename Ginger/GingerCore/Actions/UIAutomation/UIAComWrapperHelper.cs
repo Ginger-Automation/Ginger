@@ -3125,7 +3125,7 @@ namespace GingerCore.Drivers
 
                     // check box handler
                     case "check box":
-                    case "tree item":
+                    case "tree item":                    
                         if (value != "Checked" && value != "Unchecked")
                         {
                             throw new Exception(
@@ -3146,7 +3146,7 @@ namespace GingerCore.Drivers
                             ((TogglePattern)vp).Toggle();
                         }
                         break;
-
+                
                     // radio button handler
                     case "radio button":
                         value = "True";
@@ -3156,6 +3156,7 @@ namespace GingerCore.Drivers
                     case "list":
                     //Combo Box and List Box Handler
                     case "list item":
+                    case "tree view item":
                         Reporter.ToLog(eLogLevel.DEBUG, "In List Item ::");
                         AutomationElement parentElement = TreeWalker.ContentViewWalker.GetParent(element);
                         
