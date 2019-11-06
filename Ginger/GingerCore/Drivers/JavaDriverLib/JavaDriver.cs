@@ -2961,16 +2961,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                     break;
 
                 case "SwitchWindow":
-
                     string WindowTitle = pl.GetValueString();
-                    BusinessFlow.AddAct(new ActSwitchWindow()
+                    var actUISwitch = new ActUIElement()
                     {
                         Description = "Switch Window '" + WindowTitle + "'",
-                        LocateBy = eLocateBy.ByTitle,
-                        LocateValue = WindowTitle,
-                        Wait = 5,
-                        Value = WindowTitle
-                    });
+                        ElementLocateBy = eLocateBy.ByTitle,
+                        ElementLocateValue = WindowTitle,
+                        ElementType = eElementType.Window,
+                        ElementAction = ActUIElement.eElementAction.Switch
+                    };
+                    actUISwitch.GetOrCreateInputParam(ActUIElement.Fields.SyncTime, "30");
+                    BusinessFlow.AddAct(actUISwitch);
                     break;
 
                 //Widgets recorded elements
