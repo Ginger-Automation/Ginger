@@ -199,7 +199,7 @@ namespace GingerCoreNET.Application_Models
             foreach (eHandlingOperations enumItem in Enum.GetValues(typeof(eHandlingOperations)))
             {
                 string enumDes = GetEnumDescription(enumItem);
-                if (comparisonStatus == eComparisonOutput.New)
+                if (comparisonStatus == eComparisonOutput.New || comparisonStatus == eComparisonOutput.Unknown)
                 {
                     if (enumItem == eHandlingOperations.MergeChanges || enumItem == eHandlingOperations.ReplaceExisting)
                         continue;
