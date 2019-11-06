@@ -1043,6 +1043,7 @@ namespace Ginger.Run
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
                 });
             }
 
@@ -2498,13 +2499,21 @@ namespace Ginger.Run
                 if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
                 {
                     mRunSetConfig.SaveBackup();
+                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    LoadRunSetConfig(mRunSetConfig, true);
                 }
-                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
-                LoadRunSetConfig(mRunSetConfig, true);
             }            
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while undoing changes", ex);
+            }
+            finally
+            {
+                if (mRunSetConfig != null)
+                {
+                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                }
             }
         }
 

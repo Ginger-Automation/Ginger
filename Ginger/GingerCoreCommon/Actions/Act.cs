@@ -1560,31 +1560,32 @@ namespace GingerCore.Actions
                 // remove return vals which don't have expected or store to var
                 // it is not needed since it will return back after we get results
                 // if i.e the SQL changed we want to reflect the latest changes and output what we got
-                //List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => String.IsNullOrEmpty(x.Expected) == false || String.IsNullOrEmpty(x.StoreToValue) == false || String.IsNullOrEmpty(x.SimulatedActual) == false).ToList();
-                //this.ReturnValues.Clear();               
-                //foreach (ActReturnValue returnValue in configuredReturnParamsList)
-                //{
-                //    this.ReturnValues.Add(returnValue);
-                //}  
 
-                              
-                for (int indx = 0; indx < this.ReturnValues.Count; indx++)
+                //for (int indx = 0; indx < this.ReturnValues.Count; indx++)
+                //{
+                //    ActReturnValue value = this.ReturnValues[indx];
+                //    if ((String.IsNullOrEmpty(value.Expected) == false || String.IsNullOrEmpty(value.StoreToValue) == false || String.IsNullOrEmpty(value.SimulatedActual) == false))
+                //    {
+                //        //If outputvalue is configured then reset it
+                //        value.Actual = null;
+                //        value.ExpectedCalculated = null;
+                //        value.Status = ActReturnValue.eStatus.Pending;
+                //    }
+                //    else
+                //    {
+                //        this.ReturnValues.RemoveAt(indx);
+                //        indx--;
+                //    }
+                //}
+                List<ActReturnValue> configuredReturnParamsList = this.ReturnValues.Where(x => String.IsNullOrEmpty(x.Expected) == false || String.IsNullOrEmpty(x.StoreToValue) == false || String.IsNullOrEmpty(x.SimulatedActual) == false).ToList();
+                this.ReturnValues.Clear();
+                foreach (ActReturnValue returnValue in configuredReturnParamsList)
                 {
-                    ActReturnValue value = this.ReturnValues[indx];
-                    if ((String.IsNullOrEmpty(value.Expected) == false || String.IsNullOrEmpty(value.StoreToValue) == false || String.IsNullOrEmpty(value.SimulatedActual) == false))
-                    {
-                        //If outputvalue is configured then reset it
-                        value.Actual = null;
-                        value.ExpectedCalculated = null;
-                        value.Status = ActReturnValue.eStatus.Pending;
-                    }
-                    else
-                    {
-                        this.ReturnValues.RemoveAt(indx);
-                        indx--;
-                    }
+                    returnValue.Actual = null;
+                    returnValue.ExpectedCalculated = null;
+                    returnValue.Status = ActReturnValue.eStatus.Pending;
+                    this.ReturnValues.Add(returnValue);
                 }
-                            
 
                 //foreach (ActDataSourceConfig ADSC in this.DSOutputConfigParams)
                 //{

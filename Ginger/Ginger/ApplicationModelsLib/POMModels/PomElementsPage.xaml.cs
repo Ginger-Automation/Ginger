@@ -716,7 +716,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public void FinishEditInGrids()
         {
             xMainElementsGrid.Grid.CommitEdit();
+            xMainElementsGrid.Grid.CancelEdit();
             xLocatorsGrid.Grid.CommitEdit();
+            xLocatorsGrid.Grid.CancelEdit();
         }
 
 
