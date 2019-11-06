@@ -158,8 +158,16 @@ namespace GingerWPF.BusinessFlowsLib
             if (mBusinessFlow != updateBusinessFlow)
             {
                 ClearBindings();
+
+                mBusinessFlow.Activities.CollectionChanged -= mBusinessFlowActivities_CollectionChanged;
+                mBusinessFlow.TargetApplications.CollectionChanged -= TargetApplications_CollectionChanged;
+
                 mBusinessFlow = updateBusinessFlow;
                 mContext.BusinessFlow = mBusinessFlow;
+
+                mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
+                mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
+
                 BindControls();
             }
         }
