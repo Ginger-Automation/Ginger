@@ -113,8 +113,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             actModel.APImodelGUID = applicationModelGuid;
             actModel.ReturnValues = act.ActReturnValues;
             actModel.MaxNumberOfRetries = act.MaxNumberOfRetries;
-            actModel.Active = true;
-            
+            actModel.Active = true;            
             return actModel;
         }
 
@@ -224,7 +223,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         private void SetApplicationAPIModel(ref ApplicationAPIModel aPIModel, Act act, string path)
         {
             string folderPath = Path.Combine(path, @"Applications Models\API Models\");
-            //ApplicationAPIModel aPIModel = new ApplicationAPIModel();
             try
             {
                 aPIModel.ItemName = act.ItemName;
@@ -259,35 +257,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), nameof(ApplicationAPIModel.TemplateFileNameFileBrowser), act);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.AuthUsername), nameof(ApplicationAPIModel.AuthUsername), act);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.AuthPassword), nameof(ApplicationAPIModel.AuthPassword), act);
+                SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.CertificateTypeRadioButton), nameof(ApplicationAPIModel.CertificateType), act);
+                SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.NetworkCredentialsRadioButton), nameof(ApplicationAPIModel.NetworkCredentials), act);
 
                 if (!string.IsNullOrEmpty(Convert.ToString(aPIModel.TemplateFileNameFileBrowser)))
                 {
                     aPIModel.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.TemplateFile; 
                 }
-                //aPIModel.RequestBody = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.RequestBody).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.RequestType = (ApplicationAPIUtils.eRequestType)(Enum.Parse(typeof(ApplicationAPIUtils.eRequestType), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIRest.Fields.RequestType).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.ReqHttpVersion = (ApplicationAPIUtils.eHttpVersion)(Enum.Parse(typeof(ApplicationAPIUtils.eHttpVersion), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIRest.Fields.ReqHttpVersion).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.ResponseContentType = (ApplicationAPIUtils.eContentType)(Enum.Parse(typeof(ApplicationAPIUtils.eContentType), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIRest.Fields.ResponseContentType).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.CookieMode = (ApplicationAPIUtils.eCookieMode)(Enum.Parse(typeof(ApplicationAPIUtils.eCookieMode), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIRest.Fields.CookieMode).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.ContentType = (ApplicationAPIUtils.eContentType)(Enum.Parse(typeof(ApplicationAPIUtils.eContentType), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIRest.Fields.ContentType).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.SOAPAction = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPISoap.Fields.SOAPAction).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.EndPointURL = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.EndPointURL).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.URLUser = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.URLUser).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.URLDomain = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.URLDomain).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.URLPass = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.URLPass).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.CertificatePath = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.CertificatePath).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.DoNotFailActionOnBadRespose = Convert.ToBoolean(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.DoNotFailActionOnBadRespose).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.ImportCetificateFile = Convert.ToBoolean(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.ImportCetificateFile).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.CertificatePassword = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.CertificatePassword).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.SecurityType = (ApplicationAPIUtils.eSercurityType)(Enum.Parse(typeof(ApplicationAPIUtils.eSercurityType), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.SecurityType).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.AuthorizationType = (ApplicationAPIUtils.eAuthType)(Enum.Parse(typeof(ApplicationAPIUtils.eAuthType), Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.AuthorizationType).Select(x => x.Value).FirstOrDefault()), true));
-                //aPIModel.TemplateFileNameFileBrowser = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.TemplateFileNameFileBrowser).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.AuthUsername = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.AuthUsername).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.AuthPassword = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.AuthPassword).Select(x => x.Value).FirstOrDefault());
-
-                //aPIModel.NetworkCredentialsRadioButton = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.NetworkCredentialsRadioButton).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.RequestBodyTypeRadioButton = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.RequestBodyTypeRadioButton).Select(x => x.Value).FirstOrDefault());
-                //aPIModel.CertificateTypeRadioButton = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.CertificateTypeRadioButton).Select(x => x.Value).FirstOrDefault());
             }
             catch (Exception ex)
             {
@@ -318,21 +294,21 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             {
                                 PropertyInfo apiProp = aPIModel.GetType().GetProperty(modelPropertyName);
                                 var modelVal = apiProp.GetValue(aPIModel);
-                                if (modelVal == null || string.IsNullOrEmpty(Convert.ToString(modelVal)))
+                                if (apiProp.PropertyType.IsEnum)
                                 {
-                                    if (apiProp.PropertyType.IsEnum)
-                                    {
-                                        apiProp.SetValue(aPIModel, Enum.Parse(apiProp.PropertyType, Convert.ToString(val)));
-                                    }
-                                    else if (apiProp.PropertyType.Equals(typeof(Boolean)))
-                                    {
-                                        apiProp.SetValue(aPIModel, Convert.ToBoolean(val));
-                                    }
-                                    else
+                                    apiProp.SetValue(aPIModel, Enum.Parse(apiProp.PropertyType, Convert.ToString(val)));
+                                }
+                                else if (apiProp.PropertyType.Equals(typeof(Boolean)))
+                                {
+                                    apiProp.SetValue(aPIModel, Convert.ToBoolean(val));
+                                }
+                                else
+                                {
+                                    if (modelVal == null || string.IsNullOrEmpty(Convert.ToString(modelVal)))
                                     {
                                         apiProp.SetValue(aPIModel, val);
-                                    } 
-                                }
+                                    }                                    
+                                }                                
                             }
                         }
                     }
