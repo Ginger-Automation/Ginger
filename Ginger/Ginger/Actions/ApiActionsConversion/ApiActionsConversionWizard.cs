@@ -25,7 +25,6 @@ using Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion;
 using Ginger.Actions.ActionConversion;
 using Ginger.WizardLib;
 using GingerCore;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.Actions.ApiActionsConversion

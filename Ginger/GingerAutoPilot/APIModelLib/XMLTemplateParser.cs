@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 namespace Amdocs.Ginger.Repository
@@ -60,7 +61,42 @@ namespace Amdocs.Ginger.Repository
                 XDE.RemoveDuplicatesNodes();
 
             IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
-            ObservableList<AppModelParameter> AMPList = GetParamList(NodeList);
+            ObservableList<AppModelParameter> AMPList = GetParamListWithOptionalValues(NodeList);
+            return AMPList;
+        }
+
+        /// <summary>
+        /// This method will get the parameter list along with the optional values
+        /// </summary>
+        /// <param name="NodeList"></param>
+        /// <returns></returns>
+        private ObservableList<AppModelParameter> GetParamListWithOptionalValues(IEnumerable<XMLDocExtended> NodeList)
+        {
+            ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
+            foreach (XMLDocExtended XDN in NodeList)
+            {
+                string UniqPlaceHolder = "{" + GetPlaceHolderName(XDN.LocalName.ToUpper()) + "}";
+                OptionalValue opVal = new OptionalValue() { Value = XDN.Value, IsDefault = true };
+                ObservableList<OptionalValue> opList = new ObservableList<OptionalValue>();
+                opList.Add(opVal);
+                AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, opList));
+
+                if (XDN.Attributes != null && XDN.Attributes.Count > 0)
+                {
+                    foreach (XmlAttribute XmlAttribute in XDN.Attributes)
+                    {
+                        if (!string.IsNullOrEmpty(XmlAttribute.Prefix))
+                        {
+                            continue;
+                        }
+
+                        string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
+                        opVal = new OptionalValue() { Value = XmlAttribute.Value };
+                        opList.Add(opVal);
+                        AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, opList));
+                    }
+                }
+            }
             return AMPList;
         }
 
