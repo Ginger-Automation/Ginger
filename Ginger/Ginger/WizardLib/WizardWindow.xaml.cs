@@ -38,12 +38,14 @@ namespace GingerWPF.WizardLib
         public static WizardWindow CurrentWizardWindow = null;
 
         WizardBase mWizard;
+        static bool mIsPrevButtonDisable = false;
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
+        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false, bool IsPrevButtonDisable = false)
         {
-            WizardWindow wizardWindow = new WizardWindow(wizard);
+            mIsPrevButtonDisable = IsPrevButtonDisable;
+             WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
             wizardWindow.Height = height;
 
@@ -254,18 +256,7 @@ namespace GingerWPF.WizardLib
 
         private void UpdatePrevNextButton()
         {
-
-            if (mWizard.IsLastPage())
-            {
-                xNextButton.IsEnabled = false;
-                xFinishButton.IsEnabled = true;
-            }
-            else
-            {
-                xNextButton.IsEnabled = true;
-            }
-
-            if (mWizard.IsFirstPage() || mWizard.IsLastPage())
+            if (mWizard.IsFirstPage())
             {
                 xPrevButton.IsEnabled = false;
             }
@@ -274,6 +265,20 @@ namespace GingerWPF.WizardLib
                 xPrevButton.IsEnabled = true;
             }
 
+            if (mWizard.IsLastPage())
+            {
+                xNextButton.IsEnabled = false;
+                xFinishButton.IsEnabled = true;
+
+                if (mIsPrevButtonDisable)
+                {
+                    xPrevButton.IsEnabled = false;
+                }
+            }
+            else
+            {
+                xNextButton.IsEnabled = true;
+            }
         }
 
 
