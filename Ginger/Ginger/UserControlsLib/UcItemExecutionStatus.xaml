@@ -19,7 +19,8 @@
                     </TransformGroup>
                 </Polygon.RenderTransform>
             </Polygon>
-            <usercontrols:ImageMakerControl x:Name="xPolygonStatusImage" DockPanel.Dock="Right" Margin="0,-8,-25,0"  SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />
+            <!--<usercontrols:ImageMakerControl x:Name="xPolygonStatusImage" DockPanel.Dock="Right" Margin="0,-8,-25,0"  SetAsFontImageWithSize="13"  Width="13" Height="13" ImageType="Pending" FontWeight="Thin" HorizontalAlignment="Right" Foreground="White" />-->
+            <DockPanel x:Name="xPolygonStatusImagePnl" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,-10,-25,0" Width="13" Height="13" />
         </DockPanel>
 
         <DockPanel x:Name="xStatusImagePnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
