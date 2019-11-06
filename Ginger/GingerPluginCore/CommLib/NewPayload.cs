@@ -479,13 +479,13 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         /// </summary>
         /// <param name="FilePath">Provide absolute Path of the file to be added on payload </param>
         public void AddFile(string FilePath)
-        { 
-            string FileName = Path.GetFileName(FilePath);
-         
-            Byte[] FileData= File.ReadAllBytes(FilePath);
+        {
 
-            AddStringUTF16(FileName);
-            AddBytes(FileData);
+
+
+
+            AddStringUTF16(FilePath);
+
         }
 
 
@@ -538,15 +538,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         {
             string FileName = GetStringUTF16();
 
-            Byte[] FileData = GetBytes();
 
-            Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "Amdocs", "Ginger"));
-
-            string FilePath = Path.Combine(Path.GetTempPath(), "Amdocs", "Ginger", Guid.NewGuid().ToString()+ FileName);
-        
-            File.WriteAllBytes(FilePath, FileData);
-            return FilePath;
-        
+            return FileName;
         }
 
 
