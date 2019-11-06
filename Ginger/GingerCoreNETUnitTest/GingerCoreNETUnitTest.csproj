@@ -320,6 +320,24 @@
     <None Update="TestResources\Repository\DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Repository\SampleAPIModels\Create_User.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Repository\SampleAPIModels\Delete_User.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Repository\SampleAPIModels\GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Repository\SampleAPIModels\PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Repository\SampleAPIModels\PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Repository\SampleAPIModels\Update_User.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Repository\Windows.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

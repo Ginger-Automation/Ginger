@@ -52,12 +52,12 @@ namespace GingerCoreNETUnitTest.AutoPilot
             // Initialize ApplicationAPIModels XML file names to be fetched from TestResources
             xmlFiles = new List<string>()
             {
-                @"XML" + Path.DirectorySeparatorChar + "Create_User.Ginger.ApplicationAPIModel.xml",
-                @"XML" + Path.DirectorySeparatorChar + "Delete_User.Ginger.ApplicationAPIModel.xml",
-                @"XML" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml",
-                @"XML" + Path.DirectorySeparatorChar + "Update_User.Ginger.ApplicationAPIModel.xml",
-                @"XML" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml",
-                @"XML" + Path.DirectorySeparatorChar + "GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml",
+                @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "Create_User.Ginger.ApplicationAPIModel.xml",
+                @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "Delete_User.Ginger.ApplicationAPIModel.xml",
+                @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumber.Ginger.ApplicationAPIModel.xml",
+                @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "Update_User.Ginger.ApplicationAPIModel.xml",
+                @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "PhoneVerifySOAP_CheckPhoneNumbers.Ginger.ApplicationAPIModel.xml",
+                @"Repository" + Path.DirectorySeparatorChar + "SampleAPIModels" + Path.DirectorySeparatorChar + "GetQuote_DelayedStockQuoteSoap.Ginger.ApplicationAPIModel.xml",
             };
 
             existingAPIsList = new ObservableList<ApplicationAPIModel>();
