@@ -32,8 +32,8 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="120*" />
-                        <ColumnDefinition Width="50" />
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="30" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock x:Name="xMatchingAPIName" ToolTip="{Binding MatchingAPIName}" Text="{Binding MatchingAPIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" />

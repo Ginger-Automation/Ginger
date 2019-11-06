@@ -264,7 +264,8 @@ namespace GingerCoreNET.Application_Models
         {
             Modified,
             New,
-            Unchanged
+            Unchanged,
+            Unknown
         }
 
         public Amdocs.Ginger.Common.Enums.eImageType DeltaStatusIcon

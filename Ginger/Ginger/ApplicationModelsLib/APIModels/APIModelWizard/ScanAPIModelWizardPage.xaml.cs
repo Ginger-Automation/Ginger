@@ -192,6 +192,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
                     xApisSelectionGrid.ChangeGridView(eAddAPIWizardViewStyle.Add.ToString());
+                    xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
                 }
                 bool parseSuccess = false;
                 if (AddAPIModelWizard.LearnedAPIModelsList != null)
@@ -506,17 +507,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         {
             DeltaAPIModel deltaAPI = null;
             deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
-            //DeltaAPIModel updatedDelta = Amdocs.Ginger.CoreNET.Application_Models.LearnAPIModelsUtils.CreateAPIModelObject(deltaAPI);
+
             int modelIndex = xApisSelectionGrid.DataSourceList.IndexOf(deltaAPI);
             if (deltaAPI != null)
             {
                 if(deltaAPI.matchingAPIModel != null)
                 {
-                    ObservableList<ApplicationAPIModel> selectedMatchingAPIList = new ObservableList<ApplicationAPIModel>();
-                    ObservableList<ApplicationAPIModel> apiModelsLearned = new ObservableList<ApplicationAPIModel>() { deltaAPI.learnedAPI };
-                    ObservableList<DeltaAPIModel> comparisonOutput = APIDeltaUtils.DoAPIModelsCompare(apiModelsLearned, selectedMatchingAPIList);
-                    deltaAPI = comparisonOutput.FirstOrDefault();
-                    xApisSelectionGrid.DataSourceList[modelIndex] = deltaAPI;
+                    deltaAPI.matchingAPIModel = null;
+                    deltaAPI.comparisonStatus = DeltaAPIModel.eComparisonOutput.Unknown;
+                    deltaAPI.SelectedOperationEnum = DeltaAPIModel.eHandlingOperations.Add;
+                    deltaAPI.SelectedOperation = DeltaAPIModel.GetEnumDescription(deltaAPI.SelectedOperationEnum);
+
+                    xApisSelectionGrid.DataSourceList = xApisSelectionGrid.DataSourceList;
+
+                    // xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
+                    // xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
+
+                    //IObservableList sourceInstance = xApisSelectionGrid.DataSourceList;
+                    //xApisSelectionGrid.DataSourceList = sourceInstance;
                 }
             }
         }
