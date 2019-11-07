@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core.CommLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -83,12 +84,16 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         const byte FilePayload = 13;
 
 
+        object CallBackPerformer;
+
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
         
         byte[] mBuffer = new byte[4096];  // start with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
+
+        IPayloadCacheManager CacheManager;
 
         public string Name {get; set;}
         
@@ -100,6 +105,14 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             WriteString(Name);
         }
 
+        private Dictionary<byte[], string> mAttachments = new Dictionary<byte[], string>();
+        public Dictionary<byte[], string> Attachments
+        {
+            get
+            {
+                return mAttachments;
+            }
+        }
         /// Create Payload from Bytes
         /// IgnoreExtraSpace - the buffer size might be bigger than the length defined but there will be End of Packet -255 char at the length postiion - so valid with extra unused space, need to save copy bytes for resize in socket
         public NewPayLoad(byte[] bytes, bool IgnoreExtraSpace = false)
@@ -478,14 +491,34 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         /// Add a File to the payload
         /// </summary>
         /// <param name="FilePath">Provide absolute Path of the file to be added on payload </param>
-        public void AddFile(string FilePath)
+        public void AddFile(string Path,bool cache=true)
         {
 
+            //get file name  and add it
+            //
+            AddValue(cache);
+            if (cache)
+            {
+                //bool is true
+               byte[]key= GingerUtils.Encryption.MD5Utility.GetFileMD5(Path);
+
+                //if key is present in attachments that means the file is already added
+                // it doesnt matter if the paths are different but if md5 is same that means the content is same 
+                if(!mAttachments.ContainsKey(key))
+                {
+                    mAttachments.Add(key, Path);
+                }
+                AddBytes(key);
+            }
+            else
+            {
 
 
+                AddValue(System.IO.Path.GetFileName(Path));
+                AddBytes(File.ReadAllBytes(Path));
 
-            AddStringUTF16(FilePath);
-
+            }
+            
         }
 
 
@@ -536,10 +569,34 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public string GetFile()
         {
-            string FileName = GetStringUTF16();
 
+            if (GetValueBool())
+            {
+                byte[] key = GetBytes();
 
-            return FileName;
+                if (CacheManager != null)
+                {
+                    return CacheManager.GetFilePath(key);
+                }
+                else if (Attachments!=null && Attachments.ContainsKey(key))
+                {
+                    return Attachments[key];
+                }
+
+                throw new InvalidOperationException("Trying to get  other file, make sure you are trying to get file which were sent");
+            }
+
+            else
+            {
+                string filename = GetValueString();
+                byte[] filedata = GetBytes();
+
+                string filepath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks + filename);
+
+                File.WriteAllBytes(filepath, filedata);
+
+                return filepath;
+            }
         }
 
 
