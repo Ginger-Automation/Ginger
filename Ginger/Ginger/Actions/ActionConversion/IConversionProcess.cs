@@ -8,9 +8,7 @@ namespace Ginger.Actions
     {
         ObservableList<BusinessFlowToConvert> ListOfBusinessFlow { get; set; }
 
-        eConversionType ConversionType { get; set; }
-
-        bool ParameterizeRequestBody { get; set; }
+        eModelConversionType ModelConversionType { get; set; }
 
         void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow);
 
@@ -25,7 +23,7 @@ namespace Ginger.Actions
         int GetConvertibleActionsCountFromBusinessFlow(BusinessFlow bf);
     }
 
-    public enum eConversionType
+    public enum eModelConversionType
     {
         ActionConversion,
         ApiActionConversion

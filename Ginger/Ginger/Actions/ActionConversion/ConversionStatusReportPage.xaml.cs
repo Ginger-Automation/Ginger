@@ -76,18 +76,7 @@ namespace Ginger.Actions.ActionConversion
                 mConversionProcess.BusinessFlowsActionsConversion(ListOfBusinessFlow);
             });           
         }
-
-        /// <summary>
-        /// This method is
-        /// </summary>
-        private void SetConversionButton()
-        {
-            if(mConversionProcess.ConversionType == eConversionType.ApiActionConversion)
-            {
-
-            }
-        }
-
+        
         /// <summary>
         /// This method is used to set the columns for BusinessFlow Conversion Status GridView
         /// </summary>
@@ -273,9 +262,18 @@ namespace Ginger.Actions.ActionConversion
 
         public void SetButtonsVisibility(bool saveVisible)
         {
-            xSaveButton.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
-            xStopButton.Visibility = saveVisible ? Visibility.Collapsed : Visibility.Visible;
-            xReConvert.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
+            if(mConversionProcess.ModelConversionType == eModelConversionType.ApiActionConversion)
+            {
+                xSaveButton.Visibility = Visibility.Collapsed;
+                xStopButton.Visibility = Visibility.Collapsed;
+                xReConvert.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xSaveButton.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
+                xStopButton.Visibility = saveVisible ? Visibility.Collapsed : Visibility.Visible;
+                xReConvert.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
+            }
             ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = saveVisible;
         }
     }

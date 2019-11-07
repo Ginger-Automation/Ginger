@@ -76,9 +76,13 @@ namespace Amdocs.Ginger.Repository
             foreach (XMLDocExtended XDN in NodeList)
             {
                 string UniqPlaceHolder = "{" + GetPlaceHolderName(XDN.LocalName.ToUpper()) + "}";
-                OptionalValue opVal = new OptionalValue() { Value = XDN.Value, IsDefault = true };
                 ObservableList<OptionalValue> opList = new ObservableList<OptionalValue>();
-                opList.Add(opVal);
+                OptionalValue opVal = new OptionalValue();
+                if (XDN.Value != UniqPlaceHolder)
+                {
+                    opVal = new OptionalValue() { Value = XDN.Value, IsDefault = true };
+                    opList.Add(opVal); 
+                }
                 AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, opList));
 
                 if (XDN.Attributes != null && XDN.Attributes.Count > 0)

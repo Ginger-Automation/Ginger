@@ -11,17 +11,22 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="xGrdPane">        
         <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="450" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <CheckBox x:Name="xChkParameterizeRequestBody"  Grid.Column="0" Height="20" Grid.Row="0" IsChecked="{Binding Path=ParameterizeRequestBody, Mode=TwoWay}" HorizontalAlignment="Left"  Margin="10,10,0,0" >
+        <CheckBox x:Name="xChkParameterizeRequestBody"  Grid.Column="0" Height="20" Grid.Row="0" IsChecked="{Binding Path=ParameterizeRequestBody, Mode=TwoWay}" HorizontalAlignment="Left"  Margin="10,20,0,0" >
             <CheckBox.Content>
                 <GingerCore:ucTextDicResource Text="Parameterize the Request body"/>
+            </CheckBox.Content>
+        </CheckBox>
+        <CheckBox x:Name="xChkValidationRequired"  Grid.Column="0" Height="20" Grid.Row="1" IsChecked="{Binding Path=PullValidations, Mode=TwoWay}" HorizontalAlignment="Left"  Margin="10,10,0,0" >
+            <CheckBox.Content>
+                <GingerCore:ucTextDicResource Text="Pull Configured Validations"/>
             </CheckBox.Content>
         </CheckBox>
     </Grid>

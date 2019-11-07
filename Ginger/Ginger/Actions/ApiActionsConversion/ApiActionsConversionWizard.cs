@@ -50,6 +50,10 @@ namespace Ginger.Actions.ApiActionsConversion
 
         public bool ParameterizeRequestBody { get; set; }
 
+        public bool PullValidations { get; set; }
+
+        public eModelConversionType ModelConversionType { get; set; }
+
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
         ConversionStatusReportPage mReportPage = null;
@@ -61,6 +65,7 @@ namespace Ginger.Actions.ApiActionsConversion
         /// <param name="context"></param>
         public ApiActionsConversionWizard(Context context)
         {
+            ModelConversionType = eModelConversionType.ApiActionConversion;
             Context = context;
             ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
 
@@ -163,8 +168,7 @@ namespace Ginger.Actions.ApiActionsConversion
 
                 if (flowsToConvert.Count > 0)
                 {
-                    mConversionUtils.ParameterizeRequestBody = ParameterizeRequestBody;
-                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert));
+                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations));
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -188,8 +192,7 @@ namespace Ginger.Actions.ApiActionsConversion
             {
                 ProcessStarted();
 
-                mConversionUtils.ParameterizeRequestBody = ParameterizeRequestBody;
-                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst));
+                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations));
 
                 mReportPage.SetButtonsVisibility(true);
 

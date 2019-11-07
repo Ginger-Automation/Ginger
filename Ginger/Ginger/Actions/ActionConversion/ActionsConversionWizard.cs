@@ -66,10 +66,13 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
+        public eModelConversionType ModelConversionType { get; set; }
+
         ConversionStatusReportPage mReportPage = null;
 
         public ActionsConversionWizard(eActionConversionType conversionType, Context context, ObservableList<BusinessFlow> businessFlows)
         {
+            ModelConversionType = eModelConversionType.ActionConversion;
             Context = context;
             ConversionType = conversionType;
             mListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);

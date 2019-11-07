@@ -18,15 +18,16 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
     /// </summary>
     public class ApiActionConversionUtils
     {
-        private string WEB_SERVICE = "WebServices";
+        string WEB_SERVICE = "WebServices";
         bool mStopConversion = false;
-        public bool ParameterizeRequestBody { get; set; }
 
         /// <summary>
         /// This method is used to convert the legacy service actions to api actions from the businessflows provided
         /// </summary>
         /// <param name="businessFlows"></param>
-        public void ConvertToApiActionsFromBusinessFlows(ObservableList<BusinessFlowToConvert> businessFlows)
+        /// <param name="parameterizeRequestBody"></param>
+        /// <param name="configuredValidationRequired"></param>
+        public void ConvertToApiActionsFromBusinessFlows(ObservableList<BusinessFlowToConvert> businessFlows, bool parameterizeRequestBody, bool pullValidations)
         {
             try
             {
@@ -66,9 +67,16 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                                 SetApplicationAPIModel(ref applicationModel, act, bf.BusinessFlow.ContainingFolderFullPath);
                                                 
                                                 //Create WebAPIModel action
-                                                ActWebAPIModel actApiModel = GetNewAPIModelAction(applicationModel.Guid, act);                                                
-                                                AddAppParameters(applicationModel, act, actApiModel);
-                                                
+                                                ActWebAPIModel actApiModel = GetNewAPIModelAction(applicationModel.Guid, act);
+                                                if (parameterizeRequestBody)
+                                                {
+                                                    AddAppParameters(applicationModel, act, actApiModel); 
+                                                }
+                                                if (pullValidations)
+                                                {
+                                                    applicationModel.ReturnValues = act.ReturnValues;
+                                                }
+
                                                 activity.Acts.Insert(selectedActIndex + 1, actApiModel);
                                                 act.Active = false;
                                                 if (!isModelExists)
@@ -114,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             actModel.APImodelGUID = applicationModelGuid;
             actModel.ReturnValues = act.ActReturnValues;
             actModel.MaxNumberOfRetries = act.MaxNumberOfRetries;
-            actModel.Active = true;            
+            actModel.Active = true;
             return actModel;
         }
 
@@ -127,19 +135,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         private void AddAppParameters(ApplicationAPIModel aPIModel, Act act, ActWebAPIModel actApiModel)
         {
             try
-            {
-                string contentType = string.Empty;
-                PropertyInfo actProp = act.GetType().GetProperty(nameof(Act.ActInputValues));
-                if (actProp != null)
-                {
-                    ObservableList<ActInputValue> inputValues = (ObservableList<ActInputValue>)actProp.GetValue(act);
-                    if (inputValues != null)
-                    {
-                        var val = inputValues.Where(x => x.FileName == nameof(ActWebAPIRest.Fields.ContentType)).Select(x => x.Value).FirstOrDefault();
-                        contentType = Convert.ToString(val);
-                    }
-                }
-
+            {                
                 string requestBody = string.Empty;
                 if(aPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
                 {
@@ -335,9 +331,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         {
             ApplicationAPIModel aPIModel = null;
             string endPointURL = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPIBase.Fields.EndPointURL).Select(x => x.Value).FirstOrDefault());
-            if (!string.IsNullOrEmpty(endPointURL))
+            string soapAction = Convert.ToString(act.InputValues.Where(x => x.FileName == ActWebAPISoap.Fields.SOAPAction).Select(x => x.Value).FirstOrDefault());
+            ApplicationAPIUtils.eWebApiType apiType = act.GetType().Name.ToLower().Contains("soap") ? ApplicationAPIUtils.eWebApiType.SOAP : ApplicationAPIUtils.eWebApiType.REST;
+            if (!string.IsNullOrEmpty(soapAction))
             {
-                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.EndpointURL == endPointURL).FirstOrDefault();
+                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.EndpointURL == endPointURL && x.SOAPAction == soapAction && x.APIType == apiType).FirstOrDefault();
+            }
+            else
+            {
+                aPIModel = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.EndpointURL == endPointURL && x.APIType == apiType).FirstOrDefault();
             }
             return aPIModel;
         }
