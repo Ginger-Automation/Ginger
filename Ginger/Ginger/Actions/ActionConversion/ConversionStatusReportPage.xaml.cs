@@ -78,6 +78,17 @@ namespace Ginger.Actions.ActionConversion
         }
 
         /// <summary>
+        /// This method is
+        /// </summary>
+        private void SetConversionButton()
+        {
+            if(mConversionProcess.ConversionType == eConversionType.ApiActionConversion)
+            {
+
+            }
+        }
+
+        /// <summary>
         /// This method is used to set the columns for BusinessFlow Conversion Status GridView
         /// </summary>
         private void SetBusinessFlowConversionStatusGridView()

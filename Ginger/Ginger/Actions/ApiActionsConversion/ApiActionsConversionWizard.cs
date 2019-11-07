@@ -48,6 +48,8 @@ namespace Ginger.Actions.ApiActionsConversion
             }
         }
 
+        public bool ParameterizeRequestBody { get; set; }
+
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
         ConversionStatusReportPage mReportPage = null;
@@ -64,6 +66,7 @@ namespace Ginger.Actions.ApiActionsConversion
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ApiActionsConversion/ApiActionsConversionIntro.md"));
             AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
+            AddPage(Name: "API Conversion Configurations", Title: "API Conversion Configurations", SubTitle: "API Conversion Configurations", Page: new ApiConversionConfigurationWzardPage());
 
             mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
             AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage);
@@ -160,6 +163,7 @@ namespace Ginger.Actions.ApiActionsConversion
 
                 if (flowsToConvert.Count > 0)
                 {
+                    mConversionUtils.ParameterizeRequestBody = ParameterizeRequestBody;
                     await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert));
                 }
                 mReportPage.SetButtonsVisibility(true);
@@ -184,6 +188,7 @@ namespace Ginger.Actions.ApiActionsConversion
             {
                 ProcessStarted();
 
+                mConversionUtils.ParameterizeRequestBody = ParameterizeRequestBody;
                 await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst));
 
                 mReportPage.SetButtonsVisibility(true);

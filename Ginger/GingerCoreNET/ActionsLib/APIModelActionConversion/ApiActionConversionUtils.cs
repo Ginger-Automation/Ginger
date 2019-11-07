@@ -20,6 +20,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
     {
         private string WEB_SERVICE = "WebServices";
         bool mStopConversion = false;
+        public bool ParameterizeRequestBody { get; set; }
 
         /// <summary>
         /// This method is used to convert the legacy service actions to api actions from the businessflows provided
@@ -60,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                                 {
                                                     isModelExists = false;
                                                     applicationModel = new ApplicationAPIModel();
-                                                    applicationModel.TargetApplicationKey = bf.BusinessFlow.TargetApplications.Where(x => x.ItemName == activity.TargetApplication).FirstOrDefault().Key;
+                                                    applicationModel.TargetApplicationKey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.ItemName == activity.TargetApplication).FirstOrDefault().Key;
                                                 }
                                                 SetApplicationAPIModel(ref applicationModel, act, bf.BusinessFlow.ContainingFolderFullPath);
                                                 
@@ -142,7 +143,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 string requestBody = string.Empty;
                 if(aPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
                 {
-                    string apiModelPath = aPIModel.ContainingFolder.Replace("\\Applications Models\\API Models\\", "");
+                    int indexBF = aPIModel.ContainingFolder.IndexOf("BusinessFlows");
+                    string apiModelPath = aPIModel.ContainingFolder.Substring(0, (indexBF - 1));
                     string fileUri = aPIModel.TemplateFileNameFileBrowser.Replace("~\\", apiModelPath);
                     if (File.Exists(fileUri))
                     {
@@ -206,7 +208,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     isExists = true;
                     foreach (var val in param.OptionalValuesList)
                     {
-                        item.OptionalValuesList.Add(val);
+                        var paramOptionalValue = item.OptionalValuesList.Where(x => x.Value == val.Value).FirstOrDefault();
+                        if (!string.IsNullOrEmpty(Convert.ToString(val.Value)) && Convert.ToString(val.Value) != "?" && (paramOptionalValue == null || paramOptionalValue.Value != val.Value))
+                        {
+                            item.OptionalValuesList.Add(val); 
+                        }
                     }
                     break;
                 }
