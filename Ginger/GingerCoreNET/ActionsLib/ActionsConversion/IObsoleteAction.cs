@@ -27,7 +27,7 @@ namespace Amdocs.Ginger.CoreNET
     public interface IObsoleteAction
     {
         // Check if relevant for the platform of the activity
-        bool IsObsoleteForPlatform(ePlatformType Platfrom);
+        bool IsObsoleteForPlatform(ePlatformType platform);
 
         // return convert action
         Act GetNewAction();
