@@ -17,13 +17,16 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using Amdocs.Ginger.Plugin.Core.CommLib;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
-    public class GingerSocketInfo
+    public class GingerSocketInfo: IPayloadCacheManager
     {
         private Socket mSocket = null;
         
@@ -45,13 +48,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         
         // Class using it attach its handler to Action
         public Action<GingerSocketInfo> MessageHandler { get; set; }
-        
+
+        private Dictionary<byte[], string> OutgouingAttachments = new Dictionary<byte[], string>();
+
+        private Dictionary<byte[], string> IncomingAttachments = new Dictionary<byte[], string>();
+
         private readonly object mSendLockObject = new object();
         public NewPayLoad DataAsPayload
         {
             get
             {
-                NewPayLoad rc = new NewPayLoad(buffer, true);                
+                NewPayLoad rc = new NewPayLoad(buffer, true);
+                rc.CacheManager = this;
                 return rc;
             }
         }
@@ -197,6 +205,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                                 case NewPayLoad.ePaylodType.SocketRequest:
                                     SocketRequestHandler(gingerSocketInfo);
                                     break;
+
+
+
+                                case NewPayLoad.ePaylodType.FileRequest:
+                                    FileRequestHandler(gingerSocketInfo);
+                                    gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.ResponsePayload;
+                                    break;
                                 default:
                                     throw new InvalidOperationException("Unknown Payload Type, Payload.Name: " + Resp.Name);
                             }
@@ -247,6 +262,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
         }
 
+
+
         // Internal socket communication is handled here
         private void SocketRequestHandler(GingerSocketInfo gingerSocketInfo)
         {
@@ -278,6 +295,68 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 Console.WriteLine(e.ToString());
             }
+        }
+
+        public string GetCachedFilePath(byte[] key)
+        {
+
+            if(IncomingAttachments.ContainsKey(key))
+            {
+                return IncomingAttachments[key];
+            }
+
+            else
+            {
+                return RequestFileFromServer(key);
+            }
+            
+        }
+
+        private string RequestFileFromServer(byte[] key)
+        {
+
+            NewPayLoad  P = new NewPayLoad("FileRequest");
+            P.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+            P.AddBytes(key);
+            P.ClosePackage();
+            NewPayLoad FilePayload= SendRequest(P);
+
+            string filename = FilePayload.GetValueString();
+            byte[] filedata = FilePayload.GetBytes();
+
+            string filepath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks + filename);
+
+            File.WriteAllBytes(filepath, filedata);
+
+            return filepath;
+
+        }
+
+        private void FileRequestHandler(GingerSocketInfo gingerSocketInfo)
+        {
+            NewPayLoad Req = gingerSocketInfo.DataAsPayload;
+            if (Req.Name == "FileRequest")
+            {
+
+                NewPayLoad FileResponse = new NewPayLoad("FileResponse");
+
+                byte[] key = Req.GetBytes();
+                if (OutgouingAttachments.ContainsKey(key))
+                {
+
+                    //now we are sending file without cache 
+                    FileResponse.AddFile(OutgouingAttachments[key], false);
+                }
+
+
+                gingerSocketInfo.Response = FileResponse;
+
+
+                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
+                return;
+            }
+       
+            throw new InvalidOperationException("SocketRequestHandler - Unknown Request: " + Req.Name);
         }
     }
 }

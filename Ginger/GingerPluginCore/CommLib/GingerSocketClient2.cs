@@ -137,7 +137,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             pl.PaylodType = NewPayLoad.ePaylodType.RequestPayload;
             return mGingerSocketInfo.SendRequest(pl);            
         }
-
+               
         public NewPayLoad SendSocketPayLoad(NewPayLoad pl)
         {
             pl.PaylodType = NewPayLoad.ePaylodType.SocketRequest;

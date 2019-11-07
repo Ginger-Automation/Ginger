@@ -249,7 +249,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             //Assert
             Assert.AreEqual(val, val2);
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void FilePayload()
@@ -274,6 +274,9 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
         }
+
+
+
 
 
 

@@ -6,6 +6,6 @@ namespace Amdocs.Ginger.Plugin.Core.CommLib
 {
     public interface IPayloadCacheManager
     {
-        string  GetFilePath(byte[] key);
+        string  GetCachedFilePath(byte[] key);
     }
 }

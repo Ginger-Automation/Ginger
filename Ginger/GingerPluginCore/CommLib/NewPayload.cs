@@ -93,7 +93,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         byte[] mBuffer = new byte[4096];  // start with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
-        IPayloadCacheManager CacheManager;
+       public IPayloadCacheManager CacheManager { get; set; }
 
         public string Name {get; set;}
         
@@ -337,7 +337,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             SocketResponse = 2,
             RequestPayload = 3,
             ResponsePayload = 4,
-            DriverRequest = 5 // for example attach Display
+            DriverRequest = 5 ,// for example attach Display
+            FileRequest=6,
         }
 
         private ePaylodType mPaylodType = ePaylodType.Unknown;
@@ -576,7 +577,7 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
                 if (CacheManager != null)
                 {
-                    return CacheManager.GetFilePath(key);
+                    return CacheManager.GetCachedFilePath(key);
                 }
                 else if (Attachments!=null && Attachments.ContainsKey(key))
                 {

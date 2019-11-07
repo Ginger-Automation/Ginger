@@ -89,6 +89,12 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
                         Thread.Sleep(10000);
                         NewPayLoad PLOKLongAction = new NewPayLoad("LongActionDone", "Done");
                         return PLOKLongAction;
+                    case "FilePayload":
+                
+                        NewPayLoad filepayload = new NewPayLoad("RemoteFilePath",PL.GetFile() );
+                        return filepayload;
+
+                        
                     case "CalcSum":
                         int num = PL.GetValueInt();
                         int total = 0;
@@ -242,6 +248,30 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             Assert.AreEqual(PLRC.Name, "EchoBack", "PLRC.Name = EchoBack");
             Assert.AreEqual(txt, txt2, "txt = txt2");
         }
+
+
+        [TestMethod]
+
+        public void FileOverSocket()
+        {
+            // Arrange
+            DateTime Startime = DateTime.Now;
+            NewPayLoad pl = new NewPayLoad("FilePayload");
+
+            pl.AddFile(TestResources.GetTestResourcesFile("DummyDoc.docx"));
+            pl.ClosePackage();
+            //Act
+            NewPayLoad PLRC = mMyGingerClient.Send(pl);
+
+            string filepath = PLRC.GetValueString();
+
+            //Assert
+          DateTime Writetime=  System.IO.File.GetLastWriteTime(filepath);
+
+            Assert.IsTrue((Writetime - Startime).Ticks > 0);
+
+        }
+
 
         [TestMethod]
         [Timeout(60000)]
