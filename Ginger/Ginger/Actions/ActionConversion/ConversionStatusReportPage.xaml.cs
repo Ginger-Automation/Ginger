@@ -104,16 +104,20 @@ namespace Ginger.Actions.ActionConversion
                     Header = "Conversion Status",
                     BindingMode = System.Windows.Data.BindingMode.OneWayToSource
                 });
-                view.GridColsView.Add(new GridColView()
+
+                if (mConversionProcess.ModelConversionType == eModelConversionType.ActionConversion)
                 {
-                    Field = nameof(BusinessFlowToConvert.SaveStatusIcon),
-                    WidthWeight = 10,
-                    StyleType = GridColView.eGridColStyleType.Template,
-                    CellTemplate = (DataTemplate)this.PageGrid.Resources["xConversionSaveStatusIconTemplate"],
-                    ReadOnly = true,
-                    Header = "Save Status",
-                    BindingMode = System.Windows.Data.BindingMode.OneWayToSource
-                });
+                    view.GridColsView.Add(new GridColView()
+                    {
+                        Field = nameof(BusinessFlowToConvert.SaveStatusIcon),
+                        WidthWeight = 10,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = (DataTemplate)this.PageGrid.Resources["xConversionSaveStatusIconTemplate"],
+                        ReadOnly = true,
+                        Header = "Save Status",
+                        BindingMode = System.Windows.Data.BindingMode.OneWayToSource
+                    }); 
+                }
 
                 xBusinessFlowGrid.SetAllColumnsDefaultView(view);
                 xBusinessFlowGrid.InitViewItems();

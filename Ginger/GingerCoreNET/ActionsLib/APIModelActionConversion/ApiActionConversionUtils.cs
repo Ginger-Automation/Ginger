@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
 {
@@ -32,8 +33,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             try
             {
                 ActWebAPIModel webAPIModel = new ActWebAPIModel();
-                //Parallel.ForEach(businessFlows, (bf, state) =>
-                foreach(BusinessFlowToConvert bf in businessFlows)
+                Parallel.ForEach(businessFlows, (bf, state) =>
                 {
                     if (!mStopConversion)
                     {
@@ -58,19 +58,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                                 bool isModelExists = true;
                                                 ApplicationAPIModel applicationModel = GetAPIModelIfExists(act);
 
-                                                if(applicationModel == null)
+                                                if (applicationModel == null)
                                                 {
                                                     isModelExists = false;
                                                     applicationModel = new ApplicationAPIModel();
                                                     applicationModel.TargetApplicationKey = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.ItemName == activity.TargetApplication).FirstOrDefault().Key;
                                                 }
                                                 SetApplicationAPIModel(ref applicationModel, act, bf.BusinessFlow.ContainingFolderFullPath);
-                                                
+
                                                 //Create WebAPIModel action
                                                 ActWebAPIModel actApiModel = GetNewAPIModelAction(applicationModel.Guid, act);
                                                 if (parameterizeRequestBody)
                                                 {
-                                                    AddAppParameters(applicationModel, act, actApiModel); 
+                                                    AddAppParameters(applicationModel, act, actApiModel);
                                                 }
                                                 if (pullValidations)
                                                 {
@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                                 else
                                                 {
                                                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(applicationModel);
-                                                }                                                
+                                                }
                                             }
                                         }
                                         catch (Exception ex)
@@ -97,10 +97,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                 }
                             }
                         }
-                        bf.ConversionStatus = eConversionStatus.Finish; 
+                        bf.ConversionStatus = eConversionStatus.Finish;
                     }
-                }
-                //);
+                });
             }
             catch (Exception ex)
             {
