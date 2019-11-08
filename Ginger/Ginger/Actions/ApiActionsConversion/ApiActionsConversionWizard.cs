@@ -126,7 +126,7 @@ namespace Ginger.Actions.ApiActionsConversion
         /// </summary>
         public override void Finish()
         {
-            base.ProcessFinish();
+            base.mWizardWindow.Close();
         }
 
         /// <summary>
