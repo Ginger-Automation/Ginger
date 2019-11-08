@@ -115,14 +115,8 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (obsoletePlatformList.Contains(platform))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            // returning true as actswitchwindow is obsolete for all platform
+             return true;
         }
 
         public override List<ePlatformType> LegacyActionPlatformsList

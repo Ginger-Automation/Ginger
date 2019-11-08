@@ -96,7 +96,7 @@ namespace GingerCore.Drivers.PBDriver
             mUIAutomationHelper.taskFinished = false;
             //TODO: avoid hard coded string... 
             actClass = actClass.Replace("GingerCore.Actions.", "");
-            if (actClass != "ActUIASwitchWindow" && actClass != "ActSwitchWindow" && (actClass == "Common.ActUIElement" && (((ActUIElement)act).ElementAction != ActUIElement.eElementAction.Switch)))
+            if (!actClass.Equals(typeof(ActUIASwitchWindow)) && !actClass.Equals(typeof(ActSwitchWindow)) && (actClass == "Common.ActUIElement" && (((ActUIElement)act).ElementAction != ActUIElement.eElementAction.Switch)))
             {
                 CheckRetrySwitchWindowIsNeeded();
             }

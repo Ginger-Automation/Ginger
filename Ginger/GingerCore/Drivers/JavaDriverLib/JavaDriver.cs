@@ -560,17 +560,14 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public override void RunAction(Act act)
         {
-            string actClass = act.GetType().ToString();
-            //TODO: avoid hard coded string...
-            actClass = actClass.Replace("GingerCore.Actions.Java.", "");
-            actClass = actClass.Replace("GingerCore.Actions.", "");
+            string actClass = act.GetType().Name;
             PayLoad Response = null;
 
             SetCommandTimeoutForAction(act.Timeout);
 
             switch (actClass)
             {
-                case "Common.ActUIElement":
+                case "ActUIElement":
                     Response = HandleActUIElement((ActUIElement)act);
                     break;
 
@@ -615,7 +612,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response != null)
             {
-                if (actClass.Equals("Common.ActUIElement") && act.GetInputParamValue(ActUIElement.Fields.ElementLocateBy).Equals(eLocateBy.POMElement.ToString()))
+                if (actClass.Equals("ActUIElement") && act.GetInputParamValue(ActUIElement.Fields.ElementLocateBy).Equals(eLocateBy.POMElement.ToString()))
                 {
                     return;
                 }

@@ -93,20 +93,15 @@ namespace GingerCore.Drivers.WindowsLib
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
-            string actClass = act.GetType().ToString();
+            string actClass = act.GetType().Name;
 
             mUIAutomationHelper.mLoadTimeOut = mActionTimeout;
             mUIAutomationHelper.taskFinished = false;
 
-            //TODO: avoid hard coded string...
-            actClass = actClass.Replace("GingerCore.Actions.", "");
-            actClass = actClass.Replace("Windows.", "");
-
-
-            if (actClass != "ActSwitchWindow" || (actClass == "ActWindow" && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
+            if (!actClass.Equals(typeof(ActSwitchWindow)) || (actClass.Equals(typeof(ActWindow)) && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
             {
                 var checkWindow = true;
-                if(actClass == "Common.ActUIElement" && (((ActUIElement)act).ElementAction != ActUIElement.eElementAction.Switch))
+                if(actClass.Equals(typeof(ActUIElement)) && ((ActUIElement)act).ElementAction.Equals(ActUIElement.eElementAction.Switch))
                 {
                     checkWindow = false;
                 }
@@ -169,7 +164,7 @@ namespace GingerCore.Drivers.WindowsLib
                         }
                         break;
                     
-                case "Common.ActUIElement":
+                case "ActUIElement":
                     HandleUIElementAction(act);
                     break;
                 case "ActBrowserElement":
