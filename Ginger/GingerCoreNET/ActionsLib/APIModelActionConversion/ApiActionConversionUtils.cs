@@ -135,33 +135,53 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         private void AddAppParameters(ApplicationAPIModel aPIModel, Act act, ActWebAPIModel actApiModel)
         {
             try
-            {                
-                string requestBody = string.Empty;
-                if(aPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
+            {
+                ObservableList<AppModelParameter> lstParameters = null;
+                ObservableList<ActInputValue> actInputs = ((ActWebAPIBase)act).DynamicElements;
+                if (actInputs == null || actInputs.Count == 0)
                 {
-                    int indexBF = aPIModel.ContainingFolder.IndexOf("BusinessFlows");
-                    string apiModelPath = aPIModel.ContainingFolder.Substring(0, (indexBF - 1));
-                    string fileUri = aPIModel.TemplateFileNameFileBrowser.Replace("~\\", apiModelPath);
-                    if (File.Exists(fileUri))
+                    string requestBody = string.Empty;
+                    if (aPIModel.RequestBodyType == ApplicationAPIUtils.eRequestBodyType.TemplateFile)
                     {
-                        requestBody = System.IO.File.ReadAllText(fileUri); 
+                        int indexBF = aPIModel.ContainingFolder.IndexOf("BusinessFlows");
+                        string apiModelPath = aPIModel.ContainingFolder.Substring(0, (indexBF - 1));
+                        string fileUri = aPIModel.TemplateFileNameFileBrowser.Replace("~\\", apiModelPath);
+                        if (File.Exists(fileUri))
+                        {
+                            requestBody = System.IO.File.ReadAllText(fileUri);
+                        }
                     }
+                    else
+                    {
+                        SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.RequestBody), nameof(ApplicationAPIModel.RequestBody), act);
+                        requestBody = Convert.ToString(aPIModel.RequestBody);
+                    }
+                    if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("{"))
+                    {
+                        JSONTemplateParser jsonTemplate = new JSONTemplateParser();
+                        lstParameters = jsonTemplate.GetAppModelParametersFromJson(requestBody);
+                    }
+                    else if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("<"))
+                    {
+                        XMLTemplateParser parser = new XMLTemplateParser();
+                        lstParameters = parser.GetAppParameterFromXML(requestBody);
+                    } 
                 }
                 else
                 {
-                    SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.RequestBody), nameof(ApplicationAPIModel.RequestBody), act);
-                    requestBody = Convert.ToString(aPIModel.RequestBody);
-                }
-                ObservableList<AppModelParameter> lstParameters = null;                
-                if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("{"))
-                {
-                    JSONTemplateParser jsonTemplate = new JSONTemplateParser();
-                    lstParameters = jsonTemplate.GetAppModelParametersFromJson(requestBody);
-                }
-                else if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("<"))
-                {
-                    XMLTemplateParser parser = new XMLTemplateParser();
-                    lstParameters = parser.GetAppParameterFromXML(requestBody);
+                    lstParameters = new ObservableList<AppModelParameter>();
+                    foreach (var inptVal in actInputs)
+                    {
+                        AppModelParameter param = new AppModelParameter();
+                        param.ItemName = inptVal.ItemName;                        
+                        OptionalValue opVal = new OptionalValue()
+                        {
+                            Value = inptVal.Value,
+                            IsDefault = true
+                        };
+                        param.OptionalValuesList = new ObservableList<OptionalValue>() { opVal };
+                        lstParameters.Add(param);
+                    }
                 }
 
                 if (lstParameters != null && lstParameters.Count > 0)
@@ -230,6 +250,22 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 aPIModel.ItemName = act.ItemName;
                 aPIModel.ContainingFolder = folderPath;
                 aPIModel.ContainingFolderFullPath = Path.Combine(folderPath, string.Format("{0}.xml", act.ItemName));
+                if (((ActWebAPIBase)act).HttpHeaders != null)
+                {
+                    if (aPIModel.HttpHeaders == null)
+                    {
+                        aPIModel.HttpHeaders = new ObservableList<APIModelKeyValue>(); 
+                    }
+                    foreach (var header in ((ActWebAPIBase)act).HttpHeaders)
+                    {
+                        APIModelKeyValue keyVal = new APIModelKeyValue();
+                        keyVal.ItemName = header.ItemName;
+                        keyVal.Param = header.ItemName;
+                        keyVal.FileName = header.ItemName;
+                        keyVal.Value = header.Value;
+                        aPIModel.HttpHeaders.Add(keyVal);
+                    } 
+                }
                 if (act.GetType() == typeof(ActWebAPIRest))
                 {
                     aPIModel.APIType = ApplicationAPIUtils.eWebApiType.REST;
