@@ -16,16 +16,24 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core.Reporter;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Amdocs.Ginger.Plugin.Core
+namespace Amdocs.Ginger.Plugin.Core.DatabaseLib
 {
-    public enum eRecordingEvent
-    {
-        ElementRecorded,
-        PageChanged,
-        StopRecording
+    // Interface for the basic database operation
+
+    // Mark it as plugin interface so will be written to the services json
+    [GingerInterface("IDatabase", "Database Interface")]
+    public interface IDatabase
+    {        
+        Boolean OpenConnection();
+        void CloseConnection();
+
+        string ConnectionString { get; set; }
+
+        object ExecuteQuery(string Query); //  int? timeout = null : TODO // Return Data table         
+
+        void InitReporter(IReporter reporter);
     }
 }

@@ -22,10 +22,21 @@ using System.Text;
 
 namespace Amdocs.Ginger.Plugin.Core
 {
-    public enum eRecordingEvent
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class DatabaseParamAttribute : Attribute, IParamProperty
     {
-        ElementRecorded,
-        PageChanged,
-        StopRecording
+        // when saved to services json the attr property name will be:
+        public string PropertyName => "Param";
+
+        public string Param { get; set; }
+
+        public DatabaseParamAttribute(string param)
+        {
+            Param = param;
+        }
+
+        public DatabaseParamAttribute()
+        {
+        }
     }
 }

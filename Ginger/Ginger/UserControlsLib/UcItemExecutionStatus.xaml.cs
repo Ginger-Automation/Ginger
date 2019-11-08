@@ -55,7 +55,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 if (StatusViewMode == eStatusViewMode.Polygon)
                 {
-                    return xPolygonStatusImage.SetAsFontImageWithSize;
+                    return xPolygonStatusImagePnl.Height;
                 }
                 else if (StatusViewMode == eStatusViewMode.Image)
                 {
@@ -70,7 +70,7 @@ namespace Ginger.UserControlsLib.UCListView
             {                
                 if (StatusViewMode == eStatusViewMode.Polygon)
                 {
-                    xPolygonStatusImage.SetAsFontImageWithSize = value;
+                    xPolygonStatusImagePnl.Height = value;
                 }
                 else if (StatusViewMode == eStatusViewMode.Image)
                 {
@@ -197,11 +197,17 @@ namespace Ginger.UserControlsLib.UCListView
                     {
                         StatusSize = 10;
                     }
+                    //create new image because the Running icon causing the image to turn and there is no way to reset it in FontAwosome 
+                    xPolygonStatusImagePnl.Children.Clear();
+                    Amdocs.Ginger.UserControls.ImageMakerControl xPolygonStatusImage = new Amdocs.Ginger.UserControls.ImageMakerControl();
                     xPolygonStatusImage.ImageType = mStatusImage;
+                    xPolygonStatusImage.Foreground = Brushes.White;                                        
+                    xPolygonStatusImage.SetAsFontImageWithSize = StatusSize;
                     xPolygonStatusImage.Width = StatusSize;
                     xPolygonStatusImage.Height = StatusSize;
                     xPolygonStatusImage.ImageToolTip= statusLbl;
                     xPolygonStatusImage.ToolTip = statusLbl;
+                    xPolygonStatusImagePnl.Children.Add(xPolygonStatusImage);
                     break;
 
                 case eStatusViewMode.Image:
