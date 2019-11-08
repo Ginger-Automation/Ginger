@@ -43,12 +43,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
             string timestamp = DateTime.Now.ToString("MMddyyyy_HHmmss");
 
             string jsonSummaryFolder = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-            if (amdocs.ginger.GingerCoreNET.WorkSpace.Instance.RunningInExecutionMode)
+            if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
             {
-                if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
-                {
-                    jsonSummaryFolder = WorkSpace.Instance.TestArtifactsFolder;
-                }
+                jsonSummaryFolder = WorkSpace.Instance.TestArtifactsFolder;
             }
             string fileName = Path.Combine(jsonSummaryFolder, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?                
             System.IO.File.WriteAllText(fileName, json);

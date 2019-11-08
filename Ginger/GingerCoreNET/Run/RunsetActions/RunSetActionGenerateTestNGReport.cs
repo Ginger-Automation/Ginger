@@ -74,31 +74,17 @@ namespace Ginger.Run.RunSetActions
             string testNGReportPath = "";
             try
             {
-                if (amdocs.ginger.GingerCoreNET.WorkSpace.Instance.RunningInExecutionMode)
+                if (!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
                 {
-                    if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
-                    {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
-                    }
-                    else if (!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
-                    {
-                        testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder;
-                    }
-                    else
-                    {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-                    }
+                    testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder;
+                }
+                else if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
+                {
+                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
-                    {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
-                    }
-                    else
-                    {
-                        testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-                    }
+                    testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                 }
                 if (!Directory.Exists(testNGReportPath))
                 {
