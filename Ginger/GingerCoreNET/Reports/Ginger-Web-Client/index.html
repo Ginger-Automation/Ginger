@@ -19,29 +19,6 @@
       <div class="splash-screen">
           <div class="splash-screen-bars"></div>
       </div>
-    </app-root>
-
-<script>
-    window.onload= LoadSVG; 
-
-    function LoadSVG() {
-        var timer = setInterval(LoadSVG, 1);
-        var svg = document.getElementsByTagName('svg');
-        if(svg[0]!=null)// to check first element is loaded or not
-        {
-            clearInterval(timer);
-            for(var i=0; i<svg.length; i++)
-            {
-                var textElement = svg[i].getElementsByTagName('text')[0];
-                textElement.setAttribute("x", '50%');
-                textElement.setAttribute("y", '50%');
-                textElement.setAttribute("text-anchor","middle");
-            }
-            
-        }
-    }
-
-</script>
-    
-<script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script><script type="text/javascript" src="polyfills.df76418418e1f9a7a012.js"></script><script type="text/javascript" src="scripts.9aa141af6e0119c2bcf8.js"></script><script type="text/javascript" src="main.ac18b79c87efc4589d26.js"></script></body>
+    </app-root>    
+<script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script><script type="text/javascript" src="polyfills.ad3825fe2ad2e1a7698a.js"></script><script type="text/javascript" src="scripts.9aa141af6e0119c2bcf8.js"></script><script type="text/javascript" src="main.5c9395fe36c9ac94e13c.js"></script></body>
 </html>
