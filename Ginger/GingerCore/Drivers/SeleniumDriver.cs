@@ -4429,16 +4429,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            Act switchAct = new ActBrowserElement();
-            switchAct.LocateBy = eLocateBy.ByTitle;
-            ((ActBrowserElement)switchAct).ControlAction = ActBrowserElement.eControlAction.SwitchWindow;
-            switchAct.Description = "Switch Window to Default Window";
-            switchAct.LocateValue = Title;
-            BusinessFlow.AddAct(switchAct, true);
-            return true;
-        }
+
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
@@ -5775,8 +5766,22 @@ namespace GingerCore.Drivers
 
             int waitTime = this.ImplicitWait;
             if (act is ActSwitchWindow)
+            {
                 if (((ActSwitchWindow)act).WaitTime >= 0)
+                {
                     waitTime = ((ActSwitchWindow)act).WaitTime;
+                }
+            }
+            else if(act is ActUIElement)
+            {
+                // adding to support actuielement switch window action synctime
+                var syncTime = Convert.ToInt32(((ActUIElement)act).GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
+                if(syncTime >= 0)
+                {
+                    waitTime = syncTime;
+                }
+            }
+
 
             while (St.ElapsedMilliseconds < waitTime * 1000)
             {
@@ -5787,7 +5792,7 @@ namespace GingerCore.Drivers
                         ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
                         foreach (String winHandle in openWindows)
                         {
-                            if (act.LocateBy == eLocateBy.ByTitle)
+                            if (act.LocateBy == eLocateBy.ByTitle || (act is ActUIElement && ((ActUIElement)act).ElementLocateBy.Equals(eLocateBy.ByTitle)))
                             {
 
                                 string winTitle = Driver.SwitchTo().Window(winHandle).Title;
@@ -5801,7 +5806,7 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
-                            if (act.LocateBy == eLocateBy.ByUrl)
+                            if (act.LocateBy == eLocateBy.ByUrl || (act is ActUIElement && ((ActUIElement)act).ElementLocateBy.Equals(eLocateBy.ByUrl)))
                             {
                                 string winurl = Driver.SwitchTo().Window(winHandle).Url;
                                 // We search windows titles based on contains
@@ -5814,7 +5819,7 @@ namespace GingerCore.Drivers
                                     break;
                                 }
                             }
-                            if (act.LocateBy == eLocateBy.ByIndex)
+                            if (act.LocateBy == eLocateBy.ByIndex || (act is ActUIElement && ((ActUIElement)act).ElementLocateBy.Equals(eLocateBy.ByIndex)))
                             {
                                 int getWindowIndex = Int16.Parse(act.LocateValueCalculated);
                                 string winIndexTitle = Driver.SwitchTo().Window(openWindows[getWindowIndex]).Title;
@@ -6246,6 +6251,20 @@ namespace GingerCore.Drivers
         {
             string searchedWinTitle = string.Empty;
 
+            if (act is ActUIElement)
+            {
+                var actUIElement = (ActUIElement)act;
+                if (string.IsNullOrEmpty(actUIElement.ElementLocateValue))
+                {
+                    act.Error = "Error: The window title to search for is missing.";
+                    return act.Error;
+                }
+                else
+                {
+                    return actUIElement.ElementLocateValue;
+                }
+            }
+
             if (String.IsNullOrEmpty(act.ValueForDriver) && String.IsNullOrEmpty(act.LocateValueCalculated))
             {
                 act.Error = "Error: The window title to search for is missing.";
@@ -6321,7 +6340,7 @@ namespace GingerCore.Drivers
         {
             IWebElement e = null;
 
-            if (act.ElementLocateBy != eLocateBy.NA)
+            if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
                 e = LocateElement(act);
                 if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
@@ -6689,6 +6708,9 @@ namespace GingerCore.Drivers
                         break;
                     case ActUIElement.eElementAction.GetTextLength:
                         act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                        break;
+                    case ActUIElement.eElementAction.Switch:
+                        SwitchWindow(act);
                         break;
                     default:
                         act.Error = "Error: Unknown Action: " + act.ElementAction;

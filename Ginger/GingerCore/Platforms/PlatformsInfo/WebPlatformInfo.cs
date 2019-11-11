@@ -488,6 +488,14 @@ namespace GingerCore.Platforms.PlatformsInfo
                                                  .ForEach(z => z.ElementOperationsList = z.ElementOperationsList.Union(ElementCommonActionsList).ToList());
 
 
+                //Adding to support switch window in UIelement
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Window,
+                    ActionType = typeof(ActUIElement),
+                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Switch }
+                });
+
                 //------Must be last one for calculating all supported Element operations
                 List<Enum> allSupportedOperations = new List<Enum>();
                 foreach (ElementTypeData elemData in mPlatformElementTypeOperations)

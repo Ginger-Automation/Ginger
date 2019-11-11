@@ -1750,7 +1750,28 @@ namespace UnitTests.UITests.JavaDriverTest
         }
         #endregion
 
-        #region Unit Test For ActSwitchWindow
+        #region Unit Test For SwitchWindow
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ActUISwitchWindowActionTest()
+        {
+            ActUIElement action = new ActUIElement();
+            action.ElementLocateBy = eLocateBy.ByTitle;
+            action.ElementLocateValue = "Java Swing";
+            action.Active = true;
+            action.ElementAction = ActUIElement.eElementAction.Switch;
+            action.ElementType = eElementType.Window;
+            mBF.CurrentActivity.Acts.Add(action);
+            mBF.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action, false);
+
+            //Assert
+            Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
+            Assert.AreEqual(action.Error, null, "Act.Error");
+        }
 
         [TestMethod]
         [Timeout(60000)]

@@ -1235,10 +1235,6 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            return false;
-        }
         
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
