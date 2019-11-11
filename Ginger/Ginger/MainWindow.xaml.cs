@@ -64,6 +64,8 @@ namespace Ginger
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
+            App.HelpLayoutEvent += App_HelpLayoutEvent;
+
             Telemetry.eventHandler += TelemetryEventHandler;
             GingerCore.General.DoEvents();
         }
@@ -1016,14 +1018,24 @@ namespace Ginger
                 });
         }
 
+        private void App_HelpLayoutEvent(HelpLayoutEventArgs args)
+        {
+            ShowHelpLayout(args);
+        }
+
         private void xHelpLayoutDemoIcon_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ShowHelpLayout(new HelpLayoutEventArgs(HelpLayoutEventArgs.eEventType.ShowHelp, xFindAndReplaceBtn, "Click here to do search"));
+        }
+
+        private void ShowHelpLayout(HelpLayoutEventArgs helpArgs)
         {
             xHelpLayoutCanvas.Visibility = Visibility.Visible;
             xHelpLayoutCanvas.Width = xMainWindowPnl.ActualWidth;
             xHelpLayoutCanvas.Height = xMainWindowPnl.ActualHeight;
             //xHelpLayoutCanvas.Margin = new Thickness(-(50), 0, 0, 0);
 
-            Control controlToFocus = xFindAndReplaceBtn;
+            Control controlToFocus = helpArgs.FocusedControl;
             double controlToFocusWidth = controlToFocus.ActualWidth;
             double controlToFocusHeight = controlToFocus.ActualHeight;
             Point controlToFocusLocation = controlToFocus.TransformToAncestor(App.MainWindow).Transform(new Point(0, 0));
@@ -1039,15 +1051,18 @@ namespace Ginger
             xHelpLayoutRectangleTop.Width = controlToFocusWidth;
             xHelpLayoutRectangleTop.Height = controlToFocusLocation.Y;
 
-            xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
+            xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X-0.255);
             xHelpLayoutRectangleBottom.SetValue(Canvas.TopProperty, controlToFocusLocation.Y + controlToFocusHeight);
-            xHelpLayoutRectangleBottom.Width = controlToFocusWidth;
+            xHelpLayoutRectangleBottom.Width = controlToFocusWidth +0.5;
             xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
 
             //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
             //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.TopProperty, controlToFocusLocation.Y);
             //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
             //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
+
+            xHelpLayoutTextBlock.Text = helpArgs.HelpText;
+
         }
 
         private void xHelpLayoutCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

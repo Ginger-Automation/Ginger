@@ -300,7 +300,7 @@
             <Rectangle  x:Name="xHelpLayoutRectangleRight" Fill="Black" Opacity="0.7"  />
             <Rectangle  x:Name="xHelpLayoutRectangleBottom" Fill="Black" Opacity="0.7"   />
 
-            <TextBlock Canvas.Left="500" Canvas.Top="200" Text="Click here for Adding new Solution" Foreground="Pink" FontSize="25"/>
+            <TextBlock x:Name="xHelpLayoutTextBlock" Canvas.Left="500" Canvas.Top="200" Text="Click here for Adding new Solution" Foreground="Pink" FontSize="25"/>
             <Path Stretch="Fill" Fill="White"  Canvas.Left="800" Canvas.Top="150"
                     Data="M 0,110 70,110 45,90 75,90 120,120 75,150 45,150 70,130 0,130 Z"
                     HorizontalAlignment="Right"  Width="30" Height="24" Margin="0,0,2,0" RenderTransformOrigin=".5,.5">
