@@ -836,9 +836,9 @@ namespace GingerCore.Actions.REST
             return NewReqBody;
         }
 
-        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType Platfrom)
+        bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if(Platform == ePlatformType.WebServices || Platfrom == ePlatformType.NA)
+            if(platform == ePlatformType.WebServices || platform == ePlatformType.NA)
             {
                 return true;
             }
