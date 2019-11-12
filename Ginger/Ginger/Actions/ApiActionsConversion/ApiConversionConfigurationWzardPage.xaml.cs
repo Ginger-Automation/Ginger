@@ -27,7 +27,7 @@ namespace Ginger.Actions.ApiActionsConversion
     /// </summary>
     public partial class ApiConversionConfigurationWzardPage : Page, IWizardPage
     {
-        IConversionProcess mConversionProcess;
+        IActionsConversionProcess mConversionProcess;
 
         /// <summary>
         /// Constructor for configuration page
@@ -46,14 +46,14 @@ namespace Ginger.Actions.ApiActionsConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mConversionProcess = (IConversionProcess)WizardEventArgs.Wizard;
+                    mConversionProcess = (IActionsConversionProcess)WizardEventArgs.Wizard;
                     ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = false;
                     break;
                 case EventType.Active:
                     Init(WizardEventArgs);
                     break;
                 default:
-                    mConversionProcess = (IConversionProcess)WizardEventArgs.Wizard;
+                    mConversionProcess = (IActionsConversionProcess)WizardEventArgs.Wizard;
                     break;
             }
         }

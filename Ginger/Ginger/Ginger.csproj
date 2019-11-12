@@ -422,7 +422,7 @@
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
-    <Compile Include="Actions\ActionConversion\IConversionProcess.cs" />
+    <Compile Include="Actions\ActionConversion\IActionsConversionProcess.cs" />
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
@@ -489,6 +489,7 @@
     <Compile Include="Actions\ActionEditPages\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ImportOptionalValuesForParameters.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMBindingObjectHelper.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml.cs">
       <DependentUpon>POMsSelectionPage.xaml</DependentUpon>
@@ -837,7 +838,6 @@
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\AddOptionalValuesModelSelectTypePage.xaml.cs">
       <DependentUpon>AddOptionalValuesModelSelectTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ImportOptionalValuesForParameters.cs" />
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelExpectedValueParamSelectionPage.xaml.cs">
       <DependentUpon>ModelExpectedValueParamSelectionPage.xaml</DependentUpon>
     </Compile>

@@ -33,7 +33,7 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class ConversionStatusReportPage : Page, IWizardPage
     {
-        IConversionProcess mConversionProcess;
+        IActionsConversionProcess mConversionProcess;
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mConversionProcess = (IConversionProcess)WizardEventArgs.Wizard;
+                    mConversionProcess = (IActionsConversionProcess)WizardEventArgs.Wizard;
                     break;
                 case EventType.Active:
                     Init();

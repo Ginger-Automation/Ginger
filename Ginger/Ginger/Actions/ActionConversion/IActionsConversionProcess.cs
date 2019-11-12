@@ -4,11 +4,11 @@ using GingerCore;
 
 namespace Ginger.Actions
 {
-    public interface IConversionProcess
+    public interface IActionsConversionProcess
     {
         ObservableList<BusinessFlowToConvert> ListOfBusinessFlow { get; set; }
 
-        eModelConversionType ModelConversionType { get; set; }
+        eModelConversionType ModelConversionType { get; }
 
         void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow);
 

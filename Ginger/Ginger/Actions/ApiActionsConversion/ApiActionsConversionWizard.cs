@@ -25,6 +25,7 @@ using Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion;
 using Ginger.Actions.ActionConversion;
 using Ginger.WizardLib;
 using GingerCore;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 
 namespace Ginger.Actions.ApiActionsConversion
@@ -32,7 +33,7 @@ namespace Ginger.Actions.ApiActionsConversion
     /// <summary>
     /// This class is used to ApiActionsConversionWizard 
     /// </summary>
-    public class ApiActionsConversionWizard : WizardBase, IConversionProcess
+    public class ApiActionsConversionWizard : WizardBase, IActionsConversionProcess
     {
         public override string Title { get { return "Convert Webservices Actions"; } }
 
@@ -52,7 +53,13 @@ namespace Ginger.Actions.ApiActionsConversion
 
         public bool PullValidations { get; set; }
 
-        public eModelConversionType ModelConversionType { get; set; }
+        public eModelConversionType ModelConversionType 
+        { 
+            get
+            {
+                return eModelConversionType.ApiActionConversion;
+            }
+        }
 
         public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
@@ -65,13 +72,12 @@ namespace Ginger.Actions.ApiActionsConversion
         /// <param name="context"></param>
         public ApiActionsConversionWizard(Context context)
         {
-            ModelConversionType = eModelConversionType.ApiActionConversion;
             Context = context;
             ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ApiActionsConversion/ApiActionsConversionIntro.md"));
             AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
-            AddPage(Name: "API Conversion Configurations", Title: "API Conversion Configurations", SubTitle: "API Conversion Configurations", Page: new ApiConversionConfigurationWzardPage());
+            AddPage(Name: "Conversion Configurations", Title: "Conversion Configurations", SubTitle: "Conversion Configurations", Page: new ApiConversionConfigurationWzardPage());
 
             mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
             AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage);
@@ -109,10 +115,11 @@ namespace Ginger.Actions.ApiActionsConversion
         /// <returns></returns>
         private bool IsWebServiceTargetApplicationInFlow(BusinessFlow bf)
         {
-            bool isPresent = false;
+            bool isPresent = false;            
             foreach (var ta in bf.TargetApplications)
             {
-                isPresent = ta.Name.Contains("Services");
+                ePlatformType platformType = WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(ta.ItemName);
+                isPresent = platformType == ePlatformType.WebServices;
                 if(isPresent)
                 {
                     break;

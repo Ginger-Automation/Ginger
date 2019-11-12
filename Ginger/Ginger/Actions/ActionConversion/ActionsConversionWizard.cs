@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
 {
-    public class ActionsConversionWizard : WizardBase, IConversionProcess
+    public class ActionsConversionWizard : WizardBase, IActionsConversionProcess
     {
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
@@ -66,13 +66,18 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
-        public eModelConversionType ModelConversionType { get; set; }
+        public eModelConversionType ModelConversionType
+        {
+            get
+            {
+                return eModelConversionType.ActionConversion;
+            }
+        }
 
         ConversionStatusReportPage mReportPage = null;
 
         public ActionsConversionWizard(eActionConversionType conversionType, Context context, ObservableList<BusinessFlow> businessFlows)
         {
-            ModelConversionType = eModelConversionType.ActionConversion;
             Context = context;
             ConversionType = conversionType;
             mListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);

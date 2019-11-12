@@ -162,8 +162,7 @@ namespace Amdocs.Ginger.Repository
                 GetAllOptionalValuesFromExamples(placeHolderName, Node, ref optionalValuesList);
             }
         }
-
-
+        
         public string GetPlaceHolderName(string ElementName)
         {
             string PlaceHolderName = ElementName.ToUpper();

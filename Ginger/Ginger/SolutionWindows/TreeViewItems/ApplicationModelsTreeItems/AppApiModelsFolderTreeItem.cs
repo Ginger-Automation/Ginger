@@ -144,7 +144,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Convert Webservices Actions", WebServiceActionsConversionHandler, null, "@Connection_32x32.png");
+            TreeViewUtils.AddSubMenuItem(addMenu, "Convert Webservices Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
 
             AddSourceControlOptions(mContextMenu);
         }

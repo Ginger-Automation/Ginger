@@ -1,5 +1,5 @@
-﻿### For what WebService and SOAP Action Conversion is used for?
-WebSerivce and SOAP Action conversion wizard is used for converting the existing WebService & SOAP actions to new actions with simplified details on the action page.
+﻿### 1- Why to Convert Web services Actions to API Models?
+Web services Actions (from type WebAPI RESR/SOAP) should be converted to API Models in order to enjoy the benefits of using API Models like improve Solution maintaince by placing the API configurations on repository level and seprate it from the execution flow on which only the data is been set.
 
-### How to convert webservice and SOAP actions to newly supported actions with simplified details?
-WebSerivce and SOAP Action Conversion is been done by selecting the business flows which contains specific Actions type to be converted, the new actions will be added to new ones.
+### 2- What will Happen During the Conversion Process?
+During the conversion process, New API Model will be created for each unique web services Action in selected Business Flows and Action which execute the added API Model will be added after the converted Action (which will become disabeed)
