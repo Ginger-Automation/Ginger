@@ -293,21 +293,20 @@
             </Border>
         </Grid>
 
-        <Canvas x:Name="xHelpLayoutCanvas" Panel.ZIndex="2" MouseLeftButtonDown="xHelpLayoutCanvas_MouseLeftButtonDown"  Visibility="Collapsed" >
+        <Canvas x:Name="xHelpLayoutCanvas" Panel.ZIndex="2" MouseLeftButtonDown="xHelpLayoutCanvas_MouseLeftButtonDown"  Visibility="Collapsed" Background="Transparent" >
             <Rectangle  x:Name="xHelpLayoutRectangleLeft" Fill="Black" Opacity="0.7" />
             <Rectangle  x:Name="xHelpLayoutRectangleTop" Fill="Black" Opacity="0.7" />
             <!--<Rectangle  x:Name="xHelpLayoutRectangleFocusedItem" Fill="Red" />-->
             <Rectangle  x:Name="xHelpLayoutRectangleRight" Fill="Black" Opacity="0.7"  />
             <Rectangle  x:Name="xHelpLayoutRectangleBottom" Fill="Black" Opacity="0.7"   />
-
-            <TextBlock x:Name="xHelpLayoutTextBlock" Canvas.Left="500" Canvas.Top="200" Text="Click here for Adding new Solution" Foreground="Pink" FontSize="25"/>
-            <Path Stretch="Fill" Fill="White"  Canvas.Left="800" Canvas.Top="150"
-                    Data="M 0,110 70,110 45,90 75,90 120,120 75,150 45,150 70,130 0,130 Z"
-                    HorizontalAlignment="Right"  Width="30" Height="24" Margin="0,0,2,0" RenderTransformOrigin=".5,.5">
+            <TextBlock x:Name="xHelpLayoutTextBlock" FontFamily="Comic Sans MS" Canvas.Left="500" Canvas.Top="200" Text="Help text content dsadasd dasds dsdsa dsdas dsada dsdsad dsadsa" Foreground="White" MaxWidth="450" TextWrapping="Wrap" FontSize="22"/>
+            <!--<Path Stretch="Fill" Fill="White" Canvas.Left="800" Canvas.Top="150"
+                    Data="M 0,110 70,110 45,90 75,90 140,120 75,150 45,150 70,130 0,130 Z"
+                    HorizontalAlignment="Right"  Width="50" Height="25" Margin="0,0,0,0" RenderTransformOrigin=".5,.5">
                 <Path.RenderTransform>
                     <RotateTransform Angle="300" />
                 </Path.RenderTransform>
-            </Path>
+            </Path>-->
         </Canvas>
     </Grid>
 </Window>

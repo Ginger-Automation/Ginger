@@ -650,7 +650,8 @@
     <Compile Include="Activities\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GeneralWindows\HelpLayoutEventArgs.cs" />
+    <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
+    <Compile Include="GeneralWindows\HelpLayout\HelpLayoutEventArgs.cs" />
     <Compile Include="Variables\VariablesListViewHelper.cs" />
     <Compile Include="Variables\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
