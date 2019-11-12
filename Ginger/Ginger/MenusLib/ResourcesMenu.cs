@@ -180,6 +180,12 @@ namespace Ginger.MenusLib
 
         private static Page POMModels()
         {
+            var pomList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            foreach (var pom in pomList)
+            {
+               var appPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(pom.TargetApplicationKey);
+               new ApplicationPOMModel().SetItemImageType(appPlatform);
+            }
             ApplicationPOMsTreeItem POMsRoot = new ApplicationPOMsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>());
             SingleItemTreeViewExplorerPage pomModelPage = new SingleItemTreeViewExplorerPage("Page Objects Models", eImageType.Application, POMsRoot, POMsRoot.SaveAllTreeFolderItemsHandler, POMsRoot.AddPOM);
             return pomModelPage;

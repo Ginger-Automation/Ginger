@@ -161,12 +161,30 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
 
+        private eImageType eImageType;
         public override eImageType ItemImageType
         {
             get
             {
-                return eImageType.ApplicationPOMModel;
+                 return eImageType;
             }
+        }
+
+        public void SetItemImageType(ePlatformType platformType)
+        {
+            switch (platformType)
+            {
+                case ePlatformType.Web:
+                    eImageType = eImageType.Browser;
+                    break;
+                case ePlatformType.Java:
+                    eImageType = eImageType.Java;
+                    break;
+                default:
+                    eImageType = eImageType.ApplicationPOMModel;
+                break;
+            }
+            
         }
 
         public override string ItemNameField
