@@ -249,16 +249,13 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             //Assert
             Assert.AreEqual(val, val2);
         }
-        [Ignore]
+
+        
         [TestMethod]
         [Timeout(60000)]
-        public void FilePayload()
+        public void FilePayload()  
         {
             //Arrange
-
-
-
-
             NewPayLoad pl = new NewPayLoad("FilePayload");
 
             pl.AddFile(TestResources.GetTestResourcesFile("DummyDoc.docx"));
@@ -267,16 +264,12 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             byte[] b = pl.GetPackage();
 
             NewPayLoad pl2 = new NewPayLoad(b);
+            pl2.Attachments = pl.Attachments;  // on local without socket cache we need to transfer the attachments
 
             string filepath = pl2.GetFile();
             //Assert
             Assert.IsTrue(File.Exists(filepath));
-
-
         }
-
-
-
 
 
 

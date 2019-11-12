@@ -251,7 +251,6 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
 
 
         [TestMethod]
-
         public void FileOverSocket()
         {
             // Arrange
@@ -266,7 +265,30 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             string filepath = PLRC.GetValueString();
 
             //Assert
-          DateTime Writetime=  System.IO.File.GetLastWriteTime(filepath);
+            DateTime Writetime=  System.IO.File.GetLastWriteTime(filepath);
+
+            Assert.IsTrue((Writetime - Startime).Ticks > 0);
+
+        }
+
+        [TestMethod]
+        public void FileOverSocketCache()
+        {
+            // FileCache mFileCache = ...
+
+            // Arrange
+            DateTime Startime = DateTime.Now;
+            NewPayLoad pl = new NewPayLoad("FilePayload");
+
+            pl.AddFile(TestResources.GetTestResourcesFile("DummyDoc.docx"));
+            pl.ClosePackage();
+            //Act
+            NewPayLoad PLRC = mMyGingerClient.Send(pl);
+
+            string filepath = PLRC.GetValueString();
+
+            //Assert
+            DateTime Writetime = System.IO.File.GetLastWriteTime(filepath);
 
             Assert.IsTrue((Writetime - Startime).Ticks > 0);
 
@@ -300,7 +322,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
         public void EchoBig10KMessage()
         {
             // Arrange            
-            string bigMessage =new string('*', 10000);
+            string bigMessage =new string('*', 1000);
             
 
             NewPayLoad PL = new NewPayLoad("Echo", bigMessage);

@@ -89,8 +89,8 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         // Last char is 255 - looks like space but is not and marking end of packaet
         const byte LastByteMarker = 255;
         const int cNULLStringLen = -1;    // if the string we write is null we write len = -1 - save space and parsing time
-        
-        byte[] mBuffer = new byte[4096];  // start with initial buffer of 1024, will grow if needed
+                
+        byte[] mBuffer = new byte[1024];  // start with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
        public IPayloadCacheManager CacheManager { get; set; }
@@ -105,12 +105,20 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
             WriteString(Name);
         }
 
-        private Dictionary<byte[], string> mAttachments = new Dictionary<byte[], string>();
-        public Dictionary<byte[], string> Attachments
+        private Dictionary<string, string> mAttachments;
+        public Dictionary<string, string> Attachments
         {
             get
             {
+                if (mAttachments == null)
+                {
+                    mAttachments = new Dictionary<string, string>();
+                }
                 return mAttachments;
+            }
+            set
+            {
+                mAttachments = value;
             }
         }
         /// Create Payload from Bytes
@@ -494,32 +502,30 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
         /// <param name="FilePath">Provide absolute Path of the file to be added on payload </param>
         public void AddFile(string Path,bool cache=true)
         {
-
             //get file name  and add it
-            //
+            // 1.  first we mark if this file is to be cached or not
+            // if cache then add MD5 of the file
+            // 2.  MD5 hashkey
+            // 3.  if no cache then we add the file name only 0-  no full path and the file content
+
             AddValue(cache);
             if (cache)
             {
-                //bool is true
-               byte[]key= GingerUtils.Encryption.MD5Utility.GetFileMD5(Path);
-
+                byte[] md5 = GingerUtils.Encryption.MD5Utility.GetFileMD5(Path);
+                string md5string = GingerUtils.Encryption.MD5Utility.GetFileMD5string(Path);                
                 //if key is present in attachments that means the file is already added
                 // it doesnt matter if the paths are different but if md5 is same that means the content is same 
-                if(!mAttachments.ContainsKey(key))
+                if(!Attachments.ContainsKey(md5string))
                 {
-                    mAttachments.Add(key, Path);
+                    mAttachments.Add(md5string, Path);
                 }
-                AddBytes(key);
+                AddBytes(md5);
             }
             else
             {
-
-
                 AddValue(System.IO.Path.GetFileName(Path));
                 AddBytes(File.ReadAllBytes(Path));
-
-            }
-            
+            }            
         }
 
 
@@ -570,29 +576,37 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 
         public string GetFile()
         {
-
-            if (GetValueBool())
+            bool cache = GetValueBool();
+            if (cache)
             {
-                byte[] key = GetBytes();
+                byte[] md5 = GetBytes();                
+                string md5string = GingerUtils.Encryption.MD5Utility.GetMD5string(md5);
 
                 if (CacheManager != null)
                 {
-                    return CacheManager.GetCachedFilePath(key);
+                    return CacheManager.GetCachedFilePath(md5);
                 }
-                else if (Attachments!=null && Attachments.ContainsKey(key))
+                else 
+                    // (Attachments!=null && Attachments.ContainsKey(key))  // better use TryGetValue to get key and check if found otherwise we search twice
                 {
-                    return Attachments[key];
-                }
-
-                throw new InvalidOperationException("Trying to get  other file, make sure you are trying to get file which were sent");
+                    string fileName;
+                    bool bFound = Attachments.TryGetValue(md5string, out fileName);
+                    if (bFound)
+                    {
+                        return fileName;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Trying to get other file, make sure you are trying to get file which were sent");
+                    }
+                }                
             }
-
             else
             {
                 string filename = GetValueString();
                 byte[] filedata = GetBytes();
 
-                string filepath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks + filename);
+                string filepath = Path.Combine(Path.GetTempPath(), DateTime.Now.Ticks + filename);  // change ticks to timestamp
 
                 File.WriteAllBytes(filepath, filedata);
 

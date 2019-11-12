@@ -22,8 +22,19 @@ namespace GingerUtils.Encryption
 
         public static string GetFileMD5string(string filePath)
         {
-            return MD5Utility.GetFileMD5(filePath).ToString();
+            byte[] md5 = MD5Utility.GetFileMD5(filePath);
+            return GetMD5string(md5);            
+        }
 
+
+        public static string GetMD5string(byte[] md5)
+        {            
+            StringBuilder hex = new StringBuilder(md5.Length * 2);
+            foreach (byte b in md5)
+            {
+                hex.AppendFormat("{0:x2}", b);
+            }
+            return hex.ToString();
         }
     }
 }
