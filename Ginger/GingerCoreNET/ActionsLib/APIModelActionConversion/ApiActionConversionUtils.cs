@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     if (act.Active && (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)))
                     {
                         // get the index of the action that is being converted 
-                        int selectedActIndex = activity.Acts.IndexOf(act);
+                        int selectedActIndex = activity.Acts.IndexOf(act); 
 
                         //Create/Update API Model
                         bool isModelExists = true;
