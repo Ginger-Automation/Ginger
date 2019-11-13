@@ -126,7 +126,13 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.CurrentItem != null)
             {
                 ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryGrid.CurrentItem;
-                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, null, ActivitiesGroupPage.eEditMode.SharedRepository);
+                BusinessFlow currentBF = null;
+                if(mContext != null)
+                {
+                    currentBF = mContext.BusinessFlow;
+                }
+
+                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, currentBF, ActivitiesGroupPage.eEditMode.SharedRepository);
                 mActivitiesGroupPage.ShowAsWindow();
             }
             else

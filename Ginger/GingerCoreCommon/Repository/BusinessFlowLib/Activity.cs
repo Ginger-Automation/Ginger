@@ -695,7 +695,15 @@ namespace GingerCore
                     }
                     break;
                 case eItemParts.Actions:
-                    activityInstance.Acts = newInstance.Acts;
+                    if(hostItem != null)
+                    {
+                        activityInstance.Acts = newInstance.Acts;
+                        BusinessFlow currentBF = hostItem as BusinessFlow;
+                        currentBF.Activities = currentBF.Activities;
+                        //int originalIndex = ((BusinessFlow)hostItem).Activities.IndexOf(activityInstance);
+                        //(hostItem as BusinessFlow).Activities.Remove(activityInstance);
+                        //(hostItem as BusinessFlow).Activities.Insert(originalIndex, activityInstance);
+                    }
                     break;
                 case eItemParts.Variables:
                     activityInstance.Variables = newInstance.Variables;

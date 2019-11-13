@@ -772,7 +772,13 @@ namespace GingerCore
                 for (int indx = 0; indx < group.ActivitiesIdentifiers.Count;)
                 {
                     ActivityIdentifiers actIdentifis = (ActivityIdentifiers)group.ActivitiesIdentifiers[indx];
-                    Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+
+                    //Activity activ = activitiesList.Where(x => x.ActivityName == actIdentifis.ActivityName && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+                    //OLD logic capturing other Activities which exists in Shared Repository, from other group
+                    // We don't need to check for same name
+
+                    Activity activ = activitiesList.Where(x => x.ActivitiesGroupID == group.Name && x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
+
                     if (activ == null)
                     {
                         activ = activitiesList.Where(x => x.Guid == actIdentifis.ActivityGuid).FirstOrDefault();
@@ -785,6 +791,21 @@ namespace GingerCore
                     {
                         //actIdentifis.IdentifiedActivity = (Activity)activ;
                         activ.ActivitiesGroupID = group.Name;
+
+                        int actInGroupCount = group.ActivitiesIdentifiers.Where(a => a.ActivityGuid == activ.Guid).Count();
+                        int actInBFListCount = activitiesList.Where(a => a.ActivitiesGroupID == group.Name && a.Guid == actIdentifis.ActivityGuid).Count();
+
+                        // Another instance of existing Shared Activity added to Shared Group which isn't in sync with BF Activities List
+                        if(actInBFListCount < actInGroupCount)
+                        {
+                            activitiesList.Add(activ);
+                        }
+                        // Shared Group contains multiple instances of same Shared Activity which isn't in sync with BF Activities List
+                        else if (actInBFListCount > actInGroupCount)
+                        {
+                            group.ActivitiesIdentifiers.RemoveAt(indx);//Activity not exist in BF anymore
+                        }
+
                         indx++;
                     }
                     else
