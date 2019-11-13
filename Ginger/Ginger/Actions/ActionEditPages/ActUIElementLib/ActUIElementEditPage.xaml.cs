@@ -418,6 +418,15 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
                     elementList.Add(GetElementConfigControl("Property Name", Fields.ValueToSelect, eElementType.ComboBox, propertyListString));
                     break;
+                case eElementAction.Switch:
+                    if(mAction.ElementType.Equals(eElementType.Window))
+                    {
+                        possibleValues = String.IsNullOrEmpty(mAction.GetInputParamValue(Fields.SyncTime)) ? new List<string>() { "30" } :
+                           new List<string>() { mAction.GetInputParamValue(Fields.SyncTime) };
+
+                        elementList.Add(GetElementConfigControl("Sync Time", Fields.SyncTime, eElementType.TextBox, possibleValues,null,"Sync time in seconds."));
+                    }
+                    break;
 
                 default:
                     Reporter.ToLog(eLogLevel.DEBUG, mAction.ElementAction.ToString() + "not required config page.");
@@ -527,7 +536,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
                 Width = 600,
-                Margin = new Thickness(10, 0, 0, 0)
+                Margin = new Thickness(10, 0, 0, 0),
+                ToolTip = element.ToolTip
             };
         }
 
@@ -555,7 +565,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             };
         }
 
-        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent=null)
+        private ElementConfigControl GetElementConfigControl(string title, string bindedString, eElementType elementType, List<string> possibleValue, RoutedEventHandler routedEvent=null,string toolTip = "")
         {
             return new ElementConfigControl()
             {
@@ -563,7 +573,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 BindedString = bindedString,
                 ControlType = elementType,
                 PossibleValues = possibleValue,
-                ElementEvent = routedEvent
+                ElementEvent = routedEvent,
+                ToolTip = toolTip
             };
         }
 
