@@ -95,7 +95,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void BindControlsToActivity()
         {
-            if (mPageViewMode != Ginger.General.eRIPageViewMode.View)
+            if (mPageViewMode != Ginger.General.eRIPageViewMode.View && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
                 mActivity.SaveBackup();
             }
@@ -225,7 +225,7 @@ namespace GingerWPF.BusinessFlowsLib
             mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
             mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
 
-            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View)
+            if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
                 mActivity.ClearBackup();
             }

@@ -175,11 +175,12 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    this.Dispatcher.Invoke(() =>
+                    xListView.ItemsSource = mObjList;
+
+                    this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         xSearchTextBox.Text = "";
-                        xListView.ItemsSource = mObjList;
-
+                        
                         // Make the first row selected
                         if (value != null && value.Count > 0)
                         {
@@ -195,7 +196,7 @@ namespace Ginger.UserControlsLib.UCListView
                         //show items as collapsed
                         mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
-                    });
+                    }));
                 }
                 catch (Exception ex)
                 {

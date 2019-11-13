@@ -396,7 +396,10 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
-                mBusinessFlow.SaveBackup();
+                if (mBusinessFlow.DirtyStatus != eDirtyStatus.Modified)
+                {
+                    mBusinessFlow.SaveBackup();
+                }
                 mContext.BusinessFlow = mBusinessFlow;
 
                 mRunner.BusinessFlows.Add(mBusinessFlow);
@@ -412,7 +415,10 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mBusinessFlow != null)
                 {
-                    mBusinessFlow.SaveBackup();
+                    if (mBusinessFlow.DirtyStatus != eDirtyStatus.Modified)
+                    {
+                        mBusinessFlow.SaveBackup();
+                    }
                     mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                     BindingHandler.ObjFieldBinding(xBusinessFlowNameTxtBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
