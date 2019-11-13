@@ -134,6 +134,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     bool mergeIssue = false;
                     bool notifyReplaceAPI = false;
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
+                    List<DeltaAPIModel> repeatingMatchingModels = AddAPIModelWizard.DeltaModelsList.Where(m => m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting ||
+                                                                m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                                                                        .GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).ToList();
+
+                    bool matchingModelsReplacementIssue = repeatingMatchingModels.Count() != 0;
+                    int apiCount = 0;
+                    if(matchingModelsReplacementIssue)
+                    {
+                        string issueMsg = Environment.NewLine + Environment.NewLine;
+                        foreach(DeltaAPIModel deltaMod in repeatingMatchingModels)
+                        {
+                            apiCount++;
+                            issueMsg += apiCount + "). " + deltaMod.MatchingAPIName + Environment.NewLine;
+                        }
+                        Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Below Matching API Models selected to be replaced/overwritten multiple times:" + issueMsg);
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+
                     foreach (DeltaAPIModel deltaModel in AddAPIModelWizard.DeltaModelsList.Where(m => m.IsSelected == true))
                     {
                         ApplicationAPIModel selectedAPIModel = null;
