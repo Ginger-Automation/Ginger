@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
@@ -1054,7 +1053,7 @@ namespace Ginger
             xHelpLayoutRectangleTop.Width = controlToFocusWidth;
             xHelpLayoutRectangleTop.Height = controlToFocusLocation.Y;
 
-            xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X- 0.25);
+            xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X - 0.25);
             xHelpLayoutRectangleBottom.SetValue(Canvas.TopProperty, controlToFocusLocation.Y + controlToFocusHeight);
             xHelpLayoutRectangleBottom.Width = controlToFocusWidth + 0.25;
             xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
@@ -1064,35 +1063,46 @@ namespace Ginger
             //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
             //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
 
-            //-- set text and it location location
+            //-- set text and it location 
             xHelpLayoutTextBlock.Text = helpArgs.HelpText;
             double textNeededWidth = 650;
             double textNeededHeight = 500;
             double arrowNeededLength = 200;
+            double arrowDistanceFromTarget = 10;
             Point helpTextLocation = new Point();
+            Point arrowSourceLocation = new Point();
+            Point arrowTargetLocation = new Point();
             //focused item top left corner
             if (controlToFocusLocation.X >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
             {
-                helpTextLocation.X = controlToFocusLocation.X - textNeededWidth;
+                helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength; ;
                 helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
+                arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth - 200, helpTextLocation.Y + 50);
+                arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y - arrowDistanceFromTarget);
             }
             //focused item bottom left corner
-            else if (controlToFocusLocation.X  >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
+            else if (controlToFocusLocation.X >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
             {
                 helpTextLocation.X = controlToFocusLocation.X - textNeededWidth;
                 helpTextLocation.Y = controlToFocusLocation.Y + controlToFocusHeight + arrowNeededLength;
+                arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth / 2, helpTextLocation.Y);
+                arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y + controlToFocusHeight + arrowDistanceFromTarget);
             }
             //focused item top right corner
             else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
             {
                 helpTextLocation.X = controlToFocusLocation.X + controlToFocusWidth + textNeededWidth;
                 helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
+                arrowSourceLocation = new Point(helpTextLocation.X -20, helpTextLocation.Y + 20);
+                arrowTargetLocation = new Point(controlToFocusLocation.X + controlToFocusWidth, controlToFocusLocation.Y - arrowDistanceFromTarget);
             }
             //focused item bottom right corner
             else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
             {
                 helpTextLocation.X = controlToFocusLocation.X + controlToFocusWidth + textNeededWidth;
                 helpTextLocation.Y = controlToFocusLocation.Y + controlToFocusHeight + arrowNeededLength;
+                arrowSourceLocation = new Point(helpTextLocation.X, helpTextLocation.Y);
+                arrowTargetLocation = new Point(controlToFocusLocation.X + controlToFocusWidth, controlToFocusLocation.Y + controlToFocusHeight + arrowDistanceFromTarget);
             }
             //middle of screen
             else
@@ -1103,6 +1113,13 @@ namespace Ginger
             xHelpLayoutTextBlock.SetValue(Canvas.LeftProperty, helpTextLocation.X);
             xHelpLayoutTextBlock.SetValue(Canvas.TopProperty, helpTextLocation.Y);
 
+            //-- draw Arrow
+            while (xHelpLayoutCanvas.Children.Count > 5)//removing previous dynamic arrows
+            {
+                xHelpLayoutCanvas.Children.RemoveAt(xHelpLayoutCanvas.Children.Count - 1);
+            }
+            xHelpLayoutCanvas.Children.Add(GeneralWindows.HelpLayout.DrawArrow.DrawLinkArrow(arrowSourceLocation, arrowTargetLocation));
+           
         }
 
         private void xHelpLayoutCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
