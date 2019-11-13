@@ -38,13 +38,11 @@ namespace GingerWPF.WizardLib
         public static WizardWindow CurrentWizardWindow = null;
 
         WizardBase mWizard;
-        static bool mIsPrevButtonDisable = false;
 
         List<ValidationError> mValidationErrors = new List<ValidationError>();
 
-        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false, bool IsPrevButtonDisable = false)
+        public static void ShowWizard(WizardBase wizard, double width = 800, double height = 800, bool DoNotShowAsDialog = false)
         {
-            mIsPrevButtonDisable = IsPrevButtonDisable;
              WizardWindow wizardWindow = new WizardWindow(wizard);
             wizardWindow.Width = width;
             wizardWindow.Height = height;
@@ -267,13 +265,9 @@ namespace GingerWPF.WizardLib
 
             if (mWizard.IsLastPage())
             {
+                xPrevButton.IsEnabled = mWizard.PrevEnabled;
                 xNextButton.IsEnabled = false;
                 xFinishButton.IsEnabled = true;
-
-                if (mIsPrevButtonDisable)
-                {
-                    xPrevButton.IsEnabled = false;
-                }
             }
             else
             {

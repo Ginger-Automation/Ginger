@@ -40,7 +40,7 @@ namespace Ginger.Repository
         {
             if (listSelectedRepoItems != null && listSelectedRepoItems.Count>0)
             {
-                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, listSelectedRepoItems), 1200, 800, false, true);                
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, listSelectedRepoItems));
             }
             else
             {
