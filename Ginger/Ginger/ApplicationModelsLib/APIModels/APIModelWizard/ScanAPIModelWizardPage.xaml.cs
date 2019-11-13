@@ -142,13 +142,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     int apiCount = 0;
                     if(matchingModelsReplacementIssue)
                     {
-                        string issueMsg = Environment.NewLine + Environment.NewLine;
+                        System.Text.StringBuilder issueMsg = new System.Text.StringBuilder(Environment.NewLine + Environment.NewLine);
                         foreach(DeltaAPIModel deltaMod in repeatingMatchingModels)
                         {
                             apiCount++;
-                            issueMsg += apiCount + "). " + deltaMod.MatchingAPIName + Environment.NewLine;
+                            issueMsg.Append(apiCount + "). " + deltaMod.MatchingAPIName + Environment.NewLine);
                         }
-                        Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Below Matching API Models selected to be replaced/overwritten multiple times:" + issueMsg);
+                        Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Below Matching API Models selected to be replaced/overwritten multiple times:" + issueMsg.ToString());
                         WizardEventArgs.CancelEvent = true;
                         return;
                     }
