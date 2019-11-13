@@ -537,13 +537,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     deltaAPI.SelectedOperationEnum = DeltaAPIModel.eHandlingOperations.Add;
                     deltaAPI.SelectedOperation = DeltaAPIModel.GetEnumDescription(deltaAPI.SelectedOperationEnum);
 
-                    xApisSelectionGrid.DataSourceList = xApisSelectionGrid.DataSourceList;
-
-                    // xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
-                    // xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
-
-                    //IObservableList sourceInstance = xApisSelectionGrid.DataSourceList;
-                    //xApisSelectionGrid.DataSourceList = sourceInstance;
+                    xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
+                    xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
                 }
             }
         }
