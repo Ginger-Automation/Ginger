@@ -30,118 +30,39 @@ namespace Amdocs.Ginger.Common.APIModelLib
     {
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(FileName);
+            string jsOnText = System.IO.File.ReadAllText(FileName);
+            string fileName = Path.GetFileNameWithoutExtension(FileName);
+            return GetParameters(jsOnText, AAMSList, avoidDuplicatesNodes, fileName);
+        }
 
-            string JSOnText = System.IO.File.ReadAllText(FileName);
+        public ObservableList<ApplicationAPIModel> ParseDocumentWithJsonContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
+        {
+            return GetParameters(fileContent, AAMSList, avoidDuplicatesNodes, string.Empty);
+        }
+
+        private static ObservableList<ApplicationAPIModel> GetParameters(string jsonText, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes, string fileName)
+        {
+            ApplicationAPIModel AAM = new ApplicationAPIModel();
+            AAM.Name = Path.GetFileNameWithoutExtension(fileName);
+
             //JObject jo = JObject.Parse(JSOnText);
             //IList<string> keys = jo.Properties().Select(p => p.Path).ToList();
 
             if (avoidDuplicatesNodes)
             {
-                JsonExtended fullJSOnObjectExtended = new JsonExtended(JSOnText);
+                JsonExtended fullJSOnObjectExtended = new JsonExtended(jsonText);
                 fullJSOnObjectExtended.RemoveDuplicatesNodes();
-                JSOnText = fullJSOnObjectExtended.JsonString;
+                jsonText = fullJSOnObjectExtended.JsonString;
             }
 
-            object[] BodyandModelParameters = GenerateBodyANdModelParameters(JSOnText);
+            object[] BodyandModelParameters = GenerateBodyANdModelParameters(jsonText);
 
             AAM.RequestBody = (string)BodyandModelParameters[0];
             AAM.AppModelParameters = (ObservableList<AppModelParameter>)BodyandModelParameters[1];
             AAMSList.Add(AAM);
 
             return AAMSList;
-        }
-
-        /// <summary>
-        /// This method will return the AppmodelParameters from Json string
-        /// </summary>
-        /// <param name="JsonText"></param>
-        /// <param name="avoidDuplicatesNodes"></param>
-        /// <returns></returns>
-        public ObservableList<AppModelParameter> GetAppModelParametersFromJson(string JsonText)
-        {
-            ObservableList<AppModelParameter> appList = new ObservableList<AppModelParameter>();
-            dynamic JE = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonText);
-            RecursivelyGetAllAppParameters(JE, ref appList);
-
-            return appList;
-        }
-
-        /// <summary>
-        /// This method is used to get app parameters recursively
-        /// </summary>
-        /// <param name="JE"></param>
-        private void RecursivelyGetAllAppParameters(dynamic JE, ref ObservableList<AppModelParameter> appList)
-        {
-            foreach (var item in JE)
-            {
-                if (Convert.ToString(item.Value).StartsWith("{"))
-                {
-                    RecursivelyGetAllAppParameters(item.Value, ref appList);
-                }
-                else
-                {
-                    string paramName = string.Empty;
-                    ObservableList<OptionalValue> vals = new ObservableList<OptionalValue>();
-                    int count = 0;
-                    var property = item.GetType().GetProperty("Name");
-                    if (property != null)
-                    {
-                        count = GetAppParametersCountInList(appList, item.Name.ToUpper());
-                        paramName = string.Format("<{0}[{1}]>", item.Name.ToUpper(), count);
-                    }
-                    else
-                    {
-                        count = GetAppParametersCountInList(appList, item.Key.ToUpper());
-                        paramName = string.Format("<{0}[{1}]>", item.Key.ToUpper(), count);
-                    }
-
-                    if (Convert.ToString(item.Value).StartsWith("["))
-                    {
-                        dynamic child = item.Value;
-                        foreach (var val in child)
-                        {
-                            OptionalValue optionalValue = new OptionalValue() { Value = Convert.ToString(val.Value) };
-                            vals.Add(optionalValue);
-                        }
-                    }
-                    else
-                    {
-                        if (property != null)
-                        {
-                            OptionalValue optionalValue = new OptionalValue() { Value = Convert.ToString(((Newtonsoft.Json.Linq.JValue)item.Value).Value) };
-                            vals.Add(optionalValue);
-                        }
-                        else
-                        {
-                            OptionalValue optionalValue = new OptionalValue() { Value = Convert.ToString(item.Value) };
-                            vals.Add(optionalValue);
-                        }
-                    }
-                    appList.Add(new AppModelParameter() { ItemName = paramName, OptionalValuesList = vals });
-                }
-            }
-        }
-
-        /// <summary>
-        /// This method will get the parameter count from the list of parameters
-        /// </summary>
-        /// <param name="appList"></param>
-        /// <param name="paramName"></param>
-        /// <returns></returns>
-        private int GetAppParametersCountInList(ObservableList<AppModelParameter> appList, string paramName)
-        {
-            int count = 0;
-            foreach (var appModel in appList)
-            {
-                if(appModel.ItemName.Contains(paramName))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
+        }        
 
         public static ObservableList<ActReturnValue> ParseJSONResponseSampleIntoReturnValues(string JSOnText)
         {

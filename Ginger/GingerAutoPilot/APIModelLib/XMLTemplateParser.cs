@@ -19,23 +19,32 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 
 namespace Amdocs.Ginger.Repository
 {
     public class XMLTemplateParser : APIConfigurationsDocumentParserBase
     {
-
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(FileName);
-            ObservableList <AppModelParameter> AppModelParameters = new ObservableList<AppModelParameter>();
             XmlDocument doc = new XmlDocument();
             doc.Load(FileName);
+            return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+        }
+
+        public ObservableList<ApplicationAPIModel> ParseDocumentWithXMLContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList,bool avoidDuplicatesNodes = false)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(fileContent);
+            return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+        }
+
+        private ObservableList<ApplicationAPIModel> GetParameters(XmlDocument doc, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes)
+        {
+            ApplicationAPIModel AAM = new ApplicationAPIModel();
+            AAM.Name = Path.GetFileNameWithoutExtension(doc.BaseURI);
             XMLDocExtended XDE = new XMLDocExtended(doc);
 
             if (avoidDuplicatesNodes)
@@ -50,60 +59,7 @@ namespace Amdocs.Ginger.Repository
             AllPlaceHolders.Clear();
             return AAMSList;
         }
-
-        public ObservableList<AppModelParameter> GetAppParameterFromXML(string xml, bool avoidDuplicatesNodes = false)
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(xml);
-            XMLDocExtended XDE = new XMLDocExtended(doc);
-
-            if (avoidDuplicatesNodes)
-                XDE.RemoveDuplicatesNodes();
-
-            IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
-            ObservableList<AppModelParameter> AMPList = GetParamListWithOptionalValues(NodeList);
-            return AMPList;
-        }
-
-        /// <summary>
-        /// This method will get the parameter list along with the optional values
-        /// </summary>
-        /// <param name="NodeList"></param>
-        /// <returns></returns>
-        private ObservableList<AppModelParameter> GetParamListWithOptionalValues(IEnumerable<XMLDocExtended> NodeList)
-        {
-            ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
-            foreach (XMLDocExtended XDN in NodeList)
-            {
-                string UniqPlaceHolder = "{" + GetPlaceHolderName(XDN.LocalName.ToUpper()) + "}";
-                ObservableList<OptionalValue> opList = new ObservableList<OptionalValue>();
-                OptionalValue opVal = new OptionalValue();
-                if (XDN.Value != UniqPlaceHolder)
-                {
-                    opVal = new OptionalValue() { Value = XDN.Value, IsDefault = true };
-                    opList.Add(opVal); 
-                }
-                AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, opList));
-
-                if (XDN.Attributes != null && XDN.Attributes.Count > 0)
-                {
-                    foreach (XmlAttribute XmlAttribute in XDN.Attributes)
-                    {
-                        if (!string.IsNullOrEmpty(XmlAttribute.Prefix))
-                        {
-                            continue;
-                        }
-
-                        string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
-                        opVal = new OptionalValue() { Value = XmlAttribute.Value };
-                        opList.Add(opVal);
-                        AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, opList));
-                    }
-                }
-            }
-            return AMPList;
-        }
-
+               
         private ObservableList<AppModelParameter> GetParamList(IEnumerable<XMLDocExtended> NodeList)
         {
             ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();

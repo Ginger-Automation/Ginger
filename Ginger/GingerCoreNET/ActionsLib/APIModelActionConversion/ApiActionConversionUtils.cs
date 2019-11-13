@@ -2,12 +2,14 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
+using GingerAutoPilot.APIModelLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.WebServices;
 using GingerCore.Actions.WebServices.WebAPI;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,7 +22,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
     /// </summary>
     public class ApiActionConversionUtils
     {
-        string WEB_SERVICE = "WebServices";
         bool mStopConversion = false;
 
         /// <summary>
@@ -31,74 +32,88 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// <param name="configuredValidationRequired"></param>
         public void ConvertToApiActionsFromBusinessFlows(ObservableList<BusinessFlowToConvert> businessFlows, bool parameterizeRequestBody, bool pullValidations)
         {
-            try
+            ActWebAPIModel webAPIModel = new ActWebAPIModel();
+            foreach(var bf in businessFlows)
             {
-                ActWebAPIModel webAPIModel = new ActWebAPIModel();
-                Parallel.ForEach(businessFlows, (bf, state) =>
+                try
                 {
                     if (!mStopConversion)
                     {
                         bf.ConversionStatus = eConversionStatus.Pending;
                         if (IsValidWebServiceBusinessFlow(bf.BusinessFlow))
                         {
-                            for (int intIndex = 0; intIndex < bf.BusinessFlow.Activities.Count(); intIndex++)
+                            for (int activityIndex = 0; activityIndex < bf.BusinessFlow.Activities.Count(); activityIndex++)
                             {
-                                Activity activity = bf.BusinessFlow.Activities[intIndex];
+                                Activity activity = bf.BusinessFlow.Activities[activityIndex];
                                 RepositoryItemKey ta = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.ItemName == activity.TargetApplication).FirstOrDefault().Key;
                                 if (activity != null && activity.Active && WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(ta.ItemName) == ePlatformType.WebServices)
                                 {
-                                    foreach (Act act in activity.Acts.ToList())
-                                    {
-                                        try
-                                        {
-                                            if (act.Active && (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)))
-                                            {
-                                                // get the index of the action that is being converted 
-                                                int selectedActIndex = activity.Acts.IndexOf(act);
-
-                                                //Create/Update API Model
-                                                bool isModelExists = true;
-                                                ApplicationAPIModel applicationModel = GetAPIModelIfExists(act);
-
-                                                if (applicationModel == null)
-                                                {
-                                                    isModelExists = false;
-                                                    applicationModel = new ApplicationAPIModel();
-                                                    applicationModel.TargetApplicationKey = ta;
-                                                    SetApplicationAPIModel(ref applicationModel, act, pullValidations);
-                                                }                                                
-
-                                                //Create WebAPIModel action
-                                                ActWebAPIModel actApiModel = GetNewAPIModelAction(applicationModel.Guid, act);
-                                                AddAppParameters(applicationModel, act, actApiModel, parameterizeRequestBody);
-                                                
-                                                activity.Acts.Insert(selectedActIndex + 1, actApiModel);
-                                                act.Active = false;
-                                                if (!isModelExists)
-                                                {
-                                                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(applicationModel);
-                                                }
-                                                else
-                                                {
-                                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(applicationModel);
-                                                }
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
-                                        }
-                                    }
+                                    ConvertAction(parameterizeRequestBody, pullValidations, activity, ta);
                                 }
                             }
                         }
                         bf.ConversionStatus = eConversionStatus.Finish;
                     }
-                });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
+                }
             }
-            catch (Exception ex)
+        }
+
+        /// <summary>
+        /// This method will convert the action
+        /// </summary>
+        /// <param name="parameterizeRequestBody"></param>
+        /// <param name="pullValidations"></param>
+        /// <param name="activity"></param>
+        /// <param name="ta"></param>
+        private void ConvertAction(bool parameterizeRequestBody, bool pullValidations, Activity activity, RepositoryItemKey ta)
+        {
+            for (int actionIndex = 0; actionIndex < activity.Acts.Count; actionIndex++)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
+                try
+                {
+                    Act act = (Act)activity.Acts[actionIndex];
+                    if (act.Active && (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)))
+                    {
+                        // get the index of the action that is being converted 
+                        int selectedActIndex = activity.Acts.IndexOf(act);
+
+                        //Create/Update API Model
+                        bool isModelExists = true;
+                        ApplicationAPIModel applicationModel = GetAPIModelIfExists(act);
+
+                        if (applicationModel == null)
+                        {
+                            isModelExists = false;
+                            applicationModel = new ApplicationAPIModel();
+                            applicationModel.TargetApplicationKey = ta;
+                            SetApplicationAPIModel(ref applicationModel, act, pullValidations);
+                        }
+
+                        //Create WebAPIModel action
+                        ActWebAPIModel actApiModel = GetNewAPIModelAction(applicationModel.Guid, act);
+                        AddAppParameters(applicationModel, act, actApiModel, parameterizeRequestBody);
+
+                        activity.Acts.Insert(selectedActIndex + 1, actApiModel);
+                        actionIndex++;
+                        act.Active = false;
+                        if (!isModelExists)
+                        {
+                            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(applicationModel);
+                        }
+                        else
+                        {
+                            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(applicationModel);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert action", ex);
+                }
             }
         }
 
@@ -142,21 +157,54 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     }
                     else
                     {
-                        SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.RequestBody), nameof(ApplicationAPIModel.RequestBody), act);
-                        requestBody = Convert.ToString(aPIModel.RequestBody);
+                        if (string.IsNullOrEmpty(aPIModel.RequestBody))
+                        {
+                            SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.RequestBody), nameof(ApplicationAPIModel.RequestBody), act);
+                            requestBody = Convert.ToString(aPIModel.RequestBody);
+                        }
+                        else
+                        {
+                            requestBody = Convert.ToString(aPIModel.RequestBody);
+                        }
                     }
 
-                    //ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
+                    ObservableList<ApplicationAPIModel> applicationAPIModels = new ObservableList<ApplicationAPIModel>();
+                    if (!string.IsNullOrEmpty(requestBody))
+                    {
+                        if (aPIModel.RequestBody.StartsWith("{"))
+                        {
+                            JSONTemplateParser jsonTemplate = new JSONTemplateParser();
+                            jsonTemplate.ParseDocumentWithJsonContent(aPIModel.RequestBody, applicationAPIModels);
+                        }
+                        else if (aPIModel.RequestBody.StartsWith("<"))
+                        {
+                            XMLTemplateParser parser = new XMLTemplateParser();
+                            parser.ParseDocumentWithXMLContent(aPIModel.RequestBody, applicationAPIModels);
+                        }
+
+                        if (applicationAPIModels[0].AppModelParameters != null && applicationAPIModels[0].AppModelParameters.Count > 0)
+                        {
+                            aPIModel.AppModelParameters = applicationAPIModels[0].AppModelParameters;
+                        }
+                    }
+
+                    if (parameterizeRequestBody && applicationAPIModels.Count > 0 && !string.IsNullOrEmpty(applicationAPIModels[0].RequestBody))
+                    {
+                        aPIModel.RequestBody = applicationAPIModels[0].RequestBody;
+                    }
+
+                    Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
+                    ImportParametersOptionalValues ImportOptionalValues = new ImportParametersOptionalValues();
                     if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("{"))
                     {
-                        JSONTemplateParser jsonTemplate = new JSONTemplateParser();
-                        lstParameters = jsonTemplate.GetAppModelParametersFromJson(requestBody);
+                        ImportOptionalValues.GetJSONAllOptionalValuesFromExamplesFile(requestBody, OptionalValuesPerParameterDict);
+                        ImportOptionalValues.PopulateJSONOptionalValuesForAPIParameters(aPIModel, OptionalValuesPerParameterDict);
                     }
                     else if (!string.IsNullOrEmpty(requestBody) && requestBody.StartsWith("<"))
                     {
-                        XMLTemplateParser parser = new XMLTemplateParser();
-                        lstParameters = parser.GetAppParameterFromXML(requestBody);
-                    } 
+                        ImportOptionalValues.GetXMLAllOptionalValuesFromExamplesFile(requestBody, OptionalValuesPerParameterDict);
+                        ImportOptionalValues.PopulateXMLOptionalValuesForAPIParameters(aPIModel, OptionalValuesPerParameterDict);
+                    }
                 }
                 else
                 {
@@ -164,7 +212,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     foreach (var inptVal in actInputs)
                     {
                         AppModelParameter param = new AppModelParameter();
-                        param.ItemName = inptVal.ItemName;                        
+                        param.ItemName = inptVal.ItemName;
                         OptionalValue opVal = new OptionalValue()
                         {
                             Value = inptVal.Value,
@@ -173,24 +221,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         param.OptionalValuesList = new ObservableList<OptionalValue>() { opVal };
                         lstParameters.Add(param);
                     }
-                }
-
-                if (lstParameters != null && lstParameters.Count > 0)
-                {
-                    if(actApiModel.ActAppModelParameters == null)
-                    {
-                        actApiModel.ActAppModelParameters = new ObservableList<AppModelParameter>();
-                    }
-
-                    foreach (var param in lstParameters)
-                    {
-                        if (!CheckParameterExistsIfExistsThenAddValues(aPIModel.AppModelParameters, param))
-                        {
-                            aPIModel.AppModelParameters.Add(param); 
-                        }
-
-                        actApiModel.ActAppModelParameters.Add(param);
-                    }
+                    aPIModel.AppModelParameters = lstParameters;
                 }
             }
             catch (Exception ex)
@@ -210,7 +241,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             bool isExists = false;
             foreach (var item in lstParameters)
             {
-                if(item.ItemName.Contains(param.ItemName))
+                if (item.ItemName.Contains(param.ItemName))
                 {
                     isExists = true;
                     foreach (var val in param.OptionalValuesList)
@@ -218,7 +249,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         var paramOptionalValue = item.OptionalValuesList.Where(x => x.Value == val.Value).FirstOrDefault();
                         if (!string.IsNullOrEmpty(Convert.ToString(val.Value)) && Convert.ToString(val.Value) != "?" && (paramOptionalValue == null || paramOptionalValue.Value != val.Value))
                         {
-                            item.OptionalValuesList.Add(val); 
+                            item.OptionalValuesList.Add(val);
                         }
                     }
                     break;
@@ -239,13 +270,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             try
             {
                 aPIModel.ItemName = act.ItemName;
-                aPIModel.ContainingFolder = folderPath;                
+                aPIModel.ContainingFolder = folderPath;
                 aPIModel.ContainingFolderFullPath = Path.Combine(folderPath, string.Format("{0}.xml", act.ItemName));
                 if (((ActWebAPIBase)act).HttpHeaders != null)
                 {
                     if (aPIModel.HttpHeaders == null)
                     {
-                        aPIModel.HttpHeaders = new ObservableList<APIModelKeyValue>(); 
+                        aPIModel.HttpHeaders = new ObservableList<APIModelKeyValue>();
                     }
                     foreach (var header in ((ActWebAPIBase)act).HttpHeaders)
                     {
@@ -258,9 +289,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                     }
                 }
 
-                if(pullValidations)
+                if (pullValidations)
                 {
-                    aPIModel.ReturnValues = act.ReturnValues; 
+                    aPIModel.ReturnValues = act.ReturnValues;
                 }
 
                 if (act.GetType() == typeof(ActWebAPIRest))
@@ -270,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 else
                 {
                     aPIModel.APIType = ApplicationAPIUtils.eWebApiType.SOAP;
-                }           
+                }
 
                 SetPropertyValue(aPIModel, nameof(ActWebAPIBase.Fields.RequestBody), nameof(ApplicationAPIModel.RequestBody), act);
                 SetPropertyValue(aPIModel, nameof(ActWebAPIRest.Fields.RequestType), nameof(ApplicationAPIModel.RequestType), act);
@@ -297,15 +328,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
 
                 if (!string.IsNullOrEmpty(Convert.ToString(aPIModel.TemplateFileNameFileBrowser)))
                 {
-                    aPIModel.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.TemplateFile; 
-                }               
+                    aPIModel.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.TemplateFile;
+                }
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating the api model", ex);
-            }            
+            }
         }
-                        
+
         /// <summary>
         /// This method will set the Property value in API model's property by reading the value from action
         /// </summary>
@@ -314,7 +345,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// <param name="act"></param>
         private void SetPropertyValue(ApplicationAPIModel aPIModel, string propName, string modelPropertyName, Act act)
         {
-            if(aPIModel != null && act != null)
+            if (aPIModel != null && act != null)
             {
                 try
                 {
@@ -342,8 +373,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                                     if (modelVal == null || string.IsNullOrEmpty(Convert.ToString(modelVal)))
                                     {
                                         apiProp.SetValue(aPIModel, val);
-                                    }                                    
-                                }                                
+                                    }
+                                }
                             }
                         }
                     }
@@ -384,7 +415,15 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
         /// <returns></returns>
         private bool IsValidWebServiceBusinessFlow(BusinessFlow bf)
         {
-            bool isValid = string.IsNullOrEmpty(Convert.ToString(bf.TargetApplications.Where(x => x.ItemName.StartsWith(WEB_SERVICE) || x.ItemName.Contains(WEB_SERVICE)).FirstOrDefault())) ? false : true;
+            bool isValid = false;
+            foreach (var ta in bf.TargetApplications)
+            {
+                isValid = WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(ta.ItemName) == ePlatformType.WebServices;
+                if(isValid)
+                {
+                    break;
+                }
+            }
             return isValid;
         }
 
@@ -400,7 +439,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             {
                 foreach (Activity activity in bf.Activities.Where(x => x.Active))
                 {
-                    count = count + activity.Acts.Where(act => (act.Active && 
+                    count = count + activity.Acts.Where(act => (act.Active &&
                                                                (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)))).Count();
                 }
             }
