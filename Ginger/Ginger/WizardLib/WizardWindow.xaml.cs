@@ -371,7 +371,10 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = null;
         }
 
-
+        public void ShowFinishButton(bool isVisible)
+        {
+            xFinishButton.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
 
         private void NavigationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

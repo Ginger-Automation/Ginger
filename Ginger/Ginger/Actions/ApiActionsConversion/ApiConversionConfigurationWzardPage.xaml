@@ -19,14 +19,14 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <CheckBox x:Name="xChkParameterizeRequestBody"  Grid.Column="0" Height="20" Grid.Row="0" IsChecked="{Binding Path=ParameterizeRequestBody, Mode=TwoWay}" HorizontalAlignment="Left"  Margin="10,20,0,0" >
+        <CheckBox x:Name="xChkParameterizeRequestBody"  Grid.Column="0" Height="20" Grid.Row="0" IsChecked="{Binding Path=ParameterizeRequestBody, Mode=TwoWay}" ToolTip="This option will help parse the request body to be parameterized" HorizontalAlignment="Left"  Margin="10,20,0,0" >
             <CheckBox.Content>
-                <GingerCore:ucTextDicResource Text="Parameterize the Request body"/>
+                <GingerCore:ucTextDicResource Text="Parameterize the request body"/>
             </CheckBox.Content>
         </CheckBox>
-        <CheckBox x:Name="xChkValidationRequired"  Grid.Column="0" Height="20" Grid.Row="1" IsChecked="{Binding Path=PullValidations, Mode=TwoWay}" HorizontalAlignment="Left"  Margin="10,10,0,0" >
+        <CheckBox x:Name="xChkValidationRequired"  Grid.Column="0" Height="20" Grid.Row="1" IsChecked="{Binding Path=PullValidations, Mode=TwoWay}" ToolTip="This option will help pull the validations from old action to newly converted action" HorizontalAlignment="Left"  Margin="10,10,0,0" >
             <CheckBox.Content>
-                <GingerCore:ucTextDicResource Text="Pull Configured Validations"/>
+                <GingerCore:ucTextDicResource Text="Pull configured validations"/>
             </CheckBox.Content>
         </CheckBox>
     </Grid>

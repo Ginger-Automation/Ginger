@@ -278,7 +278,7 @@ namespace Ginger.Actions.ActionConversion
                 xStopButton.Visibility = saveVisible ? Visibility.Collapsed : Visibility.Visible;
                 xReConvert.Visibility = saveVisible ? Visibility.Visible : Visibility.Collapsed;
             }
-            ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = saveVisible;
+            ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).ShowFinishButton(saveVisible);
         }
     }
 }

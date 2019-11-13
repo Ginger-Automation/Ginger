@@ -47,7 +47,7 @@ namespace Ginger.Actions.ApiActionsConversion
             {
                 case EventType.Init:
                     mConversionProcess = (IActionsConversionProcess)WizardEventArgs.Wizard;
-                    ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = false;
+                    ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).ShowFinishButton(false);
                     break;
                 case EventType.Active:
                     Init(WizardEventArgs);
@@ -64,7 +64,7 @@ namespace Ginger.Actions.ApiActionsConversion
         /// <param name="WizardEventArgs"></param>
         private void Init(WizardEventArgs WizardEventArgs)
         {
-            ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).xFinishButton.IsEnabled = false;
+            ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).ShowFinishButton(false);
             DataContext = mConversionProcess;
         }        
     }

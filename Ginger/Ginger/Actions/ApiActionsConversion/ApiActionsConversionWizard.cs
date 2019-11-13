@@ -76,7 +76,9 @@ namespace Ginger.Actions.ApiActionsConversion
             ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ApiActionsConversion/ApiActionsConversionIntro.md"));
-            AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
+
+            string businessFlow = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
+            AddPage(Name: "Select " + businessFlow + " for Conversion", Title: "Select " + businessFlow + " for Conversion", SubTitle: "Select " + businessFlow + " for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
             AddPage(Name: "Conversion Configurations", Title: "Conversion Configurations", SubTitle: "Conversion Configurations", Page: new ApiConversionConfigurationWzardPage());
 
             mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
@@ -182,7 +184,7 @@ namespace Ginger.Actions.ApiActionsConversion
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert", ex);
             }
             finally
             {
@@ -208,8 +210,7 @@ namespace Ginger.Actions.ApiActionsConversion
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " - ", ex);
-                Reporter.ToUser(eUserMsgKey.ActivitiesConversionFailed);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to convert", ex);
             }
             finally
             {
