@@ -186,7 +186,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         {
                             foreach(var par in applicationAPIModels[0].AppModelParameters)
                             {
-                                aPIModel.AppModelParameters.Add(par);
+                                if (!CheckParameterExistsIfExistsThenAddValues(aPIModel.AppModelParameters, par))
+                                {
+                                    aPIModel.AppModelParameters.Add(par); 
+                                }
                             }
                         }
                     }
