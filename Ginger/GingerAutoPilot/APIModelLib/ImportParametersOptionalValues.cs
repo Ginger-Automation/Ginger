@@ -88,7 +88,7 @@ namespace GingerAutoPilot.APIModelLib
 
                 string VAXBXPath = string.Empty;
                 if (!string.IsNullOrEmpty(result))
-                    VAXBXPath = AMP.Path.Replace(result, "//*[name()='vaxb:VAXB']/vaxb:");
+                { VAXBXPath = AMP.Path.Replace(result, "//*[name()='vaxb:VAXB']/vaxb:"); }
 
                 Tuple<string, string> tuple = new Tuple<string, string>(AMP.TagName, AMP.Path);
                 Tuple<string, string> relativePathTuple = new Tuple<string, string>(AMP.TagName, VAXBXPath);
@@ -258,7 +258,7 @@ namespace GingerAutoPilot.APIModelLib
                 {
                     OptionalValue OptionalValue = new OptionalValue() { Value = Value };
                     if (!string.IsNullOrEmpty(Value))
-                        OptionalValue.IsDefault = true;
+                    { OptionalValue.IsDefault = true; }
 
                     AMP.OptionalValuesList.Add(OptionalValue);
                 }
