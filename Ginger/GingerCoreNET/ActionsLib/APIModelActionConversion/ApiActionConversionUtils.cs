@@ -232,7 +232,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                         param.OptionalValuesList = new ObservableList<OptionalValue>() { opVal };
                         lstParameters.Add(param);
                     }
-                    aPIModel.AppModelParameters = lstParameters;
+                    foreach (var par in lstParameters)
+                    {
+                        if (!CheckParameterExistsIfExistsThenAddValues(aPIModel.AppModelParameters, par))
+                        {
+                            aPIModel.AppModelParameters.Add(par);
+                        }
+                    }
                     actApiModel.ActAppModelParameters = lstParameters;
                 }
             }
