@@ -182,9 +182,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                             parser.ParseDocumentWithXMLContent(requestBody, applicationAPIModels);
                         }
 
-                        if (!isModelExists && applicationAPIModels[0].AppModelParameters != null && applicationAPIModels[0].AppModelParameters.Count > 0)
+                        if (applicationAPIModels[0].AppModelParameters != null && applicationAPIModels[0].AppModelParameters.Count > 0)
                         {
-                            aPIModel.AppModelParameters = applicationAPIModels[0].AppModelParameters;
+                            foreach(var par in applicationAPIModels[0].AppModelParameters)
+                            {
+                                aPIModel.AppModelParameters.Add(par);
+                            }
                         }
                     }
 
@@ -299,8 +302,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
                 {
                     foreach (var item in act.ReturnValues)
                     {
-                        if(!string.IsNullOrEmpty(item.Expected) && item.StoreTo == ActReturnValue.eStoreTo.None)
-                        {
+                        if ((!string.IsNullOrEmpty(item.Expected) && 
+                            (item.StoreTo == ActReturnValue.eStoreTo.None || 
+                             item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter)))
+                         {
                             ActReturnValue actR = new ActReturnValue();
                             actR.ItemName = item.ItemName;
                             actR.FileName = item.FileName;
