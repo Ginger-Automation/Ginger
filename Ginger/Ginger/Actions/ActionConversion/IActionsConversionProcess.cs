@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using GingerCore;
+using System.Threading.Tasks;
 
 namespace Ginger.Actions
 {
@@ -10,11 +11,11 @@ namespace Ginger.Actions
 
         eModelConversionType ModelConversionType { get; }
 
-        void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow);
+        Task BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow);
 
         void StopConversion();
 
-        void ProcessConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow, bool v);
+        Task ProcessConversion(ObservableList<BusinessFlowToConvert> listOfBusinessFlow, bool v);
 
         void ConversionProcessEnded();
 

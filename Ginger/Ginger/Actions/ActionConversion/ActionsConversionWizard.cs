@@ -156,7 +156,7 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         /// <param name="lst"></param>
         /// <param name="isReConvert"></param>
-        public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
+        public async Task ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
         {
             IsConversionDoneOnce = true;
             ProcessStarted();
@@ -184,7 +184,7 @@ namespace Ginger.Actions.ActionConversion
 
                 if (mConversionUtils.ListOfBusinessFlowsToConvert.Count > 0)
                 {
-                    await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                    await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs)).ConfigureAwait(true);
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -202,7 +202,7 @@ namespace Ginger.Actions.ActionConversion
         /// This method is used to convert the actions
         /// </summary>
         /// <param name="lst"></param>
-        public async void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
+        public async Task BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
         {
             try
             {
@@ -216,7 +216,7 @@ namespace Ginger.Actions.ActionConversion
                 mConversionUtils.ActUIElementClassName = nameof(ActUIElement);
                 mConversionUtils.ListOfBusinessFlowsToConvert = lst;
 
-                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs)).ConfigureAwait(true);
 
                 if (ConversionType == eActionConversionType.MultipleBusinessFlow)
                 {

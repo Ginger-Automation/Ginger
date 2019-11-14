@@ -151,7 +151,7 @@ namespace Ginger.Actions.ApiActionsConversion
         /// </summary>
         /// <param name="lst"></param>
         /// <param name="isReConvert"></param>
-        public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
+        public async Task ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
         {
             ProcessStarted();
             try
@@ -178,7 +178,7 @@ namespace Ginger.Actions.ApiActionsConversion
 
                 if (flowsToConvert.Count > 0)
                 {
-                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations));
+                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations)).ConfigureAwait(true);
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -196,13 +196,13 @@ namespace Ginger.Actions.ApiActionsConversion
         /// This method is used to convert the actions
         /// </summary>
         /// <param name="lst"></param>
-        public async void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
+        public async Task BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
         {
             try
             {
                 ProcessStarted();
 
-                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations));
+                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations)).ConfigureAwait(true);
 
                 mReportPage.SetButtonsVisibility(true);
 
