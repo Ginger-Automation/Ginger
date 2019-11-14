@@ -39,6 +39,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByClassName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByAutomationID);
+                mElementLocatorsTypeList.Add(eLocateBy.ByTitle);
             }
             return mElementLocatorsTypeList;
         }
@@ -59,32 +60,35 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             //TOOD: Currently we support only drag and drop for PB. So avoiding the call to get actions list from base
-            List<ActUIElement.eElementAction> pbTableControlActionlist = new List<ActUIElement.eElementAction>();
+            List<ActUIElement.eElementAction> controlActionlist = new List<ActUIElement.eElementAction>();
 
             switch (ElementType)
             {
                 case eElementType.Unknown:
-                        pbTableControlActionlist.Add(ActUIElement.eElementAction.DragDrop);
+                        controlActionlist.Add(ActUIElement.eElementAction.DragDrop);
                     break;
 
                 case eElementType.Button:                   
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);                    
+                    controlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);                    
                     break;                
                 case eElementType.List:
                 case eElementType.ComboBox:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SelectandValidate);
+                    controlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
+                    controlActionlist.Add(ActUIElement.eElementAction.SelectandValidate);
                     break;
                 case eElementType.TextBox:
                 case eElementType.Text:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
+                    controlActionlist.Add(ActUIElement.eElementAction.SendKeysAndValidate);
                     break;
                 case eElementType.Dialog:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.AcceptDialog);
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.DismissDialog);
+                    controlActionlist.Add(ActUIElement.eElementAction.AcceptDialog);
+                    controlActionlist.Add(ActUIElement.eElementAction.DismissDialog);
+                    break;
+                case eElementType.Window:
+                    controlActionlist.Add(ActUIElement.eElementAction.Switch);
                     break;
             }
-            return pbTableControlActionlist;
+            return controlActionlist;
         }
 
         public override string GetPlatformGenericElementEditControls()
@@ -173,6 +177,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Table);
                 mElementsTypeList.Add(eElementType.Text);
                 mElementsTypeList.Add(eElementType.Dialog);
+                mElementsTypeList.Add(eElementType.Window);
+
             }
             return mElementsTypeList;
         }
