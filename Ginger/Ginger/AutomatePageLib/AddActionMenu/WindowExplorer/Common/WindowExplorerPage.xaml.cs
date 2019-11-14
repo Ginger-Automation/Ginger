@@ -1017,7 +1017,7 @@ namespace Ginger.WindowExplorer
                 WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
                 if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
                         ShowFilterElementsPage();
-
+                RefreshControlsGrid();
                 image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
                 GridTreeViewButton.Content = image;
                 GridTreeViewButton.ToolTip = "Switch to Tree View";
