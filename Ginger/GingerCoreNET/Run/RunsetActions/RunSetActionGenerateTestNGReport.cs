@@ -74,13 +74,13 @@ namespace Ginger.Run.RunSetActions
             string testNGReportPath = "";
             try
             {
-                if (!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
-                {
-                    testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder;
-                }
-                else if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
+                if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
                     testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
+                }
+                else if(!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
+                {
+                    testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder;
                 }
                 else
                 {

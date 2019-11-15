@@ -113,41 +113,34 @@ namespace Ginger.Run.RunSetActions
                 }
 
                 string currentHTMLFolderName = string.Empty;
-                if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
+                if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
                 {
-                    currentHTMLFolderName = Path.Combine(WorkSpace.Instance.TestArtifactsFolder, System.IO.Path.GetFileName(runSetFolder));
+                    if (!isHTMLReportPermanentFolderNameUsed)
+                    {
+                        currentHTMLFolderName = Path.Combine(HTMLReportFolderNameCalculated, System.IO.Path.GetFileName(runSetFolder));
+                    }
+                    else
+                    {
+                        currentHTMLFolderName = HTMLReportFolderNameCalculated;
+                    }
                 }
+                if (String.IsNullOrEmpty(currentHTMLFolderName))
+                {
+                    if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
+                    {
+                        currentHTMLFolderName = Path.Combine(WorkSpace.Instance.TestArtifactsFolder, System.IO.Path.GetFileName(runSetFolder));
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(selectedHTMLReportTemplateID.ToString()))
                 {
                     ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                    if (isHTMLReportFolderNameUsed && !String.IsNullOrEmpty(HTMLReportFolderName))
-                    {
-                        if (String.IsNullOrEmpty(currentHTMLFolderName))
-                        {
-                            if (!isHTMLReportPermanentFolderNameUsed)
-                            {
-                                currentHTMLFolderName = Path.Combine(HTMLReportFolderNameCalculated, System.IO.Path.GetFileName(runSetFolder));
-                            }
-                            else
-                            {
-                                currentHTMLFolderName = HTMLReportFolderNameCalculated;
-                            }
-                        }
-
-                        reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                        
+                    reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                                 false,
                                                                                                                                 HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault(),
                                                                                                                                 currentHTMLFolderName,
                                                                                                                                 isHTMLReportPermanentFolderNameUsed, currentConf.HTMLReportConfigurationMaximalFolderSize);
-                    }
-                    else
-                    {
-                        reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
-                                                                                                                                false,
-                                                                                                                                HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault(),
-                                                                                                                                currentHTMLFolderName,
-                                                                                                                                isHTMLReportPermanentFolderNameUsed);
-                    }
                 }
                 else
                 {
