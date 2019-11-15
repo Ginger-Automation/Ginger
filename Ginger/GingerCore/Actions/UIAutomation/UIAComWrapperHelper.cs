@@ -4347,6 +4347,36 @@ namespace GingerCore.Drivers
                 actSW.Error += "Window with title-" + windowTitle + " not found within specified time";
         }
 
+        public override void ActUISwitchWindow(Act act)
+        {
+            ActUIElement actUIElement = (ActUIElement)act;
+            
+            Stopwatch St = new Stopwatch();
+            St.Reset();
+            St.Start();
+
+            bool switchDoneFlag = false;
+            string windowTitle = actUIElement.ElementLocateValue;
+
+            var syncTime = Convert.ToInt32(actUIElement.GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
+            while (!switchDoneFlag && !taskFinished)
+            {
+                if (syncTime <= 0)
+                {
+                    syncTime = mLoadTimeOut.Value;
+                }
+                switchDoneFlag = SwitchToWindow(windowTitle);
+
+                if (St.ElapsedMilliseconds > syncTime * 1000)
+                {
+                    break;
+                }
+            }
+
+            if (!switchDoneFlag)
+                actUIElement.Error += "Window with title-" + windowTitle + " not found within specified time";
+        }
+
         public override void SwitchWindow(ActUIASwitchWindow act)
         {
             bool isLoaded = false;

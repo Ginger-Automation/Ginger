@@ -32,13 +32,20 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="120*" />
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="30" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock x:Name="xMatchingAPIName" ToolTip="{Binding MatchingAPIName}" Text="{Binding MatchingAPIName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" />
+
                     <UserControls:ucButton x:Name="xManualMatchBtn" VerticalAlignment="Center" IsEnabled="True" Grid.Column="1" Margin="0" Padding="0" Height="23"
                       ButtonType="ImageButton" Click="XManualMatchBtn_Click" ButtonText="" ToolTip="Manually Match an Existing API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
                             ButtonImageWidth="15" ButtonImageType="Edit" />
+
+                    <UserControls:ucButton x:Name="xClearMatchBtn" VerticalAlignment="Center" IsEnabled="{Binding ShowMergerLink}" Grid.Column="2" Margin="0" Padding="0" Height="23"
+                              ButtonType="ImageButton" Click="xClearMatchBtn_Click" ButtonText="" ToolTip="Clear Matching API Model" ButtonFontImageSize="15" ButtonImageHeight="15"
+                                           ButtonImageWidth="15" ButtonImageType="Close" />
+
                 </Grid>
             </DataTemplate>
 
