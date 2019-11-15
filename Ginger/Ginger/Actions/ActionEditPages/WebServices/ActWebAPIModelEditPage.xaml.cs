@@ -31,6 +31,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Ginger.DataSource;
+using GingerWPF.ApplicationModelsLib.APIModels;
 
 namespace Ginger.Actions.WebServices
 {
@@ -271,6 +272,12 @@ namespace Ginger.Actions.WebServices
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
                 Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
             }
+        }
+
+        private void xViewAPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            APIModelPage mAPIEditPage = new APIModelPage(AAMB, General.eRIPageViewMode.Standalone);
+            mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, parentWindow: Window.GetWindow(this));
         }
     }
 }

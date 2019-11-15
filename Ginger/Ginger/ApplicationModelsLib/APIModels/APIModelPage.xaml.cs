@@ -764,7 +764,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         public eEditMode editMode { get; set; }
 
-        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false, eEditMode e = eEditMode.Design)
+        public bool ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false, eEditMode e = eEditMode.Design, Window parentWindow = null)
         {
             mApplicationAPIModel.StartDirtyTracking();
             //changed the style to be free - since many other windows get stuck and doesn't show
@@ -808,7 +808,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     winButtons.Add(saveBtnAnalyzer);
                     break;
             }
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
+            if(parentWindow == null)
+            {
+                parentWindow = (Window)App.MainWindow;
+            }
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, parentWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
         }
 

@@ -45,6 +45,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
 
             AppApiModelsFolderTreeItem mAPIsRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>());
+
             mItemTypeRootNode = mAPIsRoot;
             mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
                                         new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey) + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication),
@@ -52,9 +53,28 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
             mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems);
-
+            mAPIPage.xTreeView.xTreeViewTree.ItemDoubleClick += APIModelItemsTreeView_ItemDoubleClick;
             mContext.PropertyChanged += MContext_PropertyChanged;
             xAPIFrame.Content = mAPIPage;
+        }
+
+        private void APIModelItemsTreeView_ItemDoubleClick(object sender, EventArgs e)
+        {
+            if(sender is TreeViewItem)
+            {
+                AppApiModelTreeItem apiModelTreeItem = (sender as TreeViewItem).Tag as AppApiModelTreeItem;
+                if(apiModelTreeItem != null)
+                {
+                    ApplicationAPIModel apiModelSelected = apiModelTreeItem.NodeObject() as ApplicationAPIModel;
+                    if (apiModelSelected != null)
+                    {
+                        GingerWPF.ApplicationModelsLib.APIModels.APIModelPage mAPIEditPage = new GingerWPF.ApplicationModelsLib.APIModels.APIModelPage(apiModelSelected, General.eRIPageViewMode.Standalone);
+                        System.Windows.Input.Mouse.OverrideCursor = null;
+                        mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, parentWindow: Window.GetWindow(this));
+                    }
+                }
+            }
+
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
