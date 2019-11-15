@@ -82,7 +82,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
             ObservableList<ApplicationAPIModel> selectedAPIModels = GingerCore.General.ConvertListToObservableList<ApplicationAPIModel>(AddAPIModelWizard.LearnedAPIModelsList.Where(m => m.IsSelected == true).ToList());
+
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
+
+            if(AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Count() != 0)
+            {
+                foreach(DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
+                {
+                    deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
+                }
+                Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Same existing API Models found as Matching for multiple Learned API Models. Consider the ones marked with 'Warning' tag in the list before selecting Overwriting operation for the same.", eUserMsgOption.OK);
+            }
 
             xApisSelectionGrid.InitViewItems();
 
