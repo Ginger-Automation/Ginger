@@ -116,6 +116,9 @@ namespace GingerCore.Actions.Common
             public static string IsWidgetsElement = "IsWidgetsElement";
             public static string IsMouseEvent = "IsMouseEvent";
 
+            //used to support switch action sync time
+            public static string SyncTime = "SyncTime";
+
             //used for TableElementAction
             public static string ControlAction = "ControlAction";
             public static string ControlActionValue = "ControlActionValue";

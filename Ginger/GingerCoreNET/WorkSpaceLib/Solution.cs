@@ -573,6 +573,21 @@ namespace Ginger.SolutionGeneral
             return ePlatformType.Web;
         }
 
+        /// <summary>
+        /// This method will return platform for the target application name
+        /// </summary>
+        /// <param name="targetapp"></param>
+        /// <returns></returns>
+        public ePlatformType GetApplicationPlatformForTargetApp(string targetapp)
+        {
+            if (!string.IsNullOrEmpty(targetapp))
+            {
+                ePlatformType platform = (from x in ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                return platform;
+            }
+            return ePlatformType.NA;
+        }
+
     }
 
 
