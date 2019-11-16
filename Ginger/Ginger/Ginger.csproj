@@ -422,6 +422,7 @@
       <DependentUpon>ConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionConversion\BooleanToVisiblityCollapsedConverter.cs" />
+    <Compile Include="Actions\ActionConversion\IActionsConversionProcess.cs" />
     <Compile Include="Actions\ActionConversion\SelectActionWzardPage.xaml.cs">
       <DependentUpon>SelectActionWzardPage.xaml</DependentUpon>
     </Compile>
@@ -479,12 +480,16 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ApiActionsConversion\ApiConversionConfigurationWzardPage.xaml.cs">
+      <DependentUpon>ApiConversionConfigurationWzardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\UserControls\UCInputValuesGrid.xaml.cs">
       <DependentUpon>UCInputValuesGrid.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionEditPages\ActDataSourcePage.xaml.cs">
       <DependentUpon>ActDataSourcePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ImportOptionalValuesForParameters.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMBindingObjectHelper.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\POMsSelectionPage.xaml.cs">
       <DependentUpon>POMsSelectionPage.xaml</DependentUpon>
@@ -755,6 +760,7 @@
     <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
       <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ApiActionsConversion\ApiActionsConversionWizard.cs" />
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
@@ -832,7 +838,6 @@
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\AddOptionalValuesModelSelectTypePage.xaml.cs">
       <DependentUpon>AddOptionalValuesModelSelectTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationModelsLib\ModelOptionalValue\ImportOptionalValuesForParameters.cs" />
     <Compile Include="ApplicationModelsLib\ModelParams Pages\ModelExpectedValueParamSelectionPage.xaml.cs">
       <DependentUpon>ModelExpectedValueParamSelectionPage.xaml</DependentUpon>
     </Compile>
@@ -2079,6 +2084,7 @@
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowTreeItem.cs" />
+    <Resource Include="Actions\ApiActionsConversion\ApiActionsConversionIntro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
@@ -2666,6 +2672,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ApiActionsConversion\ApiConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

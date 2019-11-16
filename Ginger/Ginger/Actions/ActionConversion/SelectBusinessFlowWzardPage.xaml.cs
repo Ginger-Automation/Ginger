@@ -39,8 +39,7 @@ namespace Ginger.Actions.ActionConversion
     /// </summary>
     public partial class SelectBusinessFlowWzardPage : Page, IWizardPage
     {
-        ActionsConversionWizard mWizard;
-        public object BusinessFlowFolder { get; set; }
+        IActionsConversionProcess mConversionProcess;
         SingleItemTreeViewSelectionPage mBFSelectionPage = null;
         ObservableList<BusinessFlowToConvert> ListOfBusinessFlow = null;
         Context mContext = null;
@@ -58,8 +57,8 @@ namespace Ginger.Actions.ActionConversion
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (ActionsConversionWizard)WizardEventArgs.Wizard;
-                    ((WizardWindow)mWizard.mWizardWindow).xFinishButton.IsEnabled = false;
+                    mConversionProcess = (IActionsConversionProcess)WizardEventArgs.Wizard;
+                    ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow).ShowFinishButton(false);
                     SetGridsView();
                     break;
                 case EventType.LeavingForNextPage:
@@ -154,7 +153,7 @@ namespace Ginger.Actions.ActionConversion
                                                                                         SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
                 mBFSelectionPage.SelectionDone += MBFSelectionPage_SelectionDone;
             }
-            List<object> selectedBFs = mBFSelectionPage.ShowAsWindow(ownerWindow: ((WizardWindow)mWizard.mWizardWindow));
+            List<object> selectedBFs = mBFSelectionPage.ShowAsWindow(ownerWindow: ((WizardWindow)mConversionProcess));
             AddSelectedBF(selectedBFs);
         }
 
@@ -174,7 +173,7 @@ namespace Ginger.Actions.ActionConversion
                         flowToConversion.BusinessFlow = bf;
                         flowToConversion.ConversionStatus = eConversionStatus.Pending;
                         flowToConversion.IsSelected = true;
-                        flowToConversion.TotalProcessingActionsCount = mWizard.GetConvertibleActionsCountFromBusinessFlow(bf);
+                        flowToConversion.TotalProcessingActionsCount = mConversionProcess.GetConvertibleActionsCountFromBusinessFlow(bf);
                         ListOfBusinessFlow.Add(flowToConversion); 
                     }
                 } 
