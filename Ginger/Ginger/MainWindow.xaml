@@ -6,7 +6,7 @@
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
-        Height="600" Width="1100" WindowState="Maximized"         
+        Height="600" Width="1100" WindowState="Maximized"   SizeChanged="xMainWindow_SizeChanged"      
         Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
 
     <Grid x:Name="xMainWindowPnl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -293,20 +293,13 @@
             </Border>
         </Grid>
 
-        <Canvas x:Name="xHelpLayoutCanvas" Panel.ZIndex="2" MouseLeftButtonDown="xHelpLayoutCanvas_MouseLeftButtonDown"  Visibility="Collapsed" Background="Transparent" >
+        <Canvas x:Name="xHelpLayoutCanvas" Panel.ZIndex="2" MouseLeftButtonDown="xHelpLayoutCanvas_MouseLeftButtonDown"  Background="Transparent" Visibility="Collapsed" >
             <Rectangle  x:Name="xHelpLayoutRectangleLeft" Fill="Black" Opacity="0.7" />
             <Rectangle  x:Name="xHelpLayoutRectangleTop" Fill="Black" Opacity="0.7" />
             <!--<Rectangle  x:Name="xHelpLayoutRectangleFocusedItem" Fill="Red" />-->
             <Rectangle  x:Name="xHelpLayoutRectangleRight" Fill="Black" Opacity="0.7"  />
             <Rectangle  x:Name="xHelpLayoutRectangleBottom" Fill="Black" Opacity="0.7"   />
-            <TextBlock x:Name="xHelpLayoutTextBlock" FontFamily="Comic Sans MS" Canvas.Left="500" Canvas.Top="200" Text="Help text content dsadasd dasds dsdsa dsdas dsada dsdsad dsadsa" Foreground="White" MaxWidth="450" TextWrapping="Wrap" FontSize="22"/>
-            <!--<Path Stretch="Fill" Fill="White" Canvas.Left="800" Canvas.Top="150"
-                    Data="M 0,110 70,110 45,90 75,90 140,120 75,150 45,150 70,130 0,130 Z"
-                    HorizontalAlignment="Right"  Width="50" Height="25" Margin="0,0,0,0" RenderTransformOrigin=".5,.5">
-                <Path.RenderTransform>
-                    <RotateTransform Angle="300" />
-                </Path.RenderTransform>
-            </Path>-->
+            <TextBlock x:Name="xHelpLayoutTextBlock" FontFamily="Comic Sans MS" Canvas.Left="500" Canvas.Top="200" Text="Help text content" Foreground="White" MaxWidth="450" MaxHeight="250" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" FontSize="22"/>
         </Canvas>
     </Grid>
 </Window>

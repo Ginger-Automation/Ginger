@@ -230,16 +230,6 @@ namespace Ginger
             }
         }
 
-        public static event HelpLayoutEventHandler HelpLayoutEvent;
-        public delegate void HelpLayoutEventHandler(HelpLayoutEventArgs args);
-        public static void OnHelpLayoutEvent(HelpLayoutEventArgs.eEventType eventType, Control focusedControl, string helpText)
-        {
-            HelpLayoutEventHandler handler = HelpLayoutEvent;
-            if (handler != null)
-            {
-                handler(new HelpLayoutEventArgs(eventType, focusedControl, helpText));
-            }
-        }
 
 
         // Main entry point to Ginger UI/CLI

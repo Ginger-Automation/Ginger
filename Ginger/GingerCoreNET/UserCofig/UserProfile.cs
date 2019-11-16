@@ -791,5 +791,9 @@ namespace Ginger
             }
         }
 
+
+        [IsSerializedForLocalRepository]
+        public List<string> ShownHelpLayoutsKeys = new List<string>();
+
     }
 }
