@@ -480,7 +480,7 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ApiActionsConversion\ApiConversionConfigurationWzardPage.xaml.cs">
+    <Compile Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ApiConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\UserControls\UCInputValuesGrid.xaml.cs">
@@ -760,7 +760,7 @@
     <Compile Include="UserControlsLib\UCWindowsGrid.xaml.cs">
       <DependentUpon>UCWindowsGrid.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Actions\ApiActionsConversion\ApiActionsConversionWizard.cs" />
+    <Compile Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionWizard.cs" />
     <Compile Include="WizardLib\ValidationDetails.cs" />
     <Compile Include="GeneralValidationRules\FileValidationRule.cs" />
     <Compile Include="GeneralValidationRules\GridValidationRule.cs" />
@@ -2084,7 +2084,7 @@
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsControlTreeItem.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowsElementTreeItemBase.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Windows\WindowTreeItem.cs" />
-    <Resource Include="Actions\ApiActionsConversion\ApiActionsConversionIntro.md" />
+    <Resource Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
     <Resource Include="Images\%40AddFile_16x16.png" />
     <Content Include="StaticDrivers\selenium-server-standalone.jar">
@@ -2675,7 +2675,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Actions\ApiActionsConversion\ApiConversionConfigurationWzardPage.xaml">
+    <Page Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
