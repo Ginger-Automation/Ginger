@@ -22,6 +22,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion;
+using Amdocs.Ginger.Repository;
 using Ginger.Actions.ActionConversion;
 using Ginger.WizardLib;
 using GingerCore;
@@ -35,6 +36,8 @@ namespace Ginger.Actions.ApiActionsConversion
     /// </summary>
     public class ApiActionsConversionWizard : WizardBase, IActionsConversionProcess
     {
+        RepositoryFolder<ApplicationAPIModel> mAPIModelFolder;
+
         public override string Title { get { return "Convert Webservices Actions"; } }
 
         private ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
@@ -61,7 +64,6 @@ namespace Ginger.Actions.ApiActionsConversion
             }
         }
 
-        public Context Context;
         public ObservableList<ConvertableActionDetails> ActionToBeConverted = new ObservableList<ConvertableActionDetails>();
         ConversionStatusReportPage mReportPage = null;
         ApiActionConversionUtils mConversionUtils = new ApiActionConversionUtils();
@@ -70,15 +72,15 @@ namespace Ginger.Actions.ApiActionsConversion
         /// Constructor
         /// </summary>
         /// <param name="context"></param>
-        public ApiActionsConversionWizard(Context context)
+        public ApiActionsConversionWizard(RepositoryFolder<ApplicationAPIModel> apiModelFolder)
         {
-            Context = context;
+            mAPIModelFolder = apiModelFolder;
             ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
 
-            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ApiActionsConversion/ApiActionsConversionIntro.md"));
+            AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Webservices Actions Conversion Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/APIModels/ApiActionsConversionWizard/ApiActionsConversionIntro.md"));
 
             string businessFlow = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
-            AddPage(Name: "Select " + businessFlow + " for Conversion", Title: "Select " + businessFlow + " for Conversion", SubTitle: "Select " + businessFlow + " for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, context));
+            AddPage(Name: "Select " + businessFlow + " for Conversion", Title: "Select " + businessFlow + " for Conversion", SubTitle: "Select " + businessFlow + " for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, new Context()));
             AddPage(Name: "Conversion Configurations", Title: "Conversion Configurations", SubTitle: "Conversion Configurations", Page: new ApiConversionConfigurationWzardPage());
 
             mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
@@ -93,8 +95,8 @@ namespace Ginger.Actions.ApiActionsConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert()
         {
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            ObservableList <BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
-            foreach (BusinessFlow bf in businessFlows)
+            ObservableList <BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();           
+            Parallel.ForEach(businessFlows, bf =>
             {
                 if (IsWebServiceTargetApplicationInFlow(bf))
                 {
@@ -103,10 +105,10 @@ namespace Ginger.Actions.ApiActionsConversion
                     flowToConvert.TotalProcessingActionsCount = mConversionUtils.GetConvertibleActionsCountFromBusinessFlow(bf);
                     if (flowToConvert.TotalProcessingActionsCount > 0)
                     {
-                        lst.Add(flowToConvert);  
+                        lst.Add(flowToConvert);
                     }
                 }
-            }
+            });
             return lst;
         }
 
@@ -178,7 +180,7 @@ namespace Ginger.Actions.ApiActionsConversion
 
                 if (flowsToConvert.Count > 0)
                 {
-                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations)).ConfigureAwait(true);
+                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations, mAPIModelFolder)).ConfigureAwait(true);
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -202,7 +204,7 @@ namespace Ginger.Actions.ApiActionsConversion
             {
                 ProcessStarted();
 
-                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations)).ConfigureAwait(true);
+                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations, mAPIModelFolder)).ConfigureAwait(true);
 
                 mReportPage.SetButtonsVisibility(true);
 

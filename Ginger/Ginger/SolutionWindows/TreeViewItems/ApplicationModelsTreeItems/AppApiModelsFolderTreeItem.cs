@@ -155,7 +155,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         /// <param name="e"></param>
         private void WebServiceActionsConversionHandler(object sender, RoutedEventArgs e)
         {            
-            WizardWindow.ShowWizard(new ApiActionsConversionWizard(new Context()), 900, 700);
+            WizardWindow.ShowWizard(new ApiActionsConversionWizard(mAPIModelFolder), 900, 700);
         }
 
         private void AddSoapAPIModel(object sender, RoutedEventArgs e)
