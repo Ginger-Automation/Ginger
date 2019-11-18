@@ -19,7 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.Actions.ApiActionsConversion;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -139,12 +139,23 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Import API's", AddAPIModelFromDocument, null, eImageType.Download);
             TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
+            TreeViewUtils.AddSubMenuItem(addMenu, "Convert Webservices Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
             if (mAPIModelFolder.IsRootFolder)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
 
             AddSourceControlOptions(mContextMenu);
+        }
+
+        /// <summary>
+        /// This event is used to handle the WebService Conversion Handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WebServiceActionsConversionHandler(object sender, RoutedEventArgs e)
+        {            
+            WizardWindow.ShowWizard(new ApiActionsConversionWizard(mAPIModelFolder), 900, 700);
         }
 
         private void AddSoapAPIModel(object sender, RoutedEventArgs e)
