@@ -7,7 +7,7 @@
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
         Height="600" Width="1100" WindowState="Maximized"   SizeChanged="xMainWindow_SizeChanged"      
-        Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
+        Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown" Loaded="MainWindow_Loaded">
 
     <Grid x:Name="xMainWindowPnl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid  Panel.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}">
@@ -276,7 +276,6 @@
 
             <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" >
                 <DockPanel VerticalAlignment="Center">
-                    <usercontrols:ImageMakerControl x:Name="xHelpLayoutDemoIcon" ImageType="Help" ToolTip="Show Help Layout" SetAsFontImageWithSize="18" Foreground="Purple" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0" MouseLeftButtonDown="xHelpLayoutDemoIcon_MouseLeftButtonDown"/>
                     <usercontrols:ImageMakerControl x:Name="xBetaFeaturesIcon" ImageType="Beta" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0" MouseLeftButtonDown="xBetaFeaturesIcon_MouseLeftButtonDown"/>
                     <StackPanel x:Name="xLogErrorsPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <usercontrols:ImageMakerControl x:Name="xLogErrorsIcon" ImageType="Error" SetAsFontImageWithSize="18" Foreground="Red" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="10,0,0,0" MouseLeftButtonDown="xLogErrors_MouseLeftButtonDown"/>

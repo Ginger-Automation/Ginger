@@ -1,4 +1,4 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
 
 namespace Ginger.GeneralWindows
 {
@@ -11,10 +11,10 @@ namespace Ginger.GeneralWindows
 
         //public eEventType EventType;
         public string HelpLayoutKey;
-        public Control FocusedControl;
+        public FrameworkElement FocusedControl;
         public string HelpText;
 
-        public HelpLayoutArgs(string helpLayoutKey, Control focusedControl, string helpText)
+        public HelpLayoutArgs(string helpLayoutKey, FrameworkElement focusedControl, string helpText)
         {
             this.HelpLayoutKey = helpLayoutKey;
             this.FocusedControl = focusedControl;

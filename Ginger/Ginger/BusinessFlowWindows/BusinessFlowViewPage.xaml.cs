@@ -63,7 +63,7 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             SetUIView();
-            BindControlsToBusinessFlow();
+            BindControlsToBusinessFlow();            
         }
 
         private void SetUIView()
@@ -402,6 +402,11 @@ namespace GingerWPF.BusinessFlowsLib
         {
             //OKButtonClicked = true;
             mGenericWin.Close();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            App.MainWindow.AddHelpLayoutToShow("BusinessFlowPage_AutomateBtnHelp", xAutomateBtn, "Click here to design your automation flow");
         }
     }
 }
