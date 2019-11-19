@@ -1052,10 +1052,6 @@ namespace Ginger.Run.RunSetActions
                         {
                             fieldsValuesHTMLTableCells.Append(tableStyle + ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString() + 's') + "</td>");
                         }
-                        else if (selectedField.FieldKey == RunSetReport.Fields.StartTimeStamp)
-                        {
-                            fieldsValuesHTMLTableCells.Append(tableStyle + DateTime.Parse(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString()).ToLocalTime().ToString() + " </td>");
-                        }
                         else if (selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate || selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
                         {
                             fieldsValuesHTMLTableCells.Append(tableStyle + ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString() + '%') + "</td>");
