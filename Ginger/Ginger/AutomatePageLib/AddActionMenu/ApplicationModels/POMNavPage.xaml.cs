@@ -99,30 +99,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             mContext.PropertyChanged += MContext_PropertyChanged;
             mPOMPage.OnSelect += MainTreeView_ItemSelected;
-
-            //mPOMPage.xTreeView.xTreeViewTree.ItemDoubleClick += POMItemsTreeView_ItemDoubleClick;
-
             SetElementsGridView();
             xPOMFrame.Content = mPOMPage;
             xPOMSplitter.Visibility = Visibility.Collapsed;
-        }
-
-        private void POMItemsTreeView_ItemDoubleClick(object sender, EventArgs e)
-        {
-            if (sender is TreeViewItem)
-            {
-                ApplicationPOMTreeItem apiModelTreeItem = (sender as TreeViewItem).Tag as ApplicationPOMTreeItem;
-                if (apiModelTreeItem != null)
-                {
-                    //ApplicationPOMModel selectedPOM = apiModelTreeItem.NodeObject() as ApplicationPOMModel;
-                    //if (selectedPOM != null)
-                    //{
-                    //    POMEditPage mAPIEditPage = new POMEditPage(selectedPOM, General.eRIPageViewMode.Standalone);
-                    //    System.Windows.Input.Mouse.OverrideCursor = null;
-                    //    mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog);     //, parentWindow: Window.GetWindow(this));
-                    //}
-                }
-            }
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

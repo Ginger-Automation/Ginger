@@ -34,10 +34,12 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
     {
         private ApplicationAPIModel mApiModel;
         private APIModelPage mAPIModelPage;
+        bool mShowEditInMenu = false;
 
-        public AppApiModelTreeItem(ApplicationAPIModel apiModel)
+        public AppApiModelTreeItem(ApplicationAPIModel apiModel, bool ShowEditInMenu = false)
         {
             mApiModel = apiModel;
+            mShowEditInMenu = ShowEditInMenu;
         }
 
         public object NodeObject()
@@ -90,9 +92,14 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            AddItemNodeBasicManipulationsOptions(mContextMenu);
+            AddItemNodeBasicManipulationsOptions(mContextMenu, allowEdit: mShowEditInMenu);
 
             AddSourceControlOptions(mContextMenu);
+        }
+
+        public override void EditTreeItem(object item)
+        {
+            (EditPage(null) as APIModelPage).ShowAsWindow(Ginger.eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.FindAndReplace);
         }
 
         public override void DuplicateTreeItem(object item)

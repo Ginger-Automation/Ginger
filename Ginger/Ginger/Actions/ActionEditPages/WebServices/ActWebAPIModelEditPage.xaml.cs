@@ -276,8 +276,8 @@ namespace Ginger.Actions.WebServices
 
         private void xViewAPIBtn_Click(object sender, RoutedEventArgs e)
         {
-            APIModelPage mAPIEditPage = new APIModelPage(AAMB, General.eRIPageViewMode.Standalone);
-            mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, parentWindow: Window.GetWindow(this));
+            APIModelPage mAPIEditPage = new APIModelPage(AAMB);
+            mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.FindAndReplace, parentWindow: Window.GetWindow(this));
         }
     }
 }
