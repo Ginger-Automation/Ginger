@@ -18,11 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.BusinessFlowPages;
 using Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -126,17 +128,12 @@ namespace Ginger.Activities
                 {
                     if (senderGrid != null)
                     {
-                        mActivitiesGroup.AddActivityToGroup(sharedActivity);
-                        //mBusinessFlow.Activities.Add(sharedActivity);
+                        Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
+                        mActivitiesGroup.AddActivityToGroup(newInstance);
                     }
                     else
                     {
                         mActivitiesGroup.RemoveActivityFromGroup(sharedActivity);
-                        //if (mBusinessFlow != null)
-                        //{
-                        //    //Activity instanceInBF = mBusinessFlow.Activities.Where(a => a.ActivitiesGroupID == mActivitiesGroup.Name && a.Guid == sharedActivity.Guid).FirstOrDefault();
-                        //    mBusinessFlow.Activities.Remove(sharedActivity);
-                        //}
                     }
                 }
             }

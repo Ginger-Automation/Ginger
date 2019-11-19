@@ -295,14 +295,13 @@ namespace Ginger.Repository
                         {
                             if (usage.HostActivity != null)
                             {
-                                //this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity));
-                                mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity);
-
+                                this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity));
+                                //mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity);
                             }
                             else
                             {
-                                //this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow));
-                                mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow);
+                                this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow));
+                                //mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow);
                             }
 
                             usage.Status = RepositoryItemUsage.eStatus.Updated;

@@ -235,59 +235,40 @@ namespace GingerCore.Activities
                         int grpIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
                         if (grpIndex >= 0)
                         {
+                            int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(g => g.ActivitiesGroupID == activitiesGroupInstance.Name).Last());
+
                             currentBF.ActivitiesGroups.Remove(activitiesGroupInstance);
                             currentBF.ActivitiesGroups.Insert(grpIndex, newInstance);
 
+                            // look for Activities that were added to this Group, and add those into the current Business Flow
+                            List<Activity> missingActivitiesInBF = this.ActivitiesIdentifiers.Where(m => !currentBF.Activities.Any(x => x.Guid == m.ActivityGuid)).Select(m => m.IdentifiedActivity).ToList();
+                            if (missingActivitiesInBF != null && missingActivitiesInBF.Count > 0)
+                            {
+                                foreach (Activity srActivity in missingActivitiesInBF)
+                                {
+                                    Activity activityIns = (Activity)srActivity.CreateInstance(true);
+                                    activityIns.Active = true;
+                                    currentBF.SetActivityTargetApplication(activityIns);
+                                    insertIndex++;
+                                    currentBF.Activities.Insert(insertIndex, activityIns);
+                                }
+                            }
+
                             currentBF.AttachActivitiesGroupsAndActivities();
+
+                            // look for Activities that were deleted from this Group, and delete those from the current Business Flow
+                            List<Activity> missingActivitiesFromBF = currentBF.Activities.Where(m => m.ActivitiesGroupID == this.Name && !this.ActivitiesIdentifiers.Any(x => x.ActivityGuid == m.Guid)).ToList();
+                            if (missingActivitiesFromBF != null && missingActivitiesFromBF.Count > 0)
+                            {
+                                foreach (Activity srActivity in missingActivitiesFromBF)
+                                {
+                                    currentBF.Activities.Remove(srActivity);
+                                }
+                            }
+
                             currentBF.ActivitiesGroups = currentBF.ActivitiesGroups;
                             currentBF.Activities = currentBF.Activities;
                         }
-                        #region some trials
-                        /// In case new Shared Activity is added to the current ActivityGroup
-                        //foreach (Activity currentActivity in newInstance.ActivitiesIdentifiers.Select(a => a.IdentifiedActivity))
-                        //{
-                        //    if(currentBF.Activities.Where(a => a.ActivitiesGroupID == newInstance.Name && a.Guid == currentActivity.Guid).FirstOrDefault() == null)
-                        //    {
-                        //        currentBF.Activities.Add(currentActivity);
-                        //    }
-                        //}
-
-                        ///// In case Shared Activity is deleted from the current ActivityGroup
-                        //ObservableList<Activity> existingActivities = new ObservableList<Activity>(currentBF.Activities.Where(a => a.ActivitiesGroupID == newInstance.Name).Distinct());
-                        //foreach (Activity currentActivity in existingActivities)
-                        //{
-                        //    int countInGroup = newInstance.ActivitiesIdentifiers.Where(a => a.ActivityGuid == currentActivity.Guid).Count();
-                        //    int countInBF = currentBF.Activities.Where(a => a.ActivitiesGroupID == newInstance.Name && a.Guid == currentActivity.Guid).Count();
-
-                        //    // No Change was done
-                        //    if (countInGroup == countInBF)
-                        //    {
-                        //        continue;
-                        //    }
-                        //    // New Activity added to the group
-                        //    else if(countInGroup > countInBF)
-                        //    {
-
-                        //    }
-                        //    // An Activity was deleted from the group
-                        //    else
-                        //    {
-
-                        //    }
-
-                        //    if (newInstance.ActivitiesIdentifiers.Where(a => a.ActivityGuid == currentActivity.Guid).FirstOrDefault() == null)
-                        //    {
-                        //        currentBF.Activities.Remove(currentActivity);
-                        //    }
-                        //}
-
-                        //int originalIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
-                        //currentBF.ActivitiesGroups.Remove(activitiesGroupInstance);
-                        //currentBF.SetUniqueActivitiesGroupName(newInstance);
-                        //currentBF.ActivitiesGroups.Insert(originalIndex, newInstance);
-                        //currentBF.AttachActivitiesGroupsAndActivities();
-                        //currentBF.ActivitiesGroups = currentBF.ActivitiesGroups;
-                        #endregion
                     }
                     break;
                 case eItemParts.Activities:
