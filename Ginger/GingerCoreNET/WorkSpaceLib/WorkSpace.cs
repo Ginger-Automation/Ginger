@@ -765,7 +765,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 if (string.IsNullOrEmpty(mTestArtifactsFolder))
                 {
-                    folder =  Path.Combine(WorkSpace.Instance.Solution.Folder, "ExecutionResults");
+                    return null;
                 }
                 else
                 {
