@@ -265,9 +265,12 @@ namespace GingerWPF.WizardLib
 
             if (mWizard.IsLastPage())
             {
-                xPrevButton.IsEnabled = mWizard.PrevEnabled;
                 xNextButton.IsEnabled = false;
                 xFinishButton.IsEnabled = true;
+                if (mWizard.DisableBackBtnOnLastPage == true)
+                {
+                    xPrevButton.IsEnabled = false;
+                }
             }
             else
             {

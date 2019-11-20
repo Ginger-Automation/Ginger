@@ -132,7 +132,7 @@ namespace GingerWPF.WizardLib
         //    }
         //}
 
-        public bool PrevEnabled { get; set; } = true;
+        public bool DisableBackBtnOnLastPage { get; set; } = false;
 
         public void AddPage(string Name, String Title, string SubTitle, IWizardPage Page)
         {
