@@ -560,7 +560,7 @@ namespace GingerCore
                     }
                     if (dt.Rows.Count == 0)
                     {
-                        mValueCalculated = "No Row found with " + Query;
+                        mValueCalculated = "No row found with selected query";
                         return;
                     }
                     if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
