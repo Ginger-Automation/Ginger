@@ -59,6 +59,7 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using GingerCore.Actions.Common;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 
 namespace Ginger.WindowExplorer
 {
@@ -1100,11 +1101,10 @@ namespace Ginger.WindowExplorer
         {
             if (WindowsComboBox.SelectedValue != null)
             {
-                if (mWindowExplorerDriver.AddSwitchWindowAction(((AppWindow)WindowsComboBox.SelectedValue).Title) == false)
-                    StatusTextBlock.Text = "Not implemented yet or not needed for this driver type";
+                WindowExplorerCommon.CreateActUISwitchWindowAction(((AppWindow)WindowsComboBox.SelectedValue).Title, mContext);
             }
         }
-        
+
         private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
         {
             ControlsViewRow.Height = new GridLength(200, GridUnitType.Star);

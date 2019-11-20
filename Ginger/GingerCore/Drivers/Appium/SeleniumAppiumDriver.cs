@@ -1489,10 +1489,6 @@ namespace GingerCore.Drivers.Appium
             return list;
         }
         
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            return false;
-        }
 
         public event Amdocs.Ginger.Plugin.Core.RecordingEventHandler RecordingEvent;
 

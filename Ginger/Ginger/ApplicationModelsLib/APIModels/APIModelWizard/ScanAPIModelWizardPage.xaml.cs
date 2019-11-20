@@ -81,7 +81,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
-            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList).OrderBy(d => d.comparisonStatus));
+            ObservableList<ApplicationAPIModel> selectedAPIModels = GingerCore.General.ConvertListToObservableList<ApplicationAPIModel>(AddAPIModelWizard.LearnedAPIModelsList.Where(m => m.IsSelected == true).ToList());
+            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
             xApisSelectionGrid.InitViewItems();
 
@@ -191,6 +192,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
                     xApisSelectionGrid.ChangeGridView(eAddAPIWizardViewStyle.Add.ToString());
+                    xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
                 }
                 bool parseSuccess = false;
                 if (AddAPIModelWizard.LearnedAPIModelsList != null)
@@ -455,12 +457,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
+        private object GetFrameElementDataContext(object sender)
+        {
+            var fEl = sender as FrameworkElement;
+            if (fEl != null)
+                return fEl.DataContext;
+            else
+                return null;
+        }
+
         private void XManualMatchBtn_Click(object sender, RoutedEventArgs e)
         {
             DeltaAPIModel deltaAPI = null;
-            var fEl = sender as FrameworkElement;
-            if (fEl != null)
-                deltaAPI = fEl.DataContext as DeltaAPIModel;
+            deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
 
             if (deltaAPI != null)
             {
@@ -492,6 +501,32 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
 
+        }
+
+        private void xClearMatchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeltaAPIModel deltaAPI = null;
+            deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
+
+            int modelIndex = xApisSelectionGrid.DataSourceList.IndexOf(deltaAPI);
+            if (deltaAPI != null)
+            {
+                if(deltaAPI.matchingAPIModel != null)
+                {
+                    deltaAPI.matchingAPIModel = null;
+                    deltaAPI.comparisonStatus = DeltaAPIModel.eComparisonOutput.Unknown;
+                    deltaAPI.SelectedOperationEnum = DeltaAPIModel.eHandlingOperations.Add;
+                    deltaAPI.SelectedOperation = DeltaAPIModel.GetEnumDescription(deltaAPI.SelectedOperationEnum);
+
+                    xApisSelectionGrid.DataSourceList = xApisSelectionGrid.DataSourceList;
+
+                    // xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
+                    // xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
+
+                    //IObservableList sourceInstance = xApisSelectionGrid.DataSourceList;
+                    //xApisSelectionGrid.DataSourceList = sourceInstance;
+                }
+            }
         }
     }
 }

@@ -103,20 +103,40 @@ namespace GingerCore.Actions
             }
         }
 
+        private List<ePlatformType> obsoletePlatformList = new List<ePlatformType>()
+            {
+                ePlatformType.ASCF,
+                ePlatformType.Java,
+                ePlatformType.Web,
+                ePlatformType.Windows,
+                ePlatformType.PowerBuilder,
+                ePlatformType.Mobile
+            };
+
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.ASCF)
+            // returning true as actswitchwindow is obsolete for all platform
+             return true;
+        }
+
+        public override List<ePlatformType> LegacyActionPlatformsList
+        {
+            get
             {
-                return true;
+                return obsoletePlatformList;
+            }
+        }
+
+        Type IObsoleteAction.TargetAction()
+        {
+            if(Platform.Equals(ePlatformType.Web) || Platform.Equals(ePlatformType.Mobile))
+            {
+                return typeof(ActBrowserElement);
             }
             else
             {
-                return false;
+                return typeof(ActUIElement);
             }
-        }
-        Type IObsoleteAction.TargetAction()
-        {
-            return typeof(ActUIElement);
         }
         String IObsoleteAction.TargetActionTypeName()
         {
@@ -125,34 +145,37 @@ namespace GingerCore.Actions
         }
         ePlatformType IObsoleteAction.GetTargetPlatform()
         {
-            return ePlatformType.Java;
+            if (obsoletePlatformList.Contains(Platform))
+            {
+                if (this.Platform.Equals(ePlatformType.ASCF))
+                {
+                    return ePlatformType.Java;
+                }
+                else
+                {
+                    return this.Platform;
+                }
+
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
+            }
         }
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            AutoMapper.MapperConfiguration mapConfig;
+
+            mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
-            newAct.ElementType = eElementType.Unknown;
             newAct.ElementType = eElementType.Window;
             newAct.ElementAction = ActUIElement.eElementAction.Switch;
-            newAct.ElementLocateValue = this.LocateValue;
-           
-            switch (LocateBy)
-            {
-                case eLocateBy.ByName:
-                    newAct.ElementLocateBy = eLocateBy.ByName;
-                    break;
-                case eLocateBy.ByTitle:
-                    newAct.ElementLocateBy = eLocateBy.ByTitle;
-                    break;
-                default:
-                    newAct.ElementLocateBy = eLocateBy.Unknown;
-                    break;
-            }
 
-            // check if the current action is a garbage action or not
-            newAct.Active = false;
-            newAct.Description = "*** Partially Converted *** - " + this.Description + System.Environment.NewLine + "Please update the Locate By and Locate Value as shown in Windows Explorer for Java Driver.";
+            newAct.ElementLocateBy = LocateBy;
+            newAct.ElementLocateValue = LocateValue;
+            newAct.GetOrCreateInputParam(ActUIElement.Fields.SyncTime, Convert.ToString(WaitTime));
             return newAct;
+
         }
 
         internal PayLoad GetPayLoad()

@@ -398,6 +398,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 response = HandlePOMElememntExecution(act);
             }
+            else if (act.ElementType.Equals(eElementType.Window) && act.ElementAction.Equals(ActUIElement.eElementAction.Switch))
+            {
+                response = ActUISwitchWindow(act);
+            }
             else
             {
                 PayLoad PL = act.GetPayLoad();
@@ -409,6 +413,35 @@ namespace GingerCore.Drivers.JavaDriverLib
                 List<KeyValuePair<string, string>> parsedResponse = response.GetParsedResult();
                 act.AddOrUpdateReturnParsedParamValue(parsedResponse);
             }
+            return response;
+        }
+
+        private PayLoad ActUISwitchWindow(ActUIElement act)
+        {
+            Stopwatch St = new Stopwatch();
+            St.Reset();
+            St.Start();
+            var waitTime = this.ImplicitWait;
+
+            var syncTime = Convert.ToInt32(act.GetInputParamCalculatedValue(ActUIElement.Fields.SyncTime));
+            if (syncTime >= 0)
+            {
+                waitTime = syncTime;
+            }
+
+            PayLoad response;
+            PayLoad Request = act.GetPayLoad();
+            response = Send(Request);
+
+            while (!response.IsOK())
+            {
+                response = Send(Request);
+                if(St.ElapsedMilliseconds > waitTime * 1000)
+                {
+                    break;
+                }
+            }
+            St.Stop();
             return response;
         }
 
@@ -527,17 +560,14 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public override void RunAction(Act act)
         {
-            string actClass = act.GetType().ToString();
-            //TODO: avoid hard coded string...
-            actClass = actClass.Replace("GingerCore.Actions.Java.", "");
-            actClass = actClass.Replace("GingerCore.Actions.", "");
+            string actClass = act.GetType().Name;
             PayLoad Response = null;
 
             SetCommandTimeoutForAction(act.Timeout);
 
             switch (actClass)
             {
-                case "Common.ActUIElement":
+                case "ActUIElement":
                     Response = HandleActUIElement((ActUIElement)act);
                     break;
 
@@ -582,7 +612,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (Response != null)
             {
-                if (actClass.Equals("Common.ActUIElement") && act.GetInputParamValue(ActUIElement.Fields.ElementLocateBy).Equals(eLocateBy.POMElement.ToString()))
+                if (actClass.Equals("ActUIElement") && act.GetInputParamValue(ActUIElement.Fields.ElementLocateBy).Equals(eLocateBy.POMElement.ToString()))
                 {
                     return;
                 }
@@ -2197,11 +2227,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return minifiedString + ";";
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            CreateSwitchWindowAction(Title);
-            return true;
-        }
+
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
@@ -2932,16 +2958,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                     break;
 
                 case "SwitchWindow":
-
                     string WindowTitle = pl.GetValueString();
-                    BusinessFlow.AddAct(new ActSwitchWindow()
+                    var actUISwitch = new ActUIElement()
                     {
                         Description = "Switch Window '" + WindowTitle + "'",
-                        LocateBy = eLocateBy.ByTitle,
-                        LocateValue = WindowTitle,
-                        Wait = 5,
-                        Value = WindowTitle
-                    });
+                        ElementLocateBy = eLocateBy.ByTitle,
+                        ElementLocateValue = WindowTitle,
+                        ElementType = eElementType.Window,
+                        ElementAction = ActUIElement.eElementAction.Switch
+                    };
+                    actUISwitch.GetOrCreateInputParam(ActUIElement.Fields.SyncTime, "30");
+                    BusinessFlow.AddAct(actUISwitch);
                     break;
 
                 //Widgets recorded elements
@@ -3091,19 +3118,35 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void CreateSwitchWindowAction(string windowTitle)
         {
-            ActSwitchWindow act = new ActSwitchWindow();
-            act.Description = "Switch Window - " + windowTitle;
-            act.LocateBy = eLocateBy.ByTitle;
-            act.LocateValue = windowTitle;
+            //ActSwitchWindow act = new ActSwitchWindow();
+            //act.Description = "Switch Window - " + windowTitle;
+            //act.LocateBy = eLocateBy.ByTitle;
+            //act.LocateValue = windowTitle;
+            //if (BusinessFlow != null)
+            //{
+            //    BusinessFlow.AddAct(act, true);
+            //}
+            //else
+            //{
+            //    Reporter.ToUser(eUserMsgKey.RestartAgent);
+            //}
+            ActUIElement actUIElement = new ActUIElement()
+            {
+                Description = "Switch Window - " + windowTitle,
+                ElementLocateBy = eLocateBy.ByTitle,
+                ElementLocateValue = windowTitle,
+                ElementType = eElementType.Window
+            };
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.SyncTime, "30");
             if (BusinessFlow != null)
             {
-                BusinessFlow.AddAct(act, true);
+                BusinessFlow.AddAct(actUIElement, true);
             }
             else
             {
                 Reporter.ToUser(eUserMsgKey.RestartAgent);
             }
-            
+
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)

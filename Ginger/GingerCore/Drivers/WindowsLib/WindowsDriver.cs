@@ -93,19 +93,23 @@ namespace GingerCore.Drivers.WindowsLib
         public override void RunAction(Act act)
         {
             //TODO: add func to Act + Enum for switch
-            string actClass = act.GetType().ToString();
+            string actClass = act.GetType().Name;
 
             mUIAutomationHelper.mLoadTimeOut = mActionTimeout;
             mUIAutomationHelper.taskFinished = false;
 
-            //TODO: avoid hard coded string...
-            actClass = actClass.Replace("GingerCore.Actions.", "");
-            actClass = actClass.Replace("Windows.", "");
-
-
-            if (actClass != "ActSwitchWindow" || (actClass == "ActWindow" && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
+            if (!actClass.Equals(typeof(ActSwitchWindow)) || (actClass.Equals(typeof(ActWindow)) && ((ActWindow)act).WindowActionType != ActWindow.eWindowActionType.Switch))
             {
-                CheckRetrySwitchWindowIsNeeded();
+                var checkWindow = true;
+                if(actClass.Equals(typeof(ActUIElement)) && ((ActUIElement)act).ElementAction.Equals(ActUIElement.eElementAction.Switch))
+                {
+                    checkWindow = false;
+                }
+                if (checkWindow)
+                {
+                    CheckRetrySwitchWindowIsNeeded();
+                }
+                
             }
 
             if (act.Timeout != null)
@@ -160,7 +164,7 @@ namespace GingerCore.Drivers.WindowsLib
                         }
                         break;
                     
-                case "Common.ActUIElement":
+                case "ActUIElement":
                     HandleUIElementAction(act);
                     break;
                 case "ActBrowserElement":
@@ -285,37 +289,42 @@ namespace GingerCore.Drivers.WindowsLib
 
         private void HandleUIElementAction(Act actWC)
         {
-            ActUIElement actUIWC = (ActUIElement)actWC;
-
-            string locateValue = actUIWC.ElementLocateValueForDriver;
-            object AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIWC.ElementLocateBy, locateValue);
-
-            if (AE == null && actUIWC.ElementAction != ActUIElement.eElementAction.IsEnabled)
+            ActUIElement actUIElement = (ActUIElement)actWC;
+            object AE = null;
+            if (!actUIElement.ElementType.Equals(eElementType.Window) && !actUIElement.ElementAction.Equals(ActUIElement.eElementAction.Switch))
             {
-                actUIWC.Error = "Element not Found - " + actUIWC.ElementLocateBy + " " + actUIWC.ElementLocateValueForDriver;
-                return;
-            }
+                string locateValue = actUIElement.ElementLocateValueForDriver;
+                AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIElement.ElementLocateBy, locateValue);
 
-            switch (actUIWC.ElementAction)
+                if (AE == null && actUIElement.ElementAction != ActUIElement.eElementAction.IsEnabled)
+                {
+                    actUIElement.Error = "Element not Found - " + actUIElement.ElementLocateBy + " " + actUIElement.ElementLocateValueForDriver;
+                    return;
+                }
+            }
+            switch (actUIElement.ElementAction)
             {
                 case ActUIElement.eElementAction.DragDrop:
-                    mUIAutomationHelper.DragAndDrop(AE, actUIWC);
+                    mUIAutomationHelper.DragAndDrop(AE, actUIElement);
                     break;
 
                 case ActUIElement.eElementAction.ClickAndValidate:
-                    string status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIWC);
+                    string status = mUIAutomationHelper.ClickAndValidteHandler(AE, actUIElement);
                     if (!status.Contains("Clicked Successfully"))
                     {
-                        actUIWC.Error += status;
+                        actUIElement.Error += status;
                     }
                     else
                     {
-                        actUIWC.ExInfo += status;
+                        actUIElement.ExInfo += status;
                     }
+                    break;
+                case ActUIElement.eElementAction.Switch:
+                    mUIAutomationHelper.ActUISwitchWindow(actUIElement);
                     break;
 
                 default:
-                    actUIWC.Error = "Unable to perform operation";
+                    actUIElement.Error = "Unable to perform operation";
                     break;
             }
         }
@@ -619,11 +628,7 @@ namespace GingerCore.Drivers.WindowsLib
             mUIAutomationHelper.SwitchToWindow(Title);
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            mUIAutomationHelper.CreateSwitchWindowAction(Title);
-            return true;
-        }
+
         
         string IWindowExplorer.GetFocusedControl()
         {
