@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Globals">
     <SccProjectName>SAK</SccProjectName>
@@ -7,6 +7,9 @@
     <SccLocalPath>SAK</SccLocalPath>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -27,7 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
-    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1402,10 +1402,6 @@ namespace GingerCore.Drivers.ASCF
             return list;
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            return false;
-        }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)
         {
