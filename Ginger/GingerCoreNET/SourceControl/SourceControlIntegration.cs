@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -174,13 +175,16 @@ namespace Ginger.SourceControl
         public static bool ResolveConflicts(SourceControlBase SourceControl, string path, eResolveConflictsSide side)
         {
             string error = string.Empty;
+            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
 
+            repositoryFolderBase.PauseFileWatcher();
             if (!SourceControl.ResolveConflicts(path, side, ref error))
             {
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
-
+            repositoryFolderBase.ResumeFileWatcher();
+            repositoryFolderBase.ReloadUpdatedXML(path);
             return true;
         }
 
