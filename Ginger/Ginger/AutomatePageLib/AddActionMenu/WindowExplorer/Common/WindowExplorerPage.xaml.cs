@@ -894,16 +894,16 @@ namespace Ginger.WindowExplorer
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
+                StatusTextBlock.Text = "Loading";
                 List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
 
-                StatusTextBlock.Text = "Ready";
                 // Convert to obserable for the grid
                 VisibleElementsInfoList.Clear();
                 foreach (ElementInfo EI in list)
                 {
                     VisibleElementsInfoList.Add(EI);
                 }
-
+                StatusTextBlock.Text = "Ready";
                 WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
 
             }
@@ -1017,10 +1017,11 @@ namespace Ginger.WindowExplorer
                 WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
                 if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
                         ShowFilterElementsPage();
-                RefreshControlsGrid();
+                
                 image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
                 GridTreeViewButton.Content = image;
                 GridTreeViewButton.ToolTip = "Switch to Tree View";
+                RefreshControlsGrid();
             }           
         }
 
