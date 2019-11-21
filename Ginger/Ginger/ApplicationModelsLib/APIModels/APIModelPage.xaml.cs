@@ -759,6 +759,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             View = 0,
             Design = 1,
             FindAndReplace = 2,
+            Edit = 3,
             //Global = 4
         }
 
@@ -807,6 +808,20 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     winButtons.Add(undoBtnAnalyzer);
                     winButtons.Add(saveBtnAnalyzer);
                     break;
+                case eEditMode.Edit:
+                    title = mApplicationAPIModel.Name + " Edit Page";
+                    mApplicationAPIModel.SaveBackup();
+
+                    Button saveBtn = new Button() { Content = "Save" };
+                    saveBtn.Click += saveBtn_Click;
+
+                    Button undoChangesBtn = new Button() { Content = "Undo & Close" };
+                    undoChangesBtn.Click += UndoChangesBtn_Click;
+
+                    winButtons.Add(saveBtn);
+                    winButtons.Add(undoChangesBtn);
+
+                    break;
             }
             if(parentWindow == null)
             {
@@ -815,6 +830,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, parentWindow, windowStyle, title, this, winButtons, false, string.Empty, CloseWinClicked, startupLocationWithOffset: startupLocationWithOffset);
             return saveWasDone;
+        }
+
+        private void UndoChangesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UndoChangesAndClose();
+            mApplicationAPIModel.SetDirtyStatusToNoChange();
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)

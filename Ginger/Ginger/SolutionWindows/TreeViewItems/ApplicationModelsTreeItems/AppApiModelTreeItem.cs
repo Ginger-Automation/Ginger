@@ -99,7 +99,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public override void EditTreeItem(object item)
         {
-            (EditPage(null) as APIModelPage).ShowAsWindow(Ginger.eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.FindAndReplace);
+            (EditPage(null) as APIModelPage).ShowAsWindow(Ginger.eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.Edit);
         }
 
         public override void DuplicateTreeItem(object item)
