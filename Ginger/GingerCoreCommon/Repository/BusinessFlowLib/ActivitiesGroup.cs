@@ -235,29 +235,38 @@ namespace GingerCore.Activities
                         int grpIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
                         if (grpIndex >= 0)
                         {
-                            int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(g => g.ActivitiesGroupID == activitiesGroupInstance.Name).Last());
+                            int firstActivityIndex = currentBF.Activities.IndexOf(currentBF.ActivitiesGroups[grpIndex].ActivitiesIdentifiers.FirstOrDefault().IdentifiedActivity);
+                            if (firstActivityIndex == -1)
+                            {
+                                firstActivityIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(a => a.Guid == currentBF.ActivitiesGroups[grpIndex].ActivitiesIdentifiers.FirstOrDefault().ActivityGuid).FirstOrDefault());
+                            }
 
-                            currentBF.ActivitiesGroups.Remove(activitiesGroupInstance);
-                            currentBF.ActivitiesGroups.Insert(grpIndex, newInstance);
+                            int insertIndex = firstActivityIndex;
 
-                            // look for Activities that were added to this Group, and add those into the current Business Flow
-                            List<Activity> missingActivitiesInBF = this.ActivitiesIdentifiers.Where(m => !currentBF.Activities.Any(x => x.Guid == m.ActivityGuid)).Select(m => m.IdentifiedActivity).ToList();
+                            // look for Activities that were added to this Group, and Add those into the current Business Flow
+                            List<ActivityIdentifiers> missingActivitiesInBF = newInstance.ActivitiesIdentifiers.Where(m => !currentBF.Activities.Any(x => x.Guid == m.ActivityGuid) && !currentBF.Activities.Any(x => x.ParentGuid == m.ActivityGuid)).ToList();
+
                             if (missingActivitiesInBF != null && missingActivitiesInBF.Count > 0)
                             {
-                                foreach (Activity srActivity in missingActivitiesInBF)
+                                foreach (ActivityIdentifiers srActivityIdentifier in missingActivitiesInBF)
                                 {
-                                    Activity activityIns = (Activity)srActivity.CreateInstance(true);
-                                    activityIns.Active = true;
-                                    currentBF.SetActivityTargetApplication(activityIns);
+                                    //int aiIndex = this.ActivitiesIdentifiers.IndexOf(srActivityIdentifier);
+                                    int aiIndex = this.ActivitiesIdentifiers.IndexOf(this.ActivitiesIdentifiers.Where(a => a.ActivityGuid == srActivityIdentifier.ActivityGuid).FirstOrDefault());
+                                    Activity newSRActInst = this.ActivitiesIdentifiers[aiIndex].IdentifiedActivity.CreateInstance(true) as Activity;
+                                    currentBF.SetActivityTargetApplication(newSRActInst);
                                     insertIndex++;
-                                    currentBF.Activities.Insert(insertIndex, activityIns);
+                                    currentBF.Activities.Insert(insertIndex, newSRActInst);
+                                    srActivityIdentifier.IdentifiedActivity = newSRActInst;
                                 }
                             }
+
+                            // Check in case Activities were moved/shifted
+                            ReArrangeActivitiesSequenceBasedOnGroup(currentBF, firstActivityIndex, newInstance);
 
                             currentBF.AttachActivitiesGroupsAndActivities();
 
                             // look for Activities that were deleted from this Group, and delete those from the current Business Flow
-                            List<Activity> missingActivitiesFromBF = currentBF.Activities.Where(m => m.ActivitiesGroupID == this.Name && !this.ActivitiesIdentifiers.Any(x => x.ActivityGuid == m.Guid)).ToList();
+                            List<Activity> missingActivitiesFromBF = currentBF.Activities.Where(m => m.ActivitiesGroupID == newInstance.Name && !newInstance.ActivitiesIdentifiers.Any(x => x.ActivityGuid == m.Guid) && !newInstance.ActivitiesIdentifiers.Any(x => x.ActivityGuid == m.ParentGuid)).ToList();
                             if (missingActivitiesFromBF != null && missingActivitiesFromBF.Count > 0)
                             {
                                 foreach (Activity srActivity in missingActivitiesFromBF)
@@ -265,6 +274,9 @@ namespace GingerCore.Activities
                                     currentBF.Activities.Remove(srActivity);
                                 }
                             }
+
+                            currentBF.ActivitiesGroups.Remove(activitiesGroupInstance);
+                            currentBF.ActivitiesGroups.Insert(grpIndex, newInstance);
 
                             currentBF.ActivitiesGroups = currentBF.ActivitiesGroups;
                             currentBF.Activities = currentBF.Activities;
@@ -295,6 +307,35 @@ namespace GingerCore.Activities
             }
         }
 
+        private void ReArrangeActivitiesSequenceBasedOnGroup(BusinessFlow currentBF, int firstActivityIndex, ActivitiesGroup actGroup)
+        {
+            //if (firstActivityIndex >= 0)
+            //{
+            //    for (int i = firstActivityIndex; i < firstActivityIndex + this.ActivitiesIdentifiers.Count; i++)
+            //    {
+            //        Activity bfActivity = currentBF.Activities[i];
+            //        Activity grpActivity = this.ActivitiesIdentifiers[i - firstActivityIndex].IdentifiedActivity;
+
+            //        if (bfActivity.Guid != grpActivity.Guid)
+            //        {
+            //            int indexInGrp = this.ActivitiesIdentifiers.IndexOf(this.ActivitiesIdentifiers.Where(a => a.ActivityGuid == bfActivity.Guid).FirstOrDefault());
+            //            currentBF.Activities.Move(i, firstActivityIndex + indexInGrp);
+            //        }
+            //    }
+            //}
+
+            if (firstActivityIndex >= 0)
+            {
+                for (int c = firstActivityIndex; c < firstActivityIndex + actGroup.ActivitiesIdentifiers.Count; c++)
+                {
+                    if (currentBF.Activities[c].Guid != actGroup.ActivitiesIdentifiers[c - firstActivityIndex].ActivityGuid)
+                    {
+                        int posInGroup = actGroup.ActivitiesIdentifiers.IndexOf(actGroup.ActivitiesIdentifiers.Where(ac => ac.ActivityGuid == currentBF.Activities[c].Guid).FirstOrDefault());
+                        currentBF.Activities.Move(c, firstActivityIndex + posInGroup);
+                    }
+                }
+            }
+        }
 
         public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
