@@ -6556,7 +6556,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.MultiSetValue:
-                        List<IWebElement> textels = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                        List<IWebElement> textels = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
                         if (textels != null)
                         {
                             try
@@ -6570,12 +6570,12 @@ namespace GingerCore.Drivers
                             }
                             catch (Exception)
                             {
-                                act.Error = "Error: One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                                act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
                             }
                         }
                         else
                         {
-                            act.Error = "Error: One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                            act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
                             return;
                         }
                         break;
@@ -6608,7 +6608,7 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            act.Error = "Failed to count number of elements for - " + act.LocateBy + " " + act.LocateValueCalculated;
+                            act.Error = "Failed to count number of elements for - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
                             act.ExInfo = ex.Message;
                         }
                         break;
