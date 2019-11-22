@@ -27,7 +27,7 @@ namespace GingerCoreNETUnitTest
         static BusinessFlow mBF;
         static string solutionName;
         static SolutionRepository mSolutionRepository;
-        static ObservableList<BusinessFlow> mListBF;        
+        static ObservableList<BusinessFlow> mListBF;
         static RepositoryFolder<ApplicationAPIModel> apiModelsFolder;
         static string webService = "WebServices";
 
@@ -66,7 +66,14 @@ namespace GingerCoreNETUnitTest
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+            if (apiModelsFolder != null)
+            {
+                ObservableList<ApplicationAPIModel> list = apiModelsFolder.GetFolderItems();
+                for (int i = 0; i < list.Count;)
+                {
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(list[i]);
+                }
+            }
         }
 
         private static void CreateTestSolution()
@@ -86,6 +93,22 @@ namespace GingerCoreNETUnitTest
             SR.AddRepositoryItem(E1);
 
             SR.Close();
+        }
+
+        #region 1st Test
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void APIActionConversionNewModelTest()
+        {
+            GetActivityWithActWebApiActions();
+
+            ExecuteActionConversion(false, false);
+
+            bool isValid = ValidateApiActionConversion();
+
+            //Assert
+            Assert.AreEqual(isValid, true);
         }
 
         private static void GetActivityWithActWebApiActions()
@@ -114,11 +137,86 @@ namespace GingerCoreNETUnitTest
 
             activity.Acts.Add(actSoapJson);
 
-            mBF.AddActivity(activity);            
+            mBF.AddActivity(activity);
             mListBF.Add(mBF);
         }
 
-        private static void GetActivityWithActionsWithSameParametersDiffernetOptionalValues()
+        private static bool ValidateApiActionConversion()
+        {
+            bool isValid = true;
+
+            ObservableList<ApplicationAPIModel> list = apiModelsFolder.GetFolderItems();
+            if (list.Count <= 0)
+            {
+                isValid = false;
+            }
+
+            if (list[0].AppModelParameters.Count > 0)
+            {
+                isValid = false;
+            }
+
+            if (isValid)
+            {
+                foreach (BusinessFlow bf in mListBF)
+                {
+                    if (bf.Activities[0].Acts.Count < 4)
+                    {
+                        isValid = false;
+                        break;
+                    }
+
+                    foreach (var activity in bf.Activities)
+                    {
+                        string sourceDescription = activity.Acts[0].Description;
+                        string convertedDescription = activity.Acts[1].Description;
+                        if (sourceDescription != convertedDescription)
+                        {
+                            isValid = false;
+                            break;
+                        }
+
+                        string sourceActType = activity.Acts[0].GetType().Name.ToString();
+                        string convertedActType = activity.Acts[1].GetType().Name.ToString();
+                        if (sourceActType != typeof(ActWebAPIRest).Name && convertedActType != typeof(ActWebAPIModel).Name)
+                        {
+                            isValid = false;
+                            break;
+                        }
+
+                        sourceActType = activity.Acts[2].GetType().Name.ToString();
+                        convertedActType = activity.Acts[3].GetType().Name.ToString();
+                        if (sourceActType != typeof(ActWebAPISoap).Name && convertedActType != typeof(ActWebAPIModel).Name)
+                        {
+                            isValid = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return isValid;
+        }
+
+        #endregion
+
+        #region 2nd Test
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void APIActionConversionOptionalValuesTest()
+        {
+            GetActivityWithActionsWithSameParametersDiffernetOptionalValues(false);
+
+            ExecuteActionConversion(true, false);
+
+            bool isValid = ValidateApiActionConversionOptionalValues();
+
+            //Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        private static void GetActivityWithActionsWithSameParametersDiffernetOptionalValues(bool onlyOneAction)
         {
             Activity activity = new Activity();
             activity.Active = true;
@@ -132,21 +230,173 @@ namespace GingerCoreNETUnitTest
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
+            ObservableList<ActReturnValue> retVal = new ObservableList<ActReturnValue>();
+            retVal.Add(new ActReturnValue() { Param = "RetCode_1st", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() });
+            retVal.Add(new ActReturnValue() { Param = "RetCode_2nd", Expected = null, StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() });
+            retVal.Add(new ActReturnValue() { Param = "RetCode_3rd", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.DataSource.ToString() });
+            actRest.ReturnValues = retVal;
+
             activity.Acts.Add(actRest);
 
-            ActWebAPIRest actRestDiff = new ActWebAPIRest();
-            actRestDiff.Active = true;
-            actRestDiff.Description = "WebAPI Soap Action-JsonBody";
+            if (!onlyOneAction)
+            {
+                ActWebAPIRest actRestDiff = new ActWebAPIRest();
+                actRestDiff.Active = true;
+                actRestDiff.Description = "WebAPI REST Action-XMLBody 2";
 
-            SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBodyDifferentOptionalValues());
-            SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
-            SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
+                SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBodyDifferentOptionalValues());
+                SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
+                SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
-            activity.Acts.Add(actRestDiff);
+                activity.Acts.Add(actRestDiff);
+            }
 
             mBF.AddActivity(activity);
             mListBF.Add(mBF);
         }
+
+        private static bool ValidateApiActionConversionOptionalValues()
+        {
+            bool isValid = true;
+
+            ObservableList<ApplicationAPIModel> list = apiModelsFolder.GetFolderItems();
+            if (list.Count <= 0)
+            {
+                isValid = false;
+            }
+            
+            if (isValid && list[0].ReturnValues.Count > 0)
+            {
+                isValid = false;
+            }
+
+            if (isValid && list.Count == 1)
+            {
+                if (list[0].AppModelParameters.Count != 2)
+                {
+                    isValid = false;
+                }
+                else if (list[0].AppModelParameters.Count == 2)
+                {
+                    if (list[0].AppModelParameters[0].OptionalValuesList.Count != 2 && list[0].AppModelParameters[0].OptionalValuesString == "11*,33")
+                    {
+                        isValid = false;
+                    }
+                    if (list[0].AppModelParameters[1].OptionalValuesList.Count != 2 && list[0].AppModelParameters[1].OptionalValuesString == "22*,44")
+                    {
+                        isValid = false;
+                    }
+                }
+                
+            }
+
+            return isValid;
+        }
+
+        #endregion
+
+        #region 3rd Test
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void APIActionConversionParameterizeBodyTest()
+        {
+            GetActivityWithActionsWithSameParametersDiffernetOptionalValues(true);
+
+            ExecuteActionConversion(true, false);
+
+            bool isValid = ValidateApiActionConversionParameterizeBody();
+
+            //Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        private static bool ValidateApiActionConversionParameterizeBody()
+        {
+            bool isValid = true;
+
+            ObservableList<ApplicationAPIModel> list = apiModelsFolder.GetFolderItems();
+            if (list.Count <= 0)
+            {
+                isValid = false;
+            }
+            else if (list.Count == 1)
+            {
+                string paramName = list[0].AppModelParameters[0].ItemName.Replace("{", "").Replace("}", "");
+                if (!list[0].RequestBody.Contains("{" + paramName + "}"))
+                {
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        #endregion
+
+        #region 4th Test
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void APIActionConversionReturnValueTest()
+        {
+            GetActivityWithActionsWithSameParametersDiffernetOptionalValues(true);
+
+            ExecuteActionConversion(false, true);
+
+            bool isValid = ValidateApiActionConversionReturnValue();
+
+            //Assert
+            Assert.AreEqual(isValid, true);
+        }
+
+        private static bool ValidateApiActionConversionReturnValue()
+        {
+            bool isValid = true;
+
+            ObservableList<ApplicationAPIModel> list = apiModelsFolder.GetFolderItems();
+            if (list.Count <= 0)
+            {
+                isValid = false;
+            }
+            else if (list.Count == 1)
+            {
+                if (list[0].ReturnValues == null || list[0].ReturnValues.Count <= 0)
+                {
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        #endregion
+
+        #region Execution
+
+        private static void ExecuteActionConversion(bool parameterizeRequestBody, bool pullValidations)
+        {
+            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
+            ApiActionConversionUtils utils = new ApiActionConversionUtils();
+            foreach (var bf in mListBF)
+            {
+                foreach (var act in bf.Activities)
+                {
+                    act.SelectedForConversion = true;
+                }
+
+                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
+                flowConversion.BusinessFlow = bf;
+                flowConversion.ConversionStatus = eConversionStatus.Pending;
+                flowConversion.TotalProcessingActionsCount = utils.GetConvertibleActionsCountFromBusinessFlow(bf);
+                ListOfBusinessFlowToConvert.Add(flowConversion);
+            }
+
+            apiModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
+            utils.ConvertToApiActionsFromBusinessFlows(ListOfBusinessFlowToConvert, parameterizeRequestBody, pullValidations, apiModelsFolder);
+        }
+
+        #endregion
 
         private static string GetXMLBody()
         {
@@ -188,138 +438,5 @@ namespace GingerCoreNETUnitTest
             ActInputValue inputValue = new ActInputValue() { FileName = sFileName, ItemName = sFileName, Param = sFileName, Value = sValue };
             act.InputValues.Add(inputValue);
         }
-
-        private static void ExecuteActionConversion()
-        {
-            ObservableList<BusinessFlowToConvert> ListOfBusinessFlowToConvert = new ObservableList<BusinessFlowToConvert>();
-            ApiActionConversionUtils utils = new ApiActionConversionUtils();
-            foreach (var bf in mListBF)
-            {
-                foreach (var act in bf.Activities)
-                {
-                    act.SelectedForConversion = true;
-                }
-
-                BusinessFlowToConvert flowConversion = new BusinessFlowToConvert();
-                flowConversion.BusinessFlow = bf;
-                flowConversion.ConversionStatus = eConversionStatus.Pending;
-                flowConversion.TotalProcessingActionsCount = utils.GetConvertibleActionsCountFromBusinessFlow(bf);
-                ListOfBusinessFlowToConvert.Add(flowConversion);
-            }
-
-            apiModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
-            utils.ConvertToApiActionsFromBusinessFlows(ListOfBusinessFlowToConvert, true, true, apiModelsFolder);
-        }
-
-        private static bool ValidateApiActionConversion()
-        {
-            bool isValid = true;
-
-            if (apiModelsFolder.GetFolderItems().Count <= 0)
-            {
-                isValid = false;
-            }
-
-            if (isValid)
-            {
-                foreach (BusinessFlow bf in mListBF)
-                {
-                    if(bf.Activities[0].Acts.Count < 4)
-                    {
-                        isValid = false;
-                        break;
-                    }
-
-                    foreach (var activity in bf.Activities)
-                    {
-                        string sourceDescription = activity.Acts[0].Description;
-                        string convertedDescription = activity.Acts[1].Description;
-                        if (sourceDescription != convertedDescription)
-                        {
-                            isValid = false;
-                            break;
-                        }
-
-                        string sourceActType = activity.Acts[0].GetType().Name.ToString();
-                        string convertedActType = activity.Acts[1].GetType().Name.ToString();
-                        if (sourceActType != typeof(ActWebAPIRest).Name && convertedActType != typeof(ActWebAPIModel).Name)
-                        {
-                            isValid = false;
-                            break;
-                        }
-
-                        sourceActType = activity.Acts[2].GetType().Name.ToString();
-                        convertedActType = activity.Acts[3].GetType().Name.ToString();
-                        if (sourceActType != typeof(ActWebAPISoap).Name && convertedActType != typeof(ActWebAPIModel).Name)
-                        {
-                            isValid = false;
-                            break;
-                        }
-                    }
-                } 
-            }
-
-            return isValid;
-        }
-
-        private static bool ValidateApiActionConversionOptionalValues()
-        {
-            bool isValid = true;
-
-            ObservableList<ApplicationAPIModel> list = apiModelsFolder.GetFolderItems();
-            if (list.Count <= 0)
-            {
-                isValid = false;
-            }
-            else if (list.Count > 1)
-            {
-                if(list[0].AppModelParameters.Count != 2)
-                {
-                    isValid = false;
-                }
-                else if (list[0].AppModelParameters.Count == 2)
-                {
-                    if(list[0].AppModelParameters[0].OptionalValuesList.Count != 2 && list[0].AppModelParameters[0].OptionalValuesString == "11*,33")
-                    {
-                        isValid = false;
-                    }
-                    if (list[0].AppModelParameters[1].OptionalValuesList.Count != 2 && list[0].AppModelParameters[1].OptionalValuesString == "22*,44")
-                    {
-                        isValid = false;
-                    }
-                }
-            }
-
-            return isValid;
-        }
-
-        [TestMethod]
-        [Timeout(60000)]
-        public void APIActionConversionNewModelTest()
-        {
-            GetActivityWithActWebApiActions();
-
-            ExecuteActionConversion();
-
-            bool isValid = ValidateApiActionConversion();
-
-            //Assert
-            Assert.AreEqual(isValid, true);
-        }
-
-        [TestMethod]
-        [Timeout(60000)]
-        public void APIActionConversionOptionalValuesTest()
-        {
-            GetActivityWithActionsWithSameParametersDiffernetOptionalValues();
-
-            ExecuteActionConversion();
-
-            bool isValid = ValidateApiActionConversionOptionalValues();
-
-            //Assert
-            Assert.AreEqual(isValid, true);
-        }
-
     }
 }
