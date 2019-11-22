@@ -27,6 +27,7 @@ using System.Linq;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Ginger.Reports;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -129,61 +130,48 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
         private void PopulateMissingFields(LiteDbRunSet liteDbRunSet, string clientAppPath)
         {
+            //select template 
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
+
+            //populate data based on level
+            if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionCalculationLevel))
+            {
+                _HTMLReportConfig.ExecutionCalculationLevel = HTMLReportConfiguration.ReportsExecutionCalculationLevel.Activity.ToString();
+            }
+
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
             List<string> runSetEnv = new List<string>();
-            int totalRunners = liteDbRunSet.RunnersColl.Count;
-            int totalPassed = 0;
-            if (liteDbRunSet.RunStatus == eRunStatus.Automated.ToString())
-            {
-                totalPassed = liteDbRunSet.RunnersColl[0].BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
-                liteDbRunSet.RunnersColl[0].RunStatus = liteDbRunSet.RunnersColl[0].BusinessFlowsColl[0].RunStatus;
-            }
-            else
-            {
-                totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
-            }
-            int totalExecuted = totalRunners - liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString()).Count();
-            if (totalRunners != 0)
-                liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (totalExecuted * 100 / totalRunners).ToString());
-            if (totalRunners != 0)
-                liteDbRunSet.PassRate = string.Format("{0:F1}", (totalPassed * 100 / totalRunners).ToString());
-            liteDbRunSet.Elapsed = liteDbRunSet.RunnersColl.Sum(a => a.Elapsed);
 
+            if (liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
+            if (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                liteDbRunSet.PassRate = string.Format("{0:F1}", (liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
                 if (!runSetEnv.Contains(liteDbRunner.Environment))
                 {
                     runSetEnv.Add(liteDbRunner.Environment);
                 }
-                int totalBFs = liteDbRunner.BusinessFlowsColl.Count;
-                int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
-                int totalExecutedBFs = totalBFs - liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString()).Count();
-                if (totalBFs != 0)
-                    liteDbRunner.ExecutionRate = string.Format("{0:F1}", (totalExecutedBFs * 100 / totalBFs).ToString());
-                if (totalExecutedBFs != 0)
-                    liteDbRunner.PassRate = string.Format("{0:F1}", (totalPassedBFs * 100 / totalExecutedBFs).ToString());
+                if (liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                    liteDbRunner.ExecutionRate = string.Format("{0:F1}", (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
+                if (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                    liteDbRunner.PassRate = string.Format("{0:F1}", (liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
                 if (liteDbRunner.Elapsed.HasValue)
                     liteDbRunner.Elapsed = Math.Round(liteDbRunner.Elapsed.Value, 2);
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
-                    int totalActivities = liteDbBusinessFlow.ActivitiesColl.Count;
-                    int totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                    int totalExecutedActivities = totalActivities - liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
-                    if (totalActivities != 0)
-                        liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", (totalExecutedActivities * 100 / totalActivities).ToString());
-                    if (totalExecutedActivities != 0)
-                        liteDbBusinessFlow.PassRate = string.Format("{0:F1}", (totalPassedActivities * 100 / totalExecutedActivities).ToString());
+                    if (liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                        liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
+                    if (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                        liteDbBusinessFlow.PassRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
                     if (liteDbBusinessFlow.Elapsed.HasValue)
                         liteDbBusinessFlow.Elapsed = Math.Round(liteDbBusinessFlow.Elapsed.Value, 2);
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
-                        int totalActions = liteDbActivity.ActionsColl.Count;
-                        int totalPassedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                        int totalExecutedActions = totalActions - liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
-                        if (totalActions != 0)
-                            liteDbActivity.ExecutionRate = string.Format("{0:F1}", (totalExecutedActions * 100 / totalActions).ToString());
-                        if (totalExecutedActions != 0)
-                            liteDbActivity.PassRate = string.Format("{0:F1}", (totalPassedActions * 100 / totalExecutedActions).ToString());
+                        if (liteDbActivity.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                            liteDbActivity.ExecutionRate = string.Format("{0:F1}", (liteDbActivity.ChildExecutedItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()] * 100 / liteDbActivity.ChildExecutableItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()]).ToString());
+                        if (liteDbActivity.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
+                            liteDbActivity.PassRate = string.Format("{0:F1}", (liteDbActivity.ChildPassedItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()] * 100 / liteDbActivity.ChildExecutedItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()]).ToString());
                         if (liteDbActivity.Elapsed.HasValue)
                             liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
                         foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
@@ -206,9 +194,9 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             liteDbAction.ScreenShots = newScreenShotsList;
                         }
                     }
-
                 }
             }
+
             if (runSetEnv.Count > 0)
             {
                 liteDbRunSet.Environment = string.Join(",", runSetEnv);

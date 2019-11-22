@@ -45,7 +45,8 @@ namespace Ginger.Reports
             public static string BusinessFlowFieldsToSelect = "BusinessFlowFieldsToSelect";
             public static string GingerRunnerFieldsToSelect = "GingerRunnerFieldsToSelect";
             public static string RunSetFieldsToSelect = "RunSetFieldsToSelect";
-            public static string ReportLowerLevelToShow = "ReportLowerLevelToShow";            
+            public static string ReportLowerLevelToShow = "ReportLowerLevelToShow";
+            public static string ExecutionCalculationLevel = "ExecutionCalculationLevel";
         }
 
         bool mIsSelected;
@@ -70,6 +71,10 @@ namespace Ginger.Reports
         bool mShowAllIterationsElements;
         [IsSerializedForLocalRepository]
         public bool ShowAllIterationsElements { get { return mShowAllIterationsElements; } set { if (mShowAllIterationsElements != value) { mShowAllIterationsElements = value; OnPropertyChanged(nameof(ShowAllIterationsElements)); } } }
+
+        string mExecutionCalculationLevel;
+        [IsSerializedForLocalRepository]
+        public string ExecutionCalculationLevel { get { return mExecutionCalculationLevel; } set { if (mExecutionCalculationLevel != value) { mExecutionCalculationLevel = value; OnPropertyChanged(nameof(ExecutionCalculationLevel)); } } }
 
         bool mUseLocalStoredStyling;
         [IsSerializedForLocalRepository]
@@ -114,6 +119,12 @@ namespace Ginger.Reports
             GingerRunnerFieldsToSelect,
             RunSetFieldsToSelect,
             EmailSummaryViewFieldsToSelect
+        }
+
+        public enum ReportsExecutionCalculationLevel
+        {
+            Action,
+            Activity
         }
 
         [IsSerializedForLocalRepository]
