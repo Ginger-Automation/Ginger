@@ -42,6 +42,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
+        string Separator = Path.DirectorySeparatorChar.ToString();
+
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
@@ -403,7 +405,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Put the BF in Test Resource
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
 
-            string FileName = TestResources.GetTestResourcesFile(@"XML\Flow 1.Ginger.BusinessFlow.xml");
+            string FileName = TestResources.GetTestResourcesFile($"XML{Separator}Flow 1.Ginger.BusinessFlow.xml");
 
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
