@@ -294,7 +294,7 @@ namespace GingerCoreNETUnitTest
         }
 
         [TestMethod]
-        //[Timeout(60000)]
+        [Timeout(60000)]
         public void APIActionConversionNewModelTest()
         {
             GetActivityWithActWebApiActions();
@@ -308,7 +308,7 @@ namespace GingerCoreNETUnitTest
         }
 
         [TestMethod]
-        //[Timeout(60000)]
+        [Timeout(60000)]
         public void APIActionConversionOptionalValuesTest()
         {
             GetActivityWithActionsWithSameParametersDiffernetOptionalValues();
