@@ -7,7 +7,7 @@
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
         Height="600" Width="1100" WindowState="Maximized"   SizeChanged="xMainWindow_SizeChanged"      
-        Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown" Loaded="MainWindow_Loaded">
+        Closing="MainWindow_Closing" PreviewKeyDown="MainWindow_PreviewKeyDown">
 
     <Grid x:Name="xMainWindowPnl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid  Panel.ZIndex="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}">

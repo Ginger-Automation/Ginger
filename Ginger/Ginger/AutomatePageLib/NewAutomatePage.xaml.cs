@@ -308,9 +308,11 @@ namespace GingerWPF.BusinessFlowsLib
             if (xAddActionsBtn.ButtonImageType == Amdocs.Ginger.Common.Enums.eImageType.Add)
             {
                 ExpandAddActionsPnl();
-            }
+                Ginger.General.DoEvents();
+                App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsPageHelp", xAddActionMenuFrame, string.Format("List of options is dynamic, options are loaded based on the target platform of current {0} and on it mapped Agent status.For example, “Record” option will be added only if the platform is UI based (like Web, Java, etc.) and Agent it loaded", GingerDicser.GetTermResValue(eTermResKey.Activity)));
+            } 
             else
-            {
+            {                
                 CollapseAddActionsPnl();
             }
         }

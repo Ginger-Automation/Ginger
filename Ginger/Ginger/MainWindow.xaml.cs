@@ -91,6 +91,8 @@ namespace Ginger
 
         public void Init()
         {
+            bool autoLoadSolDone = false;
+
             try
             {                
                 //App
@@ -123,10 +125,11 @@ namespace Ginger
                 SetBetaFlagIconVisibility();
                 lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
-                //Solution                                    
+                //Solution                  
                 if ( WorkSpace.Instance.UserProfile.AutoLoadLastSolution &&  WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
+                    autoLoadSolDone = true;
                 }
 
                 //Messages
@@ -148,6 +151,10 @@ namespace Ginger
             finally
             {
                 HideSplash();
+                if (autoLoadSolDone == false && WorkSpace.Instance.Solution == null)
+                {
+                    AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
+                }
             }
         }
 
@@ -331,7 +338,7 @@ namespace Ginger
                 if ( WorkSpace.Instance.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionNameTextBlock.Text = "Please Load Solution";                    
+                    xSolutionNameTextBlock.Text = "Please Load Solution";                
                 }
                 else
                 {
@@ -1064,10 +1071,11 @@ namespace Ginger
                     Point controlToFocusLocation = controlToFocus.TransformToAncestor(App.MainWindow).Transform(new Point(0, 0));
 
                     //---set background rectangles
-                    xHelpLayoutRectangleLeft.Width = controlToFocusLocation.X;
+                    double gapSize = 0.25;
+                    xHelpLayoutRectangleLeft.Width = controlToFocusLocation.X + gapSize;
                     xHelpLayoutRectangleLeft.Height = xMainWindowPnl.ActualHeight;
 
-                    xHelpLayoutRectangleRight.SetValue(Canvas.LeftProperty, controlToFocusLocation.X + controlToFocusWidth);
+                    xHelpLayoutRectangleRight.SetValue(Canvas.LeftProperty, controlToFocusLocation.X + controlToFocusWidth - gapSize);
                     xHelpLayoutRectangleRight.Width = xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth);
                     xHelpLayoutRectangleRight.Height = xMainWindowPnl.ActualHeight;
 
@@ -1075,9 +1083,9 @@ namespace Ginger
                     xHelpLayoutRectangleTop.Width = controlToFocusWidth;
                     xHelpLayoutRectangleTop.Height = controlToFocusLocation.Y;
 
-                    xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X - 0.25);
+                    xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
                     xHelpLayoutRectangleBottom.SetValue(Canvas.TopProperty, controlToFocusLocation.Y + controlToFocusHeight);
-                    xHelpLayoutRectangleBottom.Width = controlToFocusWidth + 0.25;
+                    xHelpLayoutRectangleBottom.Width = controlToFocusWidth ;
                     xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
 
                     //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
@@ -1176,14 +1184,6 @@ namespace Ginger
             if (xHelpLayoutCanvas.Visibility == Visibility.Visible)
             {
                 ShowHelpLayout();//need to show again in correct size
-            }
-        }
-
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (WorkSpace.Instance.Solution == null)
-            {
-                AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
             }
         }
     }
