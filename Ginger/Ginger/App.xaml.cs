@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
-using Ginger.GeneralWindows;
 using Ginger.ReporterLib;
 using Ginger.Repository;
 using Ginger.SourceControl;
@@ -33,7 +32,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Threading;
 
 
