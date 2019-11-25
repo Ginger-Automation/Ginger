@@ -228,7 +228,7 @@ namespace Ginger
             }
         }
 
-        
+
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
