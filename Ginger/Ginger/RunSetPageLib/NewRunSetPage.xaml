@@ -223,7 +223,7 @@
                                                         <GingerCore:ucTextDicResource Text="Active / Inactive All [BusinessFlow]"/>
                                                     </usercontrols:ucButton.ToolTip>
                                                 </usercontrols:ucButton>
-                                                <usercontrols:ucButton x:Name="xAddBusinessflowBtn" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" Click="xaddBusinessflow_Click">
+                                                <usercontrols:ucButton x:Name="xAddBusinessflowBtn" ButtonType="CircleImageButton" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18"  ButtonImageType="Add" Click="xaddBusinessflow_Click" Loaded="xAddBusinessflowBtn_Loaded">
                                                     <usercontrols:ucButton.ToolTip>
                                                         <GingerCore:ucTextDicResource Text="Add [BusinessFlow]"/>
                                                     </usercontrols:ucButton.ToolTip>
