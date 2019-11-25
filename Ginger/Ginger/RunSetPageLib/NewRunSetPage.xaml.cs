@@ -1234,6 +1234,12 @@ namespace Ginger.Run
                     mRunSetConfig.AllowAutoSave = true;
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
+
+                    if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null && mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+                    {
+                        General.DoEvents();
+                        App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");
+                    }
                 });
             }
         }
@@ -2539,14 +2545,6 @@ namespace Ginger.Run
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }
-
-        private void xAddBusinessflowBtn_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (mRunSetConfig != null && mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
-            {
-                App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");                                
-            }
         }
     }
 }
