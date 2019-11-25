@@ -123,7 +123,6 @@ namespace GingerCoreNETUnitTest
 
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBody());
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
-            SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
             activity.Acts.Add(actRest);
 
@@ -133,7 +132,6 @@ namespace GingerCoreNETUnitTest
 
             SetRestActionInputValues(actSoapJson, nameof(ActWebAPIBase.Fields.RequestBody), GetJsonBody());
             SetRestActionInputValues(actSoapJson, nameof(ActWebAPIBase.Fields.EndPointURL), "http://ws.cdyne.com/delayedstockquote/delayedstockquote.asmx");
-            SetRestActionInputValues(actSoapJson, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
             activity.Acts.Add(actSoapJson);
 
@@ -228,7 +226,6 @@ namespace GingerCoreNETUnitTest
 
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBody());
             SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
-            SetRestActionInputValues(actRest, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
             ObservableList<ActReturnValue> retVal = new ObservableList<ActReturnValue>();
             retVal.Add(new ActReturnValue() { Param = "RetCode_1st", Expected = "Ok", StoreToValue = ActReturnValue.eStoreTo.ApplicationModelParameter.ToString() });
@@ -246,7 +243,6 @@ namespace GingerCoreNETUnitTest
 
                 SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.RequestBody), GetXMLBodyDifferentOptionalValues());
                 SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.EndPointURL), "https://jsonplaceholder.typicode.com/posts/1");
-                SetRestActionInputValues(actRestDiff, nameof(ActWebAPIBase.Fields.TemplateFileNameFileBrowser), ApplicationAPIUtils.eRequestBodyType.FreeText.ToString());
 
                 activity.Acts.Add(actRestDiff);
             }

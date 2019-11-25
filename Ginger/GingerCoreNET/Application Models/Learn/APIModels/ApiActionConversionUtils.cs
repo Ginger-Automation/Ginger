@@ -225,7 +225,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             try
             {
                 string requestBody = null;
-                if (actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser) == ApplicationAPIUtils.eRequestBodyType.TemplateFile.ToString())
+                if (!string.IsNullOrEmpty(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser)))
                 {
                     string fileUri = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(actionToConvert.GetInputParamValue(ActWebAPIBase.Fields.TemplateFileNameFileBrowser));
                     if (File.Exists(fileUri))
