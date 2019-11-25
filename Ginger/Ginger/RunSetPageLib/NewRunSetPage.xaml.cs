@@ -1204,9 +1204,13 @@ namespace Ginger.Run
                 //Init Runners Section  
                 int res = 0;
                 if (runAsync)
+                {
                     res = await InitRunnersSection().ConfigureAwait(false);
+                }
                 else
+                {
                     InitRunnersSection(false, ViewMode);
+                }              
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -1550,6 +1554,11 @@ namespace Ginger.Run
             if (CheckIfExecutionIsInProgress()) return;
 
             AddRunner();
+
+            if (mRunSetConfig.GingerRunners.Count == 2)
+            {
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xExecutionModeBtn, "Click here to set if Runners will run in parallel or in sequential order");
+            }
         }
         
         private void clearAllRunner_Click(object sender, RoutedEventArgs e)
@@ -1939,6 +1948,11 @@ namespace Ginger.Run
             
             List<object> selectedBfs = mBusFlowsSelectionPage.ShowAsWindow();
             AddSelectedBuinessFlows(selectedBfs);
+
+            if (mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 1)
+            {              
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunsetOperationsHelp", xOperationsTab, "Use 'Operations' tab for adding pre/post execution operations like getting execution report via e-mail");
+            }
         }
 
         private void AddSelectedBuinessFlows(List<object> selectedBfs)
@@ -2180,8 +2194,8 @@ namespace Ginger.Run
                     if (Reporter.ToUser(eUserMsgKey.RunsetBuinessFlowWasChanged) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         RefreshCurrentRunSet();
                     mRunSetBusinessFlowWasChanged = false;
-                }
-            }));
+                }               
+            }));                        
         }
 
         private void RefreshCurrentRunSet()
@@ -2525,6 +2539,14 @@ namespace Ginger.Run
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+        }
+
+        private void xAddBusinessflowBtn_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (mRunSetConfig != null && mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+            {
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");                                
+            }
         }
     }
 }
