@@ -53,6 +53,7 @@ namespace Amdocs.Ginger.Repository
 
         public enum eSercurityType
         {
+            [EnumValueDescription("Default")]
             None,
             Ssl3,
             Tls,
