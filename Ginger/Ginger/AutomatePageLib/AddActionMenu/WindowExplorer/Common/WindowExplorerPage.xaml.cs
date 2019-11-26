@@ -894,16 +894,27 @@ namespace Ginger.WindowExplorer
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
-                StatusTextBlock.Text = "Loading";
-                List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
-
-                // Convert to obserable for the grid
-                VisibleElementsInfoList.Clear();
-                foreach (ElementInfo EI in list)
+                try
                 {
-                    VisibleElementsInfoList.Add(EI);
+                    StatusTextBlock.Text = "Loading";
+                    List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+
+                    // Convert to obserable for the grid
+                    VisibleElementsInfoList.Clear();
+                    foreach (ElementInfo EI in list)
+                    {
+                        VisibleElementsInfoList.Add(EI);
+                    }
                 }
-                StatusTextBlock.Text = "Ready";
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception while loading the Grid data", ex);
+                }
+                finally
+                {
+                    StatusTextBlock.Text = "Ready";
+                }
+
                 WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
 
             }
