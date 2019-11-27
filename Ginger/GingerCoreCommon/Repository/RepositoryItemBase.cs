@@ -596,7 +596,6 @@ namespace Amdocs.Ginger.Repository
                 duplicatedItem= duplicatedItem.GetUpdatedRepoItem(guidMappingList);
             }
 
-            duplicatedItem.StartDirtyTracking();
             duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
 
             return duplicatedItem;
