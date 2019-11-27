@@ -47,8 +47,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public List<string> VariablesAfterExec { get; set; }
         public LiteDB.ObjectId _id { get; set; }
 
-        public string ExecutionRate { get; set; } = "0";
-        public string PassRate { get; set; } = "0";
+        public string ExecutionRate { get; set; }
+        public string PassRate { get; set; }
 
         public LiteDbReportBase()
         {
@@ -225,24 +225,16 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     {
         public string ActivityGroupName { get; set; }
         public List<LiteDbAction> ActionsColl { get; set; }
-        //public List<Tuple<string, string>> ChildExecutableItemsCount { get; set; }
-        //public List<Tuple<string, string>> ChildExecutedItemsCount { get; set; }
-        //public List<Tuple<string, string>> ChildPassedItemsCount { get; set; }
-
-        public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
-        public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
-        public Dictionary<string, int> ChildPassedItemsCount { get; set; }
+        public int ChildExecutableItemsCount { get; set; }
+        public int ChildExecutedItemsCount { get; set; }
+        public int ChildPassedItemsCount { get; set; }
 
         public LiteDbActivity()
         {
             ActionsColl = new List<LiteDbAction>();
-            //ChildExecutableItemsCount = new List<Tuple<string, string>>();
-            //ChildExecutedItemsCount = new List<Tuple<string, string>>();
-            //ChildPassedItemsCount = new List<Tuple<string, string>>();
-
-            ChildExecutableItemsCount = new Dictionary<string, int>();
-            ChildExecutedItemsCount = new Dictionary<string, int>();
-            ChildPassedItemsCount = new Dictionary<string, int>();
+            //ChildExecutableItemsCount = new Dictionary<string, int>();
+            //ChildExecutedItemsCount = new Dictionary<string, int>();
+            //ChildPassedItemsCount = new Dictionary<string, int>();
         }
 
         public void SetReportData(ActivityReport activityReport)

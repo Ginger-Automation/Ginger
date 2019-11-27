@@ -159,9 +159,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));
             AR.ActionsColl.AddRange(liteDbActionList);
             //counts
-            AR.ChildExecutableItemsCount.Add("Action", activity.Acts.Count);
-            AR.ChildExecutedItemsCount.Add("Action", (activity.Acts.Count - activity.Acts.Count(x => x.Status == eRunStatus.Pending || x.Status == eRunStatus.Skipped || x.Status == eRunStatus.Blocked)));
-            AR.ChildPassedItemsCount.Add("Action", activity.Acts.Count(x => x.Status == eRunStatus.Passed));
+            //AR.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), activity.Acts.Count);
+            //AR.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), (activity.Acts.Count - activity.Acts.Count(x => x.Status == eRunStatus.Pending || x.Status == eRunStatus.Skipped || x.Status == eRunStatus.Blocked)));
+            //AR.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), activity.Acts.Count(x => x.Status == eRunStatus.Passed));
+            AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
+            AR.ChildExecutedItemsCount = AR.ChildExecutableItemsCount - activity.Acts.Count(x => x.Status == eRunStatus.Pending || x.Status == eRunStatus.Skipped || x.Status == eRunStatus.Blocked);
+            AR.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
 
             liteDbActivityList.Add(AR);
             SaveObjToReporsitory(AR, liteDbManager.NameInDb<LiteDbActivity>());
@@ -226,29 +229,22 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ChildExecutedItemsCountActivity = ChildExecutableItemsCountActivity - context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Pending || ac.Status == eRunStatus.Skipped || ac.Status == eRunStatus.Blocked).Count();
             ChildPassedItemsCountActivity = context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Passed).Count();
 
-            BFR.ChildExecutableItemsCount.Add("Activity", ChildExecutableItemsCountActivity);
-            BFR.ChildExecutedItemsCount.Add("Activity", ChildExecutedItemsCountActivity);
-            BFR.ChildPassedItemsCount.Add("Activity", ChildPassedItemsCountActivity);
+            BFR.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildExecutableItemsCountActivity);
+            BFR.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildExecutedItemsCountActivity);
+            BFR.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildPassedItemsCountActivity);
 
             int ChildExecutableItemsCountAction = 0;
             int ChildExecutedItemsCountAction = 0;
             int ChildPassedItemsCountAction = 0;
             foreach (LiteDbActivity activity in liteDbActivityList)
             {
-                int count = 0;
-                
-                activity.ChildExecutableItemsCount.TryGetValue("Action", out count);
-                ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + count;
-
-                activity.ChildExecutedItemsCount.TryGetValue("Action", out count);
-                ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + count;
-
-                activity.ChildPassedItemsCount.TryGetValue("Action", out count);
-                ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
+                ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + activity.ChildExecutableItemsCount;
+                ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + activity.ChildExecutedItemsCount;
+                ChildPassedItemsCountAction = ChildPassedItemsCountAction + activity.ChildPassedItemsCount;
             }
-            BFR.ChildExecutableItemsCount.Add("Action", ChildExecutableItemsCountAction);
-            BFR.ChildExecutedItemsCount.Add("Action", ChildExecutedItemsCountAction);
-            BFR.ChildPassedItemsCount.Add("Action", ChildPassedItemsCountAction);
+            BFR.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildExecutableItemsCountAction);
+            BFR.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildExecutedItemsCountAction);
+            BFR.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildPassedItemsCountAction);
 
             if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
@@ -365,30 +361,30 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             foreach (LiteDbBusinessFlow businessFlow in liteDbBFList)
             {
                 int count = 0;
-                businessFlow.ChildExecutableItemsCount.TryGetValue("Activity", out count);
+                businessFlow.ChildExecutableItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), out count);
                 ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + count;
 
-                businessFlow.ChildExecutedItemsCount.TryGetValue("Activity", out count);
+                businessFlow.ChildExecutedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), out count);
                 ChildExecutedItemsCountActivity = ChildExecutedItemsCountActivity + count;
 
-                businessFlow.ChildPassedItemsCount.TryGetValue("Activity", out count);
+                businessFlow.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), out count);
                 ChildPassedItemsCountActivity = ChildPassedItemsCountActivity + count;
 
-                businessFlow.ChildExecutableItemsCount.TryGetValue("Action", out count);
+                businessFlow.ChildExecutableItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), out count);
                 ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + count;
 
-                businessFlow.ChildExecutedItemsCount.TryGetValue("Action", out count);
+                businessFlow.ChildExecutedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), out count);
                 ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + count;
 
-                businessFlow.ChildPassedItemsCount.TryGetValue("Action", out count);
+                businessFlow.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
-            runner.ChildExecutableItemsCount.Add("Activity", ChildExecutableItemsCountActivity);
-            runner.ChildExecutedItemsCount.Add("Activity", ChildExecutedItemsCountActivity);
-            runner.ChildPassedItemsCount.Add("Activity", ChildPassedItemsCountActivity);
-            runner.ChildExecutableItemsCount.Add("Action", ChildExecutableItemsCountAction);
-            runner.ChildExecutedItemsCount.Add("Action", ChildExecutedItemsCountAction);
-            runner.ChildPassedItemsCount.Add("Action", ChildPassedItemsCountAction);
+            runner.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildExecutableItemsCountActivity);
+            runner.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildExecutedItemsCountActivity);
+            runner.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildPassedItemsCountActivity);
+            runner.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildExecutableItemsCountAction);
+            runner.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildExecutedItemsCountAction);
+            runner.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildPassedItemsCountAction);
         }
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
@@ -414,31 +410,31 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             foreach (LiteDbRunner runner in runSet.RunnersColl)
             {
                 int count = 0;
-                runner.ChildExecutableItemsCount.TryGetValue("Activity", out count);
+                runner.ChildExecutableItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), out count);
                 ChildExecutableItemsCountActivity = ChildExecutableItemsCountActivity + count;
 
-                runner.ChildExecutedItemsCount.TryGetValue("Activity", out count);
+                runner.ChildExecutedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), out count);
                 ChildExecutedItemsCountActivity = ChildExecutedItemsCountActivity + count;
 
-                runner.ChildPassedItemsCount.TryGetValue("Activity", out count);
+                runner.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), out count);
                 ChildPassedItemsCountActivity = ChildPassedItemsCountActivity + count;
 
-                runner.ChildExecutableItemsCount.TryGetValue("Action", out count);
+                runner.ChildExecutableItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), out count);
                 ChildExecutableItemsCountAction = ChildExecutableItemsCountAction + count;
 
-                runner.ChildExecutedItemsCount.TryGetValue("Action", out count);
+                runner.ChildExecutedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), out count);
                 ChildExecutedItemsCountAction = ChildExecutedItemsCountAction + count;
 
-                runner.ChildPassedItemsCount.TryGetValue("Action", out count);
+                runner.ChildPassedItemsCount.TryGetValue(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), out count);
                 ChildPassedItemsCountAction = ChildPassedItemsCountAction + count;
             }
-            runSet.ChildExecutableItemsCount.Add("Activity", ChildExecutableItemsCountActivity);
-            runSet.ChildExecutedItemsCount.Add("Activity", ChildExecutedItemsCountActivity);
-            runSet.ChildPassedItemsCount.Add("Activity", ChildPassedItemsCountActivity);
+            runSet.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildExecutableItemsCountActivity);
+            runSet.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildExecutedItemsCountActivity);
+            runSet.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString(), ChildPassedItemsCountActivity);
 
-            runSet.ChildExecutableItemsCount.Add("Action", ChildExecutableItemsCountAction);
-            runSet.ChildExecutedItemsCount.Add("Action", ChildExecutedItemsCountAction);
-            runSet.ChildPassedItemsCount.Add("Action", ChildPassedItemsCountAction);
+            runSet.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildExecutableItemsCountAction);
+            runSet.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildExecutedItemsCountAction);
+            runSet.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString(), ChildPassedItemsCountAction);
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
         {

@@ -134,51 +134,89 @@ namespace Amdocs.Ginger.CoreNET.Logger
             HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
 
             //populate data based on level
-            if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionCalculationLevel))
+            if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy))
             {
-                _HTMLReportConfig.ExecutionCalculationLevel = HTMLReportConfiguration.ReportsExecutionCalculationLevel.Activity.ToString();
+                _HTMLReportConfig.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString();
             }
 
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
             List<string> runSetEnv = new List<string>();
 
-            if (liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
-            if (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                liteDbRunSet.PassRate = string.Format("{0:F1}", (liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
+            if (liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
+            {
+                liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
+            }
+            else { liteDbRunSet.ExecutionRate = "0"; }
+            if (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
+            {
+                liteDbRunSet.PassRate = string.Format("{0:F1}", (liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
+            }
+            else { liteDbRunSet.PassRate = "0"; }
+            if (liteDbRunSet.Elapsed.HasValue)
+            {
+                liteDbRunSet.Elapsed = Math.Round(liteDbRunSet.Elapsed.Value, 2);
+            }
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
                 if (!runSetEnv.Contains(liteDbRunner.Environment))
                 {
                     runSetEnv.Add(liteDbRunner.Environment);
                 }
-                if (liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                    liteDbRunner.ExecutionRate = string.Format("{0:F1}", (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
-                if (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                    liteDbRunner.PassRate = string.Format("{0:F1}", (liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
+                if (liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
+                {
+                    liteDbRunner.ExecutionRate = string.Format("{0:F1}", (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
+                }
+                else { liteDbRunner.ExecutionRate = "0"; }
+                if (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
+                {
+                    liteDbRunner.PassRate = string.Format("{0:F1}", (liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
+                }
+                else { liteDbRunner.PassRate = "0"; }
                 if (liteDbRunner.Elapsed.HasValue)
+                {
                     liteDbRunner.Elapsed = Math.Round(liteDbRunner.Elapsed.Value, 2);
+                }
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
-                    if (liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                        liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
-                    if (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                        liteDbBusinessFlow.PassRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] * 100 / liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel]).ToString());
+                    if (liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
+                    {
+                        liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
+                    }
+                    else { liteDbBusinessFlow.PassRate = "0"; }
+                    if (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
+                    {
+                        liteDbBusinessFlow.PassRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
+                    }
+                    else { liteDbBusinessFlow.PassRate = "0"; }
                     if (liteDbBusinessFlow.Elapsed.HasValue)
+                    {
                         liteDbBusinessFlow.Elapsed = Math.Round(liteDbBusinessFlow.Elapsed.Value, 2);
+                    }
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
-                        if (liteDbActivity.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                            liteDbActivity.ExecutionRate = string.Format("{0:F1}", (liteDbActivity.ChildExecutedItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()] * 100 / liteDbActivity.ChildExecutableItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()]).ToString());
-                        if (liteDbActivity.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionCalculationLevel] != 0)
-                            liteDbActivity.PassRate = string.Format("{0:F1}", (liteDbActivity.ChildPassedItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()] * 100 / liteDbActivity.ChildExecutedItemsCount[HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString()]).ToString());
+                        if (liteDbActivity.ChildExecutableItemsCount != 0)
+                        {
+                            liteDbActivity.ExecutionRate = string.Format("{0:F1}", (liteDbActivity.ChildExecutedItemsCount * 100 / liteDbActivity.ChildExecutableItemsCount).ToString());
+                        }
+                        else { liteDbActivity.PassRate = "0"; }
+                        if (liteDbActivity.ChildExecutedItemsCount != 0)
+                        {
+                            liteDbActivity.PassRate = string.Format("{0:F1}", (liteDbActivity.ChildPassedItemsCount * 100 / liteDbActivity.ChildExecutedItemsCount).ToString());
+                        }
+                        else { liteDbActivity.PassRate = "0"; }
                         if (liteDbActivity.Elapsed.HasValue)
+                        {
                             liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
+                        }
+                        else { liteDbActivity.Elapsed = 0; }
                         foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
                         {
                             List<string> newScreenShotsList = new List<string>();
                             if (liteDbAction.Elapsed.HasValue)
+                            {
                                 liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value / 1000, 4);
+                            }
+                            else { liteDbAction.Elapsed = 0; }
                             if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
                                 liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
                             foreach (string screenshot in liteDbAction.ScreenShots)

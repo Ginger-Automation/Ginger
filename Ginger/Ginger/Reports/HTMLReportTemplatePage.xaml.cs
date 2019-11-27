@@ -96,13 +96,14 @@ namespace Ginger.Reports
         }
         public void RadioButtonInit()
         {
-            string currentValue = _HTMLReportConfiguration.ExecutionCalculationLevel;
-            foreach (RadioButton rdb in htmlExecutionCalculationLevelBtnsPnl.Children)
-                if (rdb.Tag.ToString() == currentValue)
-                {
-                    rdb.IsChecked = true;
-                    break;
-                }
+            if (_HTMLReportConfiguration.ExecutionStatisticsCountBy == HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString())
+            {
+                xExecutionCalculationLevelActionRadioBtn.IsChecked = true;
+            }
+            else
+            {
+                xExecutionCalculationLevelActivityRadioBtn.IsChecked = true;
+            }
         }
 
 
@@ -383,12 +384,12 @@ namespace Ginger.Reports
         }
         private void htmlExecutionCalculationLevelActivityRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            _HTMLReportConfiguration.ExecutionCalculationLevel = HTMLReportConfiguration.ReportsExecutionCalculationLevel.Activity.ToString();
+            _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString();
         }
 
         private void htmlExecutionCalculationLevelActionRadioBtn_Checked(object sender, RoutedEventArgs e)
         {
-            _HTMLReportConfiguration.ExecutionCalculationLevel = HTMLReportConfiguration.ReportsExecutionCalculationLevel.Action.ToString();
+            _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Action.ToString();
         }
         private void SelectHTMLReportsImageFolderButton_Click(object sender, RoutedEventArgs e)
         {

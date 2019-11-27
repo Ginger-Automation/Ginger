@@ -46,7 +46,7 @@ namespace Ginger.Reports
             public static string GingerRunnerFieldsToSelect = "GingerRunnerFieldsToSelect";
             public static string RunSetFieldsToSelect = "RunSetFieldsToSelect";
             public static string ReportLowerLevelToShow = "ReportLowerLevelToShow";
-            public static string ExecutionCalculationLevel = "ExecutionCalculationLevel";
+            public static string ExecutionStatisticsCountBy = "ExecutionStatisticsCountBy";
         }
 
         bool mIsSelected;
@@ -72,9 +72,9 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public bool ShowAllIterationsElements { get { return mShowAllIterationsElements; } set { if (mShowAllIterationsElements != value) { mShowAllIterationsElements = value; OnPropertyChanged(nameof(ShowAllIterationsElements)); } } }
 
-        string mExecutionCalculationLevel;
+        string mExecutionStatisticsCountBy;
         [IsSerializedForLocalRepository]
-        public string ExecutionCalculationLevel { get { return mExecutionCalculationLevel; } set { if (mExecutionCalculationLevel != value) { mExecutionCalculationLevel = value; OnPropertyChanged(nameof(ExecutionCalculationLevel)); } } }
+        public string ExecutionStatisticsCountBy { get { return mExecutionStatisticsCountBy; } set { if (mExecutionStatisticsCountBy != value) { mExecutionStatisticsCountBy = value; OnPropertyChanged(nameof(ExecutionStatisticsCountBy)); } } }
 
         bool mUseLocalStoredStyling;
         [IsSerializedForLocalRepository]
@@ -121,7 +121,7 @@ namespace Ginger.Reports
             EmailSummaryViewFieldsToSelect
         }
 
-        public enum ReportsExecutionCalculationLevel
+        public enum eExecutionStatisticsCountBy
         {
             Action,
             Activity
