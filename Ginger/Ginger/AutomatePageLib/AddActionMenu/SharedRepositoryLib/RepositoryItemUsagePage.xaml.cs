@@ -46,6 +46,7 @@ namespace Ginger.Repository
         public ObservableList<RepositoryItemUsage> RepoItemUsages = new ObservableList<RepositoryItemUsage>();
         private bool mIncludeOriginal = false;
         private readonly RepositoryItemBase mOriginalItem;
+        public object extraDetails = null;
 
         public RepositoryItemUsagePage(RepositoryItemBase repoItem, bool includeOriginal=true, RepositoryItemBase originalItem =null)
         {
@@ -300,7 +301,7 @@ namespace Ginger.Repository
                             }
                             else
                             {
-                                this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow));
+                                this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow, extraDetails));
                                 //mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow);
                             }
 

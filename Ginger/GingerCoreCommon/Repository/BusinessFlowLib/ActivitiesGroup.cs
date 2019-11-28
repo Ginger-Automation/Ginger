@@ -204,7 +204,7 @@ namespace GingerCore.Activities
             }
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             ActivitiesGroup activitiesGroupInstance = (ActivitiesGroup)instance;
 
@@ -216,22 +216,18 @@ namespace GingerCore.Activities
 
             //update required part
             ActivitiesGroup.eItemParts ePartToUpdate = (ActivitiesGroup.eItemParts)Enum.Parse(typeof(ActivitiesGroup.eItemParts), partToUpdate);
-            switch (ePartToUpdate)
+            //newInstance.Guid = activitiesGroupInstance.Guid;
+            //newInstance.ParentGuid = activitiesGroupInstance.ParentGuid;
+            //newInstance.ExternalID = activitiesGroupInstance.ExternalID;
+
+            // Update details
+            activitiesGroupInstance.Name = newInstance.Name;
+            activitiesGroupInstance.Description = newInstance.Description;
+            activitiesGroupInstance.Tags = newInstance.Tags;
+
+            if (ePartToUpdate == eItemParts.Details)
             {
-                case eItemParts.All:
-                case eItemParts.Details:
-                    newInstance.Guid = activitiesGroupInstance.Guid;
-                    newInstance.ParentGuid = activitiesGroupInstance.ParentGuid;
-                    newInstance.ExternalID = activitiesGroupInstance.ExternalID;
-                    if (ePartToUpdate == eItemParts.Details)
-                    {
-                        //keep other parts
-                        newInstance.ActivitiesIdentifiers = activitiesGroupInstance.ActivitiesIdentifiers;
-                    }
-                    break;
-                case eItemParts.Activities:
-                    // Keep everything as it is
-                    break;
+                return;
             }
 
             if (hostItem != null)
@@ -242,22 +238,12 @@ namespace GingerCore.Activities
                 int grpIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
                 if (grpIndex >= 0)
                 {
-                    int firstActivityIndex = currentBF.Activities.IndexOf(currentBF.ActivitiesGroups[grpIndex].ActivitiesIdentifiers.FirstOrDefault().IdentifiedActivity);
-                    if (firstActivityIndex == -1)
-                    {
-                        firstActivityIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(a => a.Guid == currentBF.ActivitiesGroups[grpIndex].ActivitiesIdentifiers.FirstOrDefault().ActivityGuid).FirstOrDefault());
-
-                        if (firstActivityIndex == -1)
-                        {
-                            firstActivityIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(a => a.ParentGuid == currentBF.ActivitiesGroups[grpIndex].ActivitiesIdentifiers.FirstOrDefault().ActivityGuid).FirstOrDefault());
-                        }
-                    }
-
-                    int insertIndex = firstActivityIndex;
+                    int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(a => a.Guid == activitiesGroupInstance.ActivitiesIdentifiers[0].ActivityGuid).FirstOrDefault());
 
                     List<Activity> existingActivities = new List<Activity>();
 
-                    for (int i = 0; i < activitiesGroupInstance.ActivitiesIdentifiers.Count; i++)
+                    int exActCount = activitiesGroupInstance.ActivitiesIdentifiers.Count;
+                    for (int i = exActCount-1; i >= 0; i--)
                     {
                         ActivityIdentifiers actIDexist = activitiesGroupInstance.ActivitiesIdentifiers[i];
 
@@ -274,71 +260,74 @@ namespace GingerCore.Activities
                             existingActivities.Add(exAct);
 
                             // Remove the activity from the Business Flow
-                            currentBF.Activities.Remove(exAct);
+                            currentBF.DeleteActivity(exAct);
                         }
                     }
 
-                    foreach (Activity foundAct in existingActivities)
-                    {
-                        // Remove Activity from Original Groups Identifier too
-                        activitiesGroupInstance.RemoveActivityFromGroup(foundAct);
-                    }
-
                     // Add the activities to the Business Flow in sequence they appear in the Updated Shared Group
-                    foreach (ActivityIdentifiers actID in this.ActivitiesIdentifiers)
+                    foreach (ActivityIdentifiers actID in newInstance.ActivitiesIdentifiers)
                     {
                         Activity updatedAct = null;
 
                         // Activity still exist in the group, thus re-add the same activity to the group
-                        if (existingActivities.Count > 0)
+                        updatedAct = existingActivities.Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
+
+                        // In case, group was Replaced/Overwritten
+                        if (updatedAct == null)
                         {
-                            updatedAct = existingActivities.Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
+                            updatedAct = existingActivities.Where(a => a.ParentGuid == actID.ActivityGuid).FirstOrDefault();
+                        }
 
-                            if (updatedAct == null)
-                            {
-                                updatedAct = existingActivities.Where(a => a.ParentGuid == actID.ActivityGuid).FirstOrDefault();
-                            }
-
-                            if (firstActivityIndex >= 0 && updatedAct != null)
-                            {
-                                currentBF.Activities.Insert(firstActivityIndex, updatedAct);
-                                firstActivityIndex++;
-                                existingActivities.Remove(updatedAct);
-                            }
+                        if (updatedAct != null)
+                        {
+                            currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);         //  .Activities.Insert(firstActivityIndex, updatedAct);
+                            insertIndex++;
+                            existingActivities.Remove(updatedAct);
                         }
                         // Activity doesn't exist in the group and the shared group is recently updated by addition of this activity, thus add this activity to the group instance in the Business Flow
-                        else
+                        else if(extraDetails != null)
                         {
-                            if (actID.IdentifiedActivity != null)
+                            updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName && a.Guid == actID.ActivityGuid).FirstOrDefault();
+                            if (updatedAct == null)
                             {
-                                updatedAct = actID.IdentifiedActivity;
-
-                                //updatedAct = actID.IdentifiedActivity.CreateInstance(true) as Activity;
-                                //updatedAct.ParentGuid = actID.IdentifiedActivity.ParentGuid;
+                                updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
                             }
-                            else
+                            if(updatedAct == null)
                             {
-                                // NEED TO LOOK FOR A WAY TO LOAD THE ACTIVITY VIA GUID
-                                var recObj = actID.RepositorySerializer.DeserializeFromFile(typeof(Activity), actID.ActivityName);
-                                updatedAct = new Activity() { Guid = actID.ActivityGuid, ActivityName = actID.ActivityName, Description = actID.ActivityDescription, IsSharedRepositoryInstance = true };
+                                updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName).FirstOrDefault();
                             }
 
-                            if (firstActivityIndex >= 0 && updatedAct != null)
+                            if (updatedAct != null)
                             {
-                                currentBF.Activities.Insert(firstActivityIndex, updatedAct);
-                                firstActivityIndex++;
+                                updatedAct = updatedAct.CreateInstance(true) as Activity;
+                                currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
+                                insertIndex++;
                             }
+                            //currentBF.ImportActivitiesGroupActivitiesFromRepository(activitiesGroupInstance, extraDetails as ObservableList<Activity>);
+                            //if (actID.IdentifiedActivity != null)
+                            //{
+                            //    updatedAct = actID.IdentifiedActivity;
+
+                            //    //updatedAct = actID.IdentifiedActivity.CreateInstance(true) as Activity;
+                            //    //updatedAct.ParentGuid = actID.IdentifiedActivity.ParentGuid;
+                            //}
+                            //else
+                            //{
+                            //    // NEED TO LOOK FOR A WAY TO LOAD THE ACTIVITY VIA GUID
+                            //    var recObj = actID.RepositorySerializer.DeserializeFromFile(typeof(Activity), actID.ActivityName);
+                            //    updatedAct = new Activity() { Guid = actID.ActivityGuid, ActivityName = actID.ActivityName, Description = actID.ActivityDescription, IsSharedRepositoryInstance = true };
+                            //}
+
+                            //if (insertIndex >= 0 && updatedAct != null)
+                            //{
+                            //    currentBF.Activities.Insert(insertIndex, updatedAct);
+                            //    insertIndex++;
+                            //}
                         }
 
                     }
 
-                    currentBF.DeleteActivitiesGroup(activitiesGroupInstance);
-                    currentBF.AddActivitiesGroup(newInstance, grpIndex);
-
                     currentBF.AttachActivitiesGroupsAndActivities();
-
-                    currentBF.ActivitiesGroups = currentBF.ActivitiesGroups;
-                    currentBF.Activities = currentBF.Activities;
                 }
             }
 

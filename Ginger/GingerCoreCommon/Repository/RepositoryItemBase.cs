@@ -1091,7 +1091,7 @@ namespace Amdocs.Ginger.Repository
             throw new NotImplementedException("GetUpdatedRepoItem() was not implemented for this Item type");
         }
 
-        public virtual void UpdateInstance(RepositoryItemBase instanceItem, string itemPartToUpdate, RepositoryItemBase hostItem = null)
+        public virtual void UpdateInstance(RepositoryItemBase instanceItem, string itemPartToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             throw new NotImplementedException("UpdateInstance() was not implemented for this Item type");
         }
