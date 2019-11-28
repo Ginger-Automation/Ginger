@@ -220,20 +220,24 @@ namespace GingerCore.Activities
             //newInstance.ParentGuid = activitiesGroupInstance.ParentGuid;
             //newInstance.ExternalID = activitiesGroupInstance.ExternalID;
 
-            // Update details
-            activitiesGroupInstance.Name = newInstance.Name;
-            activitiesGroupInstance.Description = newInstance.Description;
-            activitiesGroupInstance.Tags = newInstance.Tags;
-
-            if (ePartToUpdate == eItemParts.Details)
-            {
-                return;
-            }
-
             if (hostItem != null)
             {
                 //replace old instance object with new
                 BusinessFlow currentBF = ((BusinessFlow)hostItem);
+
+                // Update details
+                activitiesGroupInstance.Name = newInstance.Name;
+                activitiesGroupInstance.Description = newInstance.Description;
+                activitiesGroupInstance.Tags = newInstance.Tags;
+
+                // Confirm if no group exists in the Business Flow with same name
+                currentBF.SetUniqueActivitiesGroupName(activitiesGroupInstance);
+
+                if (ePartToUpdate == eItemParts.Details)
+                {
+                    currentBF.AttachActivitiesGroupsAndActivities();
+                    return;
+                }
 
                 int grpIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
                 if (grpIndex >= 0)
