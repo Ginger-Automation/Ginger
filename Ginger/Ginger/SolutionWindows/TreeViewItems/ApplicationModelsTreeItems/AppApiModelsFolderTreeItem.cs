@@ -40,10 +40,12 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         public RepositoryFolder<ApplicationAPIModel> mAPIModelFolder;
         private APIModelsPage mAPIModelsPage;
         private ObservableList<ApplicationAPIModel> mChildAPIs = null;
+        bool mShowEditInMenu = false;
 
-        public AppApiModelsFolderTreeItem(RepositoryFolder<ApplicationAPIModel> apiModelFolder)
+        public AppApiModelsFolderTreeItem(RepositoryFolder<ApplicationAPIModel> apiModelFolder, bool ShowEditInMenu = false)
         {
             mAPIModelFolder = apiModelFolder;
+            mShowEditInMenu = ShowEditInMenu;
         }
 
         Object ITreeViewItem.NodeObject()
@@ -75,7 +77,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             if (item is ApplicationAPIModel)
             {
-                return new AppApiModelTreeItem((ApplicationAPIModel)item);
+                return new AppApiModelTreeItem((ApplicationAPIModel)item, mShowEditInMenu);
             }
 
             if (item is RepositoryFolderBase)
@@ -93,7 +95,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             ObservableList<RepositoryFolder<ApplicationAPIModel>> subFolders = mAPIModelFolder.GetSubFolders();
             foreach (RepositoryFolder<ApplicationAPIModel> apiFolder in subFolders)
             {
-                AppApiModelsFolderTreeItem apiFTVI = new AppApiModelsFolderTreeItem(apiFolder);
+                AppApiModelsFolderTreeItem apiFTVI = new AppApiModelsFolderTreeItem(apiFolder, mShowEditInMenu);
                 Childrens.Add(apiFTVI);
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
@@ -105,7 +107,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
             foreach (ApplicationAPIModel api in mChildAPIs.OrderBy(nameof(ApplicationAPIModel.Name)))
             {
-                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api);
+                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api, mShowEditInMenu);
                 Childrens.Add(apiTI);
             }
 
