@@ -381,8 +381,11 @@ namespace GingerWPF.TreeViewItemsLib
         private void SourceControlGetInfo(object sender, RoutedEventArgs e)
         {
             SourceControlItemInfoDetails SCIID = SourceControlIntegration.GetInfo(WorkSpace.Instance.Solution.SourceControl, this.NodePath());
-            SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIID);
-            SCIIP.ShowAsWindow();
+            if (SCIID != null)
+            {
+                SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIID);
+                SCIIP.ShowAsWindow();
+            }
         }
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)

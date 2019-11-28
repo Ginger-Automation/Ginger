@@ -673,8 +673,11 @@ namespace Ginger
         {
 
             SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo( WorkSpace.Instance.Solution.SourceControl);
-            SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
-            SCIIP.ShowAsWindow();
+            if (SCIInfoDetails != null)
+            {
+                SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
+                SCIIP.ShowAsWindow();
+            }
         }
 
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
