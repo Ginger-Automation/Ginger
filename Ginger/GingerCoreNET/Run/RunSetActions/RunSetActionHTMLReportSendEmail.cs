@@ -44,6 +44,7 @@ namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionHTMLReportSendEmail : RunSetActionBase
     {
+        private static readonly Object thisObj = new object();
         public enum eHTMLReportTemplate
         {
             HTMLReport,
@@ -197,20 +198,7 @@ namespace Ginger.Run.RunSetActions
 
             var ReportItem = EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
 
-            if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText)
-            {
-                if (ReportItem != null && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
-                {
-                    Errors = "In order to get HTML report, please, perform executions before";
-                    Reporter.HideStatusMessage();
-                    Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
-                    return;
-                }
-                mValueExpression.Value = Bodytext;
-                emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + "\\GingerExecutionReport.html" + System.Environment.NewLine;
-                emailReadyHtml += mValueExpression.ValueCalculated;
-            }
-            else
+            if (HTMLReportTemplate == RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport)
             {
                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 {
@@ -321,7 +309,7 @@ namespace Ginger.Run.RunSetActions
                             reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
                             if (rReport.IsAlternameFolderUsed)
                             {
-                                var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client");
+                                var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client_" + $"{WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
                                 if (Directory.Exists(path))
                                     Directory.Delete(path, true);
                                 IoHandler.Instance.CopyFolderRec(reportsResultFolder, path, true);
@@ -437,6 +425,25 @@ namespace Ginger.Run.RunSetActions
                         Email.EmbededAttachment.Add(new KeyValuePair<string, string>(Path.Combine(tempFolder, $"Businessflow{reportTimeStamp}.jpeg"), "Businessflow" + reportTimeStamp));
                     }
                 }
+            }
+            else
+            {
+                if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                {
+                    if (ReportItem != null && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunsetExecLoggerPopulated)
+                    {
+                        Errors = "In order to get HTML report, please, perform executions before";
+                        Reporter.HideStatusMessage();
+                        Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
+                        return;
+                    }
+                }
+                mValueExpression.Value = Bodytext;
+                if (ReportItem != null)
+                {
+                    emailReadyHtml = "Full Report Shared Path =>" + reportsResultFolder + System.Environment.NewLine;
+                }
+                emailReadyHtml += mValueExpression.ValueCalculated;
             }
             //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Preparing email");
             mValueExpression.Value = MailFrom;
@@ -1797,41 +1804,44 @@ namespace Ginger.Run.RunSetActions
         //TODO: Move the Zipit function to Email.Addattach function
         void AddAttachmentToEmail(Email e, string FileName, bool ZipIt, EmailAttachment.eAttachmentType AttachmentType)
         {
-            if (ZipIt)
+            lock (thisObj)
             {
-                //We use this trick to get valid temp unique file name, then convert it to folder
-                //Create sub dir to hold the file
-                // Copy the file to the sub folder, keep the name
-                // Create target zip file name               
-                String ZipFileName = "";
-                if (AttachmentType == EmailAttachment.eAttachmentType.Report)
+                if (ZipIt)
                 {
-                    ZipFileName = "Full HTML Report.zip";
+                    //We use this trick to get valid temp unique file name, then convert it to folder
+                    //Create sub dir to hold the file
+                    // Copy the file to the sub folder, keep the name
+                    // Create target zip file name               
+                    String ZipFileName = "";
+                    if (AttachmentType == EmailAttachment.eAttachmentType.Report)
+                    {
+                        ZipFileName = "Full HTML Report.zip";
+                    }
+                    else
+                    {
+                        ZipFileName = Path.GetFileNameWithoutExtension(FileName) + ".zip";
+                    }
+                    //Create the Zip file if file not exists otherwise delete existing one and then create new.
+                    try
+                    {
+                        if (File.Exists(Path.Combine(tempFolder, ZipFileName)))
+                        {
+                            File.Delete(Path.Combine(tempFolder, ZipFileName));
+                        }
+                        ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
+                    }
+                    catch (Exception ex)
+                    {
+                        ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
+                        ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                    }
+                    e.Attachments.Add(Path.Combine(tempFolder, ZipFileName));
                 }
                 else
                 {
-                    ZipFileName = Path.GetFileNameWithoutExtension(FileName) + ".zip";
+                    e.Attachments.Add(FileName);
                 }
-                //Create the Zip file if file not exists otherwise delete existing one and then create new.
-                try
-                {
-                    if (File.Exists(Path.Combine(tempFolder, ZipFileName)))
-                    {
-                        File.Delete(Path.Combine(tempFolder, ZipFileName));
-                    }
-                    ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
-                }
-                catch (Exception ex)
-                {
-                    ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
-                    ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                }
-                e.Attachments.Add(Path.Combine(tempFolder, ZipFileName));
-            }
-            else
-            {
-                e.Attachments.Add(FileName);
             }
         }
         public long CalculateAttachmentsSize(Email email)
