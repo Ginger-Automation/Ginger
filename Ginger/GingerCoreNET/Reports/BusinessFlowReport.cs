@@ -386,7 +386,7 @@ namespace Ginger.Reports
         }
 
         [FieldParams]
-        [FieldParamsNameCaption("Business Flow Activities Execution Rate")]
+        [FieldParamsNameCaption("Business Flow Execution Rate")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]

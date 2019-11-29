@@ -134,24 +134,18 @@ namespace Amdocs.Ginger.CoreNET.Logger
             HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
 
             //populate data based on level
-            if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy))
+            if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()))
             {
-                _HTMLReportConfig.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activity.ToString();
+                _HTMLReportConfig.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
             }
 
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
             List<string> runSetEnv = new List<string>();
 
-            if (liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
-            {
-                liteDbRunSet.ExecutionRate = string.Format("{0:F1}", (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
-            }
-            else { liteDbRunSet.ExecutionRate = "0"; }
-            if (liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
-            {
-                liteDbRunSet.PassRate = string.Format("{0:F1}", (liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
-            }
-            else { liteDbRunSet.PassRate = "0"; }
+            liteDbRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+            liteDbRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
             if (liteDbRunSet.Elapsed.HasValue)
             {
                 liteDbRunSet.Elapsed = Math.Round(liteDbRunSet.Elapsed.Value, 2);
@@ -162,48 +156,36 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 {
                     runSetEnv.Add(liteDbRunner.Environment);
                 }
-                if (liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
-                {
-                    liteDbRunner.ExecutionRate = string.Format("{0:F1}", (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
-                }
-                else { liteDbRunner.ExecutionRate = "0"; }
-                if (liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
-                {
-                    liteDbRunner.PassRate = string.Format("{0:F1}", (liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
-                }
-                else { liteDbRunner.PassRate = "0"; }
+                
+                liteDbRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+                liteDbRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
                 if (liteDbRunner.Elapsed.HasValue)
                 {
                     liteDbRunner.Elapsed = Math.Round(liteDbRunner.Elapsed.Value, 2);
                 }
+                else { liteDbRunner.Elapsed = 0; }
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
-                    if (liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
-                    {
-                        liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
-                    }
-                    else { liteDbBusinessFlow.PassRate = "0"; }
-                    if (liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] != 0)
-                    {
-                        liteDbBusinessFlow.PassRate = string.Format("{0:F1}", (liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy] * 100 / liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy]).ToString());
-                    }
-                    else { liteDbBusinessFlow.PassRate = "0"; }
+                   
+                    liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+                    liteDbBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
                     if (liteDbBusinessFlow.Elapsed.HasValue)
                     {
                         liteDbBusinessFlow.Elapsed = Math.Round(liteDbBusinessFlow.Elapsed.Value, 2);
                     }
+                    else { liteDbBusinessFlow.Elapsed = 0; }
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
-                        if (liteDbActivity.ChildExecutableItemsCount != 0)
-                        {
-                            liteDbActivity.ExecutionRate = string.Format("{0:F1}", (liteDbActivity.ChildExecutedItemsCount * 100 / liteDbActivity.ChildExecutableItemsCount).ToString());
-                        }
-                        else { liteDbActivity.PassRate = "0"; }
-                        if (liteDbActivity.ChildExecutedItemsCount != 0)
-                        {
-                            liteDbActivity.PassRate = string.Format("{0:F1}", (liteDbActivity.ChildPassedItemsCount * 100 / liteDbActivity.ChildExecutedItemsCount).ToString());
-                        }
-                        else { liteDbActivity.PassRate = "0"; }
+                        
+                        liteDbActivity.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildExecutedItemsCount, liteDbActivity.ChildExecutableItemsCount));
+
+                        liteDbActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildPassedItemsCount, liteDbActivity.ChildExecutedItemsCount));
+
+                        
                         if (liteDbActivity.Elapsed.HasValue)
                         {
                             liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
@@ -238,6 +220,17 @@ namespace Amdocs.Ginger.CoreNET.Logger
             if (runSetEnv.Count > 0)
             {
                 liteDbRunSet.Environment = string.Join(",", runSetEnv);
+            }
+        }
+        private string CalculateExecutionOrPassRate(int firstItem, int secondItem)
+        {
+            if (secondItem != 0)
+            {
+                return (firstItem * 100 / secondItem).ToString();
+            }
+            else
+            {
+                return "0";
             }
         }
 

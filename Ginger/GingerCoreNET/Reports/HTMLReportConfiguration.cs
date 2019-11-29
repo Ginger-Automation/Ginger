@@ -72,9 +72,9 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public bool ShowAllIterationsElements { get { return mShowAllIterationsElements; } set { if (mShowAllIterationsElements != value) { mShowAllIterationsElements = value; OnPropertyChanged(nameof(ShowAllIterationsElements)); } } }
 
-        string mExecutionStatisticsCountBy;
+        eExecutionStatisticsCountBy mExecutionStatisticsCountBy;
         [IsSerializedForLocalRepository]
-        public string ExecutionStatisticsCountBy { get { return mExecutionStatisticsCountBy; } set { if (mExecutionStatisticsCountBy != value) { mExecutionStatisticsCountBy = value; OnPropertyChanged(nameof(ExecutionStatisticsCountBy)); } } }
+        public eExecutionStatisticsCountBy ExecutionStatisticsCountBy { get { return mExecutionStatisticsCountBy; } set { if (mExecutionStatisticsCountBy != value) { mExecutionStatisticsCountBy = value; OnPropertyChanged(nameof(ExecutionStatisticsCountBy)); } } }
 
         bool mUseLocalStoredStyling;
         [IsSerializedForLocalRepository]
@@ -123,8 +123,8 @@ namespace Ginger.Reports
 
         public enum eExecutionStatisticsCountBy
         {
-            Action,
-            Activity
+            Actions,
+            Activities
         }
 
         [IsSerializedForLocalRepository]

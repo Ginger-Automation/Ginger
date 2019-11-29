@@ -232,9 +232,6 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public LiteDbActivity()
         {
             ActionsColl = new List<LiteDbAction>();
-            //ChildExecutableItemsCount = new Dictionary<string, int>();
-            //ChildExecutedItemsCount = new Dictionary<string, int>();
-            //ChildPassedItemsCount = new Dictionary<string, int>();
         }
 
         public void SetReportData(ActivityReport activityReport)
