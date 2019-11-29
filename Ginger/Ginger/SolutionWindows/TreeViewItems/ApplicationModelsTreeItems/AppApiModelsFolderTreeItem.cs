@@ -201,6 +201,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
             if (copiedItem != null)
             {
+                copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                 AppApiModelTreeItem.HandleGlobalModelParameters(nodeItemToCopy, copiedItem);            // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
                 ((RepositoryFolderBase)(((ITreeViewItem)targetFolderNode).NodeObject())).AddRepositoryItem(copiedItem);
                 return true;
