@@ -212,13 +212,8 @@ namespace GingerCore.Activities
             ActivitiesGroup newInstance = (ActivitiesGroup)this.CreateInstance();
             newInstance.IsSharedRepositoryInstance = true;
 
-            //newInstance.ActivitiesIdentifiers = this.ActivitiesIdentifiers;
-
             //update required part
             ActivitiesGroup.eItemParts ePartToUpdate = (ActivitiesGroup.eItemParts)Enum.Parse(typeof(ActivitiesGroup.eItemParts), partToUpdate);
-            //newInstance.Guid = activitiesGroupInstance.Guid;
-            //newInstance.ParentGuid = activitiesGroupInstance.ParentGuid;
-            //newInstance.ExternalID = activitiesGroupInstance.ExternalID;
 
             if (hostItem != null)
             {
@@ -247,7 +242,7 @@ namespace GingerCore.Activities
                     List<Activity> existingActivities = new List<Activity>();
 
                     int exActCount = activitiesGroupInstance.ActivitiesIdentifiers.Count;
-                    for (int i = exActCount-1; i >= 0; i--)
+                    for (int i = exActCount - 1; i >= 0; i--)
                     {
                         ActivityIdentifiers actIDexist = activitiesGroupInstance.ActivitiesIdentifiers[i];
 
@@ -284,19 +279,19 @@ namespace GingerCore.Activities
 
                         if (updatedAct != null)
                         {
-                            currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);         //  .Activities.Insert(firstActivityIndex, updatedAct);
+                            currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
                             insertIndex++;
                             existingActivities.Remove(updatedAct);
                         }
                         // Activity doesn't exist in the group and the shared group is recently updated by addition of this activity, thus add this activity to the group instance in the Business Flow
-                        else if(extraDetails != null)
+                        else if (extraDetails != null)
                         {
                             updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName && a.Guid == actID.ActivityGuid).FirstOrDefault();
                             if (updatedAct == null)
                             {
                                 updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
                             }
-                            if(updatedAct == null)
+                            if (updatedAct == null)
                             {
                                 updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName).FirstOrDefault();
                             }
@@ -307,26 +302,6 @@ namespace GingerCore.Activities
                                 currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
                                 insertIndex++;
                             }
-                            //currentBF.ImportActivitiesGroupActivitiesFromRepository(activitiesGroupInstance, extraDetails as ObservableList<Activity>);
-                            //if (actID.IdentifiedActivity != null)
-                            //{
-                            //    updatedAct = actID.IdentifiedActivity;
-
-                            //    //updatedAct = actID.IdentifiedActivity.CreateInstance(true) as Activity;
-                            //    //updatedAct.ParentGuid = actID.IdentifiedActivity.ParentGuid;
-                            //}
-                            //else
-                            //{
-                            //    // NEED TO LOOK FOR A WAY TO LOAD THE ACTIVITY VIA GUID
-                            //    var recObj = actID.RepositorySerializer.DeserializeFromFile(typeof(Activity), actID.ActivityName);
-                            //    updatedAct = new Activity() { Guid = actID.ActivityGuid, ActivityName = actID.ActivityName, Description = actID.ActivityDescription, IsSharedRepositoryInstance = true };
-                            //}
-
-                            //if (insertIndex >= 0 && updatedAct != null)
-                            //{
-                            //    currentBF.Activities.Insert(insertIndex, updatedAct);
-                            //    insertIndex++;
-                            //}
                         }
 
                     }

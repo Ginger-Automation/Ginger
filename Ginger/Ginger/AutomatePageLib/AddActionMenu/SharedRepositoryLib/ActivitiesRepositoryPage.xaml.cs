@@ -42,10 +42,12 @@ namespace Ginger.Repository
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
-        bool mSRGroupRequest = false;
         GenericWindow _pageGenericWin = null;
+        public enum ePageViewMode { Default, Selection }
 
-        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null, bool IsSRGroupRequest = false)
+        ePageViewMode mViewMode;
+
+        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null, ePageViewMode viewMode = ePageViewMode.Default)
         {
             InitializeComponent();
 
@@ -62,7 +64,7 @@ namespace Ginger.Repository
             else
                 mAddActivityHandler = AddFromRepository;
 
-            mSRGroupRequest = IsSRGroupRequest;
+            mViewMode = viewMode;
 
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -98,7 +100,7 @@ namespace Ginger.Repository
 
             xActivitiesRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
             //grdActivitiesRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivities));      
-            if (!mSRGroupRequest)
+            if (mViewMode == ePageViewMode.Default)
             {
                 if (mContext != null && mContext.BusinessFlow != null)
                 {
@@ -151,15 +153,19 @@ namespace Ginger.Repository
             }
         }
 
-        public void ShowAsWindow(Window ownerWindow, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void ShowAsWindow(Window ownerWindow, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, ePageViewMode viewMode = ePageViewMode.Selection)
         {
-            Button addButton = new Button();
-            addButton.Content = "Add Selected";
-            addButton.Click += SendSelected;
-
             ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(addButton);
-            xActivitiesRepositoryGrid.AddHandler(DataGridRow.MouseDoubleClickEvent, new RoutedEventHandler(SendSelected));
+
+            if (viewMode == ePageViewMode.Selection)
+            {
+                Button addButton = new Button();
+                addButton.Content = "Add Selected";
+                addButton.Click += SendSelected;
+
+                winButtons.Add(addButton);
+                xActivitiesRepositoryGrid.AddHandler(DataGridRow.MouseDoubleClickEvent, new RoutedEventHandler(SendSelected));
+            }
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, ownerWindow, windowStyle, "Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities), this, winButtons, true, "Close");
         }

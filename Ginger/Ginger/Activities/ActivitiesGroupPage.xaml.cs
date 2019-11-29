@@ -18,13 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.BusinessFlowPages;
 using Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,7 +64,6 @@ namespace Ginger.Activities
             SetGroupedActivitiesGridView();
             grdGroupedActivities.DataSourceList = mActivitiesGroup.ActivitiesIdentifiers;
             grdGroupedActivities.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGroupedActivities));
-
             AttachActivitiesGroupAndRepositoryActivities();
             RefreshGroupedActivities();
 
@@ -84,23 +81,14 @@ namespace Ginger.Activities
         void UpdateSharedRepositorySupportedOperations()
         {
             grdGroupedActivities.ShowUpDown = Visibility.Visible;
+            grdGroupedActivities.ShowDelete = Visibility.Visible;
 
             grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another Activity to this Group", BtnAdd_Click);
-            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.DeleteSingle, "Delete Current Selected Activity from this Group", GroupActivitiesHandler);
-        }
-
-        private void BtnDelete_Click(object sender, RoutedEventArgs e)
-        {
-            FrameworkElement fElem = sender as FrameworkElement;
-            if (fElem != null)
-            {
-
-            }
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            ActivitiesRepositoryPage ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, null, GroupActivitiesHandler, true);
+            ActivitiesRepositoryPage ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, null, GroupActivitiesHandler, ActivitiesRepositoryPage.ePageViewMode.Selection);
             ActivitiesRepoPage.ShowAsWindow(Window.GetWindow(this));
         }
 
@@ -112,97 +100,16 @@ namespace Ginger.Activities
             if (senderGrid != null)
             {
                 selectedActivitiesList = senderGrid.GetSelectedItems();
-            }
-            else
-            {
-                selectedActivitiesList = new ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase>();
-                foreach(ActivityIdentifiers actID in grdGroupedActivities.GetSelectedItems())
-                {
-                    selectedActivitiesList.Add(actID.IdentifiedActivity);
-                }
-            }
 
-            if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
-            {
-                foreach (Activity sharedActivity in selectedActivitiesList)
+                if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
                 {
-                    if (senderGrid != null)
+                    foreach (Activity sharedActivity in selectedActivitiesList)
                     {
                         Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
                         mActivitiesGroup.AddActivityToGroup(newInstance);
                     }
-                    else
-                    {
-                        mActivitiesGroup.RemoveActivityFromGroup(sharedActivity);
-                    }
                 }
             }
-        }
-
-        void ShiftItem(bool ShiftUp)
-        {
-            ActivityIdentifiers selectedActivity = grdGroupedActivities.CurrentItem as ActivityIdentifiers;
-
-            if (selectedActivity != null)
-            {
-                int currentIndex = grdGroupedActivities.DataSourceList.IndexOf(selectedActivity);
-                int lastIndex = 0;
-                int newIndex = -1;
-                if (!ShiftUp)
-                {
-                    lastIndex = grdGroupedActivities.DataSourceList.Count - 1;
-                    newIndex = currentIndex + 1;
-                }
-                else
-                {
-                    newIndex = currentIndex - 1;
-                }
-
-                if (currentIndex == lastIndex)
-                {
-                    return;
-                }
-                else
-                {
-                    grdGroupedActivities.DataSourceList.Move(currentIndex, newIndex);
-                }
-            }
-        }
-
-        private void MoveDown_Click(object sender, EventArgs e)
-        {
-            ShiftItem(false);
-        }
-
-        private void MoveUp_Click(object sender, EventArgs e)
-        {
-            ShiftItem(true);
-        }
-
-        private void BtnDown_Click(object sender, RoutedEventArgs e)
-        {
-            //ActivityIdentifiers selectedActivity = grdGroupedActivities.CurrentItem as ActivityIdentifiers;
-
-            //if(selectedActivity != null)
-            //{
-            //    int currentIndex = grdGroupedActivities.DataSourceList.IndexOf(selectedActivity);
-            //    int lastIndex = grdGroupedActivities.DataSourceList.Count - 1;
-
-            //    if(currentIndex == lastIndex)
-            //    {
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        grdGroupedActivities.DataSourceList.Move(currentIndex, currentIndex + 1);
-            //    }
-            //}
-            //throw new NotImplementedException();
-        }
-
-        private void BtnUp_Click(object sender, RoutedEventArgs e)
-        {
-            //throw new NotImplementedException();
         }
 
         private void SetGroupedActivitiesGridView()
