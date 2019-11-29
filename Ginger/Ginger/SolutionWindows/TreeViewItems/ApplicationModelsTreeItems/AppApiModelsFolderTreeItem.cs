@@ -19,7 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
+using Ginger.Actions.ApiActionsConversion;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -40,10 +40,12 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         public RepositoryFolder<ApplicationAPIModel> mAPIModelFolder;
         private APIModelsPage mAPIModelsPage;
         private ObservableList<ApplicationAPIModel> mChildAPIs = null;
+        bool mShowEditInMenu = false;
 
-        public AppApiModelsFolderTreeItem(RepositoryFolder<ApplicationAPIModel> apiModelFolder)
+        public AppApiModelsFolderTreeItem(RepositoryFolder<ApplicationAPIModel> apiModelFolder, bool ShowEditInMenu = false)
         {
             mAPIModelFolder = apiModelFolder;
+            mShowEditInMenu = ShowEditInMenu;
         }
 
         Object ITreeViewItem.NodeObject()
@@ -75,7 +77,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         {
             if (item is ApplicationAPIModel)
             {
-                return new AppApiModelTreeItem((ApplicationAPIModel)item);
+                return new AppApiModelTreeItem((ApplicationAPIModel)item, mShowEditInMenu);
             }
 
             if (item is RepositoryFolderBase)
@@ -93,7 +95,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             ObservableList<RepositoryFolder<ApplicationAPIModel>> subFolders = mAPIModelFolder.GetSubFolders();
             foreach (RepositoryFolder<ApplicationAPIModel> apiFolder in subFolders)
             {
-                AppApiModelsFolderTreeItem apiFTVI = new AppApiModelsFolderTreeItem(apiFolder);
+                AppApiModelsFolderTreeItem apiFTVI = new AppApiModelsFolderTreeItem(apiFolder, mShowEditInMenu);
                 Childrens.Add(apiFTVI);
             }
             subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // untrack sub folders
@@ -105,7 +107,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             mChildAPIs.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
             foreach (ApplicationAPIModel api in mChildAPIs.OrderBy(nameof(ApplicationAPIModel.Name)))
             {
-                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api);
+                AppApiModelTreeItem apiTI = new AppApiModelTreeItem(api, mShowEditInMenu);
                 Childrens.Add(apiTI);
             }
 
@@ -139,12 +141,23 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             TreeViewUtils.AddSubMenuItem(addMenu, "Import API's", AddAPIModelFromDocument, null, eImageType.Download);
             TreeViewUtils.AddSubMenuItem(addMenu, "SOAP API Model", AddSoapAPIModel, null, eImageType.APIModel);
             TreeViewUtils.AddSubMenuItem(addMenu, "REST API Model", AddRESTAPIModel, null, eImageType.APIModel);
+            TreeViewUtils.AddSubMenuItem(addMenu, "Convert Webservices Actions", WebServiceActionsConversionHandler, null, eImageType.Convert);
             if (mAPIModelFolder.IsRootFolder)
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew:false, allowDeleteFolder:false, allowRenameFolder:false, allowRefresh: false, allowDeleteAllItems: true);
             else
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
 
             AddSourceControlOptions(mContextMenu);
+        }
+
+        /// <summary>
+        /// This event is used to handle the WebService Conversion Handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WebServiceActionsConversionHandler(object sender, RoutedEventArgs e)
+        {            
+            WizardWindow.ShowWizard(new ApiActionsConversionWizard(mAPIModelFolder), 900, 700);
         }
 
         private void AddSoapAPIModel(object sender, RoutedEventArgs e)
@@ -188,6 +201,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
             if (copiedItem != null)
             {
+                copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                 AppApiModelTreeItem.HandleGlobalModelParameters(nodeItemToCopy, copiedItem);            // avoid generating new GUIDs for Global Model Parameters associated to API Model being copied
                 ((RepositoryFolderBase)(((ITreeViewItem)targetFolderNode).NodeObject())).AddRepositoryItem(copiedItem);
                 return true;

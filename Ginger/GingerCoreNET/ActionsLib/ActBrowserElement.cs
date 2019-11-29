@@ -98,20 +98,6 @@ namespace GingerCore.Actions
         }
 
 
-        public eGotoURLType GotoURLRadioButton
-        {
-            get {
-
-                return GetOrCreateInputParam<eGotoURLType>(Fields.GotoURLType);
-            }
-            set
-            {
-                GetOrCreateInputParam(Fields.GotoURLType).Value = value.ToString();
-            }
-        }
-
-        // private eGotoURLType gotoURLRadioButton = eGotoURLType.Current;
-
         private int mImplicitWait = 60;
         [IsSerializedForLocalRepository]
         public int ImplicitWait
@@ -350,6 +336,14 @@ namespace GingerCore.Actions
             return platformAction;            
         }
 
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound && name == "GotoURLRadioButton")
+            {
+                return true;
+            }
+            return false;
+        }
 
     }
 }
