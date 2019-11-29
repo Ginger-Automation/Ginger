@@ -687,8 +687,8 @@ namespace Ginger.Run
                 TBH.AddLineBreak();
                 appAgentsMappingExist = true;
             }
-            
-            if (appAgentsMappingExist)
+
+            if (appAgentsMappingExist && xConfigButton.IsLoaded && Runner.BusinessFlows.Count == 1)
             {
                 App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnerConfigHelp", xConfigButton, "Click here to configure all Runner execution settings like: mapped Agents, selected Environment, etc.");
             }
