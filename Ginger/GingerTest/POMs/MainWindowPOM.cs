@@ -106,6 +106,17 @@ namespace GingerWPFUnitTest.POMs
             });
         }
 
+        internal void ClickBusinessFlowRibbon()
+        {
+            mMainWindow.Dispatcher.Invoke(() => {
+                SleepWithDoEvents(1);
+                ListView lv = (ListView)mMainWindow.FindName("xSolutionTabsListView");
+                ListViewItem b = (ListViewItem)mMainWindow.FindName("xBusinessFlowsListItem");
+                lv.SelectedItem = b;
+                WaitForPage(typeof(TwoLevelMenuPage));
+            });
+        }
+
         private void WaitForPage(Type p1)
         {
             SleepWithDoEvents(1);

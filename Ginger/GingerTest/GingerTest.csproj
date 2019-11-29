@@ -211,6 +211,7 @@
     <Compile Include="APIModelLib\WSDLParserTest.cs" />
     <!--<Compile Include="APIModelLib\WSDLToAPITest.cs" />-->
     <Compile Include="AgentsLib\AgentsTest.cs" />
+    <Compile Include="BusinessFlowLib\BusinessFlowUndoTest.cs" />
     <Compile Include="EnvironemntsLib\EnvsTest.cs" />
     <Compile Include="GeneralLib\CopyDir.cs" />
     <Compile Include="GeneralLib\VisualCompare.cs" />
@@ -263,6 +264,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TestResources\Solutions\POMsTest\RecentlyUsed.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Solutions\TestUndoBusinessFlow\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Solutions\TestUndoBusinessFlow\ExecutionResults\GingerExecutionResults.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -362,6 +369,27 @@
     <Content Include="TestResources\Solutions\ReportSR\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 2.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\DataSources\DefaultDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\VisualCompareScreens\AgentEditPage.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -428,6 +456,18 @@
     <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\ActivitiesGroup\" />
     <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Activities\" />
     <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Variables\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\ALMDefectProfiles\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\API Models\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\Global Models Parameters\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\POM Models\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\AutoSave\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Plugins\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\RemoteServiceGrid\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\RunSetConfigs\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Actions\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\ActivitiesGroup\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Activities\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Variables\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
