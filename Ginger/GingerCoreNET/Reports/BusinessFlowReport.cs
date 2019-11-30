@@ -394,7 +394,7 @@ namespace Ginger.Reports
         public double ExecutionRate { get { return Activities.Count != 0 ? Math.Round((double)(TotalActivities - TotalActivitiesOther) * 100 / TotalActivities, MidpointRounding.AwayFromZero)  : 0; } }
 
         [FieldParams]
-        [FieldParamsNameCaption("Business Flow Activities Passed Rate")]
+        [FieldParamsNameCaption("Business Flow Passed Rate")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
