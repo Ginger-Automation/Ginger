@@ -128,7 +128,7 @@ namespace GingerCoreNET.Application_Models
                     PomLearnUtils.SetLearnedElementDetails(latestElement);
 
                     if (matchingOriginalElement == null)//New element
-                    {                        
+                    {
                         object groupToAddTo;
                         if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
                         {
@@ -386,12 +386,64 @@ namespace GingerCoreNET.Application_Models
         private void SetUnidentifiedElementsDeltaDetails()
         {
             List<ElementInfo> unidentifiedElements = POMElementsCopy.Where(x => DeltaViewElements.Where(y => y.ElementInfo != null && y.ElementInfo.Guid == x.Guid).FirstOrDefault() == null).ToList();
+            
+            var addedElements = DeltaViewElements.Where(d => d.DeltaStatus == eDeltaStatus.Added).ToList();
+
             foreach (ElementInfo unidentifiedElement in unidentifiedElements)
             {
                 if (unidentifiedElement.ElementStatus == ElementInfo.eElementStatus.Failed)
-                {  
-                    //Deleted
-                    DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Deleted, unidentifiedElement.ElementGroup, true, "Element not found on page"));
+                {
+                    bool matchingElementFound = false;
+
+                    DeltaElementInfo toRemoveAddedFoundItem = null;
+                    foreach (var newElement in addedElements)
+                    {
+                        var newElementLocdiff = newElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+                        var oldElementLocdiff = unidentifiedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+
+                        if (newElementLocdiff.Except(oldElementLocdiff).Count() == 0)
+                        {
+                            //check property and update
+                            var newElementPropeties = newElement.Properties.ToDictionary(x => x.Name, x => x.Value);
+                            var oldElementPropeties = unidentifiedElement.Properties.ToDictionary(x => x.Name, x => x.Value);
+                            var diffProperties = newElementPropeties.Except(oldElementPropeties);
+
+                            foreach (var changedProprty in diffProperties.ToList())
+                            {
+                                foreach( var existingProperty in unidentifiedElement.Properties.Where(x => x.Name == changedProprty.Key))
+                                {
+                                    existingProperty.Value = changedProprty.Value;
+                                }
+                            }
+
+                            matchingElementFound = true;
+                            DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Changed, unidentifiedElement.ElementGroup, true, "Element Property Updated"));
+                            
+                            var itemToRemove = DeltaViewElements.Where(x => x.ElementInfo.Guid == newElement.ElementInfo.Guid).FirstOrDefault();
+                            if (itemToRemove != null)
+                            {
+                                DeltaViewElements.Remove(itemToRemove);
+                            }
+
+                            // add found newElment in removeitem 
+                            toRemoveAddedFoundItem = newElement;
+                            //element found and updated, so exit from loop
+                            break;
+                        }
+
+                    }
+
+                    if (toRemoveAddedFoundItem != null)
+                    {
+                        addedElements.Remove(toRemoveAddedFoundItem);
+                    }
+
+                    if (matchingElementFound==false)
+                    {
+                        //Deleted
+                        DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Deleted, unidentifiedElement.ElementGroup, true, "Element not found on page"));
+                    }
+
                 }
                 else
                 {
@@ -399,6 +451,7 @@ namespace GingerCoreNET.Application_Models
                     DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Unknown, unidentifiedElement.ElementGroup, false, "Element exist on page but could not be compared"));
                 }
             }
+
         }
 
         private void DoEndOfRelearnElementsSorting()
