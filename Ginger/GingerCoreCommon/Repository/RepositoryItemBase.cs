@@ -598,7 +598,6 @@ namespace Amdocs.Ginger.Repository
 
             duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
 
-
             return duplicatedItem;
         }
 
