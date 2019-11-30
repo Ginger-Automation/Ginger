@@ -783,7 +783,7 @@ namespace Ginger.Run.RunSetActions
                         }
                     }
                     List<string> selectedBFFields = new List<string> { BusinessFlowReport.Fields.Seq, BusinessFlowReport.Fields.Name, BusinessFlowReport.Fields.Description, BusinessFlowReport.Fields.RunDescription,
-                        BusinessFlowReport.Fields.ExecutionDuration, BusinessFlowReport.Fields.RunStatus, BusinessFlowReport.Fields.PassPercent};
+                        BusinessFlowReport.Fields.ExecutionDuration, BusinessFlowReport.Fields.RunStatus, BusinessFlowReport.Fields.ExecutionRate, BusinessFlowReport.Fields.PassPercent };
                     foreach (HTMLReportConfigFieldToSelect selectedField_internal in currentTemplate.BusinessFlowFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString() && selectedBFFields.Contains(x.FieldKey))))
                     {
                         string fieldName = EmailToObjectFieldName(selectedField_internal.FieldKey);
@@ -824,6 +824,10 @@ namespace Ginger.Run.RunSetActions
                         else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.RunStatus)
                         {
                             fieldsValuesHTMLTableCells.Append("<td style='padding:10px;border:1px solid #dddddd;' class='Status" + (br.GetType().GetProperty(fieldName).GetValue(br)).ToString() + "'>" + br.GetType().GetProperty(fieldName).GetValue(br) + "</td>");
+                        }
+                        else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.ExecutionRate)
+                        {
+                            fieldsValuesHTMLTableCells.Append(tableStyle + br.GetType().GetProperty(fieldName).GetValue(br) + " %</td>");
                         }
                         else if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.PassPercent)
                         {
