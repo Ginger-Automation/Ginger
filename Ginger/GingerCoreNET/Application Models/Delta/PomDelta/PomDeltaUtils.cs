@@ -389,9 +389,9 @@ namespace GingerCoreNET.Application_Models
             
             var addedElements = DeltaViewElements.Where(d => d.DeltaStatus == eDeltaStatus.Added).ToList();
 
-            foreach (ElementInfo unidentifiedElement in unidentifiedElements)
+            foreach (ElementInfo deletedElement in unidentifiedElements)
             {
-                if (unidentifiedElement.ElementStatus == ElementInfo.eElementStatus.Failed)
+                if (deletedElement.ElementStatus == ElementInfo.eElementStatus.Failed)
                 {
                     bool matchingElementFound = false;
 
@@ -399,36 +399,65 @@ namespace GingerCoreNET.Application_Models
                     foreach (var newElement in addedElements)
                     {
                         var newElementLocdiff = newElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
-                        var oldElementLocdiff = unidentifiedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+                        var oldElementLocdiff = deletedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
 
                         if (newElementLocdiff.Except(oldElementLocdiff).Count() == 0)
                         {
                             //check property and update
                             var newElementPropeties = newElement.Properties.ToDictionary(x => x.Name, x => x.Value);
-                            var oldElementPropeties = unidentifiedElement.Properties.ToDictionary(x => x.Name, x => x.Value);
+                            var oldElementPropeties = deletedElement.Properties.ToDictionary(x => x.Name, x => x.Value);
                             var diffProperties = newElementPropeties.Except(oldElementPropeties);
 
-                            foreach (var changedProprty in diffProperties.ToList())
+                            // check if Parent iframe changed
+                            var parentIFrame = diffProperties.Where(x => x.Key.Contains("Parent IFrame")).FirstOrDefault();
+                            if (!string.IsNullOrEmpty(parentIFrame.Value))
                             {
-                                foreach( var existingProperty in unidentifiedElement.Properties.Where(x => x.Name == changedProprty.Key))
+                                var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
+
+                                foreach (var changedProprty in diffProperties.ToList())
                                 {
-                                    existingProperty.Value = changedProprty.Value;
+                                    foreach (var existingProperty in deltaControlProp.Where(x => x.ElementProperty.Name == changedProprty.Key))
+                                    {
+                                        existingProperty.ElementProperty.Value = changedProprty.Value;
+                                        existingProperty.DeltaStatus = eDeltaStatus.Avoided;
+                                        existingProperty.DeltaExtraDetails = "Property changed";
+                                    }
                                 }
-                            }
 
-                            matchingElementFound = true;
-                            DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Changed, unidentifiedElement.ElementGroup, true, "Element Property Updated"));
+                                matchingElementFound = true;
+
+                                //DeltaElementInfo newDeltaElement = new DeltaElementInfo();
+                                //newDeltaElement.ElementInfo = deletedElement;
+                                //newDeltaElement.DeltaExtraDetails = "Element Property Updated";
+                                //newDeltaElement.DeltaStatus = eDeltaStatus.Changed;
+                                //newDeltaElement.ElementInfo.ElementStatus = ElementInfo.eElementStatus.Unknown;
+                                //newDeltaElement.SelectedElementGroup = deletedElement.ElementGroup;
+                                //newDeltaElement.IsSelected = true;
+                                //newDeltaElement.Properties = deltaControlProp;
+
+                                //DeltaViewElements.Add(newDeltaElement);
+                                //item to update deletedElement
+
+                                var itemToUpdate = DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(deletedElement.Guid)).FirstOrDefault();
+                                if (itemToUpdate != null)
+                                {
+                                    itemToUpdate.DeltaStatus = eDeltaStatus.Changed;
+                                    itemToUpdate.DeltaExtraDetails = "Element Property Updated";
+                                    itemToUpdate.Properties = deltaControlProp;
+                                }
+
+                                var itemToRemove = DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)).FirstOrDefault();
+                                if (itemToRemove != null)
+                                {
+                                    DeltaViewElements.Remove(itemToRemove);
+                                }
+
+                                // add found newElment in removeitem 
+                                toRemoveAddedFoundItem = newElement;
+                                //element found and updated, so exit from loop
+                                break;
+                            }
                             
-                            var itemToRemove = DeltaViewElements.Where(x => x.ElementInfo.Guid == newElement.ElementInfo.Guid).FirstOrDefault();
-                            if (itemToRemove != null)
-                            {
-                                DeltaViewElements.Remove(itemToRemove);
-                            }
-
-                            // add found newElment in removeitem 
-                            toRemoveAddedFoundItem = newElement;
-                            //element found and updated, so exit from loop
-                            break;
                         }
 
                     }
@@ -438,20 +467,30 @@ namespace GingerCoreNET.Application_Models
                         addedElements.Remove(toRemoveAddedFoundItem);
                     }
 
-                    if (matchingElementFound==false)
+                    if (!matchingElementFound)
                     {
                         //Deleted
-                        DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Deleted, unidentifiedElement.ElementGroup, true, "Element not found on page"));
+                        DeltaViewElements.Add(ConvertElementToDelta(deletedElement, eDeltaStatus.Deleted, deletedElement.ElementGroup, true, "Element not found on page"));
                     }
 
                 }
                 else
                 {
                     //unknown
-                    DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Unknown, unidentifiedElement.ElementGroup, false, "Element exist on page but could not be compared"));
+                    DeltaViewElements.Add(ConvertElementToDelta(deletedElement, eDeltaStatus.Unknown, deletedElement.ElementGroup, false, "Element exist on page but could not be compared"));
                 }
             }
 
+        }
+
+        private ObservableList<DeltaControlProperty> CovertToDeltaControlProperty(ObservableList<ControlProperty> properties)
+        {
+            ObservableList<DeltaControlProperty> deltaControlProperties = new ObservableList<DeltaControlProperty>();
+            foreach (ControlProperty property in properties)
+            {
+                deltaControlProperties.Add(new DeltaControlProperty() { ElementProperty = property,DeltaStatus= eDeltaStatus.Unchanged});
+            }
+            return deltaControlProperties;
         }
 
         private void DoEndOfRelearnElementsSorting()
