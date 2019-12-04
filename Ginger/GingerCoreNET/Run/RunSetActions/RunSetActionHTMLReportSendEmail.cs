@@ -718,14 +718,7 @@ namespace Ginger.Run.RunSetActions
                                     {
                                         fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    if(!string.IsNullOrEmpty(act.Error))
-                                    {
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
-                                    }
-                                    else
-                                    {
-                                        fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>N/A</td>");
-                                    }
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd; color:red;white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-break: break-all;'>" + OverrideHTMLRelatedCharacters(act.Error) + "</td>");
                                 }
                                 if ((selectedField_internal.FieldKey == ActionReport.Fields.ElapsedSecs) ||
                                     (selectedField_internal.FieldKey == ActionReport.Fields.CurrentRetryIteration) ||
