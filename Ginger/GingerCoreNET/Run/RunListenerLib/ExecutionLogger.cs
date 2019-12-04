@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
                 }
                 mVE.Value = businessFlow.RunDescription;
                 BFR.RunDescription = mVE.ValueCalculated;
