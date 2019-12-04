@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 namespace GingerCore.Actions
 {
@@ -305,7 +306,9 @@ namespace GingerCore.Actions
 
         AutoResetEvent portValueAutoResetEvent;
 
-        public override void Execute()
+        CancellationTokenSource cancellationTokenSource = null; 
+        Task task = null;
+         public override void Execute()
         {
             mJavaApplicationProcessID = -1;
            
@@ -326,15 +329,22 @@ namespace GingerCore.Actions
                 //So for windows with same title, correct process id will be calculated
                 lock (syncLock)
                 {
-                    mProcessIDForAttach = -1;
-                    if (!PerformAttachGingerAgent()) return;
+                    cancellationTokenSource = new CancellationTokenSource();
+                    task = Task.Run(() =>
+                       {
+                           mProcessIDForAttach = -1;
+                           if (!PerformAttachGingerAgent()) return;
 
-                    if(mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
-                        portValueAutoResetEvent!=null)
-                    {
-                        portValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
-                    }                 
-                    AddOrUpdateReturnParamActual("Port", mPort_Calc);
+                           if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
+                               portValueAutoResetEvent != null)
+                           {
+                               portValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+                           }
+                           AddOrUpdateReturnParamActual("Port", mPort_Calc);
+                       }, cancellationTokenSource.Token);
+
+                     task.Wait();
+
                 }
             }
 
@@ -348,8 +358,16 @@ namespace GingerCore.Actions
             }
 
             AddOrUpdateReturnParamActual("Process ID", "" + mProcessIDForAttach);
+        }
 
+        public override void PostExecute()
+        {
 
+            if (task != null && !task.IsCanceled && !task.IsFaulted)
+            {
+                cancellationTokenSource.Cancel();
+            }
+            
         }
 
 
