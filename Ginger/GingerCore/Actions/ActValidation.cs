@@ -78,11 +78,14 @@ namespace GingerCore.Actions
             {
                 ConditionCalculated += " is True";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                this.ExInfo = ConditionCalculated;
             }
             else
             {
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                this.Error = ConditionCalculated;
+
             }
         }
 
