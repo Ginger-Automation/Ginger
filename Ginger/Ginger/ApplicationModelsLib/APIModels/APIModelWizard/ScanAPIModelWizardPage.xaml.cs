@@ -81,7 +81,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
-            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(AddAPIModelWizard.LearnedAPIModelsList).OrderBy(d => d.comparisonStatus));
+            ObservableList<ApplicationAPIModel> selectedAPIModels = GingerCore.General.ConvertListToObservableList<ApplicationAPIModel>(AddAPIModelWizard.LearnedAPIModelsList.Where(m => m.IsSelected == true).ToList());
+
+            AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
+
+            if(AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Count() != 0)
+            {
+                foreach(DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
+                {
+                    deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
+                }
+                Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Same existing API Models found as Matching for multiple Learned API Models. Consider the ones marked with 'Warning' tag in the list before selecting Overwriting operation for the same.", eUserMsgOption.OK);
+            }
 
             xApisSelectionGrid.InitViewItems();
 
@@ -133,6 +144,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     bool mergeIssue = false;
                     bool notifyReplaceAPI = false;
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
+                    List<DeltaAPIModel> repeatingMatchingModels = AddAPIModelWizard.DeltaModelsList.Where(m => m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting ||
+                                                                m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                                                                        .GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).ToList();
+
+                    bool matchingModelsReplacementIssue = repeatingMatchingModels.Count() != 0;
+                    int apiCount = 0;
+                    if(matchingModelsReplacementIssue)
+                    {
+                        System.Text.StringBuilder issueMsg = new System.Text.StringBuilder(Environment.NewLine + Environment.NewLine);
+                        foreach(DeltaAPIModel deltaMod in repeatingMatchingModels)
+                        {
+                            apiCount++;
+                            issueMsg.Append(apiCount + "). " + deltaMod.MatchingAPIName + Environment.NewLine);
+                        }
+                        Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Below Matching API Models selected to be replaced/overwritten multiple times:" + issueMsg.ToString());
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+
                     foreach (DeltaAPIModel deltaModel in AddAPIModelWizard.DeltaModelsList.Where(m => m.IsSelected == true))
                     {
                         ApplicationAPIModel selectedAPIModel = null;
@@ -191,6 +221,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
                     xApisSelectionGrid.ChangeGridView(eAddAPIWizardViewStyle.Add.ToString());
+                    xApisSelectionGrid.btnMarkAll.Visibility = Visibility.Visible;
                 }
                 bool parseSuccess = false;
                 if (AddAPIModelWizard.LearnedAPIModelsList != null)
@@ -455,12 +486,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
         }
 
+        private object GetFrameElementDataContext(object sender)
+        {
+            var fEl = sender as FrameworkElement;
+            if (fEl != null)
+                return fEl.DataContext;
+            else
+                return null;
+        }
+
         private void XManualMatchBtn_Click(object sender, RoutedEventArgs e)
         {
             DeltaAPIModel deltaAPI = null;
-            var fEl = sender as FrameworkElement;
-            if (fEl != null)
-                deltaAPI = fEl.DataContext as DeltaAPIModel;
+            deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
 
             if (deltaAPI != null)
             {
@@ -492,6 +530,27 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 }
             }
 
+        }
+
+        private void xClearMatchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeltaAPIModel deltaAPI = null;
+            deltaAPI = GetFrameElementDataContext(sender) as DeltaAPIModel;
+
+            int modelIndex = xApisSelectionGrid.DataSourceList.IndexOf(deltaAPI);
+            if (deltaAPI != null)
+            {
+                if(deltaAPI.matchingAPIModel != null)
+                {
+                    deltaAPI.matchingAPIModel = null;
+                    deltaAPI.comparisonStatus = DeltaAPIModel.eComparisonOutput.Unknown;
+                    deltaAPI.SelectedOperationEnum = DeltaAPIModel.eHandlingOperations.Add;
+                    deltaAPI.SelectedOperation = DeltaAPIModel.GetEnumDescription(deltaAPI.SelectedOperationEnum);
+
+                    xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
+                    xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
+                }
+            }
         }
     }
 }

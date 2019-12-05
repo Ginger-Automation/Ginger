@@ -88,7 +88,7 @@ namespace Ginger.GeneralWindows
         private void LoadMenus()
         {            
             foreach(TopMenuItem menu in mTwoLevelMenu.MenuList)
-            {
+            {                
                 xMainNavigationListView.Items.Add(menu);
             }          
         }
@@ -113,7 +113,7 @@ namespace Ginger.GeneralWindows
 
             xSubNavigationListView.Items.Clear();
             foreach (SubMenuItem subItem in subItems)
-            {
+            {                               
                 xSubNavigationListView.Items.Add(subItem);
             }
 

@@ -86,7 +86,10 @@ namespace Ginger.Repository
             xActivitiesGroupsRepositoryGrid.InitViewItems();
 
             xActivitiesGroupsRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
-            xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            if (mContext != null && mContext.BusinessFlow!=null)
+            {
+                xActivitiesGroupsRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(AddFromRepository));
+            }
             xActivitiesGroupsRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivityGroup));
             xActivitiesGroupsRepositoryGrid.RowDoubleClick += grdActivitiesGroupsRepository_grdMain_MouseDoubleClick;
             xActivitiesGroupsRepositoryGrid.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
@@ -123,7 +126,13 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.CurrentItem != null)
             {
                 ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryGrid.CurrentItem;
-                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, null, ActivitiesGroupPage.eEditMode.SharedRepository);
+                BusinessFlow currentBF = null;
+                if(mContext != null)
+                {
+                    currentBF = mContext.BusinessFlow;
+                }
+
+                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, currentBF, ActivitiesGroupPage.eEditMode.SharedRepository);
                 mActivitiesGroupPage.ShowAsWindow();
             }
             else
@@ -137,6 +146,7 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItem != null)
             {
                 RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)xActivitiesGroupsRepositoryGrid.Grid.SelectedItem);
+                usagePage.extraDetails = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 usagePage.ShowAsWindow();
             }
             else

@@ -753,12 +753,6 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public bool AddSwitchWindowAction(string Title)
-        {
-            return true;
-            throw new System.NotImplementedException();
-        }
-
         public ObservableList<ElementInfo> GetElements(ElementLocator EL)
         {
             throw new System.NotImplementedException();

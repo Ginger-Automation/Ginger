@@ -27,6 +27,7 @@ using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -62,6 +63,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             SetDriver();
             SetRecordingControls();
             SetSelectedPOMsGridView();
+            xWindowSelectionUC.mContext = context;
         }
 
         /// <summary>
@@ -195,7 +197,24 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 mRecordingMngr = new RecordingManager(null, mContext.BusinessFlow, mContext, record, platformInfo);
             }
 
+            mRecordingMngr.RecordingNotificationEvent += RecordingMngr_RecordingNotificationEvent;
             mRecordingMngr.StartRecording();
+        }
+
+        /// <summary>
+        /// This event is used to notify from recordingmanager class
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RecordingMngr_RecordingNotificationEvent(object sender, RecordingEventArgs e)
+        {
+            switch (e.EventType)
+            {                
+                case eRecordingEvent.StopRecording:
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, mContext.Agent.Name, mContext.Environment.Name);
+                    mContext.AgentStatus = Agent.eStatus.NotStarted.ToString();
+                    break;
+            }
         }
 
         public void StopRecording()

@@ -31,6 +31,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Ginger.DataSource;
+using GingerWPF.ApplicationModelsLib.APIModels;
 
 namespace Ginger.Actions.WebServices
 {
@@ -213,7 +214,7 @@ namespace Ginger.Actions.WebServices
             //{
             RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
             AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
-            if (AAMB.TargetApplicationKey != null)
+            if (AAMB != null && AAMB.TargetApplicationKey != null)
             {
                 var apisFilterTuple = new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." + nameof(ApplicationPOMModel.TargetApplicationKey.ItemName), Convert.ToString(AAMB.TargetApplicationKey.ItemName));
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true, apisFilterTuple, UCTreeView.eFilteroperationType.Equals);
@@ -271,6 +272,12 @@ namespace Ginger.Actions.WebServices
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while mapping the API Model params to Data Source", ex);
                 Reporter.ToUser(eUserMsgKey.MappedtoDataSourceError);
             }
+        }
+
+        private void xViewAPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            APIModelPage mAPIEditPage = new APIModelPage(AAMB);
+            mAPIEditPage.ShowAsWindow(eWindowShowStyle.Dialog, e: APIModelPage.eEditMode.Edit, parentWindow: Window.GetWindow(this));
         }
     }
 }

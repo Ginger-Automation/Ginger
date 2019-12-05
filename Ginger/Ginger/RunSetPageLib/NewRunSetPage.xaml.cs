@@ -1043,6 +1043,7 @@ namespace Ginger.Run
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
                 });
             }
 
@@ -1203,9 +1204,13 @@ namespace Ginger.Run
                 //Init Runners Section  
                 int res = 0;
                 if (runAsync)
+                {
                     res = await InitRunnersSection().ConfigureAwait(false);
+                }
                 else
+                {
                     InitRunnersSection(false, ViewMode);
+                }              
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -1229,6 +1234,12 @@ namespace Ginger.Run
                     mRunSetConfig.AllowAutoSave = true;
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
+
+                    if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null && mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+                    {
+                        General.DoEvents();
+                        App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");
+                    }
                 });
             }
         }
@@ -1549,6 +1560,11 @@ namespace Ginger.Run
             if (CheckIfExecutionIsInProgress()) return;
 
             AddRunner();
+
+            if (mRunSetConfig.GingerRunners.Count == 2)
+            {
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xExecutionModeBtn, "Click here to set if Runners will run in parallel or in sequential order");
+            }
         }
         
         private void clearAllRunner_Click(object sender, RoutedEventArgs e)
@@ -1938,6 +1954,11 @@ namespace Ginger.Run
             
             List<object> selectedBfs = mBusFlowsSelectionPage.ShowAsWindow();
             AddSelectedBuinessFlows(selectedBfs);
+
+            if (mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 1)
+            {              
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunsetOperationsHelp", xOperationsTab, "Use 'Operations' tab for adding pre/post execution operations like getting execution report via e-mail");
+            }
         }
 
         private void AddSelectedBuinessFlows(List<object> selectedBfs)
@@ -2179,8 +2200,8 @@ namespace Ginger.Run
                     if (Reporter.ToUser(eUserMsgKey.RunsetBuinessFlowWasChanged) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         RefreshCurrentRunSet();
                     mRunSetBusinessFlowWasChanged = false;
-                }
-            }));
+                }               
+            }));                        
         }
 
         private void RefreshCurrentRunSet()
@@ -2433,7 +2454,7 @@ namespace Ginger.Run
             ObservableList<Button> winButtons = new ObservableList<Button>();
             if (mEditMode)
             {
-                title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
+                title = "View " + GingerDicser.GetTermResValue(eTermResKey.RunSet);
 
             }
 
@@ -2498,13 +2519,21 @@ namespace Ginger.Run
                 if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
                 {
                     mRunSetConfig.SaveBackup();
+                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    LoadRunSetConfig(mRunSetConfig, true);
                 }
-                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
-                LoadRunSetConfig(mRunSetConfig, true);
             }            
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while undoing changes", ex);
+            }
+            finally
+            {
+                if (mRunSetConfig != null)
+                {
+                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                }
             }
         }
 

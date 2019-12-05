@@ -99,7 +99,7 @@ namespace GingerCore.Actions.WebAPI
         {
             if (mAct.HttpHeaders.Count() > 0)
             {
-                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.Value.ToUpper() == "GZIP,DEFLATE");
+                var encodType = mAct.HttpHeaders.FirstOrDefault(x => x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE");
                 if (encodType != null)
                 {
                     Handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
@@ -201,6 +201,8 @@ namespace GingerCore.Actions.WebAPI
             switch (secutityType)
             {
                 case ApplicationAPIUtils.eSercurityType.None:
+#warning this should be SystemDefault but this supporting on .netframework 4.8 onwards, so for now setting all types for none
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
                     break;
                 case ApplicationAPIUtils.eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;

@@ -19,30 +19,23 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using System.Linq;
 using System.IO;
 using Amdocs.Ginger.Common;
-using System.Text.RegularExpressions;
-using Amdocs.Ginger.Common.GeneralLib;
-using Newtonsoft.Json.Linq;
 using System.Data;
-using System.Data.OleDb;
-using GingerCore;
 using Amdocs.Ginger.Common.APIModelLib;
 using GingerCore.Environments;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
-using System.Diagnostics;
-using DocumentFormat.OpenXml;
 using amdocs.ginger.GingerCoreNET;
 using System.Text;
 using GingerCore.DataSource;
+using GingerAutoPilot.APIModelLib;
 
 namespace Ginger.ApplicationModelsLib.ModelOptionalValue
 {
-   public class ImportOptionalValuesForParameters
+    public class ImportOptionalValuesForParameters
     {
         public enum eParameterType
         {
@@ -95,16 +88,17 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         }
         public void GetAllOptionalValuesFromExamplesFiles(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
         {
+            ImportParametersOptionalValues impOpVals = new ImportParametersOptionalValues();
             foreach (TemplateFile TF in ((ApplicationAPIModel)AAM).OptionalValuesTemplates)
             {
                 CreateParser(TF.FilePath);
                 if (currentParser.GetType() == typeof(XMLTemplateParser))
                 {
-                    GetXMLAllOptionalValuesFromExamplesFile(TF, OptionalValuesPerParameterDict);
+                    impOpVals.GetXMLAllOptionalValuesFromExamplesFile(TF, OptionalValuesPerParameterDict);
                 }
                 else if (currentParser.GetType() == typeof(JSONTemplateParser))
                 {
-                    GetJSONAllOptionalValuesFromExamplesFile(TF, OptionalValuesPerParameterDict);
+                    impOpVals.GetJSONAllOptionalValuesFromExamplesFile(TF, OptionalValuesPerParameterDict);
                 }
             }
         }
@@ -115,16 +109,20 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <param name="OptionalValuesPerParameterDict"></param>
         public void PopulateOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
         {
+            ImportParametersOptionalValues impOpVals = new ImportParametersOptionalValues();
             if (currentParser != null)
             {
                 if (currentParser.GetType() == typeof(XMLTemplateParser))
                 {
-                    PopulateXMLOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict);
+                    impOpVals.PopulateXMLOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict);
                 }
                 else if (currentParser.GetType() == typeof(JSONTemplateParser))
                 {
-                    PopulateJSONOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict);
+                    impOpVals.PopulateJSONOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict);
                 }
+
+                if (ShowMessage)
+                    Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count());
             }
         }
         /// <summary>
@@ -135,241 +133,24 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// <param name="SelectedParametersGridList"></param>
         public void PopulateOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
         {
+            ImportParametersOptionalValues impOpVals = new ImportParametersOptionalValues();
             if (currentParser != null)
             {
                 if (currentParser.GetType() == typeof(XMLTemplateParser))
                 {
-                    PopulateXMLOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict, SelectedParametersGridList);
+                    impOpVals.PopulateXMLOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict, SelectedParametersGridList);
                 }
                 else if (currentParser.GetType() == typeof(JSONTemplateParser))
                 {
-                    PopulateJSONOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict, SelectedParametersGridList);
+                    impOpVals.PopulateJSONOptionalValuesForAPIParameters(AAM, OptionalValuesPerParameterDict, SelectedParametersGridList);
                 }
+
+                if (ShowMessage)
+                    Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, OptionalValuesPerParameterDict.Count());
             }
         }
         #endregion
-
-        #region XML 
-        private void GetXMLAllOptionalValuesFromExamplesFile(TemplateFile XMLTemplateFile, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
-        {
-            XmlDocument XmlDocument = new XmlDocument();
-            string FileContent = File.ReadAllText(XMLTemplateFile.FilePath);
-            XmlDocument.LoadXml(FileContent);
-            XMLDocExtended XDE = new XMLDocExtended(XmlDocument);
-            IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
-            foreach (XMLDocExtended XDN in NodeList)
-            {
-                AddXMLValueToOptionalValuesPerParameterDict(OptionalValuesPerParameterDict, XDN);
-            }
-        }
-        private void AddXMLValueToOptionalValuesPerParameterDict(Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, XMLDocExtended XDN)
-        {
-            Tuple<string, string> tuple = new Tuple<string, string>(XDN.LocalName, XDN.XPath);
-            string Value = XDN.Value;
-
-            if (OptionalValuesPerParameterDict.ContainsKey(tuple))
-            {
-                OptionalValuesPerParameterDict[tuple].Add(Value);
-            }
-            else
-            {
-                OptionalValuesPerParameterDict.Add(tuple, new List<string>() { Value });
-            }
-
-            foreach (XmlAttribute attribute in XDN.Attributes)
-            {
-
-                Tuple<string, string> attributetuple = new Tuple<string, string>(attribute.LocalName, XDN.XPath);
-                string attributeValue = attribute.Value;
-
-                if (OptionalValuesPerParameterDict.ContainsKey(attributetuple))
-                {
-                    OptionalValuesPerParameterDict[attributetuple].Add(attributeValue);
-                }
-                else
-                {
-                    OptionalValuesPerParameterDict.Add(attributetuple, new List<string> { attributeValue });
-                }
-            }
-        }
-        /// <summary>
-        /// Update all parameters optional values according to xml file
-        /// </summary>
-        /// <param name="AAM"></param>
-        /// <param name="OptionalValuesPerParameterDict"></param>
-        public void PopulateXMLOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
-        {
-            int UpdatedParametersCounter = 0;
-            foreach (AppModelParameter AMP in AAM.AppModelParameters)
-            {
-                string result = Regex.Match(AMP.Path, @"(.)*soapenv:Body\[1\]\/([a-zA-Z]|\d)*:").Value;
-                if (string.IsNullOrEmpty(result))
-                {
-                    result = Regex.Match(AMP.Path, @"(.)*soapenv:Body\[1\]\/").Value;
-                }
-
-                string VAXBXPath = string.Empty;
-                if (!string.IsNullOrEmpty(result))
-                    VAXBXPath = AMP.Path.Replace(result, "//*[name()='vaxb:VAXB']/vaxb:");
-
-                Tuple<string, string> tuple = new Tuple<string, string>(AMP.TagName, AMP.Path);
-                Tuple<string, string> relativePathTuple = new Tuple<string, string>(AMP.TagName, VAXBXPath);
-                if (OptionalValuesPerParameterDict.ContainsKey(tuple))
-                {
-                    currentParser.PopulateOptionalValuesByTuple(AMP, OptionalValuesPerParameterDict, tuple);
-                }
-                if (OptionalValuesPerParameterDict.ContainsKey(relativePathTuple))
-                {
-                    currentParser.PopulateOptionalValuesByTuple(AMP, OptionalValuesPerParameterDict, relativePathTuple);
-                }
-                if (APIConfigurationsDocumentParserBase.ParameterValuesUpdated)
-                {
-                    UpdatedParametersCounter++;
-                    APIConfigurationsDocumentParserBase.ParameterValuesUpdated = false;
-                }
-            }
-            if (ShowMessage)
-                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
-        }
-        /// <summary>
-        /// Update optional values only for selected parameters  according to xml file
-        /// </summary>
-        /// <param name="AAM"></param>
-        /// <param name="OptionalValuesPerParameterDict"></param>
-        /// <param name="SelectedParametersGridList"></param>
-        public void PopulateXMLOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
-        {
-            int UpdatedParametersCounter = 0;
-            foreach (var tuple in SelectedParametersGridList.Zip(AAM.AppModelParameters, (x, y) => (x, y)))
-            {
-                if (tuple.x.RequiredAsInput)//selected
-                {
-                    string result = Regex.Match(tuple.y.Path, @"(.)*soapenv:Body\[1\]\/([a-zA-Z]|\d)*:").Value;
-                    if (string.IsNullOrEmpty(result))
-                    {
-                        result = Regex.Match(tuple.y.Path, @"(.)*soapenv:Body\[1\]\/").Value;
-                    }
-
-                    string VAXBXPath = string.Empty;
-                    if (!string.IsNullOrEmpty(result))
-                    { VAXBXPath = tuple.y.Path.Replace(result, "//*[name()='vaxb:VAXB']/vaxb:"); }
-
-                    Tuple<string, string> tupleKey = new Tuple<string, string>(tuple.y.TagName, tuple.y.Path);
-                    Tuple<string, string> relativePathTuple = new Tuple<string, string>(tuple.y.TagName, VAXBXPath);
-                    if (OptionalValuesPerParameterDict.ContainsKey(tupleKey))
-                    {
-                        currentParser.PopulateOptionalValuesByTuple(tuple.y, OptionalValuesPerParameterDict, tupleKey);
-                    }
-                    if (OptionalValuesPerParameterDict.ContainsKey(relativePathTuple))
-                    {
-                        currentParser.PopulateOptionalValuesByTuple(tuple.y, OptionalValuesPerParameterDict, relativePathTuple);
-                    }
-                    if (APIConfigurationsDocumentParserBase.ParameterValuesUpdated)
-                    {
-                        UpdatedParametersCounter++;
-                        APIConfigurationsDocumentParserBase.ParameterValuesUpdated = false;
-                    }
-                }
-            }
-            if (ShowMessage)
-            { Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter); }
-        }
-        #endregion
-
-        #region JSON
-        private void GetJSONAllOptionalValuesFromExamplesFile(TemplateFile xMLTemplateFile, Dictionary<Tuple<string, string>, List<string>> optionalValuesPerParameterDict)
-        {
-            string FileContent = File.ReadAllText(xMLTemplateFile.FilePath);
-            JsonExtended JE = new JsonExtended(FileContent);
-            foreach (JsonExtended JTN in JE.GetEndingNodes())
-            {
-                try
-                {
-                    AddJSONValueToOptionalValuesPerParameterDict(optionalValuesPerParameterDict, JTN.GetToken());
-                }
-                catch(Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, ex.StackTrace);
-                }
-            }
-        }
-        private void AddJSONValueToOptionalValuesPerParameterDict(Dictionary<Tuple<string, string>, List<string>> optionalValuesPerParameterDict, JToken xDN)
-        {
-            Tuple<string, string> tuple = new Tuple<string, string>(xDN.Path.Split('.').LastOrDefault(), xDN.Path);
-            string Value = "";
-            try
-            {
-                Value = ((JProperty)xDN).Value.ToString();
-            }
-            catch
-            {
-                Value = xDN.ToString();
-            }
-            if (optionalValuesPerParameterDict.ContainsKey(tuple))
-            {
-
-                optionalValuesPerParameterDict[tuple].Add(Value);
-            }
-            else
-            {
-                optionalValuesPerParameterDict.Add(tuple, new List<string>() { Value });
-            }
-        }
-        /// <summary>
-        /// Update all parameters optional values according to json file
-        /// </summary>
-        /// <param name="AAM"></param>
-        /// <param name="OptionalValuesPerParameterDict"></param>
-        public void PopulateJSONOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict)
-        {
-            int UpdatedParametersCounter = 0;
-            foreach (AppModelParameter AMP in AAM.AppModelParameters)
-            {
-                string result = AMP.Path;
-                Tuple<string, string> tuple = new Tuple<string, string>(AMP.TagName, AMP.Path);
-                if (OptionalValuesPerParameterDict.ContainsKey(tuple))
-                {
-                    currentParser.PopulateOptionalValuesByTuple(AMP, OptionalValuesPerParameterDict, tuple);
-                    if (APIConfigurationsDocumentParserBase.ParameterValuesUpdated)
-                    {
-                        UpdatedParametersCounter++;
-                        APIConfigurationsDocumentParserBase.ParameterValuesUpdated = false;
-                    }
-                }
-            }
-            if (ShowMessage)
-                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
-        }
-        /// <summary>
-        /// Update optional values only for selected parameter according to json file
-        /// </summary>
-        /// <param name="AAM"></param>
-        /// <param name="OptionalValuesPerParameterDict"></param>
-        /// <param name="SelectedParametersGridList"></param>
-        public void PopulateJSONOptionalValuesForAPIParameters(ApplicationModelBase AAM, Dictionary<Tuple<string, string>, List<string>> OptionalValuesPerParameterDict, List<AppModelParameter> SelectedParametersGridList)
-        {
-            int UpdatedParametersCounter = 0;
-            foreach (var tuple in SelectedParametersGridList.Zip(AAM.AppModelParameters, (x, y) => (x, y)))
-            {
-                if (tuple.x.RequiredAsInput)//selected
-                {
-                    Tuple<string, string> tupleKey = new Tuple<string, string>(tuple.y.TagName, tuple.y.Path);
-                    if (OptionalValuesPerParameterDict.ContainsKey(tupleKey))
-                    {
-                        currentParser.PopulateOptionalValuesByTuple(tuple.y, OptionalValuesPerParameterDict, tupleKey);
-                        if (APIConfigurationsDocumentParserBase.ParameterValuesUpdated)
-                        {
-                            UpdatedParametersCounter++;
-                            APIConfigurationsDocumentParserBase.ParameterValuesUpdated = false;
-                        }
-                    }
-                }
-            }
-            if (ShowMessage)
-                Reporter.ToUser(eUserMsgKey.ParameterOptionalValues, UpdatedParametersCounter);
-        }
-        #endregion
-
+               
         #region DB&Excel
         /// <summary>
         /// Update optional values only for selected Local parameters according to DB\Excel file
@@ -1088,12 +869,12 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
         /// This method is used to get the excel sheet data
         /// </summary>
         /// <returns></returns>
-        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool exactValues, bool pivoteTable)
+        public DataSet GetExcelAllSheetData(string sheetName, bool isFirstRowHeader, bool isImportEmptyColumns, bool pivoteTable)
         {
             DataSet ds = GetExcelAllSheetsData(sheetName, isFirstRowHeader);
 
             DataSet dsExact = new DataSet();
-            if(exactValues)
+            if (!isImportEmptyColumns)
             {
                 foreach (DataTable dt in ds.Tables)
                 {
@@ -1108,7 +889,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                                 colEmpty = false;
                             }
                         }
-                        if(colEmpty)
+                        if (colEmpty)
                         {
                             lstColumn.Add(dc.ColumnName);
                         }
@@ -1123,6 +904,10 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                     dtNew.TableName = dt.TableName;
                     dsExact.Tables.Add(dtNew);
                 }
+            }
+            else
+            {
+                dsExact = ds;
             }
 
             DataSet dsPivote = new DataSet();

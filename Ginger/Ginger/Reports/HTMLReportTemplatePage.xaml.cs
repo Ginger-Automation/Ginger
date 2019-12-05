@@ -92,9 +92,20 @@ namespace Ginger.Reports
             SetLoadedLogoImage();
             SetHTMLReportsConfigFieldsGridsView();
             SetHTMLReportsConfigFieldsGridsData(_HTMLReportConfiguration);
+            RadioButtonInit();
+        }
+        public void RadioButtonInit()
+        {
+            if (_HTMLReportConfiguration.ExecutionStatisticsCountBy == HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions)
+            {
+                xExecutionCalculationLevelActionRadioBtn.IsChecked = true;
+            }
+            else
+            {
+                xExecutionCalculationLevelActivityRadioBtn.IsChecked = true;
+            }
         }
 
-       
 
         private void SetHTMLReportsConfigFieldsGridsView()
         {
@@ -371,7 +382,15 @@ namespace Ginger.Reports
         {
             _HTMLReportConfiguration.ShowAllIterationsElements = false;
         }
+        private void htmlExecutionCalculationLevelActivityRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities;
+        }
 
+        private void htmlExecutionCalculationLevelActionRadioBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            _HTMLReportConfiguration.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
+        }
         private void SelectHTMLReportsImageFolderButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog op = new System.Windows.Forms.OpenFileDialog();
