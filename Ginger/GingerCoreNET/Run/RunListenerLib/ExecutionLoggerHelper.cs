@@ -96,7 +96,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null)
                     {
                         //If the path configured by user in the logger is not accessible, we set the logger path to default path
-                        logsFolder = WorkSpace.Instance.TestArtifactsFolder;                        
+                        //logsFolder = WorkSpace.Instance.TestArtifactsFolder;                        
+                        logsFolder = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                         WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder = SolutionRepository.cSolutionRootFolderSign + "ExecutionResults";
                     }
                 }

@@ -1440,7 +1440,10 @@ namespace GingerCore.Drivers.PBDriver
                 element.setAttribute(attribute, value);
                 try
                 {
-                    currentAttribute = element.getAttribute(attribute).ToString();
+                    if (element.getAttribute(attribute) != null)
+                    {
+                        currentAttribute = element.getAttribute(attribute).ToString();
+                    }
                 }
                 catch (Exception ex)
                 {
