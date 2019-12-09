@@ -485,9 +485,8 @@ namespace Amdocs.Ginger.Repository
 
         public override void ReloadUpdatedXML(string path)
         {
-            RepositoryItemBase item = null;
             WaitforFileIsReadable(path);
-            item = GetItemFromCacheByFileName(path);
+            RepositoryItemBase item = GetItemFromCacheByFileName(path);
             NewRepositorySerializer.ReloadObjectFromFile(item);
             item.RefreshSourceControlStatus();
         }
