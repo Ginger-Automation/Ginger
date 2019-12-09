@@ -306,9 +306,9 @@ namespace GingerCore.Actions
 
         AutoResetEvent portValueAutoResetEvent;
 
-        CancellationTokenSource cancellationTokenSource = null; 
-        Task task = null;
-         public override void Execute()
+        private CancellationTokenSource cancellationTokenSourceAttachAgent = null;
+        private Task attachAgentTask = null;
+        public override void Execute()
         {
             mJavaApplicationProcessID = -1;
            
@@ -329,8 +329,8 @@ namespace GingerCore.Actions
                 //So for windows with same title, correct process id will be calculated
                 lock (syncLock)
                 {
-                    cancellationTokenSource = new CancellationTokenSource();
-                    task = Task.Run(() =>
+                    cancellationTokenSourceAttachAgent = new CancellationTokenSource();
+                    attachAgentTask = Task.Run(() =>
                        {
                            mProcessIDForAttach = -1;
                            if (!PerformAttachGingerAgent()) return;
@@ -341,9 +341,9 @@ namespace GingerCore.Actions
                                portValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
                            }
                            AddOrUpdateReturnParamActual("Port", mPort_Calc);
-                       }, cancellationTokenSource.Token);
+                       }, cancellationTokenSourceAttachAgent.Token);
 
-                     task.Wait();
+                    attachAgentTask.Wait();
 
                 }
             }
@@ -363,9 +363,9 @@ namespace GingerCore.Actions
         public override void PostExecute()
         {
 
-            if (task != null && !task.IsCanceled && !task.IsFaulted)
+            if (attachAgentTask != null && !attachAgentTask.IsCanceled && !attachAgentTask.IsFaulted)
             {
-                cancellationTokenSource.Cancel();
+                cancellationTokenSourceAttachAgent.Cancel();
             }
             
         }
