@@ -63,7 +63,7 @@ namespace Ginger.Actions.WebServices
                     PanelSoap.Visibility = Visibility.Collapsed;
                     UseWSSecurityHeader.Visibility = Visibility.Collapsed;
                     //Cookie Mode
-                    CookieMode.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.New.ToString()), typeof(ApplicationAPIUtils.eCookieMode), false, null);
+                    CookieMode.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.Session.ToString()), typeof(ApplicationAPIUtils.eCookieMode), false, null);
 
                     //Request Type
                     RequestTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString()), typeof(ApplicationAPIUtils.eRequestType), false, null);
