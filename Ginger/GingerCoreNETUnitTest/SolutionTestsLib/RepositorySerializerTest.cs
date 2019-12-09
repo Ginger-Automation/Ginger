@@ -415,5 +415,21 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("NewTab", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "GotoURLType" select aiv).FirstOrDefault().Value);
         }
 
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void BusinessFlowLazyloadTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "CLI" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(true, businessFlow.Activities.AvoidLazyLoad);
+        }
+
     }
 }
