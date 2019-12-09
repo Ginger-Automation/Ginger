@@ -763,9 +763,9 @@ namespace GingerCore.SourceControl
                 }
                 return SCIID;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.StackTrace);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "This Item is not Checked-in, Please Check-in before retrieving SourceControlInfo");
                 return null;
             }
         }
