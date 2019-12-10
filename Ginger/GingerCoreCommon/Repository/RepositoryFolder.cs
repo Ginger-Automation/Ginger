@@ -487,8 +487,11 @@ namespace Amdocs.Ginger.Repository
         {
             WaitforFileIsReadable(path);
             RepositoryItemBase item = GetItemFromCacheByFileName(path);
-            NewRepositorySerializer.ReloadObjectFromFile(item);
-            item.RefreshSourceControlStatus();
+            if (item != null)
+            {
+                NewRepositorySerializer.ReloadObjectFromFile(item);
+                item.RefreshSourceControlStatus();
+            }
         }
 
         private void HandleFileChange(FileSystemEventArgs e)
