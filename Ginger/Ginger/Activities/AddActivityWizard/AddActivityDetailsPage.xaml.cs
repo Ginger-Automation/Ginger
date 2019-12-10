@@ -106,7 +106,7 @@ namespace Ginger.BusinessFlowPages
         {
             if (mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Count > 0)
             {
-                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Where(x => string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false).FirstOrDefault();
+                ActivityIdentifiers activityIdnt = mWizard.ParentActivitiesGroup.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity != null && string.IsNullOrEmpty(x.IdentifiedActivity.TargetApplication) == false).FirstOrDefault();
                 if (activityIdnt != null)
                 {
                     return activityIdnt.IdentifiedActivity.TargetApplication;
