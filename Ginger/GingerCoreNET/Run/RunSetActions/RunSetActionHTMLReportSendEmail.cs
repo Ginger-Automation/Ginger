@@ -1861,11 +1861,18 @@ namespace Ginger.Run.RunSetActions
         }
         public static string OverrideHTMLRelatedCharacters(string text)
         {
-            text = text.Replace(@"<", "&#60;");
-            text = text.Replace(@">", "&#62;");
-            text = text.Replace(@"$", "&#36;");
-            text = text.Replace(@"%", "&#37;");
-            return text;
+            if(!string.IsNullOrEmpty(text))
+            {
+                text = text.Replace(@"<", "&#60;");
+                text = text.Replace(@">", "&#62;");
+                text = text.Replace(@"$", "&#36;");
+                text = text.Replace(@"%", "&#37;");
+                return text;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
 

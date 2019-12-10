@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             AR.ActionsColl.AddRange(liteDbActionList);
             
             AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active == true);
-            AR.ChildExecutedItemsCount = AR.ChildExecutableItemsCount - activity.Acts.Count(x => x.Status == eRunStatus.Pending || x.Status == eRunStatus.Skipped || x.Status == eRunStatus.Blocked);
+            AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
             AR.ChildPassedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed);
 
             liteDbActivityList.Add(AR);
@@ -222,8 +222,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             int ChildExecutedItemsCountActivity = 0;
             int ChildPassedItemsCountActivity = 0;
 
-            ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count;
-            ChildExecutedItemsCountActivity = ChildExecutableItemsCountActivity - context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Pending || ac.Status == eRunStatus.Skipped || ac.Status == eRunStatus.Blocked).Count();
+            ChildExecutableItemsCountActivity = context.BusinessFlow.Activities.Count(x => x.Active == true);
+            ChildExecutedItemsCountActivity =  context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Failed || ac.Status == eRunStatus.Passed || ac.Status == eRunStatus.FailIgnored).Count();
             ChildPassedItemsCountActivity = context.BusinessFlow.Activities.Where(ac => ac.Status == eRunStatus.Passed).Count();
 
             BFR.ChildExecutableItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Activities.ToString(), ChildExecutableItemsCountActivity);
