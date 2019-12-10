@@ -289,11 +289,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [TestMethod]
         public void TestDyanamicRunsetOprations()
         {
-            RunSetConfig runSetConfig = CreteRunsetWithOperations();
+            RunSetConfig runSetConfigurations = CreteRunsetWithOperations();
 
             GMR = new RunsetExecutor();
             GMR.RunsetExecutionEnvironment = environment;
-            GMR.RunSetConfig = runSetConfig;
+            GMR.RunSetConfig = runSetConfigurations;
 
             CLIHelper cLIHelper = new CLIHelper();
             cLIHelper.RunAnalyzer = true;
