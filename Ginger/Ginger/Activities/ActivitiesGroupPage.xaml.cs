@@ -76,7 +76,41 @@ namespace Ginger.Activities
                 SharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
-        }     
+        }
+
+        void UpdateSharedRepositorySupportedOperations()
+        {
+            grdGroupedActivities.ShowUpDown = Visibility.Visible;
+            grdGroupedActivities.ShowDelete = Visibility.Visible;
+
+            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another Activity to this Group", BtnAdd_Click);
+        }
+
+        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            ActivitiesRepositoryPage ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), null, null, GroupActivitiesHandler, ActivitiesRepositoryPage.ePageViewMode.Selection);
+            ActivitiesRepoPage.ShowAsWindow(Window.GetWindow(this));
+        }
+
+        private void GroupActivitiesHandler(object sender, RoutedEventArgs e)
+        {
+            ucGrid senderGrid = sender as ucGrid;
+
+            ObservableList<Amdocs.Ginger.Repository.RepositoryItemBase> selectedActivitiesList = null;
+            if (senderGrid != null)
+            {
+                selectedActivitiesList = senderGrid.GetSelectedItems();
+
+                if (selectedActivitiesList != null && selectedActivitiesList.Count > 0)
+                {
+                    foreach (Activity sharedActivity in selectedActivitiesList)
+                    {
+                        Activity newInstance = sharedActivity.CreateInstance(true) as Activity;
+                        mActivitiesGroup.AddActivityToGroup(newInstance);
+                    }
+                }
+            }
+        }
 
         private void SetGroupedActivitiesGridView()
         {
@@ -107,9 +141,9 @@ namespace Ginger.Activities
             {
                 Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct =(Activity) activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    repoAct = (Activity)activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
                 if (repoAct == null)
-                    repoAct =(Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
                 if (repoAct != null)
                 {
                     actIdent.IdentifiedActivity = repoAct;
@@ -141,7 +175,7 @@ namespace Ginger.Activities
             ObservableList<Button> winButtons = new ObservableList<Button>();
             switch (mEditMode)
             {
-                case ActivitiesGroupPage.eEditMode.ExecutionFlow:               
+                case ActivitiesGroupPage.eEditMode.ExecutionFlow:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
                     okBtn.Click += new RoutedEventHandler(okBtn_Click);
@@ -154,6 +188,9 @@ namespace Ginger.Activities
                     saveBtn.Content = "Save";
                     saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
                     winButtons.Add(saveBtn);
+
+                    UpdateSharedRepositorySupportedOperations();
+
                     break;
             }
 
@@ -203,7 +240,7 @@ namespace Ginger.Activities
         private void CheckIfUserWantToSave()
         {
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivitiesGroup, "change") == true)
-            {                
+            {
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mActivitiesGroup);
                 _pageGenericWin.Close();
             }

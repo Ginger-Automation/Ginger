@@ -111,6 +111,23 @@
                                         <RadioButton x:Name="htmlShowFirstIterationOnRadioBtn" Content="Yes" Padding="5,0,0,0" Checked="htmlShowFirstIterationOnRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
+                                <StackPanel x:Name="xExecutionCalculationLevelPnl" Margin="10,10,0,0" Orientation="Horizontal" ToolTip="Show all iterations execution results on HTML Report e.g. Flow control or retry mechanism iterations">
+                                    <Label Content="Execution/Pass Rate Calculation Level:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
+                                    <StackPanel x:Name="xExecutionCalculationLevelBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <RadioButton x:Name="xExecutionCalculationLevelActivityRadioBtn" Padding="5,0,15,0" Checked="htmlExecutionCalculationLevelActivityRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
+                                            <RadioButton.Content>
+                                                <GingerCore:ucTextDicResource Text="Activities"/>
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                        <RadioButton x:Name="xExecutionCalculationLevelActionRadioBtn" Padding="5,0,0,0" Checked="htmlExecutionCalculationLevelActionRadioBtn_Checked" Style="{StaticResource @InputRadioButtonStyle}">
+                                            <RadioButton.Content>
+                                                <GingerCore:ucTextDicResource Text="Actions"/>
+                                            </RadioButton.Content>
+                                        </RadioButton>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Label Style="{StaticResource @LabelStyle}" FontSize="10" Content="Note: Supported only in case the selected Execution Logger type is DB." Padding="15,0,0,0"/>
+
                                 <StackPanel x:Name="htmlReportConfigurationPnl" Margin="10,10,0,0" Orientation="Vertical">
                                     <Label Content="HTML Report Configuration By Levels:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                                     <StackPanel x:Name="htmlReportConfigSummaryViewFieldsPnl"  Orientation="Horizontal">

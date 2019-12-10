@@ -56,6 +56,7 @@ namespace Ginger.Reports
             public static string Elapsed = "Elapsed";
             public static string RunStatus = "RunStatus";
             public static string NumberOfActivities = "NumberOfActivities";
+            public static string ExecutionRate = "ExecutionRate";
             public static string PassPercent = "PassPercent";
             public static string VariablesDetails = "VariablesDetails";
             public static string ActivityDetails = "ActivityDetails";
@@ -385,7 +386,15 @@ namespace Ginger.Reports
         }
 
         [FieldParams]
-        [FieldParamsNameCaption("Business Flow Activities Passed Rate")]
+        [FieldParamsNameCaption("Business Flow Execution Rate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+
+        public double ExecutionRate { get { return Activities.Count != 0 ? Math.Round((double)(TotalActivities - TotalActivitiesOther) * 100 / TotalActivities, MidpointRounding.AwayFromZero)  : 0; } }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Business Flow Passed Rate")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
