@@ -20,10 +20,15 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -31,34 +36,47 @@ using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{    
+{
     [TestClass]
     [Level1]
     public class GingerRunnerTest
-    {        
+    {
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static SolutionRepository SR;
+        static RunsetExecutor GMR;
+        static Solution solution;
+        static RunSetConfig runSetConfig;
+        static ProjEnvironment environment;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;            
+            p.PlatformType = ePlatformType.Web;
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
+            mGR.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+
+            environment = new ProjEnvironment();
+            environment.Name = "Default";
+
 
             Agent a = new Agent();
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
@@ -72,10 +90,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
+            mGR.SpecificEnvironmentName = environment.Name;
+            mGR.UseSpecificEnvironment = false;
 
-            
-
-            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +  Path.DirectorySeparatorChar + "BasicSimple"));
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +Path.DirectorySeparatorChar + "BasicSimple"));
+            string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
+            solution = Solution.LoadSolution(solutionFile);
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
         }
@@ -83,7 +103,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
 
@@ -214,7 +234,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         //    //Assert.AreEqual(v1.Value, "123");  // <<< the importnat part as with this defect it turned to "1" - initial val
         //}
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void TestRunsetConfigBFVariables()
@@ -265,7 +285,83 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         }
 
-        
+
+        [TestMethod]
+        public void TestDyanamicRunsetOprations()
+        {
+            RunSetConfig runSetConfig = CreteRunsetWithOperations();
+
+            GMR = new RunsetExecutor();
+            GMR.RunsetExecutionEnvironment = environment;
+            GMR.RunSetConfig = runSetConfig;
+
+            CLIHelper cLIHelper = new CLIHelper();
+            cLIHelper.RunAnalyzer = true;
+            cLIHelper.ShowAutoRunWindow = false;
+            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+
+            RunSetAutoRunConfiguration autoRunConfiguration = new RunSetAutoRunConfiguration(solution, GMR, cLIHelper);
+            CLIDynamicXML mCLIDynamicXML = new CLIDynamicXML();
+            autoRunConfiguration.SelectedCLI = mCLIDynamicXML;
+            string file = autoRunConfiguration.SelectedCLI.CreateContent(solution, GMR, cLIHelper);
+
+            XElement nodes = XElement.Parse(file);
+
+            List<XElement> AddRunsetOPerationsNodes = nodes.Elements("AddRunsetOperation").ToList();
+
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.LoadXml(file);
+            XmlNodeList runsetoperations = xDoc.GetElementsByTagName("AddRunsetOperation");
+
+            //Assert
+            Assert.AreEqual(runsetoperations.Count , 3);
+            Assert.AreEqual(runsetoperations[0].FirstChild.Name, "MailFrom");
+            Assert.AreEqual(runsetoperations[0].LastChild.Name, "IncludeAttachmentReport") ;
+            Assert.AreEqual(runsetoperations[1].FirstChild.Name, "selectedHTMLReportTemplateID");
+            Assert.AreEqual(runsetoperations[1].LastChild.Name, "isHTMLReportPermanentFolderNameUsed");
+            Assert.AreEqual(runsetoperations[2].HasChildNodes,false);
+
+        }
+
+
+        public RunSetConfig CreteRunsetWithOperations()
+        {
+            runSetConfig = new RunSetConfig();
+            runSetConfig.GingerRunners.Add(mGR);
+            runSetConfig.mRunModeParallel = false;
+
+            //added HTMl send mail action
+            RunSetActionHTMLReportSendEmail sendMail = new RunSetActionHTMLReportSendEmail();
+            sendMail.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            sendMail.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            sendMail.MailFrom = "Test@gmail.com";
+            sendMail.MailTo = "Test@gamil.com";
+            sendMail.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK;
+            sendMail.Active = true;
+
+            //added Produce Html action
+
+            RunSetActionHTMLReport produceHTML = new RunSetActionHTMLReport();
+            produceHTML.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            produceHTML.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            produceHTML.isHTMLReportFolderNameUsed = false;
+            produceHTML.isHTMLReportPermanentFolderNameUsed = false;
+            produceHTML.Active = true;
+
+            //added JSON action
+            RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary();
+            jsonReportOperation.Name = "Json Report";
+            jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            jsonReportOperation.Active = true;
+
+            runSetConfig.RunSetActions.Add(sendMail);
+            runSetConfig.RunSetActions.Add(produceHTML);
+            runSetConfig.RunSetActions.Add(jsonReportOperation);
+
+            return runSetConfig;
+        }
+
 
     }
 }
