@@ -51,9 +51,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static SolutionRepository SR;
-        static RunsetExecutor GMR;
         static Solution solution;
-        static RunSetConfig runSetConfig;
         static ProjEnvironment environment;
 
         [ClassInitialize()]
@@ -291,7 +289,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             RunSetConfig runSetConfigurations = CreteRunsetWithOperations();
 
-            GMR = new RunsetExecutor();
+            RunsetExecutor GMR = new RunsetExecutor();
             GMR.RunsetExecutionEnvironment = environment;
             GMR.RunSetConfig = runSetConfigurations;
 
@@ -326,7 +324,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         public RunSetConfig CreteRunsetWithOperations()
         {
-            runSetConfig = new RunSetConfig();
+            RunSetConfig runSetConfig = new RunSetConfig();
             runSetConfig.GingerRunners.Add(mGR);
             runSetConfig.mRunModeParallel = false;
 
