@@ -135,6 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private object MapActivityToLiteDb(Activity activity, Context context, eExecutedFrom executedFrom)
         {
             LiteDbActivity AR = new LiteDbActivity();
+            context.BusinessFlow.CurrentActivity = activity;
             context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
