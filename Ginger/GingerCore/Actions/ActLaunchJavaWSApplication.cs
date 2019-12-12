@@ -304,10 +304,10 @@ namespace GingerCore.Actions
 
         private static readonly object syncLock = new object();
 
-        AutoResetEvent portValueAutoResetEvent;
+        private AutoResetEvent mPortValueAutoResetEvent;
 
-        private CancellationTokenSource cancellationTokenSourceAttachAgent = null;
-        private Task attachAgentTask = null;
+        private CancellationTokenSource mAttachAgentCancellationToken = null;
+        private Task mAttachAgentTask = null;
         public override void Execute()
         {
             mJavaApplicationProcessID = -1;
@@ -329,21 +329,21 @@ namespace GingerCore.Actions
                 //So for windows with same title, correct process id will be calculated
                 lock (syncLock)
                 {
-                    cancellationTokenSourceAttachAgent = new CancellationTokenSource();
-                    attachAgentTask = Task.Run(() =>
+                    mAttachAgentCancellationToken = new CancellationTokenSource();
+                    mAttachAgentTask = Task.Run(() =>
                        {
                            mProcessIDForAttach = -1;
                            if (!PerformAttachGingerAgent()) return;
 
                            if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
-                               portValueAutoResetEvent != null)
+                               mPortValueAutoResetEvent != null)
                            {
-                               portValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+                               mPortValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
                            }
                            AddOrUpdateReturnParamActual("Port", mPort_Calc);
-                       }, cancellationTokenSourceAttachAgent.Token);
+                       }, mAttachAgentCancellationToken.Token);
 
-                    attachAgentTask.Wait();
+                    mAttachAgentTask.Wait();
 
                 }
             }
@@ -363,9 +363,9 @@ namespace GingerCore.Actions
         public override void PostExecute()
         {
 
-            if (attachAgentTask != null && !attachAgentTask.IsCanceled && !attachAgentTask.IsFaulted)
+            if (mAttachAgentTask != null && mAttachAgentTask.Status!= TaskStatus.RanToCompletion && !mAttachAgentTask.IsCanceled && !mAttachAgentTask.IsFaulted)
             {
-                cancellationTokenSourceAttachAgent.Cancel();
+                mAttachAgentCancellationToken.Cancel();
             }
             
         }
@@ -389,7 +389,7 @@ namespace GingerCore.Actions
             else
             {
                 //If port calculation is auto detect then we initialize autoreset event for it
-                portValueAutoResetEvent = new AutoResetEvent(false);
+                mPortValueAutoResetEvent = new AutoResetEvent(false);
             }
         }
 
@@ -684,103 +684,112 @@ namespace GingerCore.Actions
 
         private bool WaitForAppWindowTitle()
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
             bool bFound = false;
-
-            // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
-            if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
+            try
             {
-                while (!bFound)
-                {
-                    Process process = Process.GetProcessById(mJavaApplicationProcessID);
+                Stopwatch sw = new Stopwatch();
+                sw.Start();                
 
-                    if (!IsInstrumentationModuleLoaded(process.Id))
+                // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
+                if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
+                {
+                    while (!bFound)
                     {
-                        if (BlockingJavaWindow)
+                        mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                        Process process = Process.GetProcessById(mJavaApplicationProcessID);
+
+                        if (!IsInstrumentationModuleLoaded(process.Id))
                         {
-                            bFound = CheckForBlockWindow(process);
+                            if (BlockingJavaWindow)
+                            {
+                                bFound = CheckForBlockWindow(process);
+                            }
+                            else
+                            {
+                                bFound = MatchProcessTitle(process.MainWindowTitle.ToLower());
+                            }
+                            if (bFound)
+                            {
+                                mProcessIDForAttach = process.Id;
+                            }
                         }
-                        else
-                        {
-                            bFound = MatchProcessTitle(process.MainWindowTitle.ToLower());
-                        }
-                        if (bFound)
-                        {
-                            mProcessIDForAttach = process.Id;
-                        }
+
+                        // Go out after max seconds
+                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                            break;
+
+                        Thread.Sleep(1000);
                     }
-
-                    // Go out after max seconds
-                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                        break;
-
-                    Thread.Sleep(1000);
                 }
-            }
-            // If Application is not launched from Ginger then we go over the process to find the target Process ID
-            else
-            {
-                while (!bFound)
+                // If Application is not launched from Ginger then we go over the process to find the target Process ID
+                else
                 {
-                    Process[] processlist = Process.GetProcesses();
-
-                    List<Process> matchingProcessList = new List<Process>();
-
-                    foreach (Process process in processlist)
+                    while (!bFound)
                     {
-                        if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                        Process[] processlist = Process.GetProcesses();
+
+                        List<Process> matchingProcessList = new List<Process>();
+
+                        foreach (Process process in processlist)
                         {
-                            continue;
-                        }
-                        if (BlockingJavaWindow)
-                        {
-                            if (CheckForBlockWindow(process))
+                            mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                            if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                            {
+                                continue;
+                            }
+                            if (BlockingJavaWindow)
+                            {
+                                if (CheckForBlockWindow(process))
+                                {
+                                    matchingProcessList.Add(process);
+                                }
+                            }
+
+                            else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
                             {
                                 matchingProcessList.Add(process);
                             }
                         }
 
-                        else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
-                        {
-                            matchingProcessList.Add(process);
-                        }
-                    }
 
-
-                    if (matchingProcessList.Count == 1)
-                    {
-                        if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
+                        if (matchingProcessList.Count == 1)
                         {
-                            bFound = true;
-                            mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
-                        }
-                    }
-                    else if (matchingProcessList.Count > 1)
-                    {
-                        foreach (Process process in matchingProcessList)
-                        {
-                            if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
+                            if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
                             {
-                                if (!IsInstrumentationModuleLoaded(process.Id))
+                                bFound = true;
+                                mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
+                            }
+                        }
+                        else if (matchingProcessList.Count > 1)
+                        {
+                            foreach (Process process in matchingProcessList)
+                            {
+                                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                                if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
                                 {
-                                    bFound = true;
-                                    mProcessIDForAttach = process.Id;
-                                    break;
+                                    if (!IsInstrumentationModuleLoaded(process.Id))
+                                    {
+                                        bFound = true;
+                                        mProcessIDForAttach = process.Id;
+                                        break;
+                                    }
                                 }
                             }
                         }
+
+                        // Go out after max seconds
+                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                            break;
+
+                        Thread.Sleep(1000);
                     }
-
-                    // Go out after max seconds
-                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                        break;
-
-                    Thread.Sleep(1000);
                 }
             }
-
+            catch (OperationCanceledException ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Task cancellation was requested during WaitForAppWindowTitle", ex);
+            }
+          
             return bFound;
 
         }
@@ -869,7 +878,7 @@ namespace GingerCore.Actions
                 if(commnadConfigs[1].Contains(Fields.DynamicPortPlaceHolder))
                 {
                     mPort_Calc = SocketHelper.GetOpenPort().ToString();
-                    portValueAutoResetEvent.Set();
+                    mPortValueAutoResetEvent.Set();
                     commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);                   
                 }
                 
