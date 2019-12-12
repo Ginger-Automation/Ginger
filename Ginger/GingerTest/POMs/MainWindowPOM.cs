@@ -16,11 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.BusinessFlowWindows;
 using Ginger.GeneralWindows;
 using Ginger.TwoLevelMenuLib;
 using Ginger.Variables;
 using GingerTest.POMs;
 using GingerWPF.UserControlsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +42,7 @@ namespace GingerWPFUnitTest.POMs
         public AgentsPOM Agents;
         public POMsPOM POMs;
         public GlobalVariablesPOM GlobalVariables;
+        public BusinessFlowPOM businessFlow;
 
         public MainWindowPOM(Ginger.MainWindow mainWin)
         {
@@ -74,8 +77,12 @@ namespace GingerWPFUnitTest.POMs
         {            
         }
         public void ClickAutomateTab()
-        {         
-        }
+        {
+            mMainWindow.Dispatcher.Invoke(() =>
+            {
+
+            });
+            }
 
         public void ClickSolutionTab()
         {         
@@ -213,7 +220,41 @@ namespace GingerWPFUnitTest.POMs
         //    });
         //}
 
-        
+        public BusinessFlowPOM SelectBusinessFlow()
+        {
+            businessFlow = null;
+            Execute(() =>
+            {
+                ClickBusinessFlowRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage resourcesPage = (BusinessFlowsAutomatePage)f.Content;
+                Frame f2 = (Frame)resourcesPage.FindName("xContentFrame");
+                SingleItemTreeViewExplorerPage singleItemTreePage = (SingleItemTreeViewExplorerPage)f2.Content;
+
+                TreeView1 lv = (TreeView1)singleItemTreePage.FindName("xTreeView");
+
+                while (!singleItemTreePage.IsVisible)
+                {
+                    SleepWithDoEvents(100);
+                }
+
+                businessFlow = new BusinessFlowPOM(singleItemTreePage);
+               
+            });
+
+            return businessFlow;
+        }
+
+
+        public void ClickAutomateButton()
+        {
+            Execute(() =>
+            {
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+               
+            });
+        }
+
 
         public EnvironmentsPOM GotoEnvironments()
         {

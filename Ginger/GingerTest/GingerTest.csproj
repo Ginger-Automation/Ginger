@@ -219,6 +219,7 @@
     <Compile Include="HTMLReportsLib\HTMLReportTest.cs" />
     <Compile Include="POMs\AdornerLib\HighlightAdorner.cs" />
     <Compile Include="POMs\AgentsPOM.cs" />
+    <Compile Include="POMs\BusinessFlowPOM.cs" />
     <Compile Include="POMs\Common\ButtonPOM.cs" />
     <Compile Include="POMs\Common\ContextMenuItemPOM.cs" />
     <Compile Include="POMs\Common\ContextMenuPOM.cs" />
