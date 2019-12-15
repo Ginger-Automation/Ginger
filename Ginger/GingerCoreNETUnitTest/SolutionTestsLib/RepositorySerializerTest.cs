@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -23,7 +24,6 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -415,21 +415,25 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("NewTab", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "GotoURLType" select aiv).FirstOrDefault().Value);
         }
 
-
+        
         [TestMethod]
-        //[Timeout(60000)]
-        public void BusinessFlowLazyloadTest()
+        public void ActiviyLazyLad()
         {
-            //Arrange
-            //Put the BF in Test Resource
-            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "CLI" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+            ObservableList<Activity> activities = new ObservableList<Activity>();
+            XDocument myxml = XDocument.Load(TestResources.GetTestResourcesFile(@"XML\ActivityTest.Ginger.Activity.xml"));
 
-            //Load BF
-            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+            Assert.AreEqual(0, activities.Count);
 
-            //Assert
-            Assert.AreEqual(true, businessFlow.Activities.AvoidLazyLoad);
+            try
+            {
+                NewRepositorySerializer.DeserializeObservableListFromText(activities, myxml.ToString());
+            }
+            catch
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Deserialize the lazy load section");
+            }
+
+            Assert.AreEqual(1, activities.Count);
         }
-
     }
 }
