@@ -392,6 +392,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SetRunSetChildCounts(runSet);
 
             runSet.SetReportData(runSetReport);
+
+            ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+            ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus = (eRunStatus)Enum.Parse(typeof(eRunStatus), runSet.RunStatus);
+
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
             ClearSeq();
