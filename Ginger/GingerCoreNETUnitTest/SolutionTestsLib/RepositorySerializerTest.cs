@@ -435,5 +435,23 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             Assert.AreEqual(1, activities.Count);
         }
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void BusinessFlowLazyloadTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "CLI" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            Assert.AreEqual(false, businessFlow.LazyLoadFlagForUnitTest);
+
+            int count = businessFlow.Activities.Count();
+
+            Assert.AreEqual(true, businessFlow.LazyLoadFlagForUnitTest);
+        }
     }
 }
