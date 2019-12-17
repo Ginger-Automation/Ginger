@@ -890,7 +890,7 @@ namespace Ginger.Run.RunSetActions
                         }
                         if (selectedField_internal.FieldKey == BusinessFlowReport.Fields.Seq)
                         {
-                            
+
                             executionSeq = ExtensionMethods.OverrideHTMLRelatedCharacters(br.GetType().GetProperty(fieldName).GetValue(br).ToString());
                             fieldsValuesHTMLTableCells.Append(tableStyle + executionSeq + "</td>");
                         }
@@ -1036,53 +1036,53 @@ namespace Ginger.Run.RunSetActions
             return chartData;
         }
 
-        private static void GetExecGeneralDetails(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration currentTemplate, StringBuilder fieldsNamesHTMLTableCells, StringBuilder fieldsValuesHTMLTableCells, StringBuilder fieldsNamesHTMLTableCellsm, StringBuilder fieldsValuesHTMLTableCellsm)
+        private static void GetExecGeneralDetails(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration currentTemplate, StringBuilder fieldsNamesHTMLTableCellsRowOne, StringBuilder fieldsValuesHTMLTableCellsRowOne, StringBuilder fieldsNamesHTMLTableCellsRowTwo, StringBuilder fieldsValuesHTMLTableCellsRowTwo)
         {
             string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
             string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";
+
+            var totalColumnCount = currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())).Count(); ;
+            var columnHeaderName = fieldsNamesHTMLTableCellsRowOne;
+            var columnValue = fieldsValuesHTMLTableCellsRowOne;
+            var columnCount = 0;
             foreach (HTMLReportConfigFieldToSelect selectedField in currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())))
             {
-                string fieldName = EmailToObjectFieldName(selectedField.FieldKey);
-                if (currentTemplate.EmailSummaryViewFieldsToSelect.IndexOf(selectedField) <= 6)
+                // change row from one to two
+                if (totalColumnCount > 6 && ++columnCount > 6)
                 {
-                    fieldsNamesHTMLTableCells.Append(tableColor + selectedField.FieldName + "</td>");
-                    if (liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet) == null)
-                    {
-                        fieldsValuesHTMLTableCells.Append(tableStyle);
-                    }
-                    else
-                    {
-                        if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
-                        {
-                            StringBuilder environmentNames_str = new StringBuilder();
-                            liteDbRunSet.RunnersColl.Where(x => x.Environment != null && x.Environment != string.Empty).GroupBy(q => q.Environment).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.Environment + ", "));
-                            fieldsValuesHTMLTableCells.Append(tableStyle + environmentNames_str.ToString().TrimEnd(',', ' ') + "</td>");
-                            environmentNames_str.Remove(0, environmentNames_str.Length);
-                        }
-                        else if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
-                        {
-                            fieldsValuesHTMLTableCells.Append(tableStyle + ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString() + 's') + "</td>");
-                        }
-                        else if (selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate || selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
-                        {
-                            fieldsValuesHTMLTableCells.Append(tableStyle + ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString() + '%') + "</td>");
-                        }
-                        else
-                        {
-                            fieldsValuesHTMLTableCells.Append(tableStyle + ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString()) + "</td>");
-                        }
-                    }
+                    columnHeaderName = fieldsNamesHTMLTableCellsRowTwo;
+                    columnValue = fieldsValuesHTMLTableCellsRowTwo;
+                }
+                string fieldName = EmailToObjectFieldName(selectedField.FieldKey);
+                columnHeaderName.Append(string.Concat(tableColor,selectedField.FieldName,"</td>"));
+
+                if (liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet) == null)
+                {
+                    columnValue.Append(string.Concat(tableStyle , " N/A </td>"));
                 }
                 else
                 {
-                    fieldsNamesHTMLTableCellsm.Append(tableColor + selectedField.FieldName + "</td>");
-                    if (liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet) == null)
+                    var columnDbValue = ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString());
+
+                    if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
                     {
-                        fieldsValuesHTMLTableCellsm.Append(tableStyle + " N/A </td>");
+                        StringBuilder environmentNames_str = new StringBuilder();
+                        liteDbRunSet.RunnersColl.Where(x => x.Environment != null && x.Environment != string.Empty).GroupBy(q => q.Environment).Select(q => q.First()).ToList().ForEach(x => environmentNames_str.Append(x.Environment + ", "));
+                        
+                        columnValue.Append(string.Concat(tableStyle, environmentNames_str.ToString().TrimEnd(',', ' ') , "</td>"));
+                        environmentNames_str.Remove(0, environmentNames_str.Length);
+                    }
+                    else if (selectedField.FieldKey == RunSetReport.Fields.ExecutionDuration)
+                    {
+                        columnValue.Append(string.Concat(tableStyle,columnDbValue, 's', "</td>"));
+                    }
+                    else if (selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate || selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate)
+                    {
+                        columnValue.Append(string.Concat(tableStyle,columnDbValue, '%' , "</td>"));
                     }
                     else
                     {
-                        fieldsValuesHTMLTableCellsm.Append(tableStyle + ExtensionMethods.OverrideHTMLRelatedCharacters(liteDbRunSet.GetType().GetProperty(fieldName).GetValue(liteDbRunSet).ToString()) + "</td>");
+                        columnValue.Append(string.Concat(tableStyle, columnDbValue , "</td>"));
                     }
                 }
             }
@@ -1861,7 +1861,7 @@ namespace Ginger.Run.RunSetActions
         }
         public static string OverrideHTMLRelatedCharacters(string text)
         {
-            if(!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
                 text = text.Replace(@"<", "&#60;");
                 text = text.Replace(@">", "&#62;");
