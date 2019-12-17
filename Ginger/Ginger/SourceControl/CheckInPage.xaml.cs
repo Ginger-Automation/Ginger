@@ -240,8 +240,11 @@ namespace Ginger.SourceControl
                                 }
                                 else if (!fi.Locked)
                                 {
+                                    RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(fi.Path));
+                                    repositoryFolderBase.PauseFileWatcher();
                                     SourceControlIntegration.UpdateFile( WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
+                                    repositoryFolderBase.ResumeFileWatcher();
                                 }
                                 break;
                             case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
