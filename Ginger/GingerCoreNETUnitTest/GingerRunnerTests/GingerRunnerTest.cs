@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -32,8 +33,8 @@ using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
+using IWshRuntimeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -58,9 +59,18 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public static void ClassInit(TestContext context)
         {
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
+
+            Activity activity = new Activity();
+            mBF.AddActivity(activity);
+
+            ActDummy action1 = new ActDummy();
+            ActDummy action2 = new ActDummy();
+
+            mBF.Activities[0].Acts.Add(action1);
+            mBF.Activities[0].Acts.Add(action2);
+
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
@@ -74,6 +84,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             environment = new ProjEnvironment();
             environment.Name = "Default";
+            mBF.Environment = environment.Name;
 
 
             Agent a = new Agent();
@@ -101,7 +112,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-
+           
         }
 
 
@@ -321,6 +332,81 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         }
 
+        [TestMethod]
+        public void TestDynamicRunsetExecution()
+        {
+
+            RunSetConfig runSetConfig1 = new RunSetConfig();
+            mGR.IsUpdateBusinessFlowRunList = true;
+           
+            runSetConfig1.GingerRunners.Add(mGR);
+           // mGR.BusinessFlowsRunList = new BusinessFlowRun()
+            runSetConfig1.UpdateRunnersBusinessFlowRunsList();
+            runSetConfig1.mRunModeParallel = false;
+
+            RunSetActionHTMLReport produceHTML2 = CreateProduceHTMlOperation();
+            runSetConfig1.RunSetActions.Add(produceHTML2);
+
+            RunsetExecutor GMR1 = new RunsetExecutor();
+            GMR1.RunsetExecutionEnvironment = environment;
+            GMR1.RunSetConfig = runSetConfig1;
+            WorkSpace.Instance.RunsetExecutor = GMR1;
+            CLIHelper cLIHelper1 = new CLIHelper();
+            cLIHelper1.RunAnalyzer = false;
+            cLIHelper1.ShowAutoRunWindow = true;
+            cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
+
+            RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
+            CLIDynamicXML mCLIDynamicXML1  = new CLIDynamicXML();
+            autoRunConfiguration1.SelectedCLI = mCLIDynamicXML1;
+            String xmlFile =autoRunConfiguration1.SelectedCLI.CreateContent(solution, GMR1, cLIHelper1);
+
+            RunSetAutoRunShortcut runSetAutoRunShortcut = new RunSetAutoRunShortcut(autoRunConfiguration1);
+            runSetAutoRunShortcut.CreateShortcut = true;
+            runSetAutoRunShortcut.ShortcutFileName = "TestDynamicRunset";
+            runSetAutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerExe;
+            runSetAutoRunShortcut.ShortcutFolderPath= Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            runSetAutoRunShortcut.ExecuterFolderPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+           
+            autoRunConfiguration1.CreateContentFile();
+            if (runSetAutoRunShortcut.CreateShortcut)
+            {
+                WshShell shell = new WshShell();
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(runSetAutoRunShortcut.ShortcutFileFullPath);
+                shortcut.Description = runSetAutoRunShortcut.ShortcutFileName;
+                shortcut.WorkingDirectory = runSetAutoRunShortcut.ExecuterFolderPath;
+                shortcut.TargetPath = runSetAutoRunShortcut.ExecuterFullPath;
+                shortcut.Arguments = autoRunConfiguration1.ConfigArgs;
+
+                string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
+                if (System.IO.File.Exists(iconPath))
+                {
+                    shortcut.IconLocation = iconPath;
+                }
+                shortcut.Save();
+
+                CLIProcessor cLIProcessor = new CLIProcessor();
+                string argument = autoRunConfiguration1.ConfigArgs;
+                argument = argument.Replace('"', ' ');
+                string[] args = argument.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                string s = args[2] + " "+args[3];
+                args[2] = s;
+                args = args.Take(args.Count() - 1 ).ToArray();
+                cLIProcessor.ExecuteArgs(args);
+            }
+        }
+
+        public RunSetActionHTMLReport CreateProduceHTMlOperation()
+        {
+            RunSetActionHTMLReport produceHTML1 = new RunSetActionHTMLReport();
+            produceHTML1.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            produceHTML1.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            produceHTML1.isHTMLReportFolderNameUsed = true;
+            produceHTML1.HTMLReportFolderName = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "HTMLReports"));
+            produceHTML1.isHTMLReportPermanentFolderNameUsed = false;
+            produceHTML1.Active = true;
+            return produceHTML1;
+        }
 
         public RunSetConfig CreteRunsetWithOperations()
         {
@@ -339,12 +425,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //added Produce Html action
 
-            RunSetActionHTMLReport produceHTML = new RunSetActionHTMLReport();
-            produceHTML.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
-            produceHTML.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
-            produceHTML.isHTMLReportFolderNameUsed = false;
-            produceHTML.isHTMLReportPermanentFolderNameUsed = false;
-            produceHTML.Active = true;
+            RunSetActionHTMLReport produceHTML = CreateProduceHTMlOperation();
 
             //added JSON action
             RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary();
@@ -359,7 +440,5 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             return runSetConfig;
         }
-
-
     }
 }
