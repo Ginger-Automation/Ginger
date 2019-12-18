@@ -107,12 +107,24 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             solution = Solution.LoadSolution(solutionFile);
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
+            WorkSpace.Instance.Solution = solution;
+            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-           
+            try
+            {
+                //Delete 'Report' folder which is crated after Dynamic Runset Execution
+                System.IO.DirectoryInfo di = new DirectoryInfo(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "HTMLReports" + Path.DirectorySeparatorChar + "Reports"));
+                di.Delete(true);
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+            }
+
         }
 
 
@@ -326,21 +338,50 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Assert.AreEqual(runsetoperations.Count , 3);
             Assert.AreEqual(runsetoperations[0].FirstChild.Name, "MailFrom");
             Assert.AreEqual(runsetoperations[0].LastChild.Name, "IncludeAttachmentReport") ;
-            Assert.AreEqual(runsetoperations[1].FirstChild.Name, "selectedHTMLReportTemplateID");
+            Assert.AreEqual(runsetoperations[1].FirstChild.Name, "HTMLReportFolderName");
             Assert.AreEqual(runsetoperations[1].LastChild.Name, "isHTMLReportPermanentFolderNameUsed");
             Assert.AreEqual(runsetoperations[2].HasChildNodes,false);
 
         }
 
         [TestMethod]
-        public void TestDynamicRunsetExecution()
+        public void TestDynamicRunetExecution()
         {
 
-            RunSetConfig runSetConfig1 = new RunSetConfig();
-            mGR.IsUpdateBusinessFlowRunList = true;
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow BF1 = bfList[0];
+
+            ObservableList<Activity> activityList = BF1.Activities;
+
+            Activity activity = activityList[0];
+
+            BF1.Active = true;
+
+            GingerRunner mGRForRunset = new GingerRunner();
+            mGRForRunset.Name = "Test Runner";
+
+            Agent a = new Agent();
+            a.DriverType = Agent.eDriverType.SeleniumChrome;
+
+            mGRForRunset.SolutionAgents = new ObservableList<Agent>();
+            mGRForRunset.SolutionAgents.Add(a);
+
+            mGRForRunset.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
+            mGRForRunset.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGRForRunset.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+
+            mGRForRunset.BusinessFlows.Add(BF1);
+            WorkSpace.Instance.SolutionRepository = SR;
+
+            mGRForRunset.SpecificEnvironmentName = environment.Name;
+            mGRForRunset.UseSpecificEnvironment = false;
+
            
-            runSetConfig1.GingerRunners.Add(mGR);
-           // mGR.BusinessFlowsRunList = new BusinessFlowRun()
+            
+            RunSetConfig runSetConfig1 = new RunSetConfig();
+            mGRForRunset.IsUpdateBusinessFlowRunList = true;           
+            runSetConfig1.GingerRunners.Add(mGRForRunset);
+
             runSetConfig1.UpdateRunnersBusinessFlowRunsList();
             runSetConfig1.mRunModeParallel = false;
 
@@ -353,7 +394,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Instance.RunsetExecutor = GMR1;
             CLIHelper cLIHelper1 = new CLIHelper();
             cLIHelper1.RunAnalyzer = false;
-            cLIHelper1.ShowAutoRunWindow = true;
+            cLIHelper1.ShowAutoRunWindow = false;
             cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
 
             RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
@@ -367,7 +408,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             runSetAutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerExe;
             runSetAutoRunShortcut.ShortcutFolderPath= Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             runSetAutoRunShortcut.ExecuterFolderPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-           
+            
             autoRunConfiguration1.CreateContentFile();
             if (runSetAutoRunShortcut.CreateShortcut)
             {
@@ -393,6 +434,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
                 args[2] = s;
                 args = args.Take(args.Count() - 1 ).ToArray();
                 cLIProcessor.ExecuteArgs(args);
+
+                string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "HTMLReports" + Path.DirectorySeparatorChar + "Reports");
+                Assert.IsTrue(Directory.Exists(path));
+
             }
         }
 
