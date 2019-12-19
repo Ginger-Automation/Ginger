@@ -30,30 +30,39 @@ namespace Amdocs.Ginger.Common.APIModelLib
     {
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
+            string jsOnText = System.IO.File.ReadAllText(FileName);
+            string fileName = Path.GetFileNameWithoutExtension(FileName);
+            return GetParameters(jsOnText, AAMSList, avoidDuplicatesNodes, fileName);
+        }
 
+        public ObservableList<ApplicationAPIModel> ParseDocumentWithJsonContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
+        {
+            return GetParameters(fileContent, AAMSList, avoidDuplicatesNodes, string.Empty);
+        }
+
+        private static ObservableList<ApplicationAPIModel> GetParameters(string jsonText, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes, string fileName)
+        {
             ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(FileName);
-
-            string JSOnText = System.IO.File.ReadAllText(FileName);
+            AAM.Name = Path.GetFileNameWithoutExtension(fileName);
 
             //JObject jo = JObject.Parse(JSOnText);
             //IList<string> keys = jo.Properties().Select(p => p.Path).ToList();
 
             if (avoidDuplicatesNodes)
             {
-                JsonExtended fullJSOnObjectExtended = new JsonExtended(JSOnText);
+                JsonExtended fullJSOnObjectExtended = new JsonExtended(jsonText);
                 fullJSOnObjectExtended.RemoveDuplicatesNodes();
-                JSOnText = fullJSOnObjectExtended.JsonString;
+                jsonText = fullJSOnObjectExtended.JsonString;
             }
 
-            object[] BodyandModelParameters = GenerateBodyANdModelParameters(JSOnText);
+            object[] BodyandModelParameters = GenerateBodyANdModelParameters(jsonText);
 
             AAM.RequestBody = (string)BodyandModelParameters[0];
             AAM.AppModelParameters = (ObservableList<AppModelParameter>)BodyandModelParameters[1];
             AAMSList.Add(AAM);
 
             return AAMSList;
-        }
+        }        
 
         public static ObservableList<ActReturnValue> ParseJSONResponseSampleIntoReturnValues(string JSOnText)
         {

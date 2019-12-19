@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
@@ -74,6 +75,12 @@ namespace GingerTest
             {
                 AppName = "Java-App",
                 Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
+            });
+
+            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            {
+                AppName = "Window-App",
+                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Windows
             });
 
             WorkSpace.Instance.Solution = sol;
@@ -596,13 +603,68 @@ namespace GingerTest
             Assert.AreEqual(mBF.Activities[0].Acts.Count(), 1);
         }
 
+        #region Web actions convertor Test
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void WebActSwitchWindowToUISwitchWindow()
+        {
+            Activity activity = GetActivityforConversionTest("Web-App");
+            ActSwitchWindowTOUISwitchWindowConvertor(activity);
+        }
+
+        #endregion
+        private static Activity GetActivityforConversionTest(string targetApp)
+        {
+            mBF = new BusinessFlow() { Name = "TestConversion", Active = true };
+
+            Activity activity = new Activity();
+            activity.Active = true;
+            activity.SelectedForConversion = true;
+            activity.TargetApplication = targetApp;
+            return activity;
+        }
+
+        private static void ActSwitchWindowTOUISwitchWindowConvertor(Activity activity)
+        {
+            ActSwitchWindow actSwitchWindow = new ActSwitchWindow();
+            actSwitchWindow.Active = true;
+            actSwitchWindow.Description = "Switch Window";
+            actSwitchWindow.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByTitle;
+            actSwitchWindow.LocateValue = "FaceBook";
+            activity.Acts.Add(actSwitchWindow);
+
+            mBF.AddActivity(activity);
+
+            //Act
+            ExecuteActionConversion(false, true, string.Empty);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), actSwitchWindow.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), actSwitchWindow.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.Switch.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementType.ToString(), eElementType.Window.ToString());
+        }
+
+        #region Window actions convertot Test
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void WindowActSwitchWindowToUISwitchWindow()
+        {
+            Activity activity = GetActivityforConversionTest("Window-App");
+            ActSwitchWindowTOUISwitchWindowConvertor(activity);
+        }
+
+        #endregion
+
         #region java Convertor Test
 
         [TestMethod]
         [Timeout(60000)]
         public void JavaActGenericSetValueToUIElementSetValue()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -623,7 +685,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActGenericGetValueToUIElementGetValue()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -643,7 +705,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaGenericSwitchFromToActBroswerSwitchFrame()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -663,7 +725,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActRunJavaScriptToActBroswerRunJavaScript()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -684,7 +746,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActGenericClickToUIElementClick()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -704,8 +766,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaGenericScrollUpToUIElementScrollUp()
         {
-            Activity activity = GetJavaActivityforConversionTest();
-
+            Activity activity = GetActivityforConversionTest("Java-App");
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
             genAction.Description = "Scroll up";
@@ -724,7 +785,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaGenericScrollDownToUIElementScrollDown()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -744,7 +805,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaGenericVisibleToUIElementIsVisible()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -769,7 +830,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaGenericEnableToUIElementIsEnable()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -794,7 +855,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActGenericAsyncClickToUIElementAsyncClick()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -814,7 +875,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActFireMouseEventToUIElementTriggerJavaScriptEvent()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -842,7 +903,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActFireSpecialEventToUIElementTriggerJavaScriptEvent()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -870,7 +931,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActGenericSelectFromDropDownByIndexToUIElementSelectByIndex()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -898,7 +959,7 @@ namespace GingerTest
         [Timeout(60000)]
         public void JavaActGenericSelectFromDropDownToUIElementSelect()
         {
-            Activity activity = GetJavaActivityforConversionTest();
+            Activity activity = GetActivityforConversionTest("Java-App");
 
             ActGenElement genAction = new ActGenElement();
             genAction.Active = true;
@@ -922,18 +983,13 @@ namespace GingerTest
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.ValueToSelect), genAction.Value);
         }
 
-        private static Activity GetJavaActivityforConversionTest()
+        [TestMethod]
+        [Timeout(60000)]
+        public void JavaActSwitchWindowToUISwitchWindow()
         {
-            mBF = new BusinessFlow() { Name = "TestJavaConversion", Active = true };
-
-            Activity activity = new Activity();
-            activity.Active = true;
-            activity.SelectedForConversion = true;
-            activity.TargetApplication = "Java-App";
-            return activity;
+            Activity activity = GetActivityforConversionTest("Java-App");
+            ActSwitchWindowTOUISwitchWindowConvertor(activity);
         }
-
-
 
         private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
         {
@@ -959,6 +1015,8 @@ namespace GingerTest
             Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).ControlAction.ToString(), genAction.GenElementAction.ToString());
             Assert.AreEqual(((ActBrowserElement)mBF.Activities[0].Acts[1]).Value, genAction.Value);
         }
+
+        
         #endregion
     }
 }
