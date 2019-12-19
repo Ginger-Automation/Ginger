@@ -9,8 +9,6 @@ namespace GingerTest.POMs
     public class BusinessFlowPOM : GingerPOMBase
     {
         private SingleItemTreeViewExplorerPagePOM mTreeView;
-        public event EventHandler ItemDoubleClick;
-        public bool TreeItemDoubleClicked = false;
 
         public BusinessFlowPOM(SingleItemTreeViewExplorerPage page)
         {
