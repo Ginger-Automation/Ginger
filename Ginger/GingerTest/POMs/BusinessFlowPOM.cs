@@ -46,25 +46,8 @@ namespace GingerTest.POMs
                     });
                 }
             }
-
-            AddActivityToAutomate();
-
         }
 
-        public void AddActivityToAutomate()
-        {
-            //var actTabItem = FindElementByName(mTreeView.GetSelectedItemEditPage(), "xActivitisTab");
-            //if (actTabItem != null)
-            //{
-            //    if (actTabItem is System.Windows.Controls.TabItem)
-            //    {
-            //        Dispatcher.Invoke(() =>
-            //        {
-            //            //actTabItem.
-            //        });
-            //    }
-            //}
-            Page page = (Page)mTreeView.GetSelectedItemEditPage();
-        }
     }
 }
+

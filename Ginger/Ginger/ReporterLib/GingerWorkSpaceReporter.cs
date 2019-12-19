@@ -30,7 +30,12 @@ namespace Ginger.ReporterLib
         {
             eUserMsgSelection result = defualtResault;  // if user just close the window we return the default defined result
 
-            if (! WorkSpace.Instance.RunningInExecutionMode)
+            if (WorkSpace.Instance.RunningFromUnitTest)
+            {
+                result = eUserMsgSelection.Yes;
+            }
+
+            if (! WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
             {
                 App.MainWindow.Dispatcher.Invoke(() =>
                 {

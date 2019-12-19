@@ -16,11 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.GeneralWindows;
 using Ginger.TwoLevelMenuLib;
 using Ginger.Variables;
+using GingerCore;
 using GingerTest.POMs;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -38,11 +41,13 @@ namespace GingerWPFUnitTest.POMs
     {
         // WorkSpaceEventHandler w = (WorkSpaceEventHandler)WorkSpace.Instance.EventHandler;
         Ginger.MainWindow mMainWindow;
+       
         public EnvironmentsPOM Environments;
         public AgentsPOM Agents;
         public POMsPOM POMs;
         public GlobalVariablesPOM GlobalVariables;
         public BusinessFlowPOM businessFlow;
+        public int ActivityCount;
 
         public MainWindowPOM(Ginger.MainWindow mainWin)
         {
@@ -245,16 +250,95 @@ namespace GingerWPFUnitTest.POMs
             return businessFlow;
         }
 
-
-        public void ClickAutomateButton()
+        public void AddActivityToLIstView()
         {
             Execute(() =>
             {
-                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
-               
+                Frame f1 = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage page1 = (BusinessFlowsAutomatePage)f1.Content;
+                Frame f2 = (Frame)page1.FindName("xContentFrame");
+                NewAutomatePage page2 = (NewAutomatePage)f2.Content;
+                Frame f3 = (Frame)page2.FindName("xActivitiesListFrame");
+                ActivitiesListViewPage activitiesListPage = (ActivitiesListViewPage)f3.Content;
+                Activity activity2 = new Activity();
+                activity2.ActivityName = "Test Activity";
+                Dispatcher.Invoke(() =>
+                {
+                    activitiesListPage.ListView.DataSourceList.Add(activity2);
+                    SleepWithDoEvents(100);
+                });
+
+                ClickOnBackToBFTreeBtn();
+
             });
         }
 
+
+        public int ClickOnUndoBtn()
+        {
+            Execute(() =>
+            {
+                Frame f1 = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage page1 = (BusinessFlowsAutomatePage)f1.Content;
+                Frame f2 = (Frame)page1.FindName("xContentFrame");
+                NewAutomatePage page2 = (NewAutomatePage)f2.Content;
+
+                var elByName = FindElementByName(page2, "xUndoChangesBtn");
+
+                if (elByName != null)
+                {
+                    if (elByName is Amdocs.Ginger.UserControls.ucButton)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            (elByName as Amdocs.Ginger.UserControls.ucButton).DoClick();
+                            SleepWithDoEvents(100);
+
+                        });
+                    }
+                }
+
+                Frame f3 = (Frame)page2.FindName("xActivitiesListFrame");
+                ActivitiesListViewPage activitiesListPage = (ActivitiesListViewPage)f3.Content;
+
+              ActivityCount =activitiesListPage.ListView.DataSourceList.Count;
+
+            });
+
+            return ActivityCount;
+
+            }
+
+
+        public void ClickOnBackToBFTreeBtn()
+        {
+            Execute(() =>
+            {
+                Frame f1 = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage page1 = (BusinessFlowsAutomatePage)f1.Content;
+                Frame f2 = (Frame)page1.FindName("xContentFrame");
+                NewAutomatePage page2 = (NewAutomatePage)f2.Content;
+
+                var elByName = FindElementByName(page2, "xGoToBFsTreeBtn");
+
+                if (elByName != null)
+                {
+                    if (elByName is Amdocs.Ginger.UserControls.ucButton)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            (elByName as Amdocs.Ginger.UserControls.ucButton).DoClick();
+                            SleepWithDoEvents(100);
+                        });
+                    }
+                }
+
+               
+
+                
+
+            });
+        }
 
         public EnvironmentsPOM GotoEnvironments()
         {

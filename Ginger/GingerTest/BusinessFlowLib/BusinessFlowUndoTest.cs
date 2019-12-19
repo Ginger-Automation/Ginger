@@ -33,10 +33,23 @@ namespace GingerTest.BusinessFlowLib
         {
             BusinessFlowPOM businessflow = mGingerAutomator.MainWindowPOM.SelectBusinessFlow();
             BusinessFlow selectedBusinessFlow = businessflow.selectBusinessFlow("Flow 1");
-             mGingerAutomator.MainWindowPOM.ClickAutomateButton();
 
             businessflow.AutomatePage("Flow 1");
+            mGingerAutomator.MainWindowPOM.AddActivityToLIstView();
+
+            BusinessFlow selectedBusinessFlow1 = businessflow.selectBusinessFlow("Flow 2");
+            businessflow.AutomatePage("Flow 2");
+            mGingerAutomator.MainWindowPOM.ClickOnBackToBFTreeBtn();
+
+            BusinessFlow selectedBusinessFlow2 = businessflow.selectBusinessFlow("Flow 1");
+            businessflow.AutomatePage("Flow 1");
+
+            int activityCount = mGingerAutomator.MainWindowPOM.ClickOnUndoBtn();
+
+            Assert.AreEqual(1, activityCount);
         }
+
+
 
     }
 }
