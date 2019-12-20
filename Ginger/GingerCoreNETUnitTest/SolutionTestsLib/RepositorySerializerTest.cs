@@ -420,7 +420,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void ActiviyLazyLoad()
         {
             ObservableList<Activity> activities = new ObservableList<Activity>();
-            string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML\ActivityTest.Ginger.Activity.xml"));
+            string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "ActivityTest.Ginger.Activity.xml"));
 
             activities.DoLazyLoadItem(activityXml);
 
