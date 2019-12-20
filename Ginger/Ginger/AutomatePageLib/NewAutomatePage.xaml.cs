@@ -396,7 +396,7 @@ namespace GingerWPF.BusinessFlowsLib
                 ResetPageUI();
 
                 mBusinessFlow = businessFlowToLoad;
-                if (mBusinessFlow.DirtyStatus != eDirtyStatus.Modified)
+                if (mBusinessFlow.DirtyStatus == eDirtyStatus.NoChange)
                 {
                     mBusinessFlow.SaveBackup();
                 }
@@ -415,7 +415,7 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mBusinessFlow != null)
                 {
-                    if (mBusinessFlow.DirtyStatus != eDirtyStatus.Modified)
+                    if (mBusinessFlow.DirtyStatus == eDirtyStatus.NoChange)
                     {
                         mBusinessFlow.SaveBackup();
                     }

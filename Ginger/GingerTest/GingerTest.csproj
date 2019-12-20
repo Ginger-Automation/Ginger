@@ -211,7 +211,7 @@
     <Compile Include="APIModelLib\WSDLParserTest.cs" />
     <!--<Compile Include="APIModelLib\WSDLToAPITest.cs" />-->
     <Compile Include="AgentsLib\AgentsTest.cs" />
-    <Compile Include="BusinessFlowLib\BusinessFlowUndoTest.cs" />
+    <Compile Include="BusinessFlowLib\BusinessFlowPOMTest.cs" />
     <Compile Include="EnvironemntsLib\EnvsTest.cs" />
     <Compile Include="GeneralLib\CopyDir.cs" />
     <Compile Include="GeneralLib\VisualCompare.cs" />
