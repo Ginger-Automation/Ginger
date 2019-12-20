@@ -42,6 +42,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
 
+        string Separator = Path.DirectorySeparatorChar.ToString();
+
         public static void ClassInit(TestContext TestContext)
         {
             mTestHelper.ClassInitialize(TestContext);
@@ -394,8 +396,24 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         //    Assert.AreEqual(5, RSC.RunSetActions.Count);
         //}
 
-        
 
+        [TestMethod]
+        //[Timeout(60000)]
+        public void BusinessFlowBrowserActionTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+
+            string FileName = TestResources.GetTestResourcesFile($"XML{Separator}Flow 1.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+            //Asert
+            Assert.AreEqual("GotoURL", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "ControlAction" select aiv).FirstOrDefault().Value);
+            Assert.AreEqual("NewTab", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "GotoURLType" select aiv).FirstOrDefault().Value);
+        }
 
     }
 }

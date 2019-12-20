@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
@@ -58,14 +57,18 @@ namespace Ginger
         
         private bool mAskUserIfToClose = true;
 
+        ObservableList<HelpLayoutArgs> mHelpLayoutList = new ObservableList<HelpLayoutArgs>();
+
         public MainWindow()
         {
             InitializeComponent();            
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
+            
+            mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
             Telemetry.eventHandler += TelemetryEventHandler;
-            GingerCore.General.DoEvents();
+            GingerCore.General.DoEvents();            
         }
 
         private void TelemetryEventHandler(object sender, Telemetry.TelemetryEventArgs e)
@@ -88,6 +91,8 @@ namespace Ginger
 
         public void Init()
         {
+            bool autoLoadSolDone = false;
+
             try
             {                
                 //App
@@ -120,10 +125,11 @@ namespace Ginger
                 SetBetaFlagIconVisibility();
                 lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
 
-                //Solution                                    
+                //Solution                  
                 if ( WorkSpace.Instance.UserProfile.AutoLoadLastSolution &&  WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                 {
                     AutoLoadLastSolution();
+                    autoLoadSolDone = true;
                 }
 
                 //Messages
@@ -145,6 +151,10 @@ namespace Ginger
             finally
             {
                 HideSplash();
+                if (autoLoadSolDone == false && WorkSpace.Instance.Solution == null)
+                {
+                    AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
+                }
             }
         }
 
@@ -328,7 +338,7 @@ namespace Ginger
                 if ( WorkSpace.Instance.Solution == null)
                 {
                     xSolutionTabsListView.SelectedItem = null;
-                    xSolutionNameTextBlock.Text = "Please Load Solution";                    
+                    xSolutionNameTextBlock.Text = "Please Load Solution";                
                 }
                 else
                 {
@@ -663,8 +673,11 @@ namespace Ginger
         {
 
             SourceControlItemInfoDetails SCIInfoDetails = SourceControlIntegration.GetRepositoryInfo( WorkSpace.Instance.Solution.SourceControl);
-            SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
-            SCIIP.ShowAsWindow();
+            if (SCIInfoDetails != null)
+            {
+                SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIInfoDetails);
+                SCIIP.ShowAsWindow();
+            }
         }
 
         private void btnViewLogLocation_Click(object sender, RoutedEventArgs e)
@@ -1016,6 +1029,165 @@ namespace Ginger
                 });
         }
 
-        
+        public void AddHelpLayoutToShow(string helpLayoutKey, FrameworkElement focusedControl, string helpText)
+        {
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                return;//not showing help in automatic run mode
+            }
+            HelpLayoutArgs helpLayoutArgs = new HelpLayoutArgs(helpLayoutKey, focusedControl, helpText);
+            if (WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Contains(helpLayoutArgs.HelpLayoutKey) == false)
+            {
+                mHelpLayoutList.Add(helpLayoutArgs);
+            }
+        }
+
+        private void MHelpLayoutList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (mHelpLayoutList.Count > 0) // check if help were loaded and need to  be shown
+            {
+                ShowHelpLayout();
+            }
+        }
+
+        private void ShowHelpLayout()
+        {
+            if (mHelpLayoutList.Count == 0)
+            {
+                return;
+            }
+
+            HelpLayoutArgs helpArgs = mHelpLayoutList[0];
+
+            try
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    //--general canvas setup                
+                    xHelpLayoutCanvas.Width = xMainWindowPnl.ActualWidth;
+                    xHelpLayoutCanvas.Height = xMainWindowPnl.ActualHeight;
+
+                    //---get control to focus details
+                    FrameworkElement controlToFocus = helpArgs.FocusedControl;
+                    double controlToFocusWidth = controlToFocus.ActualWidth;
+                    double controlToFocusHeight = controlToFocus.ActualHeight;
+                    Point controlToFocusLocation = controlToFocus.TransformToAncestor(App.MainWindow).Transform(new Point(0, 0));
+
+                    //---set background rectangles
+                    double gapSize = 0.25;
+                    xHelpLayoutRectangleLeft.Width = controlToFocusLocation.X + gapSize;
+                    xHelpLayoutRectangleLeft.Height = xMainWindowPnl.ActualHeight;
+
+                    xHelpLayoutRectangleRight.SetValue(Canvas.LeftProperty, controlToFocusLocation.X + controlToFocusWidth - gapSize);
+                    xHelpLayoutRectangleRight.Width = xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth);
+                    xHelpLayoutRectangleRight.Height = xMainWindowPnl.ActualHeight;
+
+                    xHelpLayoutRectangleTop.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
+                    xHelpLayoutRectangleTop.Width = controlToFocusWidth;
+                    xHelpLayoutRectangleTop.Height = controlToFocusLocation.Y;
+
+                    xHelpLayoutRectangleBottom.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
+                    xHelpLayoutRectangleBottom.SetValue(Canvas.TopProperty, controlToFocusLocation.Y + controlToFocusHeight);
+                    xHelpLayoutRectangleBottom.Width = controlToFocusWidth ;
+                    xHelpLayoutRectangleBottom.Height = xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight);
+
+                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
+                    //xHelpLayoutRectangleFocusedItem.SetValue(Canvas.TopProperty, controlToFocusLocation.Y);
+                    //xHelpLayoutRectangleFocusedItem.Width = controlToFocusWidth;
+                    //xHelpLayoutRectangleFocusedItem.Height = controlToFocusHeight;
+
+                    //-- set text and it location 
+                    xHelpLayoutTextBlock.Text = helpArgs.HelpText;
+                    double textNeededWidth = 450;
+                    double textNeededHeight = 250;
+                    double arrowNeededLength = 100;
+                    double arrowDistanceFromTarget = 10;
+                    Point helpTextLocation = new Point();
+                    Point arrowSourceLocation = new Point();
+                    Point arrowTargetLocation = new Point();
+                    //focused item top left corner
+                    if (controlToFocusLocation.X >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
+                    {
+                        helpTextLocation.X = controlToFocusLocation.X - textNeededWidth - arrowNeededLength; ;
+                        helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
+                        arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth, helpTextLocation.Y + 50);
+                        arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y - arrowDistanceFromTarget);
+                    }
+                    //focused item bottom left corner
+                    else if (controlToFocusLocation.X >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
+                    {
+                        helpTextLocation.X = controlToFocusLocation.X - textNeededWidth;
+                        helpTextLocation.Y = controlToFocusLocation.Y + controlToFocusHeight + arrowNeededLength;
+                        arrowSourceLocation = new Point(helpTextLocation.X + textNeededWidth / 2, helpTextLocation.Y);
+                        arrowTargetLocation = new Point(controlToFocusLocation.X, controlToFocusLocation.Y + controlToFocusHeight + arrowDistanceFromTarget);
+                    }
+                    //focused item top right corner
+                    else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && controlToFocusLocation.Y >= textNeededHeight)
+                    {
+                        helpTextLocation.X = controlToFocusLocation.X + controlToFocusWidth + textNeededWidth;
+                        helpTextLocation.Y = controlToFocusLocation.Y - arrowNeededLength;
+                        arrowSourceLocation = new Point(helpTextLocation.X - 20, helpTextLocation.Y + 20);
+                        arrowTargetLocation = new Point(controlToFocusLocation.X + controlToFocusWidth, controlToFocusLocation.Y - arrowDistanceFromTarget);
+                    }
+                    //focused item bottom right corner
+                    else if ((xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth)) >= textNeededWidth && (xMainWindowPnl.ActualHeight - (controlToFocusLocation.Y + controlToFocusHeight)) >= textNeededHeight)
+                    {
+                        helpTextLocation.X = controlToFocusLocation.X + controlToFocusWidth + textNeededWidth;
+                        helpTextLocation.Y = controlToFocusLocation.Y + controlToFocusHeight + arrowNeededLength;
+                        arrowSourceLocation = new Point(helpTextLocation.X, helpTextLocation.Y);
+                        arrowTargetLocation = new Point(controlToFocusLocation.X + controlToFocusWidth, controlToFocusLocation.Y + controlToFocusHeight + arrowDistanceFromTarget);
+                    }
+                    //middle of screen
+                    else
+                    {
+                        helpTextLocation.X = xMainWindowPnl.ActualWidth / 2;
+                        helpTextLocation.Y = xMainWindowPnl.ActualHeight / 2;
+                    }
+                    xHelpLayoutTextBlock.SetValue(Canvas.LeftProperty, helpTextLocation.X);
+                    xHelpLayoutTextBlock.SetValue(Canvas.TopProperty, helpTextLocation.Y);
+
+                    //-- draw Arrow
+                    while (xHelpLayoutCanvas.Children.Count > 5)//removing previous dynamic arrows
+                    {
+                        xHelpLayoutCanvas.Children.RemoveAt(xHelpLayoutCanvas.Children.Count - 1);
+                    }
+                    xHelpLayoutCanvas.Children.Add(GeneralWindows.HelpLayout.DrawArrow.DrawLinkArrow(arrowSourceLocation, arrowTargetLocation));
+
+                    xHelpLayoutCanvas.Visibility = Visibility.Visible;
+                });
+
+                if (!WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Contains(helpArgs.HelpLayoutKey))
+                {
+                    WorkSpace.Instance.UserProfile.ShownHelpLayoutsKeys.Add(helpArgs.HelpLayoutKey);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to show user Help Layout, help key ='{0}'", helpArgs.HelpLayoutKey), ex);
+                HideHelpLayout();
+            }
+        }
+
+        private void HideHelpLayout()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                xHelpLayoutCanvas.Visibility = Visibility.Collapsed;
+                mHelpLayoutList.RemoveAt(0);//remove help just shown               
+            });
+        }
+
+        private void xHelpLayoutCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            HideHelpLayout();
+        }
+
+        private void xMainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (xHelpLayoutCanvas.Visibility == Visibility.Visible)
+            {
+                ShowHelpLayout();//need to show again in correct size
+            }
+        }
     }
 }

@@ -138,7 +138,10 @@ namespace GingerWPF.TreeViewItemsLib
                 //}  
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
                 if (copiedItem != null)
+                {
+                    copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                     (WorkSpace.Instance.SolutionRepository.GetItemRepositoryFolder(((RepositoryItemBase)item))).AddRepositoryItem(copiedItem);
+                }
             }
             else
             {
@@ -155,6 +158,7 @@ namespace GingerWPF.TreeViewItemsLib
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
                 if (copiedItem != null)
                 {
+                    copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                     ((RepositoryFolderBase)(((ITreeViewItem)targetFolderNode).NodeObject())).AddRepositoryItem(copiedItem);
                     return true;
                 }
@@ -175,6 +179,7 @@ namespace GingerWPF.TreeViewItemsLib
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)childItemToCopy);
                 if (copiedItem != null)
                 {
+                    copiedItem.DirtyStatus = eDirtyStatus.NoTracked;
                     ((RepositoryFolderBase)(((ITreeViewItem)this).NodeObject())).AddRepositoryItem(copiedItem);
                 }
             }
@@ -381,8 +386,11 @@ namespace GingerWPF.TreeViewItemsLib
         private void SourceControlGetInfo(object sender, RoutedEventArgs e)
         {
             SourceControlItemInfoDetails SCIID = SourceControlIntegration.GetInfo(WorkSpace.Instance.Solution.SourceControl, this.NodePath());
-            SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIID);
-            SCIIP.ShowAsWindow();
+            if (SCIID != null)
+            {
+                SourceControlItemInfoPage SCIIP = new SourceControlItemInfoPage(SCIID);
+                SCIIP.ShowAsWindow();
+            }
         }
 
         private void SourceControlUnlock(object sender, RoutedEventArgs e)

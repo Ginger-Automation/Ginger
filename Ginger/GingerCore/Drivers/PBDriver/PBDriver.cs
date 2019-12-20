@@ -96,7 +96,7 @@ namespace GingerCore.Drivers.PBDriver
             mUIAutomationHelper.taskFinished = false;
             //TODO: avoid hard coded string... 
             actClass = actClass.Replace("GingerCore.Actions.", "");
-            if (actClass != "ActUIASwitchWindow" && actClass != "ActSwitchWindow")
+            if (!actClass.Equals(typeof(ActUIASwitchWindow)) && !actClass.Equals(typeof(ActSwitchWindow)) && (actClass == "Common.ActUIElement" && (((ActUIElement)act).ElementAction != ActUIElement.eElementAction.Switch)))
             {
                 CheckRetrySwitchWindowIsNeeded();
             }
@@ -266,14 +266,20 @@ namespace GingerCore.Drivers.PBDriver
         private void HandleUIElementAction(Act actPBC)
         {
             ActUIElement actUIPBC = (ActUIElement)actPBC;
-            string locateValue = actUIPBC.ElementLocateValueForDriver;
-            object AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIPBC.ElementLocateBy, locateValue);
 
-            if (AE == null && actUIPBC.ElementAction != ActUIElement.eElementAction.IsEnabled)
+            object AE = null;
+            if (!actUIPBC.ElementType.Equals(eElementType.Window) && !actUIPBC.ElementAction.Equals(ActUIElement.eElementAction.Switch))
             {
-                actUIPBC.Error = "Element not Found - " + actUIPBC.ElementLocateBy + " " + actUIPBC.ElementLocateValueForDriver;
-                return;
+                string locateValue = actUIPBC.ElementLocateValueForDriver;
+                AE = mUIAutomationHelper.FindElementByLocator((eLocateBy)actUIPBC.ElementLocateBy, locateValue);
+
+                if (AE == null && actUIPBC.ElementAction != ActUIElement.eElementAction.IsEnabled)
+                {
+                    actUIPBC.Error = "Element not Found - " + actUIPBC.ElementLocateBy + " " + actUIPBC.ElementLocateValueForDriver;
+                    return;
+                }
             }
+
             
             switch (actUIPBC.ElementAction)
             {
@@ -316,6 +322,9 @@ namespace GingerCore.Drivers.PBDriver
                         actUIPBC.ExInfo += statusSel;
                         actUIPBC.AddOrUpdateReturnParamActual("Actual", statusSel);
                     }
+                    break;
+                case ActUIElement.eElementAction.Switch:
+                    mUIAutomationHelper.ActUISwitchWindow(actUIPBC);
                     break;
                 default:
                     actUIPBC.Error = "Unable to perform operation";
@@ -974,11 +983,6 @@ namespace GingerCore.Drivers.PBDriver
             mUIAutomationHelper.SwitchToWindow(Title);
         }
 
-        bool IWindowExplorer.AddSwitchWindowAction(string Title)
-        {
-            mUIAutomationHelper.CreateSwitchWindowAction(Title);
-            return true;
-        }
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {

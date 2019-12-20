@@ -1347,7 +1347,7 @@ namespace GingerCore
 
         public Tuple<ActivitiesGroup, ActivityIdentifiers> GetActivityGroupAndIdentifier(Activity activity)
         {
-            ActivitiesGroup group = null; ;
+            ActivitiesGroup group = null;
             ActivityIdentifiers activityIdent = null;
             group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
             if (group != null)

@@ -71,13 +71,16 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(ReportInfo RI)
         {
+            string testNGReportPath = "";
             try
             {
-                string testNGReportPath = "";
-
                 if (!string.IsNullOrEmpty(SaveResultsInSolutionFolderName))
                 {
                     testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(SaveResultsInSolutionFolderName);
+                }
+                else if(!string.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder))
+                {
+                    testNGReportPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.TestArtifactsFolder;
                 }
                 else
                 {
@@ -89,7 +92,7 @@ namespace Ginger.Run.RunSetActions
                     {
                         Directory.CreateDirectory(testNGReportPath);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         testNGReportPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
                     }

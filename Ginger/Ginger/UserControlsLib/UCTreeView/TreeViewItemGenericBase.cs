@@ -61,12 +61,17 @@ namespace GingerWPF.TreeViewItemsLib
         public enum eFolderNodePastOperations { None, Copy, Cut, CopyItems, CutItems }
         public static eFolderNodePastOperations mCurrentFolderNodePastOperations = eFolderNodePastOperations.None;
 
-        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true)
+        public void AddItemNodeBasicManipulationsOptions(ContextMenu CM, bool allowSave = true, bool allowCopy = true, bool allowCut = true, bool allowDuplicate = true, bool allowDelete = true, bool allowViewXML = true, bool allowOpenContainingFolder = true, bool allowEdit = false)
         {
             if (allowSave)
             {
                 TreeViewUtils.AddMenuItem(CM, "Save", SaveTreeItemHandler, null, "@Save_16x16.png");
                 mTreeView.AddToolbarTool("@Save_16x16.png", "Save", SaveTreeItemHandler);
+            }
+            if (allowEdit)
+            {
+                TreeViewUtils.AddMenuItem(CM, "Edit", EditTreeItemHandler, null, eImageType.Edit);
+                mTreeView.AddToolbarTool(eImageType.Edit, "Edit", EditTreeItemHandler);
             }
             if (allowCopy)
             {
@@ -131,6 +136,16 @@ namespace GingerWPF.TreeViewItemsLib
         {
             mCurrentFolderNodePastOperations = eFolderNodePastOperations.Cut;
             mNodeManipulationsSource = (ITreeViewItem)this;
+        }
+
+        public virtual void EditTreeItem(object item)
+        {
+            // Do on Item specific pages in the way required (if required)
+        }
+
+        private void EditTreeItemHandler(object sender, RoutedEventArgs e)
+        {
+            EditTreeItem(((ITreeViewItem)this).NodeObject());
         }
 
         public abstract void DuplicateTreeItem(object item);

@@ -16,11 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.WindowExplorer.Appium;
 using Ginger.WindowExplorer.HTMLCommon;
 using Ginger.WindowExplorer.Java;
 using Ginger.WindowExplorer.Windows;
+using GingerCore.Actions.Common;
 using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
@@ -77,5 +80,26 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             return TVI;
         }
 
+        public static void CreateActUISwitchWindowAction(string windowTitle, Amdocs.Ginger.Common.Context mContext)
+        {
+            ActUIElement actUIElement = new ActUIElement()
+            {
+                Description = "UI Switch Window - " + windowTitle,
+                ElementLocateBy = eLocateBy.ByTitle,
+                ElementLocateValue = windowTitle,
+                ElementType = eElementType.Window,
+                ElementAction = ActUIElement.eElementAction.Switch
+            };
+            actUIElement.GetOrCreateInputParam(ActUIElement.Fields.SyncTime, "30");
+
+            if (mContext.BusinessFlow != null)
+            {
+                mContext.BusinessFlow.AddAct(actUIElement, true);
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.RestartAgent);
+            }
+        }
     }
 }

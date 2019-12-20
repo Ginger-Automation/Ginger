@@ -117,7 +117,7 @@ namespace GingerCore.Activities
 
         public override string GetNameForFileName() { return Name; }
 
-        public void AddActivityToGroup(Activity activity, int insertIndx=-1)
+        public void AddActivityToGroup(Activity activity, int insertIndx = -1)
         {
             if (activity == null)
             {
@@ -127,7 +127,7 @@ namespace GingerCore.Activities
             actIdents.IdentifiedActivity = activity;
             actIdents.AddDynamicly = activity.AddDynamicly;
             activity.ActivitiesGroupID = this.Name;
-            
+
             if (insertIndx >= 0)
             {
                 this.ActivitiesIdentifiers.Insert(insertIndx, actIdents);
@@ -159,8 +159,8 @@ namespace GingerCore.Activities
                     this.ActivitiesIdentifiers.Remove(actIdents);
                     break;
                 }
-                    
-            }            
+
+            }
         }
 
         [IsSerializedForLocalRepository]
@@ -204,7 +204,7 @@ namespace GingerCore.Activities
             }
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             ActivitiesGroup activitiesGroupInstance = (ActivitiesGroup)instance;
 
@@ -214,39 +214,108 @@ namespace GingerCore.Activities
 
             //update required part
             ActivitiesGroup.eItemParts ePartToUpdate = (ActivitiesGroup.eItemParts)Enum.Parse(typeof(ActivitiesGroup.eItemParts), partToUpdate);
-            switch (ePartToUpdate)
-            {
-                case eItemParts.All:
-                case eItemParts.Details:
-                    newInstance.Guid = activitiesGroupInstance.Guid;
-                    newInstance.ParentGuid = activitiesGroupInstance.ParentGuid;
-                    newInstance.ExternalID = activitiesGroupInstance.ExternalID;
-                    if (ePartToUpdate == eItemParts.Details)
-                    {
-                        //keep other parts
-                        newInstance.ActivitiesIdentifiers = activitiesGroupInstance.ActivitiesIdentifiers;
-                    }
-                    if (hostItem != null)
-                    {
-                        //replace old instance object with new
-                        int originalIndex = ((BusinessFlow)hostItem).ActivitiesGroups.IndexOf(activitiesGroupInstance);
-                        ((BusinessFlow)hostItem).ActivitiesGroups.Remove(activitiesGroupInstance);
-                        ((BusinessFlow)hostItem).SetUniqueActivitiesGroupName(newInstance);
-                        ((BusinessFlow)hostItem).ActivitiesGroups.Insert(originalIndex, newInstance);
-                        ((BusinessFlow)hostItem).AttachActivitiesGroupsAndActivities();
-                    }
-                    break;
-                case eItemParts.Activities:
-                    activitiesGroupInstance.ActivitiesIdentifiers = newInstance.ActivitiesIdentifiers;
-                    break;
-            }    
-        }
 
+            if (hostItem != null)
+            {
+                //replace old instance object with new
+                BusinessFlow currentBF = ((BusinessFlow)hostItem);
+
+                // Update details
+                activitiesGroupInstance.Name = newInstance.Name;
+                activitiesGroupInstance.Description = newInstance.Description;
+                activitiesGroupInstance.Tags = newInstance.Tags;
+
+                // Confirm if no group exists in the Business Flow with same name
+                currentBF.SetUniqueActivitiesGroupName(activitiesGroupInstance);
+
+                if (ePartToUpdate == eItemParts.Details)
+                {
+                    currentBF.AttachActivitiesGroupsAndActivities();
+                    return;
+                }
+
+                int grpIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
+                if (grpIndex >= 0)
+                {
+                    int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(a => a.Guid == activitiesGroupInstance.ActivitiesIdentifiers[0].ActivityGuid).FirstOrDefault());
+
+                    List<Activity> existingActivities = new List<Activity>();
+
+                    int exActCount = activitiesGroupInstance.ActivitiesIdentifiers.Count;
+                    for (int i = exActCount - 1; i >= 0; i--)
+                    {
+                        ActivityIdentifiers actIDexist = activitiesGroupInstance.ActivitiesIdentifiers[i];
+
+                        Activity exAct = currentBF.Activities.Where(g => g.Guid == actIDexist.ActivityGuid).FirstOrDefault();
+
+                        if (exAct == null)
+                        {
+                            exAct = currentBF.Activities.Where(g => g.ParentGuid == actIDexist.ActivityGuid).FirstOrDefault();
+                        }
+
+                        if (exAct != null)
+                        {
+                            // Add to the list of deleted activities
+                            existingActivities.Add(exAct);
+
+                            // Remove the activity from the Business Flow
+                            currentBF.DeleteActivity(exAct);
+                        }
+                    }
+
+                    // Add the activities to the Business Flow in sequence they appear in the Updated Shared Group
+                    foreach (ActivityIdentifiers actID in newInstance.ActivitiesIdentifiers)
+                    {
+                        Activity updatedAct = null;
+
+                        // Activity still exist in the group, thus re-add the same activity to the group
+                        updatedAct = existingActivities.Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
+
+                        // In case, group was Replaced/Overwritten
+                        if (updatedAct == null)
+                        {
+                            updatedAct = existingActivities.Where(a => a.ParentGuid == actID.ActivityGuid).FirstOrDefault();
+                        }
+
+                        if (updatedAct != null)
+                        {
+                            currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
+                            insertIndex++;
+                            existingActivities.Remove(updatedAct);
+                        }
+                        // Activity doesn't exist in the group and the shared group is recently updated by addition of this activity, thus add this activity to the group instance in the Business Flow
+                        else if (extraDetails != null)
+                        {
+                            updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName && a.Guid == actID.ActivityGuid).FirstOrDefault();
+                            if (updatedAct == null)
+                            {
+                                updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
+                            }
+                            if (updatedAct == null)
+                            {
+                                updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName).FirstOrDefault();
+                            }
+
+                            if (updatedAct != null)
+                            {
+                                updatedAct = updatedAct.CreateInstance(true) as Activity;
+                                currentBF.AddActivity(updatedAct, activitiesGroupInstance, insertIndex);
+                                insertIndex++;
+                            }
+                        }
+
+                    }
+
+                    currentBF.AttachActivitiesGroupsAndActivities();
+                }
+            }
+
+        }
 
         public override RepositoryItemBase GetUpdatedRepoItem(RepositoryItemBase itemToUpload, RepositoryItemBase existingRepoItem, string itemPartToUpdate)
         {
             ActivitiesGroup updatedGroup = null;
-                   
+
             //update required part
             eItemParts ePartToUpdate = (eItemParts)Enum.Parse(typeof(eItemParts), itemPartToUpdate);
             switch (ePartToUpdate)
@@ -259,7 +328,7 @@ namespace GingerCore.Activities
                     {
                         updatedGroup.ActivitiesIdentifiers = ((ActivitiesGroup)existingRepoItem).ActivitiesIdentifiers;
                     }
-                  
+
                     break;
                 case eItemParts.Activities:
                     updatedGroup = (ActivitiesGroup)existingRepoItem.CreateCopy(false);
@@ -383,7 +452,7 @@ namespace GingerCore.Activities
         public void ChangeName(string newName)
         {
             Name = newName;
-            foreach(ActivityIdentifiers activityIdent in ActivitiesIdentifiers)
+            foreach (ActivityIdentifiers activityIdent in ActivitiesIdentifiers)
             {
                 activityIdent.IdentifiedActivity.ActivitiesGroupID = newName;
             }

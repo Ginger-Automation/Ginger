@@ -448,7 +448,7 @@ namespace GingerCore.Variables
             return false;
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             VariableBase variableBaseInstance = (VariableBase)instance;
 
