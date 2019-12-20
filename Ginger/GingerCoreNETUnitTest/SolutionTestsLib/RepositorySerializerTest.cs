@@ -417,23 +417,23 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
         
         [TestMethod]
-        public void ActiviyLazyLad()
+        public void ActiviyLazyLoad()
         {
             ObservableList<Activity> activities = new ObservableList<Activity>();
-            XDocument myxml = XDocument.Load(TestResources.GetTestResourcesFile(@"XML\ActivityTest.Ginger.Activity.xml"));
+            string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML\ActivityTest.Ginger.Activity.xml"));
 
-            Assert.AreEqual(0, activities.Count);
+            activities.DoLazyLoadItem(activityXml);
 
-            try
+            Assert.AreEqual(true, activities.LazyLoad);
+
+            if (activities.LazyLoad)
             {
-                NewRepositorySerializer.DeserializeObservableListFromText(activities, myxml.ToString());
-            }
-            catch
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Deserialize the lazy load section");
+                activities.LoadLazyInfo();
             }
 
             Assert.AreEqual(1, activities.Count);
+            Assert.AreEqual(false, activities.LazyLoad);
+            
         }
 
         [TestMethod]
@@ -452,6 +452,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             int count = businessFlow.Activities.Count();
 
             Assert.AreEqual(true, businessFlow.LazyLoadFlagForUnitTest);
+            Assert.AreEqual(1, count);
         }
     }
 }
