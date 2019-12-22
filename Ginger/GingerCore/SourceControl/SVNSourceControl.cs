@@ -259,10 +259,10 @@ namespace GingerCore.SourceControl
         {
             if (client == null) Init();
             SvnUpdateResult result;
-
-            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+           
             try
             {
+                RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
                 mConflictsPaths.Clear();
                 repositoryFolderBase.PauseFileWatcher();
                 client.Update(path, out result);

@@ -68,12 +68,14 @@ namespace Ginger.SourceControl
         public static bool UpdateFile(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
-
+            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+            repositoryFolderBase.PauseFileWatcher();
             if (!SourceControl.UpdateFile(path, ref error))
             {
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return false;
             }
+            repositoryFolderBase.ResumeFileWatcher();
             return true;
         }
 
