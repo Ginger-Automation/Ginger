@@ -245,6 +245,18 @@ namespace GingerCore
             }
         }
 
+       private bool mLazyLoadFlagForUnitTest;
+        public bool LazyLoadFlagForUnitTest
+        {
+            get
+            {
+              return mLazyLoadFlagForUnitTest;
+            }
+            set
+            {
+                mLazyLoadFlagForUnitTest = value;
+            }
+        }
 
         // where is it used? why BF need env?
         public string Environment { get; set; }
@@ -265,6 +277,7 @@ namespace GingerCore
                 if (mActivities.LazyLoad)
                 {
                     mActivities.LoadLazyInfo();
+                    LazyLoadFlagForUnitTest = true; 
                     AttachActivitiesGroupsAndActivities(mActivities);
                 }
                 return mActivities;
