@@ -34,7 +34,6 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
-using IWshRuntimeLibrary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -258,7 +257,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [TestMethod]
         [Timeout(60000)]
-        public void TestRunsetConfigBFVariables()
+        public void RunsetConfigBFVariablesTest()
         {
             //Arrange
             ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
@@ -308,8 +307,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
         [TestMethod]
-        public void TestDyanamicRunsetOprations()
+        public void DyanamicRunsetXMLCreationTest()
         {
+            //Arrange
             RunSetConfig runSetConfigurations = CreteRunsetWithOperations();
 
             RunsetExecutor GMR = new RunsetExecutor();
@@ -324,8 +324,13 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             RunSetAutoRunConfiguration autoRunConfiguration = new RunSetAutoRunConfiguration(solution, GMR, cLIHelper);
             CLIDynamicXML mCLIDynamicXML = new CLIDynamicXML();
             autoRunConfiguration.SelectedCLI = mCLIDynamicXML;
+
+            //Act
+            //Creating XML file content from above configurations
             string file = autoRunConfiguration.SelectedCLI.CreateContent(solution, GMR, cLIHelper);
 
+            //Assert
+            //validate the 'AddRunsetOperation' tag
             XElement nodes = XElement.Parse(file);
 
             List<XElement> AddRunsetOPerationsNodes = nodes.Elements("AddRunsetOperation").ToList();
@@ -345,9 +350,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
         [TestMethod]
-        public void TestDynamicRunetExecution()
+        public void DynamicRunetExecutionTest()
         {
-
+            //Arrange
             ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
 
@@ -376,10 +381,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGRForRunset.SpecificEnvironmentName = environment.Name;
             mGRForRunset.UseSpecificEnvironment = false;
 
-           
-            
             RunSetConfig runSetConfig1 = new RunSetConfig();
-            mGRForRunset.IsUpdateBusinessFlowRunList = true;           
+            mGRForRunset.IsUpdateBusinessFlowRunList = true;
             runSetConfig1.GingerRunners.Add(mGRForRunset);
 
             runSetConfig1.UpdateRunnersBusinessFlowRunsList();
@@ -398,47 +401,26 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
 
             RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
-            CLIDynamicXML mCLIDynamicXML1  = new CLIDynamicXML();
+            CLIDynamicXML mCLIDynamicXML1= new CLIDynamicXML();
             autoRunConfiguration1.SelectedCLI = mCLIDynamicXML1;
             String xmlFile =autoRunConfiguration1.SelectedCLI.CreateContent(solution, GMR1, cLIHelper1);
 
-            RunSetAutoRunShortcut runSetAutoRunShortcut = new RunSetAutoRunShortcut(autoRunConfiguration1);
-            runSetAutoRunShortcut.CreateShortcut = true;
-            runSetAutoRunShortcut.ShortcutFileName = "TestDynamicRunset";
-            runSetAutoRunShortcut.ExecutorType = RunSetAutoRunShortcut.eExecutorType.GingerExe;
-            runSetAutoRunShortcut.ShortcutFolderPath= Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            runSetAutoRunShortcut.ExecuterFolderPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            
             autoRunConfiguration1.CreateContentFile();
-            if (runSetAutoRunShortcut.CreateShortcut)
-            {
-                WshShell shell = new WshShell();
-                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(runSetAutoRunShortcut.ShortcutFileFullPath);
-                shortcut.Description = runSetAutoRunShortcut.ShortcutFileName;
-                shortcut.WorkingDirectory = runSetAutoRunShortcut.ExecuterFolderPath;
-                shortcut.TargetPath = runSetAutoRunShortcut.ExecuterFullPath;
-                shortcut.Arguments = autoRunConfiguration1.ConfigArgs;
 
-                string iconPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "GingerIconNew.ico");
-                if (System.IO.File.Exists(iconPath))
-                {
-                    shortcut.IconLocation = iconPath;
-                }
-                shortcut.Save();
+            CLIProcessor cLIProcessor = new CLIProcessor();
+            string argument = autoRunConfiguration1.ConfigArgs;
+            argument = argument.Replace('"', ' ');
+            string[] args = argument.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            string s = args[2] + " " + args[3];
+            args[2] = s;
+            args = args.Take(args.Count() - 1).ToArray();
 
-                CLIProcessor cLIProcessor = new CLIProcessor();
-                string argument = autoRunConfiguration1.ConfigArgs;
-                argument = argument.Replace('"', ' ');
-                string[] args = argument.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                string s = args[2] + " "+args[3];
-                args[2] = s;
-                args = args.Take(args.Count() - 1 ).ToArray();
-                cLIProcessor.ExecuteArgs(args);
+            //Act
+            cLIProcessor.ExecuteArgs(args);
 
-                string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "HTMLReports" + Path.DirectorySeparatorChar + "Reports");
-                Assert.IsTrue(Directory.Exists(path));
-
-            }
+            //Assert
+            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports" + Path.DirectorySeparatorChar + "Reports");
+            Assert.IsTrue(Directory.Exists(path));
         }
 
         public RunSetActionHTMLReport CreateProduceHTMlOperation()
@@ -447,7 +429,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             produceHTML1.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
             produceHTML1.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
             produceHTML1.isHTMLReportFolderNameUsed = true;
-            produceHTML1.HTMLReportFolderName = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "HTMLReports"));
+            produceHTML1.HTMLReportFolderName = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports"));
             produceHTML1.isHTMLReportPermanentFolderNameUsed = false;
             produceHTML1.Active = true;
             return produceHTML1;
