@@ -557,14 +557,16 @@ namespace Amdocs.Ginger.Repository
         }
 
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public string CreateRepositoryItemFileName(RepositoryItemBase RI, string containingFolder = "")
+        public string CreateRepositoryItemFileName(RepositoryItemBase repositoryItemBase, string containingFolder = "")
         {
-            var v = GetSolutionRepositoryItemInfo(RI.GetType());
+            var repositoryItemInfoBaseType = GetSolutionRepositoryItemInfo(repositoryItemBase.GetType());
 
-            string name = RI.ItemName; // (string)RI.GetType().GetProperty(v.PropertyForFileName).GetValue(RI);
+            string name = repositoryItemBase.ItemName; // (string)RI.GetType().GetProperty(v.PropertyForFileName).GetValue(RI);
 
-            if (RI.FilePath != null && File.Exists(RI.FilePath) && string.IsNullOrEmpty(containingFolder))
-                return RI.FilePath;
+            if (repositoryItemBase.FilePath != null && File.Exists(repositoryItemBase.FilePath) && string.IsNullOrEmpty(containingFolder))
+            {
+                return repositoryItemBase.FilePath;
+            }
             else
             {
                 //probably new item so create new path for it
@@ -572,49 +574,79 @@ namespace Amdocs.Ginger.Repository
                 //FOLDER             
                 string fileFolderPath = string.Empty; 
                 if (string.IsNullOrEmpty(containingFolder))
-                    fileFolderPath = RI.ContainingFolder;
+                {
+                    fileFolderPath = repositoryItemBase.ContainingFolder;
+                }
                 else
+                {
                     fileFolderPath = containingFolder;
+                }
+                    
                 if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
                 {
-                    string A = mSolutionFolderPath; 
-                    string B = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
-                    if (!A.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                    string solutionPath = mSolutionFolderPath; 
+                    string filefolder = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
+                    if (!solutionPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     {
-                        A += Path.DirectorySeparatorChar;
+                        solutionPath += Path.DirectorySeparatorChar;
                     }
-                    fileFolderPath = Path.Combine(A, B);
+                    fileFolderPath = Path.Combine(solutionPath, filefolder);
+                    if (fileFolderPath.Length > 260)
+                    {
+                        ThrowErrorIfPathLimitExeceeded();
+                    }
                 }
 
                 string fileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(name);
                                 
-                string fullName = v.Pattern.Replace("*", fileName);
+                string fullName = repositoryItemInfoBaseType.Pattern.Replace("*", fileName);
 
 
                 string filefullPath = Path.Combine(fileFolderPath, fullName);
 
                 //TODO: remove max 255 once we switch all to work with .Net core 2.0 no limit
                 //Validate Path length - MAX_PATH is 260
-                if (fileName.Length > 255)
+                if (filefullPath.Length > 260)
                 {
-                    //FIXME !!!!!!!!!!!!!!
+                    var newFileName = string.Empty;
+                    var noOfCharToEscape = 0;
+                    if (fileName.Length > 255)
+                    {
+                        noOfCharToEscape = filefullPath.Length + 2 - 255;
+                        newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);   //TODO: validate that works as expected using unit test !!!!!!!!!! file extension must remain or give err
 
-                    int gap = filefullPath.Length + 2 - 255;
-                    string NewName = fileName.Substring(0, fileName.Length - gap);   //TODO: validate that works as expected using unit test !!!!!!!!!! file extension must remain or give err
+                        newFileName = newFileName + "~1";
+                        newFileName = repositoryItemInfoBaseType.Pattern.Replace("*", newFileName);
+                        filefullPath = Path.Combine(fileFolderPath, newFileName);
+                    }
+                    
+                    if (filefullPath.Length > 260 && fileName.Length > 3 )
+                    {
+                        noOfCharToEscape = filefullPath.Length - 257;
+                        newFileName = fileName.Substring(0, fileName.Length - noOfCharToEscape);
 
-                    //tODO: throw exception if file name too short...
-
-                    NewName = NewName + "~1";
-                    NewName = v.Pattern.Replace("*", NewName);
-                    filefullPath = Path.Combine(fileFolderPath, NewName);
+                        if (newFileName.Length < 3)
+                        {
+                            ThrowErrorIfPathLimitExeceeded();
+                        }
+                        newFileName = newFileName + "~1";
+                        newFileName = repositoryItemInfoBaseType.Pattern.Replace("*", newFileName);
+                        filefullPath = Path.Combine(fileFolderPath, newFileName);
+                    }
+                    else if(filefullPath.Length > 260 && fileName.Length < 3)
+                    {
+                        ThrowErrorIfPathLimitExeceeded();
+                    }
                 }
+
+                
 
                 //validate no other file with same name
 
                 //find first file which doesn't exist, add ~counter until found
                 int counter = 0;
                 string Nameex = "";
-                string ext = v.Pattern.Replace("*", "");
+                string ext = repositoryItemInfoBaseType.Pattern.Replace("*", "");
                 while (File.Exists(filefullPath))
                 {
                     if (Nameex != "")
@@ -633,6 +665,11 @@ namespace Amdocs.Ginger.Repository
 
                 return filefullPath;
             }
+        }
+
+        private static void ThrowErrorIfPathLimitExeceeded()
+        {
+            throw new Exception("File path length limit execeeded");
         }
 
         static void AddFolderFiles(ConcurrentBag<RepositoryFile> CB, string folder, string pattern)
