@@ -68,15 +68,17 @@ namespace Ginger.SourceControl
         public static bool UpdateFile(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
+            bool IsFileUpdated = true;
             RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
             repositoryFolderBase.PauseFileWatcher();
             if (!SourceControl.UpdateFile(path, ref error))
             {
+                IsFileUpdated = false;
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                return false;
+                return IsFileUpdated;
             }
             repositoryFolderBase.ResumeFileWatcher();
-            return true;
+            return IsFileUpdated;
         }
 
 
@@ -177,17 +179,19 @@ namespace Ginger.SourceControl
         public static bool ResolveConflicts(SourceControlBase SourceControl, string path, eResolveConflictsSide side)
         {
             string error = string.Empty;
+            bool IsConflictResolved = true;
             RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
 
             repositoryFolderBase.PauseFileWatcher();
             if (!SourceControl.ResolveConflicts(path, side, ref error))
             {
+                IsConflictResolved = false;
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                return false;
+                return IsConflictResolved;
             }
             repositoryFolderBase.ResumeFileWatcher();
             repositoryFolderBase.ReloadUpdatedXML(path);
-            return true;
+            return IsConflictResolved;
         }
 
         public static void Lock(SourceControlBase SourceControl, string path, string lockComment)
