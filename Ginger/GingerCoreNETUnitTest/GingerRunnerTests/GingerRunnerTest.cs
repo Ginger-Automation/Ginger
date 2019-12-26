@@ -116,7 +116,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             try
             {
                 //Delete 'Report' folder which is crated after Dynamic Runset Execution
-                System.IO.DirectoryInfo di = new DirectoryInfo(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "HTMLReports" + Path.DirectorySeparatorChar + "Reports"));
+                System.IO.DirectoryInfo di = new DirectoryInfo(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports" + Path.DirectorySeparatorChar + "Reports"));
                 di.Delete(true);
             }
             catch (Exception e)
@@ -307,6 +307,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
 
         [TestMethod]
+        [Timeout(60000)]
         public void DyanamicRunsetXMLCreationTest()
         {
             //Arrange
@@ -350,6 +351,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         }
 
         [TestMethod]
+        [Timeout(60000)]
         public void DynamicRunetExecutionTest()
         {
             //Arrange
@@ -408,13 +410,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             autoRunConfiguration1.CreateContentFile();
 
             CLIProcessor cLIProcessor = new CLIProcessor();
-            string argument = autoRunConfiguration1.ConfigArgs;
-            argument = argument.Replace('"', ' ');
-            string[] args = argument.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            string s = args[2] + " " + args[3];
-            args[2] = s;
-            args = args.Take(args.Count() - 1).ToArray();
-
+            string[] args = new string[]{ autoRunConfiguration1.SelectedCLI.Verb, "--" + CLIOptionClassHelper.FILENAME, autoRunConfiguration1.ConfigFileFullPath};
+           
             //Act
             cLIProcessor.ExecuteArgs(args);
 
