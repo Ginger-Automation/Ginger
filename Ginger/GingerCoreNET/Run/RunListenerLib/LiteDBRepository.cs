@@ -135,6 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         private object MapActivityToLiteDb(Activity activity, Context context, eExecutedFrom executedFrom)
         {
             LiteDbActivity AR = new LiteDbActivity();
+            context.BusinessFlow.CurrentActivity = activity;
             context.Runner.CalculateActivityFinalStatus(activity);
             AR.SetReportData(GetActivityReportData(activity, context, false));
             AR.ActivityGroupName = activity.ActivitiesGroupID;
@@ -392,6 +393,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             SetRunSetChildCounts(runSet);
 
             runSet.SetReportData(runSetReport);
+
+            ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
+            ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus = (eRunStatus)Enum.Parse(typeof(eRunStatus), runSet.RunStatus);
+
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
             ClearSeq();
