@@ -83,11 +83,7 @@ namespace GingerWPFUnitTest.POMs
         }
         public void ClickAutomateTab()
         {
-            mMainWindow.Dispatcher.Invoke(() =>
-            {
-
-            });
-            }
+        }
 
         public void ClickSolutionTab()
         {         

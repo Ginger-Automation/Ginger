@@ -415,13 +415,16 @@ namespace amdocs.ginger.GingerCoreNET
                 Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
                 
-                if (!RunningInExecutionMode)
+                if (!RunningInExecutionMode && !RunningFromUnitTest)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
                 }
 
                 //Solution items upgrade
-                SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
+                if (!RunningFromUnitTest)
+                {
+                    SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
+                }
                 
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)  

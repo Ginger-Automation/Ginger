@@ -30,8 +30,10 @@ namespace GingerTest.BusinessFlowLib
         }
 
         [TestMethod]
+        [Timeout(60000)]
         public void UndoForSwitchBFTest()
         {
+           //Arrange
             BusinessFlowPOM businessflow = mGingerAutomator.MainWindowPOM.SelectBusinessFlow();
             BusinessFlow selectedBusinessFlow = businessflow.selectBusinessFlow("Flow 1");
 
@@ -45,8 +47,10 @@ namespace GingerTest.BusinessFlowLib
             BusinessFlow selectedBusinessFlow2 = businessflow.selectBusinessFlow("Flow 1");
             businessflow.AutomatePage("Flow 1");
 
+            //Act
             int activityCount = mGingerAutomator.MainWindowPOM.ClickOnUndoBtn();
 
+            //Assert
             Assert.AreEqual(1, activityCount);
         }
 
