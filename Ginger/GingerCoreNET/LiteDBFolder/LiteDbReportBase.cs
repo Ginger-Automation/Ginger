@@ -97,9 +97,15 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public string MachineName { get; set; }
         public string ExecutedbyUser { get; set; }
         public List<LiteDbRunner> RunnersColl { get; set; }
+        public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
+        public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
+        public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunSet()
         {
             RunnersColl = new List<LiteDbRunner>();
+            ChildExecutableItemsCount = new Dictionary<string, int>();
+            ChildExecutedItemsCount = new Dictionary<string, int>();
+            ChildPassedItemsCount = new Dictionary<string, int>();
         }
 
         internal void SetReportData(RunSetReport runSetReport)
@@ -122,9 +128,15 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     {
         public List<string> ApplicationAgentsMappingList { get; set; }
         public List<LiteDbBusinessFlow> BusinessFlowsColl { get; set; }
+        public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
+        public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
+        public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunner()
         {
             BusinessFlowsColl = new List<LiteDbBusinessFlow>();
+            ChildExecutableItemsCount = new Dictionary<string, int>();
+            ChildExecutedItemsCount = new Dictionary<string, int>();
+            ChildPassedItemsCount = new Dictionary<string, int>();
         }
 
         internal void SetReportData(GingerReport gingerReport)
@@ -149,10 +161,18 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public List<LiteDbActivity> ActivitiesColl { get; set; }
         public List<LiteDbActivityGroup> ActivitiesGroupsColl { get; set; }
         public List<string> BFFlowControlDT { get; set; }
+
+
+        public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
+        public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
+        public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbBusinessFlow()
         {
             ActivitiesGroupsColl = new List<LiteDbActivityGroup>();
             ActivitiesColl = new List<LiteDbActivity>();
+            ChildExecutableItemsCount = new Dictionary<string, int>();
+            ChildExecutedItemsCount = new Dictionary<string, int>();
+            ChildPassedItemsCount = new Dictionary<string, int>();
         }
         public void SetReportData(BusinessFlowReport bfReport)
         {
@@ -205,6 +225,10 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     {
         public string ActivityGroupName { get; set; }
         public List<LiteDbAction> ActionsColl { get; set; }
+        public int ChildExecutableItemsCount { get; set; }
+        public int ChildExecutedItemsCount { get; set; }
+        public int ChildPassedItemsCount { get; set; }
+
         public LiteDbActivity()
         {
             ActionsColl = new List<LiteDbAction>();

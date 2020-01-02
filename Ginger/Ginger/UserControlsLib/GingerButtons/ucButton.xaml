@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="200">
 
-    <Button x:Name="xButton" PreviewMouseDown="Button_PreviewMouseDown"  IsEnabledChanged="IsEnabledChangeHandler" FontSize="15" Height="30" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand">
+    <Button x:Name="xButton" Click="xButton_Click"  IsEnabledChanged="IsEnabledChangeHandler" FontSize="15" Height="30" Margin="5,5,5,5" HorizontalAlignment="Center" VerticalAlignment="Center" Cursor="Hand"  AutomationProperties.AutomationId="{Binding Path=ButtonAutomationId}">
         <StackPanel Orientation="Horizontal">
             <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <usercontrols:ImageMakerControl x:Name="xButtonImage" SetAsFontImageWithSize="{Binding ButtonFontImageSize}" ImageType="Empty" HorizontalAlignment="Center" SetBorder="False"  VerticalAlignment="Center" />

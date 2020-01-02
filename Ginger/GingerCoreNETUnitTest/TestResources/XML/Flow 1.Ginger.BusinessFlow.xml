@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="57bb37c3-6f2e-4271-bafa-4e301cb8aae5" ItemType="BusinessFlow" CreatedBy="aditijag" Created="201911220857" GingerVersion="3.1.0.0" Version="3" LastUpdateBy="aditijag" LastUpdate="201911220857" />
+<BusinessFlow Guid="57bb37c3-6f2e-4271-bafa-4e301cb8aae5" Name="Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b7a3dece-e340-43c4-bc16-7a284876d1b8" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActBrowserElement Active="True" ControlAction="GotoURL" Description="Browser Action" GotoURLRadioButton="Current" Guid="fa80a3c2-92fe-4c39-883b-4654744354bd" ImplicitWait="60" LocateBy="NA" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="10597095-4973-4454-849b-cf6f1bcabe3a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="756884a4-dbdb-4bce-8dce-0e2876ea9e69" Param="GotoURLType" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="NewTab" Value="NewTab" />
+<ActInputValue Guid="829e82c8-c9cd-4e02-a932-7c5ebc085ed1" Param="URLSrc" ParentGuid="00000000-0000-0000-0000-000000000000" StoreToVariable="Static" Value="Static" />
+</InputValues>
+</ActBrowserElement>
+</Acts>
+</Activity>
+</Activities>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="95e07125-e11d-4a26-bd5b-240815e85f39" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

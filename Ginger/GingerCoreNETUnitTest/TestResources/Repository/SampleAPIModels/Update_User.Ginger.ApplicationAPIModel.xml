@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="28e81086-a6e6-468b-9d38-c2b1c70a68da" ItemType="ApplicationAPIModel" CreatedBy="prateekv" Created="201907240949" GingerVersion="3.3.0.0" Version="2" LastUpdateBy="prateekv" LastUpdate="201907240949" />
+<ApplicationAPIModel APIType="REST" AuthorizationType="NoAuthentication" CertificateType="AllSSL" ContentType="JSon" CookieMode="Session" EndpointURL="https://petstore.swagger.io/v2/user/&lt;{USERNAME}&gt;" Guid="28e81086-a6e6-468b-9d38-c2b1c70a68da" Name="Updated user" NetworkCredentials="Default" ParentGuid="00000000-0000-0000-0000-000000000000" ReqHttpVersion="HTTPV10" RequestBody="{&#xD;&#xA;  &quot;id&quot;: &lt;ID&gt;,&#xD;&#xA;  &quot;username&quot;: &quot;&lt;USERNAME&gt;&quot;,&#xD;&#xA;  &quot;firstName&quot;: &quot;&lt;FIRSTNAME&gt;&quot;,&#xD;&#xA;  &quot;lastName&quot;: &quot;&lt;LASTNAME&gt;&quot;,&#xD;&#xA;  &quot;email&quot;: &quot;&lt;EMAIL&gt;&quot;,&#xD;&#xA;  &quot;password&quot;: &quot;&lt;PASSWORD&gt;&quot;,&#xD;&#xA;  &quot;phone&quot;: &quot;&lt;PHONE&gt;&quot;,&#xD;&#xA;  &quot;userStatus&quot;: &lt;USERSTATUS&gt;&#xD;&#xA;}" RequestBodyType="FreeText" RequestType="PUT" ResponseContentType="JSon" SecurityType="None" TargetApplicationKey="MyWebServicesApp~a80f92fb-02ba-4906-9304-cd743ebd06e6" URLDomain="https://petstore.swagger.io/v2">
+<AppModelParameters>
+<AppModelParameter Description="{username}in url" Guid="866a5917-c417-4fdb-852a-75c444436e58" ParentGuid="00000000-0000-0000-0000-000000000000" PlaceHolder="&lt;{USERNAME}&gt;" />
+<AppModelParameter Guid="a1a70ac3-88b7-4ce2-842e-f4ca2d416f4a" ParentGuid="00000000-0000-0000-0000-000000000000" Path="id" PlaceHolder="&lt;ID&gt;" TagName="id" />
+<AppModelParameter Guid="728d681b-456c-4623-a261-33c92a5a97b2" ParentGuid="00000000-0000-0000-0000-000000000000" Path="username" PlaceHolder="&lt;USERNAME&gt;" TagName="username" />
+<AppModelParameter Guid="0a60931a-ba0a-44df-a091-49dfb1badae2" ParentGuid="00000000-0000-0000-0000-000000000000" Path="firstName" PlaceHolder="&lt;FIRSTNAME&gt;" TagName="firstName" />
+<AppModelParameter Guid="6b21b4e8-798d-419a-bbcf-9e2717b0902d" ParentGuid="00000000-0000-0000-0000-000000000000" Path="lastName" PlaceHolder="&lt;LASTNAME&gt;" TagName="lastName" />
+<AppModelParameter Guid="4215763c-f3bc-421d-abcf-0dc59e403d3d" ParentGuid="00000000-0000-0000-0000-000000000000" Path="email" PlaceHolder="&lt;EMAIL&gt;" TagName="email" />
+<AppModelParameter Guid="2696ebfb-756d-4035-b868-61f654a963e9" ParentGuid="00000000-0000-0000-0000-000000000000" Path="password" PlaceHolder="&lt;PASSWORD&gt;" TagName="password" />
+<AppModelParameter Guid="5b9cdba8-391e-4c65-9a40-5c19f276d914" ParentGuid="00000000-0000-0000-0000-000000000000" Path="phone" PlaceHolder="&lt;PHONE&gt;" TagName="phone" />
+<AppModelParameter Guid="4236471a-7247-4282-8c63-5ae9c9de5a6a" ParentGuid="00000000-0000-0000-0000-000000000000" Path="userStatus" PlaceHolder="&lt;USERSTATUS&gt;" TagName="userStatus" />
+</AppModelParameters>
+</ApplicationAPIModel></GingerRepositoryItem>

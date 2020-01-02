@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -23,7 +24,6 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
@@ -41,6 +41,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public TestContext TestContext { get; set; }
 
         NewRepositorySerializer RS = new NewRepositorySerializer();
+
+        string Separator = Path.DirectorySeparatorChar.ToString();
 
         public static void ClassInit(TestContext TestContext)
         {
@@ -394,8 +396,63 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         //    Assert.AreEqual(5, RSC.RunSetActions.Count);
         //}
 
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void BusinessFlowBrowserActionTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+
+            string FileName = TestResources.GetTestResourcesFile($"XML{Separator}Flow 1.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
+
+            //Asert
+            Assert.AreEqual("GotoURL", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "ControlAction" select aiv).FirstOrDefault().Value);
+            Assert.AreEqual("NewTab", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "GotoURLType" select aiv).FirstOrDefault().Value);
+        }
+
         
+        [TestMethod]
+        public void ActiviyLazyLoad()
+        {
+            ObservableList<Activity> activities = new ObservableList<Activity>();
+            string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "ActivityTest.Ginger.Activity.xml"));
 
+            activities.DoLazyLoadItem(activityXml);
 
+            Assert.AreEqual(true, activities.LazyLoad);
+
+            if (activities.LazyLoad)
+            {
+                activities.LoadLazyInfo();
+            }
+
+            Assert.AreEqual(1, activities.Count);
+            Assert.AreEqual(false, activities.LazyLoad);
+            
+        }
+
+        [TestMethod]
+        //[Timeout(60000)]
+        public void BusinessFlowLazyloadTest()
+        {
+            //Arrange
+            //Put the BF in Test Resource
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "CLI" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Flow 1.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            Assert.AreEqual(false, businessFlow.LazyLoadFlagForUnitTest);
+
+            int count = businessFlow.Activities.Count();
+
+            Assert.AreEqual(true, businessFlow.LazyLoadFlagForUnitTest);
+            Assert.AreEqual(1, count);
+        }
     }
 }

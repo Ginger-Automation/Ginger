@@ -1,0 +1,8 @@
+﻿<Activities>
+  <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="374eccc8-8753-40f7-8970-e2c768ab4d9b" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+    <Acts>
+      <ActDummy Active="True" Description="Dummy Action" Guid="78500e23-1541-48ee-8587-1e79b0fb1b02" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+      <ActDummy Active="True" Description="Dummy Action" Guid="0273bd44-fb20-45c1-84a0-22884d22739e" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+    </Acts>
+  </Activity>
+</Activities>

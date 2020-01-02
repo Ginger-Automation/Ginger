@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.Locators.ASCF;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.Drivers.Windows;
 using Ginger.WindowExplorer.Appium;
@@ -186,7 +187,7 @@ namespace Ginger.UserControlsLib
         {
             if (WindowsComboBox.SelectedValue != null)
             {
-                mWindowExplorerDriver.AddSwitchWindowAction((WindowsComboBox.SelectedValue as AppWindow).Title);
+                WindowExplorerCommon.CreateActUISwitchWindowAction((WindowsComboBox.SelectedValue as AppWindow).Title,mContext);
             }
         }
 
