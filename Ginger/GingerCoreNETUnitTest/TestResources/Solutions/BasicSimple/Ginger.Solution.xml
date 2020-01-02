@@ -1,7 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" ItemType="Solution" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.2.0.0" Version="1" LastUpdateBy="YARONWE" LastUpdate="201905220334" />
+<GingerRepositoryItem><Header ItemGuid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" ItemType="Solution" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.5.0.0" Version="4" LastUpdateBy="aditijag" LastUpdate="201912271450" />
 <Solution AlmType="QC" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="Amdo CSP" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="67845df5-359a-4706-a1de-71d7db092e2c" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 </ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<ExecutionLoggerConfiguration ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="b93db740-57f0-4952-985a-fe23f1ace85e" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<HTMLReportsConfigurationSetList>
+<HTMLReportsConfiguration Guid="1cb99b99-114f-425a-83f2-b561a9f6c162" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
+</HTMLReportsConfigurationSetList>
 </Solution></GingerRepositoryItem>
