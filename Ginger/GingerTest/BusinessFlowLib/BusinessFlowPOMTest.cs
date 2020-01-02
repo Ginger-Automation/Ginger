@@ -5,6 +5,7 @@ using GingerCore;
 using GingerTest.POMs;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace GingerTest.BusinessFlowLib
@@ -18,6 +19,7 @@ namespace GingerTest.BusinessFlowLib
         public static void ClassInit(TestContext testContext)
         {
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions"+ Path.DirectorySeparatorChar +"TestUndoBusinessFlow");
+            Console.WriteLine("POMTest Folder" + sampleSolutionFolder);
             mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(sampleSolutionFolder);
 

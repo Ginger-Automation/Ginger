@@ -196,6 +196,8 @@ namespace GingerTest
             GingerPOMBase.Dispatcher.Invoke(() =>
             {
                 // TODO: do it like user with open solution page
+                Console.WriteLine("Error in Automator-OpenSolution");
+                Console.WriteLine("Folder path" + folder);
                 WorkSpace.Instance.OpenSolution(folder);                
             });
         }

@@ -352,17 +352,21 @@ namespace amdocs.ginger.GingerCoreNET
         public bool OpenSolution(string solutionFolder)
         {                      
             try
-            {               
+            {
+                Console.WriteLine("Folder in WorkSpace" + solutionFolder);
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
 
                 //Cleaning previous Solution load
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Cleaning previous Solution items");
+                Console.WriteLine("Before Close Solution");
                 CloseSolution();
+                Console.WriteLine("After Close Solution");
 
                 //Load Solution file
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Opening Solution located at: " + solutionFolder);
                 string solutionFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
+                Console.WriteLine("Solution file" + solutionFile);
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution File: " + solutionFile);
                 if (System.IO.File.Exists(solutionFile))
                 {
