@@ -286,7 +286,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
-            if (value == "Y")
+            if (value == "Y" || value == "true" || value == "True")
             {
                 try
                 {

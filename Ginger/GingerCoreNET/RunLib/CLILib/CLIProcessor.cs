@@ -241,7 +241,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler = new CLIConfigFile();                    
                     break;
                 case "dynamic":
-                    mCLIHandler = new CLIDynamicXML();
+                    mCLIHandler = new CLIDynamicFile();
                     // CLILoadAndPrepare();
                     break;
                 case "script":

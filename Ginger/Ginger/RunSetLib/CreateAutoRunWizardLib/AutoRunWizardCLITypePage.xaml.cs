@@ -109,12 +109,12 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             xConfigFileSettingsPnl.Visibility = Visibility.Visible;
         }        
 
-        CLIDynamicXML mCLIDynamicXML;
+        CLIDynamicFile mCLIDynamicXML;
         private void XDynamicRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (mCLIDynamicXML == null)
             {
-                mCLIDynamicXML = new CLIDynamicXML();
+                mCLIDynamicXML = new CLIDynamicFile();
             }
             if (mAutoRunWizard != null)
             {
