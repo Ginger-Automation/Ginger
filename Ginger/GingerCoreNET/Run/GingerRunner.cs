@@ -897,45 +897,59 @@ namespace Ginger.Run
         {            
             try
             {
-                //set Runner details if running in stand alone mode (Automate tab)
-                if (standaloneExecution)
+                if (act.Active)
                 {
-                    IsRunning = true;
-                    mStopRun = false;
-                }
-
-                //init
-                act.SolutionFolder = SolutionFolder;
-
-                //resetting the retry mechanism count before calling the function.
-                act.RetryMechanismCount = 0;
-                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
-                if (act.EnableRetryMechanism & mStopRun == false)
-                {
-                    while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
+                    //set Runner details if running in stand alone mode (Automate tab)
+                    if (standaloneExecution)
                     {
-                        //Wait
-                        act.RetryMechanismCount++;
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
-
-                        GiveUserFeedback();
-                        ProcessIntervaleRetry(act);
-
-                        if (mStopRun)
-                            break;
-
-                        //Run Again
-                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);                        
+                        IsRunning = true;
+                        mStopRun = false;
                     }
+
+                    //init
+                    act.SolutionFolder = SolutionFolder;
+
+                    //resetting the retry mechanism count before calling the function.
+                    act.RetryMechanismCount = 0;
+                    RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
+                    if (act.EnableRetryMechanism & mStopRun == false)
+                    {
+                        while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
+                        {
+                            //Wait
+                            act.RetryMechanismCount++;
+                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
+
+                            GiveUserFeedback();
+                            ProcessIntervaleRetry(act);
+
+                            if (mStopRun)
+                                break;
+
+                            //Run Again
+                            RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
+                        }
+                    }
+                    if (mStopRun)
+                    {
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                        SetDriverPreviousRunStoppedFlag(true);
+                    }
+                    else
+                        SetDriverPreviousRunStoppedFlag(false);
                 }
-                if (mStopRun)
+                if (!act.Active)
                 {
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                    SetDriverPreviousRunStoppedFlag(true);
+                    ResetAction(act);
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                    {
+                        NotifyActionEnd(act);
+                    }
+                    act.ExInfo = "Action is not active.";
+                    return;
                 }
-                else
-                    SetDriverPreviousRunStoppedFlag(false);
             }
             finally
             {
@@ -2859,122 +2873,140 @@ namespace Ginger.Run
 
             try
             {
-                //check if Activity is allowed to run
-                if (CurrentBusinessFlow == null ||
-                    activity.Acts.Count == 0 || //no Actions to run
-                        activity.GetType() == typeof(ErrorHandler) ||//don't run error handler from RunActivity
-                            activity.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow, true) == false || //Variables-Dependencies not allowing to run
-                                (FilterExecutionByTags == true && CheckIfActivityTagsMatch() == false))//add validation for Ginger runner tags
+                if (activity.Active)
                 {
-                    CalculateActivityFinalStatus(activity);
-                    return;
-                }
-
-                // handling ActivityGroup execution
-                currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
-                if (currentActivityGroup != null)
-                {
-                    switch (currentActivityGroup.ExecutionLoggerStatus)
+                    //check if Activity is allowed to run
+                    if (CurrentBusinessFlow == null ||
+                        activity.Acts.Count == 0 || //no Actions to run
+                            activity.GetType() == typeof(ErrorHandler) ||//don't run error handler from RunActivity
+                                activity.CheckIfVaribalesDependenciesAllowsToRun(CurrentBusinessFlow, true) == false || //Variables-Dependencies not allowing to run
+                                    (FilterExecutionByTags == true && CheckIfActivityTagsMatch() == false))//add validation for Ginger runner tags
                     {
-                        case executionLoggerStatus.NotStartedYet:
-                            currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
-                            NotifyActivityGroupStart(currentActivityGroup);
-                            break;
-                        case executionLoggerStatus.StartedNotFinishedYet:
-                            // do nothing
-                            break;
-                        case executionLoggerStatus.Finished:
-                            // do nothing
-                            break;
+                        CalculateActivityFinalStatus(activity);
+                        return;
                     }
-                }
 
-                //add validation for Ginger runner tags
-                if (FilterExecutionByTags)
-                {
-                    if (CheckIfActivityTagsMatch() == false) return;
-                }
-
-                if (!doContinueRun)
-                {
-                    // We reset the activity unless we are in continue mode where user can start from middle of Activity
-                    ResetActivity(CurrentBusinessFlow.CurrentActivity);
-                }
-                else
-                {
-                    // since we are in continue mode - only for first activity of continue mode
-                    // Just change the status to Pending
-                    CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Pending;
-
-                    ContinueTimerVariables(CurrentBusinessFlow.CurrentActivity.Variables);
-                }
-
-                //Do not disable the following two lines. these helping the FC run proper activities
-                CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-                CurrentBusinessFlow.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
-
-                mStopRun = false;//needed with out check for standalone execution???
-                mStopBusinessFlow = false;
-                mCurrentActivityChanged = false;
-
-                //Run the Activity
-
-
-                activityStarted = true;
-                CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
-                if (doContinueRun)
-                {
-                    NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
-                }
-                else
-                {
-                    NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
-                }
-
-                if (SolutionApplications != null && SolutionApplications.Where(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)).FirstOrDefault() == null)
-                {
-                    //load Agent only if Activity includes Actions which needs it
-                    List<IAct> driverActs = activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true).ToList();
-                    if (driverActs.Count > 0)
+                    // handling ActivityGroup execution
+                    currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    if (currentActivityGroup != null)
                     {
-                        //make sure not running in Simulation mode
-                        if (!RunInSimulationMode ||
-                            (RunInSimulationMode == true && driverActs.Where(x => x.SupportSimulation == false).ToList().Count() > 0))
+                        switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
-                            //Set the Agent to run actions with  
-                            SetCurrentActivityAgent();
+                            case executionLoggerStatus.NotStartedYet:
+                                currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet;
+                                NotifyActivityGroupStart(currentActivityGroup);
+                                break;
+                            case executionLoggerStatus.StartedNotFinishedYet:
+                                // do nothing
+                                break;
+                            case executionLoggerStatus.Finished:
+                                // do nothing
+                                break;
                         }
                     }
-                }
 
-                activity.ExecutionLogActionCounter = 0;
-
-                //Run the Activity Actions
-                st.Start();
-
-                // if it is not continue mode then goto first Action
-                if (!doContinueRun)
-                {
-                    act = (Act)activity.Acts.FirstOrDefault();
-                }
-                else
-                {
-                    act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-                }
-
-                bool bHasMoreActions = true;
-                while (bHasMoreActions)
-                {
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
-
-                    GiveUserFeedback();
-                    if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
+                    //add validation for Ginger runner tags
+                    if (FilterExecutionByTags)
                     {
-                        RunAction(act, false);
-                        GiveUserFeedback();
-                        if (mCurrentActivityChanged)
+                        if (CheckIfActivityTagsMatch() == false) return;
+                    }
+
+                    if (!doContinueRun)
+                    {
+                        // We reset the activity unless we are in continue mode where user can start from middle of Activity
+                        ResetActivity(CurrentBusinessFlow.CurrentActivity);
+                    }
+                    else
+                    {
+                        // since we are in continue mode - only for first activity of continue mode
+                        // Just change the status to Pending
+                        CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Pending;
+
+                        ContinueTimerVariables(CurrentBusinessFlow.CurrentActivity.Variables);
+                    }
+
+                    //Do not disable the following two lines. these helping the FC run proper activities
+                    CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
+                    CurrentBusinessFlow.PropertyChanged += CurrentBusinessFlow_PropertyChanged;
+
+                    mStopRun = false;//needed with out check for standalone execution???
+                    mStopBusinessFlow = false;
+                    mCurrentActivityChanged = false;
+
+                    //Run the Activity
+
+
+                    activityStarted = true;
+                    CurrentBusinessFlow.CurrentActivity.Status = eRunStatus.Running;
+                    if (doContinueRun)
+                    {
+                        NotifyActivityStart(CurrentBusinessFlow.CurrentActivity, doContinueRun);
+                    }
+                    else
+                    {
+                        NotifyActivityStart(CurrentBusinessFlow.CurrentActivity);
+                    }
+
+                    if (SolutionApplications != null && SolutionApplications.Where(x => (x.AppName == activity.TargetApplication && x.Platform == ePlatformType.NA)).FirstOrDefault() == null)
+                    {
+                        //load Agent only if Activity includes Actions which needs it
+                        List<IAct> driverActs = activity.Acts.Where(x => (x is ActWithoutDriver && x.GetType() != typeof(ActAgentManipulation)) == false && x.Active == true).ToList();
+                        if (driverActs.Count > 0)
                         {
+                            //make sure not running in Simulation mode
+                            if (!RunInSimulationMode ||
+                                (RunInSimulationMode == true && driverActs.Where(x => x.SupportSimulation == false).ToList().Count() > 0))
+                            {
+                                //Set the Agent to run actions with  
+                                SetCurrentActivityAgent();
+                            }
+                        }
+                    }
+
+                    activity.ExecutionLogActionCounter = 0;
+
+                    //Run the Activity Actions
+                    st.Start();
+
+                    // if it is not continue mode then goto first Action
+                    if (!doContinueRun)
+                    {
+                        act = (Act)activity.Acts.FirstOrDefault();
+                    }
+                    else
+                    {
+                        act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    }
+
+                    bool bHasMoreActions = true;
+                    while (bHasMoreActions)
+                    {
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
+
+                        GiveUserFeedback();
+                        if (act.Active && act.CheckIfVaribalesDependenciesAllowsToRun(activity, true) == true)
+                        {
+                            RunAction(act, false);
+                            GiveUserFeedback();
+                            if (mCurrentActivityChanged)
+                            {
+                                CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
+                                if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                                {
+                                    activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+
+                                    if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                                    {
+                                        SetNextActionsBlockedStatus();
+                                        statusCalculationIsDone = true;
+                                        return;
+                                    }
+                                }
+                                break;
+                            }
                             CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
+                            // This Sleep is needed!
+                            Thread.Sleep(1);
                             if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                             {
                                 activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -2986,61 +3018,56 @@ namespace Ginger.Run
                                     return;
                                 }
                             }
-                            break;
-                        }
-                        CurrentBusinessFlow.CurrentActivity.Elapsed = st.ElapsedMilliseconds;
-                        // This Sleep is needed!
-                        Thread.Sleep(1);
-                        if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                        {
-                            activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-
-                            if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
+                            GiveUserFeedback();
+                            // If the user selected slower speed then do wait
+                            if (AutoWait > 0)
                             {
-                                SetNextActionsBlockedStatus();
+                                // TODO: sleep 100 and do events
+                                Thread.Sleep(AutoWait * 1000);
+                            }
+
+                            if (mStopRun || mStopBusinessFlow)
+                            {
+                                CalculateActivityFinalStatus(activity);
                                 statusCalculationIsDone = true;
                                 return;
                             }
                         }
-                        GiveUserFeedback();
-                        // If the user selected slower speed then do wait
-                        if (AutoWait > 0)
+                        else
                         {
-                            // TODO: sleep 100 and do events
-                            Thread.Sleep(AutoWait * 1000);
-                        }
-
-                        if (mStopRun || mStopBusinessFlow)
-                        {
-                            CalculateActivityFinalStatus(activity);
-                            statusCalculationIsDone = true;
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        if (!act.Active)
-                        {
-                            ResetAction(act);
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                            if (!act.Active)
                             {
-                                NotifyActionEnd(act);
+                                ResetAction(act);
+                                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                                if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                                {
+                                    NotifyActionEnd(act);
+                                }
+                                act.ExInfo = "Action is not active.";
                             }
-                            act.ExInfo = "Action is not active.";
+                            if (!activity.Acts.IsLastItem())
+                            {
+                                GotoNextAction();
+                                ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                            }
                         }
-                        if (!activity.Acts.IsLastItem())
+
+                        act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                        // As long as we have more action we keep the loop, until no more actions available
+                        if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending && activity.Acts.IsLastItem())
                         {
-                            GotoNextAction();
-                            ((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem).Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                            bHasMoreActions = false;
                         }
                     }
+                }
+                if (!activity.Active)
+                {
+                    ResetActivity(activity);
+                    activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
 
-                    act = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-                    // As long as we have more action we keep the loop, until no more actions available
-                    if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending && activity.Acts.IsLastItem())
+                    if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                     {
-                        bHasMoreActions = false;
+                        NotifyActivityEnd(activity);
                     }
                 }
             }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
@@ -53,8 +54,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         static SolutionRepository SR;
         static Solution solution;
         static ProjEnvironment environment;
+        static Context context;
 
-        [ClassInitialize()]
+       [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
             mBF = new BusinessFlow();
@@ -411,7 +413,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             CLIProcessor cLIProcessor = new CLIProcessor();
             string[] args = new string[]{ autoRunConfiguration1.SelectedCLI.Verb, "--" + CLIOptionClassHelper.FILENAME, autoRunConfiguration1.ConfigFileFullPath};
-           
+
             //Act
             cLIProcessor.ExecuteArgs(args);
 
@@ -463,6 +465,60 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             runSetConfig.RunSetActions.Add(jsonReportOperation);
 
             return runSetConfig;
+        }
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunDisabledActivityTest()
+        {
+            //Arrange
+            Activity activity = GetActivityFromRepository();
+
+            //Act
+            mGR.RunActivity(activity);
+
+            //Assert
+            Assert.AreEqual(activity.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
+           
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunDisabledActionTest()
+        {
+            //Arrange
+            Activity activity = GetActivityFromRepository();
+
+            ObservableList<IAct> actionList = activity.Acts;
+            Act action = (Act)actionList[0];
+            action.Active = false;
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
+            Assert.AreEqual("Action is not active.", action.ExInfo);
+        }
+
+        public Activity GetActivityFromRepository()
+        {
+            context = new Context();
+
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow BF1 = bfList[0];
+
+            ObservableList<Activity> activityList = BF1.Activities;
+            Activity activity = activityList[0];
+            activity.Active = false;
+
+            context.BusinessFlow = BF1;
+            context.Activity = activity;
+
+            mGR.Context = context;
+
+            return activity;
         }
     }
 }
