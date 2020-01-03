@@ -155,7 +155,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             ActBrowserElement actBrowserElement = new ActBrowserElement();
             actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowserElement.Value = url;
-
+            actBrowserElement.Active = true;
 
 
 
@@ -228,7 +228,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
             actUIElement.ElementLocateValue = "button1";
             actUIElement.ElementAction = ActUIElement.eElementAction.Click;
-
+            actUIElement.Active = true;
 
 
             mBF.CurrentActivity.Acts.Add(actUIElement);
@@ -256,6 +256,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             actUIElement.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
             actUIElement.ElementLocateValue = "wrongId";
             actUIElement.ElementAction = ActUIElement.eElementAction.Click;
+            actUIElement.Active = true;
 
             mBF.CurrentActivity.Acts.Add(actUIElement);
             mBF.CurrentActivity.Acts.CurrentItem = actUIElement;
@@ -278,13 +279,14 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             setTextBoxAction.ElementLocateValue = "user";
             setTextBoxAction.ElementAction = ActUIElement.eElementAction.SetText;
             setTextBoxAction.Value = text;
+            setTextBoxAction.Active = true;
 
             ActUIElement getTextBoxAction = new ActUIElement();
             getTextBoxAction.ElementType = Amdocs.Ginger.Common.UIElement.eElementType.TextBox;
             getTextBoxAction.ElementLocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByID;
             getTextBoxAction.ElementLocateValue = "user";
             getTextBoxAction.ElementAction = ActUIElement.eElementAction.GetText;
-
+            getTextBoxAction.Active = true;
 
 
             mBF.CurrentActivity.Acts.Add(setTextBoxAction);
