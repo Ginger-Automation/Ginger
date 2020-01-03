@@ -468,14 +468,14 @@ namespace Ginger
 
         public void LoadRecentAppAgentMapping()
         {
+            Console.WriteLine("Solution:" +WorkSpace.Instance.Solution.Name);
             if (WorkSpace.Instance.Solution != null)
             {
+                Console.WriteLine("Agent Mapping");
                 //unserialize the current solution mapping saving
                 string existingSolMapping = RecentAppAgentsMapping.Where(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true).FirstOrDefault();
-                Console.WriteLine("Agent Mapping:" + existingSolMapping);
                 if (string.IsNullOrEmpty(existingSolMapping))
                 {
-                    Console.WriteLine("Null Agent Mapping");
                     return;//no saved mapping
                 }
                 else
