@@ -370,6 +370,7 @@ namespace amdocs.ginger.GingerCoreNET
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution File: " + solutionFile);
                 if (System.IO.File.Exists(solutionFile))
                 {
+                    Console.WriteLine("Solution File exist");
                     Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Solution File exist");
                 }
                 else
@@ -378,6 +379,7 @@ namespace amdocs.ginger.GingerCoreNET
                     {
                         //Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
                         Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Solution File Not Found");
+                        Console.WriteLine("Solution File not exist");
                         return false;
                     }                   
                 }                
@@ -388,22 +390,27 @@ namespace amdocs.ginger.GingerCoreNET
                 SolutionUpgrade.ClearPreviousScans();
                 if (SolutionUpgrade.IsGingerUpgradeNeeded(solutionFolder, solutionFiles))
                 {
+                    Console.WriteLine("Error: Current Ginger version");
                     Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Current Ginger version can't load the Solution because it includes items from higher Ginger version");
                     return false;
                 }
-
+                
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile);
+                Console.WriteLine("Solution Laaded Successfully");
                 if (solution == null)
                 {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
                     Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Failed to load the Solution file");
+                    Console.WriteLine("Solution is null");
                     return false;
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
+
+                Console.WriteLine("Solution loaded in SR");
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading needed Plugins");
                 mPluginsManager = new PluginsManager();
@@ -418,24 +425,23 @@ namespace amdocs.ginger.GingerCoreNET
                 solution.SetReportsConfigurations();
                 Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
-                
-                if (!RunningInExecutionMode && !RunningFromUnitTest)
+                Console.WriteLine("loaded Agent Mapping");
+
+                if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
                 }
 
+                Console.WriteLine("Autosave");
                 //Solution items upgrade
-                if (!RunningFromUnitTest)
-                {
-                    SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
-                }
-                
+                SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
+
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)  
                 {
                     UserProfile.AddSolutionToRecent(solution);
                 }
-
+                Console.WriteLine("solution added to recent");
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
