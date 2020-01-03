@@ -54,7 +54,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         static SolutionRepository SR;
         static Solution solution;
         static ProjEnvironment environment;
-        static Context context;
 
        [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -504,7 +503,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         public Activity GetActivityFromRepository()
         {
-            context = new Context();
+            Context context = new Context();
 
             ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
             BusinessFlow BF1 = bfList[0];
