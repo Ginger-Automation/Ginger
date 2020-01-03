@@ -413,8 +413,16 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
 
-                Solution = solution;                
-                UserProfile.LoadRecentAppAgentMapping();
+                Solution = solution;
+
+                if (UserProfile != null)
+                {
+                    UserProfile.LoadRecentAppAgentMapping();
+                }
+                else
+                {
+                    Console.WriteLine("User profile is null");
+                }
 
                 if (!RunningInExecutionMode)
                 {

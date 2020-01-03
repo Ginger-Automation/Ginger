@@ -106,7 +106,9 @@ namespace Ginger
                     Reporter.ToStatus(eStatusMsgKey.ExitMode);
                 }
                  WorkSpace.Instance.UserProfile.GingerStatus = eGingerStatus.Active;
+                Console.WriteLine("Before Save Profile");
                  WorkSpace.Instance.UserProfile.SaveUserProfile();
+                Console.WriteLine("After Save profile");
                  WorkSpace.Instance.UserProfile.RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            

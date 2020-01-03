@@ -72,7 +72,10 @@ namespace Amdocs.Ginger.Repository
         public  void SaveToFile(RepositoryItemBase ri, string FileName)
         {
             string txt = SerializeToString(ri);
+            Console.WriteLine("Serialize to string");
+
             File.WriteAllText(FileName, txt);
+            Console.WriteLine("WriteFile");
         }
 
         public string SerializeToString(RepositoryItemBase ri)
