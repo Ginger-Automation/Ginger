@@ -19,7 +19,6 @@ namespace GingerTest.BusinessFlowLib
         public static void ClassInit(TestContext testContext)
         {
             string sampleSolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions"+ Path.DirectorySeparatorChar +"TestUndoBusinessFlow");
-            Console.WriteLine("POMTest Folder" + sampleSolutionFolder);
             mGingerAutomator = GingerAutomator.StartSession();
             mGingerAutomator.OpenSolution(sampleSolutionFolder);
 
