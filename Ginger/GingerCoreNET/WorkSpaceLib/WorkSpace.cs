@@ -416,13 +416,18 @@ namespace amdocs.ginger.GingerCoreNET
                 mPluginsManager = new PluginsManager();
                 mPluginsManager.SolutionChanged(SolutionRepository);
 
+                Console.WriteLine("Solution Changed");
+
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Doing Source Control Configurations");
                 HandleSolutionLoadSourceControl(solution);
+
+                Console.WriteLine(" handle Source Control");
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
+                Console.WriteLine("loaded Report Config");
                 Solution = solution;                
                 UserProfile.LoadRecentAppAgentMapping();
                 Console.WriteLine("loaded Agent Mapping");
