@@ -412,8 +412,10 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
+                Console.WriteLine("Set report config");
+               Solution = solution;
 
-                Solution = solution;
+                Console.WriteLine("user profile mapping");
 
                 if (UserProfile != null)
                 {
@@ -421,7 +423,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 else
                 {
-                    Console.WriteLine("User profile is null");
+                    Reporter.ToLog(eLogLevel.ERROR , "User profile is null");
                 }
 
                 if (!RunningInExecutionMode)
