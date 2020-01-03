@@ -423,8 +423,10 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR , "User profile is null");
+                    Console.WriteLine("User profile is null");
                 }
+
+                Console.WriteLine("done with user profile mapping");
 
                 if (!RunningInExecutionMode)
                 {
