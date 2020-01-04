@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
                 }
 
-                DynamicExecutionManager.CreateRealRunSetFromXML(runsetExecutor, addRunset);
+                DynamicExecutionManager.CreateUpdateRunSetFromJSON(runsetExecutor, runset);
             }
             else
             {
