@@ -56,20 +56,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 //Dynamic JSON
                 ExecutionConfiguration exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
-                if (exeConfiguration.SolutionDetails.SourceControlDetails != null)
+                if (exeConfiguration.SolutionScmDetails != null)
                 {
-                    cliHelper.SetSourceControlType(exeConfiguration.SolutionDetails.SourceControlDetails.SCMType);
-                    cliHelper.SetSourceControlURL(exeConfiguration.SolutionDetails.SourceControlDetails.SolutionRepositoryUrl);
-                    cliHelper.SetSourceControlUser(exeConfiguration.SolutionDetails.SourceControlDetails.User);
-                    cliHelper.SetSourceControlPassword(exeConfiguration.SolutionDetails.SourceControlDetails.Password);
-                    cliHelper.PasswordEncrypted(exeConfiguration.SolutionDetails.SourceControlDetails.PasswordEncrypted.ToString());
-                    if (string.IsNullOrEmpty(exeConfiguration.SolutionDetails.SourceControlDetails.ProxyServer) == false)
+                    cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType);
+                    cliHelper.SetSourceControlURL(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl);
+                    cliHelper.SetSourceControlUser(exeConfiguration.SolutionScmDetails.User);
+                    cliHelper.SetSourceControlPassword(exeConfiguration.SolutionScmDetails.Password);
+                    cliHelper.PasswordEncrypted(exeConfiguration.SolutionScmDetails.PasswordEncrypted.ToString());
+                    if (string.IsNullOrEmpty(exeConfiguration.SolutionScmDetails.ProxyServer) == false)
                     {
-                        cliHelper.SourceControlProxyServer(exeConfiguration.SolutionDetails.SourceControlDetails.ProxyServer);
-                        cliHelper.SourceControlProxyPort(exeConfiguration.SolutionDetails.SourceControlDetails.ProxyPort);
+                        cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);
+                        cliHelper.SourceControlProxyPort(exeConfiguration.SolutionScmDetails.ProxyPort);
                     }
                 }
-                cliHelper.Solution = exeConfiguration.SolutionDetails.LocalPath;
+                cliHelper.Solution = exeConfiguration.SolutionLocalPath;
                 cliHelper.ShowAutoRunWindow = exeConfiguration.ShowAutoRunWindow;
 
                 Runset runset = exeConfiguration.Runset;
