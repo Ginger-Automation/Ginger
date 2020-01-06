@@ -3149,7 +3149,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Post Scope variable Handling", ex);
             }
 
         }
@@ -3590,7 +3590,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exeception during when calculating Business flow final execution status.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Calculating Business flow final execution status", ex);
             }
 
         }
@@ -3682,7 +3682,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "throwing exception in SetBusinessFlowActivitiesAndActionsSkipStatus()", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Marking Pending activities and actions as skipped", ex);
             }
 
         }
@@ -3735,7 +3735,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exeception during when setting activity group execution status. ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Setting activity group execution status", ex);
             }
 
         }
@@ -4437,7 +4437,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Notify Businessflow End", ex);
             }
 
         }
