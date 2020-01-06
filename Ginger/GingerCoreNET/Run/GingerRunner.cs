@@ -3591,14 +3591,23 @@ namespace Ginger.Run
 
             // Assume pass unless error
             AG.RunStatus = eActivitiesGroupRunStatus.Passed;
-            
 
-            if (AG.ActivitiesIdentifiers.Count == 0 ||
-            AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
+            try
             {
-                AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
-                return;
+                //IdentifiedActivity is not getting updated and throwing exception (Object reference not set to an instance of an object) when solution is deserialized with olds serializer
+                //TODO: enchane old serializer to fix above issue 
+                if (AG.ActivitiesIdentifiers.Count == 0 ||
+                    AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
+                {
+                    AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
+                    return;
+                }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, ex.ToString());
+            }
+
 
             BF.Activities.Where(x => AG.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList();
 
