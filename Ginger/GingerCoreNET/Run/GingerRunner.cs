@@ -3129,21 +3129,29 @@ namespace Ginger.Run
         }
         private void PostScopeVariableHandling(ObservableList<VariableBase> variableList)  
         {
-            if (variableList == null || variableList.Count == 0)
-                return;
-
-            foreach(VariableBase variable in variableList)
+            try
             {
-                if(variable.GetType()== typeof(VariableTimer))
+                if (variableList == null || variableList.Count == 0)
+                    return;
+
+                foreach (VariableBase variable in variableList)
                 {
-                    if(((VariableTimer)variable).RunWatch.IsRunning)
+                    if (variable.GetType() == typeof(VariableTimer))
                     {
-                        ((VariableTimer)variable).StopTimer();
-                        ((VariableTimer)variable).IsStopped = true;
+                        if (((VariableTimer)variable).RunWatch.IsRunning)
+                        {
+                            ((VariableTimer)variable).StopTimer();
+                            ((VariableTimer)variable).IsStopped = true;
+                        }
+
                     }
-                   
-                }               
+                }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "", ex);
+            }
+
         }
 
 
@@ -3513,70 +3521,78 @@ namespace Ginger.Run
         // Make private !!!!!!!!!!!!!!! !!!
         public void CalculateBusinessFlowFinalStatus(BusinessFlow BF, bool considrePendingAsSkipped= false)
         {
-            // A flow is blocked if some activity failed and all the activities after it failed
-            // A Flow is failed if one or more activities failed
-            // A flow is skipped if all acticities are marked skipped
-
-            // Add Blocked
-            bool Failed = false;
-            bool Blocked = false;
-            bool Stopped = false;
-
-            // All activities skipped
-            if (BF.Activities.Count == 0 ||
-                BF.Activities.Where(x=>x.GetType()== typeof(Activity) && x.Status== eRunStatus.Skipped).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)               
+            try
             {
-                BF.RunStatus = eRunStatus.Skipped;
-                return;
-            }
+                // A flow is blocked if some activity failed and all the activities after it failed
+                // A Flow is failed if one or more activities failed
+                // A flow is skipped if all acticities are marked skipped
 
-            if (considrePendingAsSkipped &&
-                BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.Status == eRunStatus.Pending).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)
-            {
-                BF.RunStatus = eRunStatus.Skipped;
-                return;
-            }
+                // Add Blocked
+                bool Failed = false;
+                bool Blocked = false;
+                bool Stopped = false;
 
-
-            // Assume pass unless error
-            eRunStatus newStatus = eRunStatus.Passed;
-
-            foreach (Activity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler)))
-            {
-                if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                // All activities skipped
+                if (BF.Activities.Count == 0 ||
+                    BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.Status == eRunStatus.Skipped).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)
                 {
-                    Stopped = true;
-                    break;
+                    BF.RunStatus = eRunStatus.Skipped;
+                    return;
                 }
-                else if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+
+                if (considrePendingAsSkipped &&
+                    BF.Activities.Where(x => x.GetType() == typeof(Activity) && x.Status == eRunStatus.Pending).ToList().Count == BF.Activities.Where(x => x.GetType() == typeof(Activity)).ToList().Count)
                 {
-                    Failed = true;
-                    
+                    BF.RunStatus = eRunStatus.Skipped;
+                    return;
                 }
-                else if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)
+
+
+                // Assume pass unless error
+                eRunStatus newStatus = eRunStatus.Passed;
+
+                foreach (Activity a in BF.Activities.Where(a => a.GetType() != typeof(ErrorHandler)))
                 {
-                    Blocked = true;
+                    if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                    {
+                        Stopped = true;
+                        break;
+                    }
+                    else if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    {
+                        Failed = true;
+
+                    }
+                    else if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked)
+                    {
+                        Blocked = true;
+                    }
                 }
+
+                if (Stopped)
+                {
+                    newStatus = eRunStatus.Stopped;
+                }
+                else if (Failed)
+                {
+                    newStatus = eRunStatus.Failed;
+                }
+                else if (Blocked)
+                {
+                    newStatus = eRunStatus.Blocked;
+                }
+                else
+                {
+                    newStatus = eRunStatus.Passed;
+                }
+
+                BF.RunStatus = newStatus;
             }
-           
-            if (Stopped) 
+            catch (Exception ex)
             {
-                newStatus = eRunStatus.Stopped;
-            }
-            else if(Failed)
-            {
-                newStatus = eRunStatus.Failed;
-            }
-            else if(Blocked)
-            {
-                newStatus = eRunStatus.Blocked;
-            }
-            else
-            {
-                newStatus = eRunStatus.Passed;
+                Reporter.ToLog(eLogLevel.ERROR, "Exeception during when calculating Business flow final execution status.", ex);
             }
 
-            BF.RunStatus = newStatus;
         }
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
@@ -3592,22 +3608,12 @@ namespace Ginger.Run
             // Assume pass unless error
             AG.RunStatus = eActivitiesGroupRunStatus.Passed;
 
-            try
+            if (AG.ActivitiesIdentifiers.Count == 0 ||
+                AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
             {
-                //IdentifiedActivity is not getting updated and throwing exception (Object reference not set to an instance of an object) when solution is deserialized with olds serializer
-                //TODO: enchane old serializer to fix above issue 
-                if (AG.ActivitiesIdentifiers.Count == 0 ||
-                    AG.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped).ToList().Count == AG.ActivitiesIdentifiers.Count)
-                {
-                    AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
-                    return;
-                }
+                AG.RunStatus = eActivitiesGroupRunStatus.Skipped;
+                return;
             }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.ToString());
-            }
-
 
             BF.Activities.Where(x => AG.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList();
 
@@ -3649,73 +3655,89 @@ namespace Ginger.Run
 
         public void SetBusinessFlowActivitiesAndActionsSkipStatus(BusinessFlow businessFlow=null, bool avoidCurrentStatus=false)
         {
-            if (businessFlow == null)
-                businessFlow = CurrentBusinessFlow;
-
-            foreach (Activity a in businessFlow.Activities)
+            try
             {
-                if (mStopRun)
-                    break;
+                if (businessFlow == null)
+                    businessFlow = CurrentBusinessFlow;
 
-                foreach (Act act in a.Acts)
+                foreach (Activity a in businessFlow.Activities)
                 {
                     if (mStopRun)
                         break;
 
-                    if (avoidCurrentStatus || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                }
+                    foreach (Act act in a.Acts)
+                    {
+                        if (mStopRun)
+                            break;
 
-                if (avoidCurrentStatus || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
-                {
-                    a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                        if (avoidCurrentStatus || act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
+
+                    if (avoidCurrentStatus || a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+                    {
+                        a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "throwing exception in SetBusinessFlowActivitiesAndActionsSkipStatus()", ex);
+            }
+
         }
 
         public void SetActivityGroupsExecutionStatus(BusinessFlow automateTab = null, bool offlineMode = false, ExecutionLoggerManager ExecutionLoggerManager = null)
         {
-            if ((CurrentBusinessFlow == null) && (automateTab != null) && offlineMode)
+            try
             {
-                CurrentBusinessFlow =(BusinessFlow) automateTab;
-                CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet);
-            }
-            foreach (ActivitiesGroup currentActivityGroup in CurrentBusinessFlow.ActivitiesGroups)
-            {
-                CalculateActivitiesGroupFinalStatus(currentActivityGroup, CurrentBusinessFlow);
-                if (currentActivityGroup != null)
+                if ((CurrentBusinessFlow == null) && (automateTab != null) && offlineMode)
                 {
-                    if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
+                    CurrentBusinessFlow = (BusinessFlow)automateTab;
+                    CurrentBusinessFlow.ActivitiesGroups.ToList().ForEach(x => x.ExecutionLoggerStatus = executionLoggerStatus.StartedNotFinishedYet);
+                }
+                foreach (ActivitiesGroup currentActivityGroup in CurrentBusinessFlow.ActivitiesGroups)
+                {
+                    CalculateActivitiesGroupFinalStatus(currentActivityGroup, CurrentBusinessFlow);
+                    if (currentActivityGroup != null)
                     {
-                        currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
-                    }
-                    else
-                    {
-                        switch (currentActivityGroup.ExecutionLoggerStatus)
+                        if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
-                            case executionLoggerStatus.NotStartedYet:
-                                // do nothing
-                                break;
-                            case executionLoggerStatus.StartedNotFinishedYet:
-                                currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.Finished;
-                                //if (executionLogger != null)
-                                //{                                    
-                                //    NotifyActivityGroupEnd(currentActivityGroup);
-                                //}
-                                //else
-                                //{                                    
-                                //    NotifyActivityGroupEnd(currentActivityGroup);
-                                //}
-                                NotifyActivityGroupEnd(currentActivityGroup, offlineMode);
-                                break;
-                            case executionLoggerStatus.Finished:
-                                // do nothing
-                                break;
+                            currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
+                        }
+                        else
+                        {
+                            switch (currentActivityGroup.ExecutionLoggerStatus)
+                            {
+                                case executionLoggerStatus.NotStartedYet:
+                                    // do nothing
+                                    break;
+                                case executionLoggerStatus.StartedNotFinishedYet:
+                                    currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.Finished;
+                                    //if (executionLogger != null)
+                                    //{                                    
+                                    //    NotifyActivityGroupEnd(currentActivityGroup);
+                                    //}
+                                    //else
+                                    //{                                    
+                                    //    NotifyActivityGroupEnd(currentActivityGroup);
+                                    //}
+                                    NotifyActivityGroupEnd(currentActivityGroup, offlineMode);
+                                    break;
+                                case executionLoggerStatus.Finished:
+                                    // do nothing
+                                    break;
+                            }
                         }
                     }
+
                 }
-                
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exeception during when setting activity group execution status. ", ex);
+            }
+
         }
 
         private void SetPendingBusinessFlowsSkippedStatus()
@@ -4404,12 +4426,20 @@ namespace Ginger.Run
 
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
-            uint eventTime = RunListenerBase.GetEventTime();
-            businessFlow.EndTimeStamp = DateTime.UtcNow;
-            foreach (RunListenerBase runnerListener in mRunListeners)
+            try
             {
-                runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
+                uint eventTime = RunListenerBase.GetEventTime();
+                businessFlow.EndTimeStamp = DateTime.UtcNow;
+                foreach (RunListenerBase runnerListener in mRunListeners)
+                {
+                    runnerListener.BusinessFlowEnd(eventTime, CurrentBusinessFlow);
+                }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "", ex);
+            }
+
         }
 
         private void NotifyBusinessFlowStart(BusinessFlow businessFlow, bool ContinueRun = false)
