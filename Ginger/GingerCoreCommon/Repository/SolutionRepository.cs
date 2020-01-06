@@ -755,7 +755,7 @@ namespace Amdocs.Ginger.Repository
               
                 string targetFileName = repositoryItem.ItemName +"." + dts + "." + repositoryItem.ObjFileExt+".xml";
 
-                targetFileName = Path.Combine(targetPath, targetFileName);
+                targetFileName = General.RemoveInvalidCharsCombinePath(targetPath, targetFileName);
 
                 if (targetFileName.Length > 255)
                 {
