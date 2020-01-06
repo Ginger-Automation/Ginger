@@ -933,6 +933,10 @@ namespace GingerWPF.BusinessFlowsLib
                     mContext.Runner.GotoNextAction();
                 }
             }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction :" + ex);
+            }
             finally
             {
                 if (mRunner.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
