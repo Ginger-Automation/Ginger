@@ -738,10 +738,10 @@ namespace GingerWPF.BusinessFlowsLib
                     UpdateAutomatePageRunner();
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentAction:
-                    RunAutomatePageAction((Tuple<Activity,Act>)args.Object,  false);
+                    RunAutomatePageAction((Tuple<Activity,Act>)args.Object);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false, true);
+                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true, true);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
                     RunAutomatePageActivity((Activity)args.Object);

@@ -892,71 +892,61 @@ namespace Ginger.Run
             return result;
         }
 
-        
+
         public void RunAction(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
-        {            
+        {
             try
             {
-                if (act.Active)
+                //set Runner details if running in stand alone mode (Automate tab)
+                if (standaloneExecution)
                 {
-                    //set Runner details if running in stand alone mode (Automate tab)
-                    if (standaloneExecution)
-                    {
-                        IsRunning = true;
-                        mStopRun = false;
-                    }
-
-                    //init
-                    act.SolutionFolder = SolutionFolder;
-
-                    //resetting the retry mechanism count before calling the function.
-                    act.RetryMechanismCount = 0;
-                    RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
-                    if (act.EnableRetryMechanism & mStopRun == false)
-                    {
-                        while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
-                        {
-                            //Wait
-                            act.RetryMechanismCount++;
-                            act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
-
-                            GiveUserFeedback();
-                            ProcessIntervaleRetry(act);
-
-                            if (mStopRun)
-                                break;
-
-                            //Run Again
-                            RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
-                        }
-                    }
-                    if (mStopRun)
-                    {
-                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                        //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                        SetDriverPreviousRunStoppedFlag(true);
-                    }
-                    else
-                        SetDriverPreviousRunStoppedFlag(false);
+                    IsRunning = true;
+                    mStopRun = false;
                 }
-                if (!act.Active)
+
+                //init
+                act.SolutionFolder = SolutionFolder;
+
+                //resetting the retry mechanism count before calling the function.
+                act.RetryMechanismCount = 0;
+                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
+                if (act.Active && act.EnableRetryMechanism & mStopRun == false)
                 {
-                    ResetAction(act);
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-                    if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
+                    while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
                     {
-                        NotifyActionEnd(act);
+                        //Wait
+                        act.RetryMechanismCount++;
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Wait;
+
+                        GiveUserFeedback();
+                        ProcessIntervaleRetry(act);
+
+                        if (mStopRun)
+                            break;
+
+                        //Run Again
+                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun, standaloneExecution);
                     }
-                    act.ExInfo = "Action is not active.";
-                    return;
                 }
+                if (mStopRun)
+                {
+                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                    //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
+                    SetDriverPreviousRunStoppedFlag(true);
+                }
+                else
+                    SetDriverPreviousRunStoppedFlag(false);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception while Running action :" + ex);
             }
             finally
             {
                 if (standaloneExecution)
                 {
                     IsRunning = false;
-                }                          
+                }
             }
         }
 
@@ -2884,7 +2874,7 @@ namespace Ginger.Run
 
             try
             {
-                if (activity.Active)
+                if (activity.Active != false)
                 {
                     //check if Activity is allowed to run
                     if (CurrentBusinessFlow == null ||
@@ -3071,15 +3061,9 @@ namespace Ginger.Run
                         }
                     }
                 }
-                if (!activity.Active)
+                else
                 {
-                    ResetActivity(activity);
                     activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
-
-                    if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
-                    {
-                        NotifyActivityEnd(activity);
-                    }
                 }
             }
             catch (Exception ex)
@@ -3446,35 +3430,29 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
-                        if (ExecutingActivity.Active != false)
-                        {
-                            // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
-                            if (FirstExecutedActivity.Equals(ExecutingActivity))
-                            {
-                                RunActivity(ExecutingActivity, true);
-                            }
-                            else
-                            {
-                                RunActivity(ExecutingActivity);
-                            }
-                            //TODO: Why this is here? do we need to rehook
-                            CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
 
-                            if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                            {
-                                //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
-                                CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                if (!(CurrentBusinessFlow.Activities.IsLastItem()))
-                                {
-                                    GotoNextActivity();
-                                    SetNextActivitiesBlockedStatus();
-                                }
-                                return;
-                            }
+                        // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
+                        if (FirstExecutedActivity.Equals(ExecutingActivity))
+                        {
+                            RunActivity(ExecutingActivity, true);
                         }
                         else
                         {
-                            ExecutingActivity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
+                            RunActivity(ExecutingActivity);
+                        }
+                        //TODO: Why this is here? do we need to rehook
+                        CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
+
+                        if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                        {
+                            //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
+                            CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            if (!(CurrentBusinessFlow.Activities.IsLastItem()))
+                            {
+                                GotoNextActivity();
+                                SetNextActivitiesBlockedStatus();
+                            }
+                            return;
                         }
 
                         if (mStopRun || mStopBusinessFlow)
