@@ -49,18 +49,26 @@ namespace GingerTest
         public static bool Highlight { get { return false; }  }
 
         public static GingerAutomator StartSession()
-        {            
-            SessionCount++;
-            TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
-            if (app == null)
+        {
+            try
             {
-                gingerAutomatorInstance = new GingerAutomator();
-                gingerAutomatorInstance.StartGinger();
-                while (!isReady)
+                SessionCount++;
+                TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
+                if (app == null)
                 {
-                    Thread.Sleep(100);
+                    gingerAutomatorInstance = new GingerAutomator();
+                    Console.WriteLine("Starting Ginger UI");
+                    gingerAutomatorInstance.StartGinger();
+                    while (!isReady)
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
-            }            
+            }
+            catch
+            {
+                Console.WriteLine("Error while Start session");
+            }
             return gingerAutomatorInstance;
         }
 
@@ -96,8 +104,10 @@ namespace GingerTest
                 
 
                 app.HideConsoleWindow();
+                Console.WriteLine("StartGingerUI");
                 app.StartGingerUI();
-                
+                Console.WriteLine("Completed:StartGingerUI");
+
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
                 //Ginger.App.MainWindow.Closed += (sender1, e1) => 
@@ -106,7 +116,10 @@ namespace GingerTest
                 MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
 
                 // Makes the thread support message pumping                 
-                System.Windows.Threading.Dispatcher.Run();                                    
+                System.Windows.Threading.Dispatcher.Run();
+
+                Console.WriteLine("Main window is" + Ginger.App.MainWindow.IsFocused);
+                Console.WriteLine("MainWindow Width" + Ginger.App.MainWindow.Width + "MainWindow Height" + Ginger.App.MainWindow.Height);
             });
 
 
