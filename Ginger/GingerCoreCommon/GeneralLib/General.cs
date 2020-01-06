@@ -261,6 +261,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
             return fileName;
         }
 
+        public static string RemoveInvalidCharsCombinePath(string filePath, string fileName)
+        {
+            return Path.Combine(filePath, RemoveInvalidFileNameChars(fileName));
+        }
+
         public class XmlNodeItem
         {
             public XmlNodeItem(string p, string v, string xp)
