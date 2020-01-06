@@ -741,7 +741,7 @@ namespace GingerWPF.BusinessFlowsLib
                     RunAutomatePageAction((Tuple<Activity,Act>)args.Object);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true, true);
+                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
                     RunAutomatePageActivity((Activity)args.Object);
@@ -881,7 +881,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true, bool moveToNextAction=false)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo, bool moveToNextAction = false, bool checkIfActionAllowedToRun = true )
         {
             if (CheckIfExecutionIsInProgress()) return;
 
