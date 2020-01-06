@@ -16,19 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System.Xml.Serialization;
-
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
-    [XmlInclude(typeof(ProduceHTML))]
-    [XmlInclude(typeof(MailReport))]    
-    [XmlInclude(typeof(JsonReport))]
-    public class AddRunsetOperation
+    public class ProduceHTML : AddRunsetOperation
     {
-        [XmlAttribute]
-        public string Condition { get; set; } = "AlwaysRun";
+        public string HTMLReportFolderName { get; set; }
 
-        [XmlAttribute]
-        public string RunAt { get; set; } = "ExecutionEnd";
+        public int selectedHTMLReportTemplateID { get; set; }
+
+        public bool isHTMLReportFolderNameUsed { get; set; }
+
+        public bool isHTMLReportPermanentFolderNameUsed { get; set; }
+
     }
 }
