@@ -47,7 +47,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     mAutoRunWizard = (AutoRunWizard)WizardEventArgs.Wizard;                    
                     BindingHandler.ObjFieldBinding(xConfigurationNameTextBox, System.Windows.Controls.TextBox.TextProperty, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigName));
                     xConfigurationPathTextbox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ConfigFileFolderPath), isVENeeded: false, isBrowseNeeded: true, browserType: Actions.UCValueExpression.eBrowserType.Folder);                    
-                    xConfigRadioButton.IsChecked = true;
+                    xConfigRadioButton.IsChecked = true;                                    
                     break;
 
                 case EventType.Active:
@@ -72,7 +72,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
             else if (xDynamicRadioButton.IsChecked == true)
             {
-                helpContent = string.Format("XML file which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Dynamic=%XMLFilePath%', Example: Ginger.exe Dynamic=\"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                helpContent = string.Format("File (XML/JSON) which describes the {0} to be executed." + GetRowDown() + "To be used in case {0} not exist in the Solution and should be created dynamically for execution purposes only, or in case {0} is exist but need to dynamically customized it input values for specific execution." + GetRowDown() + "Executed by triggering Ginger executer with the argument 'Dynamic -f %FilePath%', Example: Ginger.exe Dynamic -f \"C:\\Ginger\\FeatureATesting.Ginger.AutoRunConfigs.xml\"", GingerDicser.GetTermResValue(eTermResKey.RunSet));
             }
             else if (xScriptRadioButton.IsChecked == true)
             {
@@ -109,16 +109,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             xConfigFileSettingsPnl.Visibility = Visibility.Visible;
         }        
 
-        CLIDynamicFile mCLIDynamicXML;
+        CLIDynamicFile mCLIDynamicFile;
         private void XDynamicRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (mCLIDynamicXML == null)
+            if (mCLIDynamicFile == null)
             {
-                mCLIDynamicXML = new CLIDynamicFile();
-            }
+                mCLIDynamicFile = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+                GingerCore.General.FillComboFromEnumObj(xDynamicFileTypeCombo, mCLIDynamicFile.FileType);
+                BindingHandler.ObjFieldBinding(xDynamicFileTypeCombo, ComboBox.TextProperty, mCLIDynamicFile, nameof(CLIDynamicFile.FileType));
+            }            
+
             if (mAutoRunWizard != null)
             {
-                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIDynamicXML;
+                mAutoRunWizard.AutoRunConfiguration.SelectedCLI = mCLIDynamicFile;
                 ShowHelp();
                 ShowContent();
             }
@@ -158,6 +161,11 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             }
 
             xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
+        }
+
+        private void xDynamicFileTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ShowContent(); 
         }
 
         //CLIExcel mCLIExcel;

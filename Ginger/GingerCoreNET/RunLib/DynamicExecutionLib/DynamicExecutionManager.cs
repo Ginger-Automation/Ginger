@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
-using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
@@ -42,10 +41,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
     public class DynamicExecutionManager
     {
+        #region XML
         public static string CreateDynamicRunSetXML(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
 
+            //Create execution object
             DynamicGingerExecution dynamicExecution = new DynamicGingerExecution();
             dynamicExecution.SolutionDetails = new SolutionDetails();
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
@@ -185,18 +186,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             }
             dynamicExecution.AddRunsets.Add(addRunset);
 
-            string content = ConvertDynamicExecutionToXML(dynamicExecution);
-            return content;
-        }
-
-        private static string ConvertDynamicExecutionToXML(DynamicGingerExecution dynamicRunSet)
-        {
+            //Serilize to XML String
             XmlSerializer writer = new XmlSerializer(typeof(DynamicGingerExecution));
             StringWriter stringWriter = new StringWriter();
-            //XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-            //ns.Add("", "");
-            //writer.Serialize(stringWriter, dynamicRunSet, ns);
-            writer.Serialize(stringWriter, dynamicRunSet);
+            writer.Serialize(stringWriter, dynamicExecution);
             stringWriter.Close();
             return stringWriter.GetStringBuilder().ToString();
         }
@@ -210,21 +203,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return dynamicRunSet;
         }
 
-        public static ExecutionConfiguration LoadDynamicExecutionFromJSON(string content)
-        {
-            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content);
-        }
-
-        //public static ExecutionConfiguration LoadExecutionConfigurationFromJSON(string content)
-        //{
-        //    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(DynamicGingerExecution));
-        //    System.IO.StringReader stringReader = new System.IO.StringReader(content);
-        //    DynamicGingerExecution dynamicRunSet = (DynamicGingerExecution)reader.Deserialize(stringReader);
-        //    stringReader.Close();
-        //    return dynamicRunSet;
-        //}
-
-        public static void CreateRealRunSetFromXML(RunsetExecutor runsetExecutor, AddRunset dynamicRunsetConfigs)
+        public static void CreateRunSetFromXML(RunsetExecutor runsetExecutor, AddRunset dynamicRunsetConfigs)
         {
             RunSetConfig runSetConfig = new RunSetConfig();
             runSetConfig.Name = dynamicRunsetConfigs.Name;
@@ -354,6 +333,176 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
         }
+        #endregion XML
+
+
+        #region JSON
+        public static string CreateDynamicRunSetJSON(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        {
+            runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
+
+            //Create execution object
+            ExecutionConfiguration executionConfig = new ExecutionConfiguration();
+            if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
+            {
+                executionConfig.SolutionScmDetails = new ScmDetails();
+                executionConfig.SolutionScmDetails.SCMType = solution.SourceControl.GetSourceControlType.ToString();
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
+                {
+                    string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
+                    int lastSlash = modifiedURI.LastIndexOf('/');
+                    modifiedURI = (lastSlash > -1) ? modifiedURI.Substring(0, lastSlash) : modifiedURI;
+                    executionConfig.SolutionScmDetails.SolutionRepositoryUrl = modifiedURI;
+                }
+                else
+                {
+                    executionConfig.SolutionScmDetails.SolutionRepositoryUrl = solution.SourceControl.SourceControlURL.ToString();
+                }
+                if (solution.SourceControl.SourceControlUser != null && solution.SourceControl.SourceControlPass != null)
+                {
+                    executionConfig.SolutionScmDetails.User = solution.SourceControl.SourceControlUser;
+                    executionConfig.SolutionScmDetails.Password = EncryptionHandler.EncryptwithKey(solution.SourceControl.SourceControlPass);
+                    executionConfig.SolutionScmDetails.PasswordEncrypted = true;
+                }
+                else
+                {
+                    executionConfig.SolutionScmDetails.User = "N/A";
+                    executionConfig.SolutionScmDetails.Password = "N/A";
+                }
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                {
+                    executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
+                    executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
+                }
+            }
+            executionConfig.SolutionLocalPath = solution.Folder;
+            executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
+
+            Runset runset = new Runset();
+            runset.Exist = true;
+            runset.Name = runsetExecutor.RunSetConfig.Name;
+            runset.ID = runsetExecutor.RunSetConfig.Guid;
+            runset.Environment = runsetExecutor.RunsetExecutionEnvironment.Name;
+            runset.RunAnalyzer = cliHelper.RunAnalyzer;
+            runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
+
+            foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
+            {
+                Runner runner = new Runner();
+                runner.Name = gingerRunner.Name;
+                runner.ID = gingerRunner.Guid;
+                if (gingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(gingerRunner.SpecificEnvironmentName))
+                {
+                    runner.Environment = gingerRunner.SpecificEnvironmentName;
+                }
+                if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
+                {
+                    runner.OnFailureRunOption = gingerRunner.RunOption.ToString();
+                }
+
+                foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
+                {
+                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.Agent.Guid, ApplicationName = applicationAgent.AppName, ApplicationID = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=>x.AppName == applicationAgent.AppName).FirstOrDefault().Guid});
+                }
+
+                foreach (BusinessFlowRun businessFlowRun in gingerRunner.BusinessFlowsRunList)
+                {
+                    GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlow = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow();
+                    businessFlow.Name = businessFlowRun.BusinessFlowName;
+                    businessFlow.ID = businessFlowRun.Guid;
+                    businessFlow.Active = businessFlowRun.BusinessFlowIsActive;
+                    if (businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
+                    {
+                        businessFlow.InputValues = new List<InputValue>();
+                        foreach (VariableBase variableBase in businessFlowRun.BusinessFlowCustomizedRunVariables)
+                        {
+                            InputValue inputVal = new InputValue();
+                            inputVal.VariableParentName = variableBase.ParentName;
+                            if (variableBase.ParentType == "Business Flow")
+                            {
+                                inputVal.VariableParentID = businessFlowRun.BusinessFlowGuid;
+                            }
+                            else
+                            {
+                                //??? need the ID of the Activity
+                            }
+
+                            inputVal.VariableName = variableBase.Name;
+                            inputVal.VariableID = variableBase.Guid;
+                            inputVal.VariableCustomizedValue = variableBase.Value;
+
+                            businessFlow.InputValues.Add(inputVal);
+                        }
+                    }
+                    runner.BusinessFlows.Add(businessFlow);
+                }
+                runset.Runners.Add(runner);
+            }
+
+            foreach (RunSetActionBase runSetOperation in runsetExecutor.RunSetConfig.RunSetActions)
+            {
+                if (runSetOperation is RunSetActionHTMLReportSendEmail)
+                {
+                    RunSetActionHTMLReportSendEmail runsetMailReport = (RunSetActionHTMLReportSendEmail)runSetOperation;
+                    MailReportOperation mailReportConfig = new MailReportOperation();
+                    mailReportConfig.Name = runsetMailReport.Name;
+                    mailReportConfig.ID = runsetMailReport.Guid;
+                    mailReportConfig.Condition = runsetMailReport.Condition.ToString();
+                    mailReportConfig.RunAt = runsetMailReport.RunAt.ToString();
+
+                    mailReportConfig.MailFrom = runsetMailReport.MailFrom;
+                    mailReportConfig.MailTo = runsetMailReport.MailTo;
+                    mailReportConfig.MailCC = runsetMailReport.MailCC;
+
+                    mailReportConfig.Subject = runsetMailReport.Subject;
+                    mailReportConfig.Comments = runsetMailReport.Comments;
+
+                    if (runsetMailReport.Email.EmailMethod == GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK)
+                    {
+                        mailReportConfig.SendViaOutlook = true;
+                    }
+                    else
+                    {
+                        mailReportConfig.SmtpDetails = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.RunsetOperations.SmtpDetails();
+                        mailReportConfig.SmtpDetails.Server = runsetMailReport.Email.SMTPMailHost;
+                        mailReportConfig.SmtpDetails.Port = runsetMailReport.Email.SMTPPort.ToString();
+                        mailReportConfig.SmtpDetails.EnableSSL = runsetMailReport.Email.EnableSSL.ToString();
+                        if (runsetMailReport.Email.ConfigureCredential)
+                        {
+                            mailReportConfig.SmtpDetails.User = runsetMailReport.Email.SMTPUser;
+                            mailReportConfig.SmtpDetails.Password = runsetMailReport.Email.SMTPPass;
+                        }
+                    }
+
+                    if (runsetMailReport.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault() != null)
+                    {
+                        mailReportConfig.IncludeAttachmentReport = true;
+                    }
+                    else
+                    {
+                        mailReportConfig.IncludeAttachmentReport = false;
+                    }
+
+                    runset.Operations.Add(mailReportConfig);
+                }
+                else if (runSetOperation is RunSetActionJSONSummary)
+                {
+                    JsonReportOperation jsonReportConfig = new JsonReportOperation();
+                    jsonReportConfig.Name = runSetOperation.Name;
+                    jsonReportConfig.ID = runSetOperation.Guid;
+                    runset.Operations.Add(jsonReportConfig);
+                }
+            }
+            executionConfig.Runset = runset;
+
+            //serilize object to JSON String
+            return JsonConvert.SerializeObject(executionConfig);
+        }
+
+        public static ExecutionConfiguration LoadDynamicExecutionFromJSON(string content)
+        {
+            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content);
+        }
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, Runset dynamicRunsetConfigs)
         {
@@ -362,8 +511,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 //## Updating existing Runset
                 runSetConfig = FindItemByIDAndName<RunSetConfig>(
-                    new Tuple<string,Guid?>(nameof(RunSetConfig.Guid), dynamicRunsetConfigs.ID), 
-                    new Tuple<string, string>(nameof(RunSetConfig.Name), dynamicRunsetConfigs.Name), 
+                    new Tuple<string, Guid?>(nameof(RunSetConfig.Guid), dynamicRunsetConfigs.ID),
+                    new Tuple<string, string>(nameof(RunSetConfig.Name), dynamicRunsetConfigs.Name),
                     WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>());
             }
             else
@@ -390,8 +539,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 if (dynamicRunsetConfigs.Exist)
                 {
                     gingerRunner = FindItemByIDAndName<GingerRunner>(
-                        new Tuple<string, Guid?>(nameof(GingerRunner.Guid), runnerConfig.ID), 
-                        new Tuple<string, string>(nameof(GingerRunner.Name), runnerConfig.Name), 
+                        new Tuple<string, Guid?>(nameof(GingerRunner.Guid), runnerConfig.ID),
+                        new Tuple<string, string>(nameof(GingerRunner.Name), runnerConfig.Name),
                         runSetConfig.GingerRunners);
                 }
                 else
@@ -399,7 +548,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     gingerRunner = new GingerRunner();
                     gingerRunner.Name = runnerConfig.Name;
                 }
-                
+
                 if (!string.IsNullOrEmpty(runnerConfig.OnFailureRunOption))
                 {
                     gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), runnerConfig.OnFailureRunOption, true);
@@ -420,7 +569,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         appAgent = (ApplicationAgent)FindItemByIDAndName<IApplicationAgent>(
                                                 new Tuple<string, Guid?>(nameof(ApplicationAgent.Guid), appAgentConfig.ApplicationID),
                                                 new Tuple<string, string>(nameof(IApplicationAgent.AppName), appAgentConfig.ApplicationName),
-                                                gingerRunner.ApplicationAgents);                       
+                                                gingerRunner.ApplicationAgents);
                     }
                     else
                     {
@@ -428,8 +577,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         appAgent.AppName = appAgentConfig.ApplicationName;
                         gingerRunner.ApplicationAgents.Add(appAgent);
                     }
-                    
-                    appAgent.AgentName = appAgentConfig.AgentName;                    
+
+                    appAgent.AgentName = appAgentConfig.AgentName;
                 }
 
                 //Add or Update BFs
@@ -631,7 +780,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         else
                         {
-                            
+
                             jsonReportOperation = new RunSetActionJSONSummary();
                         }
 
@@ -668,31 +817,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runsetExecutor.RunSetConfig = runSetConfig;
         }
 
-
-        public static void Save(DynamicGingerExecution dynamicRunSet, string fileName)
-        {
-            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DynamicGingerExecution));
-            System.IO.FileStream file = System.IO.File.Create(fileName);
-            writer.Serialize(file, dynamicRunSet);
-            file.Close();
-        }
-
-        //public static DynamicRunSet Load(string fileName)
-        //{
-        //    System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(DynamicRunSet));
-        //    System.IO.StreamReader file = new System.IO.StreamReader(fileName);
-        //    DynamicRunSet dynamicRunSet = (DynamicRunSet)reader.Deserialize(file);
-        //    file.Close();
-        //    return dynamicRunSet;
-        //}
-
-        public static bool IsJson(string content)
-        {
-            content = content.Trim();
-            return content.StartsWith("{") && content.EndsWith("}")
-                   || content.StartsWith("[") && content.EndsWith("]");
-        }
-
         private static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary)
         {
             T item = default(T);
@@ -719,7 +843,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     return item;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(T), name.Item2.ToLower(), id.Item2);
                 Reporter.ToLog(eLogLevel.ERROR, error, ex);
@@ -727,5 +851,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             }
         }
 
+        public static bool IsJson(string content)
+        {
+            content = content.Trim();
+            return content.StartsWith("{") && content.EndsWith("}")
+                   || content.StartsWith("[") && content.EndsWith("]");
+        }
+        #endregion JSON
+
+
+        //public static void Save(DynamicGingerExecution dynamicRunSet, string fileName)
+        //{
+        //    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DynamicGingerExecution));
+        //    System.IO.FileStream file = System.IO.File.Create(fileName);
+        //    writer.Serialize(file, dynamicRunSet);
+        //    file.Close();
+        //}        
+       
     }
 }

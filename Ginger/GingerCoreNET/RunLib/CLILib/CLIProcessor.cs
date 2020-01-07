@@ -241,18 +241,33 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler = new CLIConfigFile();                    
                     break;
                 case "dynamic":
-                    mCLIHandler = new CLIDynamicFile();
-                    // CLILoadAndPrepare();
+                    if (Path.GetExtension(fileName).ToLower() == "xml")
+                    {
+                        mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+                    }
+                    else if (Path.GetExtension(fileName).ToLower() == "json")
+                    {
+                        mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Dynamic file type is not supported, file path: '{0}'", fileName));
+                        Environment.ExitCode = 1; //failure
+                        return Environment.ExitCode;
+                    }
                     break;
+
                 case "script":
                     mCLIHandler = new CLIScriptFile();
                     break;
-            }            
+            }   
+            
             mCLIHandler.LoadContent(ReadFile(fileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
             if (fileType == "config" || fileType == "dynamic")  // not needed for script
             {
                 CLILoadAndPrepare();  
             }
+
             ExecuteRunSet();
 
             return Environment.ExitCode;

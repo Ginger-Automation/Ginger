@@ -8,6 +8,10 @@
       d:DesignHeight="600" d:DesignWidth="800"
       Title="CreateCLIChooseTypePage">
 
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="b2v" />
+    </Page.Resources>
+    
     <DockPanel Background="{StaticResource $BackgroundColor_LightGray}" Margin="10">
 
         <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="-5,0,0,0">Auto Run Configuration Setup</Label>
@@ -19,10 +23,13 @@
                 <ColumnDefinition Width="300*"/>
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <RadioButton x:Name="xConfigRadioButton" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config</RadioButton>
-                <RadioButton x:Name="xDynamicRadioButton" Checked="XDynamicRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Dynamic</RadioButton>
-                <RadioButton x:Name="xScriptRadioButton" Checked="XScriptRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Script</RadioButton>
-                <RadioButton x:Name="xParametersRadioButton" Checked="XParametersRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Arguments</RadioButton>
+                <RadioButton x:Name="xConfigRadioButton" GroupName="cliType" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config</RadioButton>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="xDynamicRadioButton" GroupName="cliType" Checked="XDynamicRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Dynamic</RadioButton>
+                    <ComboBox x:Name="xDynamicFileTypeCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="30" Margin="5,0,0,0" VerticalAlignment="Center" SelectionChanged="xDynamicFileTypeCombo_SelectionChanged" Visibility="{Binding IsChecked, ElementName=xDynamicRadioButton, Converter={StaticResource b2v}}"/>
+                </StackPanel>
+                <RadioButton x:Name="xScriptRadioButton" GroupName="cliType" Checked="XScriptRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Script</RadioButton>
+                <RadioButton x:Name="xParametersRadioButton" GroupName="cliType" Checked="XParametersRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Arguments</RadioButton>
                 <!--<RadioButton x:Name="xExcelRadioButton" Checked="XExcelRadioButton_Checked" Margin="5">Dynamic Excel with Data</RadioButton>-->
             </StackPanel>
             <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="0.5" Grid.Column="1">

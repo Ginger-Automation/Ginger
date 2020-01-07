@@ -25,6 +25,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
     public class CLIDynamicFile : ICLI
     {
+        public enum eFileType { XML,JSON}
+
         bool ICLI.IsFileBasedConfig { get { return true; } }
 
         public string Verb
@@ -39,20 +41,41 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
-                return "xml";
+                if (FileType == eFileType.JSON)
+                {
+                    return "json";
+                }
+                else
+                {
+                    return "xml";
+                }
             }
+        }
+
+        public eFileType FileType { get; set; }
+
+        public CLIDynamicFile(eFileType fileType)
+        {
+            FileType = fileType;
         }
 
         public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
-            string xml = DynamicExecutionManager.CreateDynamicRunSetXML(solution, runsetExecutor, cliHelper);
-            return xml;            
+            if (FileType == eFileType.JSON)
+            {
+                string json = DynamicExecutionManager.CreateDynamicRunSetJSON(solution, runsetExecutor, cliHelper);
+                return json;
+            }
+            else
+            {
+                string xml = DynamicExecutionManager.CreateDynamicRunSetXML(solution, runsetExecutor, cliHelper);
+                return xml;
+            }
         }
-
 
         public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            if(DynamicExecutionManager.IsJson(content))
+            if(FileType == eFileType.JSON)
             {
                 //Dynamic JSON
                 ExecutionConfiguration exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
@@ -105,11 +128,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 cliHelper.Env = addRunset.Environment;
                 cliHelper.RunAnalyzer = addRunset.RunAnalyzer;
 
-                DynamicExecutionManager.CreateRealRunSetFromXML(runsetExecutor, addRunset);
+                DynamicExecutionManager.CreateRunSetFromXML(runsetExecutor, addRunset);
             }
         }
-
-
 
         public void Execute(RunsetExecutor runsetExecutor)
         {
