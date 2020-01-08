@@ -1440,7 +1440,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             Act actInstance = (Act)instance;
 

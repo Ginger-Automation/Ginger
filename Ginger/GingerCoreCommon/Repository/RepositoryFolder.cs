@@ -408,13 +408,15 @@ namespace Amdocs.Ginger.Repository
 
                 // this is single repository item
                 RepositoryItemBase item = GetItemFromCacheByFileName(e.OldFullPath);
-                item.FileName = e.FullPath;
-                item.FilePath = e.FullPath;
+                if(item != null)
+                {
+                    item.FileName = e.FullPath;
+                    item.FilePath = e.FullPath;
 
-                // set Folder item cache as it depends on the file name, so remove the old name and add with new name
-                mFolderItemsCache.DeleteItem(e.OldFullPath);
-                mFolderItemsCache[e.FullPath] = item;
-
+                    // set Folder item cache as it depends on the file name, so remove the old name and add with new name
+                    mFolderItemsCache.DeleteItem(e.OldFullPath);
+                    mFolderItemsCache[e.FullPath] = item;                    
+                }
                 RepositoryItemBase item2 = GetItemFromCacheByFileName(e.FullPath);
             }
             catch(Exception ex)
@@ -479,6 +481,17 @@ namespace Amdocs.Ginger.Repository
                 m.ReleaseMutex();
             }
             //Reporter.ToLog(eLogLevel.DEBUG, "FileWatcher change handled: " + e.FullPath + " , " + e.ChangeType);
+        }
+
+        public override void ReloadUpdatedXML(string path)
+        {
+            WaitforFileIsReadable(path);
+            RepositoryItemBase item = GetItemFromCacheByFileName(path);
+            if (item != null)
+            {
+                NewRepositorySerializer.ReloadObjectFromFile(item);
+                item.RefreshSourceControlStatus();
+            }
         }
 
         private void HandleFileChange(FileSystemEventArgs e)
@@ -965,5 +978,6 @@ namespace Amdocs.Ginger.Repository
                 mFileWatcher = null;
             }
         }
+
     }
 }

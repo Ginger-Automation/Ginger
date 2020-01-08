@@ -175,6 +175,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     JsonReport dynamicJsonReport = new JsonReport();
                     addRunset.AddRunsetOperations.Add(dynamicJsonReport);
                 }
+                else if (runSetOperation is RunSetActionHTMLReport)
+                {
+                    RunSetActionHTMLReport runsetActionProduceHTMLReport = (RunSetActionHTMLReport)runSetOperation;
+                    ProduceHTML dynamicReport = new ProduceHTML();
+                    dynamicReport.Condition = runsetActionProduceHTMLReport.Condition.ToString();
+                    dynamicReport.RunAt = runsetActionProduceHTMLReport.RunAt.ToString();
+                    dynamicReport.selectedHTMLReportTemplateID = runsetActionProduceHTMLReport.selectedHTMLReportTemplateID;
+                    dynamicReport.isHTMLReportFolderNameUsed = runsetActionProduceHTMLReport.isHTMLReportFolderNameUsed;
+                    if (runsetActionProduceHTMLReport.isHTMLReportFolderNameUsed)
+                    {
+                        dynamicReport.HTMLReportFolderName = runsetActionProduceHTMLReport.HTMLReportFolderName;
+                    }
+                    dynamicReport.isHTMLReportPermanentFolderNameUsed = runsetActionProduceHTMLReport.isHTMLReportPermanentFolderNameUsed;
+                   
+                    addRunset.AddRunsetOperations.Add(dynamicReport);
+                }
             }
             dynamicExecution.AddRunsets.Add(addRunset);
 
@@ -327,6 +343,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     jsonReportOperation.Active = true;
 
                     runSetConfig.RunSetActions.Add(jsonReportOperation);
+                }
+                else if (addOperation is ProduceHTML)
+                {
+                    ProduceHTML dynamicReport = (ProduceHTML)addOperation;
+                    RunSetActionHTMLReport reportOpertaion = new RunSetActionHTMLReport();
+
+                    reportOpertaion.Name = "Dynamic HTML Report" ;
+                    reportOpertaion.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), dynamicReport.Condition, true);
+                    reportOpertaion.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), dynamicReport.RunAt, true);
+                    reportOpertaion.Active = true;
+                    reportOpertaion.selectedHTMLReportTemplateID = dynamicReport.selectedHTMLReportTemplateID;
+                    reportOpertaion.isHTMLReportFolderNameUsed = dynamicReport.isHTMLReportFolderNameUsed;
+                    if (dynamicReport.isHTMLReportFolderNameUsed)
+                    {
+                        reportOpertaion.HTMLReportFolderName = dynamicReport.HTMLReportFolderName;
+                    }
+                    reportOpertaion.isHTMLReportPermanentFolderNameUsed = dynamicReport.isHTMLReportPermanentFolderNameUsed;
+                   
+
+                    runSetConfig.RunSetActions.Add(reportOpertaion);
                 }
             }
 

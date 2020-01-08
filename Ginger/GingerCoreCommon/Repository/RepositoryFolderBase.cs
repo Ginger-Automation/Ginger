@@ -137,6 +137,7 @@ namespace Amdocs.Ginger.Repository
 
         public abstract void ReloadItems();
 
+        public abstract void ReloadUpdatedXML(string path);
 
         public virtual void StartFileWatcher()
         {
