@@ -410,10 +410,10 @@ namespace GingerCoreNET.Application_Models
 
                             // check if Parent iframe changed
                             var parentIFrame = diffProperties.Where(x => x.Key.Contains("Parent IFrame")).FirstOrDefault();
+                            
+                            var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
                             if (!string.IsNullOrEmpty(parentIFrame.Value))
                             {
-                                var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
-
                                 foreach (var changedProprty in diffProperties.ToList())
                                 {
                                     foreach (var existingProperty in deltaControlProp.Where(x => x.ElementProperty.Name == changedProprty.Key))
@@ -423,41 +423,20 @@ namespace GingerCoreNET.Application_Models
                                         existingProperty.DeltaExtraDetails = "Property changed";
                                     }
                                 }
-
-                                matchingElementFound = true;
-
-                                //DeltaElementInfo newDeltaElement = new DeltaElementInfo();
-                                //newDeltaElement.ElementInfo = deletedElement;
-                                //newDeltaElement.DeltaExtraDetails = "Element Property Updated";
-                                //newDeltaElement.DeltaStatus = eDeltaStatus.Changed;
-                                //newDeltaElement.ElementInfo.ElementStatus = ElementInfo.eElementStatus.Unknown;
-                                //newDeltaElement.SelectedElementGroup = deletedElement.ElementGroup;
-                                //newDeltaElement.IsSelected = true;
-                                //newDeltaElement.Properties = deltaControlProp;
-
-                                //DeltaViewElements.Add(newDeltaElement);
-                                //item to update deletedElement
-
-                                var itemToUpdate = DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(deletedElement.Guid)).FirstOrDefault();
-                                if (itemToUpdate != null)
-                                {
-                                    itemToUpdate.DeltaStatus = eDeltaStatus.Changed;
-                                    itemToUpdate.DeltaExtraDetails = "Element Property Updated";
-                                    itemToUpdate.Properties = deltaControlProp;
-                                }
-
-                                var itemToRemove = DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)).FirstOrDefault();
-                                if (itemToRemove != null)
-                                {
-                                    DeltaViewElements.Remove(itemToRemove);
-                                }
-
-                                // add found newElment in removeitem 
-                                toRemoveAddedFoundItem = newElement;
-                                //element found and updated, so exit from loop
-                                break;
                             }
-                            
+                            matchingElementFound = true;
+
+                            var mathchedItemIndex = DeltaViewElements.IndexOf(DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)).FirstOrDefault());
+                            var item = ConvertElementToDelta(deletedElement, eDeltaStatus.Changed, deletedElement.ElementGroup, false, "Property Changed");
+                            item.Properties = deltaControlProp;
+                            if (mathchedItemIndex != -1)
+                                DeltaViewElements[mathchedItemIndex] = item;
+
+                            // add found newElment in removeitem 
+                            toRemoveAddedFoundItem = newElement;
+                            //element found and updated, so exit from loop
+                            break;
+
                         }
 
                     }
