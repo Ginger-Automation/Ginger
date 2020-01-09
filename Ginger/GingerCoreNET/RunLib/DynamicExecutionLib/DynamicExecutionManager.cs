@@ -409,7 +409,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlow = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow();
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
-                    businessFlow.ID = businessFlowRun.Guid;
+                    businessFlow.ID = businessFlowRun.BusinessFlowGuid;//probably need to go with BusinessFlowInstanceGuid to support multi BF's from same type
                     businessFlow.Active = businessFlowRun.BusinessFlowIsActive;
                     if (businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
                     {
@@ -501,7 +501,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static ExecutionConfiguration LoadDynamicExecutionFromJSON(string content)
         {
-            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content);
+            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content, typeof(ExecutionConfiguration));
         }
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, Runset dynamicRunsetConfigs)
@@ -825,22 +825,37 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 if (id.Item2 != null && id.Item2 != Guid.Empty)
                 {
-                    item = repoLibrary.Where(x => (Guid)(typeof(T).GetField(id.Item1).GetValue(x)) == id.Item2).FirstOrDefault();
-                }
-                else if (!string.IsNullOrEmpty(name.Item2))
-                {
-                    item = repoLibrary.Where(x => typeof(T).GetField(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower()).FirstOrDefault();
+                    if (typeof(T).GetProperty(id.Item1) != null)
+                    {
+                        item = repoLibrary.Where(x => (Guid)(typeof(T).GetProperty(id.Item1).GetValue(x)) == id.Item2).FirstOrDefault();
+                    }
+                    else if (typeof(T).GetField(id.Item1) != null)
+                    {
+                        item = repoLibrary.Where(x => (Guid)(typeof(T).GetField(id.Item1).GetValue(x)) == id.Item2).FirstOrDefault();
+                    }
                 }
 
-                if (item == null)
+                if (item == null && !string.IsNullOrEmpty(name.Item2))
                 {
+                    if (typeof(T).GetProperty(name.Item1) != null)
+                    {
+                        item = repoLibrary.Where(x => typeof(T).GetProperty(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower()).FirstOrDefault();
+                    }
+                    else if (typeof(T).GetField(name.Item1) != null)
+                    {
+                        item = repoLibrary.Where(x => typeof(T).GetField(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower()).FirstOrDefault();
+                    }
+                }
+
+                if (item != null)
+                {
+                    return item;
+                }
+                else
+                {                    
                     string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(T), name.Item2.ToLower(), id.Item2);
                     Reporter.ToLog(eLogLevel.ERROR, error);
                     throw new Exception(error);
-                }
-                else
-                {
-                    return item;
                 }
             }
             catch (Exception ex)

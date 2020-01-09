@@ -59,7 +59,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             FileType = fileType;
         }
 
-        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             if (FileType == eFileType.JSON)
             {
@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
             if(FileType == eFileType.JSON)
             {
@@ -93,16 +93,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
                 cliHelper.Solution = exeConfiguration.SolutionLocalPath;
-                cliHelper.ShowAutoRunWindow = exeConfiguration.ShowAutoRunWindow;
-
-                Runset runset = exeConfiguration.Runset;
-                cliHelper.Env = runset.Environment;
-                if (runset.RunAnalyzer != null)
-                {
-                    cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
-                }
-
-                DynamicExecutionManager.CreateUpdateRunSetFromJSON(runsetExecutor, runset);
+                cliHelper.ShowAutoRunWindow = exeConfiguration.ShowAutoRunWindow;                
             }
             else
             {
@@ -122,12 +113,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                 }
                 cliHelper.Solution = dynamicExecution.SolutionDetails.Path;
-                cliHelper.ShowAutoRunWindow = dynamicExecution.ShowAutoRunWindow;
+                cliHelper.ShowAutoRunWindow = dynamicExecution.ShowAutoRunWindow;               
+            }
+        }
 
+        public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        {
+            if (FileType == eFileType.JSON)
+            {
+                //Dynamic JSON
+                ExecutionConfiguration exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                Runset runset = exeConfiguration.Runset;
+                cliHelper.Env = runset.Environment;
+                if (runset.RunAnalyzer != null)
+                {
+                    cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
+                }
+                DynamicExecutionManager.CreateUpdateRunSetFromJSON(runsetExecutor, runset);
+            }
+            else
+            {
+                //Dynamic XML
+                DynamicGingerExecution dynamicExecution = DynamicExecutionManager.LoadDynamicExecutionFromXML(content);
                 AddRunset addRunset = dynamicExecution.AddRunsets[0];//for now supporting only one Run set execution
                 cliHelper.Env = addRunset.Environment;
                 cliHelper.RunAnalyzer = addRunset.RunAnalyzer;
-
                 DynamicExecutionManager.CreateRunSetFromXML(runsetExecutor, addRunset);
             }
         }

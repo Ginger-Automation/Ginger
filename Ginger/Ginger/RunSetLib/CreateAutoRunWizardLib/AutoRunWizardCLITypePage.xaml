@@ -26,7 +26,7 @@
                 <RadioButton x:Name="xConfigRadioButton" GroupName="cliType" Margin="5" Checked="xConfigRadioButton_Checked" Style="{StaticResource $InputRadioButtonStyle}">Config</RadioButton>
                 <StackPanel Orientation="Horizontal">
                     <RadioButton x:Name="xDynamicRadioButton" GroupName="cliType" Checked="XDynamicRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Dynamic</RadioButton>
-                    <ComboBox x:Name="xDynamicFileTypeCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="30" Margin="5,0,0,0" VerticalAlignment="Center" SelectionChanged="xDynamicFileTypeCombo_SelectionChanged" Visibility="{Binding IsChecked, ElementName=xDynamicRadioButton, Converter={StaticResource b2v}}"/>
+                    <ComboBox x:Name="xDynamicFileTypeCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Width="30" Margin="5,0,0,0" VerticalAlignment="Center" DropDownClosed="xDynamicFileTypeCombo_DropDownClosed"  Visibility="{Binding IsChecked, ElementName=xDynamicRadioButton, Converter={StaticResource b2v}}"/>
                 </StackPanel>
                 <RadioButton x:Name="xScriptRadioButton" GroupName="cliType" Checked="XScriptRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Script</RadioButton>
                 <RadioButton x:Name="xParametersRadioButton" GroupName="cliType" Checked="XParametersRadioButton_Checked" Margin="5" Style="{StaticResource $InputRadioButtonStyle}">Arguments</RadioButton>

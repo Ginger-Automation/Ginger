@@ -163,9 +163,9 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             xConfigFileSettingsPnl.Visibility = Visibility.Collapsed;
         }
 
-        private void xDynamicFileTypeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void xDynamicFileTypeCombo_DropDownClosed(object sender, EventArgs e)
         {
-            ShowContent(); 
+            ShowContent();
         }
 
         //CLIExcel mCLIExcel;
