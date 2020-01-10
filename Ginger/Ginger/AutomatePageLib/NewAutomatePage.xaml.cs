@@ -935,7 +935,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction :" + ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction" , ex);
             }
             finally
             {
