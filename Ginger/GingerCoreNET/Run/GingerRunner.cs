@@ -882,23 +882,23 @@ namespace Ginger.Run
             return agentsNames;
         }
 
-        public async Task<int> RunActionAsync(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
+        public async Task<int> RunActionAsync(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction = true)
         {
             NotifyExecutionContext(AutomationTabContext.ActionRun);
             var result = await Task.Run(() => {
-                RunAction(act, checkIfActionAllowedToRun, standaloneExecution);
+                RunAction(act, checkIfActionAllowedToRun, moveToNextAction);
                 return 1;   
             });
             return result;
         }
 
         
-        public void RunAction(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution = false)
+        public void RunAction(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction = true)
         {            
             try
             {
                 //set Runner details if running in stand alone mode (Automate tab)
-                if (standaloneExecution)
+                if (moveToNextAction)
                 {
                     IsRunning = true;
                     mStopRun = false;
@@ -909,7 +909,7 @@ namespace Ginger.Run
 
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
-                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);
+                RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,moveToNextAction);
                 if (act.EnableRetryMechanism & mStopRun == false)
                 {
                     while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed && act.RetryMechanismCount < act.MaxNumberOfRetries & mStopRun == false)
@@ -925,7 +925,7 @@ namespace Ginger.Run
                             break;
 
                         //Run Again
-                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,standaloneExecution);                        
+                        RunActionWithRetryMechanism(act, checkIfActionAllowedToRun,moveToNextAction);                        
                     }
                 }
                 if (mStopRun)
@@ -939,7 +939,7 @@ namespace Ginger.Run
             }
             finally
             {
-                if (standaloneExecution)
+                if (moveToNextAction)
                 {
                     IsRunning = false;
                 }                          
@@ -973,7 +973,7 @@ namespace Ginger.Run
             }
         }
 
-        private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool standaloneExecution=false)
+        private void RunActionWithRetryMechanism(Act act, bool checkIfActionAllowedToRun = true, bool moveToNextAction=true)
         {
             try
             {
@@ -1094,7 +1094,7 @@ namespace Ginger.Run
                 Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
                 Act action = act;
 
-                DoFlowControl(act, standaloneExecution);
+                DoFlowControl(act, moveToNextAction);
                 DoStatusConversion(act);   //does it need to be here or earlier?
             }
             finally
@@ -2071,12 +2071,12 @@ namespace Ginger.Run
             act.Reset();
         }
 
-        private void DoFlowControl(Act act, bool standaloneExecution= false)
+        private void DoFlowControl(Act act, bool moveToNextAction= true)
         {            
             try
             {                                                 
                 //TODO: on pass, on fail etc...
-                bool IsStopLoop = false;                                
+                bool isFlowChange = false;                                
 
                 foreach (FlowControl FC in act.FlowControls)
                 {
@@ -2118,44 +2118,44 @@ namespace Ginger.Run
                                 break;
                             case eFlowControlAction.GoToAction:
                                 if (GotoAction(FC, act))
-                                    IsStopLoop = true;
+                                    isFlowChange = true;
                                 else
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case eFlowControlAction.GoToNextAction:
                                 if (FlowControlGotoNextAction(act))
-                                    IsStopLoop = true;
+                                    isFlowChange = true;
                                 else
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case eFlowControlAction.GoToActivity:
                             case eFlowControlAction.GoToActivityByName:
                                 if (GotoActivity(FC, act))
-                                    IsStopLoop = true;
+                                    isFlowChange = true;
                                 else
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case eFlowControlAction.GoToNextActivity:
                                 if (FlowControlGotoNextActivity(act))
-                                    IsStopLoop = true;
+                                    isFlowChange = true;
                                 else
                                     FC.Status = eStatus.Action_Execution_Failed;
                                 break;
                             case eFlowControlAction.RerunAction:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
-                                IsStopLoop = true;
+                                isFlowChange = true;
                                 break;
                             case eFlowControlAction.RerunActivity:
                                 ResetActivity(CurrentBusinessFlow.CurrentActivity);
                                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts[0];
-                                IsStopLoop = true;
+                                isFlowChange = true;
                                 break;
                             case eFlowControlAction.StopBusinessFlow:
                                 mStopBusinessFlow = true;
                                 CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
                                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
-                                IsStopLoop = true;
+                                isFlowChange = true;
                                 break;
                             case eFlowControlAction.FailActionAndStopBusinessFlow:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
@@ -2165,11 +2165,11 @@ namespace Ginger.Run
                                 CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
                                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
-                                IsStopLoop = true;
+                                isFlowChange = true;
                                 break;
                             case eFlowControlAction.StopRun:
                                 StopRun();
-                                IsStopLoop = true;
+                                isFlowChange = true;
                                 break;
                             case eFlowControlAction.SetVariableValue:
                                 try
@@ -2201,7 +2201,7 @@ namespace Ginger.Run
                                 try
                                 {
                                     if (RunSharedRepositoryActivity(FC))
-                                        IsStopLoop = true;
+                                        isFlowChange = true;
                                     else
                                         FC.Status = eStatus.Action_Execution_Failed;
                                 }
@@ -2228,16 +2228,16 @@ namespace Ginger.Run
                     }
 
                     // Go out the foreach in case we have a goto so no need to process the rest of FCs
-                    if (IsStopLoop) break;
+                    if (isFlowChange) break;
                 }
                 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
-                if (!IsStopLoop) 
+                if (!isFlowChange) 
                 {
                     if (!IsLastActionOfActivity())
                     {
-                        if (!standaloneExecution)// if running single action we don't want to move to next action
+                        if (moveToNextAction )// if running single action we don't want to move to next action
                         {
                             // if execution has been stopped externally, stop at current action
                             if (!mStopRun)
