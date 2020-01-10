@@ -834,7 +834,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             catch (Exception ex)
             {
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, "Exception during flow execution from automate tab", ex);
             }
             finally
             {
