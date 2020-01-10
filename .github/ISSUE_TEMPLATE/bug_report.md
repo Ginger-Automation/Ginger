@@ -1,35 +1,19 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+Bug : 
+Password encryption works fine during execution, but after generating the report it gets displayed without encryption.
 
----
+To Reproduce Steps to reproduce the behavior:
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+1. Go to add parameters and select Parameter Password String
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+2. Assign the value to parameter and select generate and check if it is encrypted
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+3. Now run the business flow
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+4. After completion of the execution , click on generate reports and go to the destination where results are stored.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+5. In execution details check for the details
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+Expected behavior : Password in the report should be displayed in encrypted form
 
-**Additional context**
-Add any other context about the problem here.
+Actual : Password is not encrypted.
