@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -25,7 +25,9 @@ namespace Amdocs.Ginger.Common.InterfacesLib
     public interface IApplicationAgent
     {
         string AgentName { get; set; }
+        Guid AgentID { get; set; }
         IAgent Agent { get; set; }
         string AppName { get; }
+        Guid AppID { get; }
     }
 }

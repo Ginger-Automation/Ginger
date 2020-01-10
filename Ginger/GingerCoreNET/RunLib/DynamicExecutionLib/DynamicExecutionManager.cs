@@ -41,6 +41,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
     public class DynamicExecutionManager
     {
+
         #region XML
         public static string CreateDynamicRunSetXML(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
@@ -335,7 +336,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         }
         #endregion XML
 
-
         #region JSON
         public static string CreateDynamicRunSetJSON(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
@@ -402,7 +402,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                 foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                 {
-                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.Agent.Guid, ApplicationName = applicationAgent.AppName, ApplicationID = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=>x.AppName == applicationAgent.AppName).FirstOrDefault().Guid});
+                    runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID});
                 }
 
                 foreach (BusinessFlowRun businessFlowRun in gingerRunner.BusinessFlowsRunList)
@@ -496,12 +496,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.Runset = runset;
 
             //serilize object to JSON String
-            return JsonConvert.SerializeObject(executionConfig);
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            return JsonConvert.SerializeObject(executionConfig, jsonSerializerSettings);
         }
 
         public static ExecutionConfiguration LoadDynamicExecutionFromJSON(string content)
         {
-            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content, typeof(ExecutionConfiguration));
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content, typeof(ExecutionConfiguration), jsonSerializerSettings);
         }
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, Runset dynamicRunsetConfigs)
@@ -567,7 +571,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     if (dynamicRunsetConfigs.Exist)
                     {
                         appAgent = (ApplicationAgent)FindItemByIDAndName<IApplicationAgent>(
-                                                new Tuple<string, Guid?>(nameof(ApplicationAgent.Guid), appAgentConfig.ApplicationID),
+                                                new Tuple<string, Guid?>(nameof(IApplicationAgent.AppID), appAgentConfig.ApplicationID),
                                                 new Tuple<string, string>(nameof(IApplicationAgent.AppName), appAgentConfig.ApplicationName),
                                                 gingerRunner.ApplicationAgents);
                     }
@@ -575,10 +579,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         appAgent = new ApplicationAgent();
                         appAgent.AppName = appAgentConfig.ApplicationName;
+                        if (appAgentConfig.ApplicationID != null)
+                        {
+                            appAgent.AppID = (Guid)appAgentConfig.ApplicationID;
+                        }
                         gingerRunner.ApplicationAgents.Add(appAgent);
                     }
 
                     appAgent.AgentName = appAgentConfig.AgentName;
+                    if (appAgentConfig.AgentID != null)
+                    {
+                        appAgent.AgentID = (Guid)appAgentConfig.AgentID;
+                    }
                 }
 
                 //Add or Update BFs
@@ -670,7 +682,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 foreach (Operation runsetOperationConfig in dynamicRunsetConfigs.Operations)
                 {
-                    if (runsetOperationConfig is MailReportOperation)
+                    if (runsetOperationConfig.GetType().GetProperty(nameof(MailReportOperation.MailTo)) != null)
                     {
                         MailReportOperation runsetOperationConfigMail = (MailReportOperation)runsetOperationConfig;
                         RunSetActionHTMLReportSendEmail mailOperation;
@@ -873,15 +885,5 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                    || content.StartsWith("[") && content.EndsWith("]");
         }
         #endregion JSON
-
-
-        //public static void Save(DynamicGingerExecution dynamicRunSet, string fileName)
-        //{
-        //    System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(DynamicGingerExecution));
-        //    System.IO.FileStream file = System.IO.File.Create(fileName);
-        //    writer.Serialize(file, dynamicRunSet);
-        //    file.Close();
-        //}        
-       
     }
 }
