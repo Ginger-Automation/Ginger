@@ -346,7 +346,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
                 executionConfig.SolutionScmDetails = new ScmDetails();
-                executionConfig.SolutionScmDetails.SCMType = solution.SourceControl.GetSourceControlType.ToString();
+                executionConfig.SolutionScmDetails.SCMType = (ScmDetails.eSCMType)Enum.Parse(typeof(ScmDetails.eSCMType), solution.SourceControl.GetSourceControlType.ToString(), true);                
                 if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.SVN)//added for supporting Jenkins way of config creation- need to improve it
                 {
                     string modifiedURI = solution.SourceControl.SourceControlURL.TrimEnd(new char[] { '/' });
@@ -386,6 +386,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunAnalyzer = cliHelper.RunAnalyzer;
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
 
+            if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            {
+                runset.Runners = new List<Runner>();
+            }
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
             {
                 Runner runner = new Runner();
@@ -397,14 +401,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
                 {
-                    runner.OnFailureRunOption = gingerRunner.RunOption.ToString();
+                    runner.OnFailureRunOption = (Runner.eOnFailureRunOption)Enum.Parse(typeof(Runner.eOnFailureRunOption), gingerRunner.RunOption.ToString(), true);                    
                 }
 
+                if (gingerRunner.ApplicationAgents.Count > 0)
+                {
+                    runner.AppAgentMappings = new List<AppAgentMapping>();
+                }
                 foreach (ApplicationAgent applicationAgent in gingerRunner.ApplicationAgents)
                 {
                     runner.AppAgentMappings.Add(new AppAgentMapping() { AgentName = applicationAgent.AgentName, AgentID = applicationAgent.AgentID, ApplicationName = applicationAgent.AppName, ApplicationID = applicationAgent.AppID});
                 }
 
+                if (gingerRunner.BusinessFlowsRunList.Count > 0)
+                {
+                    runner.BusinessFlows = new List<GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow>();
+                }
                 foreach (BusinessFlowRun businessFlowRun in gingerRunner.BusinessFlowsRunList)
                 {
                     GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlow = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow();
@@ -439,6 +451,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runset.Runners.Add(runner);
             }
 
+            if (runsetExecutor.RunSetConfig.RunSetActions.Count > 0)
+            {
+                runset.Operations = new List<Operation>();
+            }
             foreach (RunSetActionBase runSetOperation in runsetExecutor.RunSetConfig.RunSetActions)
             {
                 if (runSetOperation is RunSetActionHTMLReportSendEmail)
@@ -447,33 +463,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     MailReportOperation mailReportConfig = new MailReportOperation();
                     mailReportConfig.Name = runsetMailReport.Name;
                     mailReportConfig.ID = runsetMailReport.Guid;
-                    mailReportConfig.Condition = runsetMailReport.Condition.ToString();
-                    mailReportConfig.RunAt = runsetMailReport.RunAt.ToString();
-
-                    mailReportConfig.MailFrom = runsetMailReport.MailFrom;
-                    mailReportConfig.MailTo = runsetMailReport.MailTo;
-                    mailReportConfig.MailCC = runsetMailReport.MailCC;
-
-                    mailReportConfig.Subject = runsetMailReport.Subject;
-                    mailReportConfig.Comments = runsetMailReport.Comments;
+                    mailReportConfig.Condition = (Operation.eOperationRunCondition)Enum.Parse(typeof(Operation.eOperationRunCondition), runsetMailReport.Condition.ToString(), true);
+                    mailReportConfig.RunAt = (Operation.eOperationRunAt)Enum.Parse(typeof(Operation.eOperationRunAt), runsetMailReport.RunAt.ToString(), true);
 
                     if (runsetMailReport.Email.EmailMethod == GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK)
                     {
-                        mailReportConfig.SendViaOutlook = true;
+                        mailReportConfig.MailSettings.EmailMethod = SendMailSettings.eEmailMethod.OUTLOOK;
                     }
                     else
                     {
-                        mailReportConfig.SmtpDetails = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.RunsetOperations.SmtpDetails();
-                        mailReportConfig.SmtpDetails.Server = runsetMailReport.Email.SMTPMailHost;
-                        mailReportConfig.SmtpDetails.Port = runsetMailReport.Email.SMTPPort.ToString();
-                        mailReportConfig.SmtpDetails.EnableSSL = runsetMailReport.Email.EnableSSL.ToString();
+                        mailReportConfig.MailSettings.SmtpDetails = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.RunsetOperations.SmtpDetails();
+                        mailReportConfig.MailSettings.SmtpDetails.Server = runsetMailReport.Email.SMTPMailHost;
+                        mailReportConfig.MailSettings.SmtpDetails.Port = runsetMailReport.Email.SMTPPort.ToString();
+                        mailReportConfig.MailSettings.SmtpDetails.EnableSSL = runsetMailReport.Email.EnableSSL;
                         if (runsetMailReport.Email.ConfigureCredential)
                         {
-                            mailReportConfig.SmtpDetails.User = runsetMailReport.Email.SMTPUser;
-                            mailReportConfig.SmtpDetails.Password = runsetMailReport.Email.SMTPPass;
+                            mailReportConfig.MailSettings.SmtpDetails.User = runsetMailReport.Email.SMTPUser;
+                            mailReportConfig.MailSettings.SmtpDetails.Password = runsetMailReport.Email.SMTPPass;
                         }
                     }
+                    mailReportConfig.MailSettings.MailFrom = runsetMailReport.MailFrom;
+                    mailReportConfig.MailSettings.MailTo = runsetMailReport.MailTo;
+                    mailReportConfig.MailSettings.MailCC = runsetMailReport.MailCC;
+                    mailReportConfig.MailSettings.Subject = runsetMailReport.Subject;
 
+                    mailReportConfig.Comments = runsetMailReport.Comments;
                     if (runsetMailReport.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault() != null)
                     {
                         mailReportConfig.IncludeAttachmentReport = true;
@@ -498,6 +512,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             //serilize object to JSON String
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            jsonSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
             return JsonConvert.SerializeObject(executionConfig, jsonSerializerSettings);
         }
 
@@ -505,6 +520,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         {
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            jsonSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
             return (ExecutionConfiguration)JsonConvert.DeserializeObject(content, typeof(ExecutionConfiguration), jsonSerializerSettings);
         }
 
@@ -537,143 +553,157 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             }
 
             //Add or Update Runners
-            foreach (Runner runnerConfig in dynamicRunsetConfigs.Runners)
+            if (dynamicRunsetConfigs.Runners != null)
             {
-                GingerRunner gingerRunner = null;
-                if (dynamicRunsetConfigs.Exist)
+                foreach (Runner runnerConfig in dynamicRunsetConfigs.Runners)
                 {
-                    gingerRunner = FindItemByIDAndName<GingerRunner>(
-                        new Tuple<string, Guid?>(nameof(GingerRunner.Guid), runnerConfig.ID),
-                        new Tuple<string, string>(nameof(GingerRunner.Name), runnerConfig.Name),
-                        runSetConfig.GingerRunners);
-                }
-                else
-                {
-                    gingerRunner = new GingerRunner();
-                    gingerRunner.Name = runnerConfig.Name;
-                }
-
-                if (!string.IsNullOrEmpty(runnerConfig.OnFailureRunOption))
-                {
-                    gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), runnerConfig.OnFailureRunOption, true);
-                }
-
-                if (!string.IsNullOrEmpty(runnerConfig.Environment))
-                {
-                    gingerRunner.UseSpecificEnvironment = true;
-                    gingerRunner.SpecificEnvironmentName = runnerConfig.Environment;
-                }
-
-                //Add or Update Agents mapping
-                foreach (AppAgentMapping appAgentConfig in runnerConfig.AppAgentMappings)
-                {
-                    GingerCore.Platforms.ApplicationAgent appAgent = null;
+                    GingerRunner gingerRunner = null;
                     if (dynamicRunsetConfigs.Exist)
                     {
-                        appAgent = (ApplicationAgent)FindItemByIDAndName<IApplicationAgent>(
-                                                new Tuple<string, Guid?>(nameof(IApplicationAgent.AppID), appAgentConfig.ApplicationID),
-                                                new Tuple<string, string>(nameof(IApplicationAgent.AppName), appAgentConfig.ApplicationName),
-                                                gingerRunner.ApplicationAgents);
+                        gingerRunner = FindItemByIDAndName<GingerRunner>(
+                            new Tuple<string, Guid?>(nameof(GingerRunner.Guid), runnerConfig.ID),
+                            new Tuple<string, string>(nameof(GingerRunner.Name), runnerConfig.Name),
+                            runSetConfig.GingerRunners);
                     }
                     else
                     {
-                        appAgent = new ApplicationAgent();
-                        appAgent.AppName = appAgentConfig.ApplicationName;
-                        if (appAgentConfig.ApplicationID != null)
+                        gingerRunner = new GingerRunner();
+                        gingerRunner.Name = runnerConfig.Name;
+                    }
+
+                    if (!string.IsNullOrEmpty(runnerConfig.Environment))
+                    {
+                        gingerRunner.UseSpecificEnvironment = true;
+                        gingerRunner.SpecificEnvironmentName = runnerConfig.Environment;
+                    }
+
+                    if (runnerConfig.OnFailureRunOption != null)
+                    {
+                        gingerRunner.RunOption = (GingerRunner.eRunOptions)Enum.Parse(typeof(GingerRunner.eRunOptions), runnerConfig.OnFailureRunOption.ToString(), true);
+                    }
+
+                    //Add or Update Agents mapping
+                    if (runnerConfig.AppAgentMappings != null)
+                    {
+                        foreach (AppAgentMapping appAgentConfig in runnerConfig.AppAgentMappings)
                         {
-                            appAgent.AppID = (Guid)appAgentConfig.ApplicationID;
-                        }
-                        gingerRunner.ApplicationAgents.Add(appAgent);
-                    }
-
-                    appAgent.AgentName = appAgentConfig.AgentName;
-                    if (appAgentConfig.AgentID != null)
-                    {
-                        appAgent.AgentID = (Guid)appAgentConfig.AgentID;
-                    }
-                }
-
-                //Add or Update BFs
-                foreach (GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlowConfig in runnerConfig.BusinessFlows)
-                {
-                    BusinessFlowRun businessFlowRun = null;
-                    if (dynamicRunsetConfigs.Exist)
-                    {
-                        businessFlowRun = FindItemByIDAndName<BusinessFlowRun>(
-                                        new Tuple<string, Guid?>(nameof(BusinessFlowRun.BusinessFlowGuid), businessFlowConfig.ID),
-                                        new Tuple<string, string>(nameof(BusinessFlowRun.BusinessFlowName), businessFlowConfig.Name),
-                                        gingerRunner.BusinessFlowsRunList);
-                    }
-                    else
-                    {
-                        businessFlowRun = new BusinessFlowRun();
-                        businessFlowRun.BusinessFlowName = businessFlowConfig.Name;
-                    }
-
-                    if (businessFlowConfig.Active != null)
-                    {
-                        businessFlowRun.BusinessFlowIsActive = (bool)businessFlowConfig.Active;
-                    }
-                    else
-                    {
-                        businessFlowRun.BusinessFlowIsActive = true;
-                    }
-
-                    //Set/Update BF Input Variables
-                    if (businessFlowConfig.InputValues != null)
-                    {
-                        foreach (InputValue inputValueConfig in businessFlowConfig.InputValues)
-                        {
-                            VariableBase inputVar = null;
+                            GingerCore.Platforms.ApplicationAgent appAgent = null;
                             if (dynamicRunsetConfigs.Exist)
                             {
-                                inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == inputValueConfig.VariableParentID && v.Guid == inputValueConfig.VariableID).FirstOrDefault();
-                                if (inputVar == null)
+                                appAgent = (ApplicationAgent)FindItemByIDAndName<IApplicationAgent>(
+                                                        new Tuple<string, Guid?>(nameof(IApplicationAgent.AppID), appAgentConfig.ApplicationID),
+                                                        new Tuple<string, string>(nameof(IApplicationAgent.AppName), appAgentConfig.ApplicationName),
+                                                        gingerRunner.ApplicationAgents);
+                            }
+                            else
+                            {
+                                appAgent = new ApplicationAgent();
+                                appAgent.AppName = appAgentConfig.ApplicationName;
+                                if (appAgentConfig.ApplicationID != null)
                                 {
-                                    inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentName == inputValueConfig.VariableParentName && v.Name == inputValueConfig.VariableName).FirstOrDefault();
-                                    if (inputVar == null)
-                                    {
-                                        inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.Name == inputValueConfig.VariableName).FirstOrDefault();
-                                    }
+                                    appAgent.AppID = (Guid)appAgentConfig.ApplicationID;
                                 }
-
-                                if (inputVar != null)
-                                {
-                                    inputVar.DiffrentFromOrigin = true;
-                                    inputVar.VarValChanged = true;
-                                    inputVar.Value = inputValueConfig.VariableCustomizedValue;
-                                }
+                                gingerRunner.ApplicationAgents.Add(appAgent);
                             }
 
-                            if (inputVar == null)
+                            appAgent.AgentName = appAgentConfig.AgentName;
+                            if (appAgentConfig.AgentID != null)
                             {
-                                inputVar = new VariableString();//type is no matter
-                                inputVar.DiffrentFromOrigin = true;
-                                inputVar.VarValChanged = true;
-                                inputVar.ParentName = inputValueConfig.VariableParentName;
-                                if (inputValueConfig.VariableParentID != null)
-                                {
-                                    inputVar.ParentGuid = (Guid)inputValueConfig.VariableParentID;
-                                }
-                                inputVar.Name = inputValueConfig.VariableName;
-                                if (inputValueConfig.VariableID != null)
-                                {
-                                    inputVar.Guid = (Guid)inputValueConfig.VariableID;
-                                }
-                                inputVar.Value = inputValueConfig.VariableCustomizedValue;
-                                businessFlowRun.BusinessFlowCustomizedRunVariables.Add(inputVar);
+                                appAgent.AgentID = (Guid)appAgentConfig.AgentID;
                             }
                         }
                     }
 
-                    if (!dynamicRunsetConfigs.Exist)
+                    //Add or Update BFs
+                    if (runnerConfig.BusinessFlows != null)
                     {
-                        gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
+                        foreach (GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlowConfig in runnerConfig.BusinessFlows)
+                        {
+                            BusinessFlowRun businessFlowRun = null;
+                            if (dynamicRunsetConfigs.Exist)
+                            {
+                                businessFlowRun = FindItemByIDAndName<BusinessFlowRun>(
+                                                new Tuple<string, Guid?>(nameof(BusinessFlowRun.BusinessFlowGuid), businessFlowConfig.ID),
+                                                new Tuple<string, string>(nameof(BusinessFlowRun.BusinessFlowName), businessFlowConfig.Name),
+                                                gingerRunner.BusinessFlowsRunList);
+                            }
+                            else
+                            {
+                                businessFlowRun = new BusinessFlowRun();
+                                businessFlowRun.BusinessFlowName = businessFlowConfig.Name;
+                                if (businessFlowConfig.ID != null)
+                                {
+                                    businessFlowRun.BusinessFlowGuid = (Guid)businessFlowConfig.ID;
+                                }
+                                businessFlowRun.BusinessFlowIsActive = true;
+                            }
+
+                            if (businessFlowConfig.Active != null)
+                            {
+                                businessFlowRun.BusinessFlowIsActive = (bool)businessFlowConfig.Active;
+                            }
+
+                            //Set/Update BF Input Variables
+                            if (businessFlowConfig.InputValues != null)
+                            {
+                                foreach (InputValue inputValueConfig in businessFlowConfig.InputValues)
+                                {
+                                    VariableBase inputVar = null;
+                                    if (dynamicRunsetConfigs.Exist)
+                                    {
+                                        inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == inputValueConfig.VariableParentID && v.Guid == inputValueConfig.VariableID).FirstOrDefault();
+                                        if (inputVar == null)
+                                        {
+                                            inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.Guid == inputValueConfig.VariableID).FirstOrDefault();
+                                            if (inputVar == null)
+                                            {
+                                                inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentName == inputValueConfig.VariableParentName && v.Name == inputValueConfig.VariableName).FirstOrDefault();
+                                                if (inputVar == null)
+                                                {
+                                                    inputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.Name == inputValueConfig.VariableName).FirstOrDefault();
+                                                }
+                                            }
+                                        }
+
+                                        if (inputVar != null)
+                                        {
+                                            inputVar.DiffrentFromOrigin = true;
+                                            inputVar.VarValChanged = true;
+                                            inputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                        }
+                                    }
+
+                                    if (inputVar == null)
+                                    {
+                                        inputVar = new VariableString();//type is not matter
+                                        inputVar.DiffrentFromOrigin = true;
+                                        inputVar.VarValChanged = true;
+                                        inputVar.ParentName = inputValueConfig.VariableParentName;
+                                        if (inputValueConfig.VariableParentID != null)
+                                        {
+                                            inputVar.ParentGuid = (Guid)inputValueConfig.VariableParentID;
+                                        }
+                                        inputVar.Name = inputValueConfig.VariableName;
+                                        if (inputValueConfig.VariableID != null)
+                                        {
+                                            inputVar.Guid = (Guid)inputValueConfig.VariableID;
+                                        }
+                                        inputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                        businessFlowRun.BusinessFlowCustomizedRunVariables.Add(inputVar);
+                                    }
+                                }
+                            }
+
+                            if (!dynamicRunsetConfigs.Exist)
+                            {
+                                gingerRunner.BusinessFlowsRunList.Add(businessFlowRun);
+                            }
+                        }
+                        if (!dynamicRunsetConfigs.Exist)
+                        {
+                            runSetConfig.GingerRunners.Add(gingerRunner);
+                        }
                     }
-                }
-                if (!dynamicRunsetConfigs.Exist)
-                {
-                    runSetConfig.GingerRunners.Add(gingerRunner);
                 }
             }
 
@@ -682,7 +712,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 foreach (Operation runsetOperationConfig in dynamicRunsetConfigs.Operations)
                 {
-                    if (runsetOperationConfig.GetType().GetProperty(nameof(MailReportOperation.MailTo)) != null)
+                    if (runsetOperationConfig is MailReportOperation)
                     {
                         MailReportOperation runsetOperationConfigMail = (MailReportOperation)runsetOperationConfig;
                         RunSetActionHTMLReportSendEmail mailOperation;
@@ -696,82 +726,92 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         else
                         {
                             mailOperation = new RunSetActionHTMLReportSendEmail();
+                            mailOperation.Name = runsetOperationConfigMail.Name;
                             mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
                             mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
                             mailOperation.Email.IsBodyHTML = true;
+                            mailOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+                            mailOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
                         }
                         if (runsetOperationConfigMail.Active != null)
                         {
                             mailOperation.Active = (bool)runsetOperationConfigMail.Active;
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.Name) == false)
+                        if (runsetOperationConfigMail.Condition != null)
                         {
-                            mailOperation.Name = runsetOperationConfigMail.Name;
+                            mailOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfigMail.Condition.ToString(), true);
                         }
-                        else
+                        if (runsetOperationConfigMail.RunAt != null)
                         {
-                            mailOperation.Name = "Dynamic Mail Report";
-                        }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.Condition) == false)
-                        {
-                            mailOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfigMail.Condition, true);
-                        }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.RunAt) == false)
-                        {
-                            mailOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfigMail.RunAt, true);
-                        }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailFrom) == false)
-                        {
-                            mailOperation.MailFrom = runsetOperationConfigMail.MailFrom;
-                            mailOperation.Email.MailFrom = runsetOperationConfigMail.MailFrom;
+                            mailOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfigMail.RunAt.ToString(), true);
                         }
 
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailTo) == false)
+                        if (runsetOperationConfigMail.MailSettings.EmailMethod != null)
                         {
-                            mailOperation.MailTo = runsetOperationConfigMail.MailTo;
-                            mailOperation.Email.MailTo = runsetOperationConfigMail.MailTo;
+                            if (runsetOperationConfigMail.MailSettings.EmailMethod == SendMailSettings.eEmailMethod.OUTLOOK)
+                            {
+                                mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK;
+                            }
+                            else
+                            {
+                                mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.SMTP;
+                                if (runsetOperationConfigMail.MailSettings.SmtpDetails != null)
+                                {
+                                    if (runsetOperationConfigMail.MailSettings.SmtpDetails.Server != null)
+                                    {
+                                        mailOperation.Email.SMTPMailHost = runsetOperationConfigMail.MailSettings.SmtpDetails.Server;
+                                    }
+                                    if (runsetOperationConfigMail.MailSettings.SmtpDetails.Port != null)
+                                    {
+                                        mailOperation.Email.SMTPPort = int.Parse(runsetOperationConfigMail.MailSettings.SmtpDetails.Port);
+                                    }
+                                    if (runsetOperationConfigMail.MailSettings.SmtpDetails.EnableSSL != null)
+                                    {
+                                        mailOperation.Email.EnableSSL = (bool)runsetOperationConfigMail.MailSettings.SmtpDetails.EnableSSL;
+                                    }
+                                    if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.SmtpDetails.User) == false)
+                                    {
+                                        mailOperation.Email.ConfigureCredential = true;
+                                        mailOperation.Email.SMTPUser = runsetOperationConfigMail.MailSettings.SmtpDetails.User;
+                                        mailOperation.Email.SMTPPass = runsetOperationConfigMail.MailSettings.SmtpDetails.Password;
+                                    }
+                                }
+                            }
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailCC) == false)
+                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.MailFrom) == false)
                         {
-                            mailOperation.MailCC = runsetOperationConfigMail.MailCC;
+                            mailOperation.MailFrom = runsetOperationConfigMail.MailSettings.MailFrom;
+                            mailOperation.Email.MailFrom = runsetOperationConfigMail.MailSettings.MailFrom;
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.Subject) == false)
+                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.MailTo) == false)
                         {
-                            mailOperation.Subject = runsetOperationConfigMail.Subject;
-                            mailOperation.Email.Subject = runsetOperationConfigMail.Subject;
+                            mailOperation.MailTo = runsetOperationConfigMail.MailSettings.MailTo;
+                            mailOperation.Email.MailTo = runsetOperationConfigMail.MailSettings.MailTo;
                         }
+                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.MailCC) == false)
+                        {
+                            mailOperation.MailCC = runsetOperationConfigMail.MailSettings.MailCC;
+                        }
+                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.Subject) == false)
+                        {
+                            mailOperation.Subject = runsetOperationConfigMail.MailSettings.Subject;
+                            mailOperation.Email.Subject = runsetOperationConfigMail.MailSettings.Subject;
+                        }
+
                         if (string.IsNullOrEmpty(runsetOperationConfigMail.Comments) == false)
                         {
                             mailOperation.Comments = runsetOperationConfigMail.Comments;
                         }
-
-                        if (runsetOperationConfigMail.SendViaOutlook != null && (bool)runsetOperationConfigMail.SendViaOutlook == true)
-                        {
-                            mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK;
-                        }
-                        else
-                        {
-                            mailOperation.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.SMTP;
-                            if (runsetOperationConfigMail.SmtpDetails != null)
-                            {
-                                mailOperation.Email.SMTPMailHost = runsetOperationConfigMail.SmtpDetails.Server;
-                                mailOperation.Email.SMTPPort = int.Parse(runsetOperationConfigMail.SmtpDetails.Port);
-                                mailOperation.Email.EnableSSL = bool.Parse(runsetOperationConfigMail.SmtpDetails.EnableSSL);
-                                if (string.IsNullOrEmpty(runsetOperationConfigMail.SmtpDetails.User) == false)
-                                {
-                                    mailOperation.Email.ConfigureCredential = true;
-                                    mailOperation.Email.SMTPUser = runsetOperationConfigMail.SmtpDetails.User;
-                                    mailOperation.Email.SMTPPass = runsetOperationConfigMail.SmtpDetails.Password;
-                                }
-                            }
-                        }
-
                         if (runsetOperationConfigMail.IncludeAttachmentReport != null && runsetOperationConfigMail.IncludeAttachmentReport == true)
                         {
                             EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
                             reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
                             reportAttachment.ZipIt = true;
                             mailOperation.EmailAttachments.Add(reportAttachment);
+                        }
+                        else
+                        {
+                            mailOperation.EmailAttachments.Clear();
                         }
 
                         if (dynamicRunsetConfigs.Exist)
@@ -792,29 +832,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         else
                         {
-
                             jsonReportOperation = new RunSetActionJSONSummary();
+                            jsonReportOperation.Name = runsetOperationConfigJsonRepot.Name;
+                            jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+                            jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
                         }
 
                         if (runsetOperationConfigJsonRepot.Active != null)
                         {
                             jsonReportOperation.Active = (bool)runsetOperationConfigJsonRepot.Active;
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigJsonRepot.Name) == false)
+                        if (runsetOperationConfigJsonRepot.Condition != null)
                         {
-                            jsonReportOperation.Name = runsetOperationConfigJsonRepot.Name;
+                            jsonReportOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfigJsonRepot.Condition.ToString(), true);
                         }
-                        else
+                        if (runsetOperationConfigJsonRepot.RunAt != null)
                         {
-                            jsonReportOperation.Name = "Dynamic Json Report";
-                        }
-                        if (string.IsNullOrEmpty(runsetOperationConfigJsonRepot.Condition) == false)
-                        {
-                            jsonReportOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfigJsonRepot.Condition, true);
-                        }
-                        if (string.IsNullOrEmpty(runsetOperationConfigJsonRepot.RunAt) == false)
-                        {
-                            jsonReportOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfigJsonRepot.RunAt, true);
+                            jsonReportOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfigJsonRepot.RunAt.ToString(), true);
                         }
 
                         if (dynamicRunsetConfigs.Exist)

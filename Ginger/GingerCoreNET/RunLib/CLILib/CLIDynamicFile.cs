@@ -16,10 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerExecuterService.Contracts.V1.ExecutionConfigurations;
+using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -81,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 ExecutionConfiguration exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
-                    cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType);
+                    cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType.ToString());
                     cliHelper.SetSourceControlURL(exeConfiguration.SolutionScmDetails.SolutionRepositoryUrl);
                     cliHelper.SetSourceControlUser(exeConfiguration.SolutionScmDetails.User);
                     cliHelper.SetSourceControlPassword(exeConfiguration.SolutionScmDetails.Password);
@@ -92,8 +94,35 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         cliHelper.SourceControlProxyPort(exeConfiguration.SolutionScmDetails.ProxyPort);
                     }
                 }
-                cliHelper.Solution = exeConfiguration.SolutionLocalPath;
-                cliHelper.ShowAutoRunWindow = exeConfiguration.ShowAutoRunWindow;                
+                if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
+                {
+                    if (System.IO.Directory.Exists(exeConfiguration.SolutionLocalPath))
+                    {
+                        cliHelper.Solution = exeConfiguration.SolutionLocalPath;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Solution local path: '{0}' was not found so creating it", exeConfiguration.SolutionLocalPath));
+                        try
+                        {
+                            System.IO.Directory.CreateDirectory(exeConfiguration.SolutionLocalPath);
+                            cliHelper.Solution = exeConfiguration.SolutionLocalPath;
+                        }
+                        catch(Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Falied to create the Solution local path: '{0}'", exeConfiguration.SolutionLocalPath), ex);
+                        }
+                    }
+                    if (cliHelper.Solution == null)
+                    {
+
+                    }
+                }
+
+                if (exeConfiguration.ShowAutoRunWindow != null && exeConfiguration.ShowAutoRunWindow == true)
+                {
+                    cliHelper.ShowAutoRunWindow = true;
+                }
             }
             else
             {
