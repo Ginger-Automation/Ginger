@@ -1,7 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="2d63419e-31cd-45ba-b222-0917b4605f9f" ItemType="Solution" CreatedBy="ELIRANBA" Created="201812130910" GingerVersion="3.1.0.0" Version="1" LastUpdateBy="ELIRANBA" LastUpdate="201812130910" />
+<GingerRepositoryItem><Header ItemGuid="2d63419e-31cd-45ba-b222-0917b4605f9f" ItemType="Solution" CreatedBy="ELIRANBA" Created="201812130910" GingerVersion="3.4.0.0" Version="2" LastUpdateBy="sudarshs" LastUpdate="201910221405" />
 <Solution AlmType="QC" Guid="2d63419e-31cd-45ba-b222-0917b4605f9f" Name="POMsTest" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ApplicationPlatforms>
 <ApplicationPlatform AppName="MyWebApp" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="843fb8a6-a844-45e9-b7ef-b045b6433c44" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
+<ApplicationPlatform AppName="MyJavaApp" CoreGUID="00000000-0000-0000-0000-000000000000" Description="Java Application" Guid="ac680118-d675-4135-b84c-86661df9aab9" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Java" />
 </ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<ExecutionLoggerConfiguration ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="f81d77b7-1514-4a0c-8f28-470a926b28c7" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedDataRepositoryMethod="TextFile" Seq="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<HTMLReportsConfigurationSetList>
+<HTMLReportsConfiguration Guid="c692a522-49fd-4a1b-99c9-5b3a84ba90df" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
+</HTMLReportsConfigurationSetList>
 </Solution></GingerRepositoryItem>
