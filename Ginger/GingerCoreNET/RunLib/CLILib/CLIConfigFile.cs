@@ -150,9 +150,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "artifacts-path":
                             cliHelper.TestArtifactsFolder = value;
                             break;
-                        default:
-                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
-                            throw new ArgumentException("Unknown argument", param);
+                        //default:
+                        //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                        //    throw new ArgumentException("Unknown argument", param);
                     }
                 }                
             }            
@@ -183,9 +183,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "analyze":
                             cliHelper.RunAnalyzer = bool.Parse(value);
                             break;
-                        default:
-                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
-                            throw new ArgumentException("Unknown argument", param);
+                        //default:
+                        //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                        //    throw new ArgumentException("Unknown argument", param);
                     }
                 }
             }

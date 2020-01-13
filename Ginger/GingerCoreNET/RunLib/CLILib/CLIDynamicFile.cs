@@ -18,9 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
-using GingerExecuterService.Contracts.V1.ExecutionConfigurations;
 using System;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if(FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                ExecutionConfiguration exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
                     cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType.ToString());
@@ -123,6 +123,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     cliHelper.ShowAutoRunWindow = true;
                 }
+                if (!string.IsNullOrEmpty(exeConfiguration.ArtifactsPath))
+                {
+                    cliHelper.TestArtifactsFolder = exeConfiguration.ArtifactsPath;
+                }                
             }
             else
             {
@@ -151,8 +155,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                ExecutionConfiguration exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
-                Runset runset = exeConfiguration.Runset;
+                GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                RunsetExecConfig runset = exeConfiguration.Runset;
                 cliHelper.Env = runset.Environment;
                 if (runset.RunAnalyzer != null)
                 {

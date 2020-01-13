@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -28,9 +30,8 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
-using GingerExecuterService.Contracts.V1.ExecutionConfigurations;
-using GingerExecuterService.Contracts.V1.ExecutionConfigurations.RunsetOperations;
 using Newtonsoft.Json;
+using RunsetOperations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -342,7 +343,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runsetExecutor.RunSetConfig.UpdateRunnersBusinessFlowRunsList();
 
             //Create execution object
-            ExecutionConfiguration executionConfig = new ExecutionConfiguration();
+            GingerExecConfig executionConfig = new GingerExecConfig();
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
                 executionConfig.SolutionScmDetails = new ScmDetails();
@@ -378,7 +379,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.SolutionLocalPath = solution.Folder;
             executionConfig.ShowAutoRunWindow = cliHelper.ShowAutoRunWindow;
 
-            Runset runset = new Runset();
+            RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
             runset.Name = runsetExecutor.RunSetConfig.Name;
             runset.ID = runsetExecutor.RunSetConfig.Guid;
@@ -388,21 +389,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
             {
-                runset.Runners = new List<Runner>();
+                runset.Runners = new List<RunnerExecConfig>();
             }
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
             {
-                Runner runner = new Runner();
+                RunnerExecConfig runner = new RunnerExecConfig();
                 runner.Name = gingerRunner.Name;
                 runner.ID = gingerRunner.Guid;
                 if (gingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(gingerRunner.SpecificEnvironmentName))
                 {
                     runner.Environment = gingerRunner.SpecificEnvironmentName;
                 }
-                if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
-                {
-                    runner.OnFailureRunOption = (Runner.eOnFailureRunOption)Enum.Parse(typeof(Runner.eOnFailureRunOption), gingerRunner.RunOption.ToString(), true);                    
-                }
+                //if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
+                //{
+                    runner.OnFailureRunOption = (RunnerExecConfig.eOnFailureRunOption)Enum.Parse(typeof(RunnerExecConfig.eOnFailureRunOption), gingerRunner.RunOption.ToString(), true);                    
+                //}
 
                 if (gingerRunner.ApplicationAgents.Count > 0)
                 {
@@ -415,11 +416,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                 if (gingerRunner.BusinessFlowsRunList.Count > 0)
                 {
-                    runner.BusinessFlows = new List<GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow>();
+                    runner.BusinessFlows = new List<BusinessFlowExecConfig>();
                 }
                 foreach (BusinessFlowRun businessFlowRun in gingerRunner.BusinessFlowsRunList)
                 {
-                    GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlow = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow();
+                    BusinessFlowExecConfig businessFlow = new BusinessFlowExecConfig();
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;//probably need to go with BusinessFlowInstanceGuid to support multi BF's from same type
                     businessFlow.Active = businessFlowRun.BusinessFlowIsActive;
@@ -453,26 +454,27 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (runsetExecutor.RunSetConfig.RunSetActions.Count > 0)
             {
-                runset.Operations = new List<Operation>();
+                runset.Operations = new List<OperationExecConfigBase>();
             }
             foreach (RunSetActionBase runSetOperation in runsetExecutor.RunSetConfig.RunSetActions)
             {
                 if (runSetOperation is RunSetActionHTMLReportSendEmail)
                 {
                     RunSetActionHTMLReportSendEmail runsetMailReport = (RunSetActionHTMLReportSendEmail)runSetOperation;
-                    MailReportOperation mailReportConfig = new MailReportOperation();
+                    MailReportOperationExecConfig mailReportConfig = new MailReportOperationExecConfig();
                     mailReportConfig.Name = runsetMailReport.Name;
                     mailReportConfig.ID = runsetMailReport.Guid;
-                    mailReportConfig.Condition = (Operation.eOperationRunCondition)Enum.Parse(typeof(Operation.eOperationRunCondition), runsetMailReport.Condition.ToString(), true);
-                    mailReportConfig.RunAt = (Operation.eOperationRunAt)Enum.Parse(typeof(Operation.eOperationRunAt), runsetMailReport.RunAt.ToString(), true);
+                    mailReportConfig.Condition = (OperationExecConfigBase.eOperationRunCondition)Enum.Parse(typeof(OperationExecConfigBase.eOperationRunCondition), runsetMailReport.Condition.ToString(), true);
+                    mailReportConfig.RunAt = (OperationExecConfigBase.eOperationRunAt)Enum.Parse(typeof(OperationExecConfigBase.eOperationRunAt), runsetMailReport.RunAt.ToString(), true);
 
+                    mailReportConfig.MailSettings = new SendMailSettings();
                     if (runsetMailReport.Email.EmailMethod == GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK)
                     {
                         mailReportConfig.MailSettings.EmailMethod = SendMailSettings.eEmailMethod.OUTLOOK;
                     }
                     else
                     {
-                        mailReportConfig.MailSettings.SmtpDetails = new GingerExecuterService.Contracts.V1.ExecutionConfigurations.RunsetOperations.SmtpDetails();
+                        mailReportConfig.MailSettings.SmtpDetails = new MailSmtpDetails();
                         mailReportConfig.MailSettings.SmtpDetails.Server = runsetMailReport.Email.SMTPMailHost;
                         mailReportConfig.MailSettings.SmtpDetails.Port = runsetMailReport.Email.SMTPPort.ToString();
                         mailReportConfig.MailSettings.SmtpDetails.EnableSSL = runsetMailReport.Email.EnableSSL;
@@ -501,7 +503,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 else if (runSetOperation is RunSetActionJSONSummary)
                 {
-                    JsonReportOperation jsonReportConfig = new JsonReportOperation();
+                    JsonReportOperationExecConfig jsonReportConfig = new JsonReportOperationExecConfig();
                     jsonReportConfig.Name = runSetOperation.Name;
                     jsonReportConfig.ID = runSetOperation.Guid;
                     runset.Operations.Add(jsonReportConfig);
@@ -516,15 +518,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return JsonConvert.SerializeObject(executionConfig, jsonSerializerSettings);
         }
 
-        public static ExecutionConfiguration LoadDynamicExecutionFromJSON(string content)
+        public static GingerExecConfig LoadDynamicExecutionFromJSON(string content)
         {
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             jsonSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
-            return (ExecutionConfiguration)JsonConvert.DeserializeObject(content, typeof(ExecutionConfiguration), jsonSerializerSettings);
+            return (GingerExecConfig)JsonConvert.DeserializeObject(content, typeof(GingerExecConfig), jsonSerializerSettings);
         }
 
-        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, Runset dynamicRunsetConfigs)
+        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, RunsetExecConfig dynamicRunsetConfigs)
         {
             RunSetConfig runSetConfig = null;
             if (dynamicRunsetConfigs.Exist)
@@ -555,7 +557,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             //Add or Update Runners
             if (dynamicRunsetConfigs.Runners != null)
             {
-                foreach (Runner runnerConfig in dynamicRunsetConfigs.Runners)
+                foreach (RunnerExecConfig runnerConfig in dynamicRunsetConfigs.Runners)
                 {
                     GingerRunner gingerRunner = null;
                     if (dynamicRunsetConfigs.Exist)
@@ -617,7 +619,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     //Add or Update BFs
                     if (runnerConfig.BusinessFlows != null)
                     {
-                        foreach (GingerExecuterService.Contracts.V1.ExecutionConfigurations.BusinessFlow businessFlowConfig in runnerConfig.BusinessFlows)
+                        foreach (BusinessFlowExecConfig businessFlowConfig in runnerConfig.BusinessFlows)
                         {
                             BusinessFlowRun businessFlowRun = null;
                             if (dynamicRunsetConfigs.Exist)
@@ -710,11 +712,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             //Add/Update Runset Operations
             if (dynamicRunsetConfigs.Operations != null)
             {
-                foreach (Operation runsetOperationConfig in dynamicRunsetConfigs.Operations)
+                foreach (OperationExecConfigBase runsetOperationConfig in dynamicRunsetConfigs.Operations)
                 {
-                    if (runsetOperationConfig is MailReportOperation)
+                    RunSetActionBase runSetOperation = null;
+                    if (runsetOperationConfig is MailReportOperationExecConfig)
                     {
-                        MailReportOperation runsetOperationConfigMail = (MailReportOperation)runsetOperationConfig;
+                        MailReportOperationExecConfig runsetOperationConfigMail = (MailReportOperationExecConfig)runsetOperationConfig;
                         RunSetActionHTMLReportSendEmail mailOperation;
                         if (dynamicRunsetConfigs.Exist)
                         {
@@ -732,19 +735,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             mailOperation.Email.IsBodyHTML = true;
                             mailOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
                             mailOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
-                        }
-                        if (runsetOperationConfigMail.Active != null)
-                        {
-                            mailOperation.Active = (bool)runsetOperationConfigMail.Active;
-                        }
-                        if (runsetOperationConfigMail.Condition != null)
-                        {
-                            mailOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfigMail.Condition.ToString(), true);
-                        }
-                        if (runsetOperationConfigMail.RunAt != null)
-                        {
-                            mailOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfigMail.RunAt.ToString(), true);
-                        }
+                        }                        
 
                         if (runsetOperationConfigMail.MailSettings.EmailMethod != null)
                         {
@@ -804,24 +795,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (runsetOperationConfigMail.IncludeAttachmentReport != null && runsetOperationConfigMail.IncludeAttachmentReport == true)
                         {
-                            EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
-                            reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
-                            reportAttachment.ZipIt = true;
-                            mailOperation.EmailAttachments.Add(reportAttachment);
+                            if (mailOperation.EmailAttachments.Count == 0)
+                            {
+                                EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
+                                reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
+                                reportAttachment.ZipIt = true;
+                                mailOperation.EmailAttachments.Add(reportAttachment);
+                            }
                         }
                         else
                         {
                             mailOperation.EmailAttachments.Clear();
                         }
 
-                        if (dynamicRunsetConfigs.Exist)
-                        {
-                            runSetConfig.RunSetActions.Add(mailOperation);
-                        }
+                        runSetOperation = mailOperation;
                     }
-                    else if (runsetOperationConfig is JsonReportOperation)
+                    else if (runsetOperationConfig is JsonReportOperationExecConfig)
                     {
-                        JsonReportOperation runsetOperationConfigJsonRepot = (JsonReportOperation)runsetOperationConfig;
+                        JsonReportOperationExecConfig runsetOperationConfigJsonRepot = (JsonReportOperationExecConfig)runsetOperationConfig;
                         RunSetActionJSONSummary jsonReportOperation;
                         if (dynamicRunsetConfigs.Exist)
                         {
@@ -837,23 +828,28 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
                             jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
                         }
+                        runSetOperation = jsonReportOperation;
+                    }
 
-                        if (runsetOperationConfigJsonRepot.Active != null)
+                    //Generic settings
+                    if (runSetOperation != null)
+                    {
+                        if (runsetOperationConfig.Active != null)
                         {
-                            jsonReportOperation.Active = (bool)runsetOperationConfigJsonRepot.Active;
+                            runSetOperation.Active = (bool)runsetOperationConfig.Active;
                         }
-                        if (runsetOperationConfigJsonRepot.Condition != null)
+                        if (runsetOperationConfig.Condition != null)
                         {
-                            jsonReportOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfigJsonRepot.Condition.ToString(), true);
+                            runSetOperation.Condition = (RunSetActionBase.eRunSetActionCondition)Enum.Parse(typeof(RunSetActionBase.eRunSetActionCondition), runsetOperationConfig.Condition.ToString(), true);
                         }
-                        if (runsetOperationConfigJsonRepot.RunAt != null)
+                        if (runsetOperationConfig.RunAt != null)
                         {
-                            jsonReportOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfigJsonRepot.RunAt.ToString(), true);
+                            runSetOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfig.RunAt.ToString(), true);
                         }
 
-                        if (dynamicRunsetConfigs.Exist)
+                        if (!dynamicRunsetConfigs.Exist)
                         {
-                            runSetConfig.RunSetActions.Add(jsonReportOperation);
+                            runSetConfig.RunSetActions.Add(runSetOperation);
                         }
                     }
                 }
