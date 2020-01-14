@@ -184,8 +184,13 @@ namespace Ginger
 
             if (mExceptionsDic[ex.Message] <= 3)
             {
-                Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
+                }
             }
+
+            Environment.ExitCode = -1;
 
             // Clear the err so it will not crash
             e.Handled = true;
