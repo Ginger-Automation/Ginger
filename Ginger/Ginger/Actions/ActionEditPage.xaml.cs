@@ -1373,6 +1373,20 @@ namespace Ginger.Actions
             foreach (DataSourceBase ds in mDSList)
                 mDSNames.Add(ds.Name);
             GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
+            //Added Check to get already saved ActOutDataSourceConfig params
+            List<ActOutDataSourceConfig> mADCS = (from arc in mAction.DSOutputConfigParams select arc).ToList();
+            if (mADCS.Count > 0)
+            {
+                if (mAction.OutDSParamMapType == null)
+                {
+                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
+                }
+                if (mAction.OutDataSourceName == null || mAction.OutDataSourceTableName == null)
+                {
+                    mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
+                    mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
+                }
+            }
             if (mAction.OutDataSourceName != null && mAction.OutDataSourceTableName != null && mAction.OutDataSourceName != "" && mAction.OutDataSourceTableName != "")
             {
                 xDataSourceNameCombo.SelectedValue = mAction.OutDataSourceName;
