@@ -269,16 +269,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     throw new Exception("Failed to find any Environment in the Solution");
                 }
             }
-
-
         }
 
         private void DownloadSolutionFromSourceControl()
         {
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                SourceControlIntegration.DownloadSolution(Solution);                
+                Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                if (!SourceControlIntegration.DownloadSolution(Solution))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                }
             }
         }
 

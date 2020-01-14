@@ -16,13 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
-using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Ginger.ExecuterService.Contracts;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
@@ -30,7 +31,6 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SourceControl;
-using Newtonsoft.Json;
 using RunsetOperations;
 using System;
 using System.Collections.Generic;
@@ -548,18 +548,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.Runset = runset;
 
             //serilize object to JSON String
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            jsonSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
-            return JsonConvert.SerializeObject(executionConfig, jsonSerializerSettings);
+            return NewtonsoftJsonUtils.SerializeObject(executionConfig);
         }
 
         public static GingerExecConfig LoadDynamicExecutionFromJSON(string content)
         {
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            jsonSerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
-            return (GingerExecConfig)JsonConvert.DeserializeObject(content, typeof(GingerExecConfig), jsonSerializerSettings);
+            return NewtonsoftJsonUtils.DeserializeObject< GingerExecConfig>(content);
         }
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, RunsetExecConfig dynamicRunsetConfigs)

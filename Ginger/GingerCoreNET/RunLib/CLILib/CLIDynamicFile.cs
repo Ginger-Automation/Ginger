@@ -113,10 +113,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             Reporter.ToLog(eLogLevel.ERROR, string.Format("Falied to create the Solution local path: '{0}'", exeConfiguration.SolutionLocalPath), ex);
                         }
                     }
-                    if (cliHelper.Solution == null)
-                    {
-
-                    }
                 }
 
                 if (exeConfiguration.ShowAutoRunWindow != null && exeConfiguration.ShowAutoRunWindow == true)
