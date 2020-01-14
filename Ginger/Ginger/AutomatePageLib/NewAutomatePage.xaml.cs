@@ -904,6 +904,10 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = true;
                 //SetUIElementsBehaverDuringExecution();
 
+                mBusinessFlow.CurrentActivity = parentActivity;
+                mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+
                 //No need of agent for actions like DB and read for excel. For other need agent  
                 Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
@@ -928,6 +932,10 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
                 }
                              
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction" , ex);
             }
             finally
             {
