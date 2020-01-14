@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.Java;
 using GingerCore.Environments;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
@@ -682,7 +683,7 @@ namespace GingerTest
         }
 
         [TestMethod]
-        [Timeout(60000)]
+       // [Timeout(60000)]
         public void JavaActGenericGetValueToUIElementGetValue()
         {
             Activity activity = GetActivityforConversionTest("Java-App");
@@ -991,6 +992,36 @@ namespace GingerTest
             ActSwitchWindowTOUISwitchWindowConvertor(activity);
         }
 
+        [TestMethod]
+        //[Timeout(60000)]
+        public void JavaElementSetValueToUIElementSetValue()
+        {
+            Activity activity = GetActivityforConversionTest("Java-App");
+
+            ActJavaElement javaElement = new ActJavaElement();
+            javaElement.Active = true;
+            javaElement.Description = "Set Value : Emp Id";
+            javaElement.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
+            javaElement.LocateValue = "txeEmployeeId";
+            javaElement.Value = "12345";
+            javaElement.ControlAction = ActJavaElement.eControlAction.SetValue;
+
+
+            activity.Acts.Add(javaElement);
+
+            mBF.AddActivity(activity);
+
+            //Act
+            ExecuteActionConversion(false, true, string.Empty,true);
+
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "false");
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), javaElement.LocateBy.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), javaElement.LocateValue.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.Select.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.Value), javaElement.Value);
+        }
+
         private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
         {
             //Act
@@ -1003,6 +1034,7 @@ namespace GingerTest
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), genAction.GenElementAction.ToString());
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).Value, genAction.Value);
         }
+
 
         private void JavaGenericToBrowserActionConversionActAndAssert(ActGenElement genAction)
         {
