@@ -325,12 +325,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
 
             RunSetAutoRunConfiguration autoRunConfiguration = new RunSetAutoRunConfiguration(solution, GMR, cLIHelper);
-            CLIDynamicXML mCLIDynamicXML = new CLIDynamicXML();
+            CLIDynamicFile mCLIDynamicXML = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
             autoRunConfiguration.SelectedCLI = mCLIDynamicXML;
 
             //Act
             //Creating XML file content from above configurations
-            string file = autoRunConfiguration.SelectedCLI.CreateContent(solution, GMR, cLIHelper);
+            string file = autoRunConfiguration.SelectedCLI.CreateConfigurationsContent(solution, GMR, cLIHelper);
 
             //Assert
             //validate the 'AddRunsetOperation' tag
@@ -405,9 +405,9 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
 
             RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
-            CLIDynamicXML mCLIDynamicXML1= new CLIDynamicXML();
+            CLIDynamicFile mCLIDynamicXML1= new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
             autoRunConfiguration1.SelectedCLI = mCLIDynamicXML1;
-            String xmlFile =autoRunConfiguration1.SelectedCLI.CreateContent(solution, GMR1, cLIHelper1);
+            String xmlFile =autoRunConfiguration1.SelectedCLI.CreateConfigurationsContent(solution, GMR1, cLIHelper1);
 
             autoRunConfiguration1.CreateContentFile();
 

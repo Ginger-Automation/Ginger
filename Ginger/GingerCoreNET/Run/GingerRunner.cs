@@ -391,6 +391,10 @@ namespace Ginger.Run
                 {
                     ProjEnvironment = specificEnv;
                 }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Runner Environment '{0}' was not found. Using default Environment instead", SpecificEnvironmentName));
+                }
             }
 
             if (ProjEnvironment == null)
