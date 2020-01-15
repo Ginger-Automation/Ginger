@@ -738,19 +738,19 @@ namespace GingerWPF.BusinessFlowsLib
                     UpdateAutomatePageRunner();
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentAction:
-                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true, false);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true, false).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true, true);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true, true).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
-                    await RunAutomatePageActivity((Activity)args.Object);
+                    await RunAutomatePageActivity((Activity)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
-                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object);
+                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActivityRun:
-                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object);
+                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.StopRun:
                     StopAutomateRun();

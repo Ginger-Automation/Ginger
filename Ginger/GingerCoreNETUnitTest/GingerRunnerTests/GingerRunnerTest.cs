@@ -82,11 +82,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR = new GingerRunner();
             mGR.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
-
+            mGR.CurrentBusinessFlow = mBF;
+            mGR.CurrentBusinessFlow.CurrentActivity = activity;
             environment = new ProjEnvironment();
             environment.Name = "Default";
             mBF.Environment = environment.Name;
-
+            mGR.ProjEnvironment = environment;
 
             Agent a = new Agent();
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
@@ -504,18 +505,19 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         [TestMethod]
         [Timeout(60000)]
-        public void RunActionWithFlowControlAndMoveNext()
+        public void RunActionWithFlowControlAndDontMoveNext()
         {
             //Arrange
-            Activity activity = GetActivityFromRepository();
+            Activity activity = mBF.Activities[0];
 
             ActDummy act1 = new ActDummy();
-            act1.FileName = "FlowControlAction";
+            act1.ItemName = "FlowControlAction";
             act1.Active = true;
             activity.Acts.Add(act1);
 
             ObservableList<IAct> actionList = activity.Acts;
-            Act action = (Act)actionList[0]; 
+            Act action = (Act)actionList[0];
+            action.Active = true;
             FlowControl flowControl = new FlowControl();
             flowControl.Active = true;
 
@@ -538,11 +540,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void RunActionWithoutFlowControlAndMoveNext()
         {
             //Arrange
-            Activity activity = GetActivityFromRepository();
+            Activity activity = mBF.Activities[0];
 
             ActDummy act1 = new ActDummy();
             act1.Active = true;
-            activity.Acts.Add(act1);
+            activity.Acts.AddToFirstIndex(act1);
 
             ObservableList<IAct> actionList = activity.Acts;
             Act action = (Act)actionList[0];
@@ -568,17 +570,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ObservableList<Activity> activityList = BF1.Activities;
             Activity activity = activityList[0];
             activity.Active = false;
-
-            context.BusinessFlow = BF1;
-            context.Activity = activity;
-            mGR.CurrentBusinessFlow = BF1;
-            mGR.CurrentBusinessFlow.CurrentActivity = activity;
-            mGR.Context = context;
-
-            ProjEnvironment environment = new ProjEnvironment();
-            environment.Name = "default";
-            environment.Active = true;
-            mGR.ProjEnvironment = environment;
 
             return activity;
         }

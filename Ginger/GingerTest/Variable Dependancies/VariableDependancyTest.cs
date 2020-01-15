@@ -7,6 +7,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -21,8 +22,6 @@ namespace GingerTest.Variable_Dependancies
     {
         static BusinessFlow BF1;
         static GingerRunner mGR;
-        static ProjEnvironment environment;
-        static Context context1;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
@@ -90,7 +89,7 @@ namespace GingerTest.Variable_Dependancies
             mGR.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
 
-            environment = new ProjEnvironment();
+            ProjEnvironment environment = new ProjEnvironment();
             environment.Name = "Default";
             BF1.Environment = environment.Name;
 
@@ -106,7 +105,7 @@ namespace GingerTest.Variable_Dependancies
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(BF1);
 
-            context1 = new Context();
+            Context context1 = new Context();
             context1.BusinessFlow = BF1;
             context1.Activity = BF1.Activities[0];
 
@@ -133,10 +132,12 @@ namespace GingerTest.Variable_Dependancies
             BF1.Variables.Add(selectionList);
 
             //Added dependancies in activities
-            VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "a", "b" });
+            string[] variableValues = new string[] { "a", "b" };
+
+            VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             activityList[0].VariablesDependencies.Add(actiVD0);
 
-            VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "a", "b" });
+            VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             activityList[1].VariablesDependencies.Add(actiVD1);
 
             VariableDependency actiVD2 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "b" });
@@ -183,16 +184,19 @@ namespace GingerTest.Variable_Dependancies
             activity.Variables.Add(selectionList);
 
             //added action level dependancies
-            VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "abc" });
+            string[] variableValues = new string[] { "abc", "xyz" };
+            string[] variablevalue =  new string[] { "abc" };
+
+            VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variablevalue);
             actionList[0].VariablesDependencies.Add(actiVD0);
 
-            VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "abc", "xyz" });
+            VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             actionList[1].VariablesDependencies.Add(actiVD1);
 
-            VariableDependency actiVD3 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "abc", "xyz" });
+            VariableDependency actiVD3 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             actionList[2].VariablesDependencies.Add(actiVD3);
 
-            VariableDependency actiVD4 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "abc" });
+            VariableDependency actiVD4 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variablevalue);
             actionList[3].VariablesDependencies.Add(actiVD4);
 
             //Act

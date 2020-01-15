@@ -2094,15 +2094,9 @@ namespace Ginger.Run
                         FC.Status = eStatus.Skipped;
                         continue;
                     }
-                    try
-                    {
-                        FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
-                    }
-                    catch
-                    {
-
-                    }
-
+                    
+                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
+                   
                     //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
 
                     if (FC.ConditionCalculated.Contains("{LastActivityStatus}"))
@@ -2376,15 +2370,7 @@ namespace Ginger.Run
 
         public bool GotoNextAction()
         {
-            if (CurrentBusinessFlow.CurrentActivity.Acts.Count - 1 > CurrentBusinessFlow.CurrentActivity.Acts.IndexOf((Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem))
-            {
-                CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
         }
 
         private bool FlowControlGotoNextAction(Act act)
