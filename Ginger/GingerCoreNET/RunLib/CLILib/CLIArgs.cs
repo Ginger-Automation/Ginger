@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
         
-        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             RunOptions options = new RunOptions();
             options.Solution = solution.Folder;
@@ -79,17 +79,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return args;
         }
 
+        public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
+        {
+
+        }
+
+        public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        {
+
+        }
+
         public void Execute(RunsetExecutor runsetExecutor)
         {
             runsetExecutor.RunRunset();
-        }
-       
+        }       
 
-        public void LoadContent(string args, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {      
-            
-        }
-       
-      
+
     }
 }
