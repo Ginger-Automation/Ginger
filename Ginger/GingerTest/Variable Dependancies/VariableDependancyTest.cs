@@ -132,7 +132,10 @@ namespace GingerTest.Variable_Dependancies
             BF1.Variables.Add(selectionList);
 
             //Added dependancies in activities
-            string[] variableValues = new string[] { "a", "b" };
+            string[] variableValues, variableValue;
+
+            variableValues = new string[] { "a", "b" };
+            variableValue = new string[] { "a" };
 
             VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             activityList[0].VariablesDependencies.Add(actiVD0);
@@ -140,7 +143,7 @@ namespace GingerTest.Variable_Dependancies
             VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             activityList[1].VariablesDependencies.Add(actiVD1);
 
-            VariableDependency actiVD2 = new VariableDependency(selectionList.Guid, selectionList.ItemName, new string[] { "b" });
+            VariableDependency actiVD2 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValue);
             activityList[2].VariablesDependencies.Add(actiVD2);
             
             //Act
@@ -184,8 +187,10 @@ namespace GingerTest.Variable_Dependancies
             activity.Variables.Add(selectionList);
 
             //added action level dependancies
-            string[] variableValues = new string[] { "abc", "xyz" };
-            string[] variablevalue =  new string[] { "abc" };
+            string[] variableValues, variablevalue;
+
+            variableValues = new string[] { "abc", "xyz" };
+            variablevalue =  new string[] { "abc" };
 
             VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variablevalue);
             actionList[0].VariablesDependencies.Add(actiVD0);
