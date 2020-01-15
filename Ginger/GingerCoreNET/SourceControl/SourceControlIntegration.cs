@@ -319,9 +319,10 @@ namespace Ginger.SourceControl
         }
 
 
-        public static void DownloadSolution(string SolutionFolder)
+        public static bool DownloadSolution(string SolutionFolder)
         {
-            try {
+            try
+            {
                 SourceControlBase mSourceControl;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
@@ -367,7 +368,7 @@ namespace Ginger.SourceControl
                 {
                     sol.ExistInLocaly = true;
                 }
-                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder +Path.DirectorySeparatorChar + @".git")))
+                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".git")))
                 {
                     sol.ExistInLocaly = true;
                 }
@@ -381,7 +382,7 @@ namespace Ginger.SourceControl
                 if (sol == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
-                    return;
+                    return false;
                 }
 
                 string ProjectURI = string.Empty;
@@ -398,31 +399,25 @@ namespace Ginger.SourceControl
                 getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
                 if (getProjectResult != true)
                 {
-                    return;
+                    return false;
                 }
 
                 if (sol.ExistInLocaly == true)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
-
-
-                    RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+                    return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
 
                 }
                 else
                 {
-                    getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+                    return getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToConsole(eLogLevel.INFO, "Error Downloading solution ");
-                Reporter.ToConsole(eLogLevel.INFO, e.Message);
-                Reporter.ToConsole(eLogLevel.INFO, e.Source);
-   
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Downloading/Updating Solution from source control", e);
+                return false;
             }
-            }
-
+        }
     }
 }
