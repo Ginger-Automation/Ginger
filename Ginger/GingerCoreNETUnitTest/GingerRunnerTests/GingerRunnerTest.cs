@@ -82,8 +82,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR = new GingerRunner();
             mGR.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+
             mGR.CurrentBusinessFlow = mBF;
-            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+            mGR.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+
             environment = new ProjEnvironment();
             environment.Name = "Default";
             mBF.Environment = environment.Name;
@@ -532,7 +534,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreSame(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, act1);
+            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, act1);
         }
 
         [TestMethod]
