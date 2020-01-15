@@ -77,7 +77,12 @@ namespace GingerTest
                 AppName = "Java-App",
                 Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
             });
-
+            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            {
+                AppName = "MyJavaApp",
+                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
+            });
+            
             sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
             {
                 AppName = "Window-App",
@@ -207,7 +212,14 @@ namespace GingerTest
         private static void ExecuteActionConversion(bool addNewActivity, bool isDefaultTargetApp, string strTargetApp,
                                                     bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
-            ActionConversionUtils utils = new ActionConversionUtils();
+            ActionConversionUtils utils = new ActionConversionUtils()
+            {
+                ActUIElementClassName = nameof(ActUIElement),
+                ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy),
+                ActUIElementLocateValueField = nameof(ActUIElement.ElementLocateValue),
+                ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue),
+                ActUIElementElementTypeField = nameof(ActUIElement.ElementType)
+            };
             ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
             foreach (var item in lst)
@@ -993,33 +1005,26 @@ namespace GingerTest
         }
 
         [TestMethod]
-        //[Timeout(60000)]
-        public void JavaElementSetValueToUIElementSetValue()
+        public void JavaLegacyPOMConversionTest()
         {
-            Activity activity = GetActivityforConversionTest("Java-App");
+            //Arrange
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+            var businessFlowFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml" + Path.DirectorySeparatorChar + "Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml");
+            var javaPomFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml");
+            
+            //Load BF
+            mBF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(businessFlowFile);
 
-            ActJavaElement javaElement = new ActJavaElement();
-            javaElement.Active = true;
-            javaElement.Description = "Set Value : Emp Id";
-            javaElement.LocateBy = Amdocs.Ginger.Common.UIElement.eLocateBy.ByName;
-            javaElement.LocateValue = "txeEmployeeId";
-            javaElement.Value = "12345";
-            javaElement.ControlAction = ActJavaElement.eControlAction.SetValue;
+            mBF.Activities[0].SelectedForConversion = true;
 
+            //Load POM
+            ApplicationPOMModel applicationPOM = (ApplicationPOMModel)RepositorySerializer.DeserializeFromFile(javaPomFile);
+            mSolutionRepository.AddRepositoryItem(applicationPOM);
 
-            activity.Acts.Add(javaElement);
-
-            mBF.AddActivity(activity);
-
-            //Act
-            ExecuteActionConversion(false, true, string.Empty,true);
-
+            ExecuteActionConversion(true, true, string.Empty, true, applicationPOM.Guid);
             //Assert
-            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.IsWidgetsElement), "false");
-            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateBy.ToString(), javaElement.LocateBy.ToString());
-            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementLocateValue.ToString(), javaElement.LocateValue.ToString());
-            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), ActUIElement.eElementAction.Select.ToString());
-            Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).GetInputParamValue(ActUIElement.Fields.Value), javaElement.Value);
+            Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementLocateBy.ToString(),eLocateBy.POMElement.ToString());
+
         }
 
         private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
