@@ -427,7 +427,10 @@ namespace GingerCoreNET.Application_Models
                             matchingElementFound = true;
 
                             var mathchedItemIndex = DeltaViewElements.IndexOf(DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)).FirstOrDefault());
-                            var item = ConvertElementToDelta(deletedElement, eDeltaStatus.Changed, deletedElement.ElementGroup, false, "Property Changed");
+                            //update path of element
+                            deletedElement.Path = newElement.ElementInfo.Path;
+
+                            var item = ConvertElementToDelta(deletedElement, eDeltaStatus.Changed, deletedElement.ElementGroup, true, "Property Changed");
                             item.Properties = deltaControlProp;
                             if (mathchedItemIndex != -1)
                                 DeltaViewElements[mathchedItemIndex] = item;
