@@ -207,7 +207,7 @@ namespace WorkspaceHold
 
             RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
             runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicXML();
+            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
             runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
