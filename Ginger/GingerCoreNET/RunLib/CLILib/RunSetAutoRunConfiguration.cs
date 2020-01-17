@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             get
             {
-                return SelectedCLI.CreateContent(mSolution, mRunsetExecutor, mCLIHelper);
+                return SelectedCLI.CreateConfigurationsContent(mSolution, mRunsetExecutor, mCLIHelper);
             }
         }
 

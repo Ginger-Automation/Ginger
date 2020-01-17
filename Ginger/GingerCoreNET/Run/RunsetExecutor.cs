@@ -200,7 +200,7 @@ namespace Ginger.Run
                     {
                         foreach (VariableBase varb in BFCopy.GetBFandActivitiesVariabeles(true))
                         {
-                            VariableBase runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == varb.ParentGuid && v.ParentName == varb.ParentName && v.Name == varb.Name).FirstOrDefault();
+                            VariableBase runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == varb.ParentGuid && v.Guid == varb.Guid).FirstOrDefault();
                             if (runVar == null)//for supporting dynamic run set XML in which we do not have GUID
                             {
                                 runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentName == varb.ParentName && v.Name == varb.Name).FirstOrDefault();
