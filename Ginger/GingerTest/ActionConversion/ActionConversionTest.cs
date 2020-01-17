@@ -695,7 +695,7 @@ namespace GingerTest
         }
 
         [TestMethod]
-       // [Timeout(60000)]
+        [Timeout(60000)]
         public void JavaActGenericGetValueToUIElementGetValue()
         {
             Activity activity = GetActivityforConversionTest("Java-App");
@@ -1005,6 +1005,7 @@ namespace GingerTest
         }
 
         [TestMethod]
+        [Timeout(100000)]
         public void JavaLegacyPOMConversionTest()
         {
             //Arrange
@@ -1024,7 +1025,7 @@ namespace GingerTest
             ExecuteActionConversion(true, true, string.Empty, true, applicationPOM.Guid);
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementLocateBy.ToString(),eLocateBy.POMElement.ToString());
-
+            Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementAction.ToString(), ((ActJavaElement)mBF.Activities[0].Acts[1]).ControlAction.ToString());
         }
 
         private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
