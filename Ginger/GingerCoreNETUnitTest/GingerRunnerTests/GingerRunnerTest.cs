@@ -513,7 +513,6 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             Activity activity = mBF.Activities[0];
 
             ActDummy act1 = new ActDummy();
-            act1.ItemName = "FlowControlAction";
             act1.Active = true;
             activity.Acts.Add(act1);
 
@@ -525,7 +524,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             flowControl.Operator = eFCOperator.ActionPassed;
             flowControl.FlowControlAction = eFlowControlAction.GoToAction;
-            flowControl.Value= act1.Guid + flowControl.GUID_NAME_SEPERATOR + act1.ItemName;
+            flowControl.Value= act1.Guid + flowControl.GUID_NAME_SEPERATOR;
 
             action.FlowControls.Add(flowControl);
 
@@ -534,7 +533,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem,actionList[2]);
+            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[2]);
         }
 
         [TestMethod]
@@ -553,7 +552,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem,actionList[1]);
+            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[1]);
         }
       
         public Activity GetActivityFromRepository()
