@@ -132,10 +132,8 @@ namespace GingerTest.Variable_Dependancies
             BF1.Variables.Add(selectionList);
 
             //Added dependancies in activities
-            string[] variableValues, variableValue;
 
-            variableValues = new string[] { "a", "b" };
-            variableValue = new string[] { "a" };
+            string[] variableValues = { "a", "b" };
 
             VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             activityList[0].VariablesDependencies.Add(actiVD0);
@@ -143,7 +141,7 @@ namespace GingerTest.Variable_Dependancies
             VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             activityList[1].VariablesDependencies.Add(actiVD1);
 
-            VariableDependency actiVD2 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValue);
+            VariableDependency actiVD2 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues[1]);
             activityList[2].VariablesDependencies.Add(actiVD2);
             
             //Act
@@ -187,12 +185,10 @@ namespace GingerTest.Variable_Dependancies
             activity.Variables.Add(selectionList);
 
             //added action level dependancies
-            string[] variableValues, variablevalue;
 
-            variableValues = new string[] { "abc", "xyz" };
-            variablevalue =  new string[] { "abc" };
+            string[] variableValues = { "abc", "xyz" };
 
-            VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variablevalue);
+            VariableDependency actiVD0 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues[0]);
             actionList[0].VariablesDependencies.Add(actiVD0);
 
             VariableDependency actiVD1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
@@ -201,7 +197,7 @@ namespace GingerTest.Variable_Dependancies
             VariableDependency actiVD3 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues);
             actionList[2].VariablesDependencies.Add(actiVD3);
 
-            VariableDependency actiVD4 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variablevalue);
+            VariableDependency actiVD4 = new VariableDependency(selectionList.Guid, selectionList.ItemName, variableValues[0]);
             actionList[3].VariablesDependencies.Add(actiVD4);
 
             //Act

@@ -741,7 +741,7 @@ namespace GingerWPF.BusinessFlowsLib
                     await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, true).ConfigureAwait(false);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
                     await RunAutomatePageActivity((Activity)args.Object).ConfigureAwait(false);
