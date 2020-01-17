@@ -534,7 +534,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Assert
             Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, act1);
+            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem,actionList[2]);
         }
 
         [TestMethod]
@@ -543,16 +543,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         {
             //Arrange
             Activity activity = mBF.Activities[0];
-
-            ActDummy act1 = new ActDummy();
-            act1.Active = true;
-            activity.Acts.AddToFirstIndex(act1);
-
             ObservableList<IAct> actionList = activity.Acts;
             Act action = (Act)actionList[0];
             action.Active = true;
-
-            mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = action;
+            mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = actionList[0];
 
             //Act
             mGR.RunAction(action);
