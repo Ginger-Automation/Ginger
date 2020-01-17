@@ -541,11 +541,17 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         public void RunActionWithoutFlowControlAndMoveNext()
         {
             //Arrange
-            Activity activity = mBF.Activities[0];
+            
+            Activity activity = GetActivityFromRepository(); 
+            ActDummy act1 = new ActDummy();
+            act1.Active = true;
+            activity.Acts.Add(act1);
+
             ObservableList<IAct> actionList = activity.Acts;
             Act action = (Act)actionList[0];
             action.Active = true;
-            mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = actionList[0];
+
+            mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = action;
 
             //Act
             mGR.RunAction(action);
@@ -565,6 +571,12 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             ObservableList<Activity> activityList = BF1.Activities;
             Activity activity = activityList[0];
             activity.Active = false;
+
+            context.BusinessFlow = BF1;
+            context.Activity = activity;
+            mGR.CurrentBusinessFlow = BF1;
+            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+            mGR.Context = context;
 
             return activity;
         }
