@@ -888,5 +888,14 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return "Switch Window";
         }
+
+        /// <summary>
+        /// This method is used to check if the platform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsPlatformSupportPOM()
+        {
+            return true;
+        }
     }
 }
