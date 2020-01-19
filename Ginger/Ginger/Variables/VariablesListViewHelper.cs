@@ -308,7 +308,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
                 ListItemNotification publishInd = new ListItemNotification();
                 publishInd.AutomationID = "publishInd";
-                publishInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Input;
+                publishInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
                 publishInd.ToolTip = string.Format("{0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.Variable));
                 publishInd.BindingObject = mVariable;
                 publishInd.BindingFieldName = nameof(RepositoryItemBase.Publish);
@@ -467,7 +467,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             publish.ImageBindingConverter = new ActiveImageTypeConverter();
             publish.Header = "Publish";
             publish.ToolTip = "Publish to third party applications";
-            publish.OperationHandler = InputHandler;
+            publish.OperationHandler = PublishHandler;
             extraOperationsList.Add(publish);
 
             ListItemOperation addToSR = new ListItemOperation();

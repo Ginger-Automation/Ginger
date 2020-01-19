@@ -641,7 +641,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             publishGroup.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             publishGroup.AutomationID = "publishGroup";
             publishGroup.Header = "Publish/Un-Publish Group";
-            publishGroup.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Input;
+            publishGroup.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
             publishGroup.ToolTip = string.Format("Set if {0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             publishGroup.OperationHandler = SetPublishGroupHandler;
             groupOperationsList.Add(publishGroup);
@@ -898,6 +898,10 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
             activitiesGroup.Publish = !activitiesGroup.Publish;
+            foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
+            {
+                activityIdnt.IdentifiedActivity.Publish = activitiesGroup.Publish;
+            }
         }
 
         private void ExportGroupHandler(object sender, RoutedEventArgs e)
