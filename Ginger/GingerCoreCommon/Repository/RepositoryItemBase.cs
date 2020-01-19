@@ -1145,7 +1145,26 @@ namespace Amdocs.Ginger.Repository
             return false;
         }
 
-        
+        bool mPublish = false;
+        /// <summary>
+        /// Flag used to mark if item is ready to be published on third party applications which enhancing Ginger framework
+        /// </summary>
+        [IsSerializedForLocalRepository]
+        public bool Publish
+        {
+            get
+            {
+                return mPublish;
+            }
+            set
+            {
+                if (mPublish != value)
+                {
+                    mPublish = value;
+                    OnPropertyChanged(nameof(Publish));
+                }
+            }
+        }
 
     }
 }
