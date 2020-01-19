@@ -296,6 +296,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             mandatoryInd.BindingConverter = new BoolVisibilityConverter();
             notificationsList.Add(mandatoryInd);
 
+            ListItemNotification publishInd = new ListItemNotification();
+            publishInd.AutomationID = "publishInd";
+            publishInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+            publishInd.ToolTip = string.Format("{0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.Activity));
+            publishInd.ImageSize = 14;
+            publishInd.BindingObject = mActivity;
+            publishInd.BindingFieldName = nameof(RepositoryItemBase.Publish);
+            publishInd.BindingConverter = new BoolVisibilityConverter();
+            notificationsList.Add(publishInd);
+
             ListItemNotification sharedRepoInd = new ListItemNotification();            
             sharedRepoInd.AutomationID = "sharedRepoInd";
             sharedRepoInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
@@ -428,6 +438,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             moveToOtherGroup.OperationHandler = MoveToOtherGroupHandler;
             extraOperationsList.Add(moveToOtherGroup);
 
+            ListItemOperation publish = new ListItemOperation();
+            publish.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            publish.AutomationID = "publish";
+            publish.Header = "Publish";
+            publish.ToolTip = "Publish to third party applications";
+            publish.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
+            publish.ImageBindingObject = mActivity;
+            publish.ImageBindingFieldName = nameof(RepositoryItemBase.Publish);
+            publish.ImageBindingConverter = new ActiveImageTypeConverter();
+            publish.OperationHandler = PublishHandler;
+            extraOperationsList.Add(publish);
+
             ListItemOperation addToSR = new ListItemOperation();
             addToSR.SupportedViews = new List<General.eRIPageViewMode>() {General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addToSR.AutomationID = "addToSR";
@@ -478,6 +500,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (group != null)
             {
                 List<ListItemNotification> notificationsList = new List<ListItemNotification>();
+
+                ListItemNotification publishInd = new ListItemNotification();
+                publishInd.AutomationID = "publishInd";
+                publishInd.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
+                publishInd.ToolTip = string.Format("{0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                //publishInd.ImageForeground = Brushes.Orange;
+                publishInd.BindingObject = group;
+                publishInd.BindingFieldName = nameof(RepositoryItemBase.Publish);
+                publishInd.BindingConverter = new BoolVisibilityConverter();
+                notificationsList.Add(publishInd);
 
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
@@ -605,6 +637,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             export.OperationHandler = ExportGroupHandler;
             groupOperationsList.Add(export);
 
+            ListItemGroupOperation publishGroup = new ListItemGroupOperation();
+            publishGroup.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            publishGroup.AutomationID = "publishGroup";
+            publishGroup.Header = "Publish/Un-Publish Group";
+            publishGroup.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Input;
+            publishGroup.ToolTip = string.Format("Set if {0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+            publishGroup.OperationHandler = SetPublishGroupHandler;
+            groupOperationsList.Add(publishGroup);
+
             ListItemGroupOperation addToSR = new ListItemGroupOperation();
             addToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addToSR.AutomationID = "addGroupToSR";
@@ -662,6 +703,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
             mActivity.Mandatory = !mActivity.Mandatory;
+        }
+
+        private void PublishHandler(object sender, RoutedEventArgs e)
+        {
+            SetItem(sender);
+            mActivity.Publish = !mActivity.Publish;
         }
 
         private void AddToSRHandler(object sender, RoutedEventArgs e)
@@ -845,6 +892,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
 
             (new Repository.SharedRepositoryOperations()).AddItemsToRepository(mContext, list);
+        }
+
+        private void SetPublishGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            activitiesGroup.Publish = !activitiesGroup.Publish;
         }
 
         private void ExportGroupHandler(object sender, RoutedEventArgs e)
