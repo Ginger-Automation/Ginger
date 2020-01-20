@@ -366,6 +366,7 @@ namespace GingerCore.DataSource
         }
         private bool ExportDSToExcel(DataTable table, string sFilePath, string sSheetName)
         {
+            sFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
 

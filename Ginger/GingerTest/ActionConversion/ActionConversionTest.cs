@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.Java;
 using GingerCore.Environments;
 using GingerTestHelper;
 using GingerWPF.WorkSpaceLib;
@@ -76,7 +77,12 @@ namespace GingerTest
                 AppName = "Java-App",
                 Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
             });
-
+            sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
+            {
+                AppName = "MyJavaApp",
+                Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Java
+            });
+            
             sol.ApplicationPlatforms.Add(new GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ApplicationPlatform()
             {
                 AppName = "Window-App",
@@ -206,7 +212,14 @@ namespace GingerTest
         private static void ExecuteActionConversion(bool addNewActivity, bool isDefaultTargetApp, string strTargetApp,
                                                     bool convertToPOMAction = false, Guid selectedPOM = default(Guid))
         {
-            ActionConversionUtils utils = new ActionConversionUtils();
+            ActionConversionUtils utils = new ActionConversionUtils()
+            {
+                ActUIElementClassName = nameof(ActUIElement),
+                ActUIElementElementLocateByField = nameof(ActUIElement.ElementLocateBy),
+                ActUIElementLocateValueField = nameof(ActUIElement.ElementLocateValue),
+                ActUIElementElementLocateValueField = nameof(ActUIElement.ElementLocateValue),
+                ActUIElementElementTypeField = nameof(ActUIElement.ElementType)
+            };
             ObservableList<ConvertableActionDetails> lst = utils.GetConvertableActivityActions(mBF.Activities.ToList());
             ObservableList<Guid> poms = new ObservableList<Guid>() { selectedPOM };
             foreach (var item in lst)
@@ -991,6 +1004,30 @@ namespace GingerTest
             ActSwitchWindowTOUISwitchWindowConvertor(activity);
         }
 
+        [TestMethod]
+        [Timeout(100000)]
+        public void JavaLegacyPOMConversionTest()
+        {
+            //Arrange
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+            var businessFlowFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml" + Path.DirectorySeparatorChar + "Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml");
+            var javaPomFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml");
+            
+            //Load BF
+            mBF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(businessFlowFile);
+
+            mBF.Activities[0].SelectedForConversion = true;
+
+            //Load POM
+            ApplicationPOMModel applicationPOM = (ApplicationPOMModel)RepositorySerializer.DeserializeFromFile(javaPomFile);
+            mSolutionRepository.AddRepositoryItem(applicationPOM);
+
+            ExecuteActionConversion(true, true, string.Empty, true, applicationPOM.Guid);
+            //Assert
+            Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementLocateBy.ToString(),eLocateBy.POMElement.ToString());
+            Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementAction.ToString(), ((ActJavaElement)mBF.Activities[0].Acts[1]).ControlAction.ToString());
+        }
+
         private static void JavaGenericToUIElementConversionActAndAssert(ActGenElement genAction)
         {
             //Act
@@ -1003,6 +1040,7 @@ namespace GingerTest
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).ElementAction.ToString(), genAction.GenElementAction.ToString());
             Assert.AreEqual(((ActUIElement)mBF.Activities[0].Acts[1]).Value, genAction.Value);
         }
+
 
         private void JavaGenericToBrowserActionConversionActAndAssert(ActGenElement genAction)
         {

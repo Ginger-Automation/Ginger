@@ -119,18 +119,19 @@ namespace GingerCore.Actions
                         AddOrUpdateReturnParamActual("Output", VERC.ValueCalculated);
                         break;
                     case eControlAction.ExportToExcel:
-                        ValueExpression EVE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        EVE.Value = this.Value;
+                        ValueExpression VEETE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
+                        VEETE.Value = ExcelPath;
+                        string ExcelFilePath = VEETE.ValueCalculated;
 
-                        ValueExpression ETERC = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList, false, EVE.ValueCalculated);
-                        ETERC.Value = ValueExp;                    
-                        if (ETERC.ValueCalculated == "The Export Excel can be *.xlsx only")
+                        if (ExcelFilePath.ToLower().EndsWith(".xlsx"))
+                        {
+                            DataSource.ExporttoExcel(DSTableName, ExcelFilePath, ExcelSheetName);
+                        }
+                        else
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             Error = "The Export Excel can be *.xlsx only";
                         }
-                        else
-                            outVal = ETERC.ValueCalculated;
                         break;
                     case eControlAction.DeleteRow:
                         ValueExpression veDel = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
