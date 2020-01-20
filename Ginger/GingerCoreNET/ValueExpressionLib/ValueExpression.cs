@@ -621,18 +621,7 @@ namespace GingerCore
                     DataSource.RunQuery(updateQuery);
                     mValueCalculated = "";
                 }
-                else if (sAct == "ETE" && bDone == true)
-                {
-                    if (ExcelSheet == "")
-                        ExcelSheet = DSTable;
-                    if (ExcelPath.ToLower().EndsWith(".xlsx"))
-                    {
-                        DataSource.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
-                        mValueCalculated = "";
-                    }
-                    else
-                        mValueCalculated = "The Export Excel can be *.xlsx only";
-                }
+                
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {

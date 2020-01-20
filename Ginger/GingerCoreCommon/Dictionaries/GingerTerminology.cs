@@ -69,6 +69,20 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSets", "Calendars")
         };
 
+        static List<KeyValuePair<string, string>> gingerTermTDMList = new List<KeyValuePair<string, string>>()
+        {
+            new KeyValuePair<string, string>("BusinessFlow", "Sub Business Process"),
+            new KeyValuePair<string, string>("BusinessFlows", "Sub Business Processes"),
+            new KeyValuePair<string, string>("ActivitiesGroup", "Activity"),
+            new KeyValuePair<string, string>("ActivitiesGroups", "Activities"),
+            new KeyValuePair<string, string>("Activity", "Step"),
+            new KeyValuePair<string, string>("Activities", "Steps"),
+            new KeyValuePair<string, string>("Variable", "Parameter"),
+            new KeyValuePair<string, string>("Variables", "Parameters"),
+            new KeyValuePair<string, string>("RunSet", "Business Process"),
+            new KeyValuePair<string, string>("RunSets", "Business Processes")
+        };
+
         public static string GetTerminologyValue(eTermResKey key)
         {
             KeyValuePair<string, string> result = new KeyValuePair<string, string>();
@@ -82,6 +96,9 @@ namespace GingerCore
                     break;
                 case eTerminologyType.Testing:
                     result = gingerTermTestingList.Find(kvp => kvp.Key == key.ToString());
+                    break;
+                case eTerminologyType.TDM:
+                    result = gingerTermTDMList.Find(kvp => kvp.Key == key.ToString());
                     break;
             }
             return result.Value;

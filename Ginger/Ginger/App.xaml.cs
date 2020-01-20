@@ -308,9 +308,7 @@ namespace Ginger
 
             MainWindow = new MainWindow();
             MainWindow.Show();
-            GingerCore.General.DoEvents();
-
-            MainWindow.Init();
+            GingerCore.General.DoEvents();            
 
             if (WorkSpace.Instance.UserProfile != null)
             {
@@ -320,6 +318,8 @@ namespace Ginger
             {
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
             }
+
+            MainWindow.Init();
         }
 
 
