@@ -1165,7 +1165,7 @@ namespace GingerCoreNET.DataSource
             isDeleteAllExecuted = true;
         }
 
-        private void DeleteDBTableContents(string TName)
+        public void DeleteDBTableContents(string TName)
         {
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
