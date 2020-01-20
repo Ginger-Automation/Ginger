@@ -12,7 +12,7 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="250"/>
+            <RowDefinition Height="280"/>
             <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
@@ -38,6 +38,7 @@
                 <Label Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Top">Automation %:</Label>
                 <TextBox x:Name="txtAutoPrecentage" Width="70" Height="25"  Style="{StaticResource @TextBoxStyle}"></TextBox>
             </StackPanel>
+            <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
         </StackPanel>
 
         <Ginger:ucGrid x:Name="grdGroupedActivities" Grid.Row="1" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" Margin="0,10,0,0" Grid.ColumnSpan="2">

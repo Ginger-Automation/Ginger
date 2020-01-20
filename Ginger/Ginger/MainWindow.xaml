@@ -77,10 +77,14 @@
                             </ListView.ItemsPanel>
                             <ListViewItem x:Name="xBusinessFlowsListItem" Style="{StaticResource $TopListViewItemStyle}" IsSelected="True">
                                 <ListViewItem.Content>
-                                    <GingerCore:ucTextDicResource Text="[BusinessFlows]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
+                                    <GingerCore:ucTextDicResource x:Name="xBusinessFlowsListItemText" Text="[BusinessFlows]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
                                 </ListViewItem.Content>
                             </ListViewItem>
-                            <ListViewItem x:Name="xRunListItem" Style="{StaticResource $TopListViewItemStyle}" >RUN</ListViewItem>
+                            <ListViewItem x:Name="xRunListItem" Style="{StaticResource $TopListViewItemStyle}" >
+                                <ListViewItem.Content>
+                                    <GingerCore:ucTextDicResource x:Name="xRunListItemText"  Text="[RunSets]" Typography.Capitals="AllSmallCaps" FontSize="20" Margin="0,0,0,3"/>
+                                </ListViewItem.Content>
+                            </ListViewItem>
                             <ListViewItem x:Name="xConfigurationsListItem" Style="{StaticResource $TopListViewItemStyle}">CONFIGURATIONS</ListViewItem>
                             <ListViewItem x:Name="xResourcesListItem" Style="{StaticResource $TopListViewItemStyle}">RESOURCES</ListViewItem>
                         </ListView>
