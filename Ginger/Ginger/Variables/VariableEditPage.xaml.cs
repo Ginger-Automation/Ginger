@@ -82,6 +82,7 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsInputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
 
             if (mode ==eEditMode.Global)
             {
@@ -114,6 +115,7 @@ namespace Ginger.Variables
                 xSharedRepoInstanceUC.IsEnabled = false;
                 xSetAsInputValueCheckBox.IsEnabled = false;
                 xSetAsOutputValueCheckBox.IsEnabled = false;
+                xPublishcheckbox.IsEnabled = false;
                 xLinkedvariableCombo.IsEnabled = false;
                 xPublishValueToLinkedVarBtn.IsEnabled = false;
             }

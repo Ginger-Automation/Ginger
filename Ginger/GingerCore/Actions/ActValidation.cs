@@ -40,7 +40,6 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action to perform validations Using Value Expression editor ");
 
         }
-        [IsSerializedForLocalRepository]
         public string Condition { get { return this.Value; } set { this.Value = value; } }
 
         public override string ActionEditPage { get { return null; } }
