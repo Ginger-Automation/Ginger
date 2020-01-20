@@ -184,8 +184,13 @@ namespace Ginger
 
             if (mExceptionsDic[ex.Message] <= 3)
             {
-                Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
+                }
             }
+
+            Environment.ExitCode = -1;
 
             // Clear the err so it will not crash
             e.Handled = true;
@@ -303,9 +308,7 @@ namespace Ginger
 
             MainWindow = new MainWindow();
             MainWindow.Show();
-            GingerCore.General.DoEvents();
-
-            MainWindow.Init();
+            GingerCore.General.DoEvents();            
 
             if (WorkSpace.Instance.UserProfile != null)
             {
@@ -315,6 +318,8 @@ namespace Ginger
             {
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
             }
+
+            MainWindow.Init();
         }
 
 

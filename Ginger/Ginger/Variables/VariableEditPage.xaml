@@ -59,6 +59,7 @@
                                         </usercontrols:ucButton.ToolTip>
                                     </usercontrols:ucButton>
                                 </StackPanel>
+                                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,-5,0,5" Style="{StaticResource $CeckBoxStyle}"/>
                             </StackPanel>
                         </StackPanel>
                         <Ginger:ucSharedRepoInstance x:Name="xSharedRepoInstanceUC" Grid.Column="1" />

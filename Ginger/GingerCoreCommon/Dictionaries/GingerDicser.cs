@@ -42,7 +42,8 @@ namespace GingerCore
     {
         Default,
         Testing,
-        Gherkin
+        Gherkin,
+        TDM
     }
 
     public enum eUserType

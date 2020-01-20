@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList)
         {
-            throw new NotImplementedException();
+            return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)

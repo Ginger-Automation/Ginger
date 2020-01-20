@@ -241,23 +241,39 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHandler = new CLIConfigFile();                    
                     break;
                 case "dynamic":
-                    mCLIHandler = new CLIDynamicXML();
-                    // CLILoadAndPrepare();
+                    if (Path.GetExtension(fileName).ToLower() == ".xml")
+                    {
+                        mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+                    }
+                    else if (Path.GetExtension(fileName).ToLower() == ".json")
+                    {
+                        mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Dynamic file type is not supported, file path: '{0}'", fileName));
+                        Environment.ExitCode = 1; //failure
+                        return Environment.ExitCode;
+                    }
                     break;
+
                 case "script":
                     mCLIHandler = new CLIScriptFile();
                     break;
-            }            
-            mCLIHandler.LoadContent(ReadFile(fileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+            }
+
+            string fileContent = ReadFile(fileName);
+            mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
+
             if (fileType == "config" || fileType == "dynamic")  // not needed for script
             {
-                CLILoadAndPrepare();  
+                CLILoadAndPrepare(runsetConfigs: fileContent);  
             }
+
             ExecuteRunSet();
 
             return Environment.ExitCode;
         }
-
 
 
         private int HanldeGridOption(GridOptions gridOptions)
@@ -411,13 +427,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.CloseSolution();            
         }
 
-        private void CLILoadAndPrepare()
+        private void CLILoadAndPrepare(string runsetConfigs="")
         {
             if (!mCLIHelper.LoadSolution())
             {
                 return;//failed to load Solution;
             }
 
+            if (!string.IsNullOrEmpty(runsetConfigs))
+            {
+                mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+            }
             if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
             {
                 return;//failed to load Run set

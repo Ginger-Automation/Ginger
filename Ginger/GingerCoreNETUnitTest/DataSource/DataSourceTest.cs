@@ -312,7 +312,35 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(true, res);
         }
-
         
+        [TestMethod]
+        public void CommitDb()
+        {
+            // Arrange
+            ObservableList<DataSourceTable> dataSourceTableList = liteDB.GetTablesList();
+            DataSourceTable dataSource = null;
+            List<string> mColumnNames = null;
+            foreach (DataSourceTable dataSourceTable in dataSourceTableList)
+            {
+                if (dataSourceTable.Name == "MyCustomizedDataTable")
+                {
+                    dataSource = dataSourceTable;
+                }
+            }
+            DataTable dataTable = liteDB.GetQueryOutput(dataSource.Name);
+            dataSource.DataTable = dataTable;
+            liteDB.AddRow(mColumnNames, dataSource);
+            dataTable = liteDB.GetQueryOutput(dataSource.Name);
+            liteDB.SaveTable(dataTable);
+
+            //Act
+            liteDB.DeleteDBTableContents(dataSource.Name);
+            liteDB.SaveTable(dataTable);
+            var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
+
+            //Assert
+            Assert.AreEqual("1", a, "RowCount");
+        }
+
     }
 }

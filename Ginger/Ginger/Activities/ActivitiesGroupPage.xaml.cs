@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -60,6 +61,7 @@ namespace Ginger.Activities
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.AutomationPrecentage), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivitiesGroup, nameof(RepositoryItemBase.Publish));
 
             SetGroupedActivitiesGridView();
             grdGroupedActivities.DataSourceList = mActivitiesGroup.ActivitiesIdentifiers;
