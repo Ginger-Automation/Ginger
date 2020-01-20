@@ -120,6 +120,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAutoPrecentageTextBox.IsEnabled = false;
                 xTargetsListBox.IsEnabled = false;
                 xAddTargetBtn.IsEnabled = false;
+                xPublishcheckbox.IsEnabled = false;
             }
 
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
@@ -130,6 +131,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xStatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mBusinessFlow, nameof(RepositoryItemBase.Publish));
 
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
@@ -151,6 +153,7 @@ namespace GingerWPF.BusinessFlowsLib
             BindingOperations.ClearAllBindings(xCreatedByTextBox);
             BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
             BindingOperations.ClearAllBindings(xTargetsListBox);
+            BindingOperations.ClearAllBindings(xPublishcheckbox);
         }
 
         public void UpdateBusinessFlow(BusinessFlow updateBusinessFlow)

@@ -208,6 +208,9 @@
     <Content Include="TestResources\Script\ScriptWithoutOutput.vbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\BusinessFlows\ConditionVal.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Temp\sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

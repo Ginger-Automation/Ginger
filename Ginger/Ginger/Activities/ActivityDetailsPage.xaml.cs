@@ -60,6 +60,7 @@ namespace Ginger.BusinessFlowPages
                 xScreenTxt.IsEnabled = false;
                 xExpectedTxt.IsEnabled = false;
                 xMandatoryActivityCB.IsEnabled = false;
+                xPublishcheckbox.IsEnabled = false;
                 xTargetApplicationComboBox.IsEnabled = false;
                 xRunOptionCombo.IsEnabled = false;
                 xAutomationStatusCombo.IsEnabled = false;
@@ -101,6 +102,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
+            BindingOperations.ClearAllBindings(xPublishcheckbox);
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);            
         }
@@ -119,6 +121,7 @@ namespace Ginger.BusinessFlowPages
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
             xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
+            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
             if (mContext != null && mContext.BusinessFlow != null)
             {
                 xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
