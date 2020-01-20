@@ -39,15 +39,10 @@ namespace GingerTest.Variable_Dependancies
             actDummy1.Active = true;
             ActDummy actDummy2 = new ActDummy();
             actDummy2.Active = true;
-            ActDummy actDummy7 = new ActDummy();
-            actDummy7.Active = true;
-            ActDummy actDummy8 = new ActDummy();
-            actDummy8.Active = true;
 
             activity1.Acts.Add(actDummy1);
             activity1.Acts.Add(actDummy2);
-            activity1.Acts.Add(actDummy7);
-            activity1.Acts.Add(actDummy8);
+            
 
             Activity activity2 = new Activity();
             activity2.Active = true;
@@ -57,8 +52,15 @@ namespace GingerTest.Variable_Dependancies
             ActDummy actDummy4 = new ActDummy();
             actDummy4.Active = true;
 
+            ActDummy actDummy7 = new ActDummy();
+            actDummy7.Active = true;
+            ActDummy actDummy8 = new ActDummy();
+            actDummy8.Active = true;
+
             activity2.Acts.Add(actDummy3);
             activity2.Acts.Add(actDummy4);
+            activity2.Acts.Add(actDummy7);
+            activity2.Acts.Add(actDummy8);
 
             Activity activity3 = new Activity();
             activity3.Active = true;
@@ -171,11 +173,12 @@ namespace GingerTest.Variable_Dependancies
             //Arrange
             ObservableList<Activity> activityList = BF1.Activities;
 
-            Activity activity = activityList[0];
+            Activity activity = activityList[1];
             ObservableList<IAct> actionList = activity.Acts;
 
             activity.EnableActionsVariablesDependenciesControl = true;
 
+            mGR.CurrentBusinessFlow.CurrentActivity = BF1.Activities[1];
             //Added selection list variable in activity
             VariableSelectionList selectionList = new VariableSelectionList();
             selectionList.OptionalValuesList.Add(new OptionalValue("abc"));
@@ -204,10 +207,10 @@ namespace GingerTest.Variable_Dependancies
             mGR.RunActivity(activity);
 
             //Assert
-            Assert.AreEqual(BF1.Activities[0].Acts[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
-            Assert.AreEqual(BF1.Activities[0].Acts[1].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(BF1.Activities[0].Acts[2].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(BF1.Activities[0].Acts[3].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
+            Assert.AreEqual(BF1.Activities[1].Acts[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
+            Assert.AreEqual(BF1.Activities[1].Acts[1].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(BF1.Activities[1].Acts[2].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(BF1.Activities[1].Acts[3].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
             
             //Changed the selected value of selection list
             ((VariableSelectionList)activity.Variables[0]).SelectedValue = selectionList.OptionalValuesList[0].Value;
@@ -216,10 +219,10 @@ namespace GingerTest.Variable_Dependancies
             mGR.RunActivity(activity);
 
             //Assert
-            Assert.AreEqual(BF1.Activities[0].Acts[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(BF1.Activities[0].Acts[1].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(BF1.Activities[0].Acts[2].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
-            Assert.AreEqual(BF1.Activities[0].Acts[3].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(BF1.Activities[1].Acts[0].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(BF1.Activities[1].Acts[1].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(BF1.Activities[1].Acts[2].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(BF1.Activities[1].Acts[3].Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
         }
     }
 }
