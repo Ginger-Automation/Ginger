@@ -128,7 +128,7 @@ namespace GingerCoreNET.Application_Models
                     PomLearnUtils.SetLearnedElementDetails(latestElement);
 
                     if (matchingOriginalElement == null)//New element
-                    {                        
+                    {
                         object groupToAddTo;
                         if (PomLearnUtils.SelectedElementTypesList.Contains(latestElement.ElementTypeEnum))
                         {
@@ -386,19 +386,93 @@ namespace GingerCoreNET.Application_Models
         private void SetUnidentifiedElementsDeltaDetails()
         {
             List<ElementInfo> unidentifiedElements = POMElementsCopy.Where(x => DeltaViewElements.Where(y => y.ElementInfo != null && y.ElementInfo.Guid == x.Guid).FirstOrDefault() == null).ToList();
-            foreach (ElementInfo unidentifiedElement in unidentifiedElements)
+            
+            var addedElements = DeltaViewElements.Where(d => d.DeltaStatus == eDeltaStatus.Added).ToList();
+
+            foreach (ElementInfo deletedElement in unidentifiedElements)
             {
-                if (unidentifiedElement.ElementStatus == ElementInfo.eElementStatus.Failed)
-                {  
-                    //Deleted
-                    DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Deleted, unidentifiedElement.ElementGroup, true, "Element not found on page"));
+                if (deletedElement.ElementStatus == ElementInfo.eElementStatus.Failed)
+                {
+                    bool matchingElementFound = false;
+
+                    DeltaElementInfo toRemoveAddedFoundItem = null;
+                    foreach (var newElement in addedElements)
+                    {
+                        var newElementLocdiff = newElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+                        var oldElementLocdiff = deletedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
+
+                        if (newElementLocdiff.Except(oldElementLocdiff).Count() == 0)
+                        {
+                            //check property and update
+                            var newElementPropeties = newElement.Properties.ToDictionary(x => x.Name, x => x.Value);
+                            var oldElementPropeties = deletedElement.Properties.ToDictionary(x => x.Name, x => x.Value);
+                            var diffProperties = newElementPropeties.Except(oldElementPropeties);
+
+                            // check if Parent iframe changed
+                            var parentIFrame = diffProperties.Where(x => x.Key.Contains("Parent IFrame")).FirstOrDefault();
+                            
+                            var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
+                            if (!string.IsNullOrEmpty(parentIFrame.Value))
+                            {
+                                foreach (var changedProprty in diffProperties.ToList())
+                                {
+                                    foreach (var existingProperty in deltaControlProp.Where(x => x.ElementProperty.Name == changedProprty.Key))
+                                    {
+                                        existingProperty.ElementProperty.Value = changedProprty.Value;
+                                        existingProperty.DeltaStatus = eDeltaStatus.Avoided;
+                                        existingProperty.DeltaExtraDetails = "Property changed";
+                                    }
+                                }
+                            }
+                            matchingElementFound = true;
+
+                            var mathchedItemIndex = DeltaViewElements.IndexOf(DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)).FirstOrDefault());
+                            //update path of element
+                            deletedElement.Path = newElement.ElementInfo.Path;
+
+                            var item = ConvertElementToDelta(deletedElement, eDeltaStatus.Changed, deletedElement.ElementGroup, true, "Property Changed");
+                            item.Properties = deltaControlProp;
+                            if (mathchedItemIndex != -1)
+                                DeltaViewElements[mathchedItemIndex] = item;
+
+                            // add found newElment in removeitem 
+                            toRemoveAddedFoundItem = newElement;
+                            //element found and updated, so exit from loop
+                            break;
+
+                        }
+
+                    }
+
+                    if (toRemoveAddedFoundItem != null)
+                    {
+                        addedElements.Remove(toRemoveAddedFoundItem);
+                    }
+
+                    if (!matchingElementFound)
+                    {
+                        //Deleted
+                        DeltaViewElements.Add(ConvertElementToDelta(deletedElement, eDeltaStatus.Deleted, deletedElement.ElementGroup, true, "Element not found on page"));
+                    }
+
                 }
                 else
                 {
                     //unknown
-                    DeltaViewElements.Add(ConvertElementToDelta(unidentifiedElement, eDeltaStatus.Unknown, unidentifiedElement.ElementGroup, false, "Element exist on page but could not be compared"));
+                    DeltaViewElements.Add(ConvertElementToDelta(deletedElement, eDeltaStatus.Unknown, deletedElement.ElementGroup, false, "Element exist on page but could not be compared"));
                 }
             }
+
+        }
+
+        private ObservableList<DeltaControlProperty> CovertToDeltaControlProperty(ObservableList<ControlProperty> properties)
+        {
+            ObservableList<DeltaControlProperty> deltaControlProperties = new ObservableList<DeltaControlProperty>();
+            foreach (ControlProperty property in properties)
+            {
+                deltaControlProperties.Add(new DeltaControlProperty() { ElementProperty = property,DeltaStatus= eDeltaStatus.Unchanged});
+            }
+            return deltaControlProperties;
         }
 
         private void DoEndOfRelearnElementsSorting()

@@ -108,8 +108,8 @@ namespace GingerWPF.BusinessFlowsLib
         {
             InitializeComponent();
 
-            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
-            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
+            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
@@ -720,7 +720,7 @@ namespace GingerWPF.BusinessFlowsLib
 
 
 
-        private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
+        private async void App_AutomateBusinessFlowEventAsync(AutomateEventArgs args)
         {
             switch (args.EventType)
             {
@@ -738,19 +738,19 @@ namespace GingerWPF.BusinessFlowsLib
                     UpdateAutomatePageRunner();
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentAction:
-                    RunAutomatePageAction((Tuple<Activity,Act>)args.Object,  false);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false, true);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
-                    RunAutomatePageActivity((Activity)args.Object);
+                    await RunAutomatePageActivity((Activity)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
-                    ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object);
+                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActivityRun:
-                    ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object);
+                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.StopRun:
                     StopAutomateRun();
@@ -881,7 +881,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true, bool moveToNextAction=false)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo, bool moveToNextAction=true, bool checkIfActionAllowedToRun = true)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -919,7 +919,11 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunner.SetCurrentActivityAgent();
                 }
 
-                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);               
+                mBusinessFlow.CurrentActivity = parentActivity;
+                mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+
+                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -927,11 +931,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
                 }
-
-                if (moveToNextAction)
-                {
-                    mContext.Runner.GotoNextAction();
-                }
+                             
             }
             catch(Exception ex)
             {
