@@ -34,9 +34,9 @@ namespace GingerCore.DataSource
     {
         private static readonly Object thisObj = new object();
 
-        private string GetConnectionString(string sFilePath, string sMode = "Write")
+        private string GetConnectionString(string sMode = "Write")
         {
-            FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
+            //FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
 
             string strAccessConn = "";
 
@@ -53,7 +53,7 @@ namespace GingerCore.DataSource
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
                     {
@@ -148,7 +148,7 @@ namespace GingerCore.DataSource
             List<string> mColumnNames = new List<string>();
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
                     {
@@ -178,7 +178,7 @@ namespace GingerCore.DataSource
             try
             {
                 DataTable dataTable = new DataTable();
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Read")))
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
                     {
@@ -203,7 +203,7 @@ namespace GingerCore.DataSource
         {
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
+                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
                 {
                     if (connObj.State != System.Data.ConnectionState.Open)
                     {
@@ -243,7 +243,7 @@ namespace GingerCore.DataSource
 
         public override bool IsTableExist(string TableName)
         {
-            using (OleDbConnection connObj = new OleDbConnection(GetConnectionString(FileFullPath, "Write")))
+            using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
             {
                 if (connObj.State == ConnectionState.Closed)
                 {
