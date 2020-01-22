@@ -176,7 +176,6 @@ namespace Ginger.Run.RunSetActions
                 comment.Visibility = Visibility.Collapsed;
                 BodyTextBox.Visibility = Visibility.Visible;
                 runSetActionHTMLReportSendEmail.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText;
-                runSetActionHTMLReportSendEmail.Email.IsBodyHTML = false;
             }
             catch (Exception ex)
             {
@@ -190,7 +189,6 @@ namespace Ginger.Run.RunSetActions
                 comment.Visibility = Visibility.Visible;
                 BodyTextBox.Visibility = Visibility.Collapsed;
                 runSetActionHTMLReportSendEmail.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
-                runSetActionHTMLReportSendEmail.Email.IsBodyHTML = true;
             }
             catch (Exception ex)
             {
