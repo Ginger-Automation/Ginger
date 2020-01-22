@@ -2710,6 +2710,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void StartGetRecordingTimer()
         {
+            currentWindowTitle = string.Empty;
             mGetRecordingTimer = new System.Windows.Threading.DispatcherTimer();
             mGetRecordingTimer.Tick += dispatcherTimerElapsedTick;
             mGetRecordingTimer.Interval = new TimeSpan(0, 0, 1);
@@ -2735,7 +2736,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                 List<PayLoad> list = rcAC.GetListPayLoad();
                 foreach (PayLoad pl in list)
                 {
-                    CreateAction(pl, isPOMRecording);
+                    if (isPOMRecording)
+                    {
+                        GetPOMAction(pl);
+                    }
+                    else
+                    {
+                        CreateAction(pl);
+                    }
                 }
             }
         }
@@ -2744,7 +2752,149 @@ namespace GingerCore.Drivers.JavaDriverLib
             RecordingEvent?.Invoke(this, e);
         }
 
-        private void CreateAction(PayLoad pl, bool isPOMRecording)
+        private string currentWindowTitle = string.Empty;
+        private void GetPOMAction(PayLoad payLoad)
+        {
+            var title = ((IWindowExplorer)this).GetActiveWindow().Title;
+            if (title != currentWindowTitle)
+            {
+                currentWindowTitle = title;
+                RecordingEventArgs recordingEventArgs = new RecordingEventArgs();
+                recordingEventArgs.EventType = eRecordingEvent.PageChanged;
+                PageChangedEventArgs pageArgs = new PageChangedEventArgs()
+                {
+                    PageURL = title ,
+                    PageTitle = title,
+                    ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
+                };
+                recordingEventArgs.EventArgs = pageArgs;
+                OnRecordingEvent(recordingEventArgs);
+            }
+
+            RecordingEventArgs args = new RecordingEventArgs();
+            args.EventType = eRecordingEvent.ElementRecorded;
+            args.EventArgs = GetElementConfigFromPayload(payLoad);
+            OnRecordingEvent(args);
+        }
+
+        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration elementActionCongifuration)
+        {
+            JavaElementInfo elementInfo = new JavaElementInfo();
+            try
+            {
+                elementInfo.XPath = Convert.ToString(elementActionCongifuration.LocateValue);
+                elementInfo.ElementType = nameof(JavaElementInfo);
+                elementInfo = (JavaElementInfo)((IWindowExplorer)this).LearnElementInfoDetails(elementInfo);
+
+                elementInfo.ElementName = elementActionCongifuration.Description;
+                if (Enum.IsDefined(typeof(eElementType), Convert.ToString(elementActionCongifuration.Type)))
+                {
+                    elementInfo.ElementTypeEnum = (eElementType)Enum.Parse(typeof(eElementType), Convert.ToString(elementActionCongifuration.Type));
+                }
+
+                foreach (var elementLocator in elementInfo.Locators)
+                {
+                    elementLocator.Active = true;
+                    elementLocator.IsAutoLearned = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred creating the elementinfo object", ex);
+            }
+
+            return elementInfo;
+        }
+        private object GetElementConfigFromPayload(PayLoad payLoad)
+        {
+            ElementActionCongifuration configArgs = new ElementActionCongifuration();
+            //
+            configArgs.LocateBy = eLocateBy.ByXPath;
+            configArgs.LocateValue = payLoad.GetValueString();
+            
+            if (!payLoad.Name.Equals("SwitchWindow"))
+            {
+                configArgs.ElementValue = payLoad.GetValueString();
+            }
+           
+            SetElementSpecificConfiguration(payLoad, configArgs);
+ 
+            configArgs.Description = string.Concat(configArgs.Operation, " ", configArgs.LocateValue);
+            configArgs.LearnedElementInfo = GetElementInfoFromActionConfiguration(configArgs);
+
+
+            return configArgs;
+        }
+
+        private static void SetElementSpecificConfiguration(PayLoad payLoad, ElementActionCongifuration configArgs)
+        {
+            switch (payLoad.Name)
+            {
+                case "JButton":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Button.ToString();
+                    break;
+                case "JTextField":
+                    var textFieldName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+                case "JTextArea":
+                case "JTextPane":
+                    var TextAreaName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+                case "JCheckBox":
+                    configArgs.Operation = ActUIElement.eElementAction.Toggle.ToString();
+                    configArgs.Type = eElementType.CheckBox.ToString();
+                    break;
+                case "JComboBox":
+                    var comboBoxName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.ComboBox.ToString();
+                    break;
+                case "JRadioButton":
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.RadioButton.ToString();
+                    break;
+                case "JTable":
+                    var tableName = payLoad.GetValueString();
+                    var row = payLoad.GetValueString();
+                    var col = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.DoubleClick.ToString();
+                    configArgs.Type = eElementType.Table.ToString();
+                    break;
+                case "JMenu":
+                case "JMenuItem":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.MenuItem.ToString();
+                    break;
+                case "JList":
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.ListItem.ToString();
+                    break;
+                case "JTree":
+                    var treeName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.TreeView.ToString();
+                    break;
+                case "JTabbedPane":
+                    var paneName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.Tab.ToString();
+                    break;
+                case "SwitchWindow":
+                    configArgs.Operation = ActUIElement.eElementAction.Switch.ToString();
+                    configArgs.Type = eElementType.Window.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CreateAction(PayLoad pl)
         {
             switch (pl.Name)
             {
@@ -2762,15 +2912,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementAction = ActUIElement.eElementAction.Click,
                     };
                     actUIElementJButton.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
-                    if (isPOMRecording && RecordingEvent != null)
-                    {
-                        GetPOMAction(actUIElementJButton);
-                    }
-                    else
-                    {
-                        BusinessFlow.AddAct(actUIElementJButton);
-                    }
-
+                    BusinessFlow.AddAct(actUIElementJButton);
                     break;
                 case "JCheckBox":
                     string CheckBoxXPath = pl.GetValueString();
@@ -2784,15 +2926,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementType = eElementType.CheckBox,
                         ElementAction = ActUIElement.eElementAction.Toggle
                     };
-                    if (isPOMRecording && RecordingEvent != null)
-                    {
-                        GetPOMAction(uiJCheckBoxAction);
-                    }
-                    else
-                    {
-                        BusinessFlow.AddAct(uiJCheckBoxAction);
-                    }
-
+                    BusinessFlow.AddAct(uiJCheckBoxAction);
                     break;
 
                 case "JTextField":
@@ -2809,14 +2943,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementType = eElementType.TextBox,
                         ElementAction = ActUIElement.eElementAction.SetValue
                     };
-                    if (isPOMRecording && RecordingEvent != null)
-                    {
-                        GetPOMAction(jTextFieldUIAction);
-                    }
-                    else
-                    {
-                        BusinessFlow.AddAct(jTextFieldUIAction);
-                    }
+                    BusinessFlow.AddAct(jTextFieldUIAction);
                     break;
 
                 case "JComboBox":
@@ -2833,15 +2960,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementAction = ActUIElement.eElementAction.Select
                     };
                     actUIElementJComboBox.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, ComboBoxValue);
-
-                    if (isPOMRecording && RecordingEvent != null)
-                    {
-                        GetPOMAction(actUIElementJComboBox);
-                    }
-                    else
-                    {
-                        BusinessFlow.AddAct(actUIElementJComboBox);
-                    }
+                    BusinessFlow.AddAct(actUIElementJComboBox);
 
                     break;
 
@@ -2857,14 +2976,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementType = eElementType.RadioButton,
                         ElementAction = ActUIElement.eElementAction.Select
                     };
-                    if (isPOMRecording && RecordingEvent != null)
-                    {
-                        GetPOMAction(rbdButtonUIAction);
-                    }
-                    else
-                    {
-                        BusinessFlow.AddAct(rbdButtonUIAction);
-                    }
+                    BusinessFlow.AddAct(rbdButtonUIAction);
+
                     break;
 
                 case "JTextArea":
@@ -3095,26 +3208,6 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        private void GetPOMAction(ActUIElement actUIElementJButton)
-        {
-            //New implementation supporting POM
-            RecordingEventArgs args = new RecordingEventArgs();
-            args.EventType = eRecordingEvent.ElementRecorded;
-            args.EventArgs = GetElementConfigFromUIAction(actUIElementJButton);
-            OnRecordingEvent(args);
-        }
-
-        private object GetElementConfigFromUIAction(ActUIElement actUIElementJButton)
-        {
-            ElementActionCongifuration configArgs = new ElementActionCongifuration();
-            configArgs.LocateBy = actUIElementJButton.ElementLocateBy;
-            configArgs.LocateValue = actUIElementJButton.ElementLocateValue;
-            configArgs.ElementValue = actUIElementJButton.Value;
-            configArgs.Operation = actUIElementJButton.ElementAction.ToString();
-            configArgs.Description = actUIElementJButton.Description;
-            //configArgs.LearnedElementInfo = 
-            return configArgs;
-        }
 
         private ActUIElement GetHTMLAction(PayLoad pl)
         {
