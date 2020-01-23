@@ -68,8 +68,9 @@ namespace Amdocs.Ginger.GingerConsole
             {
                 if (args.Count() > 0)
                 {
+                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments...");
                     ProcessArgs(args);                    
-                    Reporter.ToLog(eLogLevel.DEBUG, "Processing command line arguments completed");
+                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments completed");
                 }
                 else
                 {
