@@ -310,7 +310,6 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						+ "" + LocateBy + "," 
 						+ "" + LocateValue + ","
 						+ "" + Value);
-			
 				PayLoad plrc= HandleElementAction(LocateBy, LocateValue, ControlAction, Value,"", "");
 			return plrc;			
 		}		
@@ -1818,6 +1817,11 @@ private PayLoad TypeKeys(Component c,String Value) {
 	
 	private TreePath SearchTreeNodes(JTree tree,String locateValue, StringBuilder searchResult) 
 	{
+		if(locateValue.isEmpty()) 
+		{
+			TreePath rootPath= tree.getPathForRow(0);
+			return rootPath;
+		}
 			
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
 				
