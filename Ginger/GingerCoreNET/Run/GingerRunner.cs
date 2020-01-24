@@ -890,9 +890,13 @@ namespace Ginger.Run
         {
             NotifyExecutionContext(AutomationTabContext.ActionRun);
             var result = await Task.Run(() => {
+                IsRunning = true;
+                mStopRun = false;
                 RunAction(act, checkIfActionAllowedToRun, moveToNextAction);
+                IsRunning = false;
                 return 1;   
             });
+           
             return result;
         }
 
@@ -901,13 +905,6 @@ namespace Ginger.Run
         {            
             try
             {
-                //set Runner details if running in stand alone mode (Automate tab)
-                if (moveToNextAction)
-                {
-                    IsRunning = true;
-                    mStopRun = false;
-                }
-
                 //init
                 act.SolutionFolder = SolutionFolder;
 
@@ -944,14 +941,6 @@ namespace Ginger.Run
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in Run Action", ex);
-            }
-
-            finally
-            {
-                if (moveToNextAction)
-                {
-                    IsRunning = false;
-                }                          
             }
         }
 
