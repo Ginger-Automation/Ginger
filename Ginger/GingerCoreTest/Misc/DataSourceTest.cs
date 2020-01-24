@@ -90,7 +90,7 @@ namespace UnitTests.NonUITests
 
             //Act : delete colunm
             accessDataSource.RemoveColumn("MyCustomizedDataTable", "New");
-            ColunmList = accessDataSource.GetColumnList("NewTableAs");
+            ColunmList = accessDataSource.GetColumnList("MyCustomizedDataTable");
             IsColunmExists = ColunmList.Any(s => s.Contains("New"));
             //Assert
             Assert.AreEqual(IsColunmExists, false);
@@ -111,20 +111,6 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(accessDataSource.IsTableExist("MyCustomizedDataTable"), true);
         }
 
-
-        public void GetResult()
-        {
-            ////Arrange
-            //string Query = "db.MyCustomizedDataTable.find limit 1";
-
-            ////Act
-            //object res = accessDataSource.GetResult(Query);
-
-            ////Assert
-            //Assert.AreEqual("System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]", res.ToString());
-
-        }
-
         [TestMethod]
         public void SaveTable()
         {
@@ -139,17 +125,17 @@ namespace UnitTests.NonUITests
                     dataSource = dataSourceTable;
                 }
             }
-            DataTable dataTable = accessDataSource.GetQueryOutput(dataSource.Name);
+            int rowsCount = accessDataSource.GetRowCount(dataSource.Name);
+            DataTable dataTable = accessDataSource.GetQueryOutput("select * from MyCustomizedDataTable");
             dataSource.DataTable = dataTable;
             accessDataSource.AddRow(mColumnNames, dataSource);
-            dataTable = accessDataSource.GetQueryOutput(dataSource.Name);
 
             //Act
-            accessDataSource.SaveTable(dataTable);
-            var a = accessDataSource.GetQueryOutput("select * from MyCustomizedDataTable");
+            accessDataSource.SaveTable(dataSource.DataTable);
+            DataTable res = accessDataSource.GetQueryOutput("select * from MyCustomizedDataTable");
 
             //Assert
-            Assert.AreEqual("1", a, "RowCount");
+            Assert.AreEqual(rowsCount + 1, res.Rows.Count, "RowCount");
         }
 
         [TestMethod]
@@ -180,17 +166,17 @@ namespace UnitTests.NonUITests
                     dataSource = dataSourceTable;
                 }
             }
-            DataTable dataTable = accessDataSource.GetQueryOutput(dataSource.Name);
+            int rowsCount = accessDataSource.GetRowCount(dataSource.Name);
+            DataTable dataTable = accessDataSource.GetQueryOutput("select * from " + dataSource.Name);
             dataSource.DataTable = dataTable;
             accessDataSource.AddRow(mColumnNames, dataSource);
-            dataTable = accessDataSource.GetQueryOutput(dataSource.Name);
 
             //Act
-            accessDataSource.SaveTable(dataTable);
-            var a = accessDataSource.GetQueryOutput("select * from MyCustomizedDataTable");
+            accessDataSource.SaveTable(dataSource.DataTable);
+            DataTable res = accessDataSource.GetQueryOutput("select * from " + dataSource.Name);
 
             //Assert
-            Assert.AreEqual("1", a, "RowCount");
+            Assert.AreEqual(rowsCount + 1, res.Rows.Count, "RowCount");
         }
 
 
@@ -217,6 +203,8 @@ namespace UnitTests.NonUITests
         [TestMethod]
         public void GetQueryOutput()
         {
+            int rowsCount = accessDataSource.GetRowCount("MyCustomizedDataTable");
+
             //Arrange
             string Query = "select * from MyCustomizedDataTable";
 
@@ -224,7 +212,7 @@ namespace UnitTests.NonUITests
             DataTable res = accessDataSource.GetQueryOutput(Query);
 
             //Assert
-            Assert.AreEqual(1, res.Rows.Count);
+            Assert.AreEqual(rowsCount, res.Rows.Count);
         }
 
         [TestMethod]
@@ -257,19 +245,20 @@ namespace UnitTests.NonUITests
                     dataSource = dataSourceTable;
                 }
             }
-            DataTable dataTable = accessDataSource.GetQueryOutput(dataSource.Name);
+            DataTable dataTable = accessDataSource.GetQueryOutput("select * from " + dataSource.Name);
             dataSource.DataTable = dataTable;
             accessDataSource.AddRow(mColumnNames, dataSource);
-            dataTable = accessDataSource.GetQueryOutput(dataSource.Name);
-            accessDataSource.SaveTable(dataTable);
+            accessDataSource.SaveTable(dataSource.DataTable);
+            int a = accessDataSource.GetRowCount(dataSource.Name);
 
             //Act
             accessDataSource.RunQuery("DELETE from  " + dataSource.Name);
-            accessDataSource.SaveTable(dataTable);
-            var a = accessDataSource.GetRowCount(dataSource.Name);
+            accessDataSource.SaveTable(dataSource.DataTable);
+            int b = accessDataSource.GetRowCount(dataSource.Name);
 
             //Assert
-            Assert.AreEqual("1", a, "RowCount");
+            Assert.AreEqual(b, 0, "RowCount");
+            Assert.AreNotEqual(a, b, "RowCount");
         }
 
     }
