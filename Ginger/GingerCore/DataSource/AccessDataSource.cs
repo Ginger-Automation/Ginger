@@ -36,8 +36,6 @@ namespace GingerCore.DataSource
 
         private string GetConnectionString(string sMode = "Write")
         {
-            //FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
-
             string strAccessConn = "";
 
             if (sMode == "Read")

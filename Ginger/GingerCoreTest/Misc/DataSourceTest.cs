@@ -42,7 +42,6 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            //string Connectionstring = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + TestResources.GetTestResourcesFile(@"Database\GingerUnitTest.mdb");
             excelFilePath = TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "ExportedDS.xlsx");
             accessDataSource.FileFullPath = TestResources.GetTestResourcesFile(@"DataSources\GingerDataSource.mdb");
         }
