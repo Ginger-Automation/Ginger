@@ -1747,27 +1747,27 @@ namespace GingerCore.Drivers.PBDriver
         public int getelementXCordinate(IHTMLElement h1,bool frame =false)
         {
             if (object.ReferenceEquals(h1.offsetParent, null)) return 0;
-            Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-Parent is not null");
+            Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-Parent is not null");
             if (h1.offsetLeft >= 0 && h1.offsetParent.offsetLeft >= 0)
             {
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-" + h1.offsetLeft);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-" + h1.offsetLeft);
                 IHTMLElement h1Par = h1.offsetParent;
                 int xPos = h1.offsetLeft;
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-parLeft" + xPos);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-parLeft" + xPos);
                 while (h1Par != null)
                 {
                     xPos += h1Par.offsetLeft;
-                    Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-parLeft" + xPos);
+                    Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-parLeft" + xPos);
                     h1Par = h1Par.offsetParent;
                 }
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-parLeft out " + xPos);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-parLeft out " + xPos);
                 int scrollLeft;
                 if (currentFrameDocument != null && frame == false)
                 {
                     xPos += getelementXCordinate(currentFrame, true);                   
                 }  
                 scrollLeft = getscrollLeft(h1);
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-scrollLeft out2 " + scrollLeft);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-scrollLeft out2 " + scrollLeft);
                 return xPos- scrollLeft;
             }
             return -1;
@@ -1779,7 +1779,7 @@ namespace GingerCore.Drivers.PBDriver
             while (h1Par != null)
             {
                 scrollLeft += ((IHTMLElement2)h1Par).scrollLeft;
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementXCordinate-scrollLeft" + scrollLeft);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementXCordinate-scrollLeft" + scrollLeft);
                 h1Par = h1Par.parentElement;
             }
             return scrollLeft;
@@ -1792,7 +1792,7 @@ namespace GingerCore.Drivers.PBDriver
             while (h1Par != null)
             {
                 scrollTop += ((IHTMLElement2)h1Par).scrollTop;
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-getscrollTop" + scrollTop);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-getscrollTop" + scrollTop);
                 h1Par = h1Par.parentElement;
             }
             return scrollTop;
@@ -1801,20 +1801,20 @@ namespace GingerCore.Drivers.PBDriver
         public int getelementYCordinate(IHTMLElement h1,bool frame=false)
         {
             if (object.ReferenceEquals(h1.offsetParent, null)) return 0;
-            Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-Parent is not null");
+            Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-Parent is not null");
             if (h1.offsetTop >= 0 && h1.offsetParent.offsetTop >= 0)
             {
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-" + h1.offsetTop);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-" + h1.offsetTop);
                 IHTMLElement h1Par = h1.offsetParent;
                 int yPos = h1.offsetTop;
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop" + yPos);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-parTop" + yPos);
                 while (h1Par != null)
                 {
                     yPos += h1Par.offsetTop;
-                    Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop" + yPos);
+                    Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-parTop" + yPos);
                     h1Par = h1Par.offsetParent;                    
                 }
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-parTop out" + yPos);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-parTop out" + yPos);
                 int scrollTop = 0;
                 scrollTop = getscrollTop(h1);
                 if (currentFrameDocument != null && frame == false)
@@ -1824,7 +1824,7 @@ namespace GingerCore.Drivers.PBDriver
                         yPos += getelementYCordinate(currentFrame, true);
                     }
                 }
-                Reporter.ToConsole(eLogLevel.DEBUG, "getelementYCordinate-scrollTop out2 " + scrollTop);
+                Reporter.ToLog(eLogLevel.DEBUG, "getelementYCordinate-scrollTop out2 " + scrollTop);
                 return yPos - scrollTop;
             }
             return -1;

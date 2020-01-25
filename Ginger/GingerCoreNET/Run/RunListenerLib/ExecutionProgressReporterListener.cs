@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -96,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
         {
-            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.ReportAllAlsoToConsole == true)//needed for not derlling the objects if not needed to be reported
+            if (WorkSpace.Instance != null && WorkSpace.Instance.RunningInExecutionMode || Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.ReportAllAlsoToConsole == true)//needed for not derlling the objects if not needed to be reported
             {
                 string prefix = string.Empty;
 
@@ -153,7 +154,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     catch (Exception) { }                  
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, stringBuilder.ToString());
+                if (WorkSpace.Instance.RunningInExecutionMode || Reporter.ReportAllAlsoToConsole == true)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, stringBuilder.ToString());
+                }
             }
         }
 

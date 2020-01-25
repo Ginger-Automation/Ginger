@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.GingerConsole
 
                 // solution.SourceControl = new SVNSourceControl();
                                 
-                Reporter.ToConsole(eLogLevel.ERROR, "Source Control of type SVN is not yet supported in GingerConsole");
+                Reporter.ToLog(eLogLevel.ERROR, "Source Control of type SVN is not yet supported in GingerConsole");
             }
         }
 
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         public void SolutionClosed()
         {
-            Reporter.ToConsole(eLogLevel.INFO, "Solution Closed");
+            Reporter.ToLog(eLogLevel.INFO, "Solution Closed");
         }
     }
 }

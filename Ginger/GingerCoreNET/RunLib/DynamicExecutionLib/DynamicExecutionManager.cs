@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     dynamicExecution.SolutionDetails.SourceControlDetails.User = "N/A";
                     dynamicExecution.SolutionDetails.SourceControlDetails.Password = "N/A";
                 }
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
                 {
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
                     dynamicExecution.SolutionDetails.SourceControlDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
@@ -406,7 +406,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.SolutionScmDetails.User = "N/A";
                     executionConfig.SolutionScmDetails.Password = "N/A";
                 }
-                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT && solution.SourceControl.SourceControlProxyAddress != null && solution.SourceControl.SourceControlProxyAddress.ToLower().ToString() == "true")
                 {
                     executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
                     executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();

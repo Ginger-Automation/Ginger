@@ -565,7 +565,7 @@ namespace GingerCoreNET.DataSource
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception Occurred: ", ex);
+                            Reporter.ToLog(eLogLevel.WARN, "Exception Occurred: ", ex);
                         }
                     }
                 }

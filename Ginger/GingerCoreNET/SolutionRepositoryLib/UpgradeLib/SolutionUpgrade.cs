@@ -204,7 +204,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             //check if Ginger Upgrade is needed for loading this Solution
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Checking if Ginger upgrade is needed for loading the Solution");
+                //Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
                 if (solutionFilesWithVersion == null)
                 {
                     solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
@@ -432,7 +432,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             {
                 if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Checking is Solution Items Upgrade is needed");
+                    Reporter.ToLog(eLogLevel.INFO, "Checking is Solution Items Upgrade is needed");
                     if (solutionFilesWithVersion == null)
                     {
                         solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
