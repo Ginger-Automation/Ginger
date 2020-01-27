@@ -2873,7 +2873,6 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instance of JTree");
-			//
 			StringBuilder searchResultMessage=new  StringBuilder();
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)
