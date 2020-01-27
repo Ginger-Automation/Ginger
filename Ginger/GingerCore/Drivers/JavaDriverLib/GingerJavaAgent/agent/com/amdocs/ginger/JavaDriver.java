@@ -1112,7 +1112,8 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			if(ControlAction.equalsIgnoreCase("Click")|| ControlAction.equalsIgnoreCase("Select")||
 					ControlAction.equalsIgnoreCase("GetControlProperty")
 					||ControlAction.equalsIgnoreCase("AsyncSelect")
-					||ControlAction.equalsIgnoreCase("SelectByIndex"))
+					||ControlAction.equalsIgnoreCase("SelectByIndex")
+					||ControlAction.equalsIgnoreCase("AsyncClick"))
 			{
 				if(mValueToSelect!=null && !mValueToSelect.isEmpty())
 				{
@@ -2872,7 +2873,7 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instance of JTree");
-			
+			//
 			StringBuilder searchResultMessage=new  StringBuilder();
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)
