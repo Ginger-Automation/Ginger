@@ -438,7 +438,7 @@ namespace GingerCore
                     varsList.Add(var);
             return varsList;
         }
-        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false)
+        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false)
         {
             ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
 
@@ -450,16 +450,16 @@ namespace GingerCore
                     var.ParentGuid = this.Guid;
                     var.ParentName = this.Name;
                 }
-                if (includeOnlySetAsInputValue)
+                if (includeOnlyPublishedVars && var.Publish == false)
                 {
-                    if (var.SetAsInputValue)
-                        varsList.Add(var);
                     continue;
                 }
-                if (includeOnlySetAsOutputValue)
+                if (includeOnlySetAsInputValue && var.SetAsInputValue == false)
+                {                    
+                   continue;                    
+                }
+                if (includeOnlySetAsOutputValue && var.SetAsOutputValue == false)
                 {
-                    if (var.SetAsOutputValue)
-                        varsList.Add(var);
                     continue;
                 }
                 varsList.Add(var);
@@ -473,18 +473,25 @@ namespace GingerCore
                     {
                         var.ParentType = GingerDicser.GetTermResValue(eTermResKey.Activity);
                         var.ParentGuid = activ.Guid;
-                        var.ParentName = activ.ActivityName;
+                        if (string.IsNullOrEmpty(activ.ActivitiesGroupID))
+                        {
+                            var.ParentName = System.IO.Path.Combine(this.Name, activ.ActivityName);
+                        }
+                        else
+                        {
+                            var.ParentName = System.IO.Path.Combine(this.Name, activ.ActivitiesGroupID, activ.ActivityName);
+                        }
                     }
-                    if (includeOnlySetAsInputValue)
+                    if (includeOnlyPublishedVars && var.Publish == false)
                     {
-                        if (var.SetAsInputValue)
-                            varsList.Add(var);
                         continue;
                     }
-                    if (includeOnlySetAsOutputValue)
+                    if (includeOnlySetAsInputValue && var.SetAsInputValue == false)
                     {
-                        if (var.SetAsOutputValue)
-                            varsList.Add(var);
+                        continue;
+                    }
+                    if (includeOnlySetAsOutputValue && var.SetAsOutputValue == false)
+                    {
                         continue;
                     }
                     varsList.Add(var);
