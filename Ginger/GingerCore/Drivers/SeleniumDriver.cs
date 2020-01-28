@@ -1748,7 +1748,7 @@ namespace GingerCore.Drivers
                     break;
 
                 case ActGenElement.eGenElementAction.Enabled:
-                    e = LocateElement(act);
+                    e = LocateElement(act,true);
                     if (e == null)
                     {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
@@ -6342,10 +6342,17 @@ namespace GingerCore.Drivers
 
             if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
-                e = LocateElement(act);
-                if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
+                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible) || (act.ElementAction.Equals(ActUIElement.eElementAction.IsEnabled)))
                 {
-                    act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    e = LocateElement(act,true);
+                }
+                else
+                {
+                    e = LocateElement(act);
+                    if (e == null)
+                    {
+                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    }
                 }
             }
 
@@ -6623,7 +6630,16 @@ namespace GingerCore.Drivers
                         MoveToElementActions(act);
                         break;
                     case ActUIElement.eElementAction.IsEnabled:
-                        act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
+                        if (e == null)
+                        {
+                            act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
+                            act.AddOrUpdateReturnParamActual("Enabled", "False");
+                            return;
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
+                        }
                         break;
 
                     case ActUIElement.eElementAction.MouseClick:
