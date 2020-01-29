@@ -143,7 +143,7 @@ namespace GingerCoreNET.DataSource
                 else
                 {
                     doc[List[0]] = 1;
-                    doc[List[1]] = "";
+                    doc[List[1]] = "False";
                     doc[List[2]] = "";
                     doc[List[3]] = DateTime.Now.ToString();
                 }
@@ -835,22 +835,25 @@ namespace GingerCoreNET.DataSource
                 {
                     foreach (DataRow dr in dtChange.Rows)
                     {
-                        dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
-                        dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
-                        if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((Convert.ToString(dr["GINGER_ID"]))))
+                        if (dr.RowState != DataRowState.Deleted)//Commit after row is deleted 
                         {
-                            dr["GINGER_ID"] = dtChange.Rows.IndexOf(dr) + 1;
+                            dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
+                            dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
+                            if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((Convert.ToString(dr["GINGER_ID"]))))
+                            {
+                                dr["GINGER_ID"] = dtChange.Rows.IndexOf(dr) + 1;
+                            }
+
+                            var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
+
+                            var mapper = new BsonMapper();
+                            var sd = mapper.ToDocument(dictionary);
+
+                            var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
+
+                            batch.Add(new BsonDocument(sd));
+                            table.Upsert(batch);
                         }
-
-                        var dictionary = dr.Table.Columns.Cast<DataColumn>().ToDictionary(col => col.ColumnName, col => dr[col.ColumnName]);
-
-                        var mapper = new BsonMapper();
-                        var sd = mapper.ToDocument(dictionary);
-
-                        var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
-
-                        batch.Add(new BsonDocument(sd));
-                        table.Upsert(batch);
                     }
                 }
                 dtChange.AcceptChanges();
@@ -1106,8 +1109,10 @@ namespace GingerCoreNET.DataSource
                     }
                     break;
                 case eControlAction.DeleteAll:
-                    List<object> AllItemsList = null;
-                    DeleteAll(AllItemsList, actDSTable.DSTableName);
+                    DataTable dtCurrent = GetQueryOutput(actDSTable.DSTableName);
+                    isDeleteAllExecuted = true;
+                    dtCurrent.Rows.Clear();
+                    SaveTable(dtCurrent);
 
                     actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     break;
