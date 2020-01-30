@@ -475,11 +475,11 @@ namespace GingerCore
                         var.ParentGuid = activ.Guid;
                         if (string.IsNullOrEmpty(activ.ActivitiesGroupID))
                         {
-                            var.ParentName = System.IO.Path.Combine(this.Name, activ.ActivityName);
+                            var.ParentName = string.Format("{0}\\{1}", this.Name, activ.ActivityName);
                         }
                         else
                         {
-                            var.ParentName = System.IO.Path.Combine(this.Name, activ.ActivitiesGroupID, activ.ActivityName);
+                            var.ParentName = string.Format("{0}\\{1}\\{2}", this.Name, activ.ActivitiesGroupID, activ.ActivityName);
                         }
                     }
                     if (includeOnlyPublishedVars && var.Publish == false)
