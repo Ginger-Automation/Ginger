@@ -363,6 +363,7 @@
                         <TextBox x:Name="xRunSetDescriptionTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="50"></TextBox>
                         <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-4,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" />
                         <CheckBox x:Name="xRunWithAnalyzercheckbox" Content="Run Analyzer before manual execution" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                        <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
                     </DockPanel>
                 </TabItem>
 

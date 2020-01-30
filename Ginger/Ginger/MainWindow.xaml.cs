@@ -34,6 +34,7 @@ using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -64,7 +65,7 @@ namespace Ginger
             InitializeComponent();            
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
-            
+
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
             Telemetry.eventHandler += TelemetryEventHandler;
@@ -117,6 +118,8 @@ namespace Ginger
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
                 }
+                xBusinessFlowsListItemText.Text = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows).ToUpper();
+                xRunListItemText.Text = GingerDicser.GetTermResValue(eTermResKey.RunSets).ToUpper();
 
                 //Status Bar            
                 xLogErrorsPnl.Visibility = Visibility.Collapsed;

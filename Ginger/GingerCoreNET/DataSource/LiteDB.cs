@@ -136,16 +136,16 @@ namespace GingerCoreNET.DataSource
                     doc[List[0]] = 1;
                     doc[List[1]] = "";
                     doc[List[2]] = "";
-                    doc[List[3]] = DateTime.Now;
-                    doc[List[4]] = "";
+                    doc[List[3]] = "";
+                    doc[List[4]] = DateTime.Now.ToString();
 
                 }
                 else
                 {
                     doc[List[0]] = 1;
                     doc[List[1]] = "";
-                    doc[List[2]] = DateTime.Now;
-                    doc[List[3]] = "";
+                    doc[List[2]] = "";
+                    doc[List[3]] = DateTime.Now.ToString();
                 }
                 table.Insert(doc);
             }
@@ -565,7 +565,7 @@ namespace GingerCoreNET.DataSource
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception Occurred: ", ex);
+                            Reporter.ToLog(eLogLevel.WARN, "Exception Occurred: ", ex);
                         }
                     }
                 }
@@ -1165,7 +1165,7 @@ namespace GingerCoreNET.DataSource
             isDeleteAllExecuted = true;
         }
 
-        private void DeleteDBTableContents(string TName)
+        public void DeleteDBTableContents(string TName)
         {
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
@@ -1224,7 +1224,7 @@ namespace GingerCoreNET.DataSource
                 }
             }
             query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName 
-                                 + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + ",GINGER_USED:\"False\" }";
+                                 + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + "}";
 
             return query;
         }

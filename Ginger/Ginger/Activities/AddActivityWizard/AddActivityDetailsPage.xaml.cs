@@ -84,7 +84,7 @@ namespace Ginger.BusinessFlowPages
         private void XAddGroupBtn_Click(object sender, RoutedEventArgs e)
         {
             string groupName = string.Empty;
-            if (InputBoxWindow.GetInputWithValidation("New Group", "New Group Name:", ref groupName))
+            if (InputBoxWindow.GetInputWithValidation(GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup,"New"), GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New", "Name:"), ref groupName))
             {
                 if (!string.IsNullOrEmpty(groupName))
                 {
