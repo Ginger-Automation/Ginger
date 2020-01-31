@@ -6630,16 +6630,7 @@ namespace GingerCore.Drivers
                         MoveToElementActions(act);
                         break;
                     case ActUIElement.eElementAction.IsEnabled:
-                        if (e == null)
-                        {
-                            act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
-                            act.AddOrUpdateReturnParamActual("Enabled", "False");
-                            return;
-                        }
-                        else
-                        {
-                            act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
-                        }
+                        act.AddOrUpdateReturnParamActual("Enabled", e.Enabled.ToString());
                         break;
 
                     case ActUIElement.eElementAction.MouseClick:
