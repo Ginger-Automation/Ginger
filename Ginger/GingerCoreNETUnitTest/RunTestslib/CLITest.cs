@@ -250,6 +250,7 @@ namespace WorkspaceHold
         /// <summary>
         /// Testing JSON existing Runset with customized Values execution
         /// </summary>
+        [Ignore]
         [TestMethod]
         public void CLIDynamicJSON_ExistingCustomized_IDsAndNames_Test()
         {
@@ -288,6 +289,7 @@ namespace WorkspaceHold
         /// <summary>
         /// Testing JSON existing Runset with customized Values execution only using items Names
         /// </summary>
+        [Ignore]
         [TestMethod]
         public void CLIDynamicJSON_ExistingCustomized_OnlyNames_Test()
         {
@@ -326,6 +328,7 @@ namespace WorkspaceHold
         /// <summary>
         /// Testing JSON non existing Runset 
         /// </summary>
+        [Ignore]
         [TestMethod]
         public void CLIDynamicJSON_NotExist_Test()
         {
