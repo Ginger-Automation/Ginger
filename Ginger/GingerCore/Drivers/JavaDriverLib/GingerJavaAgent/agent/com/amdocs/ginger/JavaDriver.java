@@ -310,7 +310,6 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						+ "" + LocateBy + "," 
 						+ "" + LocateValue + ","
 						+ "" + Value);
-			
 				PayLoad plrc= HandleElementAction(LocateBy, LocateValue, ControlAction, Value,"", "");
 			return plrc;			
 		}		
@@ -1113,7 +1112,8 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			if(ControlAction.equalsIgnoreCase("Click")|| ControlAction.equalsIgnoreCase("Select")||
 					ControlAction.equalsIgnoreCase("GetControlProperty")
 					||ControlAction.equalsIgnoreCase("AsyncSelect")
-					||ControlAction.equalsIgnoreCase("SelectByIndex"))
+					||ControlAction.equalsIgnoreCase("SelectByIndex")
+					||ControlAction.equalsIgnoreCase("AsyncClick"))
 			{
 				if(mValueToSelect!=null && !mValueToSelect.isEmpty())
 				{
@@ -1818,6 +1818,11 @@ private PayLoad TypeKeys(Component c,String Value) {
 	
 	private TreePath SearchTreeNodes(JTree tree,String locateValue, StringBuilder searchResult) 
 	{
+		if(locateValue.isEmpty()) 
+		{
+			TreePath rootPath= tree.getPathForRow(0);
+			return rootPath;
+		}
 			
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
 				
@@ -2868,7 +2873,6 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instance of JTree");
-			
 			StringBuilder searchResultMessage=new  StringBuilder();
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)

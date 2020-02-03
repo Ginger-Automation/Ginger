@@ -551,7 +551,7 @@ namespace Ginger
                     {
                         //create backup to the user profile so user won't lose all of it configs in case he went back to old Ginger version
                         //TODO- allow recover from newer User Profile version in code instead creating new user profile
-                        Reporter.ToLog(eLogLevel.DEBUG, "Creating backup copy for the User Profile file");
+                        Reporter.ToLog(eLogLevel.INFO, "Creating backup copy for the User Profile file");
                         File.Copy(UserProfileFilePath, UserProfileFilePath.Replace("Ginger.UserProfile.xml", "Ginger.UserProfile-Backup.xml"), true);
                     }
                     catch(Exception ex2)

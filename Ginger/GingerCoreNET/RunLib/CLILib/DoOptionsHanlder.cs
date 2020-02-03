@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             // TODO: add more info
 
-            Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
+            Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
         private static void DoAnalyze(string solution)
@@ -69,11 +69,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
             if (issues.Count == 0)
             {
-                Reporter.ToConsole(eLogLevel.INFO, "No Issues found");
+                Reporter.ToLog(eLogLevel.INFO, "Analyzer- No Issues found");
             }
             else
             {
-                Reporter.ToConsole(eLogLevel.WARN, "Issues found, Total count: " + issues.Count);
+                Reporter.ToLog(eLogLevel.WARN, "Analyzer- Issues found, Total count: " + issues.Count);
             }
 
             foreach (AnalyzerItemBase issue in issues)
@@ -88,13 +88,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 switch (issue.IssueType)
                 {
                     case AnalyzerItemBase.eType.Error:
-                        Reporter.ToConsole(eLogLevel.ERROR, stringBuilder.ToString());
+                        Reporter.ToLog(eLogLevel.ERROR, stringBuilder.ToString());
                         break;
                     case AnalyzerItemBase.eType.Info:
-                        Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
+                        Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
                         break;
                     case AnalyzerItemBase.eType.Warning:
-                        Reporter.ToConsole(eLogLevel.WARN, stringBuilder.ToString());
+                        Reporter.ToLog(eLogLevel.WARN, stringBuilder.ToString());
                         break;
                 }
 

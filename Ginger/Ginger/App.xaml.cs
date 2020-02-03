@@ -192,8 +192,11 @@ namespace Ginger
 
             Environment.ExitCode = -1;
 
-            // Clear the err so it will not crash
-            e.Handled = true;
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                // Clear the err so it will not crash
+                e.Handled = true;
+            }
         }
 
 

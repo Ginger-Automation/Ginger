@@ -156,20 +156,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowserElement.Value = url;
 
-
-
-
-
-
             mBF.CurrentActivity.Acts.Add(actBrowserElement);
             mBF.CurrentActivity.Acts.CurrentItem = actBrowserElement;
 
             //ACT
             mGR.RunAction(actBrowserElement, false);
-
-       
-
-
 
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            

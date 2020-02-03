@@ -162,17 +162,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
                 if (!ShowAutoRunWindow)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} Runners", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0} Runners", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     mRunsetExecutor.InitRunners();
                 }
 
                 if (mRunSetConfig.RunWithAnalyzer)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     AnalyzerUtils analyzerUtils = new AnalyzerUtils();
                     if (analyzerUtils.AnalyzeRunset(mRunSetConfig, true))
                     {
@@ -207,12 +207,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (ShowAutoRunWindow)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Showing AutoRunWindow");
+                Reporter.ToLog(eLogLevel.INFO, "Showing Auto Run Window");
                 RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
             }
             else
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Not Showing AutoRunWindow");
+                Reporter.ToLog(eLogLevel.INFO, "Not Showing Auto Run Window");
             }
         }
 
@@ -261,7 +261,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count > 0)
                 {
                     mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
-                    Reporter.ToLog(eLogLevel.DEBUG, "Auto Selected the default Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
+                    Reporter.ToLog(eLogLevel.INFO, "Auto Selected the default Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
                 }
                 else
                 {
