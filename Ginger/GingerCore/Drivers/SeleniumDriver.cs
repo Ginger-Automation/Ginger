@@ -1748,7 +1748,7 @@ namespace GingerCore.Drivers
                     break;
 
                 case ActGenElement.eGenElementAction.Enabled:
-                    e = LocateElement(act,true);
+                    e = LocateElement(act);
                     if (e == null)
                     {
                         act.Error = "Error: Element not found - " + act.LocateBy + " " + act.LocateValue;
