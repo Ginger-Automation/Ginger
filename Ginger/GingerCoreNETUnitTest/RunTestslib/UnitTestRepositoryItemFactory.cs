@@ -52,7 +52,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public IValueExpression CreateValueExpression(object obj, string attr)
         {
-            throw new NotImplementedException();
+            return new ValueExpression(obj, attr);
         }
 
         public void DisplayAsOutlookMail()
