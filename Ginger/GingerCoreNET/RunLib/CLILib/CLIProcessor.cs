@@ -233,51 +233,60 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
         {
-            SetVerboseLevel(verboseLevel);
-            Reporter.ToLog(eLogLevel.INFO, string.Format("Running with " + fileType + " file = '{0}'", fileName));
-            switch (fileType)
+            try
             {
-                case "config":
-                    mCLIHandler = new CLIConfigFile();                    
-                    break;
-                case "dynamic":
-                    if (Path.GetExtension(fileName).ToLower() == ".xml")
+                SetVerboseLevel(verboseLevel);
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Running with " + fileType + " file = '{0}'", fileName));
+                switch (fileType)
+                {
+                    case "config":
+                        mCLIHandler = new CLIConfigFile();
+                        break;
+                    case "dynamic":
+                        if (Path.GetExtension(fileName).ToLower() == ".xml")
+                        {
+                            mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+                        }
+                        else if (Path.GetExtension(fileName).ToLower() == ".json")
+                        {
+                            mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Dynamic file type is not supported, file path: '{0}'", fileName));
+                            Environment.ExitCode = 1; //failure
+                            return Environment.ExitCode;
+                        }
+                        break;
+
+                    case "script":
+                        mCLIHandler = new CLIScriptFile();
+                        break;
+                }
+
+                string fileContent = ReadFile(fileName);
+                mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
+
+                if (fileType == "config" || fileType == "dynamic")  // not needed for script
+                {
+                    if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
-                        mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
-                    }
-                    else if (Path.GetExtension(fileName).ToLower() == ".json")
-                    {
-                        mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Dynamic file type is not supported, file path: '{0}'", fileName));
-                        Environment.ExitCode = 1; //failure
+                        Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                        Environment.ExitCode = 1;
                         return Environment.ExitCode;
                     }
-                    break;
-
-                case "script":
-                    mCLIHandler = new CLIScriptFile();
-                    break;
-            }
-
-            string fileContent = ReadFile(fileName);
-            mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
-
-            if (fileType == "config" || fileType == "dynamic")  // not needed for script
-            {
-                if (!CLILoadAndPrepare(runsetConfigs: fileContent))
-                {
-                    Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
-                    Environment.ExitCode = 1;
-                    return Environment.ExitCode;
                 }
+
+                ExecuteRunSet();
+
+                return Environment.ExitCode;
             }
-
-            ExecuteRunSet();
-
-            return Environment.ExitCode;
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while Handling File Option", ex);
+                Environment.ExitCode = 1;
+                return 1;//error
+            }
         }
 
 
@@ -348,7 +357,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         
 
-        private void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
+        public static void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
         {            
             if (verboseLevel == OptionsBase.eVerboseLevel.debug)
             {

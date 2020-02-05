@@ -198,29 +198,30 @@ namespace Ginger.Run
                     }
                     if (businessFlowRun.BusinessFlowCustomizedRunVariables != null && businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
                     {
-                        foreach (VariableBase varb in BFCopy.GetBFandActivitiesVariabeles(true))
+                        ObservableList<VariableBase> allBfVars = BFCopy.GetBFandActivitiesVariabeles(true); 
+                        Parallel.ForEach(businessFlowRun.BusinessFlowCustomizedRunVariables, customizedVar =>
                         {
-                            VariableBase runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == varb.ParentGuid && v.Guid == varb.Guid).FirstOrDefault();
-                            if (runVar == null)//for supporting dynamic run set XML in which we do not have GUID
+                            VariableBase originalVar = allBfVars.Where(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid).FirstOrDefault();
+                            if (originalVar == null)//for supporting dynamic run set XML in which we do not have GUID
                             {
-                                runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentName == varb.ParentName && v.Name == varb.Name).FirstOrDefault();
-                                if (runVar == null)
+                                originalVar = allBfVars.Where(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name).FirstOrDefault();
+                                if (originalVar == null)
                                 {
-                                    runVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.Name == varb.Name).FirstOrDefault();
+                                    originalVar = allBfVars.Where(v => v.Name == customizedVar.Name).FirstOrDefault();
                                 }
                             }
-                            if (runVar != null)
+                            if (originalVar != null)
                             {
-                                RepositoryItemBase.ObjectsDeepCopy(runVar, varb);
-                                varb.DiffrentFromOrigin = runVar.DiffrentFromOrigin;
-                                varb.MappedOutputVariable = runVar.MappedOutputVariable;
+                                RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);
+                                originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
+                                originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
                             }
                             else
                             {
-                                varb.DiffrentFromOrigin = false;
-                                varb.MappedOutputVariable = null;
+                                originalVar.DiffrentFromOrigin = false;
+                                originalVar.MappedOutputVariable = null;
                             }
-                        }
+                        });
                     }
                     BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
                     BFCopy.BFFlowControls = businessFlowRun.BFFlowControls;

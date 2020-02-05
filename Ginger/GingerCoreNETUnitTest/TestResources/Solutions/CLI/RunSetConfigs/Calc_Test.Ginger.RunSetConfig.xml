@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="2056f2c3-6e8f-4da6-933d-2b0419c8fecb" ItemType="RunSetConfig" CreatedBy="MENIK" Created="202002021354" GingerVersion="3.5.0.0" Version="8" LastUpdateBy="MENIK" LastUpdate="202002021902" />
+<RunSetConfig Guid="2056f2c3-6e8f-4da6-933d-2b0419c8fecb" Name="Calc_Test" ParentGuid="00000000-0000-0000-0000-000000000000">
+<GingerRunners>
+<GingerRunner Guid="5ab73bd2-60fb-489e-9062-482fd80d97e7" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall" SpecificEnvironmentName="Env1" UseSpecificEnvironment="True">
+<ApplicationAgents>
+<ApplicationAgent AgentID="aa2f27c9-16e5-466e-ad41-ba34841fa72d" AgentName="Chrome" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="5c153c7b-f4af-4eed-a793-ca00516258bd" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" BusinessFlowInstanceGuid="515ac940-a6b2-473c-b37a-de91ac5db0ab" BusinessFlowIsActive="True" BusinessFlowName="Calculator_Test" Guid="b6656dcd-16b9-4da1-8653-1b3630dcfd6f" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString Description="Number to use for Sum with MainNum" DiffrentFromOrigin="True" Guid="4de03f61-031e-41dc-91f0-e689a001bd5a" InitialStringValue="99" MappedOutputType="None" Name="SecondNum_ForSum" ParentGuid="9bff4443-2186-46d4-824e-68d068e3e4cc" ParentName="Calculator_Test\Sum\Do Sum" ParentType="Step" Publish="True" SetAsOutputValue="False" VarValChanged="True" />
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+<BusinessFlowRun BusinessFlowGuid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" BusinessFlowInstanceGuid="29a9e969-3162-46a5-8452-1920654f3275" BusinessFlowIsActive="True" BusinessFlowName="Flow 1" Guid="9974457d-ea7a-4553-8ca3-ed74846a5b50" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<BusinessFlowRun BusinessFlowGuid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" BusinessFlowInstanceGuid="6cc0f3cf-9f51-4faf-ac74-5f9b59838bfd" BusinessFlowIsActive="True" BusinessFlowName="Calculator_Test" Guid="e2ad89b2-ea79-4bc8-a415-7afe5313dfd4" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableSelectionList Description="Set 'Yes' for performing Divide calculation" DiffrentFromOrigin="True" Guid="d9f050b3-3535-4b14-8026-f086029b35e9" MappedOutputType="None" Name="DoDivide?" ParentGuid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" ParentName="Calculator_Test" ParentType="Sub Business Process" Publish="True" SetAsOutputValue="False" Value="No" VarValChanged="True">
+<OptionalValuesList>
+<OptionalValue Guid="4e842c85-47b1-4034-906f-a15d14646ddf" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Yes" />
+<OptionalValue Guid="a7f5bd8d-594c-43e1-b0b7-7f52cf0c0768" ParentGuid="00000000-0000-0000-0000-000000000000" Value="No" />
+</OptionalValuesList>
+</VariableSelectionList>
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+
+<RunSetActions>
+<RunSetActionHTMLReportSendEmail Active="False" Condition="AlwaysRun" Guid="82f0bfde-e6b1-4cf5-9826-e480ed8859be" HTMLReportTemplate="HTMLReport" MailFrom="menik@amdocs.com" MailTo="menik@amdocs.com" Name="Send HTML Report Email" ParentGuid="00000000-0000-0000-0000-000000000000" RunAt="ExecutionEnd" Subject="AAA">
+<Email>
+<Email EmailMethod="SMTP" Guid="f47926c6-522a-4ed9-af50-a7826c33f799" ParentGuid="00000000-0000-0000-0000-000000000000" SMTPMailHost="ilmail" SMTPPort="25">
+<Attachments>
+</Attachments>
+</Email>
+</Email>
+</RunSetActionHTMLReportSendEmail>
+</RunSetActions>
+</RunSetConfig></GingerRepositoryItem>
