@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using GingerCore.Environments;
 using System;
+using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -122,7 +125,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!string.IsNullOrEmpty(exeConfiguration.ArtifactsPath))
                 {
                     cliHelper.TestArtifactsFolder = exeConfiguration.ArtifactsPath;
-                }                
+                }
+                if (exeConfiguration.VerboseLevel != null)
+                {
+                   CLIProcessor.SetVerboseLevel((OptionsBase.eVerboseLevel)Enum.Parse(typeof(OptionsBase.eVerboseLevel), exeConfiguration.VerboseLevel.ToString(), true));
+                }
             }
             else
             {
@@ -153,7 +160,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 //Dynamic JSON
                 GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
                 RunsetExecConfig runset = exeConfiguration.Runset;
-                cliHelper.Env = runset.Environment;
+                if (runset.EnvironmentName != null || runset.EnvironmentID != null)
+                {
+                    ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
+                                    new Tuple<string, Guid?>(nameof(ProjEnvironment.Guid), runset.EnvironmentID),
+                                    new Tuple<string, string>(nameof(ProjEnvironment.Name), runset.EnvironmentName),
+                                    WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
+                    if (env != null)
+                    {
+                        cliHelper.Env = env.Name;
+                    }
+                }                
                 if (runset.RunAnalyzer != null)
                 {
                     cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
