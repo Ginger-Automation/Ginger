@@ -1,7 +1,7 @@
 {
-	"SolutionLocalPath": "C:\\Users\\menik\\Documents\\MENIK05\\GitHub\\Ginger\\Ginger\\Ginger\\GingerCoreNETUnitTest\\TestResources\\Solutions\\CLI",
-	"ShowAutoRunWindow": false,
-	"VerboseLevel": "normal",
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
   "Runset": {
     "Exist": false,
     "Name": "Calc_Test_Dynamic",
@@ -62,7 +62,7 @@
                 "VariableParentID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
                 "VariableName": "DoDivide?",
                 "VariableID": "d9f050b3-3535-4b14-8026-f086029b35e9",
-                "VariableCustomizedValue": "Yes"
+                "VariableCustomizedValue": "No"
               },
               {
                 "VariableParentName": "Calculator_Test\\Divide\\Do Divide",

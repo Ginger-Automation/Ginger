@@ -655,7 +655,6 @@ namespace Ginger.Run
         {
             BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
 
-
             List<VariableBase> cachedVariables = null;
 
             //set the vars to update
@@ -783,7 +782,7 @@ namespace Ginger.Run
 
             if (businessFlowRun == null)
             {
-                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow?.Name select x).FirstOrDefault();
+                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
             }
             return businessFlowRun;
         }
