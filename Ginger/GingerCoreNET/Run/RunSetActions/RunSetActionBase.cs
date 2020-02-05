@@ -199,7 +199,7 @@ namespace Ginger.Run.RunSetActions
             Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("--> Execution Started for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("--> Execution Started for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
                 Status = RunSetActionBase.eRunSetActionStatus.Running;
                 Errors = null;
 
@@ -216,7 +216,7 @@ namespace Ginger.Run.RunSetActions
                     Status = RunSetActionBase.eRunSetActionStatus.Completed;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name) + Environment.NewLine
+                Reporter.ToLog(eLogLevel.INFO, string.Format("<-- Execution Ended for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name) + Environment.NewLine
                                                                 + "Details:" + Environment.NewLine
                                                                 + string.Format("Status= {0}", Status) + Environment.NewLine
                                                                 + string.Format("Errors= {0}", Errors) + Environment.NewLine
