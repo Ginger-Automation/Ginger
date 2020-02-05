@@ -1025,16 +1025,22 @@ namespace GingerCoreNET.DataSource
                     if (actDSTable.IsKeyValueTable)
                     {
                         RunQuery(Query);
-                        actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     }
-                    else if (actDSTable.ByRowNum)
+                    //By Selected Cell
+                    if (actDSTable.BySelectedCell)
                     {
-                        RunQuery(Query, Int32.Parse(actDSTable.LocateRowValue), actDSTable.DSTableName, actDSTable.MarkUpdate);
-                        actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+                        string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
+                        string updateParamValue = tokens[0].Substring(tokens[0].LastIndexOf(".") + 1) + "= \"" + actDSTable.Value + "\" where";
+                        RunQuery("db." + actDSTable.DSTableName + ".update " + updateParamValue + tokens[1]);
                     }
-                    else
+                    // Customized Query
+                    else if (actDSTable.Customized)
                     {
-                        if (actDSTable.ByNextAvailable)
+                        if (actDSTable.ByRowNum)
+                        {
+                            RunQuery(Query, Int32.Parse(actDSTable.LocateRowValue), actDSTable.DSTableName, actDSTable.MarkUpdate);
+                        }
+                        else if (actDSTable.ByNextAvailable)
                         {
                             RunQuery(Query, 0, actDSTable.DSTableName, actDSTable.MarkUpdate, true);
                         }
@@ -1042,8 +1048,14 @@ namespace GingerCoreNET.DataSource
                         {
                             RunQuery(Query, 0, actDSTable.DSTableName, actDSTable.MarkUpdate);
                         }
-                        actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     }
+                    // By Query given by User
+                    else
+                    {
+                        RunQuery(Query);
+                    }
+                    actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+
                     break;
 
                 case eControlAction.MarkAllUsed:
@@ -1071,37 +1083,40 @@ namespace GingerCoreNET.DataSource
                         RunQuery(Query);
                         actDSTable.AddOrUpdateReturnParamActual("Deleted Record", "1");
                     }
-                    else if (actDSTable.ByRowNum)
+                    //By Selected Cell
+                    if (actDSTable.BySelectedCell)
                     {
-                        if (actDSTable.BySelectedCell)
-                        {
-                            string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
-                            RunQuery("db." + actDSTable.DSTableName + ".delete " + tokens[1]);
-                        }
-                        else
+                        string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
+                        RunQuery("db." + actDSTable.DSTableName + ".delete " + tokens[1]);
+                    }
+                    // Customized Query
+                    else if (actDSTable.Customized)
+                    {
+                        if (actDSTable.ByRowNum)
                         {
                             dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find");
                             int x = Int32.Parse(actDSTable.LocateRowValue);
                             DataRow row = dt.Rows[x];
                             string rowValue = Convert.ToString(row["GINGER_ID"]);
-                            RunQuery(Query + " GINGER_ID = \"" + rowValue + "\"");
+                            RunQuery(Query + " GINGER_ID = " + rowValue);
+                            actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+                        }
+                        else if (actDSTable.ByNextAvailable)
+                        {
+                            dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find GINGER_USED=\"False\"");
+                            DataRow row = dt.Rows[0];
+                            string rowValue = Convert.ToString(row["GINGER_ID"]);
+                            string query = "db." + actDSTable.DSTableName + ".delete GINGER_ID=" + rowValue;
+                            GetResult(query);
+                            actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+                        }
+                        else
+                        {
+                            GetResult(Query);
                             actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                         }
                     }
-                    else if (actDSTable.ByNextAvailable)
-                    {
-                        dt = GetQueryOutput("db." + actDSTable.DSTableName + ".find GINGER_USED=\"False\"");
-                        DataRow row = dt.Rows[0];
-                        string rowValue = Convert.ToString(row["GINGER_ID"]);
-                        string query = "db." + actDSTable.DSTableName + ".delete GINGER_ID=\"" + rowValue + "\"";
-                        GetResult(query);
-                        actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
-                    }
-                    else if (actDSTable.BySelectedCell)
-                    {
-                        string[] tokens = Query.Split(new[] { "where" }, StringSplitOptions.None);
-                        RunQuery("db." + actDSTable.DSTableName + ".delete " + tokens[1]);
-                    }
+                    // By Query given by User
                     else
                     {
                         GetResult(Query);

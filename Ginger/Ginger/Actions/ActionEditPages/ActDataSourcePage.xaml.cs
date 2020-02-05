@@ -1361,7 +1361,7 @@ namespace Ginger.Actions
                             selColName = selColName.Replace("__", "_");
                             string SelCellGingerId = ((DataRowView)((DataGridCellInfo)SelectedItemsList[0]).Item).Row["GINGER_ID"].ToString();
 
-                            TBH.AddText("db." + mDSTable.Name + ".select $." + selColName + " where GINGER_ID=\"" + SelCellGingerId + "\"");
+                            TBH.AddText("db." + mDSTable.Name + ".select $." + selColName + " where GINGER_ID=" + SelCellGingerId);
                             mActDSTblElem.VarName = selColName;
                         }
                     }
@@ -2120,6 +2120,10 @@ namespace Ginger.Actions
             mActDSTblElem.ByQuery = false;
             UpdateValueExpression();
         }
-
+        private void SelectedCell_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mActDSTblElem.BySelectedCell = false;
+            UpdateValueExpression();
+        }
     }
 }
