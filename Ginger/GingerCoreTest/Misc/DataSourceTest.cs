@@ -53,7 +53,7 @@ namespace UnitTests.NonUITests
             sourceTables = accessDataSource.GetTablesList();
 
             //Assert
-            Assert.AreEqual(sourceTables.Count, 2);
+            Assert.AreNotEqual(sourceTables.Count, 0);
         }
 
         [TestMethod]
@@ -248,16 +248,16 @@ namespace UnitTests.NonUITests
             dataSource.DataTable = dataTable;
             accessDataSource.AddRow(mColumnNames, dataSource);
             accessDataSource.SaveTable(dataSource.DataTable);
-            int a = accessDataSource.GetRowCount(dataSource.Name);
+            int oldRowCount = accessDataSource.GetRowCount(dataSource.Name);
 
             //Act
             accessDataSource.RunQuery("DELETE from  " + dataSource.Name);
             accessDataSource.SaveTable(dataSource.DataTable);
-            int b = accessDataSource.GetRowCount(dataSource.Name);
+            int newRowCount = accessDataSource.GetRowCount(dataSource.Name);
 
             //Assert
-            Assert.AreEqual(b, 0, "RowCount");
-            Assert.AreNotEqual(a, b, "RowCount");
+            Assert.AreEqual(newRowCount, 0, "RowCountValidation");
+            Assert.AreNotEqual(oldRowCount, newRowCount, "RowCountValidation");
         }
 
     }

@@ -333,17 +333,17 @@ namespace UnitTests.NonUITests
             dataSource.DataTable = dataTable;
             liteDB.AddRow(mColumnNames, dataSource);
             liteDB.SaveTable(dataSource.DataTable);
-            int a = liteDB.GetRowCount(dataSource.Name); 
+            int oldRowCount = liteDB.GetRowCount(dataSource.Name); 
 
             //Act
             liteDB.DeleteDBTableContents(dataSource.Name);
             DataTable newDt = liteDB.GetQueryOutput(Query);
             liteDB.SaveTable(newDt);
-            var b = liteDB.GetRowCount(dataSource.Name);
+            var newRowCount = liteDB.GetRowCount(dataSource.Name);
 
             //Assert
-            Assert.AreEqual(b, 0, "RowCount");
-            Assert.AreNotEqual(a, b, "RowCount");
+            Assert.AreEqual(newRowCount, 0, "RowCountValidation");
+            Assert.AreNotEqual(oldRowCount, newRowCount, "RowCountValidation");
 
         }
 

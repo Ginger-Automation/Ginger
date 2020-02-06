@@ -71,6 +71,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="DataSource\DataSourceTest.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Reports\NewHTMLReportTest.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
