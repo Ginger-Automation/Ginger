@@ -910,19 +910,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             mailOperation.Comments = runsetOperationConfigMail.Comments;
                         }
-                        if (runsetOperationConfigMail.IncludeAttachmentReport != null && runsetOperationConfigMail.IncludeAttachmentReport == true)
+                        if (runsetOperationConfigMail.IncludeAttachmentReport != null)
                         {
-                            if (mailOperation.EmailAttachments.Count == 0)
+                            if (runsetOperationConfigMail.IncludeAttachmentReport == true)
                             {
-                                EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
-                                reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
-                                reportAttachment.ZipIt = true;
-                                mailOperation.EmailAttachments.Add(reportAttachment);
+                                if (mailOperation.EmailAttachments.Count == 0)
+                                {
+                                    EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
+                                    reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
+                                    reportAttachment.ZipIt = true;
+                                    mailOperation.EmailAttachments.Add(reportAttachment);
+                                }
                             }
-                        }
-                        else
-                        {
-                            mailOperation.EmailAttachments.Clear();
+                            else 
+                            {
+                                mailOperation.EmailAttachments.Clear();
+                            }
                         }
 
                         runSetOperation = mailOperation;
