@@ -83,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if(FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
                     cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType.ToString());
@@ -158,7 +158,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
                 RunsetExecConfig runset = exeConfiguration.Runset;
                 if (runset.EnvironmentName != null || runset.EnvironmentID != null)
                 {

@@ -580,12 +580,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.Runset = runset;
 
             //serilize object to JSON String
-            return NewtonsoftJsonUtils.SerializeObject(executionConfig);
+            return SerializeDynamicExecutionToJSON(executionConfig);
         }
 
-        public static GingerExecConfig LoadDynamicExecutionFromJSON(string content)
+        public static GingerExecConfig DeserializeDynamicExecutionFromJSON(string content)
         {
-            return NewtonsoftJsonUtils.DeserializeObject< GingerExecConfig>(content);
+            return NewtonsoftJsonUtils.DeserializeObject<GingerExecConfig>(content);
+        }
+
+        public static string SerializeDynamicExecutionToJSON(GingerExecConfig gingerExecConfig)
+        {
+            return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
 
         public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, RunsetExecConfig dynamicRunsetConfigs)
@@ -727,6 +732,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     businessFlowRun.BusinessFlowGuid = (Guid)businessFlowConfig.ID;
                                 }
                                 businessFlowRun.BusinessFlowIsActive = true;
+                                businessFlowRun.BusinessFlowInstanceGuid = Guid.NewGuid();
                             }
 
                             if (businessFlowConfig.Active != null)
@@ -843,12 +849,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         else
                         {
                             mailOperation = new RunSetActionHTMLReportSendEmail();
-                            mailOperation.Name = runsetOperationConfigMail.Name;
                             mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
                             mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
                             mailOperation.Email.IsBodyHTML = true;
-                            mailOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
-                            mailOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
                         }                        
 
                         if (runsetOperationConfigMail.MailSettings.EmailMethod != null)
@@ -907,19 +910,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             mailOperation.Comments = runsetOperationConfigMail.Comments;
                         }
-                        if (runsetOperationConfigMail.IncludeAttachmentReport != null && runsetOperationConfigMail.IncludeAttachmentReport == true)
+                        if (runsetOperationConfigMail.IncludeAttachmentReport != null)
                         {
-                            if (mailOperation.EmailAttachments.Count == 0)
+                            if (runsetOperationConfigMail.IncludeAttachmentReport == true)
                             {
-                                EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
-                                reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
-                                reportAttachment.ZipIt = true;
-                                mailOperation.EmailAttachments.Add(reportAttachment);
+                                if (mailOperation.EmailAttachments.Count == 0)
+                                {
+                                    EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
+                                    reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
+                                    reportAttachment.ZipIt = true;
+                                    mailOperation.EmailAttachments.Add(reportAttachment);
+                                }
                             }
-                        }
-                        else
-                        {
-                            mailOperation.EmailAttachments.Clear();
+                            else 
+                            {
+                                mailOperation.EmailAttachments.Clear();
+                            }
                         }
 
                         runSetOperation = mailOperation;
@@ -943,9 +949,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         else
                         {
                             jsonReportOperation = new RunSetActionJSONSummary();
-                            jsonReportOperation.Name = runsetOperationConfigJsonRepot.Name;
-                            jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
-                            jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
                         }
                         runSetOperation = jsonReportOperation;
                     }
@@ -953,6 +956,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     //Generic settings
                     if (runSetOperation != null)
                     {
+                        runSetOperation.Name = runsetOperationConfig.Name;
                         if (runsetOperationConfig.Active != null)
                         {
                             runSetOperation.Active = (bool)runsetOperationConfig.Active;
