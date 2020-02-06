@@ -80,6 +80,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyIDs.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyNames.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
