@@ -6342,7 +6342,7 @@ namespace GingerCore.Drivers
 
             if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
-                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible) || (act.ElementAction.Equals(ActUIElement.eElementAction.IsEnabled)))
+                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
                 {
                     e = LocateElement(act,true);
                 }
