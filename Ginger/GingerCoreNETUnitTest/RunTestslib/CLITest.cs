@@ -369,7 +369,8 @@ namespace WorkspaceHold
 
         /// <summary>
         /// Testing JSON non existing Runset 
-        /// </summary>       
+        /// </summary>   
+        [Ignore]
         [TestMethod]
         public void CLIDynamicJSON_NotExist_Test()
         {
