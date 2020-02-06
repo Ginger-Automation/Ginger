@@ -375,7 +375,7 @@ namespace GingerCore.GeneralLib
                 {
                     Event = "Failed: " + ex.Message;
                 }
-                Reporter.ToLog(eLogLevel.DEBUG, "Failed to send mail", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to send mail", ex);
 
                 return false;
             }

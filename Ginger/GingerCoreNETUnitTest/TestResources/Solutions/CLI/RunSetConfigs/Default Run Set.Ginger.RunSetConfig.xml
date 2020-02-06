@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="12675569-e0f8-45aa-ab87-055e3ae03053" ItemType="RunSetConfig" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.4.0.0" Version="4" LastUpdateBy="YARONWE" LastUpdate="201909061517" />
+<GingerRepositoryItem><Header ItemGuid="12675569-e0f8-45aa-ab87-055e3ae03053" ItemType="RunSetConfig" CreatedBy="YARONWE" Created="201904012027" GingerVersion="3.5.0.0" Version="6" LastUpdateBy="MENIK" LastUpdate="202002021357" />
 <RunSetConfig Guid="12675569-e0f8-45aa-ab87-055e3ae03053" Name="Default Run Set" ParentGuid="00000000-0000-0000-0000-000000000000">
 <GingerRunners>
 <GingerRunner Guid="ea4ab086-67a3-44d3-a5e0-a310ba204fe2" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
 <ApplicationAgents>
-<ApplicationAgent AgentName="app1 - Agent 1" AppName="app1" Guid="b382388c-f7ea-493e-a16d-975174c4b516" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ApplicationAgent AgentID="aa2f27c9-16e5-466e-ad41-ba34841fa72d" AgentName="Chrome" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="ba7865a9-b2f1-43ae-9ef7-c2c57f71de76" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ApplicationAgents>
 
 <BusinessFlowsRunList>
-<BusinessFlowRun BusinessFlowGuid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" BusinessFlowInstanceGuid="a0e97120-163f-42c3-ac35-4b9398d97c1c" BusinessFlowIsActive="True" BusinessFlowName="Flow 1" Guid="49d7fe5e-3465-4ed6-90a1-ee63fe620721" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<BusinessFlowRun BusinessFlowGuid="2db992cd-c5f7-43a6-beb6-cd4de10fece7" BusinessFlowInstanceGuid="a0e97120-163f-42c3-ac35-4b9398d97c1c" BusinessFlowIsActive="True" BusinessFlowName="Flow 1" Guid="23a6512d-6d7f-4f4b-93c2-b3c4c05ed893" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </BusinessFlowsRunList>
 </GingerRunner>
 </GingerRunners>
