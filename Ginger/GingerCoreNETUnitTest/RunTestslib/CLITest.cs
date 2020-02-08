@@ -330,7 +330,6 @@ namespace WorkspaceHold
         /// <summary>
         /// Testing JSON existing Runset with customized Values execution while only items IDs is provided
         /// </summary>
-        [Ignore]
         [TestMethod]
         public void CLIDynamicJSON_ExistingCustomized_OnlyIDs_Test()
         {
@@ -370,12 +369,53 @@ namespace WorkspaceHold
         /// <summary>
         /// Testing JSON non existing Runset 
         /// </summary>   
-        [Ignore]
         [TestMethod]
         public void CLIDynamicJSON_NotExist_Test()
         {
             // Arrange
             string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-NotExisting.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test_Dynamic", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner Dynamic", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env1", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "IE", "Validating correct Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoMultiply?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForSum").FirstOrDefault().Value, "44", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (same instance of BF)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Stopped, "Validating BF execution Stopped");
+
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "menik@amdocs.com", "Validating report mail Address");
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "AAA", "Validating report mail Subject");
+        }
+
+        /// <summary>
+        /// Testing JSON non existing Runset with only items names
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_NotExist_OnlyNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-NotExisting_OnlyNames.Ginger.AutoRunConfigs.json"), mSolutionFolder);
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
