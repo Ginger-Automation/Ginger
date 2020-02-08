@@ -729,8 +729,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                                 if (businessFlowRun == null)
                                 {
-                                    string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(BusinessFlow), businessFlowConfig.Name, businessFlowConfig.ID);
-                                    Reporter.ToLog(eLogLevel.ERROR, error);
+                                    string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(BusinessFlow), businessFlowConfig.Name, businessFlowConfig.ID);
                                     throw new Exception(error);
                                 }
                             }
@@ -809,7 +808,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                                     if (customizedInputVar == null)
                                     {
-                                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to find the customized Variabel '{0}'", inputValueConfig.VariableName));
+                                        string error = string.Format("Failed to find Input Variable with the details '{0}/{1}'", inputValueConfig.VariableName, inputValueConfig.VariableID);
+                                        throw new Exception(error);
                                     }
                                 }
                             }
@@ -1020,15 +1020,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 else
                 {                    
-                    string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(T), name.Item2.ToLower(), id.Item2);
-                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
                     throw new Exception(error);
                 }
             }
             catch (Exception ex)
             {
-                string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(T), name.Item2.ToLower(), id.Item2);
-                Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
                 throw new Exception(error, ex);
             }
         }
