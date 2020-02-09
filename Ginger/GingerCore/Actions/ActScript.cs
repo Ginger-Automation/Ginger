@@ -141,7 +141,7 @@ namespace GingerCore.Actions
         }
         public override void Execute()
         {
-            if (ScriptName == null)
+            if (ScriptName == null && ScriptCommand == null)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
                 this.Error = "Script file not loaded. Kindly select suitable file";
@@ -201,7 +201,13 @@ namespace GingerCore.Actions
                 p.StartInfo.Arguments ="\""+ ScriptName +"\" "+ Params;
                 if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
                     p.StartInfo.Arguments = " /k " + ScriptName + " " + Params;
-            
+               
+               if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("powershell") && ScriptName != null)
+                {
+                    p.StartInfo.FileName = @"powershell.exe";
+                    p.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\scripts\");
+                    p.StartInfo.Arguments = @"-executionpolicy bypass -file .\" + ScriptName + " " + Params;
+                }            
                     p.Start();
                            
             p.BeginOutputReadLine();
