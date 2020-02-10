@@ -141,10 +141,10 @@ namespace GingerCore.Actions
         }
         public override void Execute()
         {
-            if (ScriptName == null)
+            if ((ScriptName == null) && (GetInputParamCalculatedValue("Free Command") == null || GetInputParamCalculatedValue("Free Command") == string.Empty)) 
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
-                this.Error = "Script file not loaded. Kindly select suitable file";
+                Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected or Free Command is empty. Kindly select suitable file or insert Free Command.");
+                this.Error = "Script file not Selected or Free Command is empty. Kindly select suitable file or insert Free Command.";
                 return;
             }
             DataBuffer = "";
