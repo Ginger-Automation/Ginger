@@ -1160,18 +1160,20 @@ namespace Ginger.Run
                 if (mReturnValues.Count == 0)
                     return;
 
-                if (act.DSOutputConfigParams.Count > 0 && (act.OutDataSourceName == null || act.OutDataSourceTableName == null))
+                if (act.DSOutputConfigParams.ActOutDataSourceConfigParameters.Count > 0 && (act.OutDataSourceName == null || act.OutDataSourceTableName == null))
                 {
-                    act.OutDataSourceName = act.DSOutputConfigParams[0].DSName;
-                    act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
-                    if(act.DSOutputConfigParams[0].OutParamMap != null)
-                        act.OutDSParamMapType = act.DSOutputConfigParams[0].OutParamMap;
+                    act.OutDataSourceName = act.DSOutputConfigParams.DSName;
+                    act.OutDataSourceTableName = act.DSOutputConfigParams.DSTable;
+                    if(act.DSOutputConfigParams.OutParamMap != null)
+                        act.OutDSParamMapType = act.DSOutputConfigParams.OutParamMap;
                     else
                         act.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
                 }
 
-                List<ActOutDataSourceConfig> mADCS = (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true select arc).ToList();
-                if (mADCS.Count == 0 && act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
+                ActOutDataSourceConfig mADCS = act.DSOutputConfigParams;// (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true select arc).ToList();
+                if (mADCS.ActOutDataSourceConfigParameters.Count == 0 && act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
+                    return;
+                if (act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
                     return;
                 DataSourceBase DataSource = null;
                 DataSourceTable DataSourceTable = null;
@@ -1202,15 +1204,15 @@ namespace Ginger.Run
 
                 List<string> mColList = DataSourceTable.DSC.GetColumnList(DataSourceTable.Name);
                 if (act.OutDSParamMapType == null)
-                    act.OutDSParamMapType = act.DSOutputConfigParams[0].OutParamMap;
+                    act.OutDSParamMapType = act.DSOutputConfigParams.OutParamMap;
 
                 //Adding OutDataSurce Param at run time if not exist - Param to Col
                 if (act.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToCol.ToString())
                 {
                     if (act.OutDataSourceName == null || act.OutDataSourceTableName == null)
                     {
-                        act.OutDataSourceName = act.DSOutputConfigParams[0].DSName;
-                        act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
+                        act.OutDataSourceName = act.DSOutputConfigParams.DSName;
+                        act.OutDataSourceTableName = act.DSOutputConfigParams.DSTable;
                     }
 
                     List<ActReturnValue> mUniqueRVs = (from arc in act.ReturnValues where arc.Path == "" || arc.Path == "1" select arc).ToList();
@@ -1230,12 +1232,18 @@ namespace Ginger.Run
                             mColList.Remove("GINGER_USED");
                         act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param, item.Param, "", mColList, act.OutDSParamMapType);
                     }
-                    mADCS = (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true && arc.OutParamMap == act.OutDSParamMapType select arc).ToList();
-                    if (mADCS.Count == 0)
+                    act.ActOutDataSourceConfigParameters.Clear();
+
+                    //mADCS = act.DSOutputConfigParams; //(from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true && arc.OutParamMap == act.OutDSParamMapType select arc).ToList();
+                    if (act.DSOutputConfigParams.DSName == act.OutDataSourceName && act.DSOutputConfigParams.DSTable == act.OutDataSourceTableName && act.DSOutputConfigParams.OutParamMap == act.OutDSParamMapType)
+                    {
+                        mADCS = act.DSOutputConfigParams;
+                    }
+                    if (mADCS.ActOutDataSourceConfigParameters.Where(x => x.Active == true).ToList().Count == 0)
                         return;
                 }
 
-                foreach (ActOutDataSourceConfig ADSC in mADCS)
+                foreach (ActOutDataSourceConfigParam ADSC in mADCS.ActOutDataSourceConfigParameters)
                 {
                     if (mColList.Contains(ADSC.TableColumn) == false)
                         DataSource.AddColumn(DataSourceTable.Name, ADSC.TableColumn, "Text");
@@ -1264,7 +1272,7 @@ namespace Ginger.Run
                     {
                         string sColList = "";
                         string sColVals = "";
-                        foreach (ActOutDataSourceConfig ADSC in mADCS)
+                        foreach (ActOutDataSourceConfigParam ADSC in mADCS.ActOutDataSourceConfigParameters)
                         {
                             List<ActReturnValue> outReturnPath = (from arc in mOutRVs where arc.Param == ADSC.OutputType select arc).ToList();
                             if (outReturnPath.Count > 0)
@@ -1297,7 +1305,7 @@ namespace Ginger.Run
                             {
                                 string sKeyName = "";
                                 string sKeyValue = "";
-                                foreach (ActOutDataSourceConfig ADSC in mADCS)
+                                foreach (ActOutDataSourceConfigParam ADSC in mADCS.ActOutDataSourceConfigParameters)
                                 {
                                     if (ADSC.OutputType == "Parameter_Path")
                                     {
@@ -1325,7 +1333,7 @@ namespace Ginger.Run
                             {
                                 string sColList = "";
                                 string sColVals = "";
-                                foreach (ActOutDataSourceConfig ADSC in mADCS)
+                                foreach (ActOutDataSourceConfigParam ADSC in mADCS.ActOutDataSourceConfigParameters)
                                 {
                                     sColList = sColList + ADSC.TableColumn + ",";
                                     if (ADSC.OutputType == "Parameter")

@@ -76,7 +76,7 @@ namespace Ginger.Actions
         private DataSourceTable mDSTable;
         private string mDataSourceName;
         List<String> mColNames = null;
-        ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
+        ObservableList<ActOutDataSourceConfigParam> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfigParam>();
         ObservableList<String> mStoreToVarsList = new ObservableList<string>();
 
         private BusinessFlow mActParentBusinessFlow = null;
@@ -288,15 +288,15 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
             BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, nameof(Act.OutDSParamMapType));
-            if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
+            if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters.Count > 0)
             {
                 xDataSourceExpander.IsExpanded = true;
-                mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
-                mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
-                if (mAction.DSOutputConfigParams[0].OutParamMap == null)
+                mAction.OutDataSourceName = mAction.DSOutputConfigParams.DSName;
+                mAction.OutDataSourceTableName = mAction.DSOutputConfigParams.DSTable;
+                if (mAction.DSOutputConfigParams.OutParamMap == null)
                     mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
                 else
-                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
+                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams.OutParamMap;
             }
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
@@ -606,9 +606,9 @@ namespace Ginger.Actions
             ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
             view.GridColsView = viewCols;
 
-            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
-            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.OutputType, Header = "Output Type", WidthWeight = 150, ReadOnly = true });
-            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfig.Fields.TableColumn, Header = "Table Column", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActOutDataSourceConfig.Fields.PossibleValues, ActOutDataSourceConfig.Fields.TableColumn) });
+            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfigParam.Fields.Active, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfigParam.Fields.OutputType, Header = "Output Type", WidthWeight = 150, ReadOnly = true });
+            viewCols.Add(new GridColView() { Field = ActOutDataSourceConfigParam.Fields.TableColumn, Header = "Table Column", WidthWeight = 150, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ActOutDataSourceConfigParam.Fields.PossibleValues, ActOutDataSourceConfigParam.Fields.TableColumn) });
             if (xDataSourceConfigGrid.SelectedViewName != null && xDataSourceConfigGrid.SelectedViewName != "")
                 xDataSourceConfigGrid.updateAndSelectCustomView(view);
             else
@@ -1373,19 +1373,14 @@ namespace Ginger.Actions
             foreach (DataSourceBase ds in mDSList)
                 mDSNames.Add(ds.Name);
             GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
-            //Added Check to get already saved ActOutDataSourceConfig params
-            List<ActOutDataSourceConfig> mADCS = (from arc in mAction.DSOutputConfigParams select arc).ToList();
-            if (mADCS.Count > 0)
+            if (mAction.OutDSParamMapType == null)
             {
-                if (mAction.OutDSParamMapType == null)
-                {
-                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
-                }
-                if (mAction.OutDataSourceName == null || mAction.OutDataSourceTableName == null)
-                {
-                    mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
-                    mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
-                }
+                mAction.OutDSParamMapType = mAction.DSOutputConfigParams.OutParamMap;
+            }
+            if (mAction.OutDataSourceName == null || mAction.OutDataSourceTableName == null)
+            {
+                mAction.OutDataSourceName = mAction.DSOutputConfigParams.DSName;
+                mAction.OutDataSourceTableName = mAction.DSOutputConfigParams.DSTable;
             }
             if (mAction.OutDataSourceName != null && mAction.OutDataSourceTableName != null && mAction.OutDataSourceName != "" && mAction.OutDataSourceTableName != "")
             {
@@ -1412,7 +1407,7 @@ namespace Ginger.Actions
 
         private void AddOutDS_Unchecked(object sender, RoutedEventArgs e)
         {
-            mAction.DSOutputConfigParams.Clear();
+            mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters.Clear();
             SetDataSourceConfigTabView();
             UpdateOutputValuesTabHeader();
         }
@@ -1433,7 +1428,11 @@ namespace Ginger.Actions
             if (xDataSourceTableNameCombo == null || xDataSourceTableNameCombo.Items.Count == 0 || xDataSourceTableNameCombo.SelectedValue == null)
                 return;
 
-            List<ActOutDataSourceConfig> DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
+            List<ActOutDataSourceConfigParam> DSConfigParam = new List<ActOutDataSourceConfigParam>();
+            if (mAction.DSOutputConfigParams.DSName == mDataSourceName && mAction.DSOutputConfigParams.DSTable == mDSTable.Name && mAction.DSOutputConfigParams.OutParamMap == mAction.OutDSParamMapType)
+            {
+                DSConfigParam = mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters.ToList();
+            }
             SetDataSourceConfigTabView();
 
             if (mDSTable.DSTableType == DataSourceTable.eDSTableType.Customized)
@@ -1455,7 +1454,7 @@ namespace Ginger.Actions
                 }
                 else
                 {
-                    foreach (ActOutDataSourceConfig oDSParam in DSConfigParam)
+                    foreach (ActOutDataSourceConfigParam oDSParam in DSConfigParam)
                     {
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, oDSParam.OutputType, oDSParam.TableColumn, "", mColNames, mAction.OutDSParamMapType);
                     }
@@ -1470,18 +1469,29 @@ namespace Ginger.Actions
                 mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "GINGER_KEY_VALUE");
 
             }
-
-            DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
+            if (mAction.DSOutputConfigParams.DSName == mDataSourceName && mAction.DSOutputConfigParams.DSTable == mDSTable.Name && mAction.DSOutputConfigParams.OutParamMap == mAction.OutDSParamMapType)
+            {
+                DSConfigParam = mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters.ToList();
+            }
+            else if (mAction.OutDSParamMapType == Act.eOutputDSParamMapType.ParamToRow.ToString())
+            {
+                DSConfigParam = mAction.ActOutDataSourceConfigParameters.ToList();
+            }
             aOutDSConfigParam.Clear();
 
-            foreach (ActOutDataSourceConfig aOutDSConfig in DSConfigParam)
+            foreach (ActOutDataSourceConfigParam aOutDSConfig in DSConfigParam)
                 aOutDSConfigParam.Add(aOutDSConfig);
 
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
             SetActDataSourceConfigGrid();
-            mAction.DSOutputConfigParams = aOutDSConfigParam;
-            xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
+            mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters = aOutDSConfigParam;
+            xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters;
+
+            mAction.DSOutputConfigParams.DSName = mDataSourceName;
+            mAction.DSOutputConfigParams.DSTable = mDSTable.Name;
+            mAction.DSOutputConfigParams.OutParamMap = mAction.OutDSParamMapType;
+            mAction.ActOutDataSourceConfigParameters.Clear();
         }
         private void OutDSParamType_SelectionChanged(object sender, RoutedEventArgs e)
         {
@@ -1515,14 +1525,14 @@ namespace Ginger.Actions
                 if (e.OriginalSource.GetType() == typeof(CheckBox))
                 {
                     DataGridCell cell = (DataGridCell)((CheckBox)e.OriginalSource).Parent;
-                    ActOutDataSourceConfig currRow = (ActOutDataSourceConfig)cell.DataContext;
+                    ActOutDataSourceConfigParam currRow = (ActOutDataSourceConfigParam)cell.DataContext;
                     if (currRow.OutputType == "Actual")
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "GINGER_KEY_VALUE", "true");
                     else if (currRow.OutputType == "Parameter")
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter_Path.ToString(), "GINGER_KEY_NAME", (!currRow.Active).ToString());
                     else
                         mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter.ToString(), "GINGER_KEY_NAME", (!currRow.Active).ToString());
-                    xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
+                    xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams.ActOutDataSourceConfigParameters;
                 }
             }
         }

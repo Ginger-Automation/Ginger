@@ -347,7 +347,9 @@ namespace GingerCore.Actions
         public ObservableList<ActReturnValue> ReturnValues { get; set; } = new ObservableList<ActReturnValue>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ActOutDataSourceConfig> DSOutputConfigParams = new ObservableList<ActOutDataSourceConfig>();
+        public ActOutDataSourceConfig DSOutputConfigParams = new ActOutDataSourceConfig();
+
+        public List<ActOutDataSourceConfigParam> ActOutDataSourceConfigParameters = new List<ActOutDataSourceConfigParam>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableDependency> VariablesDependencies { get; set; } = new ObservableList<VariableDependency>();
@@ -580,13 +582,6 @@ namespace GingerCore.Actions
             }
         }
 
-        public ObservableList<ActOutDataSourceConfig> ActOutDSConfigParams
-        {
-            get
-            {
-                return DSOutputConfigParams;
-            }
-        }
 
 
         public ObservableList<FlowControl> ActFlowControls
@@ -620,47 +615,55 @@ namespace GingerCore.Actions
         {
             bool isActive = true;
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActOutDataSourceConfig ADCS = (from arc in DSOutputConfigParams where arc.DSName == DSName && arc.DSTable == DSTable && arc.OutputType == OutputType select arc).FirstOrDefault();
-            //if (Active != "")
-            //    isActive = bool.Parse(Active);
-            if (ADCS == null)
+            ActOutDataSourceConfigParam actOutDataSourceConfigParam = null;
+            if (DSOutputConfigParams.DSName == DSName && DSOutputConfigParams.DSTable == DSTable)
+            {
+                actOutDataSourceConfigParam = DSOutputConfigParams.ActOutDataSourceConfigParameters.Where(x => x.OutputType == OutputType).FirstOrDefault();
+            }
+            if (actOutDataSourceConfigParam == null)
             {
                 if (OutputType == "Parameter_Path" || OutDSParamType != "ParamToRow")
+                {
                     isActive = false;
+                }
             }
             else
             {
                 if (mColNames == null && Active != "")
                 {
-                    ADCS.Active = bool.Parse(Active);
+                    actOutDataSourceConfigParam.Active = bool.Parse(Active);
                     return;
                 }
-                isActive = ADCS.Active;
-                ColName = ADCS.TableColumn;
+                isActive = actOutDataSourceConfigParam.Active;
+                ColName = actOutDataSourceConfigParam.TableColumn;
                 if (mColNames != null && !mColNames.Contains(ColName))
                     ColName = OutputType;
-                DSOutputConfigParams.Remove(ADCS);
-                ADCS = null;
+                DSOutputConfigParams.ActOutDataSourceConfigParameters.Remove(actOutDataSourceConfigParam);
+
+                actOutDataSourceConfigParam = null;
             }
 
-            ADCS = new ActOutDataSourceConfig();
-            ADCS.DSName = DSName;
-            ADCS.DSTable = DSTable;
-            ADCS.PossibleValues.Add(ColName);
-            DSOutputConfigParams.Add(ADCS);
-            ADCS.OutputType = OutputType;
-            ADCS.OutParamMap = OutDSParamType;
+            actOutDataSourceConfigParam = new ActOutDataSourceConfigParam();
+            actOutDataSourceConfigParam.PossibleValues.Add(ColName);
+            actOutDataSourceConfigParam.OutputType = OutputType;
             if (mColNames != null)
             {
                 foreach (string sCol in mColNames)
                     if (sCol != ColName)
-                        ADCS.PossibleValues.Add(sCol);
+                        actOutDataSourceConfigParam.PossibleValues.Add(sCol);
             }
 
-            ADCS.Active = isActive;
+            actOutDataSourceConfigParam.Active = isActive;
 
             if (ColName != "")
-                ADCS.TableColumn = ColName;
+                actOutDataSourceConfigParam.TableColumn = ColName;
+
+            actOutDataSourceConfigParam.Active = isActive;
+            actOutDataSourceConfigParam.OutputType = OutputType;
+            actOutDataSourceConfigParam.TableColumn = ColName;
+
+            ActOutDataSourceConfigParameters.Add(actOutDataSourceConfigParam);
+            DSOutputConfigParams.ActOutDataSourceConfigParameters.Add(actOutDataSourceConfigParam);
         }
 
         public void RemoveAllButOneInputParam(string Param)
@@ -1176,8 +1179,8 @@ namespace GingerCore.Actions
 
         public string GetDataSourceConfigParam(string OutputParam)
         {
-            // check if param already exist then update as it can be saved and loaded + keep other values
-            ActOutDataSourceConfig ADSC = (from arc in DSOutputConfigParams where arc.OutputType == OutputParam select arc).FirstOrDefault();
+            //// check if param already exist then update as it can be saved and loaded + keep other values
+            ActOutDataSourceConfigParam ADSC = (from arc in DSOutputConfigParams.ActOutDataSourceConfigParameters where arc.OutputType == OutputParam select arc).FirstOrDefault();
             if (ADSC == null)
             {
                 return null;

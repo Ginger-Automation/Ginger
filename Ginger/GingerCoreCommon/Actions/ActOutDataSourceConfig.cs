@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
+using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
@@ -25,21 +26,21 @@ namespace GingerCore.Actions
     {
         private bool mActive;
         public enum eOutputType
-        {    
-            Parameter,            
-            Path,            
+        {
+            Parameter,
+            Path,
             Actual,
             Parameter_Path
         }
 
-        public  static partial class Fields
+        public static partial class Fields
         {
             public static string DSName = "DSName";
             public static string DSTable = "DSTable";
-            public static string Active = "Active";
-            public static string OutputType = "OutputType";
-            public static string TableColumn = "TableColumn";
-            public static string PossibleValues = "PossibleValues";
+            //public static string Active = "Active";
+            //public static string OutputType = "OutputType";
+            //public static string TableColumn = "TableColumn";
+            //public static string PossibleValues = "PossibleValues";
             public static string OutParamType = "OutParamMap";
         }
 
@@ -48,41 +49,97 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string DSTable { get; set; }
-        
-        [IsSerializedForLocalRepository]
-        public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(Fields.Active); } }
 
-        [IsSerializedForLocalRepository]
-        public string OutputType { get; set; }
+        //[IsSerializedForLocalRepository]
+        //public bool Active { get { return mActive; } set { mActive = value; OnPropertyChanged(Fields.Active); } }
+
+        //[IsSerializedForLocalRepository]
+        //public string OutputType { get; set; }
 
         [IsSerializedForLocalRepository]
         public string OutParamMap { get; set; }
-        
+
         public override string ItemName
         {
             get
             {
-                return this.OutputType;
+                return this.DSName;
             }
             set
             {
-                this.OutputType = value;
+                this.DSName = value;
             }
         }
 
-        ObservableList<string> mPossibleValues = new ObservableList<string>();
-        public ObservableList<string> PossibleValues
+        //ObservableList<string> mPossibleValues = new ObservableList<string>();
+        //public ObservableList<string> PossibleValues
+        //{
+        //    get
+        //    {
+        //        return mPossibleValues;
+        //    }
+        //    set
+        //    {
+        //        mPossibleValues = value;
+        //        OnPropertyChanged(Fields.PossibleValues);
+        //    }
+        //}
+
+        //string mTableColumn;
+        //[IsSerializedForLocalRepository]
+        //public string TableColumn
+        //{
+        //    get
+        //    {
+        //        return mTableColumn;
+        //    }
+        //    set
+        //    {
+        //        mTableColumn = value;
+        //        OnPropertyChanged(Fields.TableColumn);
+        //    }
+        //}
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActOutDataSourceConfigParam> ActOutDataSourceConfigParameters  = new ObservableList<ActOutDataSourceConfigParam>();
+
+
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
-            get
+            if (errorType == SerializationErrorType.PropertyNotFound)
             {
-                return mPossibleValues;
+                if (name == "Active" || name == "OutputType" || name == "TableColumn")
+                {
+                    return true;
+                }
             }
-            set
-            {
-                mPossibleValues = value;
-                OnPropertyChanged(Fields.PossibleValues);
-            }
+            return false;
         }
+
+        public override void PostSerialization()
+        {
+
+        }
+
+    }
+    public class ActOutDataSourceConfigParam : RepositoryItemBase
+    {
+        public static partial class Fields
+        {
+            public static string Active = "Active";
+            public static string OutputType = "OutputType";
+            public static string TableColumn = "TableColumn";
+            public static string PossibleValues = "PossibleValues";
+        }
+
+        private bool mActive;
+        [IsSerializedForLocalRepository]
+        public bool Active { get { return mActive; }
+            set { mActive = value;
+                OnPropertyChanged(Fields.Active); } }
+
+        [IsSerializedForLocalRepository]
+        public string OutputType { get; set; }
 
         string mTableColumn;
         [IsSerializedForLocalRepository]
@@ -96,6 +153,34 @@ namespace GingerCore.Actions
             {
                 mTableColumn = value;
                 OnPropertyChanged(Fields.TableColumn);
+            }
+        }
+
+
+        public override string ItemName
+        {
+            get
+            {
+                return this.OutputType;
+            }
+            set
+            {
+                this.OutputType = value;
+            }
+        }
+
+
+        ObservableList<string> mPossibleValues = new ObservableList<string>();
+        public ObservableList<string> PossibleValues
+        {
+            get
+            {
+                return mPossibleValues;
+            }
+            set
+            {
+                mPossibleValues = value;
+                OnPropertyChanged(Fields.PossibleValues);
             }
         }
     }
