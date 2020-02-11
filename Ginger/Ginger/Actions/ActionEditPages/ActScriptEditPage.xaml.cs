@@ -137,7 +137,7 @@ namespace Ginger.Actions
             {
                 InterpreterPathPanel.Visibility = Visibility.Visible;
                 fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
+               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".ps1") || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".cmd")).ToArray();
             }
             else if (interpreterType == ActScript.eScriptInterpreterType.BAT)
             {
