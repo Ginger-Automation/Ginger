@@ -201,8 +201,15 @@ namespace GingerCore.Actions
                 p.StartInfo.Arguments ="\""+ ScriptName +"\" "+ Params;
                 if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
                     p.StartInfo.Arguments = " /k " + ScriptName + " " + Params;
-            
-                    p.Start();
+            	
+                if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("powershell") && ScriptName != null)
+	                {
+	                    p.StartInfo.FileName = @"powershell.exe";
+	                    p.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\scripts\");
+	                    p.StartInfo.Arguments = @"-executionpolicy bypass -file .\" + ScriptName + " " + Params;
+                }
+                   
+                   p.Start();
                            
             p.BeginOutputReadLine();
             p.BeginErrorReadLine();
