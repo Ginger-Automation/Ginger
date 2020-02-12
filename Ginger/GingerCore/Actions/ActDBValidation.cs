@@ -100,26 +100,8 @@ namespace GingerCore.Actions
         public string Where { set; get; }
         
         [IsSerializedForLocalRepository]
-        public string SQL
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(GetInputParamValue("SQL")))
-                {
-                    AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
-                }
-                if (!string.IsNullOrEmpty(GetInputParamValue("Value")))
-                {
-                    RemoveInputParam("Value");
-                }
-                return GetInputParamValue("SQL");
-            }
-            set
-            {
-                AddOrUpdateInputParamValue("SQL", value);
-            }
-        }
-
+        public string SQL { get; set; }
+        
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
