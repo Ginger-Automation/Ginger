@@ -109,8 +109,6 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public int Seq { get; set; }
 
-        [FieldParamsFieldType(FieldsType.Field)]
-        [FieldParamsNameCaption("Business Flow ID")]
         [JsonProperty]
         public string GUID { get { return mBusinessFlow.Guid.ToString(); } }
 
