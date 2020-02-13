@@ -1094,6 +1094,67 @@ namespace Ginger.Actions
                         {
                             TBH.AddUnderLineText("NxtAvail");
                         }
+                        else if (Where.IsChecked == true)
+                        {
+                            TBH.AddUnderLineText("Where");
+
+                            //
+                            TBH.AddText(" COND=");
+                            for (int i = 0; i < mActDSTblElem.WhereConditions.Count; i++)
+                            {
+                                string wQuery = "";
+                                string wCond = mActDSTblElem.WhereConditions[i].wCondition.ToString();
+                                string wColVal = "[" + mActDSTblElem.WhereConditions[i].wTableColumn.ToString().Trim() + "]";
+                                string wOpr = mActDSTblElem.WhereConditions[i].wOperator.ToString();
+                                string wRowVal = mActDSTblElem.WhereConditions[i].wValue.ToString();
+                                if (wRowVal.IndexOf("{DS Name") == -1)
+                                    wRowVal = wRowVal.Replace("'", "''");
+
+                                if (wCond == "EMPTY")
+                                    wCond = "";
+
+                                if (wOpr == "Equals")
+                                {
+                                    if (wColVal == "[GINGER_ID]")
+                                    {
+                                        wQuery = wQuery + " " + wCond + " " + wColVal + " = " + wRowVal;
+                                    }
+                                    else
+                                    {
+                                        wQuery = wQuery + " " + wCond + " " + wColVal + " = '" + wRowVal + "'";
+                                    }
+                                }
+                                else if (wOpr == "NotEquals")
+                                {
+                                    if (wColVal == "[GINGER_ID]")
+                                    {
+                                        wQuery = wQuery + " " + wCond + " " + wColVal + " <> " + wRowVal;
+                                    }
+                                    else
+                                    {
+                                        wQuery = wQuery + " " + wCond + " " + wColVal + " <> '" + wRowVal + "'";
+                                    }
+                                }
+                                else if (wOpr == "Contains")
+                                    wQuery = wQuery + " " + wCond + " " + wColVal + " contains " + "\"" + wRowVal + "\"";
+                                //else if (wOpr == "NotContains")
+                                //    wQuery = wQuery + " " + wCond + " " + wColVal + " not contains " + "\"" + wRowVal + "\"";
+                                else if (wOpr == "StartsWith")
+                                    wQuery = wQuery + " " + wCond + " " + wColVal + " like " + "\"" + wRowVal + "\"";
+                                //else if (wOpr == "NotStartsWith")
+                                //    wQuery = wQuery + " " + wCond + " " + wColVal + " ! like + "\"" + wRowVal + "\"";
+                                //else if (wOpr == "EndsWith")
+                                //    wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE '%" + wRowVal + "'";
+                                //else if (wOpr == "NotEndsWith")
+                                //    wQuery = wQuery + " " + wCond + " " + wColVal + " NOT LIKE '%" + wRowVal + "'";
+                                //else if (wOpr == "IsNull")
+                                //    wQuery = wQuery + " " + wCond + " " + wColVal + " IS NULL";
+                                //else if (wOpr == "IsNotNull")
+                                //    wQuery = wQuery + " " + wCond + " " + wColVal + " IS NOT NULL";
+
+                                TBH.AddBoldText(wQuery);
+                            }
+                        }
                         TBH.AddText(" Query QUERY=");
 
                         TBH.AddText("db." + mDSTable.Name);
@@ -1261,13 +1322,13 @@ namespace Ginger.Actions
                                             }
                                         }
                                         else if (wOpr == "Contains")
-                                            wQuery = wQuery + " " + wCond + " " + wColVal + " " + wOpr + "\"" + wRowVal + "\"";
+                                            wQuery = wQuery + " " + wCond + " " + wColVal + " contains " + "\"" + wRowVal + "\"";
                                         //else if (wOpr == "NotContains")
-                                        //    wQuery = wQuery + " " + wCond + " " + wColVal + " NOT LIKE " + "'%" + wRowVal + "%'";
-                                        //else if (wOpr == "StartsWith")
-                                        //    wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE '" + wRowVal + "%'";
+                                        //    wQuery = wQuery + " " + wCond + " " + wColVal + " not contains " + "\"" + wRowVal + "\"";
+                                        else if (wOpr == "StartsWith")
+                                            wQuery = wQuery + " " + wCond + " " + wColVal + " like " + "\"" + wRowVal + "\"";
                                         //else if (wOpr == "NotStartsWith")
-                                        //    wQuery = wQuery + " " + wCond + " " + wColVal + " NOT LIKE '" + wRowVal + "%'";
+                                        //    wQuery = wQuery + " " + wCond + " " + wColVal + " ! like " + "\"" + wRowVal + "\"";
                                         //else if (wOpr == "EndsWith")
                                         //    wQuery = wQuery + " " + wCond + " " + wColVal + " LIKE '%" + wRowVal + "'";
                                         //else if (wOpr == "NotEndsWith")
@@ -1300,7 +1361,7 @@ namespace Ginger.Actions
                             selColName = selColName.Replace("__", "_");
                             string SelCellGingerId = ((DataRowView)((DataGridCellInfo)SelectedItemsList[0]).Item).Row["GINGER_ID"].ToString();
 
-                            TBH.AddText("db." + mDSTable.Name + ".select $." + selColName + " where GINGER_ID=\"" + SelCellGingerId + "\"");
+                            TBH.AddText("db." + mDSTable.Name + ".select $." + selColName + " where GINGER_ID=" + SelCellGingerId);
                             mActDSTblElem.VarName = selColName;
                         }
                     }
@@ -2059,6 +2120,10 @@ namespace Ginger.Actions
             mActDSTblElem.ByQuery = false;
             UpdateValueExpression();
         }
-
+        private void SelectedCell_Unchecked(object sender, RoutedEventArgs e)
+        {
+            mActDSTblElem.BySelectedCell = false;
+            UpdateValueExpression();
+        }
     }
 }
