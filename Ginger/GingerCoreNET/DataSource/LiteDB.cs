@@ -725,9 +725,12 @@ namespace GingerCoreNET.DataSource
             //Nextavailable
             else if (NextAvai)
             {
-                DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
-                row = datatble.Rows[LocateRowValue];
-                string rowID = Convert.ToString(row["GINGER_ID"]);
+                DataTable datatble = GetQueryOutput("db." + DSTableName + ".select $.GINGER_ID where GINGER_USED = \"False\" limit 1");
+                row = datatble.Rows[0];
+                string rowID = row[0].ToString();
+                //DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
+                //row = datatble.Rows[LocateRowValue];
+                //string rowID = Convert.ToString(row["GINGER_ID"]);
 
                 string[] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
                 query = Stringsplit[0] + " where GINGER_ID = " + rowID;
