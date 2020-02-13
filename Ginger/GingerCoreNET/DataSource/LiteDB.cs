@@ -708,6 +708,12 @@ namespace GingerCoreNET.DataSource
         public void RunQuery(string query, int LocateRowValue, string DSTableName, bool MarkUpdate = false, bool NextAvai = false)
         {
             DataTable dt = GetQueryOutput("db." + DSTableName + ".find");
+            //Add a row if the table is empty to update the value.
+            if (dt.Rows.Count == 0 && NextAvai == true)
+            {
+                RunQuery("db." + DSTableName + ".insert { GINGER_ID:1,GINGER_USED:\"False\"}");
+                dt = GetQueryOutput("db." + DSTableName + ".find");
+            }
             DataRow row = dt.Rows[LocateRowValue];
             string rowValue = Convert.ToString(row["GINGER_ID"]);
 
