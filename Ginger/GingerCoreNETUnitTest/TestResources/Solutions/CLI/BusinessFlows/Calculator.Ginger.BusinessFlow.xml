@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202001152030" GingerVersion="3.5.0.0" Version="27" LastUpdateBy="MENIK" LastUpdate="202002021355" />
+<GingerRepositoryItem><Header ItemGuid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202001152030" GingerVersion="3.5.0.0" Version="28" LastUpdateBy="MENIK" LastUpdate="202002081933" />
 <BusinessFlow Elapsed="6057" Guid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" Name="Calculator_Test" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="RandomCalc" ActivityName="Do RandomCalc" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="91ba3dd6-8688-43aa-b2d9-a2da7f9c4ea1" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" Publish="True" TargetApplication="app1">
@@ -20,7 +20,7 @@
 <Acts>
 <ActDummy Active="True" Description="Decide if to Run Sum" Guid="74d24f98-6665-4e83-8900-c84b2e400d2a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
 <FlowControls>
-<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoSum?}&quot; = &quot;No&quot;" FlowControlAction="GoToNextActivity" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="Legacy" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoSum?}&quot; == &quot;No&quot;" FlowControlAction="GoToNextActivity" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </FlowControls>
 
 <InputValues>
@@ -47,7 +47,7 @@
 <Acts>
 <ActDummy Active="True" Description="Decide if to Run Multiply" Guid="206edc95-07a8-4ac2-bc61-8245e51cf13e" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
 <FlowControls>
-<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoMultiply?}&quot; = &quot;No&quot;" FlowControlAction="GoToNextActivity" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="Legacy" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoMultiply?}&quot; == &quot;No&quot;" FlowControlAction="GoToNextActivity" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </FlowControls>
 
 <InputValues>
@@ -70,7 +70,7 @@
 <Acts>
 <ActDummy Active="True" Description="Decide if to Run Divide" Guid="9bf93cf7-8948-4d63-8d8c-56ea5c5e6141" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
 <FlowControls>
-<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoDivide?}&quot; = &quot;No&quot;" FlowControlAction="StopRun" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="Legacy" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoDivide?}&quot; == &quot;No&quot;" FlowControlAction="StopRun" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </FlowControls>
 
 <InputValues>
@@ -94,22 +94,22 @@
 <ActivitiesGroups>
 <ActivitiesGroup Guid="8568128d-f945-43c0-8292-b8943282a7f6" Name="RandomCalc" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="91ba3dd6-8688-43aa-b2d9-a2da7f9c4ea1" ActivityName="Do RandomCalc" Guid="26247c89-6ba9-47e8-bf58-f964303d18a8" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="91ba3dd6-8688-43aa-b2d9-a2da7f9c4ea1" ActivityName="Do RandomCalc" Guid="a4c75874-3474-4167-9574-657e5aaf0fb3" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 <ActivitiesGroup Guid="0b117905-cf83-42dd-b65a-6b804bb53ad0" Name="Sum" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="9bff4443-2186-46d4-824e-68d068e3e4cc" ActivityName="Do Sum" Guid="52ae6a08-4e0c-4c95-ba97-c823272c6172" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="9bff4443-2186-46d4-824e-68d068e3e4cc" ActivityName="Do Sum" Guid="699d2be6-d3e5-4314-ae88-fa5546802ad4" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 <ActivitiesGroup Guid="43608559-06e2-4c4d-a258-80ba55dc4992" Name="Multiply" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="cb800179-fa3c-46fa-9c38-4c9c605ab149" ActivityName="Do Multiply" Guid="c0254d5a-6db1-4523-bc4e-20c1bba5fcd0" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="cb800179-fa3c-46fa-9c38-4c9c605ab149" ActivityName="Do Multiply" Guid="2815bfeb-e957-48be-b3b1-72038d4c68e8" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 <ActivitiesGroup Guid="17afb069-a131-4732-b813-d7498ba0b0fe" Name="Divide" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4d6949ee-bd24-4b97-be01-f6fc686eeba9" ActivityName="Do Divide" Guid="37f8498e-1d46-4bbb-9a72-ce6d4e2e96f9" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4d6949ee-bd24-4b97-be01-f6fc686eeba9" ActivityName="Do Divide" Guid="ea7702ed-bef3-4a51-97f3-4c21289413bf" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 </ActivitiesGroups>

@@ -31,6 +31,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
 using RunsetOperations;
 using System;
@@ -663,7 +664,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         foreach (AppAgentMapping appAgentConfig in runnerConfig.AppAgentMappings)
                         {
-                            GingerCore.Platforms.ApplicationAgent appAgent = null;
+                            ApplicationPlatform app = (ApplicationPlatform)FindItemByIDAndName<ApplicationPlatform>(
+                                                        new Tuple<string, Guid?>(nameof(ApplicationPlatform.Guid), appAgentConfig.ApplicationID),
+                                                        new Tuple<string, string>(nameof(ApplicationPlatform.AppName), appAgentConfig.ApplicationName),
+                                                        WorkSpace.Instance.Solution.ApplicationPlatforms);
+
+                            Agent agent = (Agent)FindItemByIDAndName<Agent>(
+                                                        new Tuple<string, Guid?>(nameof(Agent.Guid), appAgentConfig.AgentID),
+                                                        new Tuple<string, string>(nameof(Agent.Name), appAgentConfig.AgentName),
+                                                        WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>());
+
+                            ApplicationAgent appAgent = null;
                             if (dynamicRunsetConfigs.Exist)
                             {
                                 appAgent = (ApplicationAgent)FindItemByIDAndName<IApplicationAgent>(
@@ -674,19 +685,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             else
                             {
                                 appAgent = new ApplicationAgent();
-                                appAgent.AppName = appAgentConfig.ApplicationName;
-                                if (appAgentConfig.ApplicationID != null)
-                                {
-                                    appAgent.AppID = (Guid)appAgentConfig.ApplicationID;
-                                }
                                 gingerRunner.ApplicationAgents.Add(appAgent);
                             }
 
-                            appAgent.AgentName = appAgentConfig.AgentName;
-                            if (appAgentConfig.AgentID != null)
-                            {
-                                appAgent.AgentID = (Guid)appAgentConfig.AgentID;
-                            }
+                            appAgent.AppName = app.AppName;
+                            appAgent.AppID = app.Guid;
+                            appAgent.AgentName = agent.Name;
+                            appAgent.AgentID = agent.Guid;
                         }
                     }
 
@@ -695,18 +700,24 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         foreach (BusinessFlowExecConfig businessFlowConfig in runnerConfig.BusinessFlows)
                         {
+                            BusinessFlow bf = (BusinessFlow)FindItemByIDAndName<BusinessFlow>(
+                                new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowConfig.ID),
+                                new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowConfig.Name),
+                                WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
+
                             BusinessFlowRun businessFlowRun = null;
+
                             if (dynamicRunsetConfigs.Exist)
                             {
                                 businessFlowRun = FindItemByIDAndName<BusinessFlowRun>(
-                                                new Tuple<string, Guid?>(nameof(BusinessFlowRun.BusinessFlowGuid), businessFlowConfig.ID),
-                                                new Tuple<string, string>(nameof(BusinessFlowRun.BusinessFlowName), businessFlowConfig.Name),
+                                                new Tuple<string, Guid?>(nameof(BusinessFlowRun.BusinessFlowGuid), bf.Guid),
+                                                new Tuple<string, string>(nameof(BusinessFlowRun.BusinessFlowName), bf.Name),
                                                 gingerRunner.BusinessFlowsRunList);
 
-                                List<BusinessFlowRun> businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowConfig.ID).ToList();
+                                List<BusinessFlowRun> businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == bf.Guid).ToList();
                                 if (businessFlowRunList == null || businessFlowRunList.Count == 0)
                                 {
-                                    businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowName == businessFlowConfig.Name).ToList();
+                                    businessFlowRunList = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowName == bf.Name).ToList();
                                 }
                                 if (businessFlowRunList != null && businessFlowRunList.Count > 0)
                                 {
@@ -718,19 +729,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                                 if (businessFlowRun == null)
                                 {
-                                    string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(BusinessFlow), businessFlowConfig.Name, businessFlowConfig.ID);
-                                    Reporter.ToLog(eLogLevel.ERROR, error);
+                                    string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(BusinessFlow), businessFlowConfig.Name, businessFlowConfig.ID);
                                     throw new Exception(error);
                                 }
                             }
                             else
                             {
                                 businessFlowRun = new BusinessFlowRun();
-                                businessFlowRun.BusinessFlowName = businessFlowConfig.Name;
-                                if (businessFlowConfig.ID != null)
-                                {
-                                    businessFlowRun.BusinessFlowGuid = (Guid)businessFlowConfig.ID;
-                                }
+                                businessFlowRun.BusinessFlowGuid = bf.Guid;
+                                businessFlowRun.BusinessFlowName = bf.Name;                               
                                 businessFlowRun.BusinessFlowIsActive = true;
                                 businessFlowRun.BusinessFlowInstanceGuid = Guid.NewGuid();
                             }
@@ -743,15 +750,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             //Set/Update BF Input Variables
                             if (businessFlowConfig.InputValues != null)
                             {
-                                ObservableList<VariableBase> allInputVars = null;
-                                BusinessFlow parentBF = FindItemByIDAndName<BusinessFlow>(
-                                            new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowRun.BusinessFlowGuid),
-                                            new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowRun.BusinessFlowName),
-                                            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>());
-                                if (parentBF != null)
-                                {
-                                    allInputVars = parentBF.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true);
-                                }
+                                ObservableList<VariableBase> allInputVars = null;                                
+                                allInputVars = bf.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsInputValue: true);
+                                
                                 foreach (InputValue inputValueConfig in businessFlowConfig.InputValues)
                                 {
                                     VariableBase customizedInputVar = null;
@@ -807,7 +808,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                                     if (customizedInputVar == null)
                                     {
-                                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to find the customized Variabel '{0}'", inputValueConfig.VariableName));
+                                        string error = string.Format("Failed to find Input Variable with the details '{0}/{1}'", inputValueConfig.VariableName, inputValueConfig.VariableID);
+                                        throw new Exception(error);
                                     }
                                 }
                             }
@@ -1018,15 +1020,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
                 else
                 {                    
-                    string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(T), name.Item2.ToLower(), id.Item2);
-                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
                     throw new Exception(error);
                 }
             }
             catch (Exception ex)
             {
-                string error = string.Format("Failed to find {0} with the details '{0}/{1}'", typeof(T), name.Item2.ToLower(), id.Item2);
-                Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
                 throw new Exception(error, ex);
             }
         }
