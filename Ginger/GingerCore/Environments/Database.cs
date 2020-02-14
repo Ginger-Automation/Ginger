@@ -223,36 +223,54 @@ namespace GingerCore.Environments
                 //DbTypes = value;
             }
         }
-
+        public bool CheckUserCredentialsInTNS()
+        {
+            string tnsCalculated = GetDecryptOrCalcluatedValue(TNSCalculated);
+            if (!string.IsNullOrEmpty(tnsCalculated) && tnsCalculated.ToLower().Contains("data source=") && tnsCalculated.ToLower().Contains("password=") && tnsCalculated.ToLower().Contains("user id="))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public string GetDecryptOrCalcluatedValue(string calculatedValue)
+        {
+            bool res = false;
+            String deCryptValue = EncryptionHandler.DecryptString(calculatedValue, ref res, false);
+            if (res == true)
+            {
+                return deCryptValue;
+            }
+            else
+            {
+                return calculatedValue;
+            }
+        }
         public string NameBeforeEdit;
 
        
         public string GetConnectionString()
         {
             string connStr = null;
-            bool res;
-            res = false;
+            
+            //Decryption
+            string User = GetDecryptOrCalcluatedValue(UserCalculated);
+            string Pass = GetDecryptOrCalcluatedValue(PassCalculated);
+            string TNS = GetDecryptOrCalcluatedValue(TNSCalculated);
+            string ConnString = GetDecryptOrCalcluatedValue(ConnectionStringCalculated);
 
-            if (String.IsNullOrEmpty(ConnectionStringCalculated) == false)
+            if (String.IsNullOrEmpty(ConnString) == false)
             {
-                connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
-     
-                String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-                if (res == true)
-                    { connStr = connStr.Replace("{PASS}", deCryptValue); }
-                else
-                    { connStr = connStr.Replace("{PASS}", PassCalculated); }
+                connStr = ConnString.Replace("{USER}", User);
+                connStr = ConnString.Replace("{PASS}", Pass);
             }
             else
             {
-                String strConnString = TNSCalculated;
+                String strConnString = TNS;
                 String strProvider;
-                connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
-
-                String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-
-                if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
-                else { connStr = connStr + "Password=" + PassCalculated + ";"; }
+                connStr = "Data Source=" + TNS + ";User Id=" + User + ";" + "Password=" + Pass + ";";
 
                 if (DBType == eDBTypes.MSAccess)
                 {
@@ -263,24 +281,24 @@ namespace GingerCore.Environments
                 }
                 else if (DBType == eDBTypes.DB2)
                 {
-                    connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + "PWD=" + deCryptValue;
+                    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + Pass;
                 }
                 else if (DBType == eDBTypes.PostgreSQL)
                 {
-                    string[] host = TNSCalculated.Split(':');
+                    string[] host = TNS.Split(':');
                     if (host.Length == 2)
                     {
-                        connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], UserCalculated, deCryptValue, Name);
+                        connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], User, Pass, Name);
                     }
                     else
                     {
                         //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                        connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNSCalculated, UserCalculated, deCryptValue, Name);
+                        connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNS, User, Pass, Name);
                     }
                 }
                 else if (DBType == eDBTypes.MySQL)
                 {
-                    connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + ";PWD=" + deCryptValue;
+                    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + ";PWD=" + Pass;
                 }
                 
             }

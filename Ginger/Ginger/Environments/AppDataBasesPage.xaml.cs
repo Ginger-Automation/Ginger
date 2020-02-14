@@ -57,9 +57,61 @@ namespace Ginger.Environments
             {
                 grdAppDbs.grdMain.CellEditEnding += grdMain_CellEditEnding;
                 grdAppDbs.grdMain.PreparingCellForEdit += grdMain_PreparingCellForEdit;
+                grdAppDbs.grdMain.LostFocus += grdMain_LostFocus;
             }
         }
-
+        private void grdMain_LostFocus(object sender, RoutedEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+            if (dataGrid != null)
+            {
+                Database currentdb = (Database)grdAppDbs.CurrentItem;
+                bool res = false;
+                if (!EncryptionHandler.IsStringEncrypted(currentdb.TNS))
+                {
+                    currentdb.TNS = EncryptionHandler.EncryptString(currentdb.TNS, ref res);
+                    if (res == false)
+                    {
+                        currentdb.TNS = null;
+                    }
+                    //Removing below assignments as the TNS is changed it will be added back while testConnection, if the TNS present these values
+                    if (currentdb.CheckUserCredentialsInTNS())
+                    {
+                        currentdb.User = null;
+                        currentdb.Pass = null;
+                        currentdb.ConnectionString = null;
+                    }
+                }
+                res = false;
+                if (!EncryptionHandler.IsStringEncrypted(currentdb.User))
+                {
+                    currentdb.User = EncryptionHandler.EncryptString(currentdb.User, ref res);
+                    if (res == false)
+                    {
+                        currentdb.User = null;
+                    }
+                }
+                res = false;
+                if (!EncryptionHandler.IsStringEncrypted(currentdb.Pass))
+                {
+                    currentdb.Pass = EncryptionHandler.EncryptString(currentdb.Pass, ref res);
+                    if (res == false)
+                    {
+                        currentdb.Pass = null;
+                    }
+                }
+                res = false;
+                if (!EncryptionHandler.IsStringEncrypted(currentdb.ConnectionString))
+                {
+                    currentdb.ConnectionString = EncryptionHandler.EncryptString(currentdb.ConnectionString, ref res);
+                    if (res == false)
+                    {
+                        currentdb.ConnectionString = null;
+                    }
+                }
+            }
+            
+        }
         private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
             if (e.Column.Header.ToString() == nameof(Database.Name))
@@ -88,7 +140,64 @@ namespace Ginger.Environments
                     }                   
                 }
             }
-
+            if (e.Column.Header.ToString() == "User Name")
+            {
+                Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
+                String intialValue = selectedEnvDB.User;
+                if (!string.IsNullOrEmpty(intialValue))
+                {
+                    bool res = false;
+                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                    {
+                        selectedEnvDB.User = EncryptionHandler.EncryptString(intialValue, ref res);
+                        if (res == false)
+                        {
+                            selectedEnvDB.User = null;
+                        }
+                    }
+                }
+            }
+            if (e.Column.Header.ToString() == "TNS / File Path / Host ")
+            {
+                Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
+                String intialValue = selectedEnvDB.TNS;
+                if (!string.IsNullOrEmpty(intialValue))
+                {
+                    bool res = false;
+                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                    {
+                        selectedEnvDB.TNS = EncryptionHandler.EncryptString(intialValue, ref res);
+                        if (res == false)
+                        {
+                            selectedEnvDB.TNS = null;
+                        }
+                        //Removing below assignments as the TNS is changed it will be added back while testConnection, if the TNS present these values
+                        if (selectedEnvDB.CheckUserCredentialsInTNS())
+                        {
+                            selectedEnvDB.User = null;
+                            selectedEnvDB.Pass = null;
+                            selectedEnvDB.ConnectionString = null;
+                        }
+                    }
+                }
+            }
+            if (e.Column.Header.ToString() == "Connection String (Optional)")
+            {
+                Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;
+                String intialValue = selectedEnvDB.ConnectionString;
+                if (!string.IsNullOrEmpty(intialValue))
+                {
+                    bool res = false;
+                    if (!EncryptionHandler.IsStringEncrypted(intialValue))
+                    {
+                        selectedEnvDB.ConnectionString = EncryptionHandler.EncryptString(intialValue, ref res);
+                        if (res == false)
+                        {
+                            selectedEnvDB.ConnectionString = null;
+                        }
+                    }
+                }
+            }
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
                 Database selectedDB = (Database)grdAppDbs.CurrentItem;
@@ -145,7 +254,7 @@ namespace Ginger.Environments
                 Mouse.OverrideCursor = null;
             }
         }
-
+       
         #region Events
         private void TestDBConnection(object sender, RoutedEventArgs e)
         {
@@ -160,14 +269,35 @@ namespace Ginger.Environments
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow =  null;
-                if (string.IsNullOrEmpty(db.ConnectionString) && !string.IsNullOrEmpty(db.TNS) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
+                if (string.IsNullOrEmpty(db.GetDecryptOrCalcluatedValue(db.ConnectionStringCalculated)) && db.CheckUserCredentialsInTNS())
                 {
                     System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
-                    scSB.ConnectionString = db.TNS;
-                    db.TNS = scSB.DataSource;
-                    db.User = scSB.UserID;
-                    db.Pass = scSB.Password;
-                    db.ConnectionString = scSB.ConnectionString;
+                    scSB.ConnectionString = db.GetDecryptOrCalcluatedValue(db.TNSCalculated);
+
+                    bool res = false;
+                    db.TNS = EncryptionHandler.EncryptString(scSB.DataSource, ref res);
+                    if (res == false)
+                    {
+                        db.TNS = null;
+                    }
+                    res = false;
+                    db.User = EncryptionHandler.EncryptString(scSB.UserID, ref res);
+                    if (res == false)
+                    {
+                        db.User = null;
+                    }
+                    res = false;
+                    db.Pass = EncryptionHandler.EncryptString(scSB.Password, ref res);
+                    if (res == false)
+                    {
+                        db.Pass = null;
+                    }
+                    res = false;
+                    db.ConnectionString = EncryptionHandler.EncryptString(scSB.ConnectionString, ref res);
+                    if (res == false)
+                    {
+                        db.ConnectionString = null;
+                    }
                 }
 
                 db.CloseConnection();
