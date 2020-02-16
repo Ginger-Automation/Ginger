@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -264,7 +265,11 @@ namespace GingerCore
 
 
         private ObservableList<Activity> mActivities;
-
+        /// <summary>
+        /// Been used to identify if Activities were loaded by lazy load or not
+        /// </summary>
+        public bool ActivitiesLazyLoad { get { return mActivities.LazyLoad; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
         {
@@ -279,6 +284,10 @@ namespace GingerCore
                     mActivities.LoadLazyInfo();
                     LazyLoadFlagForUnitTest = true; 
                     AttachActivitiesGroupsAndActivities(mActivities);
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mActivities);
+                    }
                 }
                 return mActivities;
             }
