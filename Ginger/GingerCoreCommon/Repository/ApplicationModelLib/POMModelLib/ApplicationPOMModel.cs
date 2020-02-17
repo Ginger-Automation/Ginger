@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// Been used to identify if UnMappedUIElements were lazy loaded already or not
         /// </summary>
-        public bool UnMappedUIElementsLazyLoad { get { return mUnMappedElements.LazyLoad; } }
+        public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) ? mUnMappedElements.LazyLoad : false; } }
         [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements
@@ -120,7 +120,7 @@ namespace Amdocs.Ginger.Repository
         /// <summary>
         /// Been used to identify if MappedUIElements were lazy loaded already or not
         /// </summary>
-        public bool MappedUIElementsLazyLoad { get { return mMappedElements.LazyLoad; } }
+        public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) ? mMappedElements.LazyLoad : false; } }
         [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements
