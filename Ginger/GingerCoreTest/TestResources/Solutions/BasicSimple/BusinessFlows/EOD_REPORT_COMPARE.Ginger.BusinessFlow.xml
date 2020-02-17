@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="3fb0603b-0a1a-45f2-ace9-ea0eba875041" ItemType="BusinessFlow" CreatedBy="gramopav" Created="201912230925" GingerVersion="3.5.0.0" Version="223" LastUpdateBy="aditijag" LastUpdate="202001290606" />
+<BusinessFlow Elapsed="17601" Guid="3fb0603b-0a1a-45f2-ace9-ea0eba875041" Name="EOD_REPORT_COMPARE" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Run EOD _REPORT_VALIDATION scripts" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="0a9fd5ac-692e-41e6-8673-5ce49f2e61b3" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Mediation">
+<Acts>
+<ActConsoleCommand Active="True" ConsoleCommand="FreeCommand" Description="Difference between reports" Guid="41313676-573b-4a9d-849a-7755aadc88e6" MaxNumberOfRetries="5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Unix" RetryMechanismInterval="5" StatusConverter="None" WaitVE="5" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="9d3d6adc-b103-4e11-8854-7a7daa379e22" Param="Free Command" ParentGuid="00000000-0000-0000-0000-000000000000" Value="cat /vstusr1/dev/ar/vgramop1/EOD_REPORT_VALIDATION/difference.txt | wc -l" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="6038bedf-af6e-40a3-b07b-275c8a4ec760" mExpected="&#xD;&#xA;cat /vstusr1/dev/ar/vgramop1/EOD &#x8;_REPORT &#x8;_VALIDATION/difference.txt | wc -l&#xD;&#xA;cat: /vstusr1/dev/ar/vgramop1/EOD_REPORT_VALIDATION/difference.txt: Permission denied&#xD;&#xA;0&#xD;&#xA;devapp101:/vstusr2/sst/csm/vstwrk17/bin&gt; &#xD;&#xA;&#xD;&#xA;&#xD;&#xA;" Operator="Equals" Param="Result" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActConsoleCommand>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="43cb3128-1586-47ed-93b9-ceb7d1a968f0" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="0a9fd5ac-692e-41e6-8673-5ce49f2e61b3" ActivityName="Run EOD _REPORT_VALIDATION scripts" Guid="26507850-5387-4d1e-9d0b-8199f898302c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="Mediation" Guid="9c326c2a-055c-4ee5-8022-932d3ee763a0" LastExecutingAgentName="Linux_Env" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

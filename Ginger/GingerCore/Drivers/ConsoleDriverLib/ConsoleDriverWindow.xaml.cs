@@ -22,6 +22,7 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -164,9 +165,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             RunCommand();
 
             string rc = mConsoleBuffer.ToString();
+            rc = Regex.Replace(rc, "[\0\a\b\f\t]", "");
             string GingerRCStart = "~~~GINGER_RC_START~~~";
             string GingerRCEnd = "~~~GINGER_RC_END~~~";
-
+          
             int i = rc.IndexOf(GingerRCStart);
             if (i>0)
             {

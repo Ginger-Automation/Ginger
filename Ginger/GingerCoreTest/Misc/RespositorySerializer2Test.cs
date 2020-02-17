@@ -77,6 +77,21 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Count);
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void XMLSpecialCharRemoveTest()
+        {
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "EOD_REPORT_COMPARE.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            Assert.AreEqual(1, businessFlow.Activities.Count);
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count);
+        }
+
+
         //[Ignore]
         //[TestMethod]  [Timeout(60000)]
         //public void NewRepositorySerializer_ReadOldXML()

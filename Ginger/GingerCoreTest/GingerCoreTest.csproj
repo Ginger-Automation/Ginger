@@ -211,6 +211,9 @@
     <Content Include="TestResources\Solutions\BasicSimple\BusinessFlows\ConditionVal.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\BusinessFlows\EOD_REPORT_COMPARE.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Temp\sample.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
