@@ -77,6 +77,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyIDs.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyNames.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -84,6 +87,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\CLI\CLI-Default Run Set.Ginger.AutoRunConfigs.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-NotExisting_OnlyNames.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\CLI\CLI-NotExisting.Ginger.AutoRunConfigs.json">
@@ -381,6 +387,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Applications Models\POM Models\FacebookSignUp.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
