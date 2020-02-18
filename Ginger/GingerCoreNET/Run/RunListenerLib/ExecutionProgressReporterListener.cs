@@ -57,12 +57,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlow = businessFlow;
-            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), new BusinessFlowReport(businessFlow));
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), new BusinessFlowReport(businessFlow));
         }
 
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)

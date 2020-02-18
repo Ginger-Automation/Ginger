@@ -205,7 +205,7 @@ namespace Ginger.UserControlsLib
             int insertIndex = 0;
 
             //adding the new item after current selected item            
-            if (currentIndex == -1 && containerControl.GetSourceItemsAsIList().CurrentItem != null) 
+            if (currentIndex == -1 || containerControl.GetSourceItemsAsIList().CurrentItem != null) 
             {
                 currentIndex = containerControl.GetSourceItemsAsIList().IndexOf((RepositoryItemBase)containerControl.GetSourceItemsAsIList().CurrentItem);
             }

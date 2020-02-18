@@ -6342,10 +6342,17 @@ namespace GingerCore.Drivers
 
             if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
-                e = LocateElement(act);
-                if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
+                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
                 {
-                    act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    e = LocateElement(act,true);
+                }
+                else
+                {
+                    e = LocateElement(act);
+                    if (e == null)
+                    {
+                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    }
                 }
             }
 
