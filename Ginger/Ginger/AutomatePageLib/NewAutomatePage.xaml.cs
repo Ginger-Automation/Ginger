@@ -198,7 +198,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
-            xBusinessFlowItemComboBox.Items.Add("Configurations");
+            xBusinessFlowItemComboBox.Items.Add("Details");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
@@ -1171,7 +1171,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xItemsTabs.SelectedItem = xBfVariablesTab;
             }
-            else if (xBusinessFlowItemComboBox.SelectedItem == "Configurations")
+            else if (xBusinessFlowItemComboBox.SelectedItem == "Details")
             {
                 xItemsTabs.SelectedItem = xBfConfigurationsTab;
             }
