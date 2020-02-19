@@ -128,9 +128,9 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                 if (mRunSetReport == null)
                 {
+                    bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                     mRunSetReport = new RunSetReport();
                     mRunSetReport.SetDataForAutomateTab();
                     if (!isAutoRunSetExists)
@@ -151,12 +151,11 @@ namespace GingerWPF.BusinessFlowsLib
         {
             LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
-            List<LiteDbRunSet> filterData = null;
-            filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            if (filterData != null && filterData.Count > 0)
+            var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
+            if (filterData != null)
             {
                 LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
-                dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
+                dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
             }
         }
 
@@ -182,13 +181,12 @@ namespace GingerWPF.BusinessFlowsLib
             bool isExist = false;
             LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
-            List<LiteDbRunSet> filterData = null;
-            filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            isExist = (filterData == null) ? false : filterData.Count > 0;
+            var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
+            isExist = (filterData == null) ? false : true;
             if (isExist)
             {
-                mRunSetLiteDbId = filterData[0]._id;
-                mRunnerLiteDbId = filterData[0].RunnersColl[0]._id;
+                mRunSetLiteDbId = filterData._id;
+                mRunnerLiteDbId = filterData.RunnersColl[0]._id;
             }
             return isExist;
         }
