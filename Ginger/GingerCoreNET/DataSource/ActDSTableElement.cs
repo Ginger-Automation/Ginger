@@ -232,7 +232,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Get Available Row Count")]
             AvailableRowCount,
             [EnumValueDescription("Export to Excel")]
-            ExportToExcel
+            ExportToExcel,
+            [EnumValueDescription("Add Row")]
+            AddRow
         }
 
         public enum eRunColSelectorValue

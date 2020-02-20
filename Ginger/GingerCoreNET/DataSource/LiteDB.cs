@@ -738,7 +738,7 @@ namespace GingerCoreNET.DataSource
             {
                 if (query.Contains("where") && query.Contains("GINGER_ID ="))
                 {
-                    RunQuery(query);
+                     RunQuery(query);
                     string[] querysplit = query.Split(new[] { "GINGER_ID =" }, StringSplitOptions.None);
 
                     dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1]);
@@ -1129,6 +1129,26 @@ namespace GingerCoreNET.DataSource
                     dtCurrent.Rows.Clear();
                     SaveTable(dtCurrent);
 
+                    actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+                    break;
+
+                case eControlAction.AddRow:
+                    int rowCount = GetRowCount(actDSTable.DSTableName);
+                    string insertQuery = "";
+                    if (actDSTable.IsKeyValueTable)
+                    {
+                        string sColList = "GINGER_ID,";
+                        string sColVals = "" + (rowCount + 1) + ",";
+                        insertQuery = UpdateDSReturnValues(actDSTable.DSTableName, sColList, sColVals);
+                    }
+                    else
+                    {
+                        string sColList = "GINGER_ID,GINGER_USED,";
+                        string sColVals = "" + (rowCount + 1) + ", 'False',";
+                        insertQuery = UpdateDSReturnValues(actDSTable.DSTableName, sColList, sColVals);
+                    }
+                    
+                    RunQuery(insertQuery);
                     actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     break;
                 default:
