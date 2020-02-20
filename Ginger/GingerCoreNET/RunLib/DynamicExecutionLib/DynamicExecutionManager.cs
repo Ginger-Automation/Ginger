@@ -540,6 +540,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     }
                     else
                     {
+                        mailReportConfig.MailSettings.EmailMethod = SendMailSettings.eEmailMethod.SMTP;
                         mailReportConfig.MailSettings.SmtpDetails = new MailSmtpDetails();
                         mailReportConfig.MailSettings.SmtpDetails.Server = runsetMailReport.Email.SMTPMailHost;
                         mailReportConfig.MailSettings.SmtpDetails.Port = runsetMailReport.Email.SMTPPort.ToString();
