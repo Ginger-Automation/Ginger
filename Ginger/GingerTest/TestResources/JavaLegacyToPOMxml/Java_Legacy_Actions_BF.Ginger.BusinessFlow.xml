@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="1eb626cd-2b29-40e2-981d-063539759d32" ItemType="BusinessFlow" CreatedBy="ravikugu" Created="202001141148" GingerVersion="3.5.0.0" Version="2" LastUpdateBy="ravikugu" LastUpdate="202001141148" />
+<BusinessFlow Guid="1eb626cd-2b29-40e2-981d-063539759d32" Name="Java_Legacy_Actions_BF" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Java Element Action and Switch Window - Testing" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="5a1195be-96b5-41fe-a9b3-9a04f4f9656d" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyJavaApp">
+<Acts>
+<ActSwitchWindow Active="True" Description="Java Element Action- Set Value- Init" Guid="8718916e-c806-495c-b9e3-ed92d57202fa" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cb7544d8-94dd-4b98-a217-38723a0d1b3a" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="54ddae83-6f57-47c1-9da3-f8d6c4710bb4" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Java Swing Test App" />
+<ActInputValue Guid="5f6952a0-8c45-4589-a411-8dbc6fc625cc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="53e4b17e-601d-42a8-912e-5b974ac9e078" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActJavaElement Active="True" ControlAction="SetValue" Description="Java Element Action- Set Value- Testing" Guid="e26b3977-31ff-4de7-9267-066d7407e9d6" MaxNumberOfRetries="2" ParentGuid="04125673-5b37-4212-84a5-4b4f44e3bea7" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="830a652e-5707-443a-84cf-4e9888871243" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="b32875c5-a27e-4610-a814-4f90be968df1" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:txtEmployeeID][ClassName:javax.swing.JTextField]]" />
+<ActInputValue Guid="1e74a5aa-9cee-4d8d-b9fb-dfcb2412c7a0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=Employee Id}" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetValue" Description="Java Element Action_Set Value- Validation" Guid="0e504673-c984-42d8-ad9d-ad49627149fd" MaxNumberOfRetries="2" ParentGuid="04125673-5b37-4212-84a5-4b4f44e3bea7" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="c065bb40-d4c2-4885-94a4-289505a0a2b3" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="5c8754aa-eccc-4b5d-9074-57c60058c600" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:txtEmployeeID][ClassName:javax.swing.JTextField]]" />
+<ActInputValue Guid="1e74a5aa-9cee-4d8d-b9fb-dfcb2412c7a0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="9a2dc4f7-50c5-44eb-94a4-1308cedece80" mExpected="{Var Name=Employee Id}" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="Click" Description="Java Element Action- Click - Testing" Guid="72e73719-bdf1-4bdf-b4c2-28838a66f83d" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="0bb12882-5b24-4ec9-9280-b017bb029ff7" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="411ffbf8-00e0-4089-ad45-3f954c1cb07f" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:cbWorksAtAmdocs][ClassName:javax.swing.JCheckBox]]" />
+<ActInputValue Guid="20e0a3a4-625f-48c0-87ca-5f32d7b836e8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="IsChecked" Description="Java Element Action- Click - Validation" Guid="2f507305-5a5a-41ce-ad5c-b99cd3856204" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="6b05585f-2d1b-473b-9c5c-1fbbfa6e8297" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="645a26a9-1aad-4645-8548-34252ea1294d" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:cbWorksAtAmdocs][ClassName:javax.swing.JCheckBox]]" />
+<ActInputValue Guid="20e0a3a4-625f-48c0-87ca-5f32d7b836e8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="IsChecked" Description="Java Element Action- Is checked - Testing and Validation" Guid="0b9ea59c-3a09-48e7-a5a7-ac33d505f1cb" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="d07f0d03-ca7d-434f-a0da-0e5cabdb7f58" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="ab4b0408-3e0c-4d45-8e84-4dfcb54fd26a" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:cbWorksAtAmdocs][ClassName:javax.swing.JCheckBox]]" />
+<ActInputValue Guid="20e0a3a4-625f-48c0-87ca-5f32d7b836e8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="00e13371-3c60-41bd-a808-afb395a11116" mExpected="true" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetItemCount" Description="Java Element Action - Get Item Count - Testing and Validation" Guid="ea5f36db-59f1-4149-9195-8edacbf2860a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="fee375d9-3a98-42bb-989f-feb9b71342cf" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="dc5a99b4-c970-4375-ad04-71f010442acb" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:Country][ClassName:javax.swing.JComboBox]]" />
+<ActInputValue Guid="f45129a9-d894-4437-810c-78361e2979f1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="e733bd43-98a5-4418-a53d-071ef7f78093" mExpected="4" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="SelectByIndex" Description="Java Element Action - Select by Index - Testing" Guid="d82e6ce1-7074-4861-abd9-e07cdebd9c95" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="8b93acc3-7922-4b8a-b835-c1282efcd378" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="48e6682d-6678-436f-a9af-06d7226e0a50" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:Country][ClassName:javax.swing.JComboBox]]" />
+<ActInputValue Guid="14cbbf37-3ff9-46e9-9d98-6f0292d12beb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="2" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetValue" Description="Java Element Action - Select by Index - Validation" Guid="04e53241-56af-4f12-9011-89e91d2b77c1" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="0cd43838-34f3-486d-93d4-d5c3d764a1b8" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="e3ec629c-4612-4c40-9cd5-47b0599d4e0e" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:Country][ClassName:javax.swing.JComboBox]]" />
+<ActInputValue Guid="14cbbf37-3ff9-46e9-9d98-6f0292d12beb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="41d4aa49-e417-4d1b-b537-634b93a68b08" mExpected="{Var Name=Country}" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="SetValue" Description="Java Element Action - Set Value - Testing" Guid="797373d4-e591-4dc8-8ab5-861306e6c7b9" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="3d41fd48-a4ee-4c54-9385-20e30e5385ea" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="f59b65da-42bb-4560-aa94-e2ce74248f98" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="7341abb9-6795-4497-83e2-ad1030428166" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="This is a test envrionment" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetValue" Description="Java Element Action - Set Value - Validation" EnableRetryMechanism="True" Guid="4932b3de-989e-44ac-9682-f9619d5ca969" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="8b866f2a-b7eb-4efc-8388-542ce114830b" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="be807066-9a04-4294-867f-cc830f05d8c3" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="7341abb9-6795-4497-83e2-ad1030428166" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="bc12856d-c4f5-42ab-922e-a650b762d8f1" mExpected="{Var Name=Text}" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="SetValue" Description="Java Element Action-Scroll Down- Init" Guid="cb35fce8-a0f8-4ed9-b2f4-a43a1fac5801" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cd9bb021-ae51-4d4b-b5a9-684933e415a7" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="d32e048c-706d-4960-8615-209c4d374e5b" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/javax.swing.JScrollPane[0]/javax.swing.JViewport[0]/[[Name:jtxtPane][ClassName:javax.swing.JTextPane]]" />
+<ActInputValue Guid="cb44e968-cbb9-45b9-9701-38100ed73b8a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Give some text so that&#xD;&#xA;the data would scroll down. Check if scrolls correctly.&#xD;&#xA;Check the left, right, down, up. All the scrolls should &#xD;&#xA;be successfull. Lets see how it works. Here are the &#xD;&#xA;parmutations.&#xD;&#xA;scroll didnt populate, instead &#xD;&#xA;the whole frame got shifted.&#xD;&#xA;Just went out of focus,&#xD;&#xA;Lets try for the scroll down.&#xD;&#xA;Run to check it.&#xD;&#xA;Scroll bar not populating." />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="ScrollDown" Description="Java Element Action - Scroll Down- Testing" Guid="cebb812e-8f8f-448f-9dca-b7c15b6d954b" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="e8d3893e-9363-4e76-8d69-cce9eb923c17" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="de313358-ec9a-46c1-83be-9e46fc708799" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/javax.swing.JScrollPane[0]/javax.swing.JScrollPane$ScrollBar[0]" />
+<ActInputValue Guid="0af4b335-9237-412b-b94c-3e334f83f37e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="ScrollDown" Description="Java Element Action - Scroll Down- Validation---Need to know how to validate it" Guid="2562f519-99d1-464b-8c38-b3074e5688f6" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="cd8b6391-6198-4259-9a58-c0042c2f62c8" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="f4d68642-d075-44fe-b61b-4133bc7aa17a" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/javax.swing.JScrollPane[0]/javax.swing.JScrollPane$ScrollBar[0]" />
+<ActInputValue Guid="0af4b335-9237-412b-b94c-3e334f83f37e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="ScrollUp" Description="Java Element Action - Scroll Up- Testing" Guid="69852ed1-1545-4094-aa33-52f4b6c33036" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="565d9b5f-8ac1-48f3-8b4d-05a42fad905e" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="d7db3dc0-9708-432e-8a04-6a0aff89280b" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/javax.swing.JScrollPane[0]/javax.swing.JScrollPane$ScrollBar[0]" />
+<ActInputValue Guid="0af4b335-9237-412b-b94c-3e334f83f37e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="AsyncClick" Description="Java Element- Async Click - Testing" Guid="2e58a12b-b791-4865-8231-c1fc758f03d9" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="b2722155-b0ae-4178-9a15-5f5cf2dcb18e" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="1aba33aa-67b2-4f8d-a3e1-b9649e24743c" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JPanel[0]/[[Name:btnClickMe][ClassName:javax.swing.JButton]]" />
+<ActInputValue Guid="a317cdbf-1c5f-44c4-8ec6-9d7ae8076a73" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActSwitchWindow Active="True" Description="Java Element- Async Click - Validation" Guid="eedfc8d5-90aa-4859-9b12-f237a53d7787" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="c116dd5d-d76b-4021-9eac-34d6761a9c14" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="f2c097ea-5e2f-42d7-9b48-5842b66f251d" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="5f6952a0-8c45-4589-a411-8dbc6fc625cc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="53e4b17e-601d-42a8-912e-5b974ac9e078" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActWindow Active="True" Description="Window Action - Close Window -Testing" Guid="8d235c95-d86b-47b9-abdc-7061ce1982d1" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowActionType="Close" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a3c4ee86-04f8-4510-842c-0d11d9707e26" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="ea36bbed-0dff-4a7d-aea1-c036085a01ba" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+</InputValues>
+</ActWindow>
+<ActSwitchWindow Active="True" Description="Switch Window" Guid="0f83a367-c363-484a-81a3-975bd0db2020" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="961f1945-aae3-4cb1-8c1a-c017cc901c12" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="a58a8e8b-53f0-43da-bd9c-b3be5ab7c13c" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Java Swing Test App" />
+<ActInputValue Guid="ffab2fae-99b6-461c-b5c3-97a3578bac0b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="c744fcf2-ca86-42e2-ac1d-250e4f1de14f" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActJavaElement Active="True" ControlAction="AsyncClick" Description="Java Element Action - Accept Dialog - Init1" Guid="87cc04f3-0fc8-43d5-862e-d9795352d0dd" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="1de8b582-837e-4ea4-83d0-bea7e0722fcd" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="eab54810-d1df-474b-adc0-8ce8291e0ad3" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JPanel[0]/[[Name:btnClickMe][ClassName:javax.swing.JButton]]" />
+<ActInputValue Guid="9ecc1d6c-7797-4812-a8b7-1237906be092" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActSwitchWindow Active="True" Description="Java Element Action - Accept Dialog - Init2" Guid="a9e13a2c-76ec-4dd4-85a5-3dbf8735a13e" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="f6b8c3f6-9c17-4d33-84e3-e677259f7c54" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="a2248137-af23-40e7-920a-8c0c9b1285d6" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="cab7efaa-fec9-49d5-b70d-302b2a064149" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActJavaElement Active="True" ControlAction="GetDialogText" Description="Java Element Action - Get Dialog Text - Testing and Validation" Guid="efc0e700-2717-46c6-b9a4-78ee3261b49d" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="15cc8092-ac70-4fb4-9d8f-4f5f56df9005" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="167a9bed-21bc-4072-9579-4e60f619c870" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="f45129a9-d894-4437-810c-78361e2979f1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="864a5291-0de8-40bc-bdee-4d3383484310" mExpected="Open Menu Clicked !" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="AcceptDialog" Description="Java Element Action - Accept Dialog - Testing" Guid="b92923ef-630c-40f8-973c-444961ac6379" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="e573b641-c51a-495f-bdfe-fa3936493331" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="9865c357-20c9-48aa-954b-88016026b6fd" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="3b05ea99-742a-4385-b63d-2354e1887974" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActSwitchWindow Active="True" Description="Java Element Action - Accept Dialog - Validation" Guid="dc60e925-fab2-48e4-83e8-47d09cb2adcd" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="InvertStatus" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="83a1ba09-e28d-42f4-a299-a87a7b9cee1c" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="6831090b-43b6-4f73-b800-c96d96c667dc" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="cab7efaa-fec9-49d5-b70d-302b2a064149" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActSwitchWindow Active="True" Description="Switch Window" Guid="770ddef8-8f00-4f1a-ad24-27d211b5884e" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="3a1c445e-7e71-46c6-9276-07dcb9af04a4" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="7bfb7cd6-4a27-40fa-93c4-38dc5f8aaed6" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Java Swing Test App" />
+<ActInputValue Guid="ffab2fae-99b6-461c-b5c3-97a3578bac0b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="c744fcf2-ca86-42e2-ac1d-250e4f1de14f" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActJavaElement Active="True" ControlAction="AsyncClick" Description="Java Element Action - Dismiss Dialog - Init1" Guid="5cad97d1-2935-44de-ad57-c9805fc68aca" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="Medium" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="20d0ff0b-9345-4479-8b98-eacab2dff404" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="fa255eec-98fb-4ca5-99f9-fdb4f3248c22" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/javax.swing.JPanel[0]/[[Name:btnClickMe][ClassName:javax.swing.JButton]]" />
+<ActInputValue Guid="9ecc1d6c-7797-4812-a8b7-1237906be092" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActSwitchWindow Active="True" Description="Java Element Action - Dismiss Dialog - Init2" Guid="84afc73d-64be-4263-8efe-1c96726dca29" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="076096da-5b3f-4881-9109-907b3ed9b6f9" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="1e65f8e3-94d3-48eb-a4c9-2ad19406bd5a" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="cab7efaa-fec9-49d5-b70d-302b2a064149" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActJavaElement Active="True" ControlAction="DismissDialog" Description="Java Element Action - Dismiss Dialog - Testing" Guid="a4770a61-d1b3-4a4c-a1aa-ea7c741c0c73" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="50f6b3cf-b41a-4a54-874f-cb92d42ef5af" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="c848b441-bc2d-4cd4-8475-7c54cfc6596e" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="3b05ea99-742a-4385-b63d-2354e1887974" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActSwitchWindow Active="True" Description="Java Element Action - Dismiss Dialog - Validation" Guid="badd827e-f688-47ac-a11f-037b04bbfd02" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="InvertStatus" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="8a032983-d875-4925-a492-b6c61aac1f6f" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="a8ec5520-914e-4c82-9123-37672acea192" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Menu Click Info" />
+<ActInputValue Guid="cab7efaa-fec9-49d5-b70d-302b2a064149" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActSwitchWindow Active="True" Description="Switch Window" Guid="d7db9f12-9919-4d2b-9d08-e5165784d1e0" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="4b03a7c6-7939-4ded-807f-501b9a0815ee" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByTitle" />
+<ActInputValue Guid="71a9e431-df4f-425c-84ab-9a2597f47c7a" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Java Swing Test App" />
+<ActInputValue Guid="ffab2fae-99b6-461c-b5c3-97a3578bac0b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="c744fcf2-ca86-42e2-ac1d-250e4f1de14f" Param="WaitTime" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSwitchWindow>
+<ActJavaElement Active="True" ControlAction="SetValue" Description="Java Element Action - Send Keys - Testing" Guid="c0f7f30a-e270-43cd-955e-e939d19d3ee6" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="336dbc09-edf4-4c04-a6dd-8c2e39383787" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="369443c3-6a24-4713-a215-d4f9278d1cfb" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="3120a376-40db-41e4-8bd7-5c4d158b8060" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="123" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetValue" Description="Java Element Action - Send Keys - Validation" Guid="9ae50145-021f-41af-be40-22c3b000c0da" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="69d07d52-538b-404e-b46c-2956ef8fa130" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="5179114e-decd-4294-9ff0-4b056e9715c9" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="3120a376-40db-41e4-8bd7-5c4d158b8060" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="e18ae18c-abb6-4d5a-8e88-3c0ec61289df" mExpected="123" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetValue" Description="Java Element Action - Get Value - Testing and Validation" Guid="494a673a-ae5f-4694-8ffe-acc3cd0d9310" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="1ff4df72-bbc4-4104-a55b-5f2099cf10b7" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="95d607b9-da6e-497e-ba54-9170e4063f24" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="3120a376-40db-41e4-8bd7-5c4d158b8060" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="e18ae18c-abb6-4d5a-8e88-3c0ec61289df" mExpected="123" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetName" Description="Java Element Action - Get Name - Testing and Validation" Guid="a2dd9fa9-f686-4aa6-9016-e5bb24eff7c4" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="36212f79-492a-413b-ae3b-cad619dad71a" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="cecfd6a7-e370-44e5-89e4-f76b0006c988" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:btnSubmit][ClassName:javax.swing.JButton]]" />
+<ActInputValue Guid="7d119249-6e20-47d4-984c-b5a851fb35f2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="a714c661-d468-4711-bc49-39523eb6ef61" mExpected="btnSubmit" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="Toggle" Description="Java Element Action - Toggle - Testing" Guid="89253d51-2f50-4e04-a778-84d4e903d83a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="1a367f5f-f0a7-4c7b-9645-8402869edff6" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="f4a064ec-7fc9-4a17-895b-950ac0e8b7cc" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:cbWorksAtAmdocs][ClassName:javax.swing.JCheckBox]]" />
+<ActInputValue Guid="eb2430dd-899f-4442-8b21-01649220f79b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="IsChecked" Description="Java Element Action - Toggle - Validation" Guid="69af4c64-3351-4af4-a1d2-5eb932b93b34" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="2e56e180-f30e-4dde-9f43-aaf21144bb70" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="c7d8a9b9-038c-4730-ab63-646cf8174575" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:cbWorksAtAmdocs][ClassName:javax.swing.JCheckBox]]" />
+<ActInputValue Guid="51085627-64dd-4868-9ce2-636fbafa40bc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="e3431872-87bb-4025-abeb-398d5d60d41d" mExpected="false" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetState" Description="Java Element Action - Get State - Testing and Validation" Guid="12b48010-e1c8-4984-be4d-4c5047a82799" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="63ede981-c4bb-4eef-a06e-93f80c02835a" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="23d3485d-fa00-4259-8d04-b22cfcccf955" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:rbBachelor][ClassName:javax.swing.JRadioButton]]" />
+<ActInputValue Guid="d2010705-7b25-4c41-8480-0a5b95959050" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="51e702f9-f5e8-4d06-9b51-39044bf3d2cf" mExpected="FALSE" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="IsVisible" Description="Java Element Action - Is Visible - Testing and Validation" Guid="6fc52d54-c622-4f17-8c3c-64e60beca922" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="2844969d-0d55-443b-ac1c-9090f8e4a414" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="2210a759-d7f2-4e51-8823-cd16fe682da6" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="a3cd7691-0754-499a-b771-ec3eed439e90" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="dadf4099-c118-41ee-9f0e-120319beda36" mExpected="true" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="IsEnabled" Description="Java Element Action - Is Enabled - Testing and Validation" Guid="951da4d9-3135-4f46-8636-3c6241849607" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="f19185c6-e05c-4f27-99e1-bddfb265fd3a" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="709f6aad-4932-4b91-9471-8633c35d2309" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:jtxtArea][ClassName:javax.swing.JTextArea]]" />
+<ActInputValue Guid="a3cd7691-0754-499a-b771-ec3eed439e90" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="dadf4099-c118-41ee-9f0e-120319beda36" mExpected="true" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="Select" Description="Java Element Action - Select - Testing" Guid="835ff5fd-d4f0-4954-ae88-9fde010dbd97" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="afbe7914-b7b6-4757-a0c9-c82ebb660cc6" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="e5848c54-678c-4886-bd0b-2d1a4c329eda" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/[[Name:TabbedPane1][ClassName:javax.swing.JTabbedPane]]" />
+<ActInputValue Guid="4970bdb1-012e-42b8-b9ad-9b4d90f50a87" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="tab2" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="IsVisible" Description="Java Element Action - Select - Validation" Guid="216c014e-07d0-41c3-a16f-dce37fe1eda3" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="4f98758b-5cfd-4748-92a3-0a89685849cc" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="22c6b204-b552-4d2f-b474-e8a486a9da57" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 2/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/TabbedPane1/tab2/[[Name:btnClickTab2][ClassName:javax.swing.JButton]]" />
+<ActInputValue Guid="4970bdb1-012e-42b8-b9ad-9b4d90f50a87" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="e575b82d-1f2f-4cb5-aba4-20abfc5a1ba9" mExpected="true" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="AsyncSelect" Description="Java Element Action - Async Select - Testing" Guid="a3682223-efb4-4acc-8e69-397e8e58e414" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="0c4b4a14-de8f-47c5-be10-c5b2fa1d198e" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="f2b27577-dd9f-4205-a567-c8024c92d721" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:rbBachelor][ClassName:javax.swing.JRadioButton]]" />
+<ActInputValue Guid="8e80c9ee-b24a-4158-b161-b844f7bceb35" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActJavaElement>
+<ActJavaElement Active="True" ControlAction="GetState" Description="Java Element Action - Async Select - Validation" Guid="18e2c84a-9e7d-4b57-bc04-99385f6cff49" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitforIdle="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="06bb115f-e171-404b-8f5e-b0c97d5bbfa2" Param="LocateBy" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ByXPath" />
+<ActInputValue Guid="191ca29e-7fe8-47cf-985b-7c9a2e18081e" Param="LocateValue" ParentGuid="00000000-0000-0000-0000-000000000000" Value="/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/Internal Frame 1/javax.swing.JRootPane[0]/null.layeredPane/null.contentPane/JPanel1/[[Name:rbBachelor][ClassName:javax.swing.JRadioButton]]" />
+<ActInputValue Guid="8e80c9ee-b24a-4158-b161-b844f7bceb35" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+<ActReturnValue Active="True" Guid="48440c6c-12ce-423d-8594-b3201c29a389" mExpected="TRUE" Operator="Legacy" Param="Actual" ParentGuid="00000000-0000-0000-0000-000000000000" StoreTo="None" />
+</ReturnValues>
+</ActJavaElement>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="81651dff-d84d-4347-8010-7ed0dc0bba57" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="5a1195be-96b5-41fe-a9b3-9a04f4f9656d" ActivityName="Java Element Action and Switch Window - Testing" Guid="145109af-ceb2-487d-b4f6-21d2eb2d8219" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyJavaApp" Guid="4f4898d0-cb23-4d45-9190-842c1dba1fe5" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

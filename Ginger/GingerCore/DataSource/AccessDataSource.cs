@@ -366,6 +366,7 @@ namespace GingerCore.DataSource
         }
         private bool ExportDSToExcel(DataTable table, string sFilePath, string sSheetName)
         {
+            sFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(sFilePath);
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sFilePath, sSheetName);
         }
 
@@ -463,7 +464,7 @@ namespace GingerCore.DataSource
 
         public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
         {
-            return "INSERT INTO " + Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
+            return "INSERT INTO " + Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "')";
         }
     }
 }

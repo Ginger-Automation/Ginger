@@ -245,6 +245,7 @@
     <Compile Include="Repository\GingerSolutionRepositorySyncTest.cs" />
     <Compile Include="TestAssemblyInit.cs" />
     <Compile Include="UserControlsLib\ImageMakerLib\ImageMakerControlTest.cs" />
+    <Compile Include="Variable Dependancies\VariableDependancyTest.cs" />
     <Compile Include="VariablesLib\VariablesTest.cs" />
     <Compile Include="VideosLib\Speach.cs" />
     <Compile Include="WizardLib\WizardTest.cs" />
@@ -295,6 +296,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestResources\HTML\HTMLControls.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\JavaLegacyToPOMxml\Java_Legacy_Actions_BF.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\Solutions\AgentsTest\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">

@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Core;
 using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
@@ -67,13 +68,17 @@ namespace Ginger.SourceControl
         public static bool UpdateFile(SourceControlBase SourceControl, string path)
         {
             string error = string.Empty;
-
+            bool IsFileUpdated = true;
+            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+            repositoryFolderBase.PauseFileWatcher();
             if (!SourceControl.UpdateFile(path, ref error))
             {
+                IsFileUpdated = false;
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                return false;
+                return IsFileUpdated;
             }
-            return true;
+            repositoryFolderBase.ResumeFileWatcher();
+            return IsFileUpdated;
         }
 
 
@@ -174,14 +179,19 @@ namespace Ginger.SourceControl
         public static bool ResolveConflicts(SourceControlBase SourceControl, string path, eResolveConflictsSide side)
         {
             string error = string.Empty;
+            bool IsConflictResolved = true;
+            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
 
+            repositoryFolderBase.PauseFileWatcher();
             if (!SourceControl.ResolveConflicts(path, side, ref error))
             {
+                IsConflictResolved = false;
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
-                return false;
+                return IsConflictResolved;
             }
-
-            return true;
+            repositoryFolderBase.ResumeFileWatcher();
+            repositoryFolderBase.ReloadUpdatedXML(path);
+            return IsConflictResolved;
         }
 
         public static void Lock(SourceControlBase SourceControl, string path, string lockComment)
@@ -309,9 +319,10 @@ namespace Ginger.SourceControl
         }
 
 
-        public static void DownloadSolution(string SolutionFolder)
+        public static bool DownloadSolution(string SolutionFolder)
         {
-            try {
+            try
+            {
                 SourceControlBase mSourceControl;
                 if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
                 {
@@ -357,7 +368,7 @@ namespace Ginger.SourceControl
                 {
                     sol.ExistInLocaly = true;
                 }
-                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder +Path.DirectorySeparatorChar + @".git")))
+                else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".git")))
                 {
                     sol.ExistInLocaly = true;
                 }
@@ -371,7 +382,7 @@ namespace Ginger.SourceControl
                 if (sol == null)
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectSolution);
-                    return;
+                    return false;
                 }
 
                 string ProjectURI = string.Empty;
@@ -388,31 +399,25 @@ namespace Ginger.SourceControl
                 getProjectResult = SourceControlIntegration.CreateConfigFile(mSourceControl);
                 if (getProjectResult != true)
                 {
-                    return;
+                    return false;
                 }
 
                 if (sol.ExistInLocaly == true)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
-
-
-                    RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+                    return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
 
                 }
                 else
                 {
-                    getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
+                    return getProjectResult = SourceControlIntegration.GetProject(mSourceControl, sol.LocalFolder, ProjectURI);
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToConsole(eLogLevel.INFO, "Error Downloading solution ");
-                Reporter.ToConsole(eLogLevel.INFO, e.Message);
-                Reporter.ToConsole(eLogLevel.INFO, e.Source);
-   
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Downloading/Updating Solution from source control", e);
+                return false;
             }
-            }
-
+        }
     }
 }

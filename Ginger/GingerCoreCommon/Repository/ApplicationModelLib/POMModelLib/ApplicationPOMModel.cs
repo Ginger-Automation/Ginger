@@ -86,6 +86,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         private ObservableList<ElementInfo> mUnMappedElements;
+        /// <summary>
+        /// Been used to identify if UnMappedUIElements were lazy loaded already or not
+        /// </summary>
+        public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) ? mUnMappedElements.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements
         {
@@ -98,6 +103,10 @@ namespace Amdocs.Ginger.Repository
                 if (mUnMappedElements.LazyLoad)
                 {
                     mUnMappedElements.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mUnMappedElements);
+                    }
                 }
                 return mUnMappedElements;
             }
@@ -108,6 +117,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         private ObservableList<ElementInfo> mMappedElements;
+        /// <summary>
+        /// Been used to identify if MappedUIElements were lazy loaded already or not
+        /// </summary>
+        public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) ? mMappedElements.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements
         {
@@ -120,6 +134,10 @@ namespace Amdocs.Ginger.Repository
                 if (mMappedElements.LazyLoad)
                 {
                     mMappedElements.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mMappedElements);
+                    }
                 }
                 return mMappedElements;
             }

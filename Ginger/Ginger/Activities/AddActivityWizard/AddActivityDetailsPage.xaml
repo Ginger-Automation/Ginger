@@ -16,7 +16,7 @@
         <StackPanel x:Name="xGroupPanel" Margin="0,10,0,0">
             <Label  Style="{StaticResource $LabelStyle}" FontWeight="Bold">
                 <Label.Content>
-                    <GingerCore:ucTextDicResource Text="[ActivitiesGroup]:" />
+                    <GingerCore:ucTextDicResource Text="Parent [ActivitiesGroup]:" />
                 </Label.Content>
             </Label>
             <StackPanel Orientation="Horizontal">

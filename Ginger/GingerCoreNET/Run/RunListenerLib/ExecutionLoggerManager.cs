@@ -311,7 +311,7 @@ namespace Ginger.Run
                 businessFlow.ExecutionLogFolder = BFFolder;
                 mExecutionLogger.CreateNewDirectory(Path.Combine(Configuration.CalculatedLoggerFolder,BFFolder));
 
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, null);
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), null);
             }
         }
 
@@ -332,7 +332,7 @@ namespace Ginger.Run
 
             if (!offlineMode)
             {                
-                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, BFR);
+                ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), BFR);
             }
         }
         // fix add to listener/loader class

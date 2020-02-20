@@ -403,8 +403,15 @@ namespace GingerCoreNET.GeneralLib
                         {
                             xlPackage.Load(stream);
                         }
-                        var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
-                        ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                        //delete existing worksheet if worksheet with same name already exist
+                        OfficeOpenXml.ExcelWorksheet excelWorksheet = xlPackage.Workbook.Worksheets.FirstOrDefault(x => x.Name == sheetName);
+                        if (excelWorksheet != null)
+                        {
+                            xlPackage.Workbook.Worksheets.Delete(sheetName);
+                        }
+                        excelWorksheet = xlPackage.Workbook.Worksheets.Add(sheetName);
+
+                        excelWorksheet.Cells["A1"].LoadFromDataTable(dataTable, true);
                         File.WriteAllBytes(filePath, xlPackage.GetAsByteArray());
                     }
                     else

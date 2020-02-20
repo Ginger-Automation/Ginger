@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
@@ -258,10 +259,14 @@ namespace GingerCore.SourceControl
         {
             if (client == null) Init();
             SvnUpdateResult result;
+           
             try
             {
+                RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
                 mConflictsPaths.Clear();
+                repositoryFolderBase.PauseFileWatcher();
                 client.Update(path, out result);
+                repositoryFolderBase.ResumeFileWatcher();
 
                 if (mConflictsPaths.Count > 0)
                 {
@@ -501,15 +506,11 @@ namespace GingerCore.SourceControl
             if (client == null) Init();
             try
             {
-                if (System.IO.Path.GetExtension(Path) != string.Empty && !System.IO.File.Exists(System.IO.Path.GetFullPath(Path.Replace(".xml", ".ignore"))))
-                {
-                    System.IO.File.Copy(Path, (System.IO.Path.GetFullPath(Path.Replace(".xml", ".ignore"))));
-                }
-                CleanUp(Path);
+                CleanUp(System.IO.Path.GetDirectoryName(Path));
                 switch (side)
                 {
                     case eResolveConflictsSide.Local:
-                        client.Resolve(Path, SvnAccept.Mine, new SvnResolveArgs { Depth = SvnDepth.Infinity });//keep local changes for all conflicts with server
+                        client.Resolve(Path, SvnAccept.Mine, new SvnResolveArgs { Depth = SvnDepth.Infinity });//keep local changes for all conflicts 
                         client.Resolved(Path);
                         break;
                     case eResolveConflictsSide.Server:
