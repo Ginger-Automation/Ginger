@@ -345,7 +345,7 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Acts were lazy loaded already or not
         /// </summary>
-        public bool ActsLazyLoad { get { return mActs.LazyLoad; } }                           
+        public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }                           
         [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<IAct> Acts

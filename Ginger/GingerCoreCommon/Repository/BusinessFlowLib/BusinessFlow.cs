@@ -268,7 +268,7 @@ namespace GingerCore
         /// <summary>
         /// Been used to identify if Activities were loaded by lazy load or not
         /// </summary>
-        public bool ActivitiesLazyLoad { get { return mActivities.LazyLoad; } }
+        public bool ActivitiesLazyLoad { get { return (mActivities != null) ? mActivities.LazyLoad : false; } }
         [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
