@@ -3348,7 +3348,9 @@ namespace Ginger.Run
                     Activity bfFirstActivity = (Activity)CurrentBusinessFlow.Activities.FirstOrDefault();
                     CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
-                    bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
+                    CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
+                   
                 }
              
 
@@ -3507,9 +3509,11 @@ namespace Ginger.Run
                     Status = RunsetStatus;            
                 }
 
-                NotifyBusinessFlowEnd(CurrentBusinessFlow);
-
-                                
+                if(mStopRun == false)
+                {
+                    NotifyBusinessFlowEnd(CurrentBusinessFlow);
+                }
+               
             }
         }
 
@@ -3855,7 +3859,21 @@ namespace Ginger.Run
                 mExecutedActivityWhenStopped = (Activity)CurrentBusinessFlow.CurrentActivity;
                 mExecutedActionWhenStopped = (Act)CurrentBusinessFlow.CurrentActivity?.Acts.CurrentItem;
                 mExecutedBusinessFlowWhenStopped = (BusinessFlow)CurrentBusinessFlow;
+                NotifyBusinessFlowEndOnStopFlowAsync(CurrentBusinessFlow);
             }            
+        }
+
+        public async void NotifyBusinessFlowEndOnStopFlowAsync(BusinessFlow businessFlow)
+        {
+            if (mStopRun == true)
+            {
+                Task notifyFlowEndTask = new Task(() => { NotifyBusinessFlowEnd(businessFlow);});
+                notifyFlowEndTask.Start();
+
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating business flow activity status...");
+                await notifyFlowEndTask;
+                Reporter.HideStatusMessage();
+            }
         }
 
         public void ResetRunnerExecutionDetails(bool doNotResetBusFlows=false)
