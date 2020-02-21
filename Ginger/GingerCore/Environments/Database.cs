@@ -256,21 +256,21 @@ namespace GingerCore.Environments
             string connStr = null;
             
             //Decryption
-            string User = GetDecryptOrCalcluatedValue(UserCalculated);
-            string Pass = GetDecryptOrCalcluatedValue(PassCalculated);
-            string TNS = GetDecryptOrCalcluatedValue(TNSCalculated);
+            string Userid = GetDecryptOrCalcluatedValue(UserCalculated);
+            string Password = GetDecryptOrCalcluatedValue(PassCalculated);
+            string TNSHost = GetDecryptOrCalcluatedValue(TNSCalculated);
             string ConnString = GetDecryptOrCalcluatedValue(ConnectionStringCalculated);
 
-            if (String.IsNullOrEmpty(ConnString) == false)
+            if (!String.IsNullOrEmpty(ConnString))
             {
-                connStr = ConnString.Replace("{USER}", User);
-                connStr = ConnString.Replace("{PASS}", Pass);
+                connStr = ConnString.Replace("{USER}", Userid);
+                connStr = ConnString.Replace("{PASS}", Password);
             }
             else
             {
-                String strConnString = TNS;
+                String strConnString = TNSHost;
                 String strProvider;
-                connStr = "Data Source=" + TNS + ";User Id=" + User + ";" + "Password=" + Pass + ";";
+                connStr = "Data Source=" + TNSHost + ";User Id=" + Userid + ";" + "Password=" + Password + ";";
 
                 if (DBType == eDBTypes.MSAccess)
                 {
@@ -281,24 +281,26 @@ namespace GingerCore.Environments
                 }
                 else if (DBType == eDBTypes.DB2)
                 {
-                    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + Pass;
+                    //TODO: need to confirm connection string works aftr UID => ';' is missing
+                    //standard connection string format for DB2 is Server=myAddress:myPortNumber;Database=myDataBase;UID=myUsername;PWD=myPassword;
+                    connStr = "Server=" + TNSHost + ";Database=" + Name + ";UID=" + Userid + "PWD=" + Password;
                 }
                 else if (DBType == eDBTypes.PostgreSQL)
                 {
-                    string[] host = TNS.Split(':');
+                    string[] host = TNSHost.Split(':');
                     if (host.Length == 2)
                     {
-                        connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], User, Pass, Name);
+                        connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], Userid, Password, Name);
                     }
                     else
                     {
                         //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                        connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNS, User, Pass, Name);
+                        connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNSHost, Userid, Password, Name);
                     }
                 }
                 else if (DBType == eDBTypes.MySQL)
                 {
-                    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + ";PWD=" + Pass;
+                    connStr = "Server=" + TNSHost + ";Database=" + Name + ";UID=" + Userid + ";PWD=" + Password;
                 }
                 
             }
