@@ -58,6 +58,9 @@
     <Compile Include="AutoPilot\ImportOptionalValuesTest.cs" />
     <Compile Include="AutoPilot\ParserTest.cs" />
     <Compile Include="CommLib\PayLoadTest.cs" />
+    <Compile Include="Misc\DataSourceTest.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Misc\DataBaseTest.cs" />
     <Compile Include="Misc\ExpectedWithActual.cs" />
     <Compile Include="Misc\GingersMultiRunTest.cs" />
@@ -158,6 +161,9 @@
     <Content Include="TestResources\Database\GingerUnitTest.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TestResources\DataSources\GingerDataSource.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="TestResources\HTML\HTMLControls.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -235,6 +241,9 @@
     <Content Include="TestResources\XML\TemplateVU.XML">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TestResources\Excel\ExportedDS.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestResources\Excel\Names.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
