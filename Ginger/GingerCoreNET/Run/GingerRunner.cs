@@ -4431,7 +4431,7 @@ namespace Ginger.Run
         {
             try
             {
-                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating status for pending activites...");
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating status for pending activities...");
                 uint eventTime = RunListenerBase.GetEventTime();
                 businessFlow.EndTimeStamp = DateTime.UtcNow;
                 foreach (RunListenerBase runnerListener in mRunListeners)
