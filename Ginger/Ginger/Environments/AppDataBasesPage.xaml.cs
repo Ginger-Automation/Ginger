@@ -247,7 +247,6 @@ namespace Ginger.Environments
             if (e.PropertyName == Database.Fields.TNS)
             {
                 Database db = (Database)sender;
-                //string intialValue = db.TNS;
                 if (db.CheckUserCredentialsInTNS())
                 {
                     db.SplitUserIdPassFromTNS();
