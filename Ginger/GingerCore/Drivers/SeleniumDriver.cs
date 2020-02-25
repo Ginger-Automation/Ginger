@@ -5109,7 +5109,7 @@ namespace GingerCore.Drivers
             }
             catch (OpenQA.Selenium.WebDriverException e)
             {
-                StopRecordingIfAgentClosed(e.ToString());
+                StopRecordingIfAgentClosed(e.Message);
             }
             catch (Exception ex)
             {
@@ -5412,7 +5412,7 @@ namespace GingerCore.Drivers
                     }
                     catch (OpenQA.Selenium.WebDriverException e)
                     {                        
-                        StopRecordingIfAgentClosed(e.ToString());
+                        StopRecordingIfAgentClosed(e.Message);
                     }
                     catch (Exception e)
                     {
