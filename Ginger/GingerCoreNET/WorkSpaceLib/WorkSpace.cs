@@ -107,8 +107,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             // TODO: add RI type, and use attr on field
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
-            //TODO: see impact of acts - remember to add also handle in attr see others
-            //NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
         }
