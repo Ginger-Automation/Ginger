@@ -465,7 +465,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             base.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
             runSet.SetReportData(ExecutionLoggerManager.RunSetReport);
             runSet.RunnersColl.AddRange(new List<LiteDbRunner>() { runner });
-            
+
+            runSet.StartTimeStamp = runner.StartTimeStamp;
+            runSet.EndTimeStamp = runner.EndTimeStamp;
+            runSet.Elapsed = runner.Elapsed;
+
             SetRunSetChildCounts(runSet);
 
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
