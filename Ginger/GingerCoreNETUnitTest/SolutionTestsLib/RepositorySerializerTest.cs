@@ -16,7 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
@@ -27,9 +30,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace GingerCoreNETUnitTests.SolutionTestsLib
 {
@@ -59,6 +59,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void TestInitialize()
         {
             mTestHelper.TestInitialize(TestContext);
+            WorkSpace.LockWS();
         }
 
 
@@ -66,6 +67,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void TestCleanUp()
         {
             mTestHelper.TestCleanup();
+            WorkSpace.RelWS();
         }
 
         // [Ignore] // different length on Linux Mac, Win...
@@ -416,7 +418,10 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         }
 
         
-        [TestMethod]
+        /// <summary>
+        /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]        
         public void ActiviyLazyLoad()
         {
             ObservableList<Activity> activities = new ObservableList<Activity>();
@@ -436,9 +441,11 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             
         }
 
+        /// <summary>
+        /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
         [TestMethod]
-        //[Timeout(60000)]
-        public void BusinessFlowLazyloadTest()
+        public void BusinessFlowActivitiesLazyloadTest()
         {
             //Arrange
             //Put the BF in Test Resource
@@ -453,6 +460,130 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             Assert.AreEqual(true, businessFlow.LazyLoadFlagForUnitTest);
             Assert.AreEqual(1, count);
+        }
+
+        /// <summary>
+        /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void SolutionActivitiesLazyLoadTest_NotLoaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].ActivitiesLazyLoad, true, "Validating Bf Activities were not loaded");
+        }
+
+        /// <summary>
+        /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void SolutionActivitiesLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<Activity> activities = bfs[0].Activities;
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].ActivitiesLazyLoad, false, "Validating Bf Activities were loaded 1");
+            Assert.AreEqual(activities.Count, 1, "Validating Bf Activities were loaded 2");
+        }
+
+        /// <summary>
+        /// Actions Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void SolutionActionsLazyLoadTest_NotLoaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<Activity> activities = bfs[0].Activities;
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].ActivitiesLazyLoad, false, "Validating Bf Activities were loaded 1");
+            Assert.AreEqual(activities.Count, 1, "Validating Bf Activities were loaded 2");
+            Assert.AreEqual(activities[0].ActsLazyLoad, true, "Validating Activity Actions were not loaded");
+        }
+
+        /// <summary>
+        /// Actions Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void SolutionActionsLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<Activity> activities = bfs[0].Activities;
+            ObservableList<IAct> actions = activities[0].Acts;
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].ActivitiesLazyLoad, false, "Validating Bf Activities were loaded 1");
+            Assert.AreEqual(activities.Count, 1, "Validating Bf Activities were loaded 2");
+            Assert.AreEqual(activities[0].ActsLazyLoad, false, "Validating Activity Actions were loaded 1");
+            Assert.AreEqual(actions.Count, 2, "Validating Activity Actions were loaded 2 ");
+        }
+
+        /// <summary>
+        /// POM Elements Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void SolutionPomElementsLazyLoadTest_NotLoaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<ApplicationPOMModel> poms = SR.GetAllRepositoryItems<ApplicationPOMModel>();
+
+            //Assert
+            Assert.AreEqual(poms.Count, 1, "Validating POMs were loaded");
+            Assert.AreEqual(poms[0].UnMappedUIElementsLazyLoad, true, "Validating POM Un Mappped Elements were not loaded");
+            Assert.AreEqual(poms[0].MappedUIElementsLazyLoad, true, "Validating POM Mappped Elements were not loaded");
+        }
+
+        /// <summary>
+        /// POM Elements Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void SolutionPomElementsLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<ApplicationPOMModel> poms = SR.GetAllRepositoryItems<ApplicationPOMModel>();
+            ObservableList<ElementInfo> unMapped = poms[0].UnMappedUIElements;
+            ObservableList<ElementInfo> mapped = poms[0].MappedUIElements;
+
+            //Assert
+            Assert.AreEqual(poms.Count, 1, "Validating POMs were loaded");
+            Assert.AreEqual(poms[0].UnMappedUIElementsLazyLoad, false, "Validating POM Un Mappped Elements were loaded 1");
+            //Assert.AreEqual(unMapped.Count, 1, "Validating POM Un Mappped Elements were loaded 2"); //TODO: move HtmlElementInfo to .NET core project for enabeling this Assert
+            Assert.AreEqual(poms[0].MappedUIElementsLazyLoad, false, "Validating POM Mappped Elements were not loaded 1");
+            //Assert.AreEqual(mapped.Count, 15, "Validating POM Mappped Elements were not loaded 2 "); //TODO: move HtmlElementInfo to .NET core project for enabeling this Assert
         }
     }
 }

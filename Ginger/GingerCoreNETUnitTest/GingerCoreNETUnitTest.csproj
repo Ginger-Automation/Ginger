@@ -71,6 +71,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="DataSource\DataSourceTest.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Reports\NewHTMLReportTest.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
@@ -387,6 +390,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\BasicSimple\Applications Models\POM Models\FacebookSignUp.Ginger.ApplicationPOMModel.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">

@@ -199,7 +199,7 @@ namespace Ginger.Run.RunSetActions
             Reporter.ToStatus(eStatusMsgKey.ExecutingRunSetAction, null, this.Name);
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("--> Execution Started for {0} Operation from Type '{1}' and Name '{2}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("--> Execution Started for {0} Operation from Type '{1}', Operation Name= '{2}', Operation ID= '{3}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), this.Type, this.Name, this.Guid));
                 Status = RunSetActionBase.eRunSetActionStatus.Running;
                 Errors = null;
 
