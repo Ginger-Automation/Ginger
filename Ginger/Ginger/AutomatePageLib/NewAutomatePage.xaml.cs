@@ -128,12 +128,11 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                 if (mRunSetReport == null)
                 {
                     mRunSetReport = new RunSetReport();
                     mRunSetReport.SetDataForAutomateTab();
-                    if (!isAutoRunSetExists)
+                    if (!ClearPreviousAutoRunSetDocumentLiteDB())
                     {
                         mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner, offlineMode:true);
@@ -163,7 +162,7 @@ namespace GingerWPF.BusinessFlowsLib
             businessFlowToLoad.LiteDbId = null;
         }
 
-        private bool AutoRunSetDocumentExistsInLiteDB()
+        private bool ClearPreviousAutoRunSetDocumentLiteDB()
         {
             LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
@@ -391,7 +390,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
 
-                if (AutoRunSetDocumentExistsInLiteDB() && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (ClearPreviousAutoRunSetDocumentLiteDB() && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     ClearAutomatedId(businessFlowToLoad);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
