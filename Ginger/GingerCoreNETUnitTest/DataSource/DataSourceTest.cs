@@ -320,6 +320,8 @@ namespace UnitTests.NonUITests
             ObservableList<DataSourceTable> dataSourceTableList = liteDB.GetTablesList();
             DataSourceTable dataSource = null;
             List<string> mColumnNames = null;
+            string Query = "db.MyCustomizedDataTable.find limit 1";
+
             foreach (DataSourceTable dataSourceTable in dataSourceTableList)
             {
                 if (dataSourceTable.Name == "MyCustomizedDataTable")
@@ -330,16 +332,19 @@ namespace UnitTests.NonUITests
             DataTable dataTable = liteDB.GetQueryOutput(dataSource.Name);
             dataSource.DataTable = dataTable;
             liteDB.AddRow(mColumnNames, dataSource);
-            dataTable = liteDB.GetQueryOutput(dataSource.Name);
-            liteDB.SaveTable(dataTable);
+            liteDB.SaveTable(dataSource.DataTable);
+            int oldRowCount = liteDB.GetRowCount(dataSource.Name); 
 
             //Act
             liteDB.DeleteDBTableContents(dataSource.Name);
-            liteDB.SaveTable(dataTable);
-            var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
+            DataTable newDt = liteDB.GetQueryOutput(Query);
+            liteDB.SaveTable(newDt);
+            var newRowCount = liteDB.GetRowCount(dataSource.Name);
 
             //Assert
-            Assert.AreEqual("1", a, "RowCount");
+            Assert.AreEqual(newRowCount, 0, "RowCountValidation");
+            Assert.AreNotEqual(oldRowCount, newRowCount, "RowCountValidation");
+
         }
 
     }
