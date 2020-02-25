@@ -3349,8 +3349,6 @@ namespace Ginger.Run
                     CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
-                    CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
-                   
                 }
              
 
