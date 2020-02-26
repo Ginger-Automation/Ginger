@@ -2440,11 +2440,10 @@ namespace Ginger.Run
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
-                  
+
                 //set it as next activity to run           
+                CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
-                mContext.Activity = CurrentBusinessFlow.CurrentActivity;
-                mContext.Activity.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
                 return true;
             }
             else
