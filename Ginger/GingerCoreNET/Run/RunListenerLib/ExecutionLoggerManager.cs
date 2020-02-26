@@ -461,15 +461,22 @@ namespace Ginger.Run
                 }
                 mGingerRunnerLogger.LogAction(action);
             }
-
+            Activity currentActivity = null;
             try
             {
                 string executionLogFolder = string.Empty;
                 //if offline mode then execution logger path exists in action object so making executionLogFolder empty to avoid duplication of path.
                 if (!offlineMode)
                     executionLogFolder = mExecutionLogger.ExecutionLogfolder;
-                //ActionReport AR = new ActionReport(action, mContext);                
-                mContext.Activity = mCurrentActivity; //!!!!
+                //ActionReport AR = new ActionReport(action, mContext);  
+
+                //if action call the Shared actvity then mContext.Activity and mCurrentActivity will be different,so keeping the shared activity in temp variable
+                if (mContext.Activity != mCurrentActivity)
+                {
+                    currentActivity = mContext.Activity;
+                }
+                mContext.Activity = mCurrentActivity;
+
                 Object AR = null;
                 if (this.Configuration.ExecutionLoggerConfigurationIsEnabled)
                 {
@@ -551,6 +558,13 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ExecutionLogger Action end", ex);
+            }
+            finally
+            {
+                if(currentActivity != null)
+                {
+                    mContext.Activity = currentActivity;
+                }
             }
         }
         
