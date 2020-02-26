@@ -160,16 +160,7 @@ namespace Ginger.Environments
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow =  null;
-                if (string.IsNullOrEmpty(db.ConnectionString) && !string.IsNullOrEmpty(db.TNS) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
-                {
-                    System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
-                    scSB.ConnectionString = db.TNS;
-                    db.TNS = scSB.DataSource;
-                    db.User = scSB.UserID;
-                    db.Pass = scSB.Password;
-                    db.ConnectionString = scSB.ConnectionString;
-                }
-
+                
                 db.CloseConnection();
                 if (db.Connect(true))
                 {
@@ -236,14 +227,32 @@ namespace Ginger.Environments
         {
             Database db = new Database();
             db.Name = "New";
+            db.PropertyChanged += db_PropertyChanged;
             grdAppDbs.DataSourceList.Add(db);
         }
 
         private void SetGridData()
         {
+            foreach (Database db in AppOwner.Dbs)
+            {
+                db.PropertyChanged -= db_PropertyChanged;
+                db.PropertyChanged += db_PropertyChanged;
+            }
             grdAppDbs.DataSourceList = AppOwner.Dbs;
         }
         #endregion Functions
+
+        private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == Database.Fields.TNS)
+            {
+                Database db = (Database)sender;
+                if (db.CheckUserCredentialsInTNS())
+                {
+                    db.SplitUserIdPassFromTNS();
+                }
+            }
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
