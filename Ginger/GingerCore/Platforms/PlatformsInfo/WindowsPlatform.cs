@@ -68,6 +68,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Button:
                     pbTableControlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);
                     break;
+                case eElementType.Window:
+                    pbTableControlActionlist.Add(ActUIElement.eElementAction.Switch);
+                    break;
             }
             return pbTableControlActionlist;
         }
@@ -163,6 +166,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.Label);
                 mElementsTypeList.Add(eElementType.List);
                 mElementsTypeList.Add(eElementType.Table);
+                mElementsTypeList.Add(eElementType.Window);
             }
             return mElementsTypeList;
         }

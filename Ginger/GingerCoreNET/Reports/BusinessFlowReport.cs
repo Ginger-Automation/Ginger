@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using GingerCore.Variables;
-using Newtonsoft.Json;
-using System.Data;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Run;
 using GingerCore;
-using Amdocs.Ginger.Run;
+using GingerCore.Variables;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Ginger.Reports
 {
@@ -56,6 +55,7 @@ namespace Ginger.Reports
             public static string Elapsed = "Elapsed";
             public static string RunStatus = "RunStatus";
             public static string NumberOfActivities = "NumberOfActivities";
+            public static string ExecutionRate = "ExecutionRate";
             public static string PassPercent = "PassPercent";
             public static string VariablesDetails = "VariablesDetails";
             public static string ActivityDetails = "ActivityDetails";
@@ -385,7 +385,15 @@ namespace Ginger.Reports
         }
 
         [FieldParams]
-        [FieldParamsNameCaption("Business Flow Activities Passed Rate")]
+        [FieldParamsNameCaption("Business Flow Execution Rate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+
+        public double ExecutionRate { get { return Activities.Count != 0 ? Math.Round((double)(TotalActivities - TotalActivitiesOther) * 100 / TotalActivities, MidpointRounding.AwayFromZero)  : 0; } }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Business Flow Passed Rate")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
@@ -454,6 +462,22 @@ namespace Ginger.Reports
                     dt.Select("Name  = '" + elementsAfter[0] + "'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
                 }
                 return dt;
+            }
+        }
+
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsNameCaption("Output Variables Details")]
+        public string OutputVariablesDetails
+        {
+            get
+            {
+                StringBuilder outputVars = new StringBuilder();
+                outputVars.AppendLine();
+                foreach (VariableBase var in mBusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsOutputValue: true, includeOnlyPublishedVars: true))
+                {
+                    outputVars.Append(var.ParentName).Append(" | ").Append(var.Name).Append(" = ").Append(var.Value).Append(" | ").Append(var.Description).AppendLine();
+                }
+                return outputVars.ToString();
             }
         }
 

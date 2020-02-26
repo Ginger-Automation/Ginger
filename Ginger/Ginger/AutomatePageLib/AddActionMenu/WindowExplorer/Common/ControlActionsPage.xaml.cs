@@ -205,6 +205,10 @@ namespace Ginger.WindowExplorer
                 {
                     actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, act.Value);
                 }
+                else if(actUI.ElementAction.Equals(ActUIElement.eElementAction.TableCellAction))
+                {
+                    actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlActionValue, act.Value);
+                }
                 
                 act = actUI;
             }

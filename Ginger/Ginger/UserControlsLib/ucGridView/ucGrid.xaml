@@ -111,7 +111,7 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"                  
                   SizeChanged="grdMain_SizeChanged"        
                   ScrollViewer.ScrollChanged="grdMain_ScrollChanged"
-                  >
+                 >
                 <DataGrid.RowStyle>
                     <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="MaxHeight" Value="70"/>

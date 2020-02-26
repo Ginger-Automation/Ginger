@@ -223,6 +223,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
                 if (copiedItem != null)
                 {
+                    copiedItem.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked;
+
                     //Save copy to target folder
                     // check me                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
@@ -258,6 +260,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
                 if (copiedItem != null)
                 {
+                    copiedItem.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked;
                     //Save copy to target folder                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 

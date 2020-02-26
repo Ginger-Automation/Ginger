@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -204,7 +205,7 @@ namespace GingerCore
 
         /// <summary>
         /// Precentage of active Activity Actions
-        /// </summary>
+        /// </summary>       
         [IsSerializedForLocalRepository]
         public string PercentAutomated
         {
@@ -340,9 +341,36 @@ namespace GingerCore
             }
         }
 
+        private ObservableList<IAct> mActs;
+        /// <summary>
+        /// Been used to identify if Acts were lazy loaded already or not
+        /// </summary>
+        public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }                           
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
-        public ObservableList<IAct> Acts { get; set; } = new ObservableList<IAct>();
-
+        public ObservableList<IAct> Acts
+        {
+            get
+            {
+                if (mActs == null)
+                {
+                    mActs = new ObservableList<IAct>();
+                }
+                if (mActs.LazyLoad)
+                {
+                    mActs.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mActs);
+                    }
+                }
+                return mActs;
+            }
+            set
+            {
+                mActs = value;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
@@ -655,7 +683,7 @@ namespace GingerCore
             }
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             Activity activityInstance = (Activity)instance;
             //Create new instance of source
@@ -695,7 +723,15 @@ namespace GingerCore
                     }
                     break;
                 case eItemParts.Actions:
-                    activityInstance.Acts = newInstance.Acts;
+                    if(hostItem != null)
+                    {
+                        activityInstance.Acts = newInstance.Acts;
+                        BusinessFlow currentBF = hostItem as BusinessFlow;
+                        currentBF.Activities = currentBF.Activities;
+                        //int originalIndex = ((BusinessFlow)hostItem).Activities.IndexOf(activityInstance);
+                        //(hostItem as BusinessFlow).Activities.Remove(activityInstance);
+                        //(hostItem as BusinessFlow).Activities.Insert(originalIndex, activityInstance);
+                    }
                     break;
                 case eItemParts.Variables:
                     activityInstance.Variables = newInstance.Variables;

@@ -24,7 +24,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
-    class CLIOptionClassHelper
+    public class CLIOptionClassHelper
     {
         public const string FILENAME = "filename";
 

@@ -234,7 +234,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             
 
-            // Temp !!!!!!!!!!!!!!!!! change to get GingerNodePorxy for Remeote grid
+            // Temp !!!!!!!!!!!!!!!!! change to get GingerNodePorxy for Remote grid
             GingerNodeInfo gingerNodeInfo = new GingerNodeInfo();
             GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
             NewPayLoad RC = gingerNodeProxy.RunAction(p);
@@ -570,7 +570,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         
         internal static void FindNodeAndRunAction(ActPlugIn act)
         {            
-            // If we have remove grid then we go for remote run
+            // If we have remote grid(s) then we go for remote run
             ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
             if (remoteServiceGrids.Count > 0)
             {                

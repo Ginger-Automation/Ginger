@@ -373,7 +373,7 @@ namespace GingerCore.Actions
                 if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
                 {
                     //string filePath = GetInputParamValue(ActDBValidation.Fields.QueryFile).Replace(@"~\", SolutionFolder);
-                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamValue(ActDBValidation.Fields.QueryFile));
+                    string filePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
 
                     FileInfo scriptFile = new FileInfo(filePath);
                     SQL = scriptFile.OpenText().ReadToEnd();

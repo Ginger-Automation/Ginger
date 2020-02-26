@@ -40,7 +40,6 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action to perform validations Using Value Expression editor ");
 
         }
-        [IsSerializedForLocalRepository]
         public string Condition { get { return this.Value; } set { this.Value = value; } }
 
         public override string ActionEditPage { get { return null; } }
@@ -78,11 +77,14 @@ namespace GingerCore.Actions
             {
                 ConditionCalculated += " is True";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                this.ExInfo = ConditionCalculated;
             }
             else
             {
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                this.Error = ConditionCalculated;
+
             }
         }
 

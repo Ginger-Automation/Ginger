@@ -156,20 +156,11 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
             actBrowserElement.Value = url;
 
-
-
-
-
-
             mBF.CurrentActivity.Acts.Add(actBrowserElement);
             mBF.CurrentActivity.Acts.CurrentItem = actBrowserElement;
 
             //ACT
             mGR.RunAction(actBrowserElement, false);
-
-       
-
-
 
             //Assert            
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error), "No Error");            
@@ -263,7 +254,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             //ACT
             mGR.RunAction(actUIElement, false);
             //Assert                        
-            Assert.AreEqual("Element not found",actUIElement.Error, "actUIElement.Error");            
+            Assert.IsTrue(actUIElement.Error.Contains("Element not found"), "actUIElement.Error");            
         }
 
 

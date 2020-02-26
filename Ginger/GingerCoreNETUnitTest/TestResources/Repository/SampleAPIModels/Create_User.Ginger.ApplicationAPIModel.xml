@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="b7957f8f-d43b-42b6-a1a0-d324eb8c9feb" ItemType="ApplicationAPIModel" CreatedBy="prateekv" Created="201907240949" GingerVersion="3.3.0.0" Version="3" LastUpdateBy="prateekv" LastUpdate="201907240951" />
+<ApplicationAPIModel APIType="REST" AuthorizationType="NoAuthentication" CertificateType="AllSSL" ContentType="JSon" CookieMode="Session" EndpointURL="https://petstore.swagger.io/v2/user" Guid="b7957f8f-d43b-42b6-a1a0-d324eb8c9feb" Name="Create user" NetworkCredentials="Default" ParentGuid="00000000-0000-0000-0000-000000000000" ReqHttpVersion="HTTPV10" RequestBody="{&#xD;&#xA;  &quot;id&quot;: &lt;ID&gt;,&#xD;&#xA;  &quot;username&quot;: &quot;&lt;USERNAME&gt;&quot;,&#xD;&#xA;  &quot;firstName&quot;: &quot;&lt;FIRSTNAME&gt;&quot;,&#xD;&#xA;  &quot;lastName&quot;: &quot;&lt;LASTNAME&gt;&quot;,&#xD;&#xA;  &quot;email&quot;: &quot;&lt;EMAIL&gt;&quot;,&#xD;&#xA;  &quot;password&quot;: &quot;&lt;PASSWORD&gt;&quot;,&#xD;&#xA;  &quot;phone&quot;: &quot;&lt;PHONE&gt;&quot;,&#xD;&#xA;  &quot;userStatus&quot;: &lt;USERSTATUS&gt;&#xD;&#xA;}" RequestBodyType="FreeText" RequestType="POST" ResponseContentType="JSon" SecurityType="None" TargetApplicationKey="MyWebServicesApp~a80f92fb-02ba-4906-9304-cd743ebd06e6" URLDomain="https://petstore.swagger.io/v2">
+<AppModelParameters>
+<AppModelParameter Guid="1f5e20ca-d6d1-469a-a982-02bd5daddfad" ParentGuid="00000000-0000-0000-0000-000000000000" Path="id" PlaceHolder="&lt;ID&gt;" TagName="id">
+<OptionalValuesList>
+<OptionalValue Guid="3d7c7e53-761c-4bda-8e95-27449d7ee180" ParentGuid="00000000-0000-0000-0000-000000000000" Value="1" />
+<OptionalValue Guid="795b0b87-4848-4130-a547-11c6797634f7" ParentGuid="00000000-0000-0000-0000-000000000000" Value="2" />
+<OptionalValue Guid="768d5a57-4fc8-408e-8310-f98a6399ef3c" ParentGuid="00000000-0000-0000-0000-000000000000" Value="3" />
+<OptionalValue Guid="adc28ec2-afdd-4705-a0a7-95fbf0cf085b" ParentGuid="00000000-0000-0000-0000-000000000000" Value="4" />
+<OptionalValue Guid="0dac450c-cad9-453a-86ef-399807f4eadb" IsDefault="True" ParentGuid="00000000-0000-0000-0000-000000000000" Value="5" />
+<OptionalValue Guid="3210acb1-2bc0-4864-8867-f92941ac0115" ParentGuid="00000000-0000-0000-0000-000000000000" Value="6" />
+</OptionalValuesList>
+</AppModelParameter>
+<AppModelParameter Guid="24e443e7-6c1b-4bb8-bcb5-cce1d43d44c1" ParentGuid="00000000-0000-0000-0000-000000000000" Path="username" PlaceHolder="&lt;USERNAME&gt;" TagName="username">
+<OptionalValuesList>
+<OptionalValue Guid="cd76ee82-7582-40e0-8d12-df793fbed085" ParentGuid="00000000-0000-0000-0000-000000000000" Value="aaa" />
+<OptionalValue Guid="8a4860b0-d780-4e87-8641-a5214cd71ba6" IsDefault="True" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ssd" />
+</OptionalValuesList>
+</AppModelParameter>
+<AppModelParameter Guid="48db4722-675d-46b4-b55b-6a00270a40e2" ParentGuid="00000000-0000-0000-0000-000000000000" Path="firstName" PlaceHolder="&lt;FIRSTNAME&gt;" TagName="firstName">
+<OptionalValuesList>
+<OptionalValue Guid="61790e8e-85f7-452a-aee8-0b7e1511b78f" IsDefault="True" ParentGuid="00000000-0000-0000-0000-000000000000" Value="ASDAaa" />
+</OptionalValuesList>
+</AppModelParameter>
+<AppModelParameter Guid="ee5f27be-343c-4819-bdcb-f4bfff1f2086" ParentGuid="00000000-0000-0000-0000-000000000000" Path="lastName" PlaceHolder="&lt;LASTNAME&gt;" TagName="lastName">
+<OptionalValuesList>
+<OptionalValue Guid="082011f2-bf14-4a8f-9565-337e27d15714" IsDefault="True" ParentGuid="00000000-0000-0000-0000-000000000000" Value="FDDDSAaa" />
+</OptionalValuesList>
+</AppModelParameter>
+<AppModelParameter Guid="140a603e-fd8b-4d79-885b-4980fac43c9b" ParentGuid="00000000-0000-0000-0000-000000000000" Path="email" PlaceHolder="&lt;EMAIL&gt;" TagName="email" />
+<AppModelParameter Guid="770c3dc7-c2bd-42a1-a9f1-4eeebe5d61d3" ParentGuid="00000000-0000-0000-0000-000000000000" Path="password" PlaceHolder="&lt;PASSWORD&gt;" TagName="password" />
+<AppModelParameter Guid="0400ef96-f660-4086-8777-d1019dc8e957" ParentGuid="00000000-0000-0000-0000-000000000000" Path="phone" PlaceHolder="&lt;PHONE&gt;" TagName="phone">
+<OptionalValuesList>
+<OptionalValue Guid="1c798ece-b320-4b49-9367-2b4d0f1c1421" IsDefault="True" ParentGuid="00000000-0000-0000-0000-000000000000" Value="1234567890" />
+</OptionalValuesList>
+</AppModelParameter>
+<AppModelParameter Guid="988308db-b1c0-4fc7-8b21-632c94b1881e" ParentGuid="00000000-0000-0000-0000-000000000000" Path="userStatus" PlaceHolder="&lt;USERSTATUS&gt;" TagName="userStatus" />
+</AppModelParameters>
+</ApplicationAPIModel></GingerRepositoryItem>

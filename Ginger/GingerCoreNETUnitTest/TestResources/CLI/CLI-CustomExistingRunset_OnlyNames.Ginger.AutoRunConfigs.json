@@ -1,0 +1,65 @@
+{
+	"SolutionLocalPath": "SOLUTION_PATH",
+	"Runset": {
+		"Exist": true,
+		"Name": "Calc_Test",
+		"EnvironmentName": "Env1",
+		"RunAnalyzer": false,		
+		"Runners": [
+			{
+				"Name": "Runner 1",
+				"EnvironmentName": "Env2",			
+				"AppAgentMappings": [
+					{
+						"ApplicationName": "app1",
+						"AgentName": "IE",
+					}
+				],
+				"BusinessFlows": [
+					{
+						"Name": "Calculator_Test",
+						"Instance": 1,
+						"InputValues": [
+							{
+								"VariableParentName": "Calculator_Test",
+								"VariableName": "DoMultiply?",
+								"VariableCustomizedValue": "No"
+							},
+							{
+								"VariableParentName": "Calculator_Test\\Sum\\Do Sum",
+								"VariableName": "SecondNum_ForSum",
+								"VariableCustomizedValue": "44"
+							}
+						]
+					},
+					{
+						"Name": "Calculator_Test",
+						"Instance": 2,
+						"InputValues": [
+							{
+								"VariableParentName": "Calculator_Test",
+								"VariableName": "DoDivide?",
+								"VariableCustomizedValue": "Yes"
+							},
+							{
+								"VariableParentName": "Calculator_Test\\Divide\\Do Divide",
+								"VariableName": "SecondNum_ForDivide",
+								"VariableCustomizedValue": "1"
+							}
+						]
+					}
+				]
+			}
+		],
+		"Operations": [
+			{
+				"$type": "RunsetOperations.MailReportOperationExecConfig, Ginger.ExecuterService.Contracts",
+				"MailSettings": {					
+					"MailTo": "bbb@amdocs.com",
+					"Subject": "Test44"
+				},
+				"Name": "Send HTML Report Email",
+			}
+		]
+	}
+}

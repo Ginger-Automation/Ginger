@@ -2,6 +2,8 @@
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Plugin.Core;
+using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.RunLib;
@@ -137,6 +139,42 @@ namespace GingerCoreNETUnitTest.RunTestslib
             Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
             // Assert.AreEqual("A1 Result", actPlugin.ExInfo);
             
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void StartAgentOnRemoteGingerGrid()
+        {
+            // Arrange
+            Agent agent = new Agent();
+            agent.AgentType = Agent.eAgentType.Service;
+            agent.ServiceId = "SeleniumChromeService";
+            agent.StartDriver();
+
+            // ActPlugIn actPlugin = new ActPlugIn() { ServiceId = "SeleniumChromeService", ActionId = "StartDriver" };
+
+            //Act
+            //GingerNodeProxy.RemoteGridIP = "10.122.168.174";  // cmildev174
+            //GingerNodeProxy.RemoteGridPort = 15001; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            //GingerNodeInfo gingerNodeInfo = new GingerNodeInfo() { };
+            //GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);
+            ActBrowserElement actBrowserElement = new ActBrowserElement();
+            // actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+            actBrowserElement.InputValues.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = nameof(ActBrowserElement.ControlAction), Value= "GotoURL", ValueForDriver = "GotoURL" });
+            actBrowserElement.ValueForDriver = "http://www.facebook.com";
+            // agent.RunAction(actBrowserElement);
+
+            ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
+
+            //NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
+            //NewPayLoad actionResult = gingerNodeProxy.RunAction(actionPayLoad);
+            //ExecuteOnPlugin.ParseActionResult(actionResult, actPlugin);
+
+            //Assert
+            Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
+            // Assert.AreEqual("A1 Result", actPlugin.ExInfo);
+
         }
 
     }

@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
                 }
                 mVE.Value = businessFlow.RunDescription;
                 BFR.RunDescription = mVE.ValueCalculated;
@@ -221,7 +221,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public virtual void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
             runSetReport.EndTimeStamp = DateTime.Now.ToUniversalTime();
-            runSetReport.Elapsed = (double)runSetReport.Watch.ElapsedMilliseconds / 1000;
+            runSetReport.Elapsed = runSetReport.EndTimeStamp.Subtract(runSetReport.StartTimeStamp).TotalSeconds;
             runSetReport.MachineName = Environment.MachineName;
             runSetReport.ExecutedbyUser = Environment.UserName;
             runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;

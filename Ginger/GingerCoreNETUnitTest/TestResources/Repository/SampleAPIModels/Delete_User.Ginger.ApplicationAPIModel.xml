@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="d4dac6f9-b8a4-4754-ac57-bf0f1d33483f" ItemType="ApplicationAPIModel" CreatedBy="prateekv" Created="201907240949" GingerVersion="3.3.0.0" Version="2" LastUpdateBy="prateekv" LastUpdate="201907240949" />
+<ApplicationAPIModel APIType="REST" AuthorizationType="NoAuthentication" CertificateType="AllSSL" ContentType="JSon" CookieMode="Session" EndpointURL="https://petstore.swagger.io/v2/user/&lt;{USERNAME}&gt;" Guid="d4dac6f9-b8a4-4754-ac57-bf0f1d33483f" Name="Delete user" NetworkCredentials="Default" ParentGuid="00000000-0000-0000-0000-000000000000" ReqHttpVersion="HTTPV10" RequestBodyType="FreeText" RequestType="DELETE" ResponseContentType="JSon" SecurityType="None" TargetApplicationKey="MyWebServicesApp~a80f92fb-02ba-4906-9304-cd743ebd06e6" URLDomain="https://petstore.swagger.io/v2">
+<AppModelParameters>
+<AppModelParameter Description="{username}in url" Guid="b6be172d-ebf5-4c89-a332-5eba00545806" ParentGuid="00000000-0000-0000-0000-000000000000" PlaceHolder="&lt;{USERNAME}&gt;" />
+</AppModelParameters>
+</ApplicationAPIModel></GingerRepositoryItem>

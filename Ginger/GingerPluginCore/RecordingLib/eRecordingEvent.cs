@@ -25,6 +25,7 @@ namespace Amdocs.Ginger.Plugin.Core
     public enum eRecordingEvent
     {
         ElementRecorded,
-        PageChanged
+        PageChanged,
+        StopRecording
     }
 }

@@ -108,8 +108,8 @@ namespace GingerWPF.BusinessFlowsLib
         {
             InitializeComponent();
 
-            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
-            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
+            App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
@@ -128,37 +128,22 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                bool isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                 if (mRunSetReport == null)
                 {
                     mRunSetReport = new RunSetReport();
                     mRunSetReport.SetDataForAutomateTab();
-                    if (!isAutoRunSetExists)
+                    if (!ClearPreviousAutoRunSetDocumentLiteDB())
                     {
                         mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner, offlineMode:true);
                         mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(mRunSetReport, "");
-                        isAutoRunSetExists = AutoRunSetDocumentExistsInLiteDB();
                         return;
                     }
-                    DeleteRunSetBFRefData();
                     ExecutionLoggerManager.RunSetReport = mRunSetReport;
                 }                
             }
         }
 
-        private void DeleteRunSetBFRefData()
-        {
-            LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
-            var result = dbManager.GetRunSetLiteData();
-            List<LiteDbRunSet> filterData = null;
-            filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            if (filterData != null && filterData.Count > 0)
-            {
-                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
-                dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0], eExecutedFrom.Automation);
-            }
-        }
 
         private void ClearAutomatedId(BusinessFlow businessFlowToLoad)
         {
@@ -177,20 +162,20 @@ namespace GingerWPF.BusinessFlowsLib
             businessFlowToLoad.LiteDbId = null;
         }
 
-        private bool AutoRunSetDocumentExistsInLiteDB()
+        private bool ClearPreviousAutoRunSetDocumentLiteDB()
         {
-            bool isExist = false;
             LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
-            List<LiteDbRunSet> filterData = null;
-            filterData = result.IncludeAll().Find(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString()).ToList();
-            isExist = (filterData == null) ? false : filterData.Count > 0;
-            if (isExist)
+            var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
+            if (filterData != null)
             {
-                mRunSetLiteDbId = filterData[0]._id;
-                mRunnerLiteDbId = filterData[0].RunnersColl[0]._id;
+                mRunSetLiteDbId = filterData._id;
+                mRunnerLiteDbId = filterData.RunnersColl[0]._id;
+                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
+                dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
+                return true;
             }
-            return isExist;
+            return false;
         }
         #endregion LiteDB
 
@@ -198,7 +183,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
-            xBusinessFlowItemComboBox.Items.Add("Configurations");
+            xBusinessFlowItemComboBox.Items.Add("Details");
             xBusinessFlowItemComboBox.SelectedIndex = 0;
 
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
@@ -308,9 +293,11 @@ namespace GingerWPF.BusinessFlowsLib
             if (xAddActionsBtn.ButtonImageType == Amdocs.Ginger.Common.Enums.eImageType.Add)
             {
                 ExpandAddActionsPnl();
-            }
+                Ginger.General.DoEvents();
+                App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsPageHelp", xAddActionMenuFrame, string.Format("List of options is dynamic, options are loaded based on the target platform of current {0} and on it mapped Agent status.For example, “Record” option will be added only if the platform is UI based (like Web, Java, etc.) and Agent it loaded", GingerDicser.GetTermResValue(eTermResKey.Activity)));
+            } 
             else
-            {
+            {                
                 CollapseAddActionsPnl();
             }
         }
@@ -403,9 +390,8 @@ namespace GingerWPF.BusinessFlowsLib
                 mRunner.CurrentBusinessFlow = mBusinessFlow;
                 UpdateApplicationsAgentsMapping();
 
-                if (AutoRunSetDocumentExistsInLiteDB() && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                if (ClearPreviousAutoRunSetDocumentLiteDB() && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    DeleteRunSetBFRefData();
                     ClearAutomatedId(businessFlowToLoad);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
                 }
@@ -718,7 +704,7 @@ namespace GingerWPF.BusinessFlowsLib
 
 
 
-        private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
+        private async void App_AutomateBusinessFlowEventAsync(AutomateEventArgs args)
         {
             switch (args.EventType)
             {
@@ -736,19 +722,19 @@ namespace GingerWPF.BusinessFlowsLib
                     UpdateAutomatePageRunner();
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentAction:
-                    RunAutomatePageAction((Tuple<Activity,Act>)args.Object,  false);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false, true);
+                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
-                    RunAutomatePageActivity((Activity)args.Object);
+                    await RunAutomatePageActivity((Activity)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActionRun:
-                    ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object);
+                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificAction, args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.ContinueActivityRun:
-                    ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object);
+                    await ContinueRunFromAutomatePage(eContinueFrom.SpecificActivity, args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.StopRun:
                     StopAutomateRun();
@@ -832,7 +818,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
             catch (Exception ex)
             {
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, "Exception during flow execution from automate tab", ex);
             }
             finally
             {
@@ -879,7 +865,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo,  bool checkIfActionAllowedToRun = true, bool moveToNextAction=false)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo, bool moveToNextAction=true, bool checkIfActionAllowedToRun = true)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
@@ -902,6 +888,10 @@ namespace GingerWPF.BusinessFlowsLib
                 //mExecutionIsInProgress = true;
                 //SetUIElementsBehaverDuringExecution();
 
+                mBusinessFlow.CurrentActivity = parentActivity;
+                mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+
                 //No need of agent for actions like DB and read for excel. For other need agent  
                 Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
@@ -917,7 +907,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
-                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, true).ConfigureAwait(false);               
+                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);               
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -925,11 +915,11 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
                 }
-
-                if (moveToNextAction)
-                {
-                    mContext.Runner.GotoNextAction();
-                }
+                             
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction" , ex);
             }
             finally
             {
@@ -1165,7 +1155,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xItemsTabs.SelectedItem = xBfVariablesTab;
             }
-            else if (xBusinessFlowItemComboBox.SelectedItem == "Configurations")
+            else if (xBusinessFlowItemComboBox.SelectedItem == "Details")
             {
                 xItemsTabs.SelectedItem = xBfConfigurationsTab;
             }
@@ -1496,6 +1486,13 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 ExecutionLoggerManager.RunSetReport = mRunSetReport;
             }
+
+            //Help Layouts            
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_GoBackToBFsHelp", xGoToBFsTreeBtn, string.Format("Click here to go back to {0} tree", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_BusinessFlowLayerHelp", xBusinessFlowItemComboBox, string.Format("Select here which layer of {0} you want to configure: {1}, {2} or Details", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables)));
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");            
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsBtnHelp", xAddActionsBtn, "Click here to view all options to add automation Actions into your flow");
         }
     }
 

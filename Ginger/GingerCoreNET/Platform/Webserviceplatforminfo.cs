@@ -33,7 +33,8 @@ namespace Amdocs.Ginger.CoreNET.Platform
 {
   public  class Webserviceplatforminfo : IPlatformPluginPostRun
     {
-       private bool SaveRequest;
+        private static readonly Object thisObj = new object();
+        private bool SaveRequest;
         private bool SaveResponse;
         private string PathToSave;
         public void PostExecute(Agent agent, Act actPlugin)
@@ -115,18 +116,22 @@ namespace Amdocs.Ginger.CoreNET.Platform
                 Directory.CreateDirectory(directoryFullPath);
             }
 
-            String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
-            actName = PathHelper.CleanInValidPathChars(mAct.Description);
-            string fullFileName = Path.Combine(directoryFullPath, actName + "_" + timeStamp + "_" + fileType + "." + extension);
+            string fullFileName = "";
+            lock (thisObj)
+            {
+                String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+                actName = PathHelper.CleanInValidPathChars(mAct.Description);
+                fullFileName = Path.Combine(directoryFullPath, actName + "_" + timeStamp + "_" + fileType + "." + extension);
 
-            if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
-            {
-                File.WriteAllText(fullFileName, fileContent);
-            }
-            else
-            {
-                byte[] bytes = Encoding.Default.GetBytes(fileContent);
-                File.WriteAllBytes(fullFileName, bytes);
+                if (contentType != ApplicationAPIUtils.eContentType.PDF.ToString())
+                {
+                    File.WriteAllText(fullFileName, fileContent);
+                }
+                else
+                {
+                    byte[] bytes = Encoding.Default.GetBytes(fileContent);
+                    File.WriteAllBytes(fullFileName, bytes);
+                }
             }
 
             return fullFileName;

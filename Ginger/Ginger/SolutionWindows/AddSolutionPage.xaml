@@ -26,7 +26,7 @@
                     <ColumnDefinition Width="100*"/>
                     <ColumnDefinition Width="55"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="ApplicationTextBox" AutomationProperties.AutomationId="QA-SolutionFolderTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top"/>
+                <TextBox x:Name="ApplicationTextBox" AutomationProperties.AutomationId="QA-ApplicationTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top"/>
                 <Button x:Name="SelectButton" Click="SelectButton_Click" Content="Select" ToolTip="Select From List of Known Applications" Style="{StaticResource @InputButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
                 
             </Grid>

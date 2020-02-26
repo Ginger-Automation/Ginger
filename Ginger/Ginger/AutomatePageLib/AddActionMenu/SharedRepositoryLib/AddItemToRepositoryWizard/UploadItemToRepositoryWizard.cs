@@ -46,6 +46,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
             AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
             AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
+            DisableBackBtnOnLastPage = true;
         }
 
         private UploadItemSelection CreateUploadItem(RepositoryItemBase item)

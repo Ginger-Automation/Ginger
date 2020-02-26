@@ -35,5 +35,7 @@ namespace GingerCore.Actions.Common
         public string DefaultValue { get; set; }
 
         public RoutedEventHandler ElementEvent { get;set; }
+
+        public string ToolTip { get; set; }
     }
 }

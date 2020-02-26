@@ -621,18 +621,7 @@ namespace GingerCore
                     DataSource.RunQuery(updateQuery);
                     mValueCalculated = "";
                 }
-                else if (sAct == "ETE" && bDone == true)
-                {
-                    if (ExcelSheet == "")
-                        ExcelSheet = DSTable;
-                    if (ExcelPath.ToLower().EndsWith(".xlsx"))
-                    {
-                        DataSource.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
-                        mValueCalculated = "";
-                    }
-                    else
-                        mValueCalculated = "The Export Excel can be *.xlsx only";
-                }
+                
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
@@ -656,7 +645,10 @@ namespace GingerCore
                         string[] Name = tokens[1].Split(splitchar);
 
                         string[] markasdone = tokens[0].Split(new[] { "MASD=" }, StringSplitOptions.None)[1].Split(splitchar);
-
+                        if(!bDone)
+                        {
+                            markasdone[0] = "N";
+                        }
                         string[] tableName = tokens[0].Split(new[] { "DST=" }, StringSplitOptions.None)[1].Split(splitchar);
 
                         iColVal = Name[0];

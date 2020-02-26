@@ -107,8 +107,7 @@ namespace amdocs.ginger.GingerCoreNET
         {
             // TODO: add RI type, and use attr on field
             NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
-            //TODO: see impact of acts - remember to add also handle in attr see others
-            //NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
+            NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
             NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
         }
@@ -123,7 +122,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             else
             {
-                Reporter.ToConsole(eLogLevel.ERROR, "StartLocalGrid requested but grid is already running");
+                Reporter.ToLog(eLogLevel.ERROR, "StartLocalGrid requested but grid is already running");
             }
         }
 
@@ -259,17 +258,17 @@ namespace amdocs.ginger.GingerCoreNET
 
             // TODO: need to add a switch what we get from old ginger based on magic key
 
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading User Profile");            
+            Reporter.ToLog(eLogLevel.INFO, "Loading User Profile");            
             UserProfile = UserProfile.LoadUserProfile();
             
-            Reporter.ToLog(eLogLevel.DEBUG, "Configuring User Type");
+            Reporter.ToLog(eLogLevel.INFO, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
                         
             CheckWebReportFolder();
 
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
-                Reporter.ToConsole(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
+                Reporter.ToLog(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
             }
         }
 
@@ -278,9 +277,9 @@ namespace amdocs.ginger.GingerCoreNET
             try
             {
                 string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.DEBUG, "Copying from web report from: "+ clientAppFolderPath);
+                Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: "+ clientAppFolderPath);
                 string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.DEBUG, "Copying to web report from: " + userAppFolder);
+                Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
                 if (Directory.Exists(clientAppFolderPath))
                 {
                     string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
@@ -291,7 +290,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "CheckWebReportFolder Error: " + ex.Message, ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
             }
         }
 
@@ -357,13 +356,13 @@ namespace amdocs.ginger.GingerCoreNET
                 LoadingSolution = true;
 
                 //Cleaning previous Solution load
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Cleaning previous Solution items");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Cleaning previous Solution items");
                 CloseSolution();
 
                 //Load Solution file
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Opening Solution located at: " + solutionFolder);
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Opening Solution located at: " + solutionFolder);
                 string solutionFile = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution File: " + solutionFile);
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution File: " + solutionFile);
                 if (System.IO.File.Exists(solutionFile))
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Solution File exist");
@@ -373,13 +372,13 @@ namespace amdocs.ginger.GingerCoreNET
                     if (!File.Exists(Amdocs.Ginger.IO.PathHelper.GetLongPath(solutionFile)))
                     {
                         //Reporter.ToUser(eUserMsgKey.BeginWithNoSelectSolution);
-                        Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Solution File Not Found");
+                        Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Solution File Not Found");
                         return false;
                     }                   
                 }                
 
                 //Checking if Ginger upgrade is needed
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Checking if Ginger upgrade is needed");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Checking if Ginger Solution items upgrade is needed");
                 IEnumerable<string> solutionFiles = Solution.SolutionFiles(solutionFolder);
                 SolutionUpgrade.ClearPreviousScans();
                 if (SolutionUpgrade.IsGingerUpgradeNeeded(solutionFolder, solutionFiles))
@@ -388,27 +387,27 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution.xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile);
                 if (solution == null)
                 {
                     Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Failed to load the Solution file");
-                    Reporter.ToLog(eLogLevel.WARN, "Loading Solution- Error: Failed to load the Solution file");
+                    Reporter.ToLog(eLogLevel.ERROR, "Loading Solution- Error: Failed to load the Solution file");
                     return false;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Creating Items Repository");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Creating Items Repository");
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading needed Plugins");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading needed Plugins");
                 mPluginsManager = new PluginsManager();
                 mPluginsManager.SolutionChanged(SolutionRepository);
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Doing Source Control Configurations");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Doing Source Control Configurations");
                 HandleSolutionLoadSourceControl(solution);
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
+                Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
@@ -432,7 +431,7 @@ namespace amdocs.ginger.GingerCoreNET
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Finished Loading successfully the Solution '{0}'", solutionFolder));
                 return true;
             }
             catch (Exception ex)
@@ -765,7 +764,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 if (string.IsNullOrEmpty(mTestArtifactsFolder))
                 {
-                    folder =  Path.Combine(WorkSpace.Instance.Solution.Folder, "ExecutionResults");
+                    return null;
                 }
                 else
                 {
