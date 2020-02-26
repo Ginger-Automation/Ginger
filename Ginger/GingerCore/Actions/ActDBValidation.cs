@@ -98,8 +98,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
-        
-        [IsSerializedForLocalRepository]
+
         public string SQL
         {
             get
