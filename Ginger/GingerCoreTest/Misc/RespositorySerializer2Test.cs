@@ -24,6 +24,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace UnitTests.NonUITests
@@ -76,6 +77,20 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Count);
         }
+
+        public void DBActInputValuesTest()
+        {
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "DBActionInputValuesTest.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "SQL").ToList().Count);
+        }
+
 
         //[Ignore]
         //[TestMethod]  [Timeout(60000)]
