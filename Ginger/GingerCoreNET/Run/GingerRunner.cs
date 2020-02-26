@@ -3348,7 +3348,7 @@ namespace Ginger.Run
                     Activity bfFirstActivity = (Activity)CurrentBusinessFlow.Activities.FirstOrDefault();
                     CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
-                    bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
                 }
              
 
@@ -3496,20 +3496,14 @@ namespace Ginger.Run
                 st.Stop();
                 CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
                 
-                //if (doContinueRun == false)
-                //{
-                //    ExecutionLogger.BusinessFlowEnd(CurrentBusinessFlow);
-                //}
-
+                NotifyBusinessFlowEnd(CurrentBusinessFlow);
+                
                 if (standaloneExecution)
                 {
                     IsRunning = false;
-                    Status = RunsetStatus;            
+                    Status = RunsetStatus;
                 }
-
-                NotifyBusinessFlowEnd(CurrentBusinessFlow);
-
-                                
+          
             }
         }
 
@@ -4435,6 +4429,7 @@ namespace Ginger.Run
         {
             try
             {
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating status for pending activities...");
                 uint eventTime = RunListenerBase.GetEventTime();
                 businessFlow.EndTimeStamp = DateTime.UtcNow;
                 foreach (RunListenerBase runnerListener in mRunListeners)
@@ -4445,6 +4440,10 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Notify Businessflow End", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
             }
 
         }

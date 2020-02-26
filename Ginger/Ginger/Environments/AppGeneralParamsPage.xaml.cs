@@ -99,11 +99,7 @@ namespace Ginger.Environments
                     {
                         if (EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            selectedEnvParam.Value = EncryptionHandler.DecryptString(intialValue, ref res);
-                            if (res == false)
-                            {
-                                selectedEnvParam.Value = null;
-                            }
+                            selectedEnvParam.Value = null;
                         }
                     }
                 }
@@ -200,11 +196,7 @@ namespace Ginger.Environments
                     {
                         if (EncryptionHandler.IsStringEncrypted(intialValue))
                         {
-                            param.Value = EncryptionHandler.DecryptString(intialValue, ref res);
-                            if (res == false)
-                            {
-                                param.Value = null;
-                            }
+                            param.Value = null;
                         }
                     }
                 }
