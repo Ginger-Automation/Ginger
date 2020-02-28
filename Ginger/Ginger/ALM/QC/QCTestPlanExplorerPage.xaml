@@ -20,7 +20,12 @@
         </DockPanel>
         <DockPanel Grid.Row="1">
             <Border BorderBrush="Black" BorderThickness="0,1,0,0" DockPanel.Dock="Top">
-                <CheckBox DockPanel.Dock="Bottom" x:Name="xCreateBusinessFlowFolder" Content="Create Business Flow Folder and Export the Activity Groups to this folder" Style="{StaticResource @CheckBoxStyle}"  VerticalAlignment="Bottom" Checked="xCreateBusinessFlowFolder_Checked" Unchecked="xCreateBusinessFlowFolder_Checked"/>
+                <CheckBox DockPanel.Dock="Bottom" x:Name="xCreateBusinessFlowFolder" Style="{StaticResource @CheckBoxStyle}"  VerticalAlignment="Bottom" Checked="xCreateBusinessFlowFolder_Checked" Unchecked="xCreateBusinessFlowFolder_Checked">
+                    <CheckBox.Content>
+                        <GingerCore:ucTextDicResource Text="Create [Business Flow] Folder and Export the Activity Groups to this folder"/>
+                    </CheckBox.Content>
+                </CheckBox>
+
             </Border>
         </DockPanel>
 

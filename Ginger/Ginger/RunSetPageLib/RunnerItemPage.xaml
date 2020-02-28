@@ -76,7 +76,7 @@
                             <usercontrols:ImageMakerControl ImageType="Export" Width="16" SetAsFontImageWithSize="16" HorizontalAlignment="Left"/>
                         </MenuItem.Icon>
                         <MenuItem.Header>
-                            <GingerCore:ucTextDicResource Text="Export [BusinessFlow] Activities Group to ALM"/>
+                            <GingerCore:ucTextDicResource Text="Export [BusinessFlow] [Activities Group] to ALM"/>
                         </MenuItem.Header>
                     </MenuItem>
                     <MenuItem x:Name="xResetStatus_Buss_Flow_Actions" Style="{StaticResource $MenuItemStyle}" Click="xResetStatus_Buss_Flow_Actions_Click">
