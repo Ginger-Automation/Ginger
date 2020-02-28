@@ -415,7 +415,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Downloading/Updating Solution from source control", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Downloading/Updating Solution from source control", e);
                 return false;
             }
         }

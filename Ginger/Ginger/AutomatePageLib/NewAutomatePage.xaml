@@ -316,7 +316,7 @@
                 </TabItem>
 
                 <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0">
-                    <Frame x:Name="xBfVariablesTabFrame" Content="Variabels" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
+                    <Frame x:Name="xBfVariablesTabFrame" Content="Variables" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" />
                 </TabItem>
 
                 <TabItem x:Name="xBfConfigurationsTab" Style="{StaticResource $CoolMainTab}" TabIndex="3" Margin="-20,0,0,0">
