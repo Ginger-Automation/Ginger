@@ -485,20 +485,29 @@ namespace GingerCore.SourceControl
             {
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
-                    string committishOrBranchSpec = "master";
-                    CheckoutOptions checkoutOptions = new CheckoutOptions();
-                    checkoutOptions.CheckoutModifiers = CheckoutModifiers.Force;
-                    checkoutOptions.CheckoutNotifyFlags = CheckoutNotifyFlags.Ignored;
-                    repo.CheckoutPaths(committishOrBranchSpec, new[] { path }, checkoutOptions);
+                    if (Path.GetFullPath(new Uri(RepositoryRootFolder).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant() ==
+                            Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant())
+                    {
+                        //undo all changes
+                        repo.Reset(ResetMode.Hard);
+                    }
+                    else
+                    {
+                        //undo specific changes
+                        string committishOrBranchSpec = "master";
+                        CheckoutOptions checkoutOptions = new CheckoutOptions();
+                        checkoutOptions.CheckoutModifiers = CheckoutModifiers.Force;
+                        checkoutOptions.CheckoutNotifyFlags = CheckoutNotifyFlags.Ignored;
+                        repo.CheckoutPaths(committishOrBranchSpec, new[] { path }, checkoutOptions);
+                    }
                 }
             }
             catch (Exception e)
-            {
+            {                
                 error = e.Message + Environment.NewLine + e.InnerException;
                 return false;
             }
             return true;
-
         }
 
         public override bool TestConnection(ref string error)
@@ -615,10 +624,9 @@ namespace GingerCore.SourceControl
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 PullOptions PullOptions = new PullOptions();
-                PullOptions.FetchOptions = new FetchOptions();
+                PullOptions.FetchOptions = new FetchOptions();                
                 PullOptions.FetchOptions.CredentialsProvider = new CredentialsHandler(
-                    (url, usernameFromUrl, types) => new UsernamePasswordCredentials() { Username = SourceControlUser, Password = SourceControlPass });
-                //return repo.Network.Pull(new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                    (url, usernameFromUrl, types) => new UsernamePasswordCredentials() { Username = SourceControlUser, Password = SourceControlPass });               
                 MergeResult mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
                 return mergeResult;
             }

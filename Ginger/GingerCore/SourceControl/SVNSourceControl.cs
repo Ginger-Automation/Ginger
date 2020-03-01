@@ -259,14 +259,24 @@ namespace GingerCore.SourceControl
         {
             if (client == null) Init();
             SvnUpdateResult result;
-           
+
             try
             {
-                RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                RepositoryFolderBase repositoryFolderBase = null;
+                if (WorkSpace.Instance.SolutionRepository != null)
+                {
+                    repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                }
                 mConflictsPaths.Clear();
-                repositoryFolderBase.PauseFileWatcher();
+                if (repositoryFolderBase != null)
+                {
+                    repositoryFolderBase.PauseFileWatcher();
+                }
                 client.Update(path, out result);
-                repositoryFolderBase.ResumeFileWatcher();
+                if (repositoryFolderBase != null)
+                {
+                    repositoryFolderBase.ResumeFileWatcher();
+                }
 
                 if (mConflictsPaths.Count > 0)
                 {
@@ -277,7 +287,7 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.DEBUG, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKey.UpdateToRevision, result.Revision);
                 }
@@ -288,7 +298,6 @@ namespace GingerCore.SourceControl
                     else
                         Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
-
             }
             catch (Exception ex)
             {
