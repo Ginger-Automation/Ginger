@@ -413,6 +413,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.SolutionScmDetails.ProxyServer = solution.SourceControl.SourceControlProxyAddress.ToString();
                     executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
                 }
+                executionConfig.SolutionScmDetails.UndoSolutionLocalChanges = false;
             }
             executionConfig.SolutionLocalPath = solution.Folder;
 
