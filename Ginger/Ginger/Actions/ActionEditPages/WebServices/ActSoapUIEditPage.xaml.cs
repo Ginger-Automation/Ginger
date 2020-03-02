@@ -263,7 +263,9 @@ namespace Ginger.Actions.WebServices
 
             ProcessInputForDriver();
 
-            if (!Boolean.Parse((mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.ImportFile))))
+            bool isImportedFile;
+            Boolean.TryParse(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.ImportFile),out isImportedFile);
+            if (!isImportedFile)
             {
                 mAct.TempProperties.ClearAll();
                 mAct.AllProperties.ClearAll();
