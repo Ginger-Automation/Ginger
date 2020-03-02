@@ -265,18 +265,20 @@ namespace GingerCore.SourceControl
                 RepositoryFolderBase repositoryFolderBase = null;
                 if (WorkSpace.Instance.SolutionRepository != null)
                 {
-                    repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                    if (Path.GetDirectoryName(path) != SolutionFolder)
+                    {
+                        repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                    }
+                    else
+                    {
+                        repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(path);
+                    }
+                    
                 }
                 mConflictsPaths.Clear();
-                if (repositoryFolderBase != null)
-                {
-                    repositoryFolderBase.PauseFileWatcher();
-                }
+
                 client.Update(path, out result);
-                if (repositoryFolderBase != null)
-                {
-                    repositoryFolderBase.ResumeFileWatcher();
-                }
+
 
                 if (mConflictsPaths.Count > 0)
                 {
