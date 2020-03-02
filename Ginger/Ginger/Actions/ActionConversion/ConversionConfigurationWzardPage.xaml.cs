@@ -129,7 +129,7 @@ namespace Ginger.Actions.ActionConversion
                 mWizard.ConvertableTargetApplications = GetTargetApplication(); 
             }
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Taret Application" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Target Application" });
             view.GridColsView.Add(new GridColView()
             {
                 Field = nameof(ConvertableTargetApplicationDetails.TargetTargetApplicationName),

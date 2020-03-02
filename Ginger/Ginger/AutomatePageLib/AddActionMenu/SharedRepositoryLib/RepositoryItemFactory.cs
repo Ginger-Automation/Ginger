@@ -715,11 +715,15 @@ namespace Ginger.Repository
            return SourceControlUI.GetLatest(path, SourceControl);
         }
 
+        public bool Revert(string path, SourceControlBase SourceControl)
+        {
+            return SourceControlUI.Revert(path, SourceControl);
+        }
+
         public SourceControlBase GetNewSVnRepo()
         {
             return new SVNSourceControl();
         }
-
 
     }
     

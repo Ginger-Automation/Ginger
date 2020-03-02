@@ -113,6 +113,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
           return  SourceControlIntegration.GetLatest(path, SourceControl);
         }
 
+        public bool Revert(string path, SourceControlBase SourceControl)
+        {
+            return SourceControlIntegration.Revert(SourceControl, path);
+        }
+
         public SourceControlBase GetNewSVnRepo()
         {
             throw new PlatformNotSupportedException("SVN Repositories are not supported yet on Ginger CLI");
