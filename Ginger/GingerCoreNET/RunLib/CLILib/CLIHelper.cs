@@ -103,6 +103,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        bool mUndoSolutionLocalChanges;
+        public bool UndoSolutionLocalChanges
+        {
+            get
+            {
+                return mUndoSolutionLocalChanges;
+            }
+            set
+            {
+                mUndoSolutionLocalChanges = value;
+                OnPropertyChanged(nameof(UndoSolutionLocalChanges));
+            }
+        }
+
 
         RunsetExecutor mRunsetExecutor;
         //UserProfile WorkSpace.Instance.UserProfile;
@@ -276,7 +290,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
-                if (!SourceControlIntegration.DownloadSolution(Solution))
+                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                 }
