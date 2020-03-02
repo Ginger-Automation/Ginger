@@ -96,6 +96,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);
                         cliHelper.SourceControlProxyPort(exeConfiguration.SolutionScmDetails.ProxyPort);
                     }
+
+                    if (exeConfiguration.SolutionScmDetails.UndoSolutionLocalChanges != null)
+                    {
+                        cliHelper.UndoSolutionLocalChanges = (bool)exeConfiguration.SolutionScmDetails.UndoSolutionLocalChanges;
+                    }
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {

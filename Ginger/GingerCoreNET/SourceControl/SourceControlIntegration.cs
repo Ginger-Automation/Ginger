@@ -319,7 +319,7 @@ namespace Ginger.SourceControl
         }
 
 
-        public static bool DownloadSolution(string SolutionFolder)
+        public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges= false)
         {
             try
             {
@@ -364,7 +364,7 @@ namespace Ginger.SourceControl
 
                 SolutionInfo sol = new SolutionInfo();
                 sol.LocalFolder = SolutionFolder;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
                 {
                     sol.ExistInLocaly = true;
                 }
@@ -401,12 +401,23 @@ namespace Ginger.SourceControl
                 {
                     return false;
                 }
-
+                
                 if (sol.ExistInLocaly == true)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
+                    if (undoSolutionLocalChanges)
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
+                        try
+                        {                            
+                            RepositoryItemHelper.RepositoryItemFactory.Revert(sol.LocalFolder, mSourceControl);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
+                        }
+                    }
                     return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
-
                 }
                 else
                 {

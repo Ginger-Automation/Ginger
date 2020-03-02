@@ -87,6 +87,12 @@ namespace Ginger.SourceControl
             return true;
         }
 
+        public static bool Revert(string path, SourceControlBase SourceControl)
+        {
+            string error = string.Empty;
+            return SourceControl.Revert(path, ref error);
+        }
+
 
         internal static BitmapImage GetItemSourceControlImage(string FileName, ref SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus)
         {
