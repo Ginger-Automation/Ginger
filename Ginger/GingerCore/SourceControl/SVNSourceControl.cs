@@ -262,19 +262,6 @@ namespace GingerCore.SourceControl
 
             try
             {
-                RepositoryFolderBase repositoryFolderBase = null;
-                if (WorkSpace.Instance.SolutionRepository != null)
-                {
-                    if (Path.GetDirectoryName(path) != SolutionFolder)
-                    {
-                        repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-                    }
-                    else
-                    {
-                        repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(path);
-                    }
-                    
-                }
                 mConflictsPaths.Clear();
 
                 client.Update(path, out result);
