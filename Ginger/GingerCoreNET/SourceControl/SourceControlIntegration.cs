@@ -180,18 +180,40 @@ namespace Ginger.SourceControl
         {
             string error = string.Empty;
             bool IsConflictResolved = true;
-            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-
-            repositoryFolderBase.PauseFileWatcher();
-            if (!SourceControl.ResolveConflicts(path, side, ref error))
+            try
             {
-                IsConflictResolved = false;
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                if (path==null)
+                {
+                    return false;
+                }
+                RepositoryFolderBase repositoryFolderBase = null;
+                if (path != SourceControl.SolutionFolder)
+                {
+                    repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                    repositoryFolderBase.PauseFileWatcher();
+                }
+
+                if (!SourceControl.ResolveConflicts(path, side, ref error))
+                {
+                    IsConflictResolved = false;
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                    return IsConflictResolved;
+                }
+                if (repositoryFolderBase != null)
+                {
+                    repositoryFolderBase.ResumeFileWatcher();
+                    repositoryFolderBase.ReloadUpdatedXML(path);
+                }
+                
                 return IsConflictResolved;
             }
-            repositoryFolderBase.ResumeFileWatcher();
-            repositoryFolderBase.ReloadUpdatedXML(path);
-            return IsConflictResolved;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured during resolving conflicts..",ex);
+                return false;
+            }
+
+
         }
 
         public static void Lock(SourceControlBase SourceControl, string path, string lockComment)
@@ -319,7 +341,7 @@ namespace Ginger.SourceControl
         }
 
 
-        public static bool DownloadSolution(string SolutionFolder)
+        public static bool DownloadSolution(string SolutionFolder, bool undoSolutionLocalChanges= false)
         {
             try
             {
@@ -364,7 +386,7 @@ namespace Ginger.SourceControl
 
                 SolutionInfo sol = new SolutionInfo();
                 sol.LocalFolder = SolutionFolder;
-                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder)))
+                if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN && Directory.Exists(PathHelper.GetLongPath(sol.LocalFolder + Path.DirectorySeparatorChar + @".svn")))
                 {
                     sol.ExistInLocaly = true;
                 }
@@ -401,12 +423,23 @@ namespace Ginger.SourceControl
                 {
                     return false;
                 }
-
+                
                 if (sol.ExistInLocaly == true)
                 {
                     mSourceControl.RepositoryRootFolder = sol.LocalFolder;
+                    if (undoSolutionLocalChanges)
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
+                        try
+                        {                            
+                            RepositoryItemHelper.RepositoryItemFactory.Revert(sol.LocalFolder, mSourceControl);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
+                        }
+                    }
                     return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
-
                 }
                 else
                 {
@@ -415,7 +448,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while Downloading/Updating Solution from source control", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Downloading/Updating Solution from source control", e);
                 return false;
             }
         }

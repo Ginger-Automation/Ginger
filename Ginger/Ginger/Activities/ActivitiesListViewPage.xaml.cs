@@ -124,7 +124,7 @@ namespace Ginger.BusinessFlowPages
                             }
                             catch(Exception ex)
                             {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Error occured while dragging Activity to other group", ex);
+                                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred while dragging Activity to other group", ex);
                             }
                             ListView.UpdateGrouping();                            
                         }

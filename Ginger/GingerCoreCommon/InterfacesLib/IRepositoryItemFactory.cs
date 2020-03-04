@@ -75,6 +75,8 @@ namespace Amdocs.Ginger.Common
 
         bool GetLatest(string path, SourceControlBase SourceControl);
 
+        bool Revert(string path, SourceControlBase SourceControl);
+
         void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
 
         SourceControlBase GetNewSVnRepo();

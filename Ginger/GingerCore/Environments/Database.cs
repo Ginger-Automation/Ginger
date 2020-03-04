@@ -272,7 +272,7 @@ namespace GingerCore.Environments
                 connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
 
                 String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-                ConnectionString = connStr + "Password=" + Pass + ";";
+                //ConnectionString = connStr + "Password=" + Pass + ";";
                 if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
                 else { connStr = connStr + "Password=" + PassCalculated + ";"; }
 
@@ -306,7 +306,7 @@ namespace GingerCore.Environments
                 }
                 
             }
-
+            ConnectionString = connStr;
             return connStr;
         }
 

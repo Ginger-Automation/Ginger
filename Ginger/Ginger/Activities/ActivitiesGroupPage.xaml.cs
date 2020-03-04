@@ -85,7 +85,7 @@ namespace Ginger.Activities
             grdGroupedActivities.ShowUpDown = Visibility.Visible;
             grdGroupedActivities.ShowDelete = Visibility.Visible;
 
-            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another Activity to this Group", BtnAdd_Click);
+            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " to this Group", BtnAdd_Click);
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)

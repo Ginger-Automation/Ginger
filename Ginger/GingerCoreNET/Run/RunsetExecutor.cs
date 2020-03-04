@@ -211,8 +211,20 @@ namespace Ginger.Run
                                 }
                             }
                             if (originalVar != null)
-                            {
+                            {                               
                                 RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);
+                                //temp solution for release, find better way, issue is with the RepositoryItemBase.ObjectsDeepCopy which causing duplicated optional values
+                                if (originalVar is VariableSelectionList)
+                                {
+                                    for (int indx = 0; indx < ((VariableSelectionList)originalVar).OptionalValuesList.Count; indx++)
+                                    {
+                                        if (((VariableSelectionList)originalVar).OptionalValuesList.Where(x=>x.Value == ((VariableSelectionList)originalVar).OptionalValuesList[indx].Value).ToList().Count >1)
+                                        {
+                                            ((VariableSelectionList)originalVar).OptionalValuesList.RemoveAt(indx);
+                                            indx--;
+                                        }
+                                    }
+                                }
                                 originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
                                 originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
                             }

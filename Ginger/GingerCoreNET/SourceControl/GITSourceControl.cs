@@ -176,16 +176,13 @@ namespace GingerCore.SourceControl
                         if (item.FilePath.StartsWith(localFilePath) && item.FilePath != localFilePath)
                             return SourceControlFileInfo.eRepositoryItemStatus.Modified;
 
-                        if (localFilePath == item.FilePath)
+                        if (NormalizePath(localFilePath) == NormalizePath(item.FilePath))
                         {
-                            if (item.State == FileStatus.ModifiedInWorkdir || item.State == FileStatus.ModifiedInIndex)
-                                return SourceControlFileInfo.eRepositoryItemStatus.Modified;
-                            if (item.State == FileStatus.DeletedFromWorkdir)
-                                return SourceControlFileInfo.eRepositoryItemStatus.Deleted;
-                            if (item.State == FileStatus.Unaltered)
-                                return SourceControlFileInfo.eRepositoryItemStatus.Equel;
-                            if (item.State == FileStatus.NewInWorkdir)
-                                return SourceControlFileInfo.eRepositoryItemStatus.New;
+                            return GetItemStatus(item.State);
+                        }
+                        else if(NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(".xml"))
+                        {
+                            return GetItemStatus(item.State);
                         }
                     }
                 }
@@ -198,6 +195,33 @@ namespace GingerCore.SourceControl
             }
         }
 
+        private SourceControlFileInfo.eRepositoryItemStatus GetItemStatus(FileStatus state)
+        {
+            if (state == FileStatus.ModifiedInWorkdir || state == FileStatus.ModifiedInIndex)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Modified;
+            }
+            else if (state == FileStatus.DeletedFromWorkdir)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Deleted;
+            }
+            else if (state == FileStatus.Unaltered)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Equel;
+            }
+            else
+            {
+                //if state == FileStatus.NewInWorkdir
+                return SourceControlFileInfo.eRepositoryItemStatus.New;
+            }
+        }
+
+        private static string NormalizePath(string path)
+        {
+               return Path.GetFullPath(path)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
+        }
         public override string GetRepositoryURL(ref string error)
         {
             string remoteURL = string.Empty;
@@ -485,20 +509,29 @@ namespace GingerCore.SourceControl
             {
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
-                    string committishOrBranchSpec = "master";
-                    CheckoutOptions checkoutOptions = new CheckoutOptions();
-                    checkoutOptions.CheckoutModifiers = CheckoutModifiers.Force;
-                    checkoutOptions.CheckoutNotifyFlags = CheckoutNotifyFlags.Ignored;
-                    repo.CheckoutPaths(committishOrBranchSpec, new[] { path }, checkoutOptions);
+                    if (Path.GetFullPath(new Uri(RepositoryRootFolder).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant() ==
+                            Path.GetFullPath(new Uri(path).LocalPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).ToUpperInvariant())
+                    {
+                        //undo all changes
+                        repo.Reset(ResetMode.Hard);
+                    }
+                    else
+                    {
+                        //undo specific changes
+                        string committishOrBranchSpec = "master";
+                        CheckoutOptions checkoutOptions = new CheckoutOptions();
+                        checkoutOptions.CheckoutModifiers = CheckoutModifiers.Force;
+                        checkoutOptions.CheckoutNotifyFlags = CheckoutNotifyFlags.Ignored;
+                        repo.CheckoutPaths(committishOrBranchSpec, new[] { path }, checkoutOptions);
+                    }
                 }
             }
             catch (Exception e)
-            {
+            {                
                 error = e.Message + Environment.NewLine + e.InnerException;
                 return false;
             }
             return true;
-
         }
 
         public override bool TestConnection(ref string error)
@@ -615,10 +648,9 @@ namespace GingerCore.SourceControl
             using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
             {
                 PullOptions PullOptions = new PullOptions();
-                PullOptions.FetchOptions = new FetchOptions();
+                PullOptions.FetchOptions = new FetchOptions();                
                 PullOptions.FetchOptions.CredentialsProvider = new CredentialsHandler(
-                    (url, usernameFromUrl, types) => new UsernamePasswordCredentials() { Username = SourceControlUser, Password = SourceControlPass });
-                //return repo.Network.Pull(new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
+                    (url, usernameFromUrl, types) => new UsernamePasswordCredentials() { Username = SourceControlUser, Password = SourceControlPass });               
                 MergeResult mergeResult = Commands.Pull(repo, new Signature(SourceControlUser, SourceControlUser, new DateTimeOffset(DateTime.Now)), PullOptions);
                 return mergeResult;
             }
