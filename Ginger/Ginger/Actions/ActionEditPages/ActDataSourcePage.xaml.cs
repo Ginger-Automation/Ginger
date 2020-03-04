@@ -1205,7 +1205,7 @@ namespace Ginger.Actions
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAsDone")
                             {
-                                TBH.AddBoldText(".update GINGER_USED= \"True\" where");
+                                TBH.AddBoldText(".update GINGER_USED= \"True\"");
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
                             {
