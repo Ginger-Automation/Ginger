@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -180,18 +180,40 @@ namespace Ginger.SourceControl
         {
             string error = string.Empty;
             bool IsConflictResolved = true;
-            RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-
-            repositoryFolderBase.PauseFileWatcher();
-            if (!SourceControl.ResolveConflicts(path, side, ref error))
+            try
             {
-                IsConflictResolved = false;
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                if (path==null)
+                {
+                    return false;
+                }
+                RepositoryFolderBase repositoryFolderBase = null;
+                if (path != SourceControl.SolutionFolder)
+                {
+                    repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
+                    repositoryFolderBase.PauseFileWatcher();
+                }
+
+                if (!SourceControl.ResolveConflicts(path, side, ref error))
+                {
+                    IsConflictResolved = false;
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                    return IsConflictResolved;
+                }
+                if (repositoryFolderBase != null)
+                {
+                    repositoryFolderBase.ResumeFileWatcher();
+                    repositoryFolderBase.ReloadUpdatedXML(path);
+                }
+                
                 return IsConflictResolved;
             }
-            repositoryFolderBase.ResumeFileWatcher();
-            repositoryFolderBase.ReloadUpdatedXML(path);
-            return IsConflictResolved;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured during resolving conflicts..",ex);
+                return false;
+            }
+
+
         }
 
         public static void Lock(SourceControlBase SourceControl, string path, string lockComment)
