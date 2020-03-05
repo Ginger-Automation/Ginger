@@ -2038,17 +2038,16 @@ namespace Ginger.Run
         {
             Activity ac = activitytoView;
             GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity=ac }, General.eRIPageViewMode.View);
-            if (mContext.BusinessFlow.CurrentActivity == null)
-            {
-                mContext.BusinessFlow.CurrentActivity = ac;
-            }
+            mContext.BusinessFlow.CurrentActivity = activitytoView;
             w.ShowAsWindow();
         }
 
         public void viewAction(Act actiontoView)
         {
+            mContext.BusinessFlow.CurrentActivity = (Activity)(mCurrentActivityRunnerItem).ItemObject;
             Act act = actiontoView;
             ActionEditPage w = new ActionEditPage(act, General.eRIPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
+            
             w.ShowAsWindow();
         }
 
