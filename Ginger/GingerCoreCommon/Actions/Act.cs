@@ -683,16 +683,16 @@ namespace GingerCore.Actions
                 AIV = new ActInputValue();
                 // AIV.Active = true;
                 AIV.Param = Param;
+                InputValues.Add(AIV);
             }
             else
             {
                 //Remove duplicate ActInputValues from the InputValues
-                foreach (ActInputValue inputValue in InputValues.Where(aiv => aiv.Param == Param).ToList())
+                while (InputValues.Where(aiv => aiv.Param == Param).ToList().Count > 1)
                 {
-                    InputValues.Remove(inputValue);
+                    InputValues.Remove((from aiv in InputValues where aiv.Param == Param select aiv).LastOrDefault());
                 }
             }
-            InputValues.Add(AIV);
             AIV.Value = Value;
         }
 
