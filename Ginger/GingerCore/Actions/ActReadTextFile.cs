@@ -91,7 +91,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string TextToWrite
         {
             get
@@ -104,7 +103,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string TextFilePath
         {
             get

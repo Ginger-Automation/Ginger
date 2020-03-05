@@ -81,7 +81,6 @@ namespace GingerCore.Actions
             public static string ParamList = "ParamList";
         }
 
-        [IsSerializedForLocalRepository]
         public string DataFileName
         {
             get
@@ -95,7 +94,6 @@ namespace GingerCore.Actions
             }            
         }
              
-        [IsSerializedForLocalRepository]
         public string ParamName
         {
             get

@@ -85,7 +85,6 @@ namespace GingerCore.Actions
             
         }
 
-        [IsSerializedForLocalRepository]
         public string SaveToFileName
         {
             get

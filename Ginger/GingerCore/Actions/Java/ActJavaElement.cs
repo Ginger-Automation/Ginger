@@ -151,7 +151,6 @@ namespace GingerCore.Actions.Java
         public eWaitForIdle WaitforIdle { get; set; }        
         
         //TODO: ColomnNum should not be here
-        [IsSerializedForLocalRepository]
         public string ColomnNum
         {
             get
@@ -165,7 +164,6 @@ namespace GingerCore.Actions.Java
         }
 
         //TODO: RowNum should not be here
-        [IsSerializedForLocalRepository]
         public string RowNum
         {
             get

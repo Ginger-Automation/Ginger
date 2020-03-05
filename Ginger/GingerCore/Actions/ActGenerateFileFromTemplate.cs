@@ -82,7 +82,6 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string TemplateFileName { set; get; }
 
-        [IsSerializedForLocalRepository]
         public string OutputFileName
         {
             get

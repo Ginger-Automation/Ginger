@@ -97,7 +97,6 @@ namespace GingerCore.Actions
             public static string ColMappingRules = "ColMappingRules";
             public static string ExcelActionType = "ExcelActionType";
         }
-
         public string ExcelFileName
         {
             get
@@ -110,7 +109,6 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(ExcelFileName));
             }
         }
-
         public string SheetName
         {
             get
@@ -122,7 +120,6 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("SheetName", value);
             }
         }
-
         public string SelectRowsWhere
         {
             get
@@ -135,7 +132,6 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(SelectRowsWhere));
             }
         }
-
         public string PrimaryKeyColumn
         {
             get
@@ -148,7 +144,6 @@ namespace GingerCore.Actions
                 OnPropertyChanged(nameof(PrimaryKeyColumn));
             }
         }
-
         public string SetDataUsed
         {
             get
@@ -167,7 +162,6 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public bool SelectAllRows { set; get; }
-
         public string ColMappingRules
         {
             get

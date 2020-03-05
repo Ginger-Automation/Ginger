@@ -90,7 +90,18 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "SQL").ToList().Count);
         }
+        public void ExcelActInputValuesTest()
+        {
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "ActExcelInputValuesTest.Ginger.BusinessFlow.xml");
 
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "ExcelFileName").ToList().Count);
+        }
 
         //[Ignore]
         //[TestMethod]  [Timeout(60000)]
