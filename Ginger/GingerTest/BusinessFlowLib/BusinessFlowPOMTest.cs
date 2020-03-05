@@ -10,6 +10,7 @@ using System.IO;
 
 namespace GingerTest.BusinessFlowLib
 {
+    [Ignore]
     [TestClass]
     [Level3]
     public class BusinessFlowPOMTest
