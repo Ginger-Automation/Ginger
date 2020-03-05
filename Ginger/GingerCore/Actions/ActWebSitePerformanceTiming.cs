@@ -150,7 +150,6 @@ namespace GingerCore.Actions
         // TODO: make unique icon
         public override eImageType Image { get { return eImageType.ChartLine; } }
         
-        [IsSerializedForLocalRepository]
         public string CSVFileName
         {
             get
@@ -163,7 +162,6 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
         public string Detail
         {
             get

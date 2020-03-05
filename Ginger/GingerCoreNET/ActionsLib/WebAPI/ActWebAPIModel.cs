@@ -74,7 +74,6 @@ namespace GingerCore.Actions.WebServices.WebAPI
             TBH.AddText("In order to create API Model please navigate to 'Resources' tab then select 'Application Models' Sub Option then select 'API Models' Sub Option then right click on the 'Application API Models' folder and select one of the option to add API's manually or from a document.");
         }
 
-        [IsSerializedForLocalRepository]
         public Guid APImodelGUID
         {
             get
