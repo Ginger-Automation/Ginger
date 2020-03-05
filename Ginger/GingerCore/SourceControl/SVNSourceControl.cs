@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -262,21 +262,10 @@ namespace GingerCore.SourceControl
 
             try
             {
-                RepositoryFolderBase repositoryFolderBase = null;
-                if (WorkSpace.Instance.SolutionRepository != null)
-                {
-                    repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-                }
                 mConflictsPaths.Clear();
-                if (repositoryFolderBase != null)
-                {
-                    repositoryFolderBase.PauseFileWatcher();
-                }
+
                 client.Update(path, out result);
-                if (repositoryFolderBase != null)
-                {
-                    repositoryFolderBase.ResumeFileWatcher();
-                }
+
 
                 if (mConflictsPaths.Count > 0)
                 {

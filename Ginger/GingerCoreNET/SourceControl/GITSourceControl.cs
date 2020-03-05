@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -176,16 +176,13 @@ namespace GingerCore.SourceControl
                         if (item.FilePath.StartsWith(localFilePath) && item.FilePath != localFilePath)
                             return SourceControlFileInfo.eRepositoryItemStatus.Modified;
 
-                        if (localFilePath == item.FilePath)
+                        if (NormalizePath(localFilePath) == NormalizePath(item.FilePath))
                         {
-                            if (item.State == FileStatus.ModifiedInWorkdir || item.State == FileStatus.ModifiedInIndex)
-                                return SourceControlFileInfo.eRepositoryItemStatus.Modified;
-                            if (item.State == FileStatus.DeletedFromWorkdir)
-                                return SourceControlFileInfo.eRepositoryItemStatus.Deleted;
-                            if (item.State == FileStatus.Unaltered)
-                                return SourceControlFileInfo.eRepositoryItemStatus.Equel;
-                            if (item.State == FileStatus.NewInWorkdir)
-                                return SourceControlFileInfo.eRepositoryItemStatus.New;
+                            return GetItemStatus(item.State);
+                        }
+                        else if(NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(".xml"))
+                        {
+                            return GetItemStatus(item.State);
                         }
                     }
                 }
@@ -198,6 +195,33 @@ namespace GingerCore.SourceControl
             }
         }
 
+        private SourceControlFileInfo.eRepositoryItemStatus GetItemStatus(FileStatus state)
+        {
+            if (state == FileStatus.ModifiedInWorkdir || state == FileStatus.ModifiedInIndex)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Modified;
+            }
+            else if (state == FileStatus.DeletedFromWorkdir)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Deleted;
+            }
+            else if (state == FileStatus.Unaltered)
+            {
+                return SourceControlFileInfo.eRepositoryItemStatus.Equel;
+            }
+            else
+            {
+                //if state == FileStatus.NewInWorkdir
+                return SourceControlFileInfo.eRepositoryItemStatus.New;
+            }
+        }
+
+        private static string NormalizePath(string path)
+        {
+               return Path.GetFullPath(path)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
+        }
         public override string GetRepositoryURL(ref string error)
         {
             string remoteURL = string.Empty;
