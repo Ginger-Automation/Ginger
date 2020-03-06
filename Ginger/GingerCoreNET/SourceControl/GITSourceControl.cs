@@ -173,14 +173,14 @@ namespace GingerCore.SourceControl
 
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        if (item.FilePath.StartsWith(localFilePath) && item.FilePath != localFilePath)
+                        if (NormalizePath(item.FilePath).StartsWith(NormalizePath(localFilePath)) && item.State != FileStatus.NewInWorkdir)
                             return SourceControlFileInfo.eRepositoryItemStatus.Modified;
 
                         if (NormalizePath(localFilePath) == NormalizePath(item.FilePath))
                         {
                             return GetItemStatus(item.State);
                         }
-                        else if(NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(".xml"))
+                        else if (NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(".xml"))
                         {
                             return GetItemStatus(item.State);
                         }
