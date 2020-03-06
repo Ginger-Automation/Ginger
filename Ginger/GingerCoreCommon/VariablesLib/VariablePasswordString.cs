@@ -40,7 +40,18 @@ namespace GingerCore.Variables
         public string Password 
         {
             set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password));  OnPropertyChanged("Formula"); }
-            get { return mPassword; } 
+            get 
+            {
+                if (!string.IsNullOrEmpty(mPassword))
+                {
+                    return mPassword;
+                }
+                else if (!string.IsNullOrEmpty(Value))
+                {
+                    mPassword = Value;
+                }
+                return mPassword;
+            } 
         }
         
         public override string GetFormula()

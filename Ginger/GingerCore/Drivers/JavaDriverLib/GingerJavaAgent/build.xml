@@ -41,7 +41,7 @@
       <compilerarg value="-XDignore.symbol.file"/>
       <src path="agent"/>
       <!--Uncomment below part only on local eclipse to run test app. On the server it should be always commented-->
-     <src path="test"/> 
+     <!--<src path="test"/> -->
       <classpath refid="GingerJavaAgent.classpath"/>
     </javac>
   </target>
