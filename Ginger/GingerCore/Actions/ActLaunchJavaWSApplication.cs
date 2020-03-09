@@ -302,7 +302,7 @@ namespace GingerCore.Actions
 
         private int mProcessIDForAttach = -1;
 
-        private static readonly object syncLock = new object();
+        private static Mutex mutex = new Mutex(false, "JavaAgentAttachMutex");
 
         private AutoResetEvent mPortValueAutoResetEvent;
 
@@ -311,7 +311,7 @@ namespace GingerCore.Actions
         public override void Execute()
         {
             mJavaApplicationProcessID = -1;
-           
+
             //calculate the arguments
             if (!CalculateArguments()) return;
 
@@ -325,10 +325,28 @@ namespace GingerCore.Actions
 
             if (mLaunchWithAgent)
             {
-                //For Parallel execution, we want attach to be synchronized.
-                //So for windows with same title, correct process id will be calculated
-                lock (syncLock)
+                try
                 {
+                    //For Parallel execution (also between diffrent Ginger processes), we want attach to be synchronized.
+                    //So for windows with same title, correct process id will be calculated
+                    try
+                    {
+                        // acquire the mutex (or timeout), will return false if it timed out
+                        Reporter.ToLog(eLogLevel.DEBUG, "Attach Java Agent- Waiting for Mutex Release");
+                        if (!mutex.WaitOne(120000))//TODO: set timeout as mWaitForWindowTitleMaxTime_Calc?
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Timeout Reached");
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Attach Java Agent- Mutex was Released");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Threw Exception", ex); ;
+                    }
+
                     mAttachAgentCancellationToken = new CancellationTokenSource();
                     mAttachAgentTask = Task.Run(() =>
                        {
@@ -344,10 +362,12 @@ namespace GingerCore.Actions
                        }, mAttachAgentCancellationToken.Token);
 
                     mAttachAgentTask.Wait();
-
+                }
+                finally
+                {
+                    mutex.ReleaseMutex();
                 }
             }
-
 
             //Changing the existing param namefrom "Actual" to "Process ID", it Param "Actual" exist, to support Return params configured on old version
             ActReturnValue ARC = (from arc in ReturnValues where arc.Param == "Actual" select arc).FirstOrDefault();
@@ -363,11 +383,11 @@ namespace GingerCore.Actions
         public override void PostExecute()
         {
 
-            if (mAttachAgentTask != null && mAttachAgentTask.Status!= TaskStatus.RanToCompletion && !mAttachAgentTask.IsCanceled && !mAttachAgentTask.IsFaulted)
+            if (mAttachAgentTask != null && mAttachAgentTask.Status != TaskStatus.RanToCompletion && !mAttachAgentTask.IsCanceled && !mAttachAgentTask.IsFaulted)
             {
                 mAttachAgentCancellationToken.Cancel();
             }
-            
+
         }
 
 
@@ -385,7 +405,7 @@ namespace GingerCore.Actions
             if (portConfigType == ePortConfigType.Manual)
             {
                 mPort_Calc = CalculateValue(mPort);
-            }          
+            }
             else
             {
                 //If port calculation is auto detect then we initialize autoreset event for it
@@ -482,10 +502,10 @@ namespace GingerCore.Actions
                     }
 
                     ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
-                    if (portConfigType== ePortConfigType.Manual)
+                    if (portConfigType == ePortConfigType.Manual)
                     {
                         return ValidatePort();
-                    }                    
+                    }
                 }
 
                 return true;
@@ -509,7 +529,7 @@ namespace GingerCore.Actions
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception during parsing Port Value", ex);
                 return false;
@@ -650,7 +670,7 @@ namespace GingerCore.Actions
                 ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
                 if (portConfigType == ePortConfigType.AutoDetect)
                 {
-                    mPort_Calc = Fields.DynamicPortPlaceHolder;                  
+                    mPort_Calc = Fields.DynamicPortPlaceHolder;
                 }
 
                 //choosing executer
@@ -688,7 +708,7 @@ namespace GingerCore.Actions
             try
             {
                 Stopwatch sw = new Stopwatch();
-                sw.Start();                
+                sw.Start();
 
                 // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
                 if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
@@ -789,7 +809,7 @@ namespace GingerCore.Actions
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Task cancellation was requested during WaitForAppWindowTitle", ex);
             }
-          
+
             return bFound;
 
         }
@@ -875,13 +895,13 @@ namespace GingerCore.Actions
             try
             {
                 List<string> commnadConfigs = (List<string>)command;
-                if(commnadConfigs[1].Contains(Fields.DynamicPortPlaceHolder))
+                if (commnadConfigs[1].Contains(Fields.DynamicPortPlaceHolder))
                 {
                     mPort_Calc = SocketHelper.GetOpenPort().ToString();
                     mPortValueAutoResetEvent.Set();
-                    commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);                   
+                    commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);
                 }
-                
+
                 ExInfo += "Executing Command: " + commnadConfigs[0] + " " + commnadConfigs[1] + Environment.NewLine;
 
                 Process p = new Process();
@@ -965,7 +985,6 @@ namespace GingerCore.Actions
 
             return false;
         }
-
-
     }
 }
+
