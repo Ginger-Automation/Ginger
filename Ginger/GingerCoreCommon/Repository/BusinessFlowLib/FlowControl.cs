@@ -229,7 +229,7 @@ namespace GingerCore.FlowControlLib
         public eStatus Status { get { return mStatus; } set { mStatus = value; OnPropertyChanged(Fields.Status); } }
 
 
-        public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, Act act, ObservableList<DataSourceBase> DSList)
+        public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, Act act, Activity LastExecutedActivity, ObservableList<DataSourceBase> DSList)
         {
             if (Condition == null)
             {
@@ -267,8 +267,14 @@ namespace GingerCore.FlowControlLib
                     }
                 }
             }
-            VE.Value = VE.Value.Replace("{ActionStatus}", (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored ? Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed : act.Status).ToString());
-
+            if (VE.Value.Contains("{ActionStatus}"))
+            {
+                VE.Value = VE.Value.Replace("{ActionStatus}", (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.FailIgnored ? Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed : act.Status).ToString());
+            }
+            else if(VE.Value.Contains("{LastActivityStatus}"))
+            {
+                VE.Value = VE.Value.Replace("{LastActivityStatus}", LastExecutedActivity != null ? LastExecutedActivity.Status.ToString() : "Last executed Activity Status not available");
+            }
             ConditionCalculated = VE.ValueCalculated;
         }
 
