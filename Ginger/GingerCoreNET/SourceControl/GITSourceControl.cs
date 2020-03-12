@@ -412,7 +412,10 @@ namespace GingerCore.SourceControl
             {
                 if (System.IO.Path.GetExtension(path) != string.Empty && !System.IO.File.Exists(path.Replace(".xml", ".ignore")))
                 {
-                    System.IO.File.Copy(path, path.Replace(".xml",".conflictBackup"));
+                    if (!System.IO.File.Exists(path.Replace(".xml", ".conflictBackup")))
+                    {
+                        System.IO.File.Copy(path, path.Replace(".xml", ".conflictBackup"));
+                    }
                 }
 
                 string firstCommonResultText = string.Empty;
