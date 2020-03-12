@@ -88,6 +88,7 @@ namespace GingerCore.Actions
             public static string WaitForWindowWhenDoingLaunch = "WaitForWindowWhenDoingLaunch";   //flag to determine if to wait for java window with required title when launching java application
             public static string WaitForWindowTitle = "WaitForWindowTitle"; //the title of the Java application to wait for
             public static string WaitForWindowTitleMaxTime = "WaitForWindowTitleMaxTime";    //the max time in seconds to wait for the window to load
+            public static string AttachAgentProcessSyncTime = "AttachAgentProcessSyncTime";    //the max time in seconds to wait for the process holding the mutex
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
@@ -248,7 +249,7 @@ namespace GingerCore.Actions
 
         private string mWaitForWindowTitle = "Login";
         string mWaitForWindowTitle_Calc = string.Empty;
-        int mWaitForWindowTitleMaxTime_Calc_int = 0;
+        
         [IsSerializedForLocalRepository]
         public string WaitForWindowTitle //the title of the Java application to wait for
         {
@@ -263,6 +264,7 @@ namespace GingerCore.Actions
             }
         }
 
+        int mWaitForWindowTitleMaxTime_Calc_int = 60;
         string mWaitForWindowTitleMaxTime = "60";
         string mWaitForWindowTitleMaxTime_Calc = string.Empty;
         [IsSerializedForLocalRepository]
@@ -279,6 +281,22 @@ namespace GingerCore.Actions
             }
         }
 
+        private int mAttachAgentProcessSyncTime_Calc_int = 120;
+        private string mAttachAgentProcessSyncTime = "120";
+        private string mAttachAgentProcessSyncTime_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string AttachAgentProcessSyncTime //the max time in seconds to wait for the window to load
+        {
+            get
+            {
+                return mAttachAgentProcessSyncTime;
+            }
+            set
+            {
+                mAttachAgentProcessSyncTime = value;
+                OnPropertyChanged(Fields.AttachAgentProcessSyncTime);
+            }
+        }
 
         // ValueExpression mVE = null;
 
@@ -332,8 +350,8 @@ namespace GingerCore.Actions
                     try
                     {
                         // acquire the mutex (or timeout), will return false if it timed out
-                        Reporter.ToLog(eLogLevel.DEBUG, "Attach Java Agent- Waiting for Mutex Release");
-                        if (!mutex.WaitOne(120000))//TODO: set timeout as mWaitForWindowTitleMaxTime_Calc?
+                        Reporter.ToLog(eLogLevel.DEBUG, "Attach Java Agent- Waiting for Mutex Release");                      
+                        if (!mutex.WaitOne(mAttachAgentProcessSyncTime_Calc_int * 1000))
                         {
                             Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Timeout Reached");
                         }
@@ -442,7 +460,7 @@ namespace GingerCore.Actions
 
                 mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
-
+                mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
                 return true;
             }
             catch (Exception ex)
@@ -495,6 +513,12 @@ namespace GingerCore.Actions
 
                 if (mLaunchWithAgent == true)
                 {
+                    if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int) == false)
+                    {
+                        Error = "Process sync time for attach agent is not valid.";
+                        return false;
+                    }
+
                     if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar")) == false)
                     {
                         Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' &  'GingerAgentStarter.jar' files.";
@@ -506,6 +530,7 @@ namespace GingerCore.Actions
                     {
                         return ValidatePort();
                     }
+                   
                 }
 
                 return true;

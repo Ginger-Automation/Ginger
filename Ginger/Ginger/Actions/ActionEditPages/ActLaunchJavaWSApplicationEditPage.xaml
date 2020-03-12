@@ -87,53 +87,68 @@
         <StackPanel Grid.Row="3" Margin="0,20,0,0">
             <CheckBox x:Name="LaunchWithAgent"  Style="{StaticResource @CheckBoxStyle}" FontWeight="Bold" Checked="LaunchWithAgent_CheckedUnchecked" Unchecked="LaunchWithAgent_CheckedUnchecked" IsChecked="False">Attach Ginger Java Agent</CheckBox>
             <StackPanel x:Name="LaunchWithAgentArgsPnl"  Margin="20,7,0,0"  >
-
-                <GroupBox Header="Agent Path Configuration">
-                    <Grid Margin="20,10,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <RadioButton x:Name="GingerAgentFromGingerFolderRdb" GroupName="AgentPathGroup" Grid.Row="0" Content="Use Ginger Agent Default Location"></RadioButton>
-                        <StackPanel Grid.Row="1">
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="200*"/>
-                                    <ColumnDefinition Width="55"/>
-                                </Grid.ColumnDefinitions>
-                                <RadioButton x:Name="GingerAgentFromOtherRdb" GroupName="AgentPathGroup" Grid.Column="0" Content="Use Other: " VerticalAlignment="Center" Checked="GingerAgentFromOtherRdb_CheckedUnchecked" Unchecked="GingerAgentFromOtherRdb_CheckedUnchecked"></RadioButton>
-                                <Actions:UCValueExpression x:Name="AgentPathTextBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="False"/>
-                                <Button x:Name="BrowseAgentPath" Content="Browse" Grid.Column="2" Click="BrowseAgentPathButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" IsEnabled="False"/>
-                            </Grid>
-                        </StackPanel>
-                    </Grid>
-                </GroupBox>
-
-
                 <Grid Margin="0,10,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition/>
+                       
+                    </Grid.ColumnDefinitions>
 
-                    <GroupBox Header="Port Configuration">
-                        <Grid Margin="0,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="180"/>
-                                <ColumnDefinition Width="153*"/>
+                    <Label  Style="{StaticResource @InputFieldLabelStyle}" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" ToolTip="For Parallel execution sync time to ensure each runner/process will attach the agent to different window">Process Sync Time in (seconds):</Label>
+                    <Actions:UCValueExpression  Grid.Row="0" Grid.Column="1" x:Name="AttachAgentProcessSyncTime" Width="100" HorizontalAlignment="Left"/>
 
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel x:Name="RadioButtonPanel"  Grid.Column="0" >
-                                <UserControlsLib:UCRadioButtons x:Name="rbGroupPortConfig" ></UserControlsLib:UCRadioButtons>
+                    <GroupBox Header="Agent Path Configuration" Grid.Row="1" Margin="0,20,0,0" Grid.ColumnSpan="2">
+                        <Grid Margin="20,10,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <RadioButton x:Name="GingerAgentFromGingerFolderRdb" GroupName="AgentPathGroup" Grid.Row="0" Content="Use Ginger Agent Default Location"></RadioButton>
+                            <StackPanel Grid.Row="1">
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="200*"/>
+                                        <ColumnDefinition Width="55"/>
+                                    </Grid.ColumnDefinitions>
+                                    <RadioButton x:Name="GingerAgentFromOtherRdb" GroupName="AgentPathGroup" Grid.Column="0" Content="Use Other: " VerticalAlignment="Center" Checked="GingerAgentFromOtherRdb_CheckedUnchecked" Unchecked="GingerAgentFromOtherRdb_CheckedUnchecked"></RadioButton>
+                                    <Actions:UCValueExpression x:Name="AgentPathTextBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center"  IsEnabled="False"/>
+                                    <Button x:Name="BrowseAgentPath" Content="Browse" Grid.Column="2" Click="BrowseAgentPathButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" IsEnabled="False"/>
+                                </Grid>
                             </StackPanel>
-                            <Actions:UCValueExpression x:Name="JavaAgentPortTextBox"  Grid.Column="1"  Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-
                         </Grid>
                     </GroupBox>
 
-                    <CheckBox x:Name="ShowAgent"  Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource @CheckBoxStyle}" Margin="0,20,0,2" HorizontalAlignment="Left" VerticalAlignment="Center">Show Ginger Agent Console</CheckBox>
+                    <Grid Margin="0,10,0,0" Grid.Row="2" Grid.ColumnSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <GroupBox Header="Port Configuration">
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="180"/>
+                                    <ColumnDefinition Width="153*"/>
+
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel x:Name="RadioButtonPanel"  Grid.Column="0" >
+                                    <UserControlsLib:UCRadioButtons x:Name="rbGroupPortConfig" ></UserControlsLib:UCRadioButtons>
+                                </StackPanel>
+                                <Actions:UCValueExpression x:Name="JavaAgentPortTextBox"  Grid.Column="1"  Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                            </Grid>
+                        </GroupBox>
+
+                        <CheckBox x:Name="ShowAgent"  Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource @CheckBoxStyle}" Margin="0,20,0,2" HorizontalAlignment="Left" VerticalAlignment="Center">Show Ginger Agent Console</CheckBox>
+                    </Grid>
+
                 </Grid>
             </StackPanel>
         </StackPanel>
