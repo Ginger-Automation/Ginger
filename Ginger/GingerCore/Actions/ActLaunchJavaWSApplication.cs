@@ -350,14 +350,14 @@ namespace GingerCore.Actions
                     try
                     {
                         // acquire the mutex (or timeout), will return false if it timed out
-                        Reporter.ToLog(eLogLevel.DEBUG, "Attach Java Agent- Waiting for Mutex Release");                      
+                        Reporter.ToLog(eLogLevel.INFO, "Attach Java Agent- Waiting for Mutex Release");                      
                         if (!mutex.WaitOne(mAttachAgentProcessSyncTime_Calc_int * 1000))
                         {
                             Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Timeout Reached");
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Attach Java Agent- Mutex was Released");
+                            Reporter.ToLog(eLogLevel.INFO, "Attach Java Agent- Mutex was Released");
                         }
                     }
                     catch (Exception ex)
@@ -380,6 +380,16 @@ namespace GingerCore.Actions
                        }, mAttachAgentCancellationToken.Token);
 
                     mAttachAgentTask.Wait();
+                    //Wait Max 30 secs for Attach agent to attach the jar or process to exit
+                    Stopwatch st = new Stopwatch();
+                    st.Start();
+                    while (st.ElapsedMilliseconds < 30 * 1000)
+                    {
+                        if (IsInstrumentationModuleLoaded(mProcessIDForAttach))
+                        {
+                            break;
+                        }
+                    }
                 }
                 finally
                 {
@@ -995,17 +1005,20 @@ namespace GingerCore.Actions
                 int modulesCount = processModules.Count - 1;
                 // we start from end, because instrument dll is always loaded after rest of the modules are already loaded
                 //So we look for only last 5 modules
-                for (int i = modulesCount; i > modulesCount - 5; i--)
+                int maxProcessToCheck = modulesCount - 5 > 0 ? modulesCount - 5 : 0;
+                for (int i = modulesCount; i > maxProcessToCheck - 5; i--)
                 {
                     module = processModules[i];
 
                     if (module.ModuleName.Equals("instrument.dll"))
+                    {
                         return true;
+                    }
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsInstrumentationModuleLoaded", e);
+                Reporter.ToLog(eLogLevel.WARN, "Exception when checking IsInstrumentationModuleLoaded for process id:" + id, e);
             }
 
             return false;
