@@ -227,7 +227,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void AsyncDialogClickandDismiss()
@@ -262,7 +262,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, acceptdialogAction.Status, "Action Status");
             Assert.AreEqual(acceptdialogAction.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetDialogText()
@@ -316,7 +316,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actAcceptDialog.Status, "Action Status");
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void AcceptDialog()
@@ -345,7 +345,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actAcceptDialog.Status, "Action Status");
             Assert.AreEqual(actAcceptDialog.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void SelectComponentByXPathInDialog()
@@ -412,7 +412,7 @@ namespace UnitTests.UITests.JavaDriverTest
             PLSwitch.ClosePackage();
             RCSwitch = mDriver.Send(PLSwitch);
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void SelectComponentByNameIndexInDialog()
@@ -468,6 +468,7 @@ namespace UnitTests.UITests.JavaDriverTest
         /**
          * TreeNode Test Cases  
         */
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetValueTreeNode()
@@ -501,7 +502,7 @@ namespace UnitTests.UITests.JavaDriverTest
         }
 
 
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeWithSlash()
@@ -537,7 +538,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeNegativeTest()
@@ -588,7 +589,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
             Assert.IsTrue(actJavaElement.Error.Contains("Node: India was not found"), "Node not found validation");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeExactMatchTest()
@@ -628,7 +629,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual("Texas", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodePartialMatchTest()
@@ -674,7 +675,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual("Texas & Florida", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodePartialMatchScenarioTwoTest()
@@ -719,7 +720,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual("Florida", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodePartialMatchScenarioThreeTest()
@@ -764,7 +765,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual("Texa", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodePartialMatchScenarioFourTest()
@@ -809,7 +810,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual("Ontario", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodePartialMatchScenarioFiveTest()
@@ -855,7 +856,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
-        
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeSingleNodeValueTest()
@@ -891,7 +892,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual("US", response.GetListString().FirstOrDefault(), "Selected node value");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickChildTreeNodeSingleNodeValueTest()
@@ -938,7 +939,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void DoubleClickTreeNode()
@@ -961,7 +962,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(doubleClickAction.Error, null, "Act.Error");
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(180000)]
         public void ClickNotExistChildNodeValidationTest()
@@ -985,10 +986,11 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.IsTrue(actJavaElement.Error.Contains("Node: Ontario was not found under: [Root, US]"), "Node not found validation");
 
         }
-               
+
         /**
          * Menu Item Test Cases  
         */
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickMenu()
@@ -1056,7 +1058,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actDismissDialog.Status, "Action Status");
             Assert.AreEqual(actDismissDialog.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetButtonText()
@@ -1080,7 +1082,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Submit", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void IsButtonEnabled()
@@ -1103,7 +1105,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ToggleCheckBox()
@@ -1122,7 +1124,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void IfCheckboxChecked()
@@ -1138,7 +1140,7 @@ namespace UnitTests.UITests.JavaDriverTest
             //Assert
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetCheckBoxValue()
@@ -1159,7 +1161,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Works at Amdocs", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void IsCheckBoxEnabled()
@@ -1180,7 +1182,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void SelectRadioButton()
@@ -1198,7 +1200,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetRadioButtonValue()
@@ -1219,7 +1221,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "Bachelor", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void IsRadioButtonSelected()
@@ -1240,7 +1242,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void SelectComboBoxValue()
@@ -1259,7 +1261,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, a.Status, "Action Status");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetComboBoxSelectedValue()
@@ -1280,7 +1282,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "India", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void SetTabSelected()
@@ -1300,7 +1302,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actSelectTab.Status, "Action Status");
             Assert.AreEqual(actSelectTab.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetSelectedTabText()
@@ -1338,7 +1340,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.ActReturnValues.FirstOrDefault().Actual, "tab2", "ExInfo");
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ClickButton()
@@ -1361,7 +1363,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(a.Error, null, "Act.Error");
         }
 
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetSelectedInternalFrameTitle()
@@ -1385,7 +1387,7 @@ namespace UnitTests.UITests.JavaDriverTest
         #endregion
 
         #region Unit test for ActTableElement
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void SetValueInTableCell()
@@ -1435,7 +1437,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(ExInfo, "Text Field Value Set to - " + actTableElement.Value, "ExInfo");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActivateRowInTable()
@@ -1460,7 +1462,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, actTableElement.Status, "Action Status");
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetValueFromTable()
@@ -1486,7 +1488,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "2", "ExInfo");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetRowCountFromTable()
@@ -1512,7 +1514,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "4", "ExInfo");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void CheckIsCellVisibleInTable()
@@ -1538,7 +1540,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void CheckIsCellEnabledInTable()
@@ -1564,7 +1566,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void GetValueFromTableUsingWhereClause()
@@ -1595,7 +1597,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(actTableElement.Error, null, "Act.Error");
             Assert.AreEqual(actTableElement.ActReturnValues.FirstOrDefault().Actual, "1", "ExInfo");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void DoubleClickOnTableCell()
@@ -1631,6 +1633,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
 
         #region Unit test for ActUIElement
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ACtUIElementGetValue()
@@ -1654,7 +1657,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(action.ReturnValues.FirstOrDefault().Actual, "Sample", "ExInfo");
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ACtUIElementSetValue()
@@ -1680,7 +1683,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(true, IsExpectedExInfo);
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ACtUIElementIsEnabled()
@@ -1705,7 +1708,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(action.ReturnValues.FirstOrDefault().Actual, "true", "ExInfo");
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ACtUIElementButtonClick()
@@ -1729,7 +1732,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(true, IsExpectedExInfo);
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ACtUIElementSelectComboBoxValue()
@@ -1751,7 +1754,7 @@ namespace UnitTests.UITests.JavaDriverTest
         #endregion
 
         #region Unit Test For SwitchWindow
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActUISwitchWindowActionTest()
@@ -1772,7 +1775,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(eRunStatus.Passed, action.Status, "Action Status");
             Assert.AreEqual(action.Error, null, "Act.Error");
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActSwitchWindowActionWithNegativeSynTimeTest()
@@ -1793,7 +1796,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(action.Error, null, "Act.Error");
             Assert.AreEqual(30, action.WaitTime);
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActSwitchWindowActionWithSynTimeTest()
@@ -1814,7 +1817,7 @@ namespace UnitTests.UITests.JavaDriverTest
             Assert.AreEqual(action.Error, null, "Act.Error");
             Assert.AreEqual(90, action.WaitTime);
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActSwitchWindowActionWithNoSyncTimeTest()
@@ -1838,7 +1841,7 @@ namespace UnitTests.UITests.JavaDriverTest
         #endregion
 
         #region Unit Test For SmartSync Action
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActSmartSyncTest()
@@ -1865,6 +1868,7 @@ namespace UnitTests.UITests.JavaDriverTest
         #endregion
 
         #region Unit Test For ScreenShot Action
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActScreenShootAction()
@@ -1901,6 +1905,7 @@ namespace UnitTests.UITests.JavaDriverTest
         }
         #endregion
         #region Unit Test For ActWindow
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void ActWindowActionIsExistWindowTest()
