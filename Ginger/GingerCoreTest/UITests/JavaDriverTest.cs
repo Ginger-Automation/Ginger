@@ -38,7 +38,7 @@ using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
 {    
-    [Ignore]  // temp
+    //[Ignore]  // temp
     [TestClass]
     [Level3]
 
