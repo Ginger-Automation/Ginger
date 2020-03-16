@@ -35,6 +35,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace UnitTests.UITests.JavaDriverTest
 {    
@@ -79,12 +81,13 @@ namespace UnitTests.UITests.JavaDriverTest
                 mBF.Activities.Add(activity);
                 mBF.CurrentActivity = activity;
 
+                var port = GetOpenPort();
                 ActLaunchJavaWSApplication LJA = new ActLaunchJavaWSApplication();
                 LJA.LaunchJavaApplication = true;
                 LJA.LaunchWithAgent = true;
                 LJA.WaitForWindowTitle = "Java Swing";
                 LJA.AddOrUpdateInputParamValue(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString());
-                LJA.Port = "9898";
+                LJA.Port = port;
                 LJA.URL = TestResources.GetTestResourcesFile(@"JavaTestApp\JavaTestApp.jar");
                 activity.Acts.Add(LJA);
                 mGR.PrepActionValueExpression(LJA);
@@ -97,7 +100,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
                 mDriver = new JavaDriver(mBF);
                 mDriver.JavaAgentHost = "127.0.0.1";
-                mDriver.JavaAgentPort = 9898;
+                mDriver.JavaAgentPort = Convert.ToInt32(port);
                 mDriver.CommandTimeout = 120;
                 mDriver.cancelAgentLoading = false;
                 mDriver.DriverLoadWaitingTime = 30;
@@ -131,6 +134,27 @@ namespace UnitTests.UITests.JavaDriverTest
                     throw new Exception("Error cannot start Java driver - " + RC.GetValueString());
                 }
             }
+        }
+
+        private static string GetOpenPort()
+        {
+            int PortStartIndex = 1000;
+            int PortEndIndex = 2000;
+            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
+
+            List<int> usedPorts = tcpEndPoints.Select(p => p.Port).ToList<int>();
+            int unusedPort = 0;
+
+            for (int port = PortStartIndex; port < PortEndIndex; port++)
+            {
+                if (!usedPorts.Contains(port))
+                {
+                    unusedPort = port;
+                    break;
+                }
+            }
+            return unusedPort.ToString();
         }
 
         [ClassCleanup()]
