@@ -174,7 +174,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy);
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy,eLocateBy.NA);
             }
             set
             {
@@ -204,7 +204,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction, eControlAction.GotoURL.ToString());
+                return GetOrCreateInputParam<eControlAction>(Fields.ControlAction, eControlAction.GotoURL);
             }
             set
             {

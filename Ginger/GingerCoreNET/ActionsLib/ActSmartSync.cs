@@ -88,7 +88,7 @@ namespace GingerCore.Actions
 
         public eSmartSyncAction SmartSyncAction
         {
-            get { return GetOrCreateInputParam<eSmartSyncAction>(Fields.SmartSyncAction); }
+            get { return GetOrCreateInputParam<eSmartSyncAction>(Fields.SmartSyncAction,eSmartSyncAction.WaitUntilDisplay); }
             set
             {
                 GetOrCreateInputParam(Fields.SmartSyncAction).Value = value.ToString();

@@ -182,7 +182,7 @@ namespace GingerCore.Actions
                 // Avoid creating new LcoateBy if this action doesn't need it
                 if (this.ObjectLocatorConfigsNeeded)
                 {
-                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy, eLocateBy.NA);
                 }
                 else
                 {
@@ -715,10 +715,10 @@ namespace GingerCore.Actions
             return AIV;
         }
 
-        public TEnum GetOrCreateInputParam<TEnum>(string Param, string DefaultValue = null) where TEnum : struct
+        public TEnum GetOrCreateInputParam<TEnum>(string Param, TEnum DefaultValue) where TEnum : struct
         {
 
-            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
+            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue.ToString());
 
             TEnum result;
        _ = Enum.TryParse<TEnum>(AIV.Value, out result);

@@ -535,7 +535,7 @@ namespace GingerCore.Actions.Common
        
         public eElementType ElementType
         {
-            get { return GetOrCreateInputParam<eElementType>(Fields.ElementType); }
+            get { return GetOrCreateInputParam<eElementType>(Fields.ElementType, eElementType.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.ElementType).Value = value.ToString();
@@ -549,7 +549,7 @@ namespace GingerCore.Actions.Common
 
         public eElementAction ElementAction
         {
-            get { return GetOrCreateInputParam<eElementAction>(Fields.ElementAction); }
+            get { return GetOrCreateInputParam<eElementAction>(Fields.ElementAction, eElementAction.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.ElementAction).Value = value.ToString();
@@ -562,7 +562,7 @@ namespace GingerCore.Actions.Common
  
         public eLocateBy ElementLocateBy
         {
-            get { return GetOrCreateInputParam<eLocateBy>(Fields.ElementLocateBy); }
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.ElementLocateBy,eLocateBy.NA); }
             set
             {
                 GetOrCreateInputParam(Fields.ElementLocateBy).Value = value.ToString();
@@ -575,7 +575,7 @@ namespace GingerCore.Actions.Common
      
         public eLocateBy TargetLocateBy
         {
-            get { return GetOrCreateInputParam<eLocateBy>(Fields.TargetLocateBy); }
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.TargetLocateBy,eLocateBy.NA); }
             set
             {
                 GetOrCreateInputParam(Fields.TargetLocateBy).Value = value.ToString();
@@ -587,7 +587,7 @@ namespace GingerCore.Actions.Common
 
         public eElementType TargetElementType
         {
-            get { return GetOrCreateInputParam<eElementType>(Fields.TargetElementType); }
+            get { return GetOrCreateInputParam<eElementType>(Fields.TargetElementType,eElementType.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.TargetElementType).Value = value.ToString();
@@ -599,7 +599,7 @@ namespace GingerCore.Actions.Common
       
         public eElementType HandleElementType
         {
-            get { return GetOrCreateInputParam<eElementType>(Fields.HandleElementType); }
+            get { return GetOrCreateInputParam<eElementType>(Fields.HandleElementType,eElementType.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.HandleElementType).Value = value.ToString();
@@ -611,7 +611,7 @@ namespace GingerCore.Actions.Common
   
         public eElementAction HandleActionType
         {
-            get { return GetOrCreateInputParam<eElementAction>(Fields.HandleActionType); }
+            get { return GetOrCreateInputParam<eElementAction>(Fields.HandleActionType,eElementAction.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.HandleActionType).Value = value.ToString();
