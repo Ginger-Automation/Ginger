@@ -81,26 +81,22 @@ namespace GingerCoreNET.RosLynLib
                 string Evalresult = exp;
                 try
                 {
-//TODO: Improve this and cache
-                    System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
-                    Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
-
-               object Result=     CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result;
-                    //c# generate True/False for bool.tostring which fails in subsequent expressions 
-                    if(Result.GetType()==typeof(Boolean))
-                    {
-                        Evalresult = Result.ToString().ToLower();
-                    }
-                    else
-                    {
-                        Evalresult = Result.ToString();
-                    }
+                    Evalresult = EvaluateExpressionCode(exp);
                 }
 
                 catch (Exception e)
                 {
                     Console.Write(e.Message);
+                    //if actual string contains double quotes inside it
+                    var splitFunReg = Evalresult.Split('.');
+                    if (splitFunReg[0].Split('\"').Length > 3)
+                    {
+                        var newExpression = "@" + "\"" + splitFunReg[0].Replace("\"", "").Trim().Split('@')[1] + "\"" + "." + splitFunReg[1];
+                        Evalresult = EvaluateExpressionCode(newExpression);
+                    }
                 }
+
+
                 Expression = Expression.Replace(match, Evalresult);
             }
 
@@ -108,6 +104,26 @@ namespace GingerCoreNET.RosLynLib
 
         }
 
+        private static string EvaluateExpressionCode(string exp)
+        {
+            //TODO: Improve this and cache
+            string Evalresult;
+            System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
+            Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
+
+            object Result = CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result;
+            //c# generate True/False for bool.tostring which fails in subsequent expressions 
+            if (Result.GetType() == typeof(Boolean))
+            {
+                Evalresult = Result.ToString().ToLower();
+            }
+            else
+            {
+                Evalresult = Result.ToString();
+            }
+
+            return Evalresult;
+        }
 
         public static bool EvalCondition(string condition)
         {
