@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ namespace Ginger.Actions.ActionConversion
                 mWizard.ConvertableTargetApplications = GetTargetApplication(); 
             }
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Taret Application" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ConvertableTargetApplicationDetails.SourceTargetApplicationName), WidthWeight = 15, ReadOnly = true, Header = "Source - Target Application" });
             view.GridColsView.Add(new GridColView()
             {
                 Field = nameof(ConvertableTargetApplicationDetails.TargetTargetApplicationName),

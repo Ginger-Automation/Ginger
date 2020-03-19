@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -1183,13 +1183,23 @@ namespace Ginger.Run.RunSetActions
                 else
                 {
                     fieldsNamesHTMLTableCellsm.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField.FieldName + "</td>");
-                    if (((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)) == null)
+                    if (selectedField.FieldKey == RunSetReport.Fields.EnvironmentsDetails)
                     {
-                        fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'> N/A </td>");
+                        StringBuilder environmentNames_str2 = new StringBuilder();
+                        ((RunSetReport)RI.ReportInfoRootObject).GingerReports.Where(x => x.EnvironmentName != null && x.EnvironmentName != string.Empty).GroupBy(q => q.EnvironmentName).Select(q => q.First()).ToList().ForEach(x => environmentNames_str2.Append(x.EnvironmentName + ", "));
+                        fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + environmentNames_str2.ToString().TrimEnd(',', ' ') + "</td>");
+                        environmentNames_str2.Remove(0, environmentNames_str2.Length);
                     }
                     else
                     {
-                        fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
+                        if (((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)) == null)
+                        {
+                            fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'> N/A </td>");
+                        }
+                        else
+                        {
+                            fieldsValuesHTMLTableCellsm.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + Ginger.Reports.GingerExecutionReport.ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
+                        }
                     }
                 }
             }
