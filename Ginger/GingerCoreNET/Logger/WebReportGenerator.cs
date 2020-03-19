@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     filterData = dbManager.FilterCollection(result, Query.All());
                 lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
                 response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);
             }
             catch (Exception ex)
@@ -215,12 +215,14 @@ namespace Amdocs.Ginger.CoreNET.Logger
                         }
                     }
                 }
+                liteDbRunner.RunStatus = liteDbRunner.SetStatus(liteDbRunner.BusinessFlowsColl);
             }
 
             if (runSetEnv.Count > 0)
             {
                 liteDbRunSet.Environment = string.Join(",", runSetEnv);
             }
+            liteDbRunSet.RunStatus = liteDbRunSet.SetStatus(liteDbRunSet.RunnersColl);
         }
         private string CalculateExecutionOrPassRate(int firstItem, int secondItem)
         {

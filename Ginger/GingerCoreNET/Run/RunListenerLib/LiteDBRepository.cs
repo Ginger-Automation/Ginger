@@ -208,7 +208,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 liteDbBFList.RemoveRange(0, context.Runner.BusinessFlows.Count);
             }
-            if (lastBfStatus == eRunStatus.Stopped && context.BusinessFlow.RunStatus != eRunStatus.Stopped)
+            if (lastBfStatus == eRunStatus.Stopped)
             {
                 BFR._id = lastBfObjId;
                 ClearSeq();
@@ -397,7 +397,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus = (eRunStatus)Enum.Parse(typeof(eRunStatus), runSet.RunStatus);
 
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
-            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
+            if (runSetReport.RunSetExecutionStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+            {
+                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
+            }
             ClearSeq();
         }
         private void SetRunSetChildCounts(LiteDbRunSet runSet)
