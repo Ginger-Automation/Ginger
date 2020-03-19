@@ -214,6 +214,9 @@
     <Content Include="TestResources\Script\ScriptWithoutOutput.vbs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Solutions\BasicSimple\BusinessFlows\ActExcelInputValuesTest.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\Solutions\BasicSimple\BusinessFlows\ConditionVal.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
