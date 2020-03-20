@@ -182,7 +182,10 @@ namespace GingerCore.Environments
             get
             {
                 VE.Value = TNS;
-                return mVE.ValueCalculated;
+                mVE.DecryptFlag = true;
+                string valueCalculated = mVE.ValueCalculated;
+                mVE.DecryptFlag = false;
+                return valueCalculated;
             }
         }
 
@@ -198,7 +201,10 @@ namespace GingerCore.Environments
             get
             {
                 VE.Value = User;
-                return mVE.ValueCalculated;
+                mVE.DecryptFlag = true;
+                string valueCalculated = mVE.ValueCalculated;
+                mVE.DecryptFlag = false;
+                return valueCalculated;
             }
         }
 
@@ -210,7 +216,10 @@ namespace GingerCore.Environments
             get
             {
                 VE.Value = Pass;
-                return mVE.ValueCalculated;
+                mVE.DecryptFlag = true;
+                string valueCalculated = mVE.ValueCalculated;
+                mVE.DecryptFlag = false;
+                return valueCalculated;
             }
         }
 
@@ -255,61 +264,57 @@ namespace GingerCore.Environments
             bool res;
             res = false;
 
-            if (String.IsNullOrEmpty(ConnectionStringCalculated) == false)
+            if (String.IsNullOrEmpty(ConnectionStringCalculated))
             {
-                connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
-     
-                String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-                if (res == true)
-                    { connStr = connStr.Replace("{PASS}", deCryptValue); }
-                else
-                    { connStr = connStr.Replace("{PASS}", PassCalculated); }
+                connStr = CreateConnectionString();
             }
+            connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
+            String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
+            if (res == true)
+            { connStr = connStr.Replace("{PASS}", deCryptValue); }
             else
-            {
-                String strConnString = TNSCalculated;
-                String strProvider;
-                connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
-
-                String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-                //ConnectionString = connStr + "Password=" + Pass + ";";
-                if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
-                else { connStr = connStr + "Password=" + PassCalculated + ";"; }
-
-                if (DBType == eDBTypes.MSAccess)
-                {
-                    if (strConnString.Contains(".accdb")) strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-                    else strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
-
-                    connStr = strProvider + connStr;
-                }
-                else if (DBType == eDBTypes.DB2)
-                {
-                    connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + "PWD=" + deCryptValue;
-                }
-                else if (DBType == eDBTypes.PostgreSQL)
-                {
-                    string[] host = TNSCalculated.Split(':');
-                    if (host.Length == 2)
-                    {
-                        connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], UserCalculated, deCryptValue, Name);
-                    }
-                    else
-                    {
-                        //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                        connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNSCalculated, UserCalculated, deCryptValue, Name);
-                    }
-                }
-                else if (DBType == eDBTypes.MySQL)
-                {
-                    connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + ";PWD=" + deCryptValue;
-                }
-                
-            }
-            ConnectionString = connStr;
+            { connStr = connStr.Replace("{PASS}", PassCalculated); }
+            
             return connStr;
         }
 
+        public string CreateConnectionString()
+        {
+            String strProvider;
+            ConnectionString = "Data Source=" + TNS + ";User Id={USER};Password={PASS};";
+
+            if (DBType == eDBTypes.MSAccess)
+            {
+                if (TNSCalculated.Contains(".accdb")) strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
+                else strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
+
+                ConnectionString = strProvider + ConnectionString;
+            }
+            else if (DBType == eDBTypes.DB2)
+            {
+                ConnectionString = "Server=" + TNS + ";Database=" + Name + ";UID={USER};PWD={PASS}";
+            }
+            else if (DBType == eDBTypes.PostgreSQL)
+            {
+                string[] host = TNSCalculated.Split(':');
+                if (host.Length == 2)
+                {
+                    ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
+
+                }
+                else
+                {
+                    //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
+                    ConnectionString = "Server=" + TNS + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
+
+                }
+            }
+            else if (DBType == eDBTypes.MySQL)
+            {
+                ConnectionString = "Server=" + TNS + ";Database=" + Name + ";UID={USER};PWD={PASS}";
+            }
+            return ConnectionStringCalculated;
+        }
         //private CancellationTokenSource CTS = null;
         private DateTime LastConnectionUsedTime;
 

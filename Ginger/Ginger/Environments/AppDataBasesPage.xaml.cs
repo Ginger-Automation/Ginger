@@ -244,13 +244,17 @@ namespace Ginger.Environments
 
         private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            Database db = (Database)sender;
             if (e.PropertyName == Database.Fields.TNS)
             {
-                Database db = (Database)sender;
                 if (db.CheckUserCredentialsInTNS())
                 {
                     db.SplitUserIdPassFromTNS();
                 }
+            }
+            if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+            {
+                db.CreateConnectionString();
             }
         }
 
