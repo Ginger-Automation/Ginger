@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -2082,24 +2082,8 @@ namespace Ginger.Run
                         continue;
                     }
                     
-                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
-                   
-                    //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
-
-                    if (FC.ConditionCalculated.Contains("{LastActivityStatus}"))
-                    {
-                        if (mLastExecutedActivity != null)
-                        {
-                            FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", mLastExecutedActivity.Status.ToString());
-                        }
-                        else
-                        {
-                            FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", "Last executed Activity Status not available");
-                        }
-                    }
+                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, mLastExecutedActivity, this.DSList);
                     FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
-
-                
 
                     bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,CurrentBusinessFlow, FC.Operator,FC.ConditionCalculated);
                  

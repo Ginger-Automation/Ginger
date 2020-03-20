@@ -135,6 +135,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
+        public bool Revert(string path, SourceControlBase SourceControl)
+        {
+            throw new NotImplementedException();
+        }
+
         public SourceControlBase GetNewSVnRepo()
         {
             throw new NotImplementedException();
