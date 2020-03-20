@@ -397,15 +397,6 @@ namespace GingerCore
                             Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
                             p = "";
                         }
-                        else if (sAct == "AR") // Add Row
-                        {
-                            //need to get columns based on table type
-                            string sColList = "GINGER_ID,";
-                            int rowCount = DataSource.GetRowCount(DSTable);
-                            string sColVals = "'" + (rowCount + 1) + "',";
-                            updateQuery = DataSource.UpdateDSReturnValues(DSTable, sColList, sColVals);
-                            p = "";
-                        }
                         else if (sAct == "ETE") // Export to Excel
                         {
                             Query = "";

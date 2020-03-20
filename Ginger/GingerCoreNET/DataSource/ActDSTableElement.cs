@@ -63,6 +63,8 @@ namespace GingerCore.Actions
                 return "Data Source Manipulation";
             }
         }
+        public DataSourceTable DSTable = null;
+
         public override void Execute()
         {
             DataSourceBase DataSource = null;
@@ -80,6 +82,17 @@ namespace GingerCore.Actions
                     DataSource = ds;
                 }
             }
+            ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
+            foreach (DataSourceTable dst in dstTables)
+            {
+                if (dst.Name == DSTableName)
+                {
+                    DSTable = dst;
+                    DSTable.DataTable = dst.DSC.GetTable(DSTableName);
+                    break;
+                }
+            }
+
             if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
@@ -143,6 +156,12 @@ namespace GingerCore.Actions
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             Error = outVal;
                         }
+                        break;
+                    case eControlAction.AddRow:
+                        List<string> mColumnNames = DataSource.GetColumnList(DSTableName);
+                        DataSource.AddRow(mColumnNames, DSTable);
+                        DataSource.SaveTable(DSTable.DataTable);
+                        AddOrUpdateReturnParamActual("Output", "Success");
                         break;
                     default:
                         ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);

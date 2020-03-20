@@ -1133,22 +1133,9 @@ namespace GingerCoreNET.DataSource
                     break;
 
                 case eControlAction.AddRow:
-                    int rowCount = GetRowCount(actDSTable.DSTableName);
-                    string insertQuery = "";
-                    if (actDSTable.IsKeyValueTable)
-                    {
-                        string sColList = "GINGER_ID,";
-                        string sColVals = "" + (rowCount + 1) + ",";
-                        insertQuery = UpdateDSReturnValues(actDSTable.DSTableName, sColList, sColVals);
-                    }
-                    else
-                    {
-                        string sColList = "GINGER_ID,GINGER_USED,";
-                        string sColVals = "" + (rowCount + 1) + ", 'False',";
-                        insertQuery = UpdateDSReturnValues(actDSTable.DSTableName, sColList, sColVals);
-                    }
-                    
-                    RunQuery(insertQuery);
+                    List<string> mColumnNames = GetColumnList(actDSTable.DSTableName);
+                    AddRow(mColumnNames, actDSTable.DSTable);
+                    SaveTable(actDSTable.DSTable.DataTable);
                     actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     break;
                 default:
