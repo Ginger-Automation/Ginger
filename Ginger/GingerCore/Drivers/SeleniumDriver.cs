@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -5108,8 +5108,8 @@ namespace GingerCore.Drivers
                 var v = ((IJavaScriptExecutor)Driver).ExecuteScript(script3, null);
             }
             catch (OpenQA.Selenium.WebDriverException e)
-            {                
-                StopRecordingIfAgentClosed();
+            {
+                StopRecordingIfAgentClosed(e.Message);
             }
             catch (Exception ex)
             {
@@ -5412,7 +5412,7 @@ namespace GingerCore.Drivers
                     }
                     catch (OpenQA.Selenium.WebDriverException e)
                     {                        
-                        StopRecordingIfAgentClosed();
+                        StopRecordingIfAgentClosed(e.Message);
                     }
                     catch (Exception e)
                     {
@@ -5493,11 +5493,16 @@ namespace GingerCore.Drivers
         /// <summary>
         /// This method is used to stop recording if the agent is not reachable
         /// </summary>
-        private void StopRecordingIfAgentClosed()
+        private void StopRecordingIfAgentClosed(string errorDetails)
         {
+            if (this.IsRunning())
+            {
+                return;
+            }
             IsRecording = false;
             RecordingEventArgs args = new RecordingEventArgs();
             args.EventType = eRecordingEvent.StopRecording;
+            args.EventArgs = errorDetails;
             OnRecordingEvent(args);
         }
 
