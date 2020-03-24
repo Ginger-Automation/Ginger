@@ -115,7 +115,17 @@ namespace GingerCore.Actions
 
             if (!Directory.Exists(DirectoryPath))
             {
-                Directory.CreateDirectory(DirectoryPath);
+                try
+                {
+                    Directory.CreateDirectory(DirectoryPath);
+                }
+                catch (Exception ex)
+                {
+                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = "Invalid Folder Path.";
+                    throw ex;
+                }
+                
             }
 
             String FileName = "";
