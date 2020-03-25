@@ -100,8 +100,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="ALMRestClient">
-      <HintPath>..\GingerCore\DLLs\ALMRestClient.dll</HintPath>
+    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\ALMRestClient.dll</HintPath>
     </Reference>
     <Reference Include="ALM_Common, Version=7.9.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -210,9 +211,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
     </Reference>
+    <Reference Include="QTestAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\QTestAPI.dll</HintPath>
+    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SharpAdbClient, Version=2.2.0.0, Culture=neutral, PublicKeyToken=d728076f5d82a2e8, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
@@ -483,6 +489,15 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
+      <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\Qtest\QtestImportReviewPage.xaml.cs">
+      <DependentUpon>QtestImportReviewPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestSuiteTreeItem.cs" />
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestCycleTreeItem.cs" />
+    <Compile Include="ALM\Repository\QtestRepository.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ApiConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
@@ -2677,6 +2692,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\Qtest\QtestImportReviewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

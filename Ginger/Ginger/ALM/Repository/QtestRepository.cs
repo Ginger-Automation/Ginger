@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GingerCore.ALM.QC;
+using Ginger.ALM.Qtest;
 using System.Windows;
 using System.IO;
 using GingerCore.Platforms;
@@ -35,12 +36,12 @@ using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.ALM.Qtest;
+using Ginger.ALM.Qtest.TreeViewItems;
 
 namespace Ginger.ALM.Repository
 {
-    public enum eQCItemType { TestCase, TestSet, Defect }
-
-    class QCRepository : ALMRepository
+    class QtestRepository : ALMRepository
     {
         Test matchingTC = null;
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
@@ -106,75 +107,62 @@ namespace Ginger.ALM.Repository
 
         #endregion General
 
-        #region Import From QC
+        #region Import From Qtest
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
+            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from Qtest");
             //set path to import to               
             if (importDestinationFolderPath == "")
                 importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
 
             //show Test Lab browser for selecting the Test Set/s to import
-            QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
+            QtestCyclesExplorerPage win = new QtestCyclesExplorerPage(importDestinationFolderPath);
             win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
 
-        public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTestSets)
+        public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTestSuites)
         {
-            if (selectedTestSets != null && selectedTestSets.Count() > 0)
+            if (selectedTestSuites != null && selectedTestSuites.Count() > 0)
             {
-                ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();                
-                foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
+                ObservableList<QtestSuiteTreeItem> testSuitesItemsToImport = new ObservableList<QtestSuiteTreeItem>();                
+                foreach (QtestSuiteTreeItem testSuiteItem in selectedTestSuites)
                 {
                     //check if some of the Test Set was already imported                
-                    if (testSetItem.AlreadyImported == true)
+                    if (testSuiteItem.AlreadyImported == true)
                     {
-                        Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
+                        Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSuiteItem.Name);
                         if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                         {
                             //Delete the mapped BF
-                            File.Delete(testSetItem.MappedBusinessFlow.FileName);                            
-                            testSetsItemsToImport.Add(testSetItem);
+                            File.Delete(testSuiteItem.MappedBusinessFlow.FileName);
+                            testSuitesItemsToImport.Add(testSuiteItem);
                         }
                     }
                     else
                     {
-                        testSetsItemsToImport.Add(testSetItem);
+                        testSuitesItemsToImport.Add(testSuiteItem);
                     }
                 }
 
-                if (testSetsItemsToImport.Count == 0) return false; //noting to import
+                if (testSuitesItemsToImport.Count == 0) return false; //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();               
                 ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
-                foreach (QCTestSetTreeItem testSetItemtoImport in testSetsItemsToImport)
+                foreach (QtestSuiteTreeItem testSetItemtoImport in testSuitesItemsToImport)
                 {
                     try
                     {
-                        //import test set data
-                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.TestSetName);
-                        QCTestSet TS = new QCTestSet();
-                        TS.TestSetID = testSetItemtoImport.TestSetID;
-                        TS.TestSetName = testSetItemtoImport.TestSetName;
-                        TS.TestSetPath = testSetItemtoImport.Path;
-                        TS = ((QCCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, testSetItemtoImport.Name);
+                        QtestTestSuite TS = new QtestTestSuite();
+                        TS.ID = testSetItemtoImport.ID;
+                        TS.Name = testSetItemtoImport.Name;
+                        TS = ((QtestCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(TS);
 
                         //convert test set into BF
-                        BusinessFlow tsBusFlow = ((QCCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
+                        BusinessFlow tsBusFlow = ((QtestCore)ALMIntegration.Instance.AlmCore).ConvertQCTestSetToBF(TS);
 
-                        //Set BF/Activities target application
-                        //if ( WorkSpace.Instance.Solution.MainApplication != null)
-                        //{
-                        //    if (tsBusFlow.TargetApplications.Count == 0)
-                        //    {
-                        //        tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName =  WorkSpace.Instance.Solution.MainApplication });
-                        //        if (tsBusFlow.TargetApplications.Count > 0)
-                        //            foreach (Activity activ in tsBusFlow.Activities)
-                        //                activ.TargetApplication = tsBusFlow.TargetApplications[0].AppName;
-                        //    }
-                        //}
                         if ( WorkSpace.Instance.Solution.MainApplication != null)
                         {
                             //add the applications mapped to the Activities
@@ -208,7 +196,7 @@ namespace Ginger.ALM.Repository
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testSetItemtoImport.Name, ex.Message);
                         Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
                     }
                 }

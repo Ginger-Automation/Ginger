@@ -100,8 +100,12 @@ namespace Ginger.ALM
                 PasswordTextBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
                 ALMProjectDetailsPanel.Visibility = Visibility.Visible;
-                if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM)
+                if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM ||
+                    (ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.Qtest)
+                {
                     ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
+                    LoginServerButton.Content = "Get Projects Details";
+                }
                 else ALMDomainSelectionPanel.Visibility = Visibility.Visible;
             }
             else
@@ -253,15 +257,17 @@ namespace Ginger.ALM
             if (ALMIntegration.Instance.TestALMServerConn(almConectStyle))
             {
                 string currSelectedDomain = (string)DomainComboBox.SelectedItem;
-                if (string.IsNullOrEmpty(currSelectedDomain))
+                if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.Qtest)
                 {
-                    if (string.IsNullOrEmpty( WorkSpace.Instance.Solution.ALMDomain))
-                        return;
+                    if (string.IsNullOrEmpty(currSelectedDomain))
+                    {
+                        if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.ALMDomain))
+                            return;
 
-                    currSelectedDomain =  WorkSpace.Instance.Solution.ALMDomain;
-                    DomainComboBox.SelectedItem = currSelectedDomain;
+                        currSelectedDomain = WorkSpace.Instance.Solution.ALMDomain;
+                        DomainComboBox.SelectedItem = currSelectedDomain;
+                    }
                 }
-
                 Dictionary<string,string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
 
                 KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(WorkSpace.Instance.Solution.ALMProjectKey, WorkSpace.Instance.Solution.ALMProject);
@@ -353,7 +359,6 @@ namespace Ginger.ALM
             switch ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType)
             {
                 case ALMIntegration.eALMType.QC:
-                    QCRadioButton.IsChecked = true;
                     QCRadioButton.FontWeight = FontWeights.ExtraBold;
                     QCRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
@@ -373,18 +378,16 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     RQMRadioButton.FontWeight = FontWeights.Regular;
                     RQMRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.IsChecked = false;
                     RallyRadioButton.FontWeight = FontWeights.Regular;
-                    RallyRadioButton.Foreground = Brushes.Black;
-                    RallyRadioButton.IsChecked = false;                    
+                    RallyRadioButton.Foreground = Brushes.Black;                  
                     RestAPICheckBox.Visibility = Visibility.Visible;
-                    JiraRadioButton.IsChecked = false;
                     JiraRadioButton.FontWeight = FontWeights.Regular;
                     JiraRadioButton.Foreground = Brushes.Black;
+                    qTestRadioButton.FontWeight = FontWeights.Regular;
+                    qTestRadioButton.Foreground = Brushes.Black;
                     break;
 
                 case ALMIntegration.eALMType.RQM:
-                    RQMRadioButton.IsChecked = true;
                     RQMRadioButton.FontWeight = FontWeights.ExtraBold;
                     RQMRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
@@ -396,17 +399,15 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = Cursors.Arrow;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
-                    QCRadioButton.IsChecked = false;
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
-                    RallyRadioButton.IsChecked = false;
                     RestAPICheckBox.Visibility = Visibility.Hidden;
-                    JiraRadioButton.IsChecked = false;
                     JiraRadioButton.FontWeight = FontWeights.Regular;
                     JiraRadioButton.Foreground = Brushes.Black;
+                    qTestRadioButton.FontWeight = FontWeights.Regular;
+                    qTestRadioButton.Foreground = Brushes.Black;
                     break;
                 case ALMIntegration.eALMType.RALLY:
-                    RallyRadioButton.IsChecked = true;
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
                     RallyRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
@@ -426,17 +427,15 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
-                    QCRadioButton.IsChecked = false;
                     RQMRadioButton.FontWeight = FontWeights.Regular;
                     RQMRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.IsChecked = false;
                     RestAPICheckBox.Visibility = Visibility.Hidden;
-                    JiraRadioButton.IsChecked = false;
                     JiraRadioButton.FontWeight = FontWeights.Regular;
                     JiraRadioButton.Foreground = Brushes.Black;
+                    qTestRadioButton.FontWeight = FontWeights.Regular;
+                    qTestRadioButton.Foreground = Brushes.Black;
                     break;
                 case ALMIntegration.eALMType.Jira:
-                    JiraRadioButton.IsChecked = true;
                     JiraRadioButton.FontWeight = FontWeights.ExtraBold;
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
@@ -456,12 +455,37 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
-                    QCRadioButton.IsChecked = false;
                     RQMRadioButton.FontWeight = FontWeights.Regular;
                     RQMRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.IsChecked = false;
                     RestAPICheckBox.Visibility = Visibility.Hidden;
-                    RallyRadioButton.IsChecked = false;
+                    RallyRadioButton.FontWeight = FontWeights.Regular;
+                    RallyRadioButton.Foreground = Brushes.Black;
+                    qTestRadioButton.FontWeight = FontWeights.Regular;
+                    qTestRadioButton.Foreground = Brushes.Black;
+                    break;
+                case ALMIntegration.eALMType.Qtest:
+                    qTestRadioButton.FontWeight = FontWeights.ExtraBold;
+                    qTestRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    Grid.SetColumnSpan(ServerURLTextBox, 2);
+                    ExampleURLHint.Content = "Example: https://qtest-stage.t-mobile.com/ ";
+                    if (!isServerDetailsCorrect)
+                    {
+                        ServerURLTextBox.IsEnabled = true;
+                        ServerURLTextBox.IsReadOnly = false;
+                    }
+                    else
+                    {
+                        ServerURLTextBox.IsEnabled = false;
+                        ServerURLTextBox.IsReadOnly = true;
+                    }
+                    ServerURLTextBox.Cursor = null;
+                    QCRadioButton.FontWeight = FontWeights.Regular;
+                    QCRadioButton.Foreground = Brushes.Black;
+                    RQMRadioButton.FontWeight = FontWeights.Regular;
+                    RQMRadioButton.Foreground = Brushes.Black;
+                    RestAPICheckBox.Visibility = Visibility.Hidden;
                     RallyRadioButton.FontWeight = FontWeights.Regular;
                     RallyRadioButton.Foreground = Brushes.Black;
                     break;
@@ -528,6 +552,13 @@ namespace Ginger.ALM
                         if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.Jira)
                         {
                             WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
+                            ClearALMConfigs();
+                        }
+                        break;
+                    case "qTestRadioButton":
+                        if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.Qtest)
+                        {
+                            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
                             ClearALMConfigs();
                         }
                         break;

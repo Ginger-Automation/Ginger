@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 /*
 Copyright © 2014-2019 European Support Limited
 
@@ -17,26 +17,16 @@ limitations under the License.
 #endregion
 
 
-namespace GingerCoreNET.ALMLib
+namespace GingerCore.ALM.Qtest
 {
-    public class ALMIntegration
+    public class QtestTestParameter
     {
-        //ERROR Commented not the location - each ALM need to say what type it is 
-        public enum eALMType
-        {
-            QC = 1,
-            RQM = 2,
-            RALLY = 3,
-            Jira = 4,
-            Qtest = 5
-        }
+        //parameter Name
+        public string Name { get; set; }
+        //Actual Value or check Default value if Actual is null
+        public string Value { get; set; }
 
-        public enum eALMConnectType
-        {
-            Silence,
-            Manual,
-            Auto,
-            SettingsPage
-        }
+        //TODO not sure if this is needed yet will determine during testing. 
+        public string Type { get; set; }
     }
 }

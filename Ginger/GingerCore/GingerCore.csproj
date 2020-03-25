@@ -76,9 +76,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRestClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\ALMRestClient.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\ALMRestClient.dll</HintPath>
     </Reference>
     <Reference Include="ALM_Common, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -243,14 +243,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\QCRestClient.dll</HintPath>
     </Reference>
+    <Reference Include="QTestAPI">
+      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\QTestAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Rally.RestApi, Version=3.3.1.0, Culture=neutral, PublicKeyToken=09c9d263d3ce713f, processorArchitecture=MSIL">
       <HintPath>..\packages\Rally.RestApi.3.3.1\lib\net45\Rally.RestApi.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
-    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\RestSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="RQMExport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -591,6 +595,9 @@
     <Compile Include="ALM\JIRA\JiraTest.cs" />
     <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
     <Compile Include="ALM\JIRA\JiraTestStep.cs" />
+    <Compile Include="ALM\QtestCore.cs" />
+    <Compile Include="ALM\Qtest\ExportToQtest.cs" />
+    <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -605,6 +612,12 @@
     <Compile Include="ALM\QC\QCTSTestParameter.cs" />
     <Compile Include="ALM\QC\QCTSTestRun.cs" />
     <Compile Include="ALM\QC\QCTSTestStep.cs" />
+    <Compile Include="ALM\Qtest\QtestTestRun.cs" />
+    <Compile Include="ALM\Qtest\QtestTestSuite.cs" />
+    <Compile Include="ALM\Qtest\QtestTest.cs" />
+    <Compile Include="ALM\Qtest\QtestTestParameter.cs" />
+    <Compile Include="ALM\Qtest\QtestTestStep.cs" />
+    <Compile Include="ALM\Qtest\QtestConnect.cs" />
     <Compile Include="ALM\RallyCore.cs" />
     <Compile Include="ALM\Rally\ImportFromRally.cs" />
     <Compile Include="ALM\Rally\RallyConnect.cs" />
@@ -834,6 +847,7 @@
     <Content Include="DLLs\QCRestClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="DLLs\RestSharp.dll" />
     <Content Include="DLLs\RQMExport.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

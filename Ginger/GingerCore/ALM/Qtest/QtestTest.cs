@@ -18,14 +18,14 @@ limitations under the License.
 
 using System.Collections.Generic;
 
-namespace GingerCore.ALM.QC
+namespace GingerCore.ALM.Qtest
 {
-    public class QCTSTest
+    public class QtestTest
     {
-        public QCTSTest()
+        public QtestTest()
         {
-            this.Parameters = new List<QCTSTestParameter>();
-            this.Steps = new List<QCTSTestStep>();
+            this.Parameters = new List<QtestTestParameter>();
+            this.Steps = new List<QtestTestStep>();
         }
 
         public string TestName { get; set; }
@@ -33,8 +33,8 @@ namespace GingerCore.ALM.QC
         public string LinkedTestID { get; set; }
         public string Description { get; set; }
         //Called Test Parameters
-        public List<QCTSTestParameter> Parameters { get; set; }
-        public List<QCTSTestStep> Steps { get; set; }
-        public List<QCTSTestRun> Runs { get; set; }
+        public List<QtestTestParameter> Parameters { get; set; }  
+        public List<QtestTestStep> Steps { get; set; } 
+        public List<QtestTestRun> Runs { get; set; } 
     }
 }

@@ -78,6 +78,10 @@ namespace Ginger.ALM
                     AlmCore = new JiraCore();
                     AlmRepo = new JIRA_Repository(AlmCore);
                     break;
+                case eALMType.Qtest:
+                    AlmCore = new QtestCore();
+                    AlmRepo = new QtestRepository();
+                    break;
             }
             if(firstSync)
                 SetALMCoreConfigurations();
@@ -126,7 +130,8 @@ namespace Ginger.ALM
             QC = 1,
             RQM = 2,
             RALLY = 3,
-            Jira = 4
+            Jira = 4,
+            Qtest = 5
         }
 
         public enum eALMConnectType

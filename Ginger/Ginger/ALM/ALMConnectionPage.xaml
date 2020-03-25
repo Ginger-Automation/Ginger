@@ -24,7 +24,8 @@
                             <RadioButton x:Name="QCRadioButton" Content="QC" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="0" IsChecked="True" Margin="5,0,0,0"></RadioButton>
                             <RadioButton x:Name="RQMRadioButton" Content="RQM" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="1" Margin="15,0,0,0"></RadioButton>
                             <RadioButton x:Name="JiraRadioButton" Content="JIRA" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="2" Margin="15,0,0,0"></RadioButton>
-                            <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="3" Margin="15,0,0,0"></RadioButton>
+                            <RadioButton x:Name="qTestRadioButton" Content="Qtest" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="3" Margin="15,0,0,0"></RadioButton>
+                            <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="4" Margin="15,0,0,0"></RadioButton>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
