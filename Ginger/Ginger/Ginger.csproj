@@ -492,9 +492,6 @@
     <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
       <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ALM\Qtest\QtestImportReviewPage.xaml.cs">
-      <DependentUpon>QtestImportReviewPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ALM\Qtest\TreeViewItems\QtestSuiteTreeItem.cs" />
     <Compile Include="ALM\Qtest\TreeViewItems\QtestCycleTreeItem.cs" />
     <Compile Include="ALM\Repository\QtestRepository.cs" />
@@ -2696,10 +2693,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ALM\Qtest\QtestImportReviewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
