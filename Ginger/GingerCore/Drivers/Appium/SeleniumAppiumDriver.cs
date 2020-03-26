@@ -45,7 +45,14 @@ namespace GingerCore.Drivers.Appium
     {
         public override bool IsSTAThread()
         {
-            return true;
+            if (LoadGingerDeviceWindow != null && LoadGingerDeviceWindow.Trim().ToUpper() == "YES")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public enum eDeviceType
@@ -97,11 +104,11 @@ namespace GingerCore.Drivers.Appium
         public Boolean StartAppiumServerAutomatically { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDescription("The device Unique identifier")]
+        [UserConfiguredDescription("The device unique identifier")]
         public String DeviceID { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDescription("Set the name which is associated with the device")]
+        [UserConfiguredDescription("The name which is associated with the device")]
         public String DeviceName { get; set; }
 
         [UserConfigured]
@@ -138,10 +145,6 @@ namespace GingerCore.Drivers.Appium
         public String AutomationName { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDescription("Set to 'true' or 'false', determine if to auto accept alerts appearing on the device screen. Keep empty to use default")]
-        public String AutoAcceptAlerts { get; set; }
-
-        [UserConfigured]
         [UserConfiguredDefault("Yes")]
         [UserConfiguredDescription("Set to 'Yes' or 'No', determine if the Ginger device window will be loaded with the Agent")]
         public String LoadGingerDeviceWindow { get; set; }
@@ -152,12 +155,12 @@ namespace GingerCore.Drivers.Appium
         public String RefreshDeviceScreenShots { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("10")]
-        [UserConfiguredDescription("Implicit Wait for Appium Action Completion")]
-        public int ImplicitWait { get; set; }
+        [UserConfiguredDefault("120")]
+        [UserConfiguredDescription("How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session")]
+        public int NewCommandTimeout { get; set; }
 
-        private static TimeSpan INIT_TIMEOUT_SEC = TimeSpan.FromSeconds(90);
-        private static TimeSpan SERVER_TIMEOUT_SEC = TimeSpan.FromSeconds(600);
+        //private static TimeSpan INIT_TIMEOUT_SEC = TimeSpan.FromSeconds(90);
+        //private static TimeSpan SERVER_TIMEOUT_SEC = TimeSpan.FromSeconds(600);
         
         private AppiumDriver<AppiumWebElement> Driver;//appium on top selenium
         private SeleniumDriver mSeleniumDriver;//selenium base
@@ -269,32 +272,39 @@ namespace GingerCore.Drivers.Appium
                     DriverDeviceType = eDeviceType.Phone;
                 }
 
-                //Setting capabilities
+                //set timeout
+                if (NewCommandTimeout < 0)
+                {
+                    NewCommandTimeout = 120;
+                }
+                TimeSpan commandTimeoutAsTimeSpan = TimeSpan.FromSeconds(NewCommandTimeout);
+                
+                //Setting capabilities                                
                 DriverOptions driverOptions = this.GetCapabilities();
 
                 //creating driver
                 switch (DriverPlatformType)
                 {
                     case eSeleniumPlatformType.Android:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
                         break;
                     case eSeleniumPlatformType.iOS:
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
                         break;
                     case eSeleniumPlatformType.AndroidBrowser:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
                         Driver.Navigate().GoToUrl("http://www.google.com");
                         break;
                     case eSeleniumPlatformType.iOSBrowser:
                         //TODO: start ios-web-proxy automatically
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, INIT_TIMEOUT_SEC);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
                         break;
                 }
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                if (ImplicitWait == 0)
-                {
-                    ImplicitWait = 10;
-                }
+                //if (ImplicitWait == 0)
+                //{
+                //    ImplicitWait = 10;
+                //}
                 //Driver.Manage().Timeouts().ImplicitWait=TimeSpan.FromSeconds((int)ImplicitWait);
 
                 return true;
@@ -547,14 +557,10 @@ namespace GingerCore.Drivers.Appium
 
             //Generic capabilities
             //driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
-            driverOptions.AddAdditionalCapability("newCommandTimeout", INIT_TIMEOUT_SEC.TotalSeconds);            
+            driverOptions.AddAdditionalCapability("newCommandTimeout", NewCommandTimeout.ToString());            
             if (string.IsNullOrEmpty(AutomationName) == false)
             {
                 driverOptions.AddAdditionalCapability("automationName", AutomationName);
-            }
-            if (string.IsNullOrEmpty(AutoAcceptAlerts) == false)
-            {
-                driverOptions.AddAdditionalCapability("autoAcceptAlerts", AutoAcceptAlerts);
             }
 
             //User customized capabilities
