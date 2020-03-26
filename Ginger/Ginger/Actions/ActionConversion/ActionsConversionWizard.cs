@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -86,11 +86,11 @@ namespace Ginger.Actions.ActionConversion
 
             if (ConversionType == eActionConversionType.MultipleBusinessFlow)
             {
-                AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(mListOfBusinessFlow, Context));
+                AddPage(Name: "Select Business Flow's for Conversion", Title: "Select " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "'s for Conversion", SubTitle: "Select " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "'s for Conversion", Page: new SelectBusinessFlowWzardPage(mListOfBusinessFlow, Context));
             }
             else if (ConversionType == eActionConversionType.SingleBusinessFlow)
             {
-                AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
+                AddPage(Name: "Select Activities for Conversion", Title: "Select " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " for Conversion", SubTitle: "Select " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " for Conversion", Page: new SelectActivityWzardPage());
             }
 
             AddPage(Name: "Select Legacy Actions Type for Conversion", Title: "Select Legacy Actions Type for Conversion", SubTitle: "Select Legacy Actions Type for Conversion", Page: new SelectActionWzardPage());

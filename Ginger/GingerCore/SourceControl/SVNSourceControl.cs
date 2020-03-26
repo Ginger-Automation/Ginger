@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -259,14 +259,13 @@ namespace GingerCore.SourceControl
         {
             if (client == null) Init();
             SvnUpdateResult result;
-           
+
             try
             {
-                RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
                 mConflictsPaths.Clear();
-                repositoryFolderBase.PauseFileWatcher();
+
                 client.Update(path, out result);
-                repositoryFolderBase.ResumeFileWatcher();
+
 
                 if (mConflictsPaths.Count > 0)
                 {
@@ -277,7 +276,7 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.DEBUG, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKey.UpdateToRevision, result.Revision);
                 }
@@ -288,7 +287,6 @@ namespace GingerCore.SourceControl
                     else
                         Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
-
             }
             catch (Exception ex)
             {
