@@ -1026,7 +1026,7 @@ namespace Ginger.Actions
                         mActDSTblElem.IsKeyValueTable = true;
                         if (ControlActionComboBox.SelectedValue != null)
                         {
-                            if (ControlActionComboBox.SelectedValue.ToString() == "GetValue")
+                            if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.GetValue.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
@@ -1038,7 +1038,7 @@ namespace Ginger.Actions
                                 }
                             }
 
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.SetValue.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
@@ -1049,7 +1049,7 @@ namespace Ginger.Actions
                                     TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.Value + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
                                 }
                             }
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteRow.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
@@ -1061,7 +1061,7 @@ namespace Ginger.Actions
                                 }
 
                             }
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString())
                             {
                                 TBH.AddBoldText(".count");
                                 TBH.AddText("}");
@@ -1069,7 +1069,7 @@ namespace Ginger.Actions
 
                                 return;
                             }
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "AddRow")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AddRow.ToString())
                             {
                                 TBH.AddBoldText(".insert");
                                 TBH.AddText("}");

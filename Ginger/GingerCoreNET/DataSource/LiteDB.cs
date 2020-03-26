@@ -1133,10 +1133,25 @@ namespace GingerCoreNET.DataSource
                     break;
 
                 case eControlAction.AddRow:
+                    DataSourceTable DSTable = null;
+                    ObservableList<DataSourceTable> dstTables = GetTablesList();
+                    foreach (DataSourceTable dst in dstTables)
+                    {
+                        if (dst.Name == actDSTable.DSTableName)
+                        {
+                            DSTable = dst;
+                            DSTable.DataTable = dst.DSC.GetTable(actDSTable.DSTableName);
+                            break;
+                        }
+                    }
                     List<string> mColumnNames = GetColumnList(actDSTable.DSTableName);
-                    AddRow(mColumnNames, actDSTable.DSTable);
-                    SaveTable(actDSTable.DSTable.DataTable);
-                    actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
+                    AddRow(mColumnNames, DSTable);
+                    SaveTable(DSTable.DataTable);
+                    //Get GingerId
+                    dt = GetTable(actDSTable.DSTableName);
+                    DataRow dr = dt.Rows[dt.Rows.Count-1];
+                    string GingerId = Convert.ToString(dr["GINGER_ID"]);
+                    actDSTable.AddOrUpdateReturnParamActual("Output", GingerId);
                     break;
                 default:
 

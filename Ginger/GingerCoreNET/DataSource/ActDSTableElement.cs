@@ -63,7 +63,6 @@ namespace GingerCore.Actions
                 return "Data Source Manipulation";
             }
         }
-        public DataSourceTable DSTable = null;
 
         public override void Execute()
         {
@@ -82,26 +81,12 @@ namespace GingerCore.Actions
                     DataSource = ds;
                 }
             }
-            ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
-            foreach (DataSourceTable dst in dstTables)
-            {
-                if (dst.Name == DSTableName)
-                {
-                    DSTable = dst;
-                    DSTable.DataTable = dst.DSC.GetTable(DSTableName);
-                    break;
-                }
-            }
-
             if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
                 string Query  = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 liteDB.Execute(this, Query);
-              
-
-                
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
@@ -158,10 +143,26 @@ namespace GingerCore.Actions
                         }
                         break;
                     case eControlAction.AddRow:
+                        DataSourceTable DSTable = null;
+                        ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
+                        foreach (DataSourceTable dst in dstTables)
+                        {
+                            if (dst.Name == DSTableName)
+                            {
+                                DSTable = dst;
+                                DSTable.DataTable = dst.DSC.GetTable(DSTableName);
+                                break;
+                            }
+                        }
                         List<string> mColumnNames = DataSource.GetColumnList(DSTableName);
                         DataSource.AddRow(mColumnNames, DSTable);
                         DataSource.SaveTable(DSTable.DataTable);
-                        AddOrUpdateReturnParamActual("Output", "Success");
+                        //Get GingerId
+                        DataTable dt = DataSource.GetTable(DSTableName);
+                        DataRow row = dt.Rows[dt.Rows.Count - 1];
+                        string GingerId = Convert.ToString(row["GINGER_ID"]);
+                        AddOrUpdateReturnParamActual("Output", GingerId);
+
                         break;
                     default:
                         ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
