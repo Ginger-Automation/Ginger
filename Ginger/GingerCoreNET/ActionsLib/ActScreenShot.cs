@@ -122,7 +122,7 @@ namespace GingerCore.Actions
                 catch (Exception ex)
                 {
                     this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = "Invalid Folder Path.";
+                    Error = string.Concat("Invalid Folder Path. :",DirectoryPath);
                     throw ex;
                 }
                 
