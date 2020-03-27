@@ -166,11 +166,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = ConnectionString;
-                mVE.DecryptFlag = true;
-                string valueCalculated = mVE.ValueCalculated;
-                mVE.DecryptFlag = false;
-                return valueCalculated;
+                return GetCalculatedWithDecryptTrue(ConnectionString);
             }
         }
 
@@ -181,11 +177,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = TNS;
-                mVE.DecryptFlag = true;
-                string valueCalculated = mVE.ValueCalculated;
-                mVE.DecryptFlag = false;
-                return valueCalculated;
+                return GetCalculatedWithDecryptTrue(TNS);
             }
         }
 
@@ -200,11 +192,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = User;
-                mVE.DecryptFlag = true;
-                string valueCalculated = mVE.ValueCalculated;
-                mVE.DecryptFlag = false;
-                return valueCalculated;
+                return GetCalculatedWithDecryptTrue(User);
             }
         }
 
@@ -215,11 +203,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = Pass;
-                mVE.DecryptFlag = true;
-                string valueCalculated = mVE.ValueCalculated;
-                mVE.DecryptFlag = false;
-                return valueCalculated;
+                return GetCalculatedWithDecryptTrue(Pass);
             }
         }
 
@@ -237,7 +221,14 @@ namespace GingerCore.Environments
         }
 
         public string NameBeforeEdit;
-
+        public string GetCalculatedWithDecryptTrue(string value)
+        {
+            VE.Value = value;
+            mVE.DecryptFlag = true;
+            string valueCalculated = mVE.ValueCalculated;
+            mVE.DecryptFlag = false;
+            return valueCalculated;
+        }
         public bool CheckUserCredentialsInTNS()
         {
             if (!string.IsNullOrEmpty(TNSCalculated) && TNSCalculated.ToLower().Contains("data source=") && TNSCalculated.ToLower().Contains("password=") && TNSCalculated.ToLower().Contains("user id="))
@@ -280,14 +271,21 @@ namespace GingerCore.Environments
 
         public string CreateConnectionString()
         {
-            String strProvider;
+            //Default ConnectionString format
             ConnectionString = "Data Source=" + TNS + ";User Id={USER};Password={PASS};";
 
+            //Change ConnectionString according to DBType
             if (DBType == eDBTypes.MSAccess)
             {
-                if (TNSCalculated.Contains(".accdb")) strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-                else strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
-
+                string strProvider;
+                if (TNSCalculated.Contains(".accdb"))
+                {
+                    strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
+                }
+                else
+                {
+                    strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
+                }
                 ConnectionString = strProvider + ConnectionString;
             }
             else if (DBType == eDBTypes.DB2)
@@ -300,13 +298,11 @@ namespace GingerCore.Environments
                 if (host.Length == 2)
                 {
                     ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
-
                 }
                 else
                 {
                     //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
                     ConnectionString = "Server=" + TNS + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
-
                 }
             }
             else if (DBType == eDBTypes.MySQL)
