@@ -17,17 +17,23 @@ limitations under the License.
 #endregion
 
 
+using System;
 using System.IO;
 
 namespace Amdocs.Ginger.CoreNET.WorkSpaceLib
 {
     public class ReportsInfo
     {
+        private static string mEmailReportTempFolder = null;
         public string EmailReportTempFolder
         {
             get
             {
-                return Path.Combine(Path.GetDirectoryName(Path.GetTempFileName()), "Ginger_Email_Reports");
+                if (mEmailReportTempFolder == null)
+                {
+                    mEmailReportTempFolder = Path.Combine(Path.GetDirectoryName(Path.GetTempFileName()), string.Format("Ginger_Email_Reports_{0}", DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss-fff")));
+                }
+                return mEmailReportTempFolder;
             }
         }
     }
