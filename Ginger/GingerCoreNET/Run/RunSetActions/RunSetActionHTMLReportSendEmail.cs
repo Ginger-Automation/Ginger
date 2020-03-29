@@ -491,7 +491,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch(Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.WARN, "Failed to delete the eMail Report Temp Folder", ex);
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to delete the eMail Report Temp Folder '{0}', Error: '{1}'", tempFolder, ex.Message));
                     }
                 }
             }
