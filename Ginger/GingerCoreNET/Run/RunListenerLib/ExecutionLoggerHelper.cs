@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Clean Execution Logger Folder", ex);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean Execution Logger Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
         }
 
