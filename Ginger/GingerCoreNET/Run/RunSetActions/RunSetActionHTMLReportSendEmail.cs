@@ -491,7 +491,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch(Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to delete the eMail Report Temp Folder '{0}', Error: '{1}'", tempFolder, ex.Message));
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to delete the eMail Report Temp Folder '{0}', Issue: '{1}'", tempFolder, ex.Message));
                     }
                 }
             }
@@ -1859,7 +1859,7 @@ namespace Ginger.Run.RunSetActions
                     }
                     catch (Exception ex)
                     {
-                        ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmss") + ".zip";
+                        ZipFileName = Path.GetFileNameWithoutExtension(FileName) + DateTime.Now.ToString("MMddyyyy_HHmmssfff") + ".zip";
                         ZipFile.CreateFromDirectory(FileName, Path.Combine(tempFolder, ZipFileName));
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }
