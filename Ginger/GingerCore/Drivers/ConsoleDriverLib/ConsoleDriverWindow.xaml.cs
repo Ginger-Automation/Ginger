@@ -165,7 +165,6 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             RunCommand();
 
             string rc = mConsoleBuffer.ToString();
-            rc = Regex.Replace(rc, "[\0\a\b\f\t]", "");
             string GingerRCStart = "~~~GINGER_RC_START~~~";
             string GingerRCEnd = "~~~GINGER_RC_END~~~";
           

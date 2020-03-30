@@ -207,7 +207,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             StringBuilder reply = new StringBuilder();
             ss.Flush();
-            StreamReader sreader = new StreamReader(ss);
+            StreamReader sreader = new StreamReader(ss, Encoding.UTF8);
             sreader.ReadToEnd();
             if (command != "\u0003\n")
             {
@@ -253,7 +253,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     if (!this.IsDriverRunning)
                         break;
 
-                    reply.AppendLine(sreader.ReadToEnd());                    
+                    reply.AppendLine(sreader.ReadToEnd());   
                     Thread.Sleep(1000);
                     if (regExp.Matches(reply.ToString()).Count > 0)
                     {
