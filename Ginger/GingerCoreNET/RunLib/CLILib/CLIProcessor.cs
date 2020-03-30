@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             if (result != 0)
             {
-                Reporter.ToConsole(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
+                Reporter.ToLog(eLogLevel.ERROR, "Error(s) occurred process exit code (" + result + ")");
                 Environment.ExitCode = 1; // error
             }            
         }
@@ -101,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleExampleOptions(ExampleOptions exampleOptions)
         {
-            Reporter.ToConsole(eLogLevel.DEBUG, "Running example options");
+            Reporter.ToLog(eLogLevel.DEBUG, "Running example options");
 
             switch (exampleOptions.verb)
             {
@@ -112,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     ShowExamples();
                     break;
                 default:
-                    Reporter.ToConsole(eLogLevel.ERROR, "Unknown verb '" + exampleOptions.verb + "' ");
+                    Reporter.ToLog(eLogLevel.ERROR, "Unknown verb '" + exampleOptions.verb + "' ");
                     return 1;                    
             }
             
@@ -157,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             sb.Append("Example #3: ");
             sb.Append(CreateExample(solutionWithSpaces, "Default Run Set", "UAT"));
 
-            Reporter.ToConsole(eLogLevel.INFO, sb.ToString());
+            Reporter.ToLog(eLogLevel.INFO, sb.ToString());
         }
 
         private string CreateExample(string solution, string runset, string env = null)
@@ -233,38 +233,68 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         private int HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
         {
-            SetVerboseLevel(verboseLevel);
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running with " + fileType + " file = '{0}'", fileName));
-            switch (fileType)
+            try
             {
-                case "config":
-                    mCLIHandler = new CLIConfigFile();                    
-                    break;
-                case "dynamic":
-                    mCLIHandler = new CLIDynamicXML();
-                    // CLILoadAndPrepare();
-                    break;
-                case "script":
-                    mCLIHandler = new CLIScriptFile();
-                    break;
-            }            
-            mCLIHandler.LoadContent(ReadFile(fileName), mCLIHelper, WorkSpace.Instance.RunsetExecutor);
-            if (fileType == "config" || fileType == "dynamic")  // not needed for script
-            {
-                CLILoadAndPrepare();  
+                SetVerboseLevel(verboseLevel);
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Running with " + fileType + " file = '{0}'", fileName));
+                switch (fileType)
+                {
+                    case "config":
+                        mCLIHandler = new CLIConfigFile();
+                        break;
+                    case "dynamic":
+                        if (Path.GetExtension(fileName).ToLower() == ".xml")
+                        {
+                            mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+                        }
+                        else if (Path.GetExtension(fileName).ToLower() == ".json")
+                        {
+                            mCLIHandler = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Dynamic file type is not supported, file path: '{0}'", fileName));
+                            Environment.ExitCode = 1; //failure
+                            return Environment.ExitCode;
+                        }
+                        break;
+
+                    case "script":
+                        mCLIHandler = new CLIScriptFile();
+                        break;
+                }
+
+                string fileContent = ReadFile(fileName);
+                mCLIHandler.LoadGeneralConfigurations(fileContent, mCLIHelper);
+
+                if (fileType == "config" || fileType == "dynamic")  // not needed for script
+                {
+                    if (!CLILoadAndPrepare(runsetConfigs: fileContent))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                        Environment.ExitCode = 1;
+                        return Environment.ExitCode;
+                    }
+                }
+
+                ExecuteRunSet();
+
+                return Environment.ExitCode;
             }
-            ExecuteRunSet();
-
-            return Environment.ExitCode;
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while Handling File Option", ex);
+                Environment.ExitCode = 1;
+                return 1;//error
+            }
         }
-
 
 
         private int HanldeGridOption(GridOptions gridOptions)
         {
             SetVerboseLevel(gridOptions.VerboseLevel);
 
-            Reporter.ToConsole(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
+            Reporter.ToLog(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
             GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
             gingerGrid.Start();
 
@@ -295,12 +325,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             SetVerboseLevel(runOptions.VerboseLevel);
 
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-            Reporter.ToLog(eLogLevel.DEBUG, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Starting Automatic {0} Execution Process ##########################", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Parsing {0} execution arguments...", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
             Reporter.ToLog(eLogLevel.INFO, $"Solution: {runOptions.Solution}");
             Reporter.ToLog(eLogLevel.INFO, $"Runset: {runOptions.Runset}");
             Reporter.ToLog(eLogLevel.INFO, $"Environment: {runOptions.Environment}");
-            Reporter.ToLog(eLogLevel.DEBUG, "Loading Configurations...");
+            Reporter.ToLog(eLogLevel.INFO, "Loading Configurations...");
             
             mCLIHandler = new CLIArgs();
             mCLIHelper.Solution = runOptions.Solution;
@@ -311,18 +341,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.TestArtifactsFolder = runOptions.TestArtifactsPath;
 
             WorkSpace.Instance.RunningInExecutionMode = true;
-            CLILoadAndPrepare();
+            if (!CLILoadAndPrepare())
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                Environment.ExitCode = 1;
+                return Environment.ExitCode;
+            }
+            
             ExecuteRunSet();
 
             mCLIHelper.PostExecution();
-
 
             return Environment.ExitCode;
         }
 
         
 
-        private void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
+        public static void SetVerboseLevel(OptionsBase.eVerboseLevel verboseLevel)
         {            
             if (verboseLevel == OptionsBase.eVerboseLevel.debug)
             {
@@ -351,7 +386,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else
             {
-                Reporter.ToConsole(eLogLevel.ERROR, "Please fix the arguments and try again");
+                Reporter.ToLog(eLogLevel.ERROR, "Please fix the arguments and try again");
                 return 1;
             }
             
@@ -363,7 +398,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             stringBuilder.Append(Environment.NewLine);
             stringBuilder.Append("Ginger Executor: ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);            
             stringBuilder.Append(Environment.NewLine);
-            Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
+            Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
 
         private void PrintGingerCLIHelp()
@@ -374,7 +409,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             stringBuilder.Append("'help' for verb list").Append(Environment.NewLine);
             stringBuilder.Append("'help {verb}' for help on specific verb options, for example: 'help run'").Append(Environment.NewLine);            
             stringBuilder.Append(Environment.NewLine);
-            Reporter.ToConsole(eLogLevel.INFO, stringBuilder.ToString());
+            Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
         }
         
 
@@ -388,7 +423,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
 
                 stopwatch.Stop();
-                Reporter.ToLog(eLogLevel.DEBUG, "Execution Elapsed time: " + stopwatch.Elapsed);
+                Reporter.ToLog(eLogLevel.INFO, "Execution Elapsed time: " + stopwatch.Elapsed);
 
                 if (WorkSpace.Instance.RunsetExecutor.RunSetExecutionStatus == Execution.eRunStatus.Passed)
                 {
@@ -407,29 +442,43 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 Environment.ExitCode = 1; //failure
             }
 
-            Reporter.ToLog(eLogLevel.DEBUG, "Closing Solution and doing Cleanup...");
+            Reporter.ToLog(eLogLevel.INFO, "Closing Solution and doing Cleanup...");
             mCLIHelper.CloseSolution();            
         }
 
-        private void CLILoadAndPrepare()
+        private bool CLILoadAndPrepare(string runsetConfigs="")
         {
-            if (!mCLIHelper.LoadSolution())
+            try
             {
-                return;//failed to load Solution;
-            }
+                if (!mCLIHelper.LoadSolution())
+                {
+                    return false;//failed to load Solution;
+                }
 
-            if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+                if (!string.IsNullOrEmpty(runsetConfigs))
+                {
+                    mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
+                }
+                if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
+                {
+                    return false;//failed to load Run set
+                }
+
+                if (!mCLIHelper.PrepareRunsetForExecution())
+                {
+                    return false; //Failed to perform execution preparations
+                }
+
+                mCLIHelper.SetTestArtifactsFolder();
+                WorkSpace.Instance.StartLocalGrid();
+
+                return true;
+            }
+            catch(Exception ex)
             {
-                return;//failed to load Run set
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while doing CLI Load And Prepare", ex);
+                return false;
             }
-
-            if (!mCLIHelper.PrepareRunsetForExecution())
-            {
-                return; //Failed to perform execution preparations
-            }
-
-            mCLIHelper.SetTestArtifactsFolder();
-            WorkSpace.Instance.StartLocalGrid();
         }
 
         private string[] ConvertOldArgs(string[] oldArgs)
@@ -464,7 +513,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     verb = DynamicOptions.Verb;
                     break;
                 default:
-                    Reporter.ToConsole(eLogLevel.ERROR, "Error - Unknown Command Line Argument(s): " + param);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error - Unknown Command Line Argument(s): " + param);
                     return null;
             }
 
@@ -475,10 +524,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private void ShowOLDCLIArgsWarning(string[] oldArgs, string[] newArgs)
         {
             // TODO:            
-            Reporter.ToConsole(eLogLevel.WARN, "You are using old style command line arguments which are obsolete!");
+            Reporter.ToLog(eLogLevel.WARN, "You are using old style command line arguments which are obsolete!");
 
-            Reporter.ToConsole(eLogLevel.WARN, "Instead of using: " + oldArgs);
-            Reporter.ToConsole(eLogLevel.WARN, "You can use: " + newArgs);
+            Reporter.ToLog(eLogLevel.WARN, "Instead of using: " + oldArgs);
+            Reporter.ToLog(eLogLevel.WARN, "You can use: " + newArgs);
         }
 
         

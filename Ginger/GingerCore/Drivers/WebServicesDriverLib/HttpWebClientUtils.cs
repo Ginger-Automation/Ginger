@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -201,6 +201,8 @@ namespace GingerCore.Actions.WebAPI
             switch (secutityType)
             {
                 case ApplicationAPIUtils.eSercurityType.None:
+#warning this should be SystemDefault but this supporting on .netframework 4.8 onwards, so for now setting all types for none
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
                     break;
                 case ApplicationAPIUtils.eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;

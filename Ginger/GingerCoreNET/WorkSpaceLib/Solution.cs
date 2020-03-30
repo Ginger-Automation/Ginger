@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -571,6 +571,21 @@ namespace Ginger.SolutionGeneral
                 return platform;
             }
             return ePlatformType.Web;
+        }
+
+        /// <summary>
+        /// This method will return platform for the target application name
+        /// </summary>
+        /// <param name="targetapp"></param>
+        /// <returns></returns>
+        public ePlatformType GetApplicationPlatformForTargetApp(string targetapp)
+        {
+            if (!string.IsNullOrEmpty(targetapp))
+            {
+                ePlatformType platform = (from x in ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
+                return platform;
+            }
+            return ePlatformType.NA;
         }
 
     }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -887,6 +887,15 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override string GetNextBtnToolTip()
         {
             return "Switch Window";
+        }
+
+        /// <summary>
+        /// This method is used to check if the platform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsPlatformSupportPOM()
+        {
+            return true;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -245,6 +246,18 @@ namespace GingerCore
             }
         }
 
+       private bool mLazyLoadFlagForUnitTest;
+        public bool LazyLoadFlagForUnitTest
+        {
+            get
+            {
+              return mLazyLoadFlagForUnitTest;
+            }
+            set
+            {
+                mLazyLoadFlagForUnitTest = value;
+            }
+        }
 
         // where is it used? why BF need env?
         public string Environment { get; set; }
@@ -252,7 +265,11 @@ namespace GingerCore
 
 
         private ObservableList<Activity> mActivities;
-
+        /// <summary>
+        /// Been used to identify if Activities were loaded by lazy load or not
+        /// </summary>
+        public bool ActivitiesLazyLoad { get { return (mActivities != null) ? mActivities.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
         {
@@ -265,7 +282,12 @@ namespace GingerCore
                 if (mActivities.LazyLoad)
                 {
                     mActivities.LoadLazyInfo();
+                    LazyLoadFlagForUnitTest = true; 
                     AttachActivitiesGroupsAndActivities(mActivities);
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mActivities);
+                    }
                 }
                 return mActivities;
             }
@@ -425,7 +447,7 @@ namespace GingerCore
                     varsList.Add(var);
             return varsList;
         }
-        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false)
+        public ObservableList<VariableBase> GetBFandActivitiesVariabeles(bool includeParentDetails, bool includeOnlySetAsInputValue = false, bool includeOnlySetAsOutputValue = false, bool includeOnlyPublishedVars = false)
         {
             ObservableList<VariableBase> varsList = new ObservableList<VariableBase>();
 
@@ -437,16 +459,16 @@ namespace GingerCore
                     var.ParentGuid = this.Guid;
                     var.ParentName = this.Name;
                 }
-                if (includeOnlySetAsInputValue)
+                if (includeOnlyPublishedVars && var.Publish == false)
                 {
-                    if (var.SetAsInputValue)
-                        varsList.Add(var);
                     continue;
                 }
-                if (includeOnlySetAsOutputValue)
+                if (includeOnlySetAsInputValue && var.SetAsInputValue == false)
+                {                    
+                   continue;                    
+                }
+                if (includeOnlySetAsOutputValue && var.SetAsOutputValue == false)
                 {
-                    if (var.SetAsOutputValue)
-                        varsList.Add(var);
                     continue;
                 }
                 varsList.Add(var);
@@ -460,18 +482,25 @@ namespace GingerCore
                     {
                         var.ParentType = GingerDicser.GetTermResValue(eTermResKey.Activity);
                         var.ParentGuid = activ.Guid;
-                        var.ParentName = activ.ActivityName;
+                        if (string.IsNullOrEmpty(activ.ActivitiesGroupID))
+                        {
+                            var.ParentName = string.Format("{0}\\{1}", this.Name, activ.ActivityName);
+                        }
+                        else
+                        {
+                            var.ParentName = string.Format("{0}\\{1}\\{2}", this.Name, activ.ActivitiesGroupID, activ.ActivityName);
+                        }
                     }
-                    if (includeOnlySetAsInputValue)
+                    if (includeOnlyPublishedVars && var.Publish == false)
                     {
-                        if (var.SetAsInputValue)
-                            varsList.Add(var);
                         continue;
                     }
-                    if (includeOnlySetAsOutputValue)
+                    if (includeOnlySetAsInputValue && var.SetAsInputValue == false)
                     {
-                        if (var.SetAsOutputValue)
-                            varsList.Add(var);
+                        continue;
+                    }
+                    if (includeOnlySetAsOutputValue && var.SetAsOutputValue == false)
+                    {
                         continue;
                     }
                     varsList.Add(var);
@@ -1347,7 +1376,7 @@ namespace GingerCore
 
         public Tuple<ActivitiesGroup, ActivityIdentifiers> GetActivityGroupAndIdentifier(Activity activity)
         {
-            ActivitiesGroup group = null; ;
+            ActivitiesGroup group = null;
             ActivityIdentifiers activityIdent = null;
             group = ActivitiesGroups.Where(x => x.Name == activity.ActivitiesGroupID).FirstOrDefault();
             if (group != null)

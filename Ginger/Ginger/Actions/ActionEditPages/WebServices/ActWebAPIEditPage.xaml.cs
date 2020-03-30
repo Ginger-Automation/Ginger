@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ namespace Ginger.Actions.WebServices
                     PanelSoap.Visibility = Visibility.Collapsed;
                     UseWSSecurityHeader.Visibility = Visibility.Collapsed;
                     //Cookie Mode
-                    CookieMode.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.New.ToString()), typeof(ApplicationAPIUtils.eCookieMode), false, null);
+                    CookieMode.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.CookieMode, ApplicationAPIUtils.eCookieMode.Session.ToString()), typeof(ApplicationAPIUtils.eCookieMode), false, null);
 
                     //Request Type
                     RequestTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIRest.Fields.RequestType, ApplicationAPIUtils.eRequestType.GET.ToString()), typeof(ApplicationAPIUtils.eRequestType), false, null);

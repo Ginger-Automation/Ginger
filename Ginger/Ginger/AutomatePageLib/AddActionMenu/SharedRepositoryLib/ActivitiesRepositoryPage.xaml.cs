@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -42,9 +42,13 @@ namespace Ginger.Repository
         ObservableList<Guid> mTags = new ObservableList<Guid>();
         RoutedEventHandler mAddActivityHandler;
         Context mContext;
+        GenericWindow _pageGenericWin = null;
+        public enum ePageViewMode { Default, Selection }
 
-        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null)
-        {          
+        ePageViewMode mViewMode;
+
+        public ActivitiesRepositoryPage(RepositoryFolder<Activity> activitiesFolder, Context context, ObservableList<Guid> Tags=null, RoutedEventHandler AddActivityHandler = null, ePageViewMode viewMode = ePageViewMode.Default)
+        {
             InitializeComponent();
 
             mActivitiesFolder = activitiesFolder;
@@ -58,7 +62,9 @@ namespace Ginger.Repository
             if (AddActivityHandler != null)
                 mAddActivityHandler = AddActivityHandler;
             else
-                mAddActivityHandler = AddFromRepository;           
+                mAddActivityHandler = AddFromRepository;
+
+            mViewMode = viewMode;
 
             SetActivitiesRepositoryGridView();            
             SetGridAndTreeData();
@@ -94,16 +100,20 @@ namespace Ginger.Repository
 
             xActivitiesRepositoryGrid.btnRefresh.Visibility = Visibility.Collapsed;
             //grdActivitiesRepository.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGridActivities));      
-            if (mContext != null && mContext.BusinessFlow!=null)
+            if (mViewMode == ePageViewMode.Default)
             {
-                xActivitiesRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(mAddActivityHandler));
+                if (mContext != null && mContext.BusinessFlow != null)
+                {
+                    xActivitiesRepositoryGrid.AddToolbarTool("@LeftArrow_16x16.png", "Add to Flow", new RoutedEventHandler(mAddActivityHandler));
+                }
+
+                xActivitiesRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivity));
+
+                xActivitiesRepositoryGrid.RowDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
+                xActivitiesRepositoryGrid.ItemDropped += grdActivitiesRepository_ItemDropped;
+                xActivitiesRepositoryGrid.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;
+                xActivitiesRepositoryGrid.ShowTagsFilter = Visibility.Visible;
             }
-            xActivitiesRepositoryGrid.AddToolbarTool("@Edit_16x16.png", "Edit Item", new RoutedEventHandler(EditActivity));
-            
-            xActivitiesRepositoryGrid.RowDoubleClick += grdActivitiesRepository_grdMain_MouseDoubleClick;
-            xActivitiesRepositoryGrid.ItemDropped += grdActivitiesRepository_ItemDropped;
-            xActivitiesRepositoryGrid.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;                        
-            xActivitiesRepositoryGrid.ShowTagsFilter = Visibility.Visible;
         }
 
         private void AddFromRepository(object sender, RoutedEventArgs e)
@@ -141,6 +151,39 @@ namespace Ginger.Repository
             {
                 Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
+        }
+
+        public void ShowAsWindow(Window ownerWindow, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, ePageViewMode viewMode = ePageViewMode.Selection)
+        {
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+
+            if (viewMode == ePageViewMode.Selection)
+            {
+                Button addButton = new Button();
+                addButton.Content = "Add Selected";
+                addButton.Click += SendSelected;
+
+                winButtons.Add(addButton);
+                xActivitiesRepositoryGrid.AddHandler(DataGridRow.MouseDoubleClickEvent, new RoutedEventHandler(SendSelected));
+            }
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, ownerWindow, windowStyle, "Shared " + GingerDicser.GetTermResValue(eTermResKey.Activities), this, winButtons, true, "Close");
+        }
+
+        private void SendSelected(object sender, RoutedEventArgs e)
+        {
+            if (mAddActivityHandler != null)
+            {
+                if (sender is ucGrid)
+                {
+                    mAddActivityHandler(sender, e);
+                }
+                else
+                {
+                    mAddActivityHandler(xActivitiesRepositoryGrid, e);
+                }
+            }
+            _pageGenericWin.Close();
         }
 
         private void ViewRepositoryItemUsage(object sender, RoutedEventArgs e)

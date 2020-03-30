@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,24 +25,44 @@ namespace Amdocs.Ginger.Repository
 {
     public class XMLTemplateParser : APIConfigurationsDocumentParserBase
     {
-
         private Dictionary<string, int> AllPlaceHolders = new Dictionary<string, int>();
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes = false)
         {
-            ApplicationAPIModel AAM = new ApplicationAPIModel();
-            AAM.Name = Path.GetFileNameWithoutExtension(FileName);
-            ObservableList <AppModelParameter> AppModelParameters = new ObservableList<AppModelParameter>();
             XmlDocument doc = new XmlDocument();
             doc.Load(FileName);
+            return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+        }
+
+        public ObservableList<ApplicationAPIModel> ParseDocumentWithXMLContent(string fileContent, ObservableList<ApplicationAPIModel> AAMSList,bool avoidDuplicatesNodes = false)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(fileContent);
+            return GetParameters(doc, AAMSList, avoidDuplicatesNodes);
+        }
+
+        private ObservableList<ApplicationAPIModel> GetParameters(XmlDocument doc, ObservableList<ApplicationAPIModel> AAMSList, bool avoidDuplicatesNodes)
+        {
+            ApplicationAPIModel AAM = new ApplicationAPIModel();
+            AAM.Name = Path.GetFileNameWithoutExtension(doc.BaseURI);
             XMLDocExtended XDE = new XMLDocExtended(doc);
 
             if (avoidDuplicatesNodes)
                 XDE.RemoveDuplicatesNodes();
 
             IEnumerable<XMLDocExtended> NodeList = XDE.GetEndingNodes(false);
-            ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
+            ObservableList<AppModelParameter> AMPList = GetParamList(NodeList);
 
+            AAM.RequestBody = XDE.XMLString;
+            AAM.AppModelParameters = AMPList;
+            AAMSList.Add(AAM);
+            AllPlaceHolders.Clear();
+            return AAMSList;
+        }
+               
+        private ObservableList<AppModelParameter> GetParamList(IEnumerable<XMLDocExtended> NodeList)
+        {
+            ObservableList<AppModelParameter> AMPList = new ObservableList<AppModelParameter>();
             foreach (XMLDocExtended XDN in NodeList)
             {
 
@@ -51,6 +71,7 @@ namespace Amdocs.Ginger.Repository
                 AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
 
                 if (XDN.Attributes != null && XDN.Attributes.Count > 0)
+                {
                     foreach (XmlAttribute XmlAttribute in XDN.Attributes)
                     {
                         if (!string.IsNullOrEmpty(XmlAttribute.Prefix))
@@ -62,13 +83,9 @@ namespace Amdocs.Ginger.Repository
                         XmlAttribute.Value = UniqAttributePlaceHolder;
                         AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue>()));
                     }
+                }
             }
-
-            AAM.RequestBody = XDE.XMLString;
-            AAM.AppModelParameters = AMPList;
-            AAMSList.Add(AAM);
-            AllPlaceHolders.Clear();
-            return AAMSList;
+            return AMPList;
         }
 
         public static ObservableList<ActReturnValue> ParseXMLResponseSampleIntoReturnValues(string fileContent)
@@ -101,8 +118,7 @@ namespace Amdocs.Ginger.Repository
                 GetAllOptionalValuesFromExamples(placeHolderName, Node, ref optionalValuesList);
             }
         }
-
-
+        
         public string GetPlaceHolderName(string ElementName)
         {
             string PlaceHolderName = ElementName.ToUpper();

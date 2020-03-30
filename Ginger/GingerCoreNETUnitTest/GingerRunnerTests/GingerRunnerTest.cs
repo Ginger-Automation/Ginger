@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,47 +18,78 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.CoreNET.Run.RunSetActions;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Environments;
+using GingerCore.FlowControlLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace UnitTests.NonUITests.GingerRunnerTests
-{    
+{
     [TestClass]
     [Level1]
     public class GingerRunnerTest
-    {        
+    {
         static BusinessFlow mBF;
         static GingerRunner mGR;
         static SolutionRepository SR;
+        static Solution solution;
+        static ProjEnvironment environment;
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
             mBF = new BusinessFlow();
-            mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF Test Fire Fox";
             mBF.Active = true;
+
+            Activity activity = new Activity();
+            mBF.AddActivity(activity);
+
+            ActDummy action1 = new ActDummy();
+            ActDummy action2 = new ActDummy();
+
+            mBF.Activities[0].Acts.Add(action1);
+            mBF.Activities[0].Acts.Add(action2);
+
             Platform p = new Platform();
-            p.PlatformType = ePlatformType.Web;            
+            p.PlatformType = ePlatformType.Web;
             mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);
 
             mGR = new GingerRunner();
+            mGR.Name = "Test Runner";
             mGR.CurrentSolution = new Ginger.SolutionGeneral.Solution();
+
+            mGR.CurrentBusinessFlow = mBF;
+            mGR.CurrentBusinessFlow.CurrentActivity = mBF.Activities[0];
+
+            environment = new ProjEnvironment();
+            environment.Name = "Default";
+            mBF.Environment = environment.Name;
+            mGR.ProjEnvironment = environment;
 
             Agent a = new Agent();
             //a.DriverType = Agent.eDriverType.SeleniumFireFox;//have known firefox issues with selenium 3
@@ -72,18 +103,32 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mGR.SolutionApplications = new ObservableList<ApplicationPlatform>();
             mGR.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
             mGR.BusinessFlows.Add(mBF);
+            mGR.SpecificEnvironmentName = environment.Name;
+            mGR.UseSpecificEnvironment = false;
 
-            
-
-            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +  Path.DirectorySeparatorChar + "BasicSimple"));
+            string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" +Path.DirectorySeparatorChar + "BasicSimple"));
+            string solutionFile = System.IO.Path.Combine(path, @"Ginger.Solution.xml");
+            solution = Solution.LoadSolution(solutionFile);
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(path);
+            WorkSpace.Instance.Solution = solution;
+            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            try
+            {
+                //Delete 'Report' folder which is crated after Dynamic Runset Execution
+                System.IO.DirectoryInfo di = new DirectoryInfo(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports" + Path.DirectorySeparatorChar + "Reports"));
+                di.Delete(true);
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, e.Message);
+            }
+
         }
 
 
@@ -214,10 +259,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
         //    //Assert.AreEqual(v1.Value, "123");  // <<< the importnat part as with this defect it turned to "1" - initial val
         //}
 
-        
+
         [TestMethod]
         [Timeout(60000)]
-        public void TestRunsetConfigBFVariables()
+        public void RunsetConfigBFVariablesTest()
         {
             //Arrange
             ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
@@ -265,7 +310,275 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
         }
 
-        
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void DyanamicRunsetXMLCreationTest()
+        {
+            //Arrange
+            RunSetConfig runSetConfigurations = CreteRunsetWithOperations();
+
+            RunsetExecutor GMR = new RunsetExecutor();
+            GMR.RunsetExecutionEnvironment = environment;
+            GMR.RunSetConfig = runSetConfigurations;
+
+            CLIHelper cLIHelper = new CLIHelper();
+            cLIHelper.RunAnalyzer = true;
+            cLIHelper.ShowAutoRunWindow = false;
+            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+
+            RunSetAutoRunConfiguration autoRunConfiguration = new RunSetAutoRunConfiguration(solution, GMR, cLIHelper);
+            CLIDynamicFile mCLIDynamicXML = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+            autoRunConfiguration.SelectedCLI = mCLIDynamicXML;
+
+            //Act
+            //Creating XML file content from above configurations
+            string file = autoRunConfiguration.SelectedCLI.CreateConfigurationsContent(solution, GMR, cLIHelper);
+
+            //Assert
+            //validate the 'AddRunsetOperation' tag
+            XElement nodes = XElement.Parse(file);
+
+            List<XElement> AddRunsetOPerationsNodes = nodes.Elements("AddRunsetOperation").ToList();
+
+            XmlDocument xDoc = new XmlDocument();
+            xDoc.LoadXml(file);
+            XmlNodeList runsetoperations = xDoc.GetElementsByTagName("AddRunsetOperation");
+
+            //Assert
+            Assert.AreEqual(runsetoperations.Count , 3);
+            Assert.AreEqual(runsetoperations[0].FirstChild.Name, "MailFrom");
+            Assert.AreEqual(runsetoperations[0].LastChild.Name, "IncludeAttachmentReport") ;
+            Assert.AreEqual(runsetoperations[1].FirstChild.Name, "HTMLReportFolderName");
+            Assert.AreEqual(runsetoperations[1].LastChild.Name, "isHTMLReportPermanentFolderNameUsed");
+            Assert.AreEqual(runsetoperations[2].HasChildNodes,false);
+
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DynamicRunetExecutionTest()
+        {
+            //Arrange
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow BF1 = bfList[0];
+
+            ObservableList<Activity> activityList = BF1.Activities;
+
+            Activity activity = activityList[0];
+
+            BF1.Active = true;
+
+            GingerRunner mGRForRunset = new GingerRunner();
+            mGRForRunset.Name = "Test Runner";
+
+            Agent a = new Agent();
+            a.DriverType = Agent.eDriverType.SeleniumChrome;
+
+            mGRForRunset.SolutionAgents = new ObservableList<Agent>();
+            mGRForRunset.SolutionAgents.Add(a);
+
+            mGRForRunset.ApplicationAgents.Add(new ApplicationAgent() { AppName = "SCM", Agent = a });
+            mGRForRunset.SolutionApplications = new ObservableList<ApplicationPlatform>();
+            mGRForRunset.SolutionApplications.Add(new ApplicationPlatform() { AppName = "SCM", Platform = ePlatformType.Web, Description = "New application" });
+
+            mGRForRunset.BusinessFlows.Add(BF1);
+            WorkSpace.Instance.SolutionRepository = SR;
+
+            mGRForRunset.SpecificEnvironmentName = environment.Name;
+            mGRForRunset.UseSpecificEnvironment = false;
+
+            RunSetConfig runSetConfig1 = new RunSetConfig();
+            mGRForRunset.IsUpdateBusinessFlowRunList = true;
+            runSetConfig1.GingerRunners.Add(mGRForRunset);
+
+            runSetConfig1.UpdateRunnersBusinessFlowRunsList();
+            runSetConfig1.mRunModeParallel = false;
+
+            RunSetActionHTMLReport produceHTML2 = CreateProduceHTMlOperation();
+            runSetConfig1.RunSetActions.Add(produceHTML2);
+
+            RunsetExecutor GMR1 = new RunsetExecutor();
+            GMR1.RunsetExecutionEnvironment = environment;
+            GMR1.RunSetConfig = runSetConfig1;
+            WorkSpace.Instance.RunsetExecutor = GMR1;
+            CLIHelper cLIHelper1 = new CLIHelper();
+            cLIHelper1.RunAnalyzer = false;
+            cLIHelper1.ShowAutoRunWindow = false;
+            cLIHelper1.DownloadUpgradeSolutionFromSourceControl = false;
+
+            RunSetAutoRunConfiguration autoRunConfiguration1 = new RunSetAutoRunConfiguration(solution, GMR1, cLIHelper1);
+            CLIDynamicFile mCLIDynamicXML1= new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
+            autoRunConfiguration1.SelectedCLI = mCLIDynamicXML1;
+            String xmlFile =autoRunConfiguration1.SelectedCLI.CreateConfigurationsContent(solution, GMR1, cLIHelper1);
+
+            autoRunConfiguration1.CreateContentFile();
+
+            CLIProcessor cLIProcessor = new CLIProcessor();
+            string[] args = new string[]{ autoRunConfiguration1.SelectedCLI.Verb, "--" + CLIOptionClassHelper.FILENAME, autoRunConfiguration1.ConfigFileFullPath};
+           
+            //Act
+            cLIProcessor.ExecuteArgs(args);
+
+            //Assert
+            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports" + Path.DirectorySeparatorChar + "Reports");
+            Assert.IsTrue(Directory.Exists(path));
+        }
+
+        public RunSetActionHTMLReport CreateProduceHTMlOperation()
+        {
+            RunSetActionHTMLReport produceHTML1 = new RunSetActionHTMLReport();
+            produceHTML1.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            produceHTML1.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            produceHTML1.isHTMLReportFolderNameUsed = true;
+            produceHTML1.HTMLReportFolderName = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports"));
+            produceHTML1.isHTMLReportPermanentFolderNameUsed = false;
+            produceHTML1.Active = true;
+            return produceHTML1;
+        }
+
+        public RunSetConfig CreteRunsetWithOperations()
+        {
+            RunSetConfig runSetConfig = new RunSetConfig();
+            runSetConfig.GingerRunners.Add(mGR);
+            runSetConfig.mRunModeParallel = false;
+
+            //added HTMl send mail action
+            RunSetActionHTMLReportSendEmail sendMail = new RunSetActionHTMLReportSendEmail();
+            sendMail.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            sendMail.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            sendMail.MailFrom = "Test@gmail.com";
+            sendMail.MailTo = "Test@gamil.com";
+            sendMail.Email.EmailMethod = GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK;
+            sendMail.Active = true;
+
+            //added Produce Html action
+
+            RunSetActionHTMLReport produceHTML = CreateProduceHTMlOperation();
+
+            //added JSON action
+            RunSetActionJSONSummary jsonReportOperation = new RunSetActionJSONSummary();
+            jsonReportOperation.Name = "Json Report";
+            jsonReportOperation.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            jsonReportOperation.Condition = RunSetActionBase.eRunSetActionCondition.AlwaysRun;
+            jsonReportOperation.Active = true;
+
+            runSetConfig.RunSetActions.Add(sendMail);
+            runSetConfig.RunSetActions.Add(produceHTML);
+            runSetConfig.RunSetActions.Add(jsonReportOperation);
+
+            return runSetConfig;
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunDisabledActivityTest()
+        {
+            //Arrange
+            Activity activity = GetActivityFromRepository();
+
+            //Act
+            mGR.RunActivity(activity);
+
+            //Assert
+            Assert.AreEqual(activity.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunDisabledActionTest()
+        {
+            //Arrange
+            Activity activity = GetActivityFromRepository();
+
+            ObservableList<IAct> actionList = activity.Acts;
+            Act action = (Act)actionList[0];
+            action.Active = false;
+
+            //Act
+
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped);
+            Assert.AreEqual("Action is not active.", action.ExInfo);
+
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunActionWithFlowControlAndDontMoveNext()
+        {
+            //Arrange
+            Activity activity = mBF.Activities[0];
+
+            ActDummy act1 = new ActDummy();
+            act1.Active = true;
+            activity.Acts.Add(act1);
+
+            ObservableList<IAct> actionList = activity.Acts;
+            Act action = (Act)actionList[0];
+            action.Active = true;
+            FlowControl flowControl = new FlowControl();
+            flowControl.Active = true;
+
+            flowControl.Operator = eFCOperator.ActionPassed;
+            flowControl.FlowControlAction = eFlowControlAction.GoToAction;
+            flowControl.Value= act1.Guid + flowControl.GUID_NAME_SEPERATOR;
+
+            action.FlowControls.Add(flowControl);
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[2]);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunActionWithoutFlowControlAndMoveNext()
+        {
+            //Arrange
+            
+            Activity activity = GetActivityFromRepository(); 
+            ActDummy act1 = new ActDummy();
+            act1.Active = true;
+            activity.Acts.Add(act1);
+
+            ObservableList<IAct> actionList = activity.Acts;
+            Act action = (Act)actionList[0];
+            action.Active = true;
+
+            mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = action;
+
+            //Act
+            mGR.RunAction(action);
+
+            //Assert
+            Assert.AreEqual(action.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+            Assert.AreEqual(mGR.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem, mGR.CurrentBusinessFlow.CurrentActivity.Acts[1]);
+        }
+      
+        public Activity GetActivityFromRepository()
+        {
+            Context context = new Context();
+
+            ObservableList<BusinessFlow> bfList = SR.GetAllRepositoryItems<BusinessFlow>();
+            BusinessFlow BF1 = bfList[0];
+
+            ObservableList<Activity> activityList = BF1.Activities;
+            Activity activity = activityList[0];
+            activity.Active = false;
+
+            context.BusinessFlow = BF1;
+            context.Activity = activity;
+            mGR.CurrentBusinessFlow = BF1;
+            mGR.CurrentBusinessFlow.CurrentActivity = activity;
+            mGR.Context = context;
+
+            return activity;
+        }
     }
 }

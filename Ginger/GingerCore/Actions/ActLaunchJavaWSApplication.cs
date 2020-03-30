@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 namespace GingerCore.Actions
 {
@@ -87,6 +88,7 @@ namespace GingerCore.Actions
             public static string WaitForWindowWhenDoingLaunch = "WaitForWindowWhenDoingLaunch";   //flag to determine if to wait for java window with required title when launching java application
             public static string WaitForWindowTitle = "WaitForWindowTitle"; //the title of the Java application to wait for
             public static string WaitForWindowTitleMaxTime = "WaitForWindowTitleMaxTime";    //the max time in seconds to wait for the window to load
+            public static string AttachAgentProcessSyncTime = "AttachAgentProcessSyncTime";    //the max time in seconds to wait for the process holding the mutex
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
@@ -247,7 +249,7 @@ namespace GingerCore.Actions
 
         private string mWaitForWindowTitle = "Login";
         string mWaitForWindowTitle_Calc = string.Empty;
-        int mWaitForWindowTitleMaxTime_Calc_int = 0;
+        
         [IsSerializedForLocalRepository]
         public string WaitForWindowTitle //the title of the Java application to wait for
         {
@@ -262,6 +264,7 @@ namespace GingerCore.Actions
             }
         }
 
+        int mWaitForWindowTitleMaxTime_Calc_int = 60;
         string mWaitForWindowTitleMaxTime = "60";
         string mWaitForWindowTitleMaxTime_Calc = string.Empty;
         [IsSerializedForLocalRepository]
@@ -278,6 +281,22 @@ namespace GingerCore.Actions
             }
         }
 
+        private int mAttachAgentProcessSyncTime_Calc_int = 120;
+        private string mAttachAgentProcessSyncTime = "120";
+        private string mAttachAgentProcessSyncTime_Calc = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string AttachAgentProcessSyncTime //the max time in seconds to wait for the window to load
+        {
+            get
+            {
+                return mAttachAgentProcessSyncTime;
+            }
+            set
+            {
+                mAttachAgentProcessSyncTime = value;
+                OnPropertyChanged(Fields.AttachAgentProcessSyncTime);
+            }
+        }
 
         // ValueExpression mVE = null;
 
@@ -301,14 +320,16 @@ namespace GingerCore.Actions
 
         private int mProcessIDForAttach = -1;
 
-        private static readonly object syncLock = new object();
+        private static Mutex mutex = new Mutex(false, "JavaAgentAttachMutex");
 
-        AutoResetEvent portValueAutoResetEvent;
+        private AutoResetEvent mPortValueAutoResetEvent;
 
+        private CancellationTokenSource mAttachAgentCancellationToken = null;
+        private Task mAttachAgentTask = null;
         public override void Execute()
         {
             mJavaApplicationProcessID = -1;
-           
+
             //calculate the arguments
             if (!CalculateArguments()) return;
 
@@ -322,22 +343,59 @@ namespace GingerCore.Actions
 
             if (mLaunchWithAgent)
             {
-                //For Parallel execution, we want attach to be synchronized.
-                //So for windows with same title, correct process id will be calculated
-                lock (syncLock)
+                try
                 {
-                    mProcessIDForAttach = -1;
-                    if (!PerformAttachGingerAgent()) return;
-
-                    if(mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
-                        portValueAutoResetEvent!=null)
+                    //For Parallel execution (also between diffrent Ginger processes), we want attach to be synchronized.
+                    //So for windows with same title, correct process id will be calculated
+                    try
                     {
-                        portValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
-                    }                 
-                    AddOrUpdateReturnParamActual("Port", mPort_Calc);
+                        // acquire the mutex (or timeout), will return false if it timed out
+                        Reporter.ToLog(eLogLevel.INFO, "Attach Java Agent- Waiting for Mutex Release");                      
+                        if (!mutex.WaitOne(mAttachAgentProcessSyncTime_Calc_int * 1000))
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Timeout Reached");
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, "Attach Java Agent- Mutex was Released");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Threw Exception", ex); ;
+                    }
+
+                    mAttachAgentCancellationToken = new CancellationTokenSource();
+                    mAttachAgentTask = Task.Run(() =>
+                       {
+                           mProcessIDForAttach = -1;
+                           if (!PerformAttachGingerAgent()) return;
+
+                           if (mPort_Calc.Equals(Fields.DynamicPortPlaceHolder) &&
+                               mPortValueAutoResetEvent != null)
+                           {
+                               mPortValueAutoResetEvent.WaitOne(TimeSpan.FromSeconds(10));
+                           }
+                           AddOrUpdateReturnParamActual("Port", mPort_Calc);
+                       }, mAttachAgentCancellationToken.Token);
+
+                    mAttachAgentTask.Wait();
+                    //Wait Max 30 secs for Attach agent to attach the jar or process to exit
+                    Stopwatch st = new Stopwatch();
+                    st.Start();
+                    while (st.ElapsedMilliseconds < 30 * 1000)
+                    {
+                        if (IsInstrumentationModuleLoaded(mProcessIDForAttach))
+                        {
+                            break;
+                        }
+                    }
+                }
+                finally
+                {
+                    mutex.ReleaseMutex();
                 }
             }
-
 
             //Changing the existing param namefrom "Actual" to "Process ID", it Param "Actual" exist, to support Return params configured on old version
             ActReturnValue ARC = (from arc in ReturnValues where arc.Param == "Actual" select arc).FirstOrDefault();
@@ -348,7 +406,15 @@ namespace GingerCore.Actions
             }
 
             AddOrUpdateReturnParamActual("Process ID", "" + mProcessIDForAttach);
+        }
 
+        public override void PostExecute()
+        {
+
+            if (mAttachAgentTask != null && mAttachAgentTask.Status != TaskStatus.RanToCompletion && !mAttachAgentTask.IsCanceled && !mAttachAgentTask.IsFaulted)
+            {
+                mAttachAgentCancellationToken.Cancel();
+            }
 
         }
 
@@ -367,11 +433,11 @@ namespace GingerCore.Actions
             if (portConfigType == ePortConfigType.Manual)
             {
                 mPort_Calc = CalculateValue(mPort);
-            }          
+            }
             else
             {
                 //If port calculation is auto detect then we initialize autoreset event for it
-                portValueAutoResetEvent = new AutoResetEvent(false);
+                mPortValueAutoResetEvent = new AutoResetEvent(false);
             }
         }
 
@@ -404,7 +470,7 @@ namespace GingerCore.Actions
 
                 mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
-
+                mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
                 return true;
             }
             catch (Exception ex)
@@ -457,6 +523,12 @@ namespace GingerCore.Actions
 
                 if (mLaunchWithAgent == true)
                 {
+                    if (string.IsNullOrEmpty(mAttachAgentProcessSyncTime_Calc) || int.TryParse(mAttachAgentProcessSyncTime_Calc, out mAttachAgentProcessSyncTime_Calc_int) == false)
+                    {
+                        Error = "Process sync time for attach agent is not valid.";
+                        return false;
+                    }
+
                     if (Directory.Exists(mJavaAgentPath_Calc) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgent.jar")) == false || File.Exists(Path.Combine(mJavaAgentPath_Calc, "GingerAgentStarter.jar")) == false)
                     {
                         Error = "The Ginger Agent path folder '" + mJavaAgentPath_Calc + "' is not valid, please select the folder which contains the 'GingerAgent.jar' &  'GingerAgentStarter.jar' files.";
@@ -464,10 +536,11 @@ namespace GingerCore.Actions
                     }
 
                     ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
-                    if (portConfigType== ePortConfigType.Manual)
+                    if (portConfigType == ePortConfigType.Manual)
                     {
                         return ValidatePort();
-                    }                    
+                    }
+                   
                 }
 
                 return true;
@@ -491,7 +564,7 @@ namespace GingerCore.Actions
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception during parsing Port Value", ex);
                 return false;
@@ -632,7 +705,7 @@ namespace GingerCore.Actions
                 ePortConfigType portConfigType = (ePortConfigType)GetInputParamValue<ePortConfigType>(Fields.PortConfigParam);
                 if (portConfigType == ePortConfigType.AutoDetect)
                 {
-                    mPort_Calc = Fields.DynamicPortPlaceHolder;                  
+                    mPort_Calc = Fields.DynamicPortPlaceHolder;
                 }
 
                 //choosing executer
@@ -666,101 +739,110 @@ namespace GingerCore.Actions
 
         private bool WaitForAppWindowTitle()
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-
             bool bFound = false;
-
-            // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
-            if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
+            try
             {
-                while (!bFound)
-                {
-                    Process process = Process.GetProcessById(mJavaApplicationProcessID);
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
 
-                    if (!IsInstrumentationModuleLoaded(process.Id))
+                // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
+                if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
+                {
+                    while (!bFound)
                     {
-                        if (BlockingJavaWindow)
+                        mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                        Process process = Process.GetProcessById(mJavaApplicationProcessID);
+
+                        if (!IsInstrumentationModuleLoaded(process.Id))
                         {
-                            bFound = CheckForBlockWindow(process);
+                            if (BlockingJavaWindow)
+                            {
+                                bFound = CheckForBlockWindow(process);
+                            }
+                            else
+                            {
+                                bFound = MatchProcessTitle(process.MainWindowTitle.ToLower());
+                            }
+                            if (bFound)
+                            {
+                                mProcessIDForAttach = process.Id;
+                            }
                         }
-                        else
-                        {
-                            bFound = MatchProcessTitle(process.MainWindowTitle.ToLower());
-                        }
-                        if (bFound)
-                        {
-                            mProcessIDForAttach = process.Id;
-                        }
+
+                        // Go out after max seconds
+                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                            break;
+
+                        Thread.Sleep(1000);
                     }
-
-                    // Go out after max seconds
-                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                        break;
-
-                    Thread.Sleep(1000);
                 }
-            }
-            // If Application is not launched from Ginger then we go over the process to find the target Process ID
-            else
-            {
-                while (!bFound)
+                // If Application is not launched from Ginger then we go over the process to find the target Process ID
+                else
                 {
-                    Process[] processlist = Process.GetProcesses();
-
-                    List<Process> matchingProcessList = new List<Process>();
-
-                    foreach (Process process in processlist)
+                    while (!bFound)
                     {
-                        if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                        Process[] processlist = Process.GetProcesses();
+
+                        List<Process> matchingProcessList = new List<Process>();
+
+                        foreach (Process process in processlist)
                         {
-                            continue;
-                        }
-                        if (BlockingJavaWindow)
-                        {
-                            if (CheckForBlockWindow(process))
+                            mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                            if (process.StartInfo.Environment["USERNAME"] != Environment.UserName)
+                            {
+                                continue;
+                            }
+                            if (BlockingJavaWindow)
+                            {
+                                if (CheckForBlockWindow(process))
+                                {
+                                    matchingProcessList.Add(process);
+                                }
+                            }
+
+                            else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
                             {
                                 matchingProcessList.Add(process);
                             }
                         }
 
-                        else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
-                        {
-                            matchingProcessList.Add(process);
-                        }
-                    }
 
-
-                    if (matchingProcessList.Count == 1)
-                    {
-                        if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
+                        if (matchingProcessList.Count == 1)
                         {
-                            bFound = true;
-                            mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
-                        }
-                    }
-                    else if (matchingProcessList.Count > 1)
-                    {
-                        foreach (Process process in matchingProcessList)
-                        {
-                            if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
+                            if (!IsInstrumentationModuleLoaded(matchingProcessList.ElementAt(0).Id))
                             {
-                                if (!IsInstrumentationModuleLoaded(process.Id))
+                                bFound = true;
+                                mProcessIDForAttach = matchingProcessList.ElementAt(0).Id;
+                            }
+                        }
+                        else if (matchingProcessList.Count > 1)
+                        {
+                            foreach (Process process in matchingProcessList)
+                            {
+                                mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
+                                if ((process.ProcessName.StartsWith("java", StringComparison.CurrentCultureIgnoreCase) || process.ProcessName.StartsWith("jp2", StringComparison.CurrentCultureIgnoreCase)))
                                 {
-                                    bFound = true;
-                                    mProcessIDForAttach = process.Id;
-                                    break;
+                                    if (!IsInstrumentationModuleLoaded(process.Id))
+                                    {
+                                        bFound = true;
+                                        mProcessIDForAttach = process.Id;
+                                        break;
+                                    }
                                 }
                             }
                         }
+
+                        // Go out after max seconds
+                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                            break;
+
+                        Thread.Sleep(1000);
                     }
-
-                    // Go out after max seconds
-                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                        break;
-
-                    Thread.Sleep(1000);
                 }
+            }
+            catch (OperationCanceledException ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Task cancellation was requested during WaitForAppWindowTitle", ex);
             }
 
             return bFound;
@@ -848,13 +930,13 @@ namespace GingerCore.Actions
             try
             {
                 List<string> commnadConfigs = (List<string>)command;
-                if(commnadConfigs[1].Contains(Fields.DynamicPortPlaceHolder))
+                if (commnadConfigs[1].Contains(Fields.DynamicPortPlaceHolder))
                 {
                     mPort_Calc = SocketHelper.GetOpenPort().ToString();
-                    portValueAutoResetEvent.Set();
-                    commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);                   
+                    mPortValueAutoResetEvent.Set();
+                    commnadConfigs[1] = commnadConfigs[1].Replace("DynamicPortPlaceHolder", mPort_Calc);
                 }
-                
+
                 ExInfo += "Executing Command: " + commnadConfigs[0] + " " + commnadConfigs[1] + Environment.NewLine;
 
                 Process p = new Process();
@@ -923,22 +1005,24 @@ namespace GingerCore.Actions
                 int modulesCount = processModules.Count - 1;
                 // we start from end, because instrument dll is always loaded after rest of the modules are already loaded
                 //So we look for only last 5 modules
-                for (int i = modulesCount; i > modulesCount - 5; i--)
+                int maxProcessToCheck = modulesCount - 5 > 0 ? modulesCount - 5 : 0;
+                for (int i = modulesCount; i > maxProcessToCheck - 5; i--)
                 {
                     module = processModules[i];
 
                     if (module.ModuleName.Equals("instrument.dll"))
+                    {
                         return true;
+                    }
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsInstrumentationModuleLoaded", e);
+                Reporter.ToLog(eLogLevel.WARN, "Exception when checking IsInstrumentationModuleLoaded for process id:" + id, e);
             }
 
             return false;
         }
-
-
     }
 }
+

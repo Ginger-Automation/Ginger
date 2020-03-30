@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -235,7 +235,7 @@ namespace GingerCoreNET.RosLynLib
                 foreach (var variable in s.Variables)
                 {
                     string varInfo = string.Format("name: {0}, type: {1}, value: {2}", variable.Name, variable.Type.Name, variable.Value);
-                    Reporter.ToConsole(eLogLevel.DEBUG, varInfo);                    
+                    Reporter.ToLog(eLogLevel.DEBUG, varInfo);                    
                 }
                 return s.ReturnValue;
 

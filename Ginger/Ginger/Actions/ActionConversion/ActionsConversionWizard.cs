@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Ginger.Actions.ActionConversion
 {
-    public class ActionsConversionWizard : WizardBase
+    public class ActionsConversionWizard : WizardBase, IActionsConversionProcess
     {
         public override string Title { get { return "Actions Conversion Wizard"; } }
         public Context Context;
@@ -36,7 +36,7 @@ namespace Ginger.Actions.ActionConversion
         public ObservableList<ConvertableTargetApplicationDetails> ConvertableTargetApplications = new ObservableList<ConvertableTargetApplicationDetails>();
         public ObservableList<Guid> SelectedPOMs = new ObservableList<Guid>();
 
-        public bool NewActivityChecked { get; set; }
+        public bool NewActivityChecked { get; set; }               
 
         public bool IsConversionDoneOnce { get; set; }
 
@@ -66,23 +66,31 @@ namespace Ginger.Actions.ActionConversion
             }
         }
 
+        public eModelConversionType ModelConversionType
+        {
+            get
+            {
+                return eModelConversionType.ActionConversion;
+            }
+        }
+
         ConversionStatusReportPage mReportPage = null;
 
         public ActionsConversionWizard(eActionConversionType conversionType, Context context, ObservableList<BusinessFlow> businessFlows)
         {
             Context = context;
             ConversionType = conversionType;
-            ListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);
-
+            mListOfBusinessFlow = GetBusinessFlowsToConvert(businessFlows);
+            
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Actions Conversion Introduction", Page: new WizardIntroPage("/Actions/ActionConversion/ActionConversionIntro.md"));
 
             if (ConversionType == eActionConversionType.MultipleBusinessFlow)
             {
-                AddPage(Name: "Select Business Flow's for Conversion", Title: "Select Business Flow's for Conversion", SubTitle: "Select Business Flow's for Conversion", Page: new SelectBusinessFlowWzardPage(ListOfBusinessFlow, Context));
+                AddPage(Name: "Select Business Flow's for Conversion", Title: "Select " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "'s for Conversion", SubTitle: "Select " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "'s for Conversion", Page: new SelectBusinessFlowWzardPage(mListOfBusinessFlow, Context));
             }
             else if (ConversionType == eActionConversionType.SingleBusinessFlow)
             {
-                AddPage(Name: "Select Activities for Conversion", Title: "Select Activities for Conversion", SubTitle: "Select Activities for Conversion", Page: new SelectActivityWzardPage());
+                AddPage(Name: "Select Activities for Conversion", Title: "Select " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " for Conversion", SubTitle: "Select " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " for Conversion", Page: new SelectActivityWzardPage());
             }
 
             AddPage(Name: "Select Legacy Actions Type for Conversion", Title: "Select Legacy Actions Type for Conversion", SubTitle: "Select Legacy Actions Type for Conversion", Page: new SelectActionWzardPage());
@@ -91,8 +99,8 @@ namespace Ginger.Actions.ActionConversion
 
             if (ConversionType == eActionConversionType.MultipleBusinessFlow)
             {
-                mReportPage = new ConversionStatusReportPage(ListOfBusinessFlow);
-                AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage);
+                mReportPage = new ConversionStatusReportPage(mListOfBusinessFlow);
+                AddPage(Name: "Conversion Status Report", Title: "Conversion Status Report", SubTitle: "Conversion Status Report", Page: mReportPage); 
             }
         }
 
@@ -130,8 +138,8 @@ namespace Ginger.Actions.ActionConversion
         public override void Finish()
         {
             if (ConversionType == eActionConversionType.SingleBusinessFlow)
-            {
-                BusinessFlowsActionsConversion(ListOfBusinessFlow);
+            {               
+                BusinessFlowsActionsConversion(mListOfBusinessFlow);
             }
         }
 
@@ -148,7 +156,7 @@ namespace Ginger.Actions.ActionConversion
         /// </summary>
         /// <param name="lst"></param>
         /// <param name="isReConvert"></param>
-        public async void ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
+        public async Task ProcessConversion(ObservableList<BusinessFlowToConvert> lst, bool isReConvert)
         {
             IsConversionDoneOnce = true;
             ProcessStarted();
@@ -176,7 +184,7 @@ namespace Ginger.Actions.ActionConversion
 
                 if (mConversionUtils.ListOfBusinessFlowsToConvert.Count > 0)
                 {
-                    await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                    await Task.Run(() => mConversionUtils.ContinueConversion(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs)).ConfigureAwait(true);
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -194,7 +202,7 @@ namespace Ginger.Actions.ActionConversion
         /// This method is used to convert the actions
         /// </summary>
         /// <param name="lst"></param>
-        public async void BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
+        public async Task BusinessFlowsActionsConversion(ObservableList<BusinessFlowToConvert> lst)
         {
             try
             {
@@ -208,7 +216,7 @@ namespace Ginger.Actions.ActionConversion
                 mConversionUtils.ActUIElementClassName = nameof(ActUIElement);
                 mConversionUtils.ListOfBusinessFlowsToConvert = lst;
 
-                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs));
+                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs)).ConfigureAwait(true);
 
                 if (ConversionType == eActionConversionType.MultipleBusinessFlow)
                 {
@@ -253,6 +261,16 @@ namespace Ginger.Actions.ActionConversion
             {
                 base.Cancel();
             }
+        }
+
+        public void ConversionProcessEnded()
+        {
+            ProcessEnded();
+        }
+
+        public void ConversionProcessStarted()
+        {
+            ProcessStarted();
         }
     }
 }

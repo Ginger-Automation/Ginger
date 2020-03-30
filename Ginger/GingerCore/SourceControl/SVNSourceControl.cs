@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using GingerCoreNET.SourceControl;
 using SharpSvn;
 using System;
@@ -258,10 +259,13 @@ namespace GingerCore.SourceControl
         {
             if (client == null) Init();
             SvnUpdateResult result;
+
             try
             {
                 mConflictsPaths.Clear();
+
                 client.Update(path, out result);
+
 
                 if (mConflictsPaths.Count > 0)
                 {
@@ -272,7 +276,7 @@ namespace GingerCore.SourceControl
                 if (result.Revision != -1)
                 {
                     if (supressMessage == true)
-                        Reporter.ToLog(eLogLevel.DEBUG, "The solution was updated successfully to revision:  " + result.Revision);
+                        Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully to revision:  " + result.Revision);
                     else
                         Reporter.ToUser(eUserMsgKey.UpdateToRevision, result.Revision);
                 }
@@ -283,7 +287,6 @@ namespace GingerCore.SourceControl
                     else
                         Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                 }
-
             }
             catch (Exception ex)
             {
@@ -501,15 +504,11 @@ namespace GingerCore.SourceControl
             if (client == null) Init();
             try
             {
-                if (System.IO.Path.GetExtension(Path) != string.Empty && !System.IO.File.Exists(System.IO.Path.GetFullPath(Path.Replace(".xml", ".ignore"))))
-                {
-                    System.IO.File.Copy(Path, (System.IO.Path.GetFullPath(Path.Replace(".xml", ".ignore"))));
-                }
-                CleanUp(Path);
+                CleanUp(System.IO.Path.GetDirectoryName(Path));
                 switch (side)
                 {
                     case eResolveConflictsSide.Local:
-                        client.Resolve(Path, SvnAccept.Mine, new SvnResolveArgs { Depth = SvnDepth.Infinity });//keep local changes for all conflicts with server
+                        client.Resolve(Path, SvnAccept.Mine, new SvnResolveArgs { Depth = SvnDepth.Infinity });//keep local changes for all conflicts 
                         client.Resolved(Path);
                         break;
                     case eResolveConflictsSide.Server:
@@ -763,9 +762,9 @@ namespace GingerCore.SourceControl
                 }
                 return SCIID;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.StackTrace);
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "This Item is not Checked-in, Please Check-in before retrieving SourceControlInfo");
                 return null;
             }
         }

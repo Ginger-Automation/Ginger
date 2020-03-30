@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action to perform validations Using Value Expression editor ");
 
         }
-        [IsSerializedForLocalRepository]
         public string Condition { get { return this.Value; } set { this.Value = value; } }
 
         public override string ActionEditPage { get { return null; } }
@@ -78,11 +77,14 @@ namespace GingerCore.Actions
             {
                 ConditionCalculated += " is True";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                this.ExInfo = ConditionCalculated;
             }
             else
             {
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                this.Error = ConditionCalculated;
+
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             AddPage(Name: "Items Selection", Title: "Item/s Selection", SubTitle: "Selected items to be added to Shared Repository", Page: new UploadItemsSelectionPage(UploadItemSelection.mSelectedItems));
             AddPage(Name: "Items Validation", Title: "Item/s Validation", SubTitle: "Validate the items to be added to Shared Repository", Page: new UploadItemsValidationPage());
             AddPage(Name: "Items Status", Title: "Item/s Status", SubTitle: "Upload Item Status", Page: new UploadStatusPage());
+            DisableBackBtnOnLastPage = true;
         }
 
         private UploadItemSelection CreateUploadItem(RepositoryItemBase item)

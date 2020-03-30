@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -547,6 +547,17 @@ namespace Ginger
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load the existing User Profile at '{0}'", UserProfileFilePath), ex);
+                    try
+                    {
+                        //create backup to the user profile so user won't lose all of it configs in case he went back to old Ginger version
+                        //TODO- allow recover from newer User Profile version in code instead creating new user profile
+                        Reporter.ToLog(eLogLevel.INFO, "Creating backup copy for the User Profile file");
+                        File.Copy(UserProfileFilePath, UserProfileFilePath.Replace("Ginger.UserProfile.xml", "Ginger.UserProfile-Backup.xml"), true);
+                    }
+                    catch(Exception ex2)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to create backup copy for the User Profile file", ex2);
+                    }
                 }
             }
 
@@ -790,6 +801,10 @@ namespace Ginger
                 OnPropertyChanged(nameof(UserDepartment));
             }
         }
+
+
+        [IsSerializedForLocalRepository]
+        public List<string> ShownHelpLayoutsKeys = new List<string>();
 
     }
 }

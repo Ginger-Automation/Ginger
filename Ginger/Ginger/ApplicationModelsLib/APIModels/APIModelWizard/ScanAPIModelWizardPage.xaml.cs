@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,7 +82,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         void BtnCompareAPIClicked(object sender, RoutedEventArgs e)
         {
             ObservableList<ApplicationAPIModel> selectedAPIModels = GingerCore.General.ConvertListToObservableList<ApplicationAPIModel>(AddAPIModelWizard.LearnedAPIModelsList.Where(m => m.IsSelected == true).ToList());
+
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
+
+            if(AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Count() != 0)
+            {
+                foreach(DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
+                {
+                    deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
+                }
+                Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Same existing API Models found as Matching for multiple Learned API Models. Consider the ones marked with 'Warning' tag in the list before selecting Overwriting operation for the same.", eUserMsgOption.OK);
+            }
 
             xApisSelectionGrid.InitViewItems();
 
@@ -134,6 +144,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     bool mergeIssue = false;
                     bool notifyReplaceAPI = false;
                     AddAPIModelWizard.LearnedAPIModelsList.Clear();
+                    List<DeltaAPIModel> repeatingMatchingModels = AddAPIModelWizard.DeltaModelsList.Where(m => m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.ReplaceExisting ||
+                                                                m.SelectedOperationEnum == DeltaAPIModel.eHandlingOperations.MergeChanges)
+                                                                        .GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).ToList();
+
+                    bool matchingModelsReplacementIssue = repeatingMatchingModels.Count() != 0;
+                    int apiCount = 0;
+                    if(matchingModelsReplacementIssue)
+                    {
+                        System.Text.StringBuilder issueMsg = new System.Text.StringBuilder(Environment.NewLine + Environment.NewLine);
+                        foreach(DeltaAPIModel deltaMod in repeatingMatchingModels)
+                        {
+                            apiCount++;
+                            issueMsg.Append(apiCount + "). " + deltaMod.MatchingAPIName + Environment.NewLine);
+                        }
+                        Reporter.ToUser(eUserMsgKey.MultipleMatchingAPI, "Below Matching API Models selected to be replaced/overwritten multiple times:" + issueMsg.ToString());
+                        WizardEventArgs.CancelEvent = true;
+                        return;
+                    }
+
                     foreach (DeltaAPIModel deltaModel in AddAPIModelWizard.DeltaModelsList.Where(m => m.IsSelected == true))
                     {
                         ApplicationAPIModel selectedAPIModel = null;
@@ -518,13 +547,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                     deltaAPI.SelectedOperationEnum = DeltaAPIModel.eHandlingOperations.Add;
                     deltaAPI.SelectedOperation = DeltaAPIModel.GetEnumDescription(deltaAPI.SelectedOperationEnum);
 
-                    xApisSelectionGrid.DataSourceList = xApisSelectionGrid.DataSourceList;
-
-                    // xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
-                    // xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
-
-                    //IObservableList sourceInstance = xApisSelectionGrid.DataSourceList;
-                    //xApisSelectionGrid.DataSourceList = sourceInstance;
+                    xApisSelectionGrid.DataSourceList.RemoveAt(modelIndex);
+                    xApisSelectionGrid.DataSourceList.Insert(modelIndex, deltaAPI);
                 }
             }
         }

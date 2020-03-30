@@ -44,6 +44,8 @@
                 <Label Style="{StaticResource $LabelStyle}" Content="Created By:" VerticalAlignment="Bottom"/>
                 <TextBox x:Name="xCreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="150" Margin="25,0,0,0" IsReadOnly="True" />
             </StackPanel>
+
+            <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
         </DockPanel>
     </ScrollViewer>
 </Page>

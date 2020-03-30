@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         public string FileExtension => throw new NotImplementedException();
 
-        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             //zzz !!!!!!
             func1(@"C:\Yaron\AQE 2019\Ginger\DynamicRunSet.xlsx", "2 lines");
@@ -46,7 +46,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             throw new NotImplementedException();
         }
 
-        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
             throw new NotImplementedException();
         }
@@ -93,6 +98,5 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             return value;
         }
-
     }
 }

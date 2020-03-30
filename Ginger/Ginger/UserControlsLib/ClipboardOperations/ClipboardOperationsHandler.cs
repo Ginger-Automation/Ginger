@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -205,7 +205,7 @@ namespace Ginger.UserControlsLib
             int insertIndex = 0;
 
             //adding the new item after current selected item            
-            if (currentIndex == -1 && containerControl.GetSourceItemsAsIList().CurrentItem != null) 
+            if (currentIndex == -1 || containerControl.GetSourceItemsAsIList().CurrentItem != null) 
             {
                 currentIndex = containerControl.GetSourceItemsAsIList().IndexOf((RepositoryItemBase)containerControl.GetSourceItemsAsIList().CurrentItem);
             }

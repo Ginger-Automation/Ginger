@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,14 +37,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
     }
 
     public class CLIHelper : INotifyPropertyChanged
-    {        
+    {
         public string Solution;
         public string Env;
         public string Runset;
         public string SourceControlURL;
         public string SourcecontrolUser;
         public string sourceControlPass;
-        public eAppReporterLoggingLevel AppLoggingLevel;        
+        public eAppReporterLoggingLevel AppLoggingLevel;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
         public bool ShowAutoRunWindow
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 OnPropertyChanged(nameof(RunAnalyzer));
             }
         }
-        
+
         string mTestArtifactsFolder;
         public string TestArtifactsFolder
         {
@@ -100,6 +100,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             {
                 mTestArtifactsFolder = value;
                 OnPropertyChanged(nameof(TestArtifactsFolder));
+            }
+        }
+
+        bool mUndoSolutionLocalChanges;
+        public bool UndoSolutionLocalChanges
+        {
+            get
+            {
+                return mUndoSolutionLocalChanges;
+            }
+            set
+            {
+                mUndoSolutionLocalChanges = value;
+                OnPropertyChanged(nameof(UndoSolutionLocalChanges));
             }
         }
 
@@ -117,7 +131,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 DownloadSolutionFromSourceControl();
                 return OpenSolution();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Unexpected error occurred while Loading the Solution", ex);
                 return false;
@@ -153,7 +167,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public void PostExecution()
         {
             if (ShowAutoRunWindow)
-            {                
+            {
                 RepositoryItemHelper.RepositoryItemFactory.WaitForAutoRunWindowClose();
             }
         }
@@ -162,17 +176,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Preparing {0} for Execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
                 if (!ShowAutoRunWindow)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Loading {0} Runners", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Loading {0} Runners", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     mRunsetExecutor.InitRunners();
                 }
 
                 if (mRunSetConfig.RunWithAnalyzer)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Running {0} Analyzer", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     AnalyzerUtils analyzerUtils = new AnalyzerUtils();
                     if (analyzerUtils.AnalyzeRunset(mRunSetConfig, true))
                     {
@@ -199,26 +213,26 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         private void SetDebugLevel()
-        {            
+        {
             Reporter.AppLoggingLevel = AppLoggingLevel;
         }
 
         private void HandleAutoRunWindow()
         {
-            if(ShowAutoRunWindow)
+            if (ShowAutoRunWindow)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Showing AutoRunWindow");
+                Reporter.ToLog(eLogLevel.INFO, "Showing Auto Run Window");
                 RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
             }
             else
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Not Showing AutoRunWindow");
+                Reporter.ToLog(eLogLevel.INFO, "Not Showing Auto Run Window");
             }
         }
 
 
         private void SelectRunset()
-        {            
+        {
             Reporter.ToLog(eLogLevel.INFO, string.Format("Selected {0}: '{1}'", GingerDicser.GetTermResValue(eTermResKey.RunSet), Runset));
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             mRunSetConfig = RunSets.Where(x => x.Name.ToLower().Trim() == Runset.ToLower().Trim()).FirstOrDefault();
@@ -236,32 +250,37 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         }
 
         private void SelectEnv()
-        {            
+        {
             Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + Env + "'");
-            ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
-            if (env != null)
+            if (String.IsNullOrEmpty(Env) == false)
             {
-                mRunsetExecutor.RunsetExecutionEnvironment = env;
-            }
-            else
-            {
-                if (Env == "Default")
+                ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
+                if (env != null)
                 {
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count == 1)
-                    {
-                        mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
-                        Reporter.ToLog(eLogLevel.DEBUG, "Auto Selected Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Cannot auto select default environment since solution do not contain 'Default' env and solution contains more than one env, please specify the env name using -e or --env");
-                    }
+                    mRunsetExecutor.RunsetExecutionEnvironment = env;
+                    return;
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to find matching Environment in the Solution");
-                    // TODO: throw
-                    // return false;
+                    if (Env != "Default")
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to find the Environment '{0}' in the Solution", Env));
+                        throw new Exception(string.Format("Failed to find the Environment '{0}' in the Solution", Env));
+                    }
+                }
+            }
+
+            if (mRunsetExecutor.RunsetExecutionEnvironment == null && (String.IsNullOrEmpty(Env) || Env == "Default"))
+            {
+                if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Count > 0)
+                {
+                    mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First();
+                    Reporter.ToLog(eLogLevel.INFO, "Auto Selected the default Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Cannot auto select default environment since solution do not contain any Environment, please add Environment to the Solution");
+                    throw new Exception("Failed to find any Environment in the Solution");
                 }
             }
         }
@@ -270,8 +289,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (SourceControlURL != null && SourcecontrolUser != "" && sourceControlPass != null)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Downloading Solution from source control");
-                SourceControlIntegration.DownloadSolution(Solution);                
+                Reporter.ToLog(eLogLevel.INFO, "Downloading/updating Solution from source control");
+                if (!SourceControlIntegration.DownloadSolution(Solution, UndoSolutionLocalChanges))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
+                }
             }
         }
 
@@ -286,7 +308,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
-            if (value == "Y")
+            if (value == "Y" || value == "true" || value == "True")
             {
                 try
                 {

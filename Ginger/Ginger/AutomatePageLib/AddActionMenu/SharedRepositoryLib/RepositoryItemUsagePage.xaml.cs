@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ namespace Ginger.Repository
         public ObservableList<RepositoryItemUsage> RepoItemUsages = new ObservableList<RepositoryItemUsage>();
         private bool mIncludeOriginal = false;
         private readonly RepositoryItemBase mOriginalItem;
+        public object extraDetails = null;
 
         public RepositoryItemUsagePage(RepositoryItemBase repoItem, bool includeOriginal=true, RepositoryItemBase originalItem =null)
         {
@@ -293,12 +294,16 @@ namespace Ginger.Repository
                     {
                         if (usage.Status == RepositoryItemUsage.eStatus.Pending)
                         {
-
                             if (usage.HostActivity != null)
-                                mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity);
+                            {
+                                this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity));
+                                //mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostActivity);
+                            }
                             else
-                                mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow);
-
+                            {
+                                this.Dispatcher.Invoke(() => mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow, extraDetails));
+                                //mRepoItem.UpdateInstance(usage.UsageItem, usage.SelectedItemPart, usage.HostBusinessFlow);
+                            }
 
                             usage.Status = RepositoryItemUsage.eStatus.Updated;
                         }

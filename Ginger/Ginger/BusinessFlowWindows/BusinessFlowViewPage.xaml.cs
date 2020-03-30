@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
 
             SetUIView();
-            BindControlsToBusinessFlow();
+            BindControlsToBusinessFlow();            
         }
 
         private void SetUIView()
@@ -402,6 +402,11 @@ namespace GingerWPF.BusinessFlowsLib
         {
             //OKButtonClicked = true;
             mGenericWin.Close();
+        }
+
+        private void xAutomateBtn_Loaded(object sender, RoutedEventArgs e)
+        {
+            App.MainWindow.AddHelpLayoutToShow("BusinessFlowPage_AutomateBtnHelp", xAutomateBtn, "Click here to design your automation flow");
         }
     }
 }

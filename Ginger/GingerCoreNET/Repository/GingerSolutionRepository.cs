@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,10 +57,10 @@ namespace Amdocs.Ginger.CoreNET.Repository
 
             SR.AddItemInfo<PluginPackage>("*.Ginger.PluginPackage.xml", SolutionRepository.cSolutionRootFolderSign + "Plugins", true, "Plugins", PropertyNameForFileName: nameof(PluginPackage.PluginId));
 
-            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGroup.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "ActivitiesGroup", true, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Shared "), PropertyNameForFileName: nameof(ActivitiesGroup.Name));
-            SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "Activities", true, GingerDicser.GetTermResValue(eTermResKey.Activities, "Shared "), PropertyNameForFileName: nameof(Activity.ActivityName));
+            SR.AddItemInfo<ActivitiesGroup>("*.Ginger.ActivitiesGroup.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "ActivitiesGroup", true, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups, "Shared"), PropertyNameForFileName: nameof(ActivitiesGroup.Name));
+            SR.AddItemInfo<Activity>("*.Ginger.Activity.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "Activities", true, GingerDicser.GetTermResValue(eTermResKey.Activities, "Shared"), PropertyNameForFileName: nameof(Activity.ActivityName));
             SR.AddItemInfo<Act>("*.Ginger.Action.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "Actions", true, "Shared Actions", PropertyNameForFileName: nameof(Act.Description));
-            SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "Variables", true, GingerDicser.GetTermResValue(eTermResKey.Variables, "Shared "), PropertyNameForFileName: nameof(VariableBase.Name));
+            SR.AddItemInfo<VariableBase>("*.Ginger.Variable.xml", SolutionRepository.cSolutionRootFolderSign + "SharedRepository" + Path.DirectorySeparatorChar + "Variables", true, GingerDicser.GetTermResValue(eTermResKey.Variables, "Shared"), PropertyNameForFileName: nameof(VariableBase.Name));
 
             SR.AddItemInfo<RunSetConfig>("*.Ginger.RunSetConfig.xml", SolutionRepository.cSolutionRootFolderSign + "RunSetConfigs", true, GingerDicser.GetTermResValue(eTermResKey.RunSets), PropertyNameForFileName: nameof(RunSetConfig.Name));
 

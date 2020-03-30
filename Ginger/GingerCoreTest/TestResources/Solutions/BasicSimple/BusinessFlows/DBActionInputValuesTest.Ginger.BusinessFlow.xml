@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="510f369a-5004-4bd6-9a59-b3241a8b75c1" ItemType="BusinessFlow" CreatedBy="arvindgh" Created="202002250713" GingerVersion="3.5.0.0" Version="2" LastUpdateBy="arvindgh" LastUpdate="202002250713" />
+<BusinessFlow Guid="510f369a-5004-4bd6-9a59-b3241a8b75c1" Name="DBActionInputValuesTest" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="7d548f00-5b64-4797-a2af-878dce9e2057" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActDBValidation Active="True" AppName="MyWebApp" DBName="AccessDB" DBValidationType="FreeSQL" Description="DataBase Action" Guid="cc51f848-22cf-4992-bf7d-8204843f58a2" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SQL="Select * From Table1" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="b1a4c16f-f48f-4dd6-b4ee-e77c0905350f" Param="SQL" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Select * From Table1" />
+<ActInputValue Guid="064435c5-ce96-4d7d-9dbf-18cc2e1fc2c2" Param="QueryTypeRadioButton" ParentGuid="00000000-0000-0000-0000-000000000000" Value="FreeSQL" />
+<ActInputValue Guid="71c8d5c1-63a0-4323-9eca-845b9e6cd888" Param="QueryFile" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="681a50ce-8f4f-4dfa-8b38-01817f8294c3" Param="CommitDB" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+
+<ReturnValues>
+</ReturnValues>
+</ActDBValidation>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="733b3bed-2701-4003-80c9-45a5aad8faec" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="7d548f00-5b64-4797-a2af-878dce9e2057" ActivityName="Activity 1" Guid="1f833b4f-3a64-4adc-b457-81998076ee84" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="e9a91382-9083-4443-90fd-513a1cbc9b30" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>

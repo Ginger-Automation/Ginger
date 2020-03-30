@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -894,14 +894,25 @@ namespace Ginger.WindowExplorer
         {
             if (WindowsComboBox.SelectedValue != null && mWindowExplorerDriver != null)
             {
-                List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
-
-                StatusTextBlock.Text = "Ready";
-                // Convert to obserable for the grid
-                VisibleElementsInfoList.Clear();
-                foreach (ElementInfo EI in list)
+                try
                 {
-                    VisibleElementsInfoList.Add(EI);
+                    StatusTextBlock.Text = "Loading";
+                    List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+
+                    // Convert to obserable for the grid
+                    VisibleElementsInfoList.Clear();
+                    foreach (ElementInfo EI in list)
+                    {
+                        VisibleElementsInfoList.Add(EI);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception while loading the Grid data", ex);
+                }
+                finally
+                {
+                    StatusTextBlock.Text = "Ready";
                 }
 
                 WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
@@ -1017,10 +1028,11 @@ namespace Ginger.WindowExplorer
                 WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
                 if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
                         ShowFilterElementsPage();
-
+                
                 image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
                 GridTreeViewButton.Content = image;
                 GridTreeViewButton.ToolTip = "Switch to Tree View";
+                RefreshControlsGrid();
             }           
         }
 

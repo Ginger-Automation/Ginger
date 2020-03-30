@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -223,6 +223,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)item);
                 if (copiedItem != null)
                 {
+                    copiedItem.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked;
+
                     //Save copy to target folder
                     // check me                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
@@ -258,6 +260,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 RepositoryItemBase copiedItem = CopyTreeItemWithNewName((RepositoryItemBase)nodeItemToCopy);
                 if (copiedItem != null)
                 {
+                    copiedItem.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked;
                     //Save copy to target folder                    
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(copiedItem);
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -69,6 +69,9 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LaunchWithAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.LaunchWithAgent);
             AgentPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.JavaAgentPath);
             JavaAgentPortTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.Port);
+
+            AttachAgentProcessSyncTime.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.AttachAgentProcessSyncTime);
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ShowAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.ShowAgent);
             
             rbGroupPortConfig.Init(typeof(ActLaunchJavaWSApplication.ePortConfigType), RadioButtonPanel, mAct.GetOrCreateInputParam(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString()), new RoutedEventHandler(PortConfigRB_Click));

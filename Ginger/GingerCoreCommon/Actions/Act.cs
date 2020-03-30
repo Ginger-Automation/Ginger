@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ namespace GingerCore.Actions
                 // Avoid creating new LcoateBy if this action doesn't need it
                 if (this.ObjectLocatorConfigsNeeded)
                 {
-                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy);
+                    return GetOrCreateInputParam<eLocateBy>(Fields.LocateBy, eLocateBy.NA);
                 }
                 else
                 {
@@ -682,11 +682,17 @@ namespace GingerCore.Actions
             {
                 AIV = new ActInputValue();
                 // AIV.Active = true;
-
                 AIV.Param = Param;
                 InputValues.Add(AIV);
             }
-
+            else
+            {
+                //Remove duplicate ActInputValues from the InputValues
+                while (InputValues.Where(aiv => aiv.Param == Param).ToList().Count > 1)
+                {
+                    InputValues.Remove((from aiv in InputValues where aiv.Param == Param select aiv).LastOrDefault());
+                }
+            }
             AIV.Value = Value;
         }
 
@@ -715,10 +721,10 @@ namespace GingerCore.Actions
             return AIV;
         }
 
-        public TEnum GetOrCreateInputParam<TEnum>(string Param, string DefaultValue = null) where TEnum : struct
+        public TEnum GetOrCreateInputParam<TEnum>(string Param, TEnum DefaultValue) where TEnum : struct
         {
 
-            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue);
+            ActInputValue AIV = GetOrCreateInputParam(Param, DefaultValue.ToString());
 
             TEnum result;
        _ = Enum.TryParse<TEnum>(AIV.Value, out result);
@@ -1440,7 +1446,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null)
+        public override void UpdateInstance(RepositoryItemBase instance, string partToUpdate, RepositoryItemBase hostItem = null, object extraDetails = null)
         {
             Act actInstance = (Act)instance;
 

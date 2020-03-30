@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -597,6 +597,36 @@ namespace UnitTests.NonUITests
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
             var expected2 = newAction.ReturnValues.FirstOrDefault(x => x.Actual == "OK");
             Assert.AreNotEqual(null, expected2);
+        }
+
+        [TestMethod]
+        [Timeout(600000)]
+        public void EnhanceSecurityProtocalOnVersionUpgradeCheck()
+        {
+            var targetFrameworkAttribute = typeof(Ginger.MainWindow).Assembly.GetCustomAttributes(typeof(System.Runtime.Versioning.TargetFrameworkAttribute), false)
+                                           .SingleOrDefault();
+            var versionName = ((System.Runtime.Versioning.TargetFrameworkAttribute)targetFrameworkAttribute).FrameworkName;
+            string versionStr = string.Empty;
+
+            int versionNumber;
+
+            for (int i = 0; i < versionName.Length; i++)
+            {
+                if (Char.IsDigit(versionName[i]))
+                    versionStr += versionName[i];
+            }
+
+            if (versionStr.Length > 0)
+            {
+                versionNumber = Convert.ToInt32(versionStr);
+
+                if (versionNumber > 461)
+                {
+                    throw new NotImplementedException("Enhance SecurityProtocolType code in WebService driver asper dotnet framework version");
+                }
+            }
+               
+
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -5108,8 +5108,8 @@ namespace GingerCore.Drivers
                 var v = ((IJavaScriptExecutor)Driver).ExecuteScript(script3, null);
             }
             catch (OpenQA.Selenium.WebDriverException e)
-            {                
-                StopRecordingIfAgentClosed();
+            {
+                StopRecordingIfAgentClosed(e.Message);
             }
             catch (Exception ex)
             {
@@ -5412,7 +5412,7 @@ namespace GingerCore.Drivers
                     }
                     catch (OpenQA.Selenium.WebDriverException e)
                     {                        
-                        StopRecordingIfAgentClosed();
+                        StopRecordingIfAgentClosed(e.Message);
                     }
                     catch (Exception e)
                     {
@@ -5493,11 +5493,16 @@ namespace GingerCore.Drivers
         /// <summary>
         /// This method is used to stop recording if the agent is not reachable
         /// </summary>
-        private void StopRecordingIfAgentClosed()
+        private void StopRecordingIfAgentClosed(string errorDetails)
         {
+            if (this.IsRunning())
+            {
+                return;
+            }
             IsRecording = false;
             RecordingEventArgs args = new RecordingEventArgs();
             args.EventType = eRecordingEvent.StopRecording;
+            args.EventArgs = errorDetails;
             OnRecordingEvent(args);
         }
 
@@ -6342,10 +6347,17 @@ namespace GingerCore.Drivers
 
             if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
-                e = LocateElement(act);
-                if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
+                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
                 {
-                    act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    e = LocateElement(act,true);
+                }
+                else
+                {
+                    e = LocateElement(act);
+                    if (e == null)
+                    {
+                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    }
                 }
             }
 
@@ -6556,7 +6568,7 @@ namespace GingerCore.Drivers
                         break;
 
                     case ActUIElement.eElementAction.MultiSetValue:
-                        List<IWebElement> textels = LocateElements(act.LocateBy, act.LocateValueCalculated);
+                        List<IWebElement> textels = LocateElements(act.ElementLocateBy, act.ElementLocateValueForDriver);
                         if (textels != null)
                         {
                             try
@@ -6570,12 +6582,12 @@ namespace GingerCore.Drivers
                             }
                             catch (Exception)
                             {
-                                act.Error = "Error: One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                                act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
                             }
                         }
                         else
                         {
-                            act.Error = "Error: One or more elements not found - " + act.LocateBy + " " + act.LocateValueCalculated;
+                            act.Error = "Error: One or more elements not found - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
                             return;
                         }
                         break;
@@ -6608,7 +6620,7 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            act.Error = "Failed to count number of elements for - " + act.LocateBy + " " + act.LocateValueCalculated;
+                            act.Error = "Failed to count number of elements for - " + act.ElementLocateBy + " " + act.ElementLocateValueForDriver;
                             act.ExInfo = ex.Message;
                         }
                         break;

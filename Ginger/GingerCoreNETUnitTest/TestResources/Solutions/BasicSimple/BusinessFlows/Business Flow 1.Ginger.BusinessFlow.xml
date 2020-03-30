@@ -1,9 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.2.0.0" Version="2" LastUpdateBy="YARONWE" LastUpdate="201905220334" />
+<GingerRepositoryItem><Header ItemGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.5.0.0" Version="3" LastUpdateBy="aditijag" LastUpdate="201912271450" />
 <BusinessFlow Active="False" Guid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
-<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" TargetApplication="Amdo CSP" />
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Amdo CSP">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action" Guid="bab71db4-e1d5-4146-80d4-88c7ad85202a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+<ActDummy Active="True" Description="Dummy Action" Guid="46b7f844-ad74-43f2-9073-7a454d507401" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+</Acts>
+</Activity>
 </Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="2bd65414-2bf6-4185-8f9c-2daf34519086" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ActivityName="Activity 1" Guid="4e6e82c4-7c46-43a7-8970-a98fee64a4b2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
 
 <TargetApplications>
 <TargetApplication AppName="Amdo CSP" Guid="74f2f292-f647-4336-9b17-588850dbd70c" ParentGuid="00000000-0000-0000-0000-000000000000" />

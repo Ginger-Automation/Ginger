@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -111,7 +111,7 @@ namespace Amdocs.Ginger.Repository
 
         public string InstallPluginPackage(OnlinePluginPackageRelease release)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Downloading Plugin" + Id + " " + release.Version);
+            Reporter.ToLog(eLogLevel.INFO, "Downloading Plugin" + Id + " " + release.Version);
             string pluginSubFolder = Path.Combine(Id, release.Version);
             string folder = DownloadPackage(release.assets[0].browser_download_url, pluginSubFolder).Result;
             return folder;       

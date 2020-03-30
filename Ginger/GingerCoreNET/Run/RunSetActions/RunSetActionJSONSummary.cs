@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,8 +41,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
         {
             string json = WorkSpace.Instance.RunsetExecutor.CreateSummary();
             string timestamp = DateTime.Now.ToString("MMddyyyy_HHmmss");
-            string testArtifactsFolder = WorkSpace.Instance.TestArtifactsFolder;            
-            string fileName = Path.Combine(testArtifactsFolder, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?                
+
+            string jsonSummaryFolder = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+            if (!string.IsNullOrEmpty(WorkSpace.Instance.TestArtifactsFolder))
+            {
+                jsonSummaryFolder = WorkSpace.Instance.TestArtifactsFolder;
+            }
+            string fileName = Path.Combine(jsonSummaryFolder, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "_" + timestamp + ".json.txt");//why not as .json?                
             System.IO.File.WriteAllText(fileName, json);
         }
 

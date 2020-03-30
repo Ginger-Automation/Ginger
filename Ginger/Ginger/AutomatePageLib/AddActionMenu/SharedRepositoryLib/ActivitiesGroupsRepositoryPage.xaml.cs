@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -126,7 +126,13 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.CurrentItem != null)
             {
                 ActivitiesGroup activityGroup = (ActivitiesGroup)xActivitiesGroupsRepositoryGrid.CurrentItem;
-                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, null, ActivitiesGroupPage.eEditMode.SharedRepository);
+                BusinessFlow currentBF = null;
+                if(mContext != null)
+                {
+                    currentBF = mContext.BusinessFlow;
+                }
+
+                ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activityGroup, currentBF, ActivitiesGroupPage.eEditMode.SharedRepository);
                 mActivitiesGroupPage.ShowAsWindow();
             }
             else
@@ -140,6 +146,7 @@ namespace Ginger.Repository
             if (xActivitiesGroupsRepositoryGrid.Grid.SelectedItem != null)
             {
                 RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage((RepositoryItemBase)xActivitiesGroupsRepositoryGrid.Grid.SelectedItem);
+                usagePage.extraDetails = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 usagePage.ShowAsWindow();
             }
             else

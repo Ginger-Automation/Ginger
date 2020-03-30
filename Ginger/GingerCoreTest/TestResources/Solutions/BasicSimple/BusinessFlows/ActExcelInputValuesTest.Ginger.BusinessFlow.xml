@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="fde53376-a0cc-4adf-bd69-0e87a4cd61b3" ItemType="BusinessFlow" CreatedBy="arvindgh" Created="202003040634" GingerVersion="3.5.0.0" Version="3" LastUpdateBy="arvindgh" LastUpdate="202003040635" />
+<BusinessFlow Guid="fde53376-a0cc-4adf-bd69-0e87a4cd61b3" Name="ActExcelInputValuesTest" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="9cb49c68-65de-41f1-90ba-327314333208" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWebApp">
+<Acts>
+<ActExcel Active="True" Description="Excel Action" ExcelActionType="ReadData" ExcelFileName="C:\GINGERSOURCECONTROL\SOLUTIONS\GINGER_REGRESSION_TESTING\DOCUMENTS\DATASOURCE REGRESSION\MULTIPLE VALUES.XLSX" Guid="f609f15c-0d28-4a3d-a4cc-9f0a5278e0d8" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" PrimaryKeyColumn="PET" RetryMechanismInterval="5" SelectRowsWhere="Used='Y'" SheetName="Sheet1" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="38459597-585e-40f4-a322-412b79eecd95" Param="ColMappingRules" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActInputValue Guid="44580636-d01f-4fbf-9272-a1c5789a61ea" Param="ExcelFileName" ParentGuid="00000000-0000-0000-0000-000000000000" Value="C:\GINGERSOURCECONTROL\SOLUTIONS\GINGER_REGRESSION_TESTING\DOCUMENTS\DATASOURCE REGRESSION\MULTIPLE VALUES.XLSX" />
+<ActInputValue Guid="68c5989a-8d64-4889-8825-f66aa93949b1" Param="SheetName" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Sheet1" />
+<ActInputValue Guid="fc5bd210-08c7-458c-8f0e-2eeb1f34098a" Param="SelectRowsWhere" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Used='Y'" />
+<ActInputValue Guid="c7f4bdc0-4a47-44c0-bcdc-2ae9df004920" Param="PrimaryKeyColumn" ParentGuid="00000000-0000-0000-0000-000000000000" Value="PET" />
+</InputValues>
+</ActExcel>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="f62be0c4-c816-46d2-9504-21c3323152db" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="9cb49c68-65de-41f1-90ba-327314333208" ActivityName="Activity 1" Guid="52620522-e439-49a9-95c6-bc15f2446f6e" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWebApp" Guid="dbbb5f07-70c8-473c-89c1-33885e98e671" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+</BusinessFlow></GingerRepositoryItem>
