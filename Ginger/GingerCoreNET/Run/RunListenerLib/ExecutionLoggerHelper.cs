@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Clean Execution Logger Folder", ex);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean Execution Logger Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
         }
 

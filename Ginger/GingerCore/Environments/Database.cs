@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -167,13 +167,16 @@ namespace GingerCore.Environments
             get
             {
                 VE.Value = ConnectionString;
-                return mVE.ValueCalculated;
+                mVE.DecryptFlag = true;
+                string valueCalculated = mVE.ValueCalculated;
+                mVE.DecryptFlag = false;
+                return valueCalculated;
             }
         }
 
         private string mTNS;
         [IsSerializedForLocalRepository]
-        public string TNS  {  get  { return mTNS; } set { mTNS = value; OnPropertyChanged(Fields.TNS); } }
+        public string TNS { get { return mTNS; } set { mTNS = value; OnPropertyChanged(Fields.TNS); } }
         public string TNSCalculated
         {
             get
@@ -226,7 +229,26 @@ namespace GingerCore.Environments
 
         public string NameBeforeEdit;
 
-       
+        public bool CheckUserCredentialsInTNS()
+        {
+            if (!string.IsNullOrEmpty(TNSCalculated) && TNSCalculated.ToLower().Contains("data source=") && TNSCalculated.ToLower().Contains("password=") && TNSCalculated.ToLower().Contains("user id="))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public void SplitUserIdPassFromTNS()
+        {
+            System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
+            scSB.ConnectionString = TNS;
+            TNS = scSB.DataSource;
+            User = scSB.UserID;
+            Pass = scSB.Password;
+            ConnectionString = scSB.ConnectionString;
+        }
         public string GetConnectionString()
         {
             string connStr = null;
@@ -250,7 +272,7 @@ namespace GingerCore.Environments
                 connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
 
                 String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-
+                //ConnectionString = connStr + "Password=" + Pass + ";";
                 if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
                 else { connStr = connStr + "Password=" + PassCalculated + ";"; }
 
@@ -284,7 +306,7 @@ namespace GingerCore.Environments
                 }
                 
             }
-
+            ConnectionString = connStr;
             return connStr;
         }
 
@@ -352,7 +374,7 @@ namespace GingerCore.Environments
                         {
                             String Temp = e.Message;
                             //if (Temp.Contains ("ORA-03111"))
-                            if (Temp.Contains("ORA-03111") || Temp.Contains("ORA-01017"))
+                            if (Temp.Contains("ORA-03111"))
                             {
                                 factory = DbProviderFactories.GetFactory("System.Data.OleDb");
                                 oConn = factory.CreateConnection();
@@ -360,9 +382,13 @@ namespace GingerCore.Environments
                                 oConn.Open();
                                 break;
                             }
+                            else if (Temp.Contains("ORA-01017"))
+                            {
+                                throw e;
+                            }
                             else if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll"))
                             {
-                                
+
                                 throw new Exception(GetMissingDLLErrorDescription());
                             }
                             else
@@ -467,7 +493,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + ConnectionString, e);
                 throw (e);
             }
             return false;

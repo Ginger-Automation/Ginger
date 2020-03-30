@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1076,7 +1076,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 if (!string.IsNullOrEmpty(HTMLReportMainFolder))
                 {
                     HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(BusinessFlowReport.Name))
-                                  .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
+                                  .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmssfff"))
                                   .Replace("{objectType_to_replace}", typeof(BusinessFlowReport).Name.ToString()));
                 }
                 currentHTMLReportsFolder = HTMLReportMainFolder;
@@ -1533,7 +1533,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 ActivityGroupReport.ExecutionLoggerIsEnabled = true;
                 HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name))
-                                               .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
+                                               .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmssfff"))
                                                .Replace("{objectType_to_replace}", typeof(ActivityGroupReport).Name.ToString()));
                 currentHTMLReportsFolder = HTMLReportMainFolder;
                 ReportLevel = "./";
@@ -1878,7 +1878,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 ActivityReport.AllIterationElements = currentTemplate.ShowAllIterationsElements;
                 HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(ActivityReport.ActivityName))
-                                                     .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
+                                                     .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmssfff"))
                                                      .Replace("{objectType_to_replace}", typeof(ActivityReport).Name.ToString()));
                 currentHTMLReportsFolder = HTMLReportMainFolder;
                 ReportLevel = "./";
@@ -2211,7 +2211,7 @@ namespace Ginger.Reports.GingerExecutionReport
             if (calledAsRoot)
             {
                 HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(HTMLReportMainFolder.Replace("{name_to_replace}", ExtensionMethods.folderNameNormalazing(ActionReport.Description))
-                                                     .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmss"))
+                                                     .Replace("{date_to_replace}", DateTime.Now.ToString("MMddyyyy_HHmmssfff"))
                                                      .Replace("{objectType_to_replace}", typeof(ActionReport).Name.ToString()));
                 currentHTMLReportsFolder = HTMLReportMainFolder;
                 System.IO.Directory.CreateDirectory(currentHTMLReportsFolder + @"\Screenshots\");
@@ -2943,8 +2943,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception ex)
             {
-
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace UnitTests.NonUITests
@@ -77,20 +78,30 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Count);
         }
 
-        [TestMethod]
-        [Timeout(60000)]
-        public void XMLSpecialCharRemoveTest()
+        public void DBActInputValuesTest()
         {
-            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "EOD_REPORT_COMPARE.Ginger.BusinessFlow.xml");
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "DBActionInputValuesTest.Ginger.BusinessFlow.xml");
 
             //Load BF
             //Act
             BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
 
-            Assert.AreEqual(1, businessFlow.Activities.Count);
-            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count);
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "SQL").ToList().Count);
         }
+        public void ExcelActInputValuesTest()
+        {
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "ActExcelInputValuesTest.Ginger.BusinessFlow.xml");
 
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "ExcelFileName").ToList().Count);
+        }
 
         //[Ignore]
         //[TestMethod]  [Timeout(60000)]

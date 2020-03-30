@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ namespace Ginger.Activities
             grdGroupedActivities.ShowUpDown = Visibility.Visible;
             grdGroupedActivities.ShowDelete = Visibility.Visible;
 
-            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another Activity to this Group", BtnAdd_Click);
+            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " to this Group", BtnAdd_Click);
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
