@@ -1,0 +1,85 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": false,
+    "Name": "Calc_Test_Dynamic",
+    "EnvironmentName": "Env1",
+    "RunAnalyzer": false,
+    "RunInParallel": true,
+    "Runners": [
+      {
+        "Name": "Runner Dynamic",
+        "EnvironmentName": "Env2",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "AgentName": "IE",
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Calculator_Test",
+            "Instance": 1,
+            "Active": true,
+            "InputValues": [
+              {
+                "VariableParentName": "Calculator_Test",
+                "VariableName": "DoMultiply?",
+                "VariableCustomizedValue": "No"
+              },
+              {
+                "VariableParentName": "Calculator_Test\\Sum\\Do Sum",
+                "VariableName": "SecondNum_ForSum",
+                "VariableCustomizedValue": "44"
+              }
+            ]
+          },
+          {
+            "Name": "Flow 1",
+            "Active": true
+          },
+          {
+            "Name": "Calculator_Test",
+            "Instance": 2,
+            "Active": true,
+            "InputValues": [
+              {
+                "VariableParentName": "Calculator_Test",
+                "VariableName": "DoDivide?",
+                "VariableCustomizedValue": "No"
+              },
+              {
+                "VariableParentName": "Calculator_Test\\Divide\\Do Divide",
+                "VariableName": "SecondNum_ForDivide",
+                "VariableCustomizedValue": "1"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Operations": [
+      {
+        "$type": "RunsetOperations.MailReportOperationExecConfig, Ginger.ExecuterService.Contracts",
+        "MailSettings": {
+          "SmtpDetails": {
+            "Server": "ilmail",
+            "Port": "25",
+            "EnableSSL": true
+          },
+          "MailFrom": "menik@amdocs.com",
+          "MailTo": "menik@amdocs.com",
+          "Subject": "AAA"
+        },
+        "IncludeAttachmentReport": false,
+        "Name": "Send HTML Report Email",
+        "Condition": "AlwaysRun",
+        "RunAt": "ExecutionEnd",
+        "Active": false
+      }
+    ]
+  }
+}

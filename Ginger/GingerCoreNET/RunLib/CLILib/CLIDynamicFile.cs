@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using GingerCore.Environments;
 using System;
+using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -80,7 +83,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if(FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
                     cliHelper.SetSourceControlType(exeConfiguration.SolutionScmDetails.SCMType.ToString());
@@ -92,6 +95,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     {
                         cliHelper.SourceControlProxyServer(exeConfiguration.SolutionScmDetails.ProxyServer);
                         cliHelper.SourceControlProxyPort(exeConfiguration.SolutionScmDetails.ProxyPort);
+                    }
+
+                    if (exeConfiguration.SolutionScmDetails.UndoSolutionLocalChanges != null)
+                    {
+                        cliHelper.UndoSolutionLocalChanges = (bool)exeConfiguration.SolutionScmDetails.UndoSolutionLocalChanges;
                     }
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
@@ -122,7 +130,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (!string.IsNullOrEmpty(exeConfiguration.ArtifactsPath))
                 {
                     cliHelper.TestArtifactsFolder = exeConfiguration.ArtifactsPath;
-                }                
+                }
+                if (exeConfiguration.VerboseLevel != null)
+                {
+                   CLIProcessor.SetVerboseLevel((OptionsBase.eVerboseLevel)Enum.Parse(typeof(OptionsBase.eVerboseLevel), exeConfiguration.VerboseLevel.ToString(), true));
+                }
             }
             else
             {
@@ -151,9 +163,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                GingerExecConfig exeConfiguration = DynamicExecutionManager.LoadDynamicExecutionFromJSON(content);
+                GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
                 RunsetExecConfig runset = exeConfiguration.Runset;
-                cliHelper.Env = runset.Environment;
+                if (runset.EnvironmentName != null || runset.EnvironmentID != null)
+                {
+                    ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
+                                    new Tuple<string, Guid?>(nameof(ProjEnvironment.Guid), runset.EnvironmentID),
+                                    new Tuple<string, string>(nameof(ProjEnvironment.Name), runset.EnvironmentName),
+                                    WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>());
+                    if (env != null)
+                    {
+                        cliHelper.Env = env.Name;
+                    }
+                }                
                 if (runset.RunAnalyzer != null)
                 {
                     cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;

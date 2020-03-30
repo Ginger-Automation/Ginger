@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,11 +37,6 @@ namespace Amdocs.Ginger.Common
         public static eAppReporterLoggingLevel AppLoggingLevel { get; set; }
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
         {
-            if (ReportAllAlsoToConsole)
-            {
-                ToConsole(logLevel, messageToLog, exceptionToLog);
-            }
-
             if (logLevel == eLogLevel.DEBUG && AppLoggingLevel != eAppReporterLoggingLevel.Debug)
             {
                 return;
@@ -52,7 +47,12 @@ namespace Amdocs.Ginger.Common
                 ReporterData.ErrorCounter++;
             }
 
-            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);
+            if (ReportAllAlsoToConsole)
+            {
+                ToConsole(logLevel, messageToLog, exceptionToLog);
+            }
+
+            WorkSpaceReporter.ToLog(logLevel, messageToLog, exceptionToLog);            
         }
         #endregion ToLog
 
@@ -122,11 +122,11 @@ namespace Amdocs.Ginger.Common
 
                 if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
+                    ToLog(eLogLevel.INFO, "Showing User Message: '" + messageText + "'");
                 }
                 else if (ReportAllAlsoToConsole)
                 {
-                    ToConsole(eLogLevel.DEBUG, "Showing User Message: '" + messageText + "'");
+                    ToConsole(eLogLevel.INFO, "Showing User Message: '" + messageText + "'");
                 }
 
                 //show the messege and return user selection
@@ -134,11 +134,11 @@ namespace Amdocs.Ginger.Common
 
                 if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
+                    ToLog(eLogLevel.INFO, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
                 else if (ReportAllAlsoToConsole)
                 {
-                    ToConsole(eLogLevel.DEBUG, "User Message Option Selection: '" + userSelection.ToString() + "'");
+                    ToConsole(eLogLevel.INFO, "User Message Option Selection: '" + userSelection.ToString() + "'");
                 }
 
                 return userSelection;
@@ -201,11 +201,11 @@ namespace Amdocs.Ginger.Common
 
                 if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
                 {
-                    ToLog(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
+                    ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
                 }
                 else if (ReportAllAlsoToConsole)
                 {
-                    ToConsole(eLogLevel.DEBUG, "Showing Status Message: " + messageContent);
+                    ToConsole(eLogLevel.INFO, "Showing Status Message: " + messageContent);
                 }
 
                 WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);

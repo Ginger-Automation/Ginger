@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace Amdocs.Ginger.Common
         public void ToConsole(eLogLevel logLevel, string message)
         {            
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("[").Append(logLevel).Append("]").Append(message).Append(Environment.NewLine);
+            stringBuilder.Append("[").Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
             switch (logLevel)
             {

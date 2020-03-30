@@ -52,7 +52,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public IValueExpression CreateValueExpression(object obj, string attr)
         {
-            throw new NotImplementedException();
+            return new ValueExpression(obj, attr);
         }
 
         public void DisplayAsOutlookMail()
@@ -131,6 +131,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public bool GetLatest(string path, SourceControlBase SourceControl)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Revert(string path, SourceControlBase SourceControl)
         {
             throw new NotImplementedException();
         }

@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202001152030" GingerVersion="3.5.0.0" Version="28" LastUpdateBy="MENIK" LastUpdate="202002081933" />
+<BusinessFlow Elapsed="6057" Guid="8d4572b1-0058-4bcd-8009-cf7f7be75d9c" Name="Calculator_Test" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="RandomCalc" ActivityName="Do RandomCalc" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="91ba3dd6-8688-43aa-b2d9-a2da7f9c4ea1" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" Publish="True" TargetApplication="app1">
+<Acts>
+<ActSetVariableValue Active="True" Description="Gen Random number to be used" Guid="21c0d4df-e932-4457-b13a-55d10f655997" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="AutoGenerateValue" StatusConverter="None" VariableName="RandomNum" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="07104707-6453-454d-b2a9-590049ee8730" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActSetVariableValue>
+<ActSetVariableValue Active="True" Description="Set value to Random Calc" Guid="b5847e86-57cf-4026-a75b-8cc41c2537fb" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="RandomCalc" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="52890060-f5d9-4069-9155-30f83e764980" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{CS Exp={Var Name=MainNum}+{Var Name=RandomNum}}" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Sum" ActivityName="Do Sum" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="9bff4443-2186-46d4-824e-68d068e3e4cc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" Publish="True" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Decide if to Run Sum" Guid="74d24f98-6665-4e83-8900-c84b2e400d2a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<FlowControls>
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoSum?}&quot; == &quot;No&quot;" FlowControlAction="GoToNextActivity" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</FlowControls>
+
+<InputValues>
+<ActInputValue Guid="41122c02-ed72-4db0-b476-d0fd764b8485" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActSetVariableValue Active="True" Description="Calculate Sum" Guid="da3bf834-da60-46c6-9e89-0184810f353a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="SumResult" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="6f947abf-80c0-4f4e-9fbe-e90f776b0350" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{CS Exp={Var Name=MainNum}+{Var Name=SecondNum_ForSum}}" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+
+<Variables>
+<VariableString Description="Number to use for Sum with MainNum" Guid="4de03f61-031e-41dc-91f0-e689a001bd5a" InitialStringValue="5" MappedOutputType="None" Name="SecondNum_ForSum" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" />
+<VariableString Description="Result of the Sum of MainNum and SecondNum " Guid="acaf386c-3300-452b-bc6f-b64d0dc4cc52" InitialStringValue="None" MappedOutputType="None" Name="SumResult" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsInputValue="False" />
+<VariableString Guid="411e9c36-cd92-4ccf-bad8-62cefd0b0614" MappedOutputType="None" Name="DO NOT SHOW ME 1!!" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
+<VariableString Guid="e7d0c738-19a7-4cb3-9c49-f63650918bff" MappedOutputType="None" Name="DO NOT SHOW ME 2!!" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsOutputValue="False" />
+<VariableString Guid="d99e64c6-f570-4833-a6d4-7068a613b033" MappedOutputType="None" Name="DO NOT SHOW ME 3!!" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" />
+<VariableString Guid="6ac6f07b-77b5-4753-8842-c240c8c44532" MappedOutputType="None" Name="DO NOT SHOW ME 4!!" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Multiply" ActivityName="Do Multiply" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="cb800179-fa3c-46fa-9c38-4c9c605ab149" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" Publish="True" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Decide if to Run Multiply" Guid="206edc95-07a8-4ac2-bc61-8245e51cf13e" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<FlowControls>
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoMultiply?}&quot; == &quot;No&quot;" FlowControlAction="GoToNextActivity" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</FlowControls>
+
+<InputValues>
+<ActInputValue Guid="41122c02-ed72-4db0-b476-d0fd764b8485" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActSetVariableValue Active="True" Description="Calculate Multiply" Guid="5e342123-1b70-42e7-bbab-be4539972d37" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="MultiplyResult" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="6f947abf-80c0-4f4e-9fbe-e90f776b0350" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{CS Exp={Var Name=MainNum}*{Var Name=SecondNum_ForMultiply}}" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+
+<Variables>
+<VariableString Description="Result of the Multiply of MainNum and SecondNum " Guid="dd8077d1-1479-472b-8ada-33c88bfcb91d" InitialStringValue="None" MappedOutputType="None" Name="MultiplyResult" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsInputValue="False" />
+<VariableString Description="Number to use for Nultiply with MainNum" Guid="5b9df897-4201-4895-9d47-d1fe81c4a0a0" InitialStringValue="3" MappedOutputType="None" Name="SecondNum_ForMultiply" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" />
+</Variables>
+</Activity>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Divide" ActivityName="Do Divide" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4d6949ee-bd24-4b97-be01-f6fc686eeba9" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" Publish="True" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Decide if to Run Divide" Guid="9bf93cf7-8948-4d63-8d8c-56ea5c5e6141" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<FlowControls>
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="&quot;{Var Name=DoDivide?}&quot; == &quot;No&quot;" FlowControlAction="StopRun" Guid="35def723-569e-4299-bb63-da5b825415de" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</FlowControls>
+
+<InputValues>
+<ActInputValue Guid="41122c02-ed72-4db0-b476-d0fd764b8485" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActSetVariableValue Active="True" Description="Calculate Divide" Guid="864e4814-cddb-4e45-8125-168e1beb714e" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" SetVariableValueOption="SetValue" StatusConverter="None" VariableName="DivideResult" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="6f947abf-80c0-4f4e-9fbe-e90f776b0350" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{CS Exp={Var Name=MainNum}/{Var Name=SecondNum_ForDivide}}" />
+</InputValues>
+</ActSetVariableValue>
+</Acts>
+
+<Variables>
+<VariableString Guid="3ba88ef6-1b42-4c25-a4a1-9097ae2e2f55" InitialStringValue="None" MappedOutputType="None" Name="DivideResult" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsInputValue="False" />
+<VariableString Guid="c2563db3-2073-4cb4-8147-6db5af758b00" InitialStringValue="2" MappedOutputType="None" Name="SecondNum_ForDivide" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" />
+</Variables>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="8568128d-f945-43c0-8292-b8943282a7f6" Name="RandomCalc" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="91ba3dd6-8688-43aa-b2d9-a2da7f9c4ea1" ActivityName="Do RandomCalc" Guid="a4c75874-3474-4167-9574-657e5aaf0fb3" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup Guid="0b117905-cf83-42dd-b65a-6b804bb53ad0" Name="Sum" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="9bff4443-2186-46d4-824e-68d068e3e4cc" ActivityName="Do Sum" Guid="699d2be6-d3e5-4314-ae88-fa5546802ad4" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup Guid="43608559-06e2-4c4d-a258-80ba55dc4992" Name="Multiply" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="cb800179-fa3c-46fa-9c38-4c9c605ab149" ActivityName="Do Multiply" Guid="2815bfeb-e957-48be-b3b1-72038d4c68e8" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+<ActivitiesGroup Guid="17afb069-a131-4732-b813-d7498ba0b0fe" Name="Divide" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4d6949ee-bd24-4b97-be01-f6fc686eeba9" ActivityName="Do Divide" Guid="ea7702ed-bef3-4a51-97f3-4c21289413bf" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="app1" Guid="0c8026df-e4ef-40f8-a66a-510dda4f4066" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Description="The main number which will be used for calculations" Guid="162685d7-10de-414e-b7ec-26952fd29cf9" InitialStringValue="10" MappedOutputType="None" Name="MainNum" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" />
+<VariableSelectionList Description="Set 'Yes' for performing Sum calculation" Guid="09be2b79-37fc-418c-a194-53c212f64db9" MappedOutputType="None" Name="DoSum?" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" Value="Yes">
+<OptionalValuesList>
+<OptionalValue Guid="aad7dab0-3389-4e48-8812-3f02d792ee3a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Yes" />
+<OptionalValue Guid="2655166e-0833-4d3c-8c46-8a82868f7e24" ParentGuid="00000000-0000-0000-0000-000000000000" Value="No" />
+</OptionalValuesList>
+</VariableSelectionList>
+<VariableSelectionList Description="Set 'Yes' for performing Multiply calculation" Guid="ae0a73da-817b-435b-8f92-a960412e7ed1" MappedOutputType="None" Name="DoMultiply?" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" Value="Yes">
+<OptionalValuesList>
+<OptionalValue Guid="5c8fc0a1-9a8c-4940-987c-c0db04c28fbd" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Yes" />
+<OptionalValue Guid="fb28e3b0-2517-4941-ba0b-83690124a3e4" ParentGuid="00000000-0000-0000-0000-000000000000" Value="No" />
+</OptionalValuesList>
+</VariableSelectionList>
+<VariableSelectionList Description="Set 'Yes' for performing Divide calculation" Guid="d9f050b3-3535-4b14-8026-f086029b35e9" MappedOutputType="None" Name="DoDivide?" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" Value="Yes">
+<OptionalValuesList>
+<OptionalValue Guid="4e842c85-47b1-4034-906f-a15d14646ddf" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Yes" />
+<OptionalValue Guid="a7f5bd8d-594c-43e1-b0b7-7f52cf0c0768" ParentGuid="00000000-0000-0000-0000-000000000000" Value="No" />
+</OptionalValuesList>
+</VariableSelectionList>
+<VariableString Guid="0bc1c01b-5615-4c4b-8d98-9c02163c5bb2" MappedOutputType="None" Name="RandomCalc" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsInputValue="False" />
+<VariableRandomNumber Guid="8375540b-82f3-4302-852b-8ef81546b010" Interval="0" IsInteger="True" MappedOutputType="None" Max="60" Min="30" Name="RandomNum" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>

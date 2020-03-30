@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -192,8 +192,11 @@ namespace Ginger
 
             Environment.ExitCode = -1;
 
-            // Clear the err so it will not crash
-            e.Handled = true;
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                // Clear the err so it will not crash
+                e.Handled = true;
+            }
         }
 
 

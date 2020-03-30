@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -655,7 +655,6 @@ namespace Ginger.Run
         {
             BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
 
-
             List<VariableBase> cachedVariables = null;
 
             //set the vars to update
@@ -783,7 +782,7 @@ namespace Ginger.Run
 
             if (businessFlowRun == null)
             {
-                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowName == CurrentBusinessFlow?.Name select x).FirstOrDefault();
+                businessFlowRun = (from x in BusinessFlowsRunList where x.BusinessFlowGuid == CurrentBusinessFlow?.Guid select x).FirstOrDefault();
             }
             return businessFlowRun;
         }
@@ -2083,24 +2082,8 @@ namespace Ginger.Run
                         continue;
                     }
                     
-                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
-                   
-                    //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
-
-                    if (FC.ConditionCalculated.Contains("{LastActivityStatus}"))
-                    {
-                        if (mLastExecutedActivity != null)
-                        {
-                            FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", mLastExecutedActivity.Status.ToString());
-                        }
-                        else
-                        {
-                            FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", "Last executed Activity Status not available");
-                        }
-                    }
+                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, mLastExecutedActivity, this.DSList);
                     FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
-
-                
 
                     bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,CurrentBusinessFlow, FC.Operator,FC.ConditionCalculated);
                  
@@ -2441,11 +2424,10 @@ namespace Ginger.Run
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
-                  
+
                 //set it as next activity to run           
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
-
                 return true;
             }
             else
@@ -3022,6 +3004,7 @@ namespace Ginger.Run
 
                             if (mStopRun || mStopBusinessFlow)
                             {
+                                mExecutedActionWhenStopped = act;
                                 CalculateActivityFinalStatus(activity);
                                 statusCalculationIsDone = true;
                                 return;
@@ -3349,7 +3332,7 @@ namespace Ginger.Run
                     Activity bfFirstActivity = (Activity)CurrentBusinessFlow.Activities.FirstOrDefault();
                     CurrentBusinessFlow.Activities.CurrentItem = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
-                    bfFirstActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
+                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
                 }
              
 
@@ -3497,20 +3480,14 @@ namespace Ginger.Run
                 st.Stop();
                 CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
                 
-                //if (doContinueRun == false)
-                //{
-                //    ExecutionLogger.BusinessFlowEnd(CurrentBusinessFlow);
-                //}
-
+                NotifyBusinessFlowEnd(CurrentBusinessFlow);
+                
                 if (standaloneExecution)
                 {
                     IsRunning = false;
-                    Status = RunsetStatus;            
+                    Status = RunsetStatus;
                 }
-
-                NotifyBusinessFlowEnd(CurrentBusinessFlow);
-
-                                
+          
             }
         }
 
@@ -3832,7 +3809,7 @@ namespace Ginger.Run
                 if (mStopRun)
                     break;
 
-                if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);
@@ -4436,6 +4413,7 @@ namespace Ginger.Run
         {
             try
             {
+                Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating status for pending activities...");
                 uint eventTime = RunListenerBase.GetEventTime();
                 businessFlow.EndTimeStamp = DateTime.UtcNow;
                 foreach (RunListenerBase runnerListener in mRunListeners)
@@ -4446,6 +4424,10 @@ namespace Ginger.Run
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Notify Businessflow End", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
             }
 
         }

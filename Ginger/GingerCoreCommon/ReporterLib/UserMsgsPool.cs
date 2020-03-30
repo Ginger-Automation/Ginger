@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
-        SuccessfullyConnectedToAgent, FailedToConnectAgent, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
+        SuccessfullyConnectedToAgent, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
@@ -327,6 +327,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveLocalChanges, new UserMsg(eUserMsgType.QUESTION, "Save Local Changes?", "Your Local Changes will be saved. Do you want to Continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.LooseLocalChanges, new UserMsg(eUserMsgType.WARN, "Loose Local Changes?", "Your Local Changes will be Lost. Do you want to Continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IFSaveChangesOfBF, new UserMsg(eUserMsgType.WARN, "Save Current" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Before Change?", "Do you want to save the changes made in the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RecordingStopped, new UserMsg(eUserMsgType.ERROR, "Recording Stopped", "Recording Stopped for the {0} agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Agents/Drivers Messages
 
