@@ -108,7 +108,6 @@ namespace Amdocs.Ginger.Repository
                         xml.WriteEndDocument();
                     }
                     string result = Encoding.UTF8.GetString(output.ToArray());
-                    //result = Regex.Replace(result, "&#x([0-8BCEFbcef]|1[0-9A-Fa-f]);|[\x01-\x08\x0B\x0C\x0E\x0F\u0000-\u0008\u000B\u000C\u000E-\u001F]", "");
                     return result;
                 }
             }
@@ -436,7 +435,6 @@ namespace Amdocs.Ginger.Repository
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);
-                //xml = Regex.Replace(xml, "&#x([0-8BCEFbcef]|1[0-9A-Fa-f]);|[\x01-\x08\x0B\x0C\x0E\x0F\u0000-\u0008\u000B\u000C\u000E-\u001F]", "");
 
                 // first check if we need to auto upgrade the xml to latest ginger version
                 //long XMLVersion = RepositorySerializer.GetXMLVersionAsLong(xml);
@@ -501,7 +499,6 @@ namespace Amdocs.Ginger.Repository
             if (FileName.Length > 0 && File.Exists(FileName))
             {
                 string xml = File.ReadAllText(FileName);
-                //xml = Regex.Replace(xml, "&#x([0-8BCEFbcef]|1[0-9A-Fa-f]);|[\x01-\x08\x0B\x0C\x0E\x0F\u0000-\u0008\u000B\u000C\u000E-\u001F]", "");
 
                 // first check if we need to auto upgrade the xml to latest ginger version
                 //long XMLVersion = RepositorySerializer.GetXMLVersionAsLong(xml);
