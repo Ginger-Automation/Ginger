@@ -266,7 +266,11 @@ namespace Ginger.Run
                 {
                     ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.RunSet), WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, RunSetReport);
                 }
-                RunSetReport = null;
+                if (RunSetReport.RunSetExecutionStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+                {
+                    RunSetReport = null;
+                }
+                    
             }
         }
         //to delete
