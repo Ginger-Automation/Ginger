@@ -1151,7 +1151,7 @@ namespace GingerCoreNET.DataSource
                     dt = GetTable(actDSTable.DSTableName);
                     DataRow dr = dt.Rows[dt.Rows.Count-1];
                     string GingerId = Convert.ToString(dr["GINGER_ID"]);
-                    actDSTable.AddOrUpdateReturnParamActual("Output", GingerId);
+                    actDSTable.AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
                     break;
                 default:
 

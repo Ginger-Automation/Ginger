@@ -161,7 +161,7 @@ namespace GingerCore.Actions
                         DataTable dt = DataSource.GetTable(DSTableName);
                         DataRow row = dt.Rows[dt.Rows.Count - 1];
                         string GingerId = Convert.ToString(row["GINGER_ID"]);
-                        AddOrUpdateReturnParamActual("Output", GingerId);
+                        AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
 
                         break;
                     default:

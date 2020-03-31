@@ -1838,7 +1838,7 @@ namespace Ginger.Actions
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
 
-                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && !ControlActionComboBox.SelectedValue.ToString().Contains("All") && !ControlActionComboBox.SelectedValue.ToString().Contains("RowCount") && !ControlActionComboBox.SelectedValue.ToString().Contains("AddRow"))
+                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteAll.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUnUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString() && ControlActionComboBox.SelectedValue.ToString() != ActDSTableElement.eControlAction.AddRow.ToString())
                     {                       
                         MarkRowPanel.Visibility = Visibility.Visible;                        
                         IdentifierRow.Height = new GridLength(IdentifierRow.Height.Value + 25);
@@ -1865,7 +1865,7 @@ namespace Ginger.Actions
         {
             if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
             {
-                if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString().StartsWith("Mark"))
+                if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString()== ActDSTableElement.eControlAction.MarkAllUnUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAsDone.ToString())
                     ControlActionComboBox.SelectedValue = ActDSTableElement.eControlAction.GetValue;
 
                 //IdentifierRow.Height = new GridLength(100);
