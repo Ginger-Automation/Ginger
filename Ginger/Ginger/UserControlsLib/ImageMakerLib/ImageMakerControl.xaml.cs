@@ -742,7 +742,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Browser:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Chrome);
                     break;
-
+               case eImageType.Java:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Coffee,Brushes.Gray);
+                    break;
                 case eImageType.KeyboardLayout:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.KeyboardOutline);
                     break;
