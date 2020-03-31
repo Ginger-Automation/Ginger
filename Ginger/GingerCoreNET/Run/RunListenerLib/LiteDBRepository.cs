@@ -204,11 +204,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             if(executedFrom==eExecutedFrom.Automation)
                 ClearSeq();
 
-            if (liteDbBFList.Count >= context.Runner.BusinessFlows.Count)
+            if (liteDbBFList.Count > context.Runner.BusinessFlows.Count)
             {
                 liteDbBFList.RemoveRange(0, context.Runner.BusinessFlows.Count);
             }
-            if (lastBfStatus == eRunStatus.Stopped && context.BusinessFlow.RunStatus != eRunStatus.Stopped)
+            if (lastBfStatus == eRunStatus.Stopped)
             {
                 BFR._id = lastBfObjId;
                 ClearSeq();
@@ -343,9 +343,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 ExecutionLoggerManager.RunSetReport = new RunSetReport();
                 ExecutionLoggerManager.RunSetReport.GUID = Guid.NewGuid().ToString();
             }
+            if (lastRunnertStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+            {
+                var runnerItem = ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Find(x => x.Name == runner.Name);
+                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Remove(runnerItem);
+            }
+            if(runner.RunStatus != eRunStatus.Stopped.ToString())
+            {
+                liteDbBFList.Clear();
+            }
             ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Add(runner);
-            liteDbBFList.Clear();
             lastRunnertStatus = gingerRunner.RunsetStatus;
+            ClearSeq();
         }
         private void SetRunnerChildCounts(LiteDbRunner runner)
         {
@@ -397,7 +406,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus = (eRunStatus)Enum.Parse(typeof(eRunStatus), runSet.RunStatus);
 
             SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
-            ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
+            if (runSetReport.RunSetExecutionStatus != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)
+            {
+                ExecutionLoggerManager.RunSetReport.liteDbRunnerList.Clear();
+            }
             ClearSeq();
         }
         private void SetRunSetChildCounts(LiteDbRunSet runSet)
