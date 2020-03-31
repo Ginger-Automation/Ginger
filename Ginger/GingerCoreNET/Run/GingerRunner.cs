@@ -608,10 +608,8 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
-                    if (doContinueRun == false)
-                    {                                        
-                        NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
-                    }
+                    NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
+
                     if(RunLevel == eRunLevel.Runner)
                     {
                         ExecutionLoggerManager.mExecutionLogger.EndRunSet();
