@@ -235,7 +235,10 @@ namespace Ginger.Run
                     dir.Delete(true);
                 }
             }
-            catch { }
+            catch(Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
+            }
         }
 
         private void RefreshGrid(object sender, RoutedEventArgs e)
