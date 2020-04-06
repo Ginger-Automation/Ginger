@@ -193,7 +193,7 @@ namespace Amdocs.Ginger.Repository
             switch (platformType)
             {
                 case ePlatformType.Web:
-                    eImageType = eImageType.Browser;
+                    eImageType = eImageType.Globe;
                     break;
                 case ePlatformType.Java:
                     eImageType = eImageType.Java;
