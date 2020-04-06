@@ -660,6 +660,9 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="Variables\VariableEditPages\VariableNumber.xaml.cs">
+      <DependentUpon>VariableNumber.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Variables\VariablesListViewHelper.cs" />
     <Compile Include="Variables\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
@@ -3265,6 +3268,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserConfigLib\UserSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariableEditPages\VariableNumber.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
