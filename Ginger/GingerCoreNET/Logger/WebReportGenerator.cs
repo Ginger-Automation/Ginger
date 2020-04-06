@@ -68,7 +68,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     filterData = dbManager.FilterCollection(result, Query.All());
                 lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
                 response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);
             }
             catch (Exception ex)
