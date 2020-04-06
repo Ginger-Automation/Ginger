@@ -280,10 +280,15 @@ namespace Ginger.Reports.GingerExecutionReport
                         {
                             fieldsValuesHTMLTableOneCells.Append("<td>" + DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + "</td>");
                         }
+                        else if ((selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate) || (selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate))
+                        {
+                            fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + '%') + "</td>");
+                        }
                         else
                         {
                             fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
                         }
+
                         if (selectedField.FieldKey == RunSetReport.Fields.Name)
                         {
                             currentRunSetLinkText = ((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString();
@@ -2704,6 +2709,11 @@ namespace Ginger.Reports.GingerExecutionReport
             switch (RI.reportInfoLevel)
             {
                 case ReportInfo.ReportInfoLevel.RunSetLevel:
+                    int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
+                    int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).Count();
+                    int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked).Count();
+                    ((RunSetReport)RI.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
+                    ((RunSetReport)RI.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
                     gingerExecutionReport.CreateSummaryViewReport(RI);
                     break;
                 case ReportInfo.ReportInfoLevel.GingerLevel:
