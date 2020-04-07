@@ -37,6 +37,7 @@ namespace GingerCore.ALM.Qtest
         static QTestApi.LoginApi connObj = new QTestApi.LoginApi();
         static QTestApi.ProjectApi projectsApi = new QTestApi.ProjectApi();
         static QTestApi.TestsuiteApi testsuiteApi = new QTestApi.TestsuiteApi();
+        static QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
 
         static QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
         static QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
@@ -1012,6 +1013,116 @@ namespace GingerCore.ALM.Qtest
         {
            
             return new QtestTest();
-        }     
+        }
+
+        public static ObservableList<ExternalItemFieldBase> GetALMItemFields(ALM_Common.DataContracts.ResourceType resourceType)
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+
+            //if (QCRestAPIConnect.QcRestClient == null)
+            //{
+            //    string qcbin = "qcbin";
+            //    QCRestAPIConnect.QcRestClient = new QCClient(ALMCore.AlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName, 12);
+            //}
+
+            //if (QCRestAPIConnect.QcRestClient.Login())
+            {
+                if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+                    return GetALMItemFields();
+                else
+                {
+                    //string fieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(resourceType);
+                    List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), resourceType.ToString());
+
+                    fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
+                }
+            }
+
+
+            //fieldApi = new QTestApi.FieldApi(connObj.Configuration);
+            //fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), resourceType.ToString());
+
+            return fields;
+        }
+        private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            fieldApi = new QTestApi.FieldApi(connObj.Configuration);
+
+            //QC   ->testSet,    testCase,  designStep,testInstance,designStep,run
+            //QTest->test-suites,test-cases,
+
+            //string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
+            List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-suites");
+
+            //string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
+            List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-cases");
+
+            ////string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
+            //List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-suites");
+
+            ////string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
+            //List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-suites");
+
+            //string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
+            //List<QTestApiModel.FieldResource> designStepParamsfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-runs");
+
+            //string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-runs");
+
+            fields.Append(AddFieldsValues(testSetfieldsCollection, "test-suites"));
+            fields.Append(AddFieldsValues(testCasefieldsCollection, "test-cases"));
+            //fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
+            //fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
+            //fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
+            fields.Append(AddFieldsValues(runfieldsCollection, "test-runs"));
+
+            return fields;
+        }
+        private static ObservableList<ExternalItemFieldBase> AddFieldsValues(List<QTestApiModel.FieldResource> testSetfieldsCollection, string testSetfieldInRestSyntax)
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+
+            if ((testSetfieldsCollection != null) && (testSetfieldsCollection.Count > 0))
+            {
+                foreach (QTestApiModel.FieldResource field in testSetfieldsCollection)
+                {
+                    if (string.IsNullOrEmpty(field.Label)) continue;
+
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                    itemfield.ID = field.OriginalName;
+                    itemfield.ExternalID = field.OriginalName;  // Temp ??? Check if ExternalID has other use in this case
+                    itemfield.Name = field.Label;
+                    bool isCheck;
+                    itemfield.Mandatory = bool.TryParse(field.Required.ToString(), out isCheck);
+                    itemfield.SystemFieled = bool.TryParse(field.SystemField.ToString(), out isCheck);
+                    if (itemfield.Mandatory)
+                        itemfield.ToUpdate = true;
+                    itemfield.ItemType = testSetfieldInRestSyntax.ToString();
+                    itemfield.Type = field.DataType;
+
+                    //if ((field.ListId != null) && (field.ListId != string.Empty) && (field.FieldValues != null) && (field.FieldValues.Count > 0))
+                    //{
+                    //    foreach (string value in field.AllowedValues)
+                    //    {
+                    //        itemfield.PossibleValues.Add(value);
+                    //    }
+                    //}
+
+                    if (itemfield.PossibleValues.Count > 0)
+                    {
+                        itemfield.SelectedValue = field.DefaultValue;
+                    }
+                    else
+                    {
+                        // itemfield.SelectedValue = "NA";
+                    }
+
+                    fields.Add(itemfield);
+                }
+            }
+
+            return fields;
+        }
     }
 }
