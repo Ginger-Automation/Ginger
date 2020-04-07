@@ -36,23 +36,11 @@ namespace GingerCore.Variables
         private bool mIsIntegerValue;
         
         [IsSerializedForLocalRepository]
-        public bool IsIntegerValue
+        public bool IsDecimalValue
         {
             set
             {
                 mIsIntegerValue = value;
-                if (IsIntegerValue)
-                {
-                    mMinValue = Int32.MinValue;
-                    mMaxValue = Int32.MaxValue;
-                }
-                else
-                {
-                    mMinValue = float.MinValue;
-                    mMaxValue = float.MaxValue;
-                    mPrecisionValue = 2; //default
-                }
-                mInitialNumberValue = MinValue;
             }
             get
             {
@@ -115,7 +103,7 @@ namespace GingerCore.Variables
 
         public override bool SupportAutoValue
         {
-            get { return true; }
+            get { return false; }
         }
 
         public override bool SupportSetValue
@@ -149,10 +137,10 @@ namespace GingerCore.Variables
         {
             get
             {
-                if(mPrecisionValue ==0)
-                {
-                    mPrecisionValue = 2;
-                }
+                //if(mPrecisionValue == null)
+                //{
+                //    mPrecisionValue = "2";
+                //}
                 return mPrecisionValue;
             }
             set
@@ -179,8 +167,8 @@ namespace GingerCore.Variables
             else
             {
                 //var setPrecision = new NumberFormatInfo();
-                //setPrecision.NumberDecimalDigits = PrecisionValue;
-                mInitialNumberValue = Math.Round(mInitialNumberValue, PrecisionValue);
+                //setPrecision.NumberDecimalDigits = mPrecisionValue;
+                mInitialNumberValue = Math.Round(mInitialNumberValue,mPrecisionValue);
                 return "Initial Value=" + mInitialNumberValue;//mInitialNumberValue.ToString("N", setPrecision);
             }
 

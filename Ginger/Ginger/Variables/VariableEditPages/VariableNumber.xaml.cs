@@ -27,11 +27,13 @@ namespace Ginger.Variables
     /// </summary>
     public partial class VariableNumberPage : Page
     {
+        VariableNumber variableNumber;
         public VariableNumberPage(VariableNumber varNumber)
         {
+            variableNumber = varNumber;
             InitializeComponent();
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.InitialNumberValue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(rdoInputInt,RadioButton.IsCheckedProperty ,varNumber, nameof(VariableNumber.IsIntegerValue));
+            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.InitialNumberValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(rdoInputDecimal,RadioButton.IsCheckedProperty ,varNumber, nameof(VariableNumber.IsDecimalValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMinValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.MinValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.MaxValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrecisionValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.PrecisionValue));
@@ -40,25 +42,77 @@ namespace Ginger.Variables
 
         private void SetNummericType()
         {
-            if(new VariableNumber().IsIntegerValue)
+            if (!variableNumber.IsDecimalValue)
             {
                 rdoInputInt.IsChecked = true;
+                pnlPrecision.Visibility = System.Windows.Visibility.Collapsed;
+                //if(string.IsNullOrEmpty(variableNumber.MinValue))
+                //{
+                //    variableNumber.MinValue = Convert.ToString(Int32.MinValue);
+                //}
+
+                //if (string.IsNullOrEmpty(variableNumber.MaxValue))
+                //{
+                //    variableNumber.MaxValue =Convert.ToString(Int32.MaxValue);
+                //}
+                
             }
             else
             {
                 rdoInputDecimal.IsChecked = true;
                 pnlPrecision.Visibility = System.Windows.Visibility.Visible;
+
+
             }
+           
         }
 
         private void rdoInputDecimal_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             pnlPrecision.Visibility = System.Windows.Visibility.Visible;
+            variableNumber.MinValue = float.MinValue;
+            variableNumber.MaxValue = float.MaxValue;
+            variableNumber.PrecisionValue = 2; //default
         }
 
         private void rdoInputInt_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             pnlPrecision.Visibility = System.Windows.Visibility.Collapsed;
+            variableNumber.MinValue = Int32.MinValue;
+            variableNumber.MaxValue = Int32.MaxValue;
+        }
+
+        private void txtNumberValue_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+        {
+            double retNum;
+            bool isNum = Double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+            if (isNum)
+            {
+                
+                if(!variableNumber.IsDecimalValue)
+                {
+                    bool isInt = Double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+                    if (isInt)
+                    {
+                        variableNumber.InitialNumberValue =Convert.ToInt32(txtNumberValue.Text);
+                    }
+                    else
+                    {
+                        //error
+                    }
+                    
+                }
+                else
+                {
+                    variableNumber.InitialNumberValue = Convert.ToDouble(txtNumberValue.Text);
+                }
+                
+            }
+            else
+            {
+                //error
+            }
+            
         }
 
         //private void txtNumberValue_LostFocus(object sender, System.Windows.RoutedEventArgs e)
@@ -74,7 +128,7 @@ namespace Ginger.Variables
         //    {
         //        e.Handled = false;
         //    }
-            
+
         //}
         //private void txtNumberValue_TextChanged(object sender, TextChangedEventArgs e)
         //{
