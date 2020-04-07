@@ -154,15 +154,21 @@ namespace GingerCore.Actions
                                 break;
                             }
                         }
-                        List<string> mColumnNames = DataSource.GetColumnList(DSTableName);
-                        DataSource.AddRow(mColumnNames, DSTable);
-                        DataSource.SaveTable(DSTable.DataTable);
-                        //Get GingerId
-                        DataTable dt = DataSource.GetTable(DSTableName);
-                        DataRow row = dt.Rows[dt.Rows.Count - 1];
-                        string GingerId = Convert.ToString(row["GINGER_ID"]);
-                        AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
-
+                        if (DSTable != null)
+                        {
+                            List<string> mColumnNames = DataSource.GetColumnList(DSTableName);
+                            DataSource.AddRow(mColumnNames, DSTable);
+                            DataSource.SaveTable(DSTable.DataTable);
+                            //Get GingerId
+                            DataTable dt = DataSource.GetTable(DSTableName);
+                            DataRow row = dt.Rows[dt.Rows.Count - 1];
+                            string GingerId = Convert.ToString(row["GINGER_ID"]);
+                            AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
+                        }
+                        else
+                        {
+                            Error = "No table present in the DataSource with the name ="+ DSTableName;
+                        }
                         break;
                     default:
                         ValueExpression VEDR = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
