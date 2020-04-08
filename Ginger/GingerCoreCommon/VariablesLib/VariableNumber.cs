@@ -28,10 +28,10 @@ namespace GingerCore.Variables
     {
         private double mInitialNumberValue;
 
-        private double mMinValue;
-        private double mMaxValue;
+        private double? mMinValue;
+        private double? mMaxValue;
 
-        private int mPrecisionValue;
+        private int? mPrecisionValue;
 
         private bool mIsIntegerValue;
         
@@ -49,7 +49,7 @@ namespace GingerCore.Variables
         }
 
         [IsSerializedForLocalRepository]
-        public double MinValue
+        public double? MinValue
         {
             get 
             {
@@ -64,7 +64,7 @@ namespace GingerCore.Variables
         }
 
         [IsSerializedForLocalRepository]
-        public double MaxValue
+        public double? MaxValue
         {
             get 
             { 
@@ -122,6 +122,7 @@ namespace GingerCore.Variables
             set
             {
                 mInitialNumberValue = value;
+                //Validate();
                 Value = value.ToString();
                 OnPropertyChanged("InitialNumberValue");
                 OnPropertyChanged("Formula");
@@ -132,14 +133,19 @@ namespace GingerCore.Variables
             }
         }
 
+        private void Validate()
+        {
+            //throw new NotImplementedException();
+        }
+
         [IsSerializedForLocalRepository]
-        public int PrecisionValue
+        public int? PrecisionValue
         {
             get
             {
-                //if(mPrecisionValue == null)
+                //if(mPrecisionValue == 0)
                 //{
-                //    mPrecisionValue = "2";
+                //    return 2;
                 //}
                 return mPrecisionValue;
             }
@@ -168,7 +174,7 @@ namespace GingerCore.Variables
             {
                 //var setPrecision = new NumberFormatInfo();
                 //setPrecision.NumberDecimalDigits = mPrecisionValue;
-                mInitialNumberValue = Math.Round(mInitialNumberValue,mPrecisionValue);
+                mInitialNumberValue = Math.Round(Convert.ToDouble(mInitialNumberValue),Convert.ToInt32(mPrecisionValue));
                 return "Initial Value=" + mInitialNumberValue;//mInitialNumberValue.ToString("N", setPrecision);
             }
 

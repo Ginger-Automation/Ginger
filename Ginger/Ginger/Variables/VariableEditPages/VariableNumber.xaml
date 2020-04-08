@@ -11,7 +11,7 @@
     <Grid>
         <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Initial Value:</Label>
-            <TextBox Text="{Binding Path=VariableNumber.InitialNumberValue,Mode=TwoWay,UpdateSourceTrigger=LostFocus,StringFormat=N2}" x:Name="txtNumberValue" LostFocus="txtNumberValue_LostFocus"  Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,10" ToolTip="Only Numeric Value Allowed."></TextBox>
+            <TextBox x:Name="txtNumberValue"   Style="{StaticResource @TextBoxStyle}"  Margin="0,0,0,10" ToolTip="Only Numeric Value Allowed."/>
 
             <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
                 <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
