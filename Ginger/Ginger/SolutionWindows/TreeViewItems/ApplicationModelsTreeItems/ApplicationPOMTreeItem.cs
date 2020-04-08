@@ -57,6 +57,8 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
 
         StackPanel ITreeViewItem.Header()
         {
+            var appPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mApplicationPOM.TargetApplicationKey);
+            mApplicationPOM.SetItemImageType(appPlatform);
             return NewTVItemHeaderStyle(mApplicationPOM);
         }
 
