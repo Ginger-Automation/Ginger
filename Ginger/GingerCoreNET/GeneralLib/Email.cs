@@ -355,6 +355,19 @@ namespace GingerCore.GeneralLib
                 
                 smtp.Send(myMail);
 
+                //clear and dispose attachments
+                if (myMail.Attachments != null)
+                {
+                    foreach (Attachment attachment in myMail.Attachments)
+                    {
+                        attachment.Dispose();
+                    }
+                    myMail.Attachments.Clear();
+                    myMail.Attachments.Dispose();
+                }
+                myMail.Dispose();
+                myMail = null;
+                //
                 return true;
             }
             catch (Exception ex)
