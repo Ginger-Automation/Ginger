@@ -608,10 +608,8 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
-                    if (doContinueRun == false)
-                    {                                        
-                        NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
-                    }
+                    NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
+
                     if(RunLevel == eRunLevel.Runner)
                     {
                         ExecutionLoggerManager.mExecutionLogger.EndRunSet();
@@ -3004,6 +3002,7 @@ namespace Ginger.Run
 
                             if (mStopRun || mStopBusinessFlow)
                             {
+                                mExecutedActionWhenStopped = act;
                                 CalculateActivityFinalStatus(activity);
                                 statusCalculationIsDone = true;
                                 return;
@@ -3808,7 +3807,7 @@ namespace Ginger.Run
                 if (mStopRun)
                     break;
 
-                if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);
