@@ -366,8 +366,6 @@ namespace GingerCore.GeneralLib
                     myMail.Attachments.Dispose();
                 }
                 myMail.Dispose();
-                myMail = null;
-                //
                 return true;
             }
             catch (Exception ex)
