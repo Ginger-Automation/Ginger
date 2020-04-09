@@ -70,9 +70,12 @@ namespace Ginger.Variables
             pnlPrecision.Visibility = System.Windows.Visibility.Visible;
             variableNumber.MinValue = float.MinValue;
             variableNumber.MaxValue = float.MaxValue;
-            variableNumber.PrecisionValue = 2; //default
-            variableNumber.InitialNumberValue = 0.00d;
-            txtNumberValue.Text = String.Format("{0}{1}{2}{3}{4}", 0, 0,".", 0, 0);
+            if (variableNumber.PrecisionValue == null)
+            {
+                variableNumber.PrecisionValue = 2; //default
+            }
+            //variableNumber.InitialNumberValue = 0.00d;
+            //txtNumberValue.Text = String.Format("{0}{1}{2}{3}{4}", 0, 0,".", 0, 0);
         }
 
         private void rdoInputInt_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -80,7 +83,7 @@ namespace Ginger.Variables
             pnlPrecision.Visibility = System.Windows.Visibility.Collapsed;
             variableNumber.MinValue = Int32.MinValue;
             variableNumber.MaxValue = Int32.MaxValue;
-            variableNumber.InitialNumberValue = 0;//default
+            //variableNumber.InitialNumberValue = 0;//default
         }
 
         private void txtNumberValue_LostFocus(object sender, System.Windows.RoutedEventArgs e)

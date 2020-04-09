@@ -33,18 +33,20 @@ namespace GingerCore.Variables
 
         private int? mPrecisionValue;
 
-        private bool mIsIntegerValue;
+        private bool mIsDecimalValue;
         
         [IsSerializedForLocalRepository]
         public bool IsDecimalValue
         {
             set
             {
-                mIsIntegerValue = value;
+                mIsDecimalValue = value;
+                OnPropertyChanged("IsDecimalValue");
+                OnPropertyChanged("Formula");
             }
             get
             {
-                return mIsIntegerValue;
+                return mIsDecimalValue;
             }
         }
 
@@ -121,7 +123,15 @@ namespace GingerCore.Variables
         {
             set
             {
-                mInitialNumberValue = value;
+                if(!mIsDecimalValue)
+                {
+                    mInitialNumberValue = Math.Round(value);
+                }
+                else
+                {
+                    mInitialNumberValue = value;
+                }
+                
                 //Validate();
                 Value = value.ToString();
                 OnPropertyChanged("InitialNumberValue");
@@ -165,10 +175,10 @@ namespace GingerCore.Variables
 
         public override string GetFormula()
         {
-            var isIntegerNumber = IsNumericValue(mInitialNumberValue);
-            if (isIntegerNumber)
+            var isNumeric = IsNumericValue(mInitialNumberValue);
+            if (!mIsDecimalValue)
             {
-                return "Initial Value=" + mInitialNumberValue;
+                return "Initial Value=" + Convert.ToInt32(mInitialNumberValue);
             }
             else
             {
@@ -183,7 +193,7 @@ namespace GingerCore.Variables
         private bool IsNumericValue(object inputValue)
         {
             double retNum;
-            bool isNum = Double.TryParse(Convert.ToString(inputValue), System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+            bool isNum = Double.TryParse(Convert.ToString(inputValue), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
             return isNum;
         }
 
