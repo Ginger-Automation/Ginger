@@ -117,62 +117,56 @@ namespace GingerCore.ALM
             get { return ImportFromQtest.GingerActivitiesRepo; }
             set { ImportFromQtest.GingerActivitiesRepo = value; }
         }
-
+       
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
             ConnectALMServer();
             fieldApi = new QTestApi.FieldApi(connObj.Configuration);
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            //List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-suites");
-
             if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
                 return GetALMItemFields();
             else
             {
-                //string fieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(resourceType);
-                List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), resourceType.ToString());
+                string fieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(resourceType);
+                List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), fieldInRestSyntax);
 
                 fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
             }
 
             return UpdatedAlmFields(fields);
-            //return UpdatedAlmFields(ImportFromQtest.GetALMItemFields(resourceType));
-            //return null;
         }
 
         private ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
-            fieldApi = new QTestApi.FieldApi(connObj.Configuration);
-
             //QC   ->|testSet,     |testCase,   |designStep, |testInstance, |designStepParams, |run
             //QTest->|test-suites, |test-cases, |test-steps, |test-cycles,  |parameters,       |test-runs
 
-            //string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
-            List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-suites");
+            string testSetfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
+            List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testSetfieldInRestSyntax);
 
-            //string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
-            List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-cases");
+            string testCasefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
+            List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testCasefieldInRestSyntax);
 
-            ////string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
-            List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-steps");
+            string designStepfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
+            List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), designStepfieldInRestSyntax);
 
-            ////string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
-            List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-cycles");
+            string testInstancefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
+            List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testInstancefieldInRestSyntax);
 
-            //string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
-            //List<QTestApiModel.FieldResource> designStepParamsfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "parameters");
+            //string designStepParamsfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
+            //List<QTestApiModel.FieldResource> designStepParamsfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), designStepParamsfieldInRestSyntax);
 
-            //string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
-            List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-runs");
+            string runfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), runfieldInRestSyntax);
 
-            fields.Append(AddFieldsValues(testSetfieldsCollection, "test-suites"));
-            fields.Append(AddFieldsValues(testCasefieldsCollection, "test-cases"));
-            fields.Append(AddFieldsValues(designStepfieldsCollection, "test-steps"));
-            fields.Append(AddFieldsValues(testInstancefieldsCollection, "test-cycles"));
-            //fields.Append(AddFieldsValues(designStepParamsfieldsCollection, "parameters"));
-            fields.Append(AddFieldsValues(runfieldsCollection, "test-runs"));
+            fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
+            fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
+            fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
+            fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
+            //fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
+            fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
 
             return fields;
         }
