@@ -80,6 +80,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\CLI\CLI-OutputsPass_Existing_RegularInputCustomized.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-OutputsPass_Existing_NotCustomized.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyIDs.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -428,6 +434,15 @@
     <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_A.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_B.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_C.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\CLI\Environments\Default.Ginger.Environment.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -444,6 +459,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\CLI\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\RunSetConfigs\Runset_DataPass.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\EmailWebReport\BusinessFlows\Jira Demo.Ginger.BusinessFlow.xml">
