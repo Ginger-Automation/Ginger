@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="3.6.0.0" Version="6" LastUpdateBy="MENIK" LastUpdate="202004121942" />
+<GingerRepositoryItem><Header ItemGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="3.6.0.0" Version="17" LastUpdateBy="MENIK" LastUpdate="202004122127" />
 <BusinessFlow Guid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" Name="Flow_A" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Do-Work" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
@@ -22,7 +22,7 @@
 </Acts>
 
 <Variables>
-<VariableSelectionList Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="None" Name="A_Type" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" Value="111">
+<VariableSelectionList Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="None" Name="A_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_A\Group\Do-Work" ParentType="Activity" Publish="True" Value="111">
 <OptionalValuesList>
 <OptionalValue Guid="f99425f7-ebb2-4e6c-a752-8eb42492b73a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="111" />
 <OptionalValue Guid="43c85b7a-0133-43b1-a21e-02fef56130df" ParentGuid="00000000-0000-0000-0000-000000000000" Value="222" />
@@ -39,7 +39,7 @@
 <ActivitiesGroups>
 <ActivitiesGroup Guid="a4cff36e-b21d-48f3-98bd-f313b5470461" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="fef364c3-6c53-463d-afdc-418f2b51d1db" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="a04ae619-69d1-492a-94ba-c897c19dd69a" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 </ActivitiesGroups>
@@ -49,9 +49,9 @@
 </TargetApplications>
 
 <Variables>
-<VariableString Guid="bde76d0f-a68e-465e-b25c-60365886762a" MappedOutputType="None" Name="A_ID" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" />
-<VariableString Guid="1aba0714-ffd2-4443-bba5-b8bf4702ab52" InitialStringValue="Meni" MappedOutputType="None" Name="A_Name" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" />
-<VariableSelectionList Guid="284891c8-ad7e-41a5-bbf8-4e00e8d578e3" MappedOutputType="None" Name="A_Color" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" Value="Red">
+<VariableString Guid="bde76d0f-a68e-465e-b25c-60365886762a" MappedOutputType="None" Name="A_ID" ParentGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ParentName="Flow_A" ParentType="Business Flow" Publish="True" />
+<VariableString Guid="1aba0714-ffd2-4443-bba5-b8bf4702ab52" InitialStringValue="Meni" MappedOutputType="None" Name="A_Name" ParentGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ParentName="Flow_A" ParentType="Business Flow" Publish="True" SetAsOutputValue="False" />
+<VariableSelectionList Guid="284891c8-ad7e-41a5-bbf8-4e00e8d578e3" MappedOutputType="None" Name="A_Color" ParentGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ParentName="Flow_A" ParentType="Business Flow" Publish="True" Value="Red">
 <OptionalValuesList>
 <OptionalValue Guid="9749e8e9-a02c-4ffe-a4f0-4d4ed3bbc5d4" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Green" />
 <OptionalValue Guid="9680a137-4d23-46e1-b4f8-87ca34468318" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Red" />

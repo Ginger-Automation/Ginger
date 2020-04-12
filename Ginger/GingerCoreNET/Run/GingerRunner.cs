@@ -667,7 +667,7 @@ namespace Ginger.Run
                 {
                     if (outputVariables == null)
                     {
-                        outputVariables = GetPossibleOutputVariables();
+                        outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow);
                     }
 
                     VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
@@ -746,10 +746,11 @@ namespace Ginger.Run
             }
         }
 
-        private List<VariableBase> GetPossibleOutputVariables()
+        public List<VariableBase> GetPossibleOutputVariables(RunSetConfig runSetConfig, BusinessFlow businessFlow)
         {
-            //set the vars to get value from
             List<VariableBase> outputVariables;
+
+            //Global Variabels
             if (BusinessFlow.SolutionVariables != null)
             {
                 outputVariables = BusinessFlow.SolutionVariables.ToList();
@@ -758,20 +759,32 @@ namespace Ginger.Run
             {
                 outputVariables = new List<VariableBase>();
             }
-            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
-            for (int i = 0; i < BusinessFlows.IndexOf(CurrentBusinessFlow); i++)
+
+            //Previous Business Flows output variabels
+            for (int i = BusinessFlows.IndexOf(businessFlow) - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
             {
-                prevBFs.Add((BusinessFlow)BusinessFlows[i]);
-            }
-            foreach (BusinessFlow bf in prevBFs.Reverse())//doing in reverse for passing the most updated value of variables with similar name
-            {
-                foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
+                foreach (VariableBase var in BusinessFlows[i].GetBFandActivitiesVariabeles(false, false, true))
                 {
                     outputVariables.Add(var);
                 }
             }
-            return outputVariables;
-                 
+
+            //Previous Runners Business Flows Output Variabels
+            if (runSetConfig.RunModeParallel == false && runSetConfig.GingerRunners.IndexOf(this) > 0)
+            {
+                for (int j = runSetConfig.GingerRunners.IndexOf(this) - 1; j >= 0; j--)//doing in reverse for sorting by latest value in case having the same var more than once
+                {
+                    foreach(BusinessFlow bf in runSetConfig.GingerRunners[j].BusinessFlows.Reverse())
+                    {
+                        foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
+                        {
+                            outputVariables.Add(var);
+                        }
+                    }
+                }
+            }
+                        
+            return outputVariables;                 
         }      
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()

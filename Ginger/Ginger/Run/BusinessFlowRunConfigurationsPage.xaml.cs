@@ -50,12 +50,10 @@ namespace Ginger.Run
 
         GenericWindow _pageGenericWin = null;
 
-        ObservableList<BusinessFlow> mPrevBusinessFlowsInFlow;
-
         GingerRunner mGingerRunner;
         Context mContext;
 
-        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow, ObservableList<BusinessFlow> prevBusinessFlowsInFlow)
+        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
         {
             InitializeComponent();
 
@@ -64,7 +62,6 @@ namespace Ginger.Run
             mGingerRunner = runner;
             mBusinessFlow = businessFlow;
             mContext = new Context() { BusinessFlow = businessFlow, Runner = runner };
-            mPrevBusinessFlowsInFlow = prevBusinessFlowsInFlow;
             
             mBusinessFlow.SaveBackup();
 
@@ -144,15 +141,9 @@ namespace Ginger.Run
                     //set the Output vars can be used
                     ObservableList<string> optionalOutputVars = new ObservableList<string>();
                     optionalOutputVars.Add(string.Empty);//default value for clear selection
-                    //solution vars
-                    if (BusinessFlow.SolutionVariables != null)
-                        foreach (VariableBase var in BusinessFlow.SolutionVariables)
-                            optionalOutputVars.Add(var.Name);
-                    //prev bf's output vars
-                    foreach (BusinessFlow bf in mPrevBusinessFlowsInFlow)
-                    {                       
-                        foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(true, false, true))
-                            optionalOutputVars.Add(var.Name);
+                    foreach(VariableBase outputVar in mGingerRunner.GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow))
+                    {
+                        optionalOutputVars.Add(outputVar.Name);
                     }
 
                     //allow setting output vars options only to variables types which supports setting value

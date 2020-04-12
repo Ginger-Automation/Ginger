@@ -20,7 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ginger.Run;
+using GingerCore;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 
 namespace Ginger.AnalyzerLib
 {
@@ -75,8 +77,45 @@ namespace Ginger.AnalyzerLib
                     }
                 }
             }
+
+            //check all configured output variabels still valid
+            foreach (GingerRunner GR in RSC.GingerRunners)
+            {
+                foreach (BusinessFlow bf in GR.BusinessFlows)
+                {
+                    List<VariableBase> inputVars = bf.GetBFandActivitiesVariabeles(true).ToList();
+                    List<VariableBase> outputVariables = null;
+                    foreach (VariableBase inputVar in inputVars)
+                    {
+                        if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)
+                        {
+                            if (outputVariables == null)
+                            {
+                                outputVariables = GR.GetPossibleOutputVariables(RSC, bf);
+                            }
+
+                            VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
+                            if (outputVar == null)
+                            {
+                                //create error
+                                RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
+                                AGR.ItemParent = GR.Name;
+                                AGR.Description = string.Format("Configured output {0} mapping is missing", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                                AGR.Details = string.Format("In '{0}' Runner, '{1}' {2}, the configured Output {3} to '{4}' Input {3} is missing", GR.Name, bf.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.Name);
+                                AGR.HowToFix = string.Format("Re-configure the missing output {0}", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                                AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                AGR.IssueType = eType.Error;
+                                AGR.Impact = "Execution might fail due to wrong data transfer";
+                                AGR.Severity = eSeverity.High;
+                                AGR.Selected = false;
+                            }
+                        }
+                    }
+                }
+            }
+
             return IssuesList;
-        }
+        }        
 
         static RunSetConfigAnalyzer CreateNewIssue(List<AnalyzerItemBase> IssuesList, RunSetConfig RSC)
         {

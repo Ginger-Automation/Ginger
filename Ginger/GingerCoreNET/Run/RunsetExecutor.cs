@@ -211,22 +211,8 @@ namespace Ginger.Run
                                 }
                             }
                             if (originalVar != null)
-                            {                               
-                                RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);
-                                //temp solution for release, find better way, issue is with the RepositoryItemBase.ObjectsDeepCopy which causing duplicated optional values
-                                if (originalVar is VariableSelectionList)
-                                {
-                                    for (int indx = 0; indx < ((VariableSelectionList)originalVar).OptionalValuesList.Count; indx++)
-                                    {
-                                        if (((VariableSelectionList)originalVar).OptionalValuesList.Where(x=>x.Value == ((VariableSelectionList)originalVar).OptionalValuesList[indx].Value).ToList().Count >1)
-                                        {
-                                            ((VariableSelectionList)originalVar).OptionalValuesList.RemoveAt(indx);
-                                            indx--;
-                                        }
-                                    }
-                                }
-                                originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
-                                originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
+                            {
+                                CopyCustomizedVariableConfigurations(customizedVar, originalVar);
                             }
                             else
                             {
@@ -243,6 +229,39 @@ namespace Ginger.Run
 
             runner.IsUpdateBusinessFlowRunList = true;
             runner.BusinessFlows = runnerFlows;
+        }
+
+        private void CopyCustomizedVariableConfigurations(VariableBase customizedVar, VariableBase originalVar)
+        {
+            //keep original description values
+            VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
+           
+            //ovveride original variable configurations with user customizations
+            RepositoryItemBase.ObjectsDeepCopy(customizedVar, originalVar);//need to replace 'ObjectsDeepCopy' with AutoMapper and to map on it which values should be overiden
+            originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
+            originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
+
+            //Restore original description values
+            originalVar.Name = originalCopy.Name;
+            originalVar.Description = originalCopy.Description;
+            originalVar.Tags = originalCopy.Tags;
+            originalVar.SetAsInputValue = originalCopy.SetAsInputValue;
+            originalVar.SetAsOutputValue = originalCopy.SetAsOutputValue;
+            originalVar.LinkedVariableName = originalCopy.LinkedVariableName;
+            originalVar.Publish = originalCopy.Publish;
+
+            //temp solution for release, find better way, issue is with the RepositoryItemBase.ObjectsDeepCopy which causing duplicated optional values
+            if (originalVar is VariableSelectionList)
+            {
+                for (int indx = 0; indx < ((VariableSelectionList)originalVar).OptionalValuesList.Count; indx++)
+                {
+                    if (((VariableSelectionList)originalVar).OptionalValuesList.Where(x => x.Value == ((VariableSelectionList)originalVar).OptionalValuesList[indx].Value).ToList().Count > 1)
+                    {
+                        ((VariableSelectionList)originalVar).OptionalValuesList.RemoveAt(indx);
+                        indx--;
+                    }
+                }
+            }
         }
 
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
