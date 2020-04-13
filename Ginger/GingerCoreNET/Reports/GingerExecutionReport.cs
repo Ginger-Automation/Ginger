@@ -280,10 +280,15 @@ namespace Ginger.Reports.GingerExecutionReport
                         {
                             fieldsValuesHTMLTableOneCells.Append("<td>" + DateTime.Parse(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()).ToLocalTime().ToString() + "</td>");
                         }
+                        else if ((selectedField.FieldKey == RunSetReport.Fields.RunSetExecutionRate) || (selectedField.FieldKey == RunSetReport.Fields.GingerRunnersPassRate))
+                        {
+                            fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString() + '%') + "</td>");
+                        }
                         else
                         {
                             fieldsValuesHTMLTableOneCells.Append("<td>" + ExtensionMethods.OverrideHTMLRelatedCharacters(((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString()) + "</td>");
                         }
+
                         if (selectedField.FieldKey == RunSetReport.Fields.Name)
                         {
                             currentRunSetLinkText = ((RunSetReport)RI.ReportInfoRootObject).GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(((RunSetReport)RI.ReportInfoRootObject)).ToString();
@@ -2704,6 +2709,7 @@ namespace Ginger.Reports.GingerExecutionReport
             switch (RI.reportInfoLevel)
             {
                 case ReportInfo.ReportInfoLevel.RunSetLevel:
+                    SetRunsetPassAndExecutionRate(RI);
                     gingerExecutionReport.CreateSummaryViewReport(RI);
                     break;
                 case ReportInfo.ReportInfoLevel.GingerLevel:
@@ -2722,6 +2728,22 @@ namespace Ginger.Reports.GingerExecutionReport
                     return string.Empty;
             }
             return gingerExecutionReport.HTMLReportMainFolder;
+        }
+
+        private static void SetRunsetPassAndExecutionRate(ReportInfo RI)
+        {
+            try
+            {
+                int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
+                int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).Count();
+                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked).Count();
+                ((RunSetReport)RI.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
+                ((RunSetReport)RI.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured during SetRunsetPassAndExecutionRate.", ex);
+            }
         }
 
         public static string NewFunctionCreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0, string templatesFolder = null, HTMLReportsConfiguration hTMLReportsConfiguration = null, string hTMLOutputFolder = null)
