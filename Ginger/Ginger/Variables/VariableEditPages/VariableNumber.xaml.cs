@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 using GingerCore.Variables;
 using System;
-using System.Text.RegularExpressions;
 using System.Windows.Controls;
 
 namespace Ginger.Variables
@@ -33,11 +32,17 @@ namespace Ginger.Variables
             variableNumber = varNumber;
             InitializeComponent();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.InitialNumberValue));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(rdoInputDecimal,RadioButton.IsCheckedProperty ,varNumber, nameof(VariableNumber.IsDecimalValue));
+            txtNumberValue.AddValidationRule(new NumberValidationRule());
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(rdoInputDecimal, RadioButton.IsCheckedProperty, varNumber, nameof(VariableNumber.IsDecimalValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMinValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.MinValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtMaxValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.MaxValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtPrecisionValue, TextBox.TextProperty, varNumber, nameof(VariableNumber.PrecisionValue));
             SetNummericType();
+
+            if (variableNumber.InitialNumberValue != null)
+            {
+                txtNumberValue.Text = variableNumber.InitialNumberValue;
+            }
         }
 
         private void SetNummericType()
@@ -62,7 +67,7 @@ namespace Ginger.Variables
                 rdoInputDecimal.IsChecked = true;
                 pnlPrecision.Visibility = System.Windows.Visibility.Visible;
             }
-           
+
         }
 
         private void rdoInputDecimal_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -74,8 +79,6 @@ namespace Ginger.Variables
             {
                 variableNumber.PrecisionValue = 2; //default
             }
-            //variableNumber.InitialNumberValue = 0.00d;
-            //txtNumberValue.Text = String.Format("{0}{1}{2}{3}{4}", 0, 0,".", 0, 0);
         }
 
         private void rdoInputInt_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -83,62 +86,34 @@ namespace Ginger.Variables
             pnlPrecision.Visibility = System.Windows.Visibility.Collapsed;
             variableNumber.MinValue = Int32.MinValue;
             variableNumber.MaxValue = Int32.MaxValue;
-            //variableNumber.InitialNumberValue = 0;//default
         }
 
         private void txtNumberValue_LostFocus(object sender, System.Windows.RoutedEventArgs e)
         {
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtNumberValue, TextBox.TextProperty, variableNumber, nameof(VariableNumber.InitialNumberValue));
-            double retNum;
-            bool isNum = Double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
-            if (isNum)
-            {
-                //variableNumber.InitialNumberValue = txtNumberValue.Text;
-                //if(!variableNumber.IsDecimalValue)
-                //{
-                //    bool isInt = Double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
-                //    if (isInt)
-                //    {
-                //        variableNumber.InitialNumberValue =Convert.ToInt32(txtNumberValue.Text);
-                //    }
-                //    else
-                //    {
-                //        //txtNumberValue.Background = System.Windows.Media.Brushes.Red;
-                //    }
-
-                //}
-                //else
-                //{
-                //    variableNumber.InitialNumberValue = Convert.ToDouble(txtNumberValue.Text);
-                //}
-
-            }
-            else
-            {
-                //error
-            }
+            //txtNumberValue.BindControl(variableNumber,nameof(VariableNumber.InitialNumberValue));
             
+
+            //double retNum;
+            //bool isNum = double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+            //if (isNum)
+            //{
+            //    //variableNumber.InitialNumberValue = txtNumberValue.Text;
+            //    if (!variableNumber.IsDecimalValue)
+            //    {
+            //        bool isInt = double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+            //        if (isInt)
+            //        {
+            //            variableNumber.InitialNumberValue = Convert.ToInt32(txtNumberValue.Text).ToString();
+            //        }
+            //    }
+            //    else
+            //    {
+            //        variableNumber.InitialNumberValue = txtNumberValue.Text;
+            //    }
+
+            //}
+            //txtNumberValue.ClearControlsBindings();
         }
-
-        //private void txtNumberValue_LostFocus(object sender, System.Windows.RoutedEventArgs e)
-        //{
-        //  var variableNumber =  new VariableNumber();
-        //    double retNum;
-        //    bool isNum = Double.TryParse(txtNumberValue.Text, System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
-        //    if(isNum)
-        //    {
-        //        variableNumber.InitialNumberValue = Convert.ToDouble(txtNumberValue.Text);
-        //    }
-        //    else
-        //    {
-        //        e.Handled = false;
-        //    }
-
-        //}
-        //private void txtNumberValue_TextChanged(object sender, TextChangedEventArgs e)
-        //{
-        //    Regex regex = new Regex("[^0-9]+");
-        //    e.Handled = regex.IsMatch(txtNumberValue.Text);
-        //}
     }
+       
 }

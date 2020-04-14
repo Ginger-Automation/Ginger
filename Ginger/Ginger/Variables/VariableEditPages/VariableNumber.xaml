@@ -5,14 +5,14 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.Variables"
       mc:Ignorable="d" 
-      d:DesignHeight="180" d:DesignWidth="300"
+      d:DesignHeight="190" d:DesignWidth="300"
       Title="VariableNumber">
 
     <Grid>
         <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Initial Value:</Label>
             <TextBox x:Name="txtNumberValue"   Style="{StaticResource @TextBoxStyle}"  Margin="0,0,0,10" ToolTip="Only Numeric Value Allowed."/>
-            <Expander  Padding="10,5,10,5" Style="{StaticResource $ExpanderStyle}" IsExpanded="False">
+            <Expander Margin="0,10,0,0"  Padding="10,5,10,5" Style="{StaticResource $ExpanderStyle}" IsExpanded="True">
                 <Expander.Header>
                     <Label Content="Number Type Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                 </Expander.Header>

@@ -660,6 +660,7 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableNumber.xaml.cs">
       <DependentUpon>VariableNumber.xaml</DependentUpon>
     </Compile>
