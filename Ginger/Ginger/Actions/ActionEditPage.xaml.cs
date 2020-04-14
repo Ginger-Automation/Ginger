@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1373,6 +1373,19 @@ namespace Ginger.Actions
             foreach (DataSourceBase ds in mDSList)
                 mDSNames.Add(ds.Name);
             GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
+            // Added Check to get already saved ActOutDataSourceConfig params
+            if (mAction.DSOutputConfigParams.Count > 0)
+            {
+                if (mAction.OutDSParamMapType == null)
+                {
+                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
+                }
+                if (mAction.OutDataSourceName == null || mAction.OutDataSourceTableName == null)
+                {
+                    mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
+                    mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
+                }
+            }
             if (mAction.OutDataSourceName != null && mAction.OutDataSourceTableName != null && mAction.OutDataSourceName != "" && mAction.OutDataSourceTableName != "")
             {
                 xDataSourceNameCombo.SelectedValue = mAction.OutDataSourceName;

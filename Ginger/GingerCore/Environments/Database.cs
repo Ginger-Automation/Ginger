@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -166,20 +166,18 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = ConnectionString;
-                return mVE.ValueCalculated;
+                return GetCalculatedWithDecryptTrue(ConnectionString);
             }
         }
 
         private string mTNS;
         [IsSerializedForLocalRepository]
-        public string TNS  {  get  { return mTNS; } set { mTNS = value; OnPropertyChanged(Fields.TNS); } }
+        public string TNS { get { return mTNS; } set { mTNS = value; OnPropertyChanged(Fields.TNS); } }
         public string TNSCalculated
         {
             get
             {
-                VE.Value = TNS;
-                return mVE.ValueCalculated;
+                return GetCalculatedWithDecryptTrue(TNS);
             }
         }
 
@@ -194,8 +192,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = User;
-                return mVE.ValueCalculated;
+                return GetCalculatedWithDecryptTrue(User);
             }
         }
 
@@ -206,8 +203,7 @@ namespace GingerCore.Environments
         {
             get
             {
-                VE.Value = Pass;
-                return mVE.ValueCalculated;
+                return GetCalculatedWithDecryptTrue(Pass);
             }
         }
 
@@ -225,69 +221,96 @@ namespace GingerCore.Environments
         }
 
         public string NameBeforeEdit;
-
-       
+        public string GetCalculatedWithDecryptTrue(string value)
+        {
+            VE.Value = value;
+            mVE.DecryptFlag = true;
+            string valueCalculated = mVE.ValueCalculated;
+            mVE.DecryptFlag = false;
+            return valueCalculated;
+        }
+        public bool CheckUserCredentialsInTNS()
+        {
+            if (!string.IsNullOrEmpty(TNSCalculated) && TNSCalculated.ToLower().Contains("data source=") && TNSCalculated.ToLower().Contains("password=") && TNSCalculated.ToLower().Contains("user id="))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public void SplitUserIdPassFromTNS()
+        {
+            System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
+            scSB.ConnectionString = TNS;
+            TNS = scSB.DataSource;
+            User = scSB.UserID;
+            Pass = scSB.Password;
+            ConnectionString = scSB.ConnectionString;
+        }
         public string GetConnectionString()
         {
             string connStr = null;
             bool res;
             res = false;
 
-            if (String.IsNullOrEmpty(ConnectionStringCalculated) == false)
+            if (String.IsNullOrEmpty(ConnectionStringCalculated))
             {
-                connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
-     
-                String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-                if (res == true)
-                    { connStr = connStr.Replace("{PASS}", deCryptValue); }
-                else
-                    { connStr = connStr.Replace("{PASS}", PassCalculated); }
+                connStr = CreateConnectionString();
             }
+            connStr = ConnectionStringCalculated.Replace("{USER}", UserCalculated);
+            String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
+            if (res == true)
+            { connStr = connStr.Replace("{PASS}", deCryptValue); }
             else
-            {
-                String strConnString = TNSCalculated;
-                String strProvider;
-                connStr = "Data Source=" + TNSCalculated + ";User Id=" + UserCalculated + ";";
-
-                String deCryptValue = EncryptionHandler.DecryptString(PassCalculated, ref res, false);
-
-                if (res == true) { connStr = connStr + "Password=" + deCryptValue + ";"; }
-                else { connStr = connStr + "Password=" + PassCalculated + ";"; }
-
-                if (DBType == eDBTypes.MSAccess)
-                {
-                    if (strConnString.Contains(".accdb")) strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
-                    else strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
-
-                    connStr = strProvider + connStr;
-                }
-                else if (DBType == eDBTypes.DB2)
-                {
-                    connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + "PWD=" + deCryptValue;
-                }
-                else if (DBType == eDBTypes.PostgreSQL)
-                {
-                    string[] host = TNSCalculated.Split(':');
-                    if (host.Length == 2)
-                    {
-                        connStr = String.Format("Server ={0};Port={1};User Id={2}; Password={3};Database={4};", host[0], host[1], UserCalculated, deCryptValue, Name);
-                    }
-                    else
-                    {
-                        //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
-                        connStr = String.Format("Server ={0};User Id={1}; Password={2};Database={3};", TNSCalculated, UserCalculated, deCryptValue, Name);
-                    }
-                }
-                else if (DBType == eDBTypes.MySQL)
-                {
-                    connStr = "Server=" + TNSCalculated + ";Database=" + Name + ";UID=" + UserCalculated + ";PWD=" + deCryptValue;
-                }
-                
-            }
-
+            { connStr = connStr.Replace("{PASS}", PassCalculated); }
+            
             return connStr;
         }
 
+        public string CreateConnectionString()
+        {
+            //Default ConnectionString format
+            ConnectionString = "Data Source=" + TNS + ";User Id={USER};Password={PASS};";
+
+            //Change ConnectionString according to DBType
+            if (DBType == eDBTypes.MSAccess)
+            {
+                string strProvider;
+                if (TNSCalculated.Contains(".accdb"))
+                {
+                    strProvider = "Provider=Microsoft.ACE.OLEDB.12.0;";
+                }
+                else
+                {
+                    strProvider = "Provider=Microsoft.Jet.OLEDB.4.0;";
+                }
+                ConnectionString = strProvider + ConnectionString;
+            }
+            else if (DBType == eDBTypes.DB2)
+            {
+                ConnectionString = "Server=" + TNS + ";Database=" + Name + ";UID={USER};PWD={PASS}";
+            }
+            else if (DBType == eDBTypes.PostgreSQL)
+            {
+                string[] host = TNSCalculated.Split(':');
+                if (host.Length == 2)
+                {
+                    ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
+                }
+                else
+                {
+                    //    connStr = "Server=" + TNS + ";Database=" + Name + ";UID=" + User + "PWD=" + deCryptValue;
+                    ConnectionString = "Server=" + TNS + ";User Id={USER}; Password={PASS};Database=" + Name + ";";
+                }
+            }
+            else if (DBType == eDBTypes.MySQL)
+            {
+                ConnectionString = "Server=" + TNS + ";Database=" + Name + ";UID={USER};PWD={PASS}";
+            }
+            return ConnectionStringCalculated;
+        }
         //private CancellationTokenSource CTS = null;
         private DateTime LastConnectionUsedTime;
 
@@ -352,7 +375,7 @@ namespace GingerCore.Environments
                         {
                             String Temp = e.Message;
                             //if (Temp.Contains ("ORA-03111"))
-                            if (Temp.Contains("ORA-03111") || Temp.Contains("ORA-01017"))
+                            if (Temp.Contains("ORA-03111"))
                             {
                                 factory = DbProviderFactories.GetFactory("System.Data.OleDb");
                                 oConn = factory.CreateConnection();
@@ -360,9 +383,13 @@ namespace GingerCore.Environments
                                 oConn.Open();
                                 break;
                             }
+                            else if (Temp.Contains("ORA-01017"))
+                            {
+                                throw e;
+                            }
                             else if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll"))
                             {
-                                
+
                                 throw new Exception(GetMissingDLLErrorDescription());
                             }
                             else
@@ -467,7 +494,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + ConnectionString, e);
                 throw (e);
             }
             return false;

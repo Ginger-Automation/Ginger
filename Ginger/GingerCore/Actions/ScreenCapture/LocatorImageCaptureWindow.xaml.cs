@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -235,18 +235,24 @@ namespace GingerCore.Actions.ScreenCapture
         public void CaptureImage( System.Drawing.Point SourcePoint, System.Drawing.Rectangle SelectionRectangle, string FilePath)
         {
             this.Hide();
-
-            using (Bitmap bitmap = new Bitmap(SelectionRectangle.Width, SelectionRectangle.Height))
+            try
             {
-                using (Graphics g = Graphics.FromImage(bitmap))
+                using (Bitmap bitmap = new Bitmap(SelectionRectangle.Width, SelectionRectangle.Height))
                 {
-                    g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);                  
-                }
-                
-                //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
-                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
+                    }
 
-                bitmap.Save(FilePath, ImageFormat.Png);                               
+                    //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
+                    FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+
+                    bitmap.Save(FilePath, ImageFormat.Png);
+                }
+            }
+            catch
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Please select image to capture");
             }
 
         }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -85,7 +85,6 @@ namespace GingerCore.Actions
             
         }
 
-        [IsSerializedForLocalRepository]
         public string SaveToFileName
         {
             get
@@ -116,7 +115,17 @@ namespace GingerCore.Actions
 
             if (!Directory.Exists(DirectoryPath))
             {
-                Directory.CreateDirectory(DirectoryPath);
+                try
+                {
+                    Directory.CreateDirectory(DirectoryPath);
+                }
+                catch (Exception ex)
+                {
+                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = string.Concat("Invalid Folder Path. :",DirectoryPath);
+                    throw ex;
+                }
+                
             }
 
             String FileName = "";

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,7 +40,18 @@ namespace GingerCore.Variables
         public string Password 
         {
             set { mPassword = value; Value = value; OnPropertyChanged(nameof(this.Password));  OnPropertyChanged("Formula"); }
-            get { return mPassword; } 
+            get 
+            {
+                if (!string.IsNullOrEmpty(mPassword))
+                {
+                    return mPassword;
+                }
+                else if (!string.IsNullOrEmpty(Value))
+                {
+                    mPassword = Value;
+                }
+                return mPassword;
+            } 
         }
         
         public override string GetFormula()
