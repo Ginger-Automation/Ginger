@@ -134,6 +134,10 @@ namespace GingerCore.Actions
                 {
                     ((VariableDynamic)Var).ValueExpression = this.Value;
                 }
+                else if (Var.GetType() == typeof(VariableNumber))
+                {
+                    ((VariableNumber)Var).Value = calculatedValue;
+                }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)
             {                  
