@@ -15,17 +15,49 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
+using GingerCore.Variables;
 using System.Windows.Controls;
 
 namespace Ginger.Variables
 {
     public class NumberValidationRule : ValidationRule
     {
+        private VariableNumber variableNumber;
+
+        public NumberValidationRule()
+        {
+        }
+
+        public NumberValidationRule(VariableNumber variableNumber)
+        {
+            this.variableNumber = variableNumber;
+        }
+
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
             float result = 0.0f;
             bool canConvert = float.TryParse(value as string, out result);
-            return new ValidationResult(canConvert, "Not a valid Number");
+            if(!canConvert)
+            {
+                return new ValidationResult(canConvert, "Not a valid Number");
+            }
+            if(variableNumber != null)
+            {
+                try
+                {
+                    var minValue = float.Parse(variableNumber.MinValue);
+                    var maxValue = float.Parse(variableNumber.MaxValue);
+                    if((result < minValue) || (result > maxValue) )
+                    {
+                        return new ValidationResult(false, $"Please enter number in the range: MinValue[{minValue}], MaxValue[{maxValue}].");
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    return new ValidationResult(false, $"Illegal characters or {ex.Message}");
+                }
+            }
+            return ValidationResult.ValidResult;
         }
     }
 }

@@ -28,12 +28,12 @@ namespace GingerCore.Variables
     {
         private string mInitialNumberValue;
 
-        private float? mMinValue;
-        private float? mMaxValue;
+        private string mMinValue;
+        private string mMaxValue;
 
-        private int? mPrecisionValue;
+        private string mPrecisionValue;
 
-        private bool mIsDecimalValue;
+        private bool? mIsDecimalValue;
         
         [IsSerializedForLocalRepository]
         public bool IsDecimalValue
@@ -42,43 +42,104 @@ namespace GingerCore.Variables
             {
                 mIsDecimalValue = value;
                 OnPropertyChanged("IsDecimalValue");
+                OnPropertyChanged("InitialNumberValue");
                 OnPropertyChanged("Formula");
             }
             get
             {
-                return mIsDecimalValue;
+                if (mIsDecimalValue == null)
+                {
+                    return false;
+                }
+                    
+                return Convert.ToBoolean(mIsDecimalValue);
             }
         }
 
         [IsSerializedForLocalRepository]
-        public float? MinValue
+        public string MinValue
         {
             get 
             {
+                if (string.IsNullOrEmpty(mMinValue))
+                {
+                    mMinValue = GetMinValue();
+                }
                 return mMinValue; 
             }
             set 
             {
                 mMinValue = value;
                 OnPropertyChanged("MinValue");
+                OnPropertyChanged("InitialNumberValue");
+                OnPropertyChanged("Formula");
+            }
+        }
+
+        private string GetMinValue()
+        {
+            if (!IsDecimalValue)
+            {
+                return Int32.MinValue.ToString();
+            }
+            else
+            {
+                return float.MinValue.ToString();
             }
         }
 
         [IsSerializedForLocalRepository]
-        public float? MaxValue
+        public string MaxValue
         {
             get 
             { 
-                return mMaxValue;
+                if(string.IsNullOrEmpty(mMaxValue))
+                {
+                    mMaxValue = GetMaxValue();
+                }
+                return mMaxValue;             
             }
             set
             { 
                 mMaxValue = value;
                 OnPropertyChanged("MaxValue");
+                OnPropertyChanged("InitialNumberValue");
+                OnPropertyChanged("Formula");
             }
         }
 
-        public VariableNumber() { }
+        private string GetMaxValue()
+        {
+            if(!IsDecimalValue)
+            {
+                return Int32.MaxValue.ToString();
+            }
+            else
+            {
+                return float.MaxValue.ToString();
+            }
+        }
+
+        [IsSerializedForLocalRepository]
+        public string PrecisionValue
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(mPrecisionValue))
+                {
+                    mPrecisionValue = "2";
+                }
+                return mPrecisionValue;
+            }
+            set
+            {
+                mPrecisionValue = value;
+                OnPropertyChanged("PrecisionValue");
+                OnPropertyChanged("InitialNumberValue");
+                OnPropertyChanged("Formula");
+            }
+        }
+
         public override string VariableType
         {
             get { return "Number"; }
@@ -121,22 +182,26 @@ namespace GingerCore.Variables
         {
             set
             {
-                if(!mIsDecimalValue)
+                if(mIsDecimalValue == null)
                 {
-                    mInitialNumberValue = GetValidInteger(value).ToString();
+                    mInitialNumberValue = value;
+                }
+                else if(!Convert.ToBoolean(mIsDecimalValue))
+                {
+                    mInitialNumberValue = GetValidInteger(value);
                 }
                 else
                 {
                     mInitialNumberValue = GetFloatWithPrecisionValue(value);
                 }
 
-                Value = value.ToString();
+                Value = mInitialNumberValue;
                 OnPropertyChanged("InitialNumberValue");
                 OnPropertyChanged("Formula");
             }
             get
             {
-                if(mInitialNumberValue == null)
+                if(string.IsNullOrEmpty(mInitialNumberValue))
                 {
                     mInitialNumberValue = "0";
                 }
@@ -146,14 +211,13 @@ namespace GingerCore.Variables
 
         private string GetFloatWithPrecisionValue(string value)
         {
-            if (value.Contains(".") && value.Split('.')[1].Length > 0)
+            if (!string.IsNullOrEmpty(mPrecisionValue) && value.Contains(".") && value.Split('.')[1].Length > 0)
             {
                 float validFloat;
                 float.TryParse(value, out validFloat);
-                if (validFloat < mMinValue || validFloat > mMaxValue)
+                if ((!string.IsNullOrEmpty(mMinValue) || !string.IsNullOrEmpty(mMaxValue)) && (validFloat < Convert.ToDouble(mMinValue) || validFloat > Convert.ToDouble(mMaxValue)))
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Input value is out of range!");
-                    return mInitialNumberValue;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Input Number is not in range: {mMinValue}-{mMaxValue}.");
                 }
                 return Math.Round(Convert.ToDouble(validFloat), Convert.ToInt32(mPrecisionValue)).ToString();
             }
@@ -169,10 +233,9 @@ namespace GingerCore.Variables
             {
                 float validInteger;
                 float.TryParse(value, out validInteger);
-                if (validInteger < mMinValue || validInteger > mMaxValue)
+                if ((!string.IsNullOrEmpty(mMinValue) || !string.IsNullOrEmpty(mMaxValue)) && (validInteger < Convert.ToDouble(mMinValue) || validInteger > Convert.ToDouble(mMaxValue)))
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Input value is out of range!");
-                    return mInitialNumberValue;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Input Number is not in range: { mMinValue}-{ mMaxValue}.");
                 }
                 return Convert.ToInt32(validInteger).ToString();
             }
@@ -184,46 +247,25 @@ namespace GingerCore.Variables
 
         }
 
-        [IsSerializedForLocalRepository]
-        public int? PrecisionValue
-        {
-            get
-            {
-                return mPrecisionValue;
-            }
-            set
-            {
-                mPrecisionValue = value;
-                OnPropertyChanged("PrecisionValue");
-                OnPropertyChanged("InitialNumberValue");
-                OnPropertyChanged("Formula");
-            }
-        }
+
 
         public override void GenerateAutoValue()
         {
-
+            //NA
         }
 
         public override string GetFormula()
         {
-            if (!mIsDecimalValue)
+            if (!Convert.ToBoolean(mIsDecimalValue))
             {
-                return "Initial Value=" + GetValidInteger(mInitialNumberValue).ToString();
+                 mInitialNumberValue = GetValidInteger(mInitialNumberValue);
             }
             else
             {
                 mInitialNumberValue = GetFloatWithPrecisionValue(mInitialNumberValue);
-                return "Initial Value=" + mInitialNumberValue;
             }
-
-        }
-
-        private bool IsNumericValue(object inputValue)
-        {
-            double retNum;
-            bool isNum = Double.TryParse(Convert.ToString(inputValue), System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
-            return isNum;
+            Value = mInitialNumberValue;
+            return "Initial Value=" + mInitialNumberValue;
         }
 
         public override List<eSetValueOptions> GetSupportedOperations()
