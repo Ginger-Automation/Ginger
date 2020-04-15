@@ -63,6 +63,7 @@ namespace GingerCore.Actions
                 return "Data Source Manipulation";
             }
         }
+
         public override void Execute()
         {
             DataSourceBase DataSource = null;
@@ -86,9 +87,6 @@ namespace GingerCore.Actions
                 string Query  = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
                 liteDB.Execute(this, Query);
-              
-
-                
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
@@ -142,6 +140,34 @@ namespace GingerCore.Actions
                         {
                             this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             Error = outVal;
+                        }
+                        break;
+                    case eControlAction.AddRow:
+                        DataSourceTable DSTable = null;
+                        ObservableList<DataSourceTable> dstTables = DataSource.GetTablesList();
+                        foreach (DataSourceTable dst in dstTables)
+                        {
+                            if (dst.Name == DSTableName)
+                            {
+                                DSTable = dst;
+                                DSTable.DataTable = dst.DSC.GetTable(DSTableName);
+                                break;
+                            }
+                        }
+                        if (DSTable != null)
+                        {
+                            List<string> mColumnNames = DataSource.GetColumnList(DSTableName);
+                            DataSource.AddRow(mColumnNames, DSTable);
+                            DataSource.SaveTable(DSTable.DataTable);
+                            //Get GingerId
+                            DataTable dt = DataSource.GetTable(DSTableName);
+                            DataRow row = dt.Rows[dt.Rows.Count - 1];
+                            string GingerId = Convert.ToString(row["GINGER_ID"]);
+                            AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
+                        }
+                        else
+                        {
+                            Error = "No table present in the DataSource with the name ="+ DSTableName;
                         }
                         break;
                     default:
@@ -232,7 +258,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Get Available Row Count")]
             AvailableRowCount,
             [EnumValueDescription("Export to Excel")]
-            ExportToExcel
+            ExportToExcel,
+            [EnumValueDescription("Add Row")]
+            AddRow
         }
 
         public enum eRunColSelectorValue
