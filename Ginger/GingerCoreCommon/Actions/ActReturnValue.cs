@@ -116,9 +116,14 @@ namespace Amdocs.Ginger.Repository
         public enum eStoreTo
         {
             None,
+            [EnumValueDescription("Variable")]
             Variable,
+            [EnumValueDescription("Data Source")]
             DataSource,
-            ApplicationModelParameter
+            [EnumValueDescription("Global Model Parameter")]
+            ApplicationModelParameter,
+            //[EnumValueDescription("Global Variable")]
+            //GlobalVariabel
         }
         private eStoreTo mStoreTo;
         [IsSerializedForLocalRepository]

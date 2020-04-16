@@ -44,9 +44,6 @@ namespace Ginger.UserControlsLib
         public static DependencyProperty VariabelsSourceProperty =
         DependencyProperty.Register("VariabelsSource", typeof(ObservableList<string>), typeof(UCDataMapping), new PropertyMetadata(OnVariabelsSourcePropertyChanged));
         
-        public static DependencyProperty ModelsGlobalParametersSourceProperty =
-        DependencyProperty.Register("ModelsGlobalParametersSource", typeof(ObservableList<ComboItem>), typeof(UCDataMapping), new PropertyMetadata(OnModelsGlobalParametersSourcePropertyChanged));
-
         public string MappedValue
         {
             get { return (string)GetValue(MappedValueProperty); }
@@ -57,6 +54,23 @@ namespace Ginger.UserControlsLib
         {
             get { return (string)GetValue(MappedTypeProperty); }
             set { SetValue(MappedTypeProperty, value); }
+        }
+
+        ObservableList<ComboItem> _modelGlobalParamsComboList = null;
+        ObservableList<ComboItem> ModelGlobalParamsComboList
+        {
+            get
+            {
+                if (_modelGlobalParamsComboList == null)
+                {
+                    _modelGlobalParamsComboList = new ObservableList<ComboItem>();
+                    foreach (GlobalAppModelParameter param in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>())
+                    {
+                        _modelGlobalParamsComboList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid.ToString() });
+                    }                    
+                }
+                return _modelGlobalParamsComboList;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -79,13 +93,24 @@ namespace Ginger.UserControlsLib
         #region Global
         private void InitDataTypeOptions()
         {
-            GingerCore.General.FillComboItemsFromEnumType(xMappedTypeComboBox, typeof(ActReturnValue.eStoreTo));            
+            GingerCore.General.FillComboFromEnumType(xMappedTypeComboBox, typeof(ActReturnValue.eStoreTo));            
             BindingHandler.ObjFieldBinding(xMappedTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedType));
 
             if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count == 0)
             {
                 GingerCore.General.DisableComboItem(xMappedTypeComboBox, ActReturnValue.eStoreTo.DataSource);
                 xDSConfigBtn.IsEnabled = false;
+            }
+
+            if (ModelGlobalParamsComboList.Count == 0)
+            {
+                GingerCore.General.DisableComboItem(xMappedTypeComboBox, ActReturnValue.eStoreTo.ApplicationModelParameter);               
+            }
+            else
+            {               
+                xModelsParamsComboBox.DisplayMemberPath = nameof(ComboItem.text);
+                xModelsParamsComboBox.SelectedValuePath = nameof(ComboItem.Value);
+                xModelsParamsComboBox.ItemsSource = ModelGlobalParamsComboList.OrderBy(nameof(ComboItem.text));
             }
         }
 
@@ -246,7 +271,7 @@ namespace Ginger.UserControlsLib
             }
         }      
         
-        public static DataTemplate GetTemplate(string dataTypeProperty, string dataValueProperty, ObservableList<string> variabelsSourceList, string variabelsSourceProperty = "", string enableDataMappingProperty = "", ObservableList<GlobalAppModelParameter> modelsGlobalParamsList = null)
+        public static DataTemplate GetTemplate(string dataTypeProperty, string dataValueProperty, string enableDataMappingProperty = "", string variabelsSourceProperty = "", ObservableList<string> variabelsSourceList=null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
@@ -263,16 +288,16 @@ namespace Ginger.UserControlsLib
                 ucDataMapping.SetBinding(UCDataMapping.VariabelsSourceProperty, comboItemsSourceBinding);
             }
 
-            if (modelsGlobalParamsList != null)
-            {
-                ObservableList<ComboItem> appModelGlobalParamsComboItemsList = new ObservableList<ComboItem>();
-                foreach (GlobalAppModelParameter param in modelsGlobalParamsList)
-                {
-                    appModelGlobalParamsComboItemsList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid.ToString() });
-                }
+            //if (modelsGlobalParamsList != null)
+            //{
+            //    ObservableList<ComboItem> appModelGlobalParamsComboItemsList = new ObservableList<ComboItem>();
+            //    foreach (GlobalAppModelParameter param in modelsGlobalParamsList)
+            //    {
+            //        appModelGlobalParamsComboItemsList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid.ToString() });
+            //    }
 
-                ucDataMapping.SetValue(UCDataMapping.ModelsGlobalParametersSourceProperty, appModelGlobalParamsComboItemsList);
-            }
+            //    ucDataMapping.SetValue(UCDataMapping.ModelsGlobalParametersSourceProperty, appModelGlobalParamsComboItemsList);
+            //}
 
             Binding selectedStoreToBinding = new Binding(dataTypeProperty);
             selectedStoreToBinding.Mode = BindingMode.TwoWay;
@@ -322,25 +347,25 @@ namespace Ginger.UserControlsLib
         #endregion Variables
 
         #region ModelGlobalParameters
-        private static void OnModelsGlobalParametersSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            var control = sender as UCDataMapping;
-            if (control != null)
-            {
-                control.ModelsGlobalParametersSourcePropertyChanged((ObservableList<ComboItem>)args.NewValue);
-            }
-        }
-        private void ModelsGlobalParametersSourcePropertyChanged(ObservableList<ComboItem> modelGlobalParamsList)
-        {
-            if (modelGlobalParamsList.Count == 0)
-            {
-                GingerCore.General.DisableComboItem(xMappedTypeComboBox, ActReturnValue.eStoreTo.ApplicationModelParameter);
-            }
+        //private static void OnModelsGlobalParametersSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        //{
+        //    var control = sender as UCDataMapping;
+        //    if (control != null)
+        //    {
+        //        control.ModelsGlobalParametersSourcePropertyChanged((ObservableList<ComboItem>)args.NewValue);
+        //    }
+        //}
+        //private void ModelsGlobalParametersSourcePropertyChanged(ObservableList<ComboItem> modelGlobalParamsList)
+        //{
+        //    if (modelGlobalParamsList.Count == 0)
+        //    {
+        //        GingerCore.General.DisableComboItem(xMappedTypeComboBox, ActReturnValue.eStoreTo.ApplicationModelParameter);
+        //    }
 
-            xModelsParamsComboBox.DisplayMemberPath = nameof(ComboItem.text);
-            xModelsParamsComboBox.SelectedValuePath = nameof(ComboItem.Value);
-            xModelsParamsComboBox.ItemsSource = modelGlobalParamsList.OrderBy(nameof(ComboItem.text));
-        }
+        //    xModelsParamsComboBox.DisplayMemberPath = nameof(ComboItem.text);
+        //    xModelsParamsComboBox.SelectedValuePath = nameof(ComboItem.Value);
+        //    xModelsParamsComboBox.ItemsSource = modelGlobalParamsList.OrderBy(nameof(ComboItem.text));
+        //}
         #endregion ModelGlobalParameters
 
         #region DataSource

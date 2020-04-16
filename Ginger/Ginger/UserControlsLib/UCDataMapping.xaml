@@ -10,14 +10,32 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>            
-            <ColumnDefinition x:Name="xMappedValueColumn" Width="105*"/>
+            <ColumnDefinition Width="155"/>            
+            <ColumnDefinition x:Name="xMappedValueColumn" Width="*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="xMappedTypeComboBox" Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" Visibility="Visible"></ComboBox>        
-        <ComboBox x:Name="xVariablesComboBox" Grid.Row="0" Grid.Column="2"  VerticalAlignment="Top" Visibility="Hidden"></ComboBox>
-        <ComboBox x:Name="xModelsParamsComboBox" Grid.Row="0" Grid.Column="2"  VerticalAlignment="Top" Visibility="Hidden"></ComboBox>
-        <Button x:Name="xDSConfigBtn" Grid.Row="0" Grid.Column="2" Visibility="Visible" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="20" Width="20" Margin="0,0,0.6,0">...</Button>
-        <TextBox x:Name="xDSExpressionTxtbox" Grid.Row="0" Grid.Column="2" Visibility="Visible" IsReadOnly="True" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource @TextBoxStyle}" Height="20" Margin="0,0,22,0"></TextBox>
+        <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" >
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <ComboBox x:Name="xVariablesComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <ComboBox x:Name="xModelsParamsComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <Button x:Name="xDSConfigBtn" Grid.Column="1" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="21" Width="20" Margin="0,0,0.6,0" Style="{StaticResource $InputButtonStyle}" Visibility="Visible">...</Button>
+        <TextBox x:Name="xDSExpressionTxtbox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" Margin="0,0,22,0" IsReadOnly="True" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Visible"></TextBox>
     </Grid>
 </UserControl>
     
