@@ -1,0 +1,23 @@
+    <UserControl x:Class="Ginger.UserControlsLib.UCDataMapping"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="320">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>            
+            <ColumnDefinition x:Name="xMappedValueColumn" Width="105*"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="xMappedTypeComboBox" Grid.Row="0" Grid.Column="0" SelectionChanged="xMappedTypeComboBox_SelectionChanged" VerticalAlignment="Top" Visibility="Visible"></ComboBox>        
+        <ComboBox x:Name="xVariablesComboBox" Grid.Row="0" Grid.Column="2" SelectionChanged="xVariablesComboBox_SelectionChanged" VerticalAlignment="Top" Visibility="Hidden"></ComboBox>
+        <ComboBox x:Name="xModelsParamsComboBox" Grid.Row="0" Grid.Column="2" SelectionChanged="xModelsParamsComboBox_SelectionChanged" VerticalAlignment="Top" Visibility="Hidden"></ComboBox>
+        <Button x:Name="xDSConfigBtn" Grid.Row="0" Grid.Column="2" Visibility="Visible" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="20" Width="20" Margin="0,0,0.6,0">...</Button>
+        <TextBox x:Name="xDSExpressionTxtbox" Grid.Row="0" Grid.Column="2" Visibility="Visible" IsReadOnly="True" VerticalAlignment="Top" HorizontalAlignment="Stretch" TextChanged="xDSExpressionTxtbox_TextChanged" Style="{StaticResource @TextBoxStyle}" Height="20" Margin="0,0,22,0"></TextBox>
+    </Grid>
+</UserControl>
+    

@@ -1375,8 +1375,8 @@
     <Compile Include="UserControlsLib\UCHamburger.xaml.cs">
       <DependentUpon>UCHamburger.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\UCStoreTo.xaml.cs">
-      <DependentUpon>UCStoreTo.xaml</DependentUpon>
+    <Compile Include="UserControlsLib\UCDataMapping.xaml.cs">
+      <DependentUpon>UCDataMapping.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\UCTextEditor.xaml.cs">
       <DependentUpon>UCTextEditor.xaml</DependentUpon>
@@ -3741,7 +3741,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControlsLib\UCStoreTo.xaml">
+    <Page Include="UserControlsLib\UCDataMapping.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
