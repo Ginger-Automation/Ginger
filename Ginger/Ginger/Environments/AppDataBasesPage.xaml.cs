@@ -69,7 +69,6 @@ namespace Ginger.Environments
             }
             if (selectedDB.DBType == Database.eDBTypes.Cassandra)
             {
-                DataGridCell cell = sender as DataGridCell;
                 DataGrid dataGrid = sender as DataGrid;
                 DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.CurrentItem);
                 row.ToolTip = "You can provide QueryTimeout value in TNS.\n\n Like ex- \"YourHostOrTNS/querytimeout=90\" \n\n Default QueryTimeout value is 20sec";
