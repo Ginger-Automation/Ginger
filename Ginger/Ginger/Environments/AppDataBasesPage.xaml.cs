@@ -62,10 +62,17 @@ namespace Ginger.Environments
 
         private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
+            Database selectedDB = (Database)grdAppDbs.CurrentItem;
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
-                Database selectedDB = (Database)grdAppDbs.CurrentItem;
                 selectedDB.NameBeforeEdit = selectedDB.Name;
+            }
+            if (selectedDB.DBType == Database.eDBTypes.Cassandra)
+            {
+                DataGridCell cell = sender as DataGridCell;
+                DataGrid dataGrid = sender as DataGrid;
+                DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.CurrentItem);
+                row.ToolTip = "You can provide QueryTimeout value in TNS.\n\n Like ex- \"YourHostOrTNS/querytimeout=90\" \n\n Default QueryTimeout value is 20sec";
             }
         }
 
@@ -258,10 +265,6 @@ namespace Ginger.Environments
                 {
                     db.CreateConnectionString();
                 }
-            }
-            if (db.DBType == Database.eDBTypes.Cassandra && e.PropertyName == Database.Fields.Type)
-            {
-                Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "You can provide QueryTimeout value in TNS.\n\n Like ex- \"YourHostOrTNS/querytimeout=90\" \n\n Default QueryTimeout value is 20sec");
             }
         }
 
