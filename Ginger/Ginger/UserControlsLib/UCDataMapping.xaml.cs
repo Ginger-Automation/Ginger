@@ -22,7 +22,6 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,9 +44,6 @@ namespace Ginger.UserControlsLib
         public static DependencyProperty VariabelsSourceProperty =
         DependencyProperty.Register("VariabelsSource", typeof(ObservableList<string>), typeof(UCDataMapping), new PropertyMetadata(OnVariabelsSourcePropertyChanged));
         
-        //public static DependencyProperty VariabelTypeCustomeLabelProperty =
-        //DependencyProperty.Register("VariabelTypeCustomeLabel", typeof(string), typeof(UCStoreTo), new PropertyMetadata(OnVariabelTypeCustomeLabelPropertyChanged));
-
         public static DependencyProperty ModelsGlobalParametersSourceProperty =
         DependencyProperty.Register("ModelsGlobalParametersSource", typeof(ObservableList<ComboItem>), typeof(UCDataMapping), new PropertyMetadata(OnModelsGlobalParametersSourcePropertyChanged));
 
@@ -77,14 +73,14 @@ namespace Ginger.UserControlsLib
         {           
             InitializeComponent();
 
-            InitTypeOptions();
+            InitDataTypeOptions();
         }
 
         #region Global
-        private void InitTypeOptions()
+        private void InitDataTypeOptions()
         {
             GingerCore.General.FillComboItemsFromEnumType(xMappedTypeComboBox, typeof(ActReturnValue.eStoreTo));            
-            //BindingHandler.ObjFieldBinding(xMappedTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedType));
+            BindingHandler.ObjFieldBinding(xMappedTypeComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedType));
 
             if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>().Count == 0)
             {
@@ -94,80 +90,49 @@ namespace Ginger.UserControlsLib
         }
 
         private static void OnMappedTypePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
+        {            
             var control = (UCDataMapping)sender;
-            if (control != null && control.DataContext != null && control.DataContext.GetType() == typeof(ActReturnValue))
-            {
-                control.MappedTypePropertyChanged((string)args.NewValue, "Set Value");
-            }
-            else
-            {
-                control.MappedTypePropertyChanged((string)args.NewValue, "Get Value");
-            }
+            control.MappedTypePropertyChanged();
         }
-        private void MappedTypePropertyChanged(string mappedTypeProperty, string controlAction)
+        private void MappedTypePropertyChanged()
         {
-            Guid refGuid = new Guid();
-            if (mappedTypeProperty == ActReturnValue.eStoreTo.Variable.ToString())
+            OnPropertyChanged(nameof(MappedType));
+
+            //set relevant value control binding
+            BindingOperations.ClearAllBindings(xVariablesComboBox);
+            BindingOperations.ClearAllBindings(xModelsParamsComboBox);
+            BindingOperations.ClearAllBindings(xDSExpressionTxtbox);
+            
+            if (MappedType == ActReturnValue.eStoreTo.Variable.ToString())
             {
-                GingerCore.General.SelectComboValue(xMappedTypeComboBox, ActReturnValue.eStoreTo.Variable.ToString());
-                if (String.IsNullOrEmpty(MappedValue) || MappedValue == xDSExpressionTxtbox.Text || Guid.TryParse(MappedValue, out refGuid) == true)
-                {
-                    xVariablesComboBox.SelectedIndex = 0;
-                    MappedValue = xVariablesComboBox.SelectedItem.ToString();
-                }
-                else
-                {
-                    xVariablesComboBox.Text = MappedValue;
-                }
+                BindingHandler.ObjFieldBinding(xVariablesComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
             }
-            else if (mappedTypeProperty == ActReturnValue.eStoreTo.ApplicationModelParameter.ToString())
+            else if (MappedType == ActReturnValue.eStoreTo.ApplicationModelParameter.ToString())
             {
-                GingerCore.General.SelectComboValue(xMappedTypeComboBox, ActReturnValue.eStoreTo.ApplicationModelParameter.ToString());
-                if (Guid.TryParse(MappedValue, out refGuid) == false)
-                {
-                    xModelsParamsComboBox.SelectedIndex = 0;
-                    MappedValue = ((ComboItem)xModelsParamsComboBox.SelectedItem).Value.ToString();
-                }
-                else
-                {
-                    xModelsParamsComboBox.SelectedValue = MappedValue;
-                }
+                BindingHandler.ObjFieldBinding(xModelsParamsComboBox, ComboBox.SelectedValueProperty, this, nameof(MappedValue));
             }
-            else if (mappedTypeProperty == ActReturnValue.eStoreTo.DataSource.ToString())
+            else if (MappedType == ActReturnValue.eStoreTo.DataSource.ToString())
             {
-                GingerCore.General.SelectComboValue(xMappedTypeComboBox, ActReturnValue.eStoreTo.DataSource.ToString());
-                if (String.IsNullOrEmpty(MappedValue) || MappedValue == xVariablesComboBox.Text || Guid.TryParse(MappedValue, out refGuid) == true)
-                {
-                    ActDataSourcePage ADSP = new ActDataSourcePage(xDSExpressionTxtbox, this.MappedValue, controlAction);
-                    ADSP.ShowAsWindow();
-                    MappedValue = xDSExpressionTxtbox.Text;
-                }
-                else
-                {
-                    xDSExpressionTxtbox.Text = MappedValue;
-                }
+                BindingHandler.ObjFieldBinding(xDSExpressionTxtbox, TextBox.TextProperty, this, nameof(MappedValue));
             }
-            else if (mappedTypeProperty == ActReturnValue.eStoreTo.None.ToString())
+            else if (MappedType == ActReturnValue.eStoreTo.None.ToString())
             {
-                GingerCore.General.SelectComboValue(xMappedTypeComboBox, ActReturnValue.eStoreTo.None.ToString());
                 MappedValue = "";
-                xDSExpressionTxtbox.Text = "";
-                xVariablesComboBox.Text = "";
             }
-            MarkMappedValueValidation();
+
+            //set valid value control view
+            SetValueControlsView();                           
         }
-        private void xMappedTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+        private void SetValueControlsView()
         {
-            if (xMappedTypeComboBox.SelectedValue == null)
+             if (MappedType == null)
             {
                 return;
             }
             else
             {
-                MappedType = xMappedTypeComboBox.SelectedValue.ToString();
-
-                if (xMappedTypeComboBox.SelectedValue.ToString() == ActReturnValue.eStoreTo.None.ToString())
+                if (MappedType == ActReturnValue.eStoreTo.None.ToString())
                 {
                     xMappedValueColumn.Width = new GridLength(0);
                 }
@@ -176,7 +141,7 @@ namespace Ginger.UserControlsLib
                     xMappedValueColumn.Width = new GridLength(105, GridUnitType.Star);
                 }
 
-                if (xMappedTypeComboBox.SelectedValue.ToString() == ActReturnValue.eStoreTo.Variable.ToString()
+                if (MappedType == ActReturnValue.eStoreTo.Variable.ToString()
                     && xVariablesComboBox != null)
                 {
                     xVariablesComboBox.Visibility = Visibility.Visible;
@@ -186,7 +151,7 @@ namespace Ginger.UserControlsLib
                     xVariablesComboBox.Visibility = Visibility.Hidden;
                 }
 
-                if (xMappedTypeComboBox.SelectedValue.ToString() == ActReturnValue.eStoreTo.ApplicationModelParameter.ToString()
+                if (MappedType == ActReturnValue.eStoreTo.ApplicationModelParameter.ToString()
                     && xModelsParamsComboBox != null)
                 {
                     xModelsParamsComboBox.Visibility = Visibility.Visible;
@@ -196,7 +161,7 @@ namespace Ginger.UserControlsLib
                     xModelsParamsComboBox.Visibility = Visibility.Hidden;
                 }
 
-                if (xMappedTypeComboBox.SelectedValue.ToString() == ActReturnValue.eStoreTo.DataSource.ToString()
+                if (MappedType == ActReturnValue.eStoreTo.DataSource.ToString()
                     && xDSExpressionTxtbox != null)
                 {
                     xDSExpressionTxtbox.Visibility = Visibility.Visible;
@@ -220,22 +185,8 @@ namespace Ginger.UserControlsLib
         }
         private void MappedValuePropertyChanged(string mappedValueProperty)
         {
-            if (String.IsNullOrEmpty(mappedValueProperty))
-            {
-                return;
-            }
-            if (xMappedTypeComboBox.SelectedValue == null)
-            {
-                return;
-            }
-            if (xMappedTypeComboBox.SelectedValue.ToString() == ActReturnValue.eStoreTo.Variable.ToString() && !mappedValueProperty.StartsWith("{DS Name"))
-            {
-                GingerCore.General.SelectComboValue(xVariablesComboBox, mappedValueProperty);
-            }
-            else if (xMappedTypeComboBox.SelectedValue.ToString() == ActReturnValue.eStoreTo.DataSource.ToString() && mappedValueProperty.StartsWith("{DS Name"))
-            {
-                xDSExpressionTxtbox.Text = mappedValueProperty;
-            }
+            OnPropertyChanged(nameof(MappedValue));
+            
             MarkMappedValueValidation();
         }
         private void MarkMappedValueValidation()
@@ -298,18 +249,18 @@ namespace Ginger.UserControlsLib
         public static DataTemplate GetTemplate(string dataTypeProperty, string dataValueProperty, ObservableList<string> variabelsSourceList, string variabelsSourceProperty = "", string enableDataMappingProperty = "", ObservableList<GlobalAppModelParameter> modelsGlobalParamsList = null)
         {
             DataTemplate template = new DataTemplate();
-            FrameworkElementFactory Storeto = new FrameworkElementFactory(typeof(UCDataMapping));
+            FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
 
             if (variabelsSourceList != null)
             {
-                Storeto.SetValue(UCDataMapping.VariabelsSourceProperty, variabelsSourceList);
+                ucDataMapping.SetValue(UCDataMapping.VariabelsSourceProperty, variabelsSourceList);
             }
             else
             {
                 Binding comboItemsSourceBinding = new Binding(variabelsSourceProperty);
                 comboItemsSourceBinding.Mode = BindingMode.TwoWay;
                 comboItemsSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                Storeto.SetBinding(UCDataMapping.VariabelsSourceProperty, comboItemsSourceBinding);
+                ucDataMapping.SetBinding(UCDataMapping.VariabelsSourceProperty, comboItemsSourceBinding);
             }
 
             if (modelsGlobalParamsList != null)
@@ -317,36 +268,31 @@ namespace Ginger.UserControlsLib
                 ObservableList<ComboItem> appModelGlobalParamsComboItemsList = new ObservableList<ComboItem>();
                 foreach (GlobalAppModelParameter param in modelsGlobalParamsList)
                 {
-                    appModelGlobalParamsComboItemsList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid });
+                    appModelGlobalParamsComboItemsList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid.ToString() });
                 }
 
-                Storeto.SetValue(UCDataMapping.ModelsGlobalParametersSourceProperty, appModelGlobalParamsComboItemsList);
+                ucDataMapping.SetValue(UCDataMapping.ModelsGlobalParametersSourceProperty, appModelGlobalParamsComboItemsList);
             }
-
-            //if (variabelNameTypeCustomeLabel != "")
-            //{
-            //    Storeto.SetValue(UCStoreTo.VariabelTypeCustomeLabelProperty, variabelNameTypeCustomeLabel);
-            //}
 
             Binding selectedStoreToBinding = new Binding(dataTypeProperty);
             selectedStoreToBinding.Mode = BindingMode.TwoWay;
             selectedStoreToBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            Storeto.SetBinding(UCDataMapping.MappedTypeProperty, selectedStoreToBinding);
+            ucDataMapping.SetBinding(UCDataMapping.MappedTypeProperty, selectedStoreToBinding);
 
             Binding selectedValueBinding = new Binding(dataValueProperty);
             selectedValueBinding.Mode = BindingMode.TwoWay;
             selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            Storeto.SetBinding(UCDataMapping.MappedValueProperty, selectedValueBinding);
+            ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, selectedValueBinding);
 
             if (enableDataMappingProperty != "")
             {
                 Binding allowStoreBinding = new Binding(enableDataMappingProperty);
                 allowStoreBinding.Mode = BindingMode.OneWay;
                 allowStoreBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                Storeto.SetBinding(UCDataMapping.EnableDataMappingProperty, allowStoreBinding);
+                ucDataMapping.SetBinding(UCDataMapping.EnableDataMappingProperty, allowStoreBinding);
             }
 
-            template.VisualTree = Storeto;
+            template.VisualTree = ucDataMapping;
             return template;
         }
         #endregion Global
@@ -371,14 +317,7 @@ namespace Ginger.UserControlsLib
         }
         private void VariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            OnMappedValuePropertyChanged(this, new DependencyPropertyChangedEventArgs(ComboBox.TextProperty, MappedValue, MappedValue));
-        }
-        private void xVariablesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xVariablesComboBox.SelectedItem != null)
-            {
-                MappedValue = xVariablesComboBox.SelectedItem.ToString();
-            }
+            OnMappedValuePropertyChanged(this, new DependencyPropertyChangedEventArgs(ComboBox.SelectedValueProperty, MappedValue, MappedValue));
         }
         #endregion Variables
 
@@ -402,14 +341,6 @@ namespace Ginger.UserControlsLib
             xModelsParamsComboBox.SelectedValuePath = nameof(ComboItem.Value);
             xModelsParamsComboBox.ItemsSource = modelGlobalParamsList.OrderBy(nameof(ComboItem.text));
         }
-
-        private void xModelsParamsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (xModelsParamsComboBox.SelectedItem != null)
-            {
-                MappedValue = ((ComboItem)xModelsParamsComboBox.SelectedItem).Value.ToString();
-            }
-        }
         #endregion ModelGlobalParameters
 
         #region DataSource
@@ -426,34 +357,6 @@ namespace Ginger.UserControlsLib
             }
             ADSP.ShowAsWindow();
         }
-
-        private void xDSExpressionTxtbox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            MappedValue = xDSExpressionTxtbox.Text;
-        }
         #endregion DataSource
-
-       
-        //########################################
-        //public List<string> ItemsSource
-        //{
-        //    get { return (List <string>)GetValue(VariabelsSourceProperty); }
-        //    set { SetValue(VariabelsSourceProperty, value);}
-        //}
-
-        //private static void OnVariabelTypeCustomeLabelPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        //{
-        //    var control = sender as UCStoreTo;
-        //    if (control != null)
-        //        control.OnVarLabelChanged((string)args.NewValue);
-        //}
-        //private void OnVarLabelChanged(string label)
-        //{            
-        //    mLabel = label;
-        //    GingerCore.General.UpdateComboItem(cmbStoreTo, ActReturnValue.eStoreTo.Variable, label);                        
-        //    GingerCore.General.DisableComboItem(cmbStoreTo, ActReturnValue.eStoreTo.Variable);
-        //    GingerCore.General.DisableComboItem(cmbStoreTo,ActReturnValue.eStoreTo.DataSource);
-        //    GingerCore.General.DisableComboItem(cmbStoreTo, ActReturnValue.eStoreTo.ApplicationModelParameter);            
-        //}
     }
 }
