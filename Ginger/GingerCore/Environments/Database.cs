@@ -344,9 +344,11 @@ namespace GingerCore.Environments
         public Boolean Connect(bool displayErrorPopup = false)
         {      
             DbProviderFactory factory;
-
-            string connectConnectionString = GetConnectionString();
-
+            string connectConnectionString = string.Empty;
+            if (DBType != eDBTypes.Cassandra && DBType != eDBTypes.Couchbase && DBType != eDBTypes.MongoDb)
+            {
+                connectConnectionString = GetConnectionString();
+            }
             try
             {
 
@@ -413,15 +415,13 @@ namespace GingerCore.Environments
 
                         if (System.IO.Directory.Exists(DB2Cpath))
                         {
-                            String db2ConnectionString = GetConnectionString();
-
                             var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"DLLs\IBM.Data.DB2.dll");
 
                             var class1Type = DLL.GetType("IBM.Data.DB2.DB2Connection");
 
                             //Now you can use reflection or dynamic to call the method. I will show you the dynamic way
                             object[] param = new object[1];
-                            param[0] = db2ConnectionString;
+                            param[0] = connectConnectionString;
                             dynamic c = Activator.CreateInstance(class1Type, param);
                             oConn = (DbConnection)c;
                             oConn.Open();

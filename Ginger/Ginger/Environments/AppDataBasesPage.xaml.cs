@@ -245,16 +245,23 @@ namespace Ginger.Environments
         private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Database db = (Database)sender;
-            if (e.PropertyName == Database.Fields.TNS)
+            if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
             {
-                if (db.CheckUserCredentialsInTNS())
+                if (e.PropertyName == Database.Fields.TNS)
                 {
-                    db.SplitUserIdPassFromTNS();
+                    if (db.CheckUserCredentialsInTNS())
+                    {
+                        db.SplitUserIdPassFromTNS();
+                    }
+                }
+                if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+                {
+                    db.CreateConnectionString();
                 }
             }
-            if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+            if (db.DBType == Database.eDBTypes.Cassandra && e.PropertyName == Database.Fields.Type)
             {
-                db.CreateConnectionString();
+                Reporter.ToUser(eUserMsgKey.ShowInfoMessage, "You can provide QueryTimeout value in TNS.\n\n Like ex- \"YourHostOrTNS/querytimeout=90\" \n\n Default QueryTimeout value is 20sec");
             }
         }
 
