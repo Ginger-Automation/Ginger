@@ -71,7 +71,7 @@ namespace Ginger.Environments
             {
                 DataGrid dataGrid = sender as DataGrid;
                 DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.CurrentItem);
-                row.ToolTip = "You can provide QueryTimeout value in TNS.\n\n Like ex- \"YourHostOrTNS/querytimeout=90\" \n\n Default QueryTimeout value is 20sec";
+                ToolTipService.SetToolTip(row, new ToolTip { Content = " You can provide QueryTimeout value in TNS.\n Like ex- \"YourHostOrTNS/querytimeout=90\" \n Default QueryTimeout value is 20sec", Style= FindResource("ToolTipStyle") as Style });
             }
         }
 
