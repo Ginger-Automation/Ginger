@@ -11,7 +11,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="155"/>            
-            <ColumnDefinition x:Name="xMappedValueColumn" Width="*"/>
+            <ColumnDefinition x:Name="xMappedValueColumn" Width="100*"/>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" >
             <ComboBox.ToolTip>
@@ -27,7 +27,7 @@
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <ComboBox x:Name="xModelsParamsComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+        <ComboBox x:Name="xItemsComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>

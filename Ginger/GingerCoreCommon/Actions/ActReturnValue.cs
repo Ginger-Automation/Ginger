@@ -118,12 +118,14 @@ namespace Amdocs.Ginger.Repository
             None,
             [EnumValueDescription("Variable")]
             Variable,
-            [EnumValueDescription("Data Source")]
-            DataSource,
+            [EnumValueDescription("Global Variable")]
+            GlobalVariable,
+            [EnumValueDescription("Output Variable")]
+            OutputVariable,
             [EnumValueDescription("Global Model Parameter")]
             ApplicationModelParameter,
-            //[EnumValueDescription("Global Variable")]
-            //GlobalVariabel
+            [EnumValueDescription("Data Source")]
+            DataSource
         }
         private eStoreTo mStoreTo;
         [IsSerializedForLocalRepository]
