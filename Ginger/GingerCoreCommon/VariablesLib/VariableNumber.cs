@@ -120,15 +120,11 @@ namespace GingerCore.Variables
             }
         }
 
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository("2")]
         public string PrecisionValue
         {
             get
             {
-                if(string.IsNullOrEmpty(mPrecisionValue))
-                {
-                    mPrecisionValue = "2";
-                }
                 return mPrecisionValue;
             }
             set

@@ -24,7 +24,7 @@
                         </DockPanel>
                         <DockPanel x:Name="pnlPrecision" Visibility="Collapsed">
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Precision Value :</Label>
-                            <TextBox  x:Name="txtPrecisionValue" Style="{StaticResource @TextBoxStyle}" Margin="0,5,0,10"></TextBox>
+                            <TextBox  x:Name="txtPrecisionValue" Style="{StaticResource @TextBoxStyle}" Margin="0,5,0,15"></TextBox>
                         </DockPanel>
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Minimum Value :</Label>

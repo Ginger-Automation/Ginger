@@ -16,11 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -136,7 +138,46 @@ namespace GingerCore.Actions
                 }
                 else if (Var.GetType() == typeof(VariableNumber))
                 {
-                    ((VariableNumber)Var).Value = calculatedValue;
+                    try
+                    {
+                        var varNumber = ((VariableNumber)Var);
+                        if (float.Parse(calculatedValue) >= float.Parse(varNumber.MinValue) && float.Parse(calculatedValue) <= float.Parse(varNumber.MaxValue))
+                        {
+                            varNumber.Value = calculatedValue;
+                        }
+                        else
+                        {
+                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value:{varNumber.MinValue}, Max value:{varNumber.MinValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during SetValue for Variable number type..", ex);
+                    }
+
+                }
+                else if(Var.GetType() == typeof(VariableDateTime))
+                {
+                    try
+                    {
+                        var varDateTime = ((VariableDateTime)Var);
+                        if (DateTime.Parse(calculatedValue) >= DateTime.Parse(varDateTime.MinDateTime) && DateTime.Parse(calculatedValue) <= DateTime.Parse(varDateTime.MaxDateTime))
+                        {
+                            varDateTime.Value = calculatedValue;
+                        }
+                        else
+                        {
+                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                            Error = $"The value {calculatedValue} is not in the date range {Var.Name}:-[Min value:{varDateTime.MinDateTime}, Max value:{varDateTime.MaxDateTime}] {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during SetValue for Variable DateTime type..", ex);
+                    }
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)

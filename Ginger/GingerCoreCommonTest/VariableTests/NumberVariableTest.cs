@@ -18,11 +18,14 @@ limitations under the License.
 using Amdocs.Ginger.Common.Enums;
 using GingerCore;
 using GingerCore.Variables;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerCoreCommonTest.VariableTests
 {
-    class NumberVariableTest
+    [TestClass]
+    [Level1]
+   public class NumberVariableTest
     {
         #region Default Class/Test Initialize Methods
         [ClassInitialize]
@@ -90,7 +93,7 @@ namespace GingerCoreCommonTest.VariableTests
             eImageType eimageType = variableString.Image;
 
             //Assert
-            Assert.AreEqual(eImageType.Label, eimageType, "Image Type");
+            Assert.AreEqual(eImageType.SequentialExecution, eimageType, "Image Type");
         }
 
         [TestMethod]
@@ -106,7 +109,7 @@ namespace GingerCoreCommonTest.VariableTests
             string formulaStr = NumberVar.GetFormula();
 
             //Assert
-            Assert.AreEqual("Initial String Value=", formulaStr, "Mismatch with Default Formula String");
+            Assert.AreEqual("Initial Value=0", formulaStr, "Mismatch with Default Formula String");
         }
 
         [TestMethod]
@@ -137,9 +140,8 @@ namespace GingerCoreCommonTest.VariableTests
             //Act
 
             //Assert
-            Assert.AreEqual("123", variableNumber.Value, "String Value");
+            Assert.AreEqual("123", variableNumber.Value, "Number Value");
         }
-
 
     }
 }
