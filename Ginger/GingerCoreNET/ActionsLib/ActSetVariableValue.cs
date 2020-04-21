@@ -160,9 +160,9 @@ namespace GingerCore.Actions
                 }
                 else if(Var.GetType() == typeof(VariableDateTime))
                 {
+                    var varDateTime = ((VariableDateTime)Var);
                     try
                     {
-                        var varDateTime = ((VariableDateTime)Var);
                         if (DateTime.Parse(calculatedValue) >= DateTime.Parse(varDateTime.MinDateTime) && DateTime.Parse(calculatedValue) <= DateTime.Parse(varDateTime.MaxDateTime))
                         {
                             varDateTime.Value = calculatedValue;
@@ -176,7 +176,7 @@ namespace GingerCore.Actions
                     catch (System.Exception ex)
                     {
                         Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during SetValue for Variable DateTime type..", ex);
+                        Error= $"Invalid DateTimeFormat,{Var.Name}:-[DateTimeFormat:{varDateTime.DateTimeFormat}] :- {ex.Message}";
                     }
                 }
             }

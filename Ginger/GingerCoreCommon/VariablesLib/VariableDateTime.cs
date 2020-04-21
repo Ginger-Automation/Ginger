@@ -18,6 +18,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
@@ -157,6 +158,11 @@ namespace GingerCore.Variables
             supportedOperations.Add(eSetValueOptions.SetValue);
             supportedOperations.Add(eSetValueOptions.ResetValue);
             return supportedOperations;
+        }
+
+        public override eImageType Image
+        {
+            get { return eImageType.DatePicker; }
         }
 
         public override void ResetValue()
