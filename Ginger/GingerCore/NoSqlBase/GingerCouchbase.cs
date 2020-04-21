@@ -36,7 +36,7 @@ namespace GingerCore.NoSqlBase
         
      
 
-        public bool Connect()
+        public override bool Connect()
         {
             try
             {
@@ -136,11 +136,11 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            if (!Connect())
-            {
-                Act.Error = "Failed to connect to Couchbase DB";
-                return;
-            }
+            //if (!Connect())
+            //{
+            //    Act.Error = "Failed to connect to Couchbase DB";
+            //    return;
+            //}
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);

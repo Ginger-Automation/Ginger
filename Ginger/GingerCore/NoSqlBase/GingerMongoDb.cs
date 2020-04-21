@@ -37,7 +37,7 @@ namespace GingerCore.NoSqlBase
         string DbName;
       
 
-        public bool Connect()
+        public override bool Connect()
         {
             try
             {
@@ -126,6 +126,7 @@ namespace GingerCore.NoSqlBase
                 return false;
             }
         }
+        
 
         //TODO: need this while checking Test Connection , need to find a better way
         public GingerMongoDb(Environments.Database mDB)
@@ -251,11 +252,11 @@ namespace GingerCore.NoSqlBase
         }
         public override void PerformDBAction()
         {
-            if (!Connect())
-            {
-                Act.Error = "Failed to connect to Mongo DB";
-                return;
-            }
+            //if (!Connect())
+            //{
+            //    Act.Error = "Failed to connect to Mongo DB";
+            //    return;
+            //}
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = Act.SQL;
             string SQLCalculated = VE.ValueCalculated;

@@ -265,28 +265,48 @@ namespace GingerCore.Actions
             }
         }
 
+        NoSqlBase.NoSqlBase NoSqlDriver = null;
         private void HandleNoSQLDBAction()
         {
-            NoSqlBase.NoSqlBase NoSqlDriver = null;
-
-            switch(this.DB.DBType)
+            //NoSqlDriver = null;
+            switch (this.DB.DBType)
             {
                 case Database.eDBTypes.Cassandra:
-                    NoSqlDriver= new GingerCassandra(DBValidationType,DB,this);
-                    NoSqlDriver.PerformDBAction();
-                   
+                    NoSqlDriver = new GingerCassandra(DBValidationType,DB,this);
                     break;
                 case Database.eDBTypes.Couchbase:
-                    NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-                    NoSqlDriver.PerformDBAction();
-
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                        NoSqlDriver.MakeSureConnectionIsOpen();
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerCouchbase))
+                        {
+                            NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                            NoSqlDriver.MakeSureConnectionIsOpen();
+                        }
+                    }
                     break;
                 case Database.eDBTypes.MongoDb:
-                    NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                    NoSqlDriver.PerformDBAction();
-
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+                        NoSqlDriver.MakeSureConnectionIsOpen();
+                        
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerMongoDb))
+                        {
+                            NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+                            NoSqlDriver.MakeSureConnectionIsOpen();
+                        }
+                    }
                     break;
             }
+            NoSqlDriver.PerformDBAction();
         }
 
         private bool SetDBConnection()

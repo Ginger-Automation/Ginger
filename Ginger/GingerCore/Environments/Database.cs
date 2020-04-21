@@ -315,7 +315,7 @@ namespace GingerCore.Environments
         private DateTime LastConnectionUsedTime;
 
 
-        private bool MakeSureConnectionIsOpen()
+        public bool MakeSureConnectionIsOpen()
         {
             Boolean isCoonected = true;
 
