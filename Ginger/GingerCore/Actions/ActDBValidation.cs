@@ -268,11 +268,22 @@ namespace GingerCore.Actions
         NoSqlBase.NoSqlBase NoSqlDriver = null;
         private void HandleNoSQLDBAction()
         {
-            //NoSqlDriver = null;
             switch (this.DB.DBType)
             {
                 case Database.eDBTypes.Cassandra:
-                    NoSqlDriver = new GingerCassandra(DBValidationType,DB,this);
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
+                        NoSqlDriver.MakeSureConnectionIsOpen();
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerCassandra))
+                        {
+                            NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
+                            NoSqlDriver.MakeSureConnectionIsOpen();
+                        }
+                    }
                     break;
                 case Database.eDBTypes.Couchbase:
                     if (NoSqlDriver == null)
