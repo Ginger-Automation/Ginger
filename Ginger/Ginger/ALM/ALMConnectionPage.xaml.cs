@@ -94,17 +94,21 @@ namespace Ginger.ALM
                 RQMRadioButton.IsEnabled = false;
                 RallyRadioButton.IsEnabled = false;
                 JiraRadioButton.IsEnabled = false;
+                qTestRadioButton.IsEnabled = false;
                 RQMLoadConfigPackageButton.IsEnabled = false;
                 ServerURLTextBox.IsEnabled = false;
                 UserNameTextBox.IsEnabled = false;
                 PasswordTextBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
                 ALMProjectDetailsPanel.Visibility = Visibility.Visible;
-                if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM ||
-                    (ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.Qtest)
+                if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM)
                 {
                     ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
                     LoginServerButton.Content = "Get Projects Details";
+                }
+                else if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.Qtest)
+                {
+                    ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
                 }
                 else ALMDomainSelectionPanel.Visibility = Visibility.Visible;
             }
@@ -116,6 +120,7 @@ namespace Ginger.ALM
                 RallyRadioButton.IsEnabled = true;
                 JiraRadioButton.IsEnabled = true;
                 RQMLoadConfigPackageButton.IsEnabled = true;
+                qTestRadioButton.IsEnabled = true;
                 if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.RQM)
                     ServerURLTextBox.IsEnabled = false;
                 else
@@ -170,6 +175,13 @@ namespace Ginger.ALM
                 UserNameTextBox.Text = "";
                 StyleRadioButtons();
             }
+            else if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType == ALMIntegration.eALMType.Qtest && qTestRadioButton.IsChecked == false)
+            {
+                qTestRadioButton.IsChecked = true;
+                PasswordTextBox.Password = "";
+                UserNameTextBox.Text = "";
+                StyleRadioButtons();
+            }
         }
 
         private void ClearALMConfigs()
@@ -185,6 +197,7 @@ namespace Ginger.ALM
             ProjectComboBox.SelectedValue = null;
             ProjectComboBox.Items.Clear();
             RestAPICheckBox.IsChecked = false;
+            ALMIntegration.Instance.AlmConfigurations.UseRest = false;
         }
 
         private bool GetProjectsDetails()
@@ -560,6 +573,7 @@ namespace Ginger.ALM
                         {
                             WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
                             ClearALMConfigs();
+                            ALMIntegration.Instance.AlmConfigurations.UseRest = true;
                         }
                         break;
                 }

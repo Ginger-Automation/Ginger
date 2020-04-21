@@ -244,7 +244,7 @@
       <HintPath>DLLs\QCRestClient.dll</HintPath>
     </Reference>
     <Reference Include="QTestAPI">
-      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\QTestAPI.dll</HintPath>
+      <HintPath>DLLs\QTestAPI.dll</HintPath>
     </Reference>
     <Reference Include="Rally.RestApi, Version=3.3.1.0, Culture=neutral, PublicKeyToken=09c9d263d3ce713f, processorArchitecture=MSIL">
       <HintPath>..\packages\Rally.RestApi.3.3.1\lib\net45\Rally.RestApi.dll</HintPath>
@@ -253,8 +253,8 @@
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp, Version=106.6.9.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\..\..\ATS 8.0.0\In House Components\ALMRestAPI\QTestRestAPI\bin\Debug\RestSharp.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="RQMExport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

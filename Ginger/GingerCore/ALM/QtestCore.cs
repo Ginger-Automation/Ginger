@@ -39,6 +39,7 @@ namespace GingerCore.ALM
         QTestApi.TestsuiteApi testsuiteApi = new QTestApi.TestsuiteApi();
         QTestApi.TestrunApi testrunApi = new QTestApi.TestrunApi();
         QTestApi.TestcaseApi testcaseApi = new QTestApi.TestcaseApi();
+        QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
 
         QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
         QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
@@ -53,6 +54,7 @@ namespace GingerCore.ALM
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
                 QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, authorization);
+                connObj.Configuration.MyAPIConfig = new QTestApiClient.QTestClientConfig();
                 connObj.Configuration.AccessToken = response.AccessToken;
                 connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
                 connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
@@ -115,13 +117,116 @@ namespace GingerCore.ALM
             get { return ImportFromQtest.GingerActivitiesRepo; }
             set { ImportFromQtest.GingerActivitiesRepo = value; }
         }
-
+       
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType)
         {
-            // return UpdatedAlmFields(ImportFromQtest.GetALMItemFields());
-            return null;
+            ConnectALMServer();
+            fieldApi = new QTestApi.FieldApi(connObj.Configuration);
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+
+            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
+                return GetALMItemFields();
+            else
+            {
+                string fieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(resourceType);
+                List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), fieldInRestSyntax);
+
+                fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
+            }
+
+            return UpdatedAlmFields(fields);
         }
-      
+
+        private ObservableList<ExternalItemFieldBase> GetALMItemFields()
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            //QC   ->|testSet,     |testCase,   |designStep, |testInstance, |designStepParams, |run
+            //QTest->|test-suites, |test-cases, |test-steps, |test-cycles,  |parameters,       |test-runs
+
+            string testSetfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
+            List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testSetfieldInRestSyntax);
+
+            string testCasefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
+            List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testCasefieldInRestSyntax);
+
+            string designStepfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
+            List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), designStepfieldInRestSyntax);
+
+            string testInstancefieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
+            List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testInstancefieldInRestSyntax);
+
+            //string designStepParamsfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
+            //List<QTestApiModel.FieldResource> designStepParamsfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), designStepParamsfieldInRestSyntax);
+
+            string runfieldInRestSyntax = QtestConnect.Instance.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), runfieldInRestSyntax);
+
+            fields.Append(AddFieldsValues(testSetfieldsCollection, testSetfieldInRestSyntax));
+            fields.Append(AddFieldsValues(testCasefieldsCollection, testCasefieldInRestSyntax));
+            fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
+            fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
+            //fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
+            fields.Append(AddFieldsValues(runfieldsCollection, runfieldInRestSyntax));
+
+            return fields;
+        }
+        private  ObservableList<ExternalItemFieldBase> AddFieldsValues(List<QTestApiModel.FieldResource> testSetfieldsCollection, string testSetfieldInRestSyntax)
+        {
+            //TODO: need to handle duplicate fields
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+
+            if ((testSetfieldsCollection != null) && (testSetfieldsCollection.Count > 0))
+            {
+                foreach (QTestApiModel.FieldResource field in testSetfieldsCollection)
+                {
+                    if (string.IsNullOrEmpty(field.Label)) continue;
+
+                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                    //itemfield.ID = field.OriginalName;
+                    itemfield.ID = field.Id.ToString();
+                    itemfield.ExternalID = field.OriginalName;  // Temp ??? Check if ExternalID has other use in this case
+                    itemfield.Name = field.Label;
+                    bool isMandatory;
+                    bool.TryParse(field.Required.ToString(), out isMandatory);
+                    itemfield.Mandatory = isMandatory;
+                    bool isSystemField;
+                    bool.TryParse(field.SystemField.ToString(), out isSystemField);
+                    itemfield.SystemFieled = isSystemField;
+                    if (itemfield.Mandatory)
+                        itemfield.ToUpdate = true;
+                    itemfield.ItemType = testSetfieldInRestSyntax.ToString();
+                    itemfield.Type = field.DataType;
+
+                    if ((field.AllowedValues != null))
+                    {
+                        foreach (QTestApiModel.AllowedValueResource value in field.AllowedValues)
+                        {
+                            itemfield.PossibleValues.Add(value.Label);
+                        }
+                    }
+
+                    if (itemfield.PossibleValues.Count > 0)
+                    {
+                        if (field.DefaultValue != null)
+                        {
+                            itemfield.SelectedValue = field.DefaultValue;
+                        }
+                        else
+                        {
+                            itemfield.SelectedValue = itemfield.PossibleValues[0];
+                        }
+                    }
+                    else
+                    {
+                        // itemfield.SelectedValue = "NA";
+                    }
+
+                    fields.Add(itemfield);
+                }
+            }
+
+            return fields;
+        }
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             // return ExportToQC.ExportExecutionDetailsToQC(bizFlow, ref result, publishToALMConfig);

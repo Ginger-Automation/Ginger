@@ -60,5 +60,65 @@ namespace GingerCore.ALM.Qtest
 
             return cyclestList;
         }
+        public string ConvertResourceType(ALM_Common.DataContracts.ResourceType resourceType)
+        {
+            string qTestResourceType;
+            switch (resourceType)
+            {
+                case ALM_Common.DataContracts.ResourceType.DEFECT:
+                    qTestResourceType = "defects";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TEST_CASE:
+                    qTestResourceType = "test-cases";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TEST_CYCLE:
+                    qTestResourceType = "test-cycles";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.REQUIREMENT:
+                    qTestResourceType = "requirements";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TEST_FOLDERS:
+                    qTestResourceType = "modules";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.RELEASES:
+                    qTestResourceType = "releases";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TEST_RUN:
+                    qTestResourceType = "test-runs";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TEST_SET:
+                    qTestResourceType = "test-suites";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.DESIGN_STEP:
+                    qTestResourceType = "test-steps";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.REQ_COVER:
+                    qTestResourceType = "linked-artifacts";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.ENUMERATIONS:
+                    qTestResourceType = "fields";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TempSystem_Field:
+                    qTestResourceType = "fields";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.USERS:
+                    qTestResourceType = "users";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.LINK:
+                    qTestResourceType = "linked-artifacts";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.TEST_CASE_PARAMETERS:
+                    qTestResourceType = "users";
+                    break;
+                case ALM_Common.DataContracts.ResourceType.PARAMETERS:
+                    qTestResourceType = "parameters";
+                    break;
+                default:
+                    qTestResourceType = "fields";
+                    break;
+            }
+
+            return qTestResourceType;
+        }
     }
 }
