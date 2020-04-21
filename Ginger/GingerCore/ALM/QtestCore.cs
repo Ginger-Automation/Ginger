@@ -128,7 +128,7 @@ namespace GingerCore.ALM
             return true;
         }
 
-        public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, Test mappedTest, string uploadPath, ObservableList<ExternalItemFieldBase> testCaseFields, ref string result)
+        public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, QtestTest mappedTest, string uploadPath, ObservableList<ExternalItemFieldBase> testCaseFields, ref string result)
         {
             // return ExportToQC.ExportActivitiesGroupToQC(activitiesGroup, mappedTest, uploadPath, testCaseFields, ref result);
             return true;
@@ -138,7 +138,7 @@ namespace GingerCore.ALM
         {
             // return ExportToQC.ExportBusinessFlowToQC(businessFlow, mappedTestSuite, uploadPath, testSetFields, ref result);
 
-            testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
+            testrunApi = new QTestApi.TestrunApi(connObj.Configuration); 
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
             testsuiteApi = new QTestApi.TestsuiteApi(connObj.Configuration);
 
@@ -151,20 +151,42 @@ namespace GingerCore.ALM
                     testSuite = new QTestApiModel.TestSuiteWithCustomFieldResource();
                     testSuite.Name = businessFlow.Name;
                     testSuite = testsuiteApi.CreateTestSuite((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testSuite);
+
+                    foreach (QtestTest test in mappedTestSuite.Tests)
+                    {
+                        QTestApiModel.TestCaseWithCustomFieldResource testCase = new QTestApiModel.TestCaseWithCustomFieldResource();
+                        testCase.Description = test.Description;
+                        testCase.Name = test.TestName;
+                        testCase = testcaseApi.CreateTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testCase);
+                        foreach (QtestTestStep step in test.Steps)
+                        {
+                            QTestApiModel.TestStepResource stepResource = new QTestApiModel.TestStepResource();
+                            stepResource.Description = step.Description;
+                            stepResource.Expected = step.Expected;
+                            stepResource.PlainValueText = step.StepName; // (???)
+                            // to extand
+                            testcaseApi.AddTestStep((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testCase.Id, stepResource);
+                        }
+
+                        QTestApiModel.TestRunWithCustomFieldResource testRun = new QTestApiModel.TestRunWithCustomFieldResource();
+                        testRun.Name = businessFlow.Name;
+                        testRun.TestCase = testCase;
+                        testRun = testrunApi.Create((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testRun, testSuite.Id);
+                    }         
                 }
                 else
                 {
                     //##update existing TestSuite
                     QTestApiModel.TestSuiteWithCustomFieldResource testSuiteToUpdate = testsuiteApi.GetTestSuite((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), (long)Convert.ToInt32(mappedTestSuite.ID));
 
-                    //foreach (TSTest tsTest in tsTestsList)
-                    //{
-                    //    ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
-                    //    if (ag == null)
-                    //        testsF.RemoveItem(tsTest.ID);
-                    //    else
-                    //        existingActivitiesGroups.Add(ag);
-                    //}
+                    foreach (QtestTest test in mappedTestSuite.Tests)
+                    {
+                        //    ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
+                        //    if (ag == null)
+                        //        testsF.RemoveItem(tsTest.ID);
+                        //    else
+                        //        existingActivitiesGroups.Add(ag);
+                    }
                 }
 
                 //set item fields
@@ -212,6 +234,20 @@ namespace GingerCore.ALM
             }
         }
 
+        public QtestTest GetQtestTest(long? testID)
+        {
+            testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
+            QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testID);
+
+            QtestTest test = new QtestTest();
+            test.Description = testCase.Description;
+            test.TestName = testCase.Name;
+            test.TestID = testCase.Id.ToString();
+            testCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), z.Description, z.Description, z.Expected)));
+
+            return test;
+        }
+
         public QtestTestSuite ImportTestSetData(QtestTestSuite TS)
         {
             testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
@@ -220,13 +256,7 @@ namespace GingerCore.ALM
             List<QTestApiModel.TestRunWithCustomFieldResource> testRunList = testrunApi.GetOf((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), (long)Convert.ToInt32(TS.ID), "test-suite", "descendents");
             foreach (QTestApiModel.TestRunWithCustomFieldResource testRun in testRunList)
             {
-                QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testRun.TestCase.Id);
-                
-                QtestTest test = new QtestTest();
-                test.Description = testCase.Description;
-                test.TestName = testCase.Name;
-                test.TestID = testCase.Id.ToString();
-                testCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), z.Description, z.Description, z.Expected)));
+                QtestTest test = GetQtestTest(testRun.TestCase.Id);
                 test.Runs = new List<QtestTestRun>();
                 test.Runs.Add(new QtestTestRun(testRun.Id.ToString(), testRun.Name, testRun.Properties[0].ToString(), testRun.CreatorId.ToString()));
                 TS.Tests.Add(test);
@@ -250,17 +280,13 @@ namespace GingerCore.ALM
             return ImportFromQtest.ConvertQtestTestSuiteToBF(TS);
         }
 
-        public Test GetQCTest(string testID)
+        public QtestTestSuite GetQtestTestSuite(string testSuiteID)
         {
-            // return ImportFromQtest.GetQtestTest(testID);
-            return null;
+            QtestTestSuite testSuite = new QtestTestSuite();
+            testSuite.ID = testSuiteID;
+            return ImportTestSetData(testSuite);          
         }
 
-        public QtestTestSuite GetQCTestSet(string testSetID)
-        {
-            // return ImportFromQtest.GetQCTestSet(testSetID);
-            return new QtestTestSuite();
-        }
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
             if (!useREST)

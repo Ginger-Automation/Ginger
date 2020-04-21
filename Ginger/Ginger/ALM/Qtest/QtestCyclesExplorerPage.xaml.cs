@@ -45,6 +45,8 @@ namespace Ginger.ALM.Qtest
         private ITreeViewItem mCurrentSelectedTreeItem = null;
         public string CurrentSelectedPath { get; set; }
         ObservableList<QtestSuiteTreeItem> mCurrentSelectedTestSuites = new ObservableList<QtestSuiteTreeItem>();
+        object mCurrentSelectedObject = new object();
+
         public ObservableList<QtestSuiteTreeItem> CurrentSelectedTestSuites
         {
             get
@@ -57,13 +59,15 @@ namespace Ginger.ALM.Qtest
             }
         }
         private string mImportDestinationPath = string.Empty;
+        private bool mParentSelectionMode = false;
         GenericWindow _GenericWin = null;
 
-        public QtestCyclesExplorerPage(string importDestinationPath = "")
+        public QtestCyclesExplorerPage(string importDestinationPath = "", bool parentSelectionMode = false)
         {
             InitializeComponent();
 
             mImportDestinationPath = importDestinationPath;
+            mParentSelectionMode = parentSelectionMode;
 
             GetTreeData();
 
@@ -135,10 +139,17 @@ namespace Ginger.ALM.Qtest
             TreeViewItem item = (TreeViewItem)sender;
             mCurrentSelectedTreeItem = (ITreeViewItem)item.Tag;
 
-            if (mCurrentSelectedTreeItem is QtestSuiteTreeItem)
+            if (mParentSelectionMode)
             {
-                mCurrentSelectedTestSuites.Add((QtestSuiteTreeItem)mCurrentSelectedTreeItem);
+                mCurrentSelectedObject = mCurrentSelectedTreeItem;
             }
+            else
+            {
+                if (mCurrentSelectedTreeItem is QtestSuiteTreeItem)
+                {
+                    mCurrentSelectedTestSuites.Add((QtestSuiteTreeItem)mCurrentSelectedTreeItem);
+                }
+            }           
         }
 
         private void GetTestSetDetails(QCTestSetTreeItem testSetItem)
@@ -173,11 +184,22 @@ namespace Ginger.ALM.Qtest
 
         public object ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button importBtn = new Button();
-            importBtn.Content = "Import Selected";
-            importBtn.Click += new RoutedEventHandler(ImportSelected);
-            GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse Qtest Cycles", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
-            return CurrentSelectedTestSuites;
+            if (mParentSelectionMode)
+            {
+                Button importBtn = new Button();
+                importBtn.Content = "Select";
+                importBtn.Click += new RoutedEventHandler(ImportSelected);
+                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Path For Export", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                return mCurrentSelectedObject;
+            }
+            else
+            {
+                Button importBtn = new Button();
+                importBtn.Content = "Import Selected";
+                importBtn.Click += new RoutedEventHandler(ImportSelected);
+                GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse Qtest Cycles", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                return CurrentSelectedTestSuites;
+            }
         }
 
         private void SelectFolder(object sender, RoutedEventArgs e)
