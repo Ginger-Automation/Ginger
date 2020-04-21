@@ -40,21 +40,30 @@ namespace GingerCore.NoSqlBase
 
         public bool Connect()
         {
+            
+
             try
             {
                 string[] HostKeySpace = Db.TNSCalculated.Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
 
+                //Get timeout value
+                int queryTimeout = 20000;//default timeout (20 seconds).
+                if ((Act.Timeout != null) && (Act.Timeout > 20))
+                {
+                    queryTimeout = (int)Act.Timeout * 1000;
+                }
+
                 if (HostPort.Length == 2)
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
-                        cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).Build();
+                        cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                     else
-                        cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).Build();
+                        cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                 }
                 else
                 {
-                    cluster = Cluster.Builder().AddContactPoint(Db.TNSCalculated).Build();
+                    cluster = Cluster.Builder().AddContactPoint(Db.TNSCalculated).WithQueryTimeout(queryTimeout).Build();
                 }
 
                 if (HostKeySpace.Length > 1)

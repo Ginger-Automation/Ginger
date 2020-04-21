@@ -1162,9 +1162,6 @@ namespace GingerCoreNET.DataSource
 
         public override void InitConnection()
         {
-            DataSourceBase ADC;
-            ADC = new GingerLiteDB();
-            ADC.DSType = DataSourceBase.eDSType.LiteDataBase;
             if (FilePath != null)
             {
                 FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
