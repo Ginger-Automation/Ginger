@@ -241,6 +241,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 }
                 throw e;
             }
+            catch(OutOfMemoryException ex)
+            {
+                Console.WriteLine($"Payload length :{PayloadLen}");
+                Console.WriteLine("OutOfMemoryException: ", ex.Message);
+                return;
+            }
             catch (Exception ex)
             {
                 throw ex;
