@@ -2013,29 +2013,43 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        string msg = string.Format("Cannot Store to " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ", '{0}' - " + " not found", item.StoreToValue.ToString());
+                        string msg = string.Format("Failed to perform Return Value StoreTo the {0} '{1}'", ActReturnValue.eStoreTo.Variable, item.StoreToValue.ToString());
                         act.ExInfo += msg;
                         Reporter.ToLog(eLogLevel.WARN, msg);
                     }
-
                 }
                 //Adding for New Control
                 else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
-                {
-                    
+                {                    
                     ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
                     VE.Calculate(item.StoreToValue);
                 }
                 else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
                 {
-                    GlobalAppModelParameter globalAppModelParameter = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                    GlobalAppModelParameter globalAppModelParameter = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
                     if (globalAppModelParameter != null)
                     {
                         globalAppModelParameter.CurrentValue = item.Actual;
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to StoreTo the Model Parameter '{0}' for the Action: '{1}'", item.StoreToValue, act.Description));
+                        string msg = string.Format("Failed to perform Return Value StoreTo the {0} '{1}'", ActReturnValue.eStoreTo.ApplicationModelParameter, item.StoreToValue.ToString());
+                        act.ExInfo += msg;
+                        Reporter.ToLog(eLogLevel.WARN, msg);
+                    }
+                }
+                else if (item.StoreTo == ActReturnValue.eStoreTo.GlobalVariable && !string.IsNullOrEmpty(item.StoreToValue))
+                {
+                    VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                    if (globalVar != null)
+                    {
+                        globalVar.Value = item.Actual;
+                    }
+                    else
+                    {
+                        string msg = string.Format("Failed to perform Return Value StoreTo the {0} '{1}'", ActReturnValue.eStoreTo.GlobalVariable, item.StoreToValue.ToString());
+                        act.ExInfo += msg;
+                        Reporter.ToLog(eLogLevel.WARN, msg);
                     }
                 }
             }

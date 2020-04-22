@@ -25,6 +25,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -76,8 +77,8 @@ namespace Ginger.UserControlsLib
         }
 
         ObservableList<VariableBase> mOutputVariablesList = null;
-        ObservableList<VariableBase> mGlobalVariablesList = WorkSpace.Instance.Solution.Variables;
-        ObservableList<GlobalAppModelParameter> mModelGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+        ObservableList<VariableBase> mGlobalVariablesList = null;
+        ObservableList<GlobalAppModelParameter> mModelGlobalParamsList = null;
 
         bool EnableDataMapping = true;
 
@@ -95,10 +96,17 @@ namespace Ginger.UserControlsLib
         {           
             InitializeComponent();
 
+            InitValuesOptions();
             InitTypeOptions();            
         }
 
         #region Global
+        private void InitValuesOptions()
+        {
+            SetGlobalVariabelsListValues();
+            SetModelGlobalParametersListValues();
+        }
+
         private void InitTypeOptions()
         {
             GingerCore.General.FillComboItemsFromEnumType(xMappedTypeComboBox, typeof(ActReturnValue.eStoreTo));            
@@ -366,7 +374,7 @@ namespace Ginger.UserControlsLib
 
             template.VisualTree = ucDataMapping;
             return template;
-        }
+        }       
         #endregion Global
 
         #region Variables
@@ -432,8 +440,23 @@ namespace Ginger.UserControlsLib
         }
         #endregion Output Variables
 
-        #region ModelGlobalParameters
-        #endregion ModelGlobalParameters
+        #region Global Variabels
+        private void SetGlobalVariabelsListValues()
+        {
+            mGlobalVariablesList = new ObservableList<VariableBase>();
+            foreach (VariableString var in WorkSpace.Instance.Solution.Variables.Where(x => x is VariableString).ToList())
+            {
+                mGlobalVariablesList.Add(var);
+            }
+        }
+        #endregion Global Variabels
+
+        #region Model Global Parameters
+        private void SetModelGlobalParametersListValues()
+        {
+             mModelGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+        }
+        #endregion Model Global Parameters
 
         #region DataSource
         private void xDSConfigBtn_Click(object sender, RoutedEventArgs e)
