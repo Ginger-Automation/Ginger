@@ -159,6 +159,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
                         if (PayloadLen > gingerSocketInfo.buffer.Length)
                         {
+                            Console.WriteLine($"Payload length :{PayloadLen}");
                             Array.Resize(ref gingerSocketInfo.buffer, PayloadLen + 4);   // Make sure we will have enough space  // Add 1024 !!!
                             // TODO: check if buffer is more than x size release it back....                        
                         }
@@ -243,7 +244,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
             catch(OutOfMemoryException ex)
             {
-                Console.WriteLine($"Payload length :{PayloadLen}");
                 Console.WriteLine("OutOfMemoryException: ", ex.Message);
                 return;
             }
