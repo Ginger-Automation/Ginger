@@ -3742,7 +3742,11 @@ namespace GingerCore.Drivers
                             //filter none visible elements
                             if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
                             {
-                                continue;
+                                //for select tag el.Displayed is false but element is visible in page
+                                if (!el.TagName.Equals("select", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    continue;
+                                }
                             }
 
                             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
