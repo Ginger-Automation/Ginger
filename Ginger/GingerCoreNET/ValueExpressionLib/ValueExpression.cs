@@ -397,7 +397,7 @@ namespace GingerCore
                             Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
                             p = "";
                         }
-                        else if (sAct == "ETE") // Get Row Count
+                        else if (sAct == "ETE") // Export to Excel
                         {
                             Query = "";
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
