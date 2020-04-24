@@ -147,14 +147,12 @@ namespace GingerCore.Actions
                         }
                         else
                         {
-                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value:{varNumber.MinValue}, Max value:{varNumber.MinValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
                         }
                     }
                     catch (System.Exception ex)
                     {
-                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during SetValue for Variable number type..", ex);
+                        Error= $"Error occured during SetValue for Variable number type..:-{ex.Message}";
                     }
 
                 }
@@ -169,13 +167,11 @@ namespace GingerCore.Actions
                         }
                         else
                         {
-                            Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             Error = $"The value {calculatedValue} is not in the date range {Var.Name}:-[Min value:{varDateTime.MinDateTime}, Max value:{varDateTime.MaxDateTime}] {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
                         }
                     }
-                    catch (System.Exception ex)
+                    catch (Exception ex)
                     {
-                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         Error= $"Invalid DateTimeFormat,{Var.Name}:-[DateTimeFormat:{varDateTime.DateTimeFormat}] :- {ex.Message}";
                     }
                 }

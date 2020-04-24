@@ -16,8 +16,11 @@ namespace Ginger.Variables
         {
             try
             {
-               var dateTtime = dateTimevalue.ToString(value as string, CultureInfo.InvariantCulture);
-               Convert.ToDateTime(dateTtime);
+                //set date format in datetime field
+               var datetime = dateTimevalue.ToString(value as string, CultureInfo.InvariantCulture);
+
+                //if dateformat is invalid it will throw exception invalid date format exception
+               Convert.ToDateTime(datetime);
             }
             catch (Exception ex)
             {
