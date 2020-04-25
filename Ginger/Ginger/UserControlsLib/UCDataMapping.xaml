@@ -27,7 +27,7 @@
                 </ToolTip>
             </ComboBox.ToolTip>
         </ComboBox>
-        <ComboBox x:Name="xItemsComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+        <ComboBox x:Name="xOptionalValuesComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>
