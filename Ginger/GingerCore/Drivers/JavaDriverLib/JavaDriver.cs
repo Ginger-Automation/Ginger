@@ -2861,10 +2861,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                     break;
                 case "JTable":
                     var tableName = payLoad.GetValueString();
+                    var JTableName = payLoad.GetValueString();
                     var row = payLoad.GetValueString();
-                    var col = payLoad.GetValueString();
-                    configArgs.Operation = ActUIElement.eElementAction.DoubleClick.ToString();
+                    var column = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.TableCellAction.ToString();
                     configArgs.Type = eElementType.Table.ToString();
+                    configArgs.ControlAction = ActUIElement.eTableAction.DoubleClick.ToString();
+                    configArgs.LocateRowType = "Row Number";
+                    configArgs.ColSelectorValue = ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString();
+                    configArgs.LocateColTitle = column;
+                    configArgs.WhereColumnValue = column;
+                    configArgs.RowValue = row;
                     break;
                 case "JMenu":
                 case "JMenuItem":

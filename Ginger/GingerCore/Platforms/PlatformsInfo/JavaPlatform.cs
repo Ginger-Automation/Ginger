@@ -163,6 +163,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                         ElementLocateValue = actConfig.LocateValue,
                         Value = actConfig.ElementValue
                     };
+                    
+                    if(elementInfo.ElementTypeEnum.Equals(eElementType.Table))
+                    {
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, actConfig.WhereColumnValue);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, actConfig.LocateRowType);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, actConfig.RowValue);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, actConfig.ColSelectorValue);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
+                    }
 
                     pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
                 }

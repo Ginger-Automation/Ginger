@@ -282,25 +282,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     actUI = PlatformInfo.GetPlatformAction(null, args);
                 }
-                if(PlatformInfo.GetType().ToString() == "GingerCore.Platforms.PlatformsInfo.JavaPlatform" )
-                {
-                    var elementType = actUI.GetInputParamValue(GingerCore.Actions.Common.ActUIElement.Fields.ElementType);
-                    var actUIElementTable = (ActUIElement)actUI;
-                    if (elementType.Equals(eElementType.Table.ToString()))
-                    {
-                        actUIElementTable.ElementType = eElementType.Table;
-                        actUIElementTable.ElementAction = ActUIElement.eElementAction.TableCellAction;
-                        actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, "0");
-                        actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, "Row Number");
-                        actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, "0");
-                        actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString());
-                        actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, "0");
-                        actUIElementTable.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, ActUIElement.eTableAction.DoubleClick.ToString());
-                        
-                        actUI = actUIElementTable;
-                    }
-                   
-                }
+
                 AddActionToBusinessFlow(actUI, einfo);
             }
             catch (Exception ex)
