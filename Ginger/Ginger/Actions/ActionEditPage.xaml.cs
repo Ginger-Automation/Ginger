@@ -683,11 +683,11 @@ namespace Ginger.Actions
             List<string> tempList = new List<string>();
             if (mActParentBusinessFlow != null)
             {
-                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
             }
             else
             {
-                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
                 if (mActParentActivity != null)
                 {
                     foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)

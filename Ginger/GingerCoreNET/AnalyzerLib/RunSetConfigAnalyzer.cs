@@ -91,7 +91,7 @@ namespace Ginger.AnalyzerLib
                         {
                             if (outputVariables == null)
                             {
-                                outputVariables = GR.GetPossibleOutputVariables(RSC, bf);
+                                outputVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars:true, includePrevRunnersVars:false);
                             }
 
                             VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();

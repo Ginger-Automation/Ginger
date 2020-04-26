@@ -657,23 +657,62 @@ namespace Ginger.Run
 
             //set the vars to update
             List<VariableBase> inputVars = CurrentBusinessFlow.GetBFandActivitiesVariabeles(true).ToList();
+            List<VariableBase> variables = null;
             List<VariableBase> outputVariables = null;
-
             //do actual value update
             foreach (VariableBase inputVar in inputVars)
             {
                 string mappedValue = "";
-                if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)
+                if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)//Legacy
+                {
+                    if (variables == null)
+                    {
+                        variables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false);
+                    }
+                    VariableBase var = variables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
+                    if (var != null)
+                    {
+                        mappedValue = var.Value;
+                    }
+                }
+                else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
                 {
                     if (outputVariables == null)
                     {
-                        outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow);
+                        outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true);
                     }
-
-                    VariableBase outputVar = outputVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
-                    if (outputVar != null)
+                    Guid mappedVarGuid = Guid.Empty;
+                    if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
                     {
-                        mappedValue = outputVar.Value;
+                        VariableBase outputVar = outputVariables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
+                        if (outputVar != null)
+                        {
+                            mappedValue = outputVar.Value;
+                        }
+                    }
+                }
+                else if (inputVar.MappedOutputType == VariableBase.eOutputType.GlobalVariable)
+                {
+                    Guid mappedVarGuid = Guid.Empty;
+                    if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
+                    {
+                        VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
+                        if (globalVar != null)
+                        {
+                            mappedValue = globalVar.Value;
+                        }
+                    }
+                }
+                else if (inputVar.MappedOutputType == VariableBase.eOutputType.ApplicationModelParameter)
+                {
+                    Guid mappedModelParamGuid = Guid.Empty;
+                    if (Guid.TryParse(inputVar.MappedOutputValue, out mappedModelParamGuid))
+                    {
+                        GlobalAppModelParameter modelParam = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedModelParamGuid).FirstOrDefault();
+                        if (modelParam != null)
+                        {
+                            mappedValue = modelParam.CurrentValue;
+                        }
                     }
                 }
                 else if(inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
@@ -746,12 +785,12 @@ namespace Ginger.Run
             }
         }
 
-        public List<VariableBase> GetPossibleOutputVariables(RunSetConfig runSetConfig, BusinessFlow businessFlow)
+        public List<VariableBase> GetPossibleOutputVariables(RunSetConfig runSetConfig, BusinessFlow businessFlow, bool includeGlobalVars= false, bool includePrevRunnersVars= true)
         {
             List<VariableBase> outputVariables;
 
             //Global Variabels
-            if (BusinessFlow.SolutionVariables != null)
+            if (includeGlobalVars && BusinessFlow.SolutionVariables != null)
             {
                 outputVariables = BusinessFlow.SolutionVariables.ToList();
             }
@@ -770,7 +809,7 @@ namespace Ginger.Run
             }
 
             //Previous Runners Business Flows Output Variabels
-            if (runSetConfig.RunModeParallel == false && runSetConfig.GingerRunners.IndexOf(this) > 0)
+            if (includePrevRunnersVars && runSetConfig.RunModeParallel == false && runSetConfig.GingerRunners.IndexOf(this) > 0)
             {
                 for (int j = runSetConfig.GingerRunners.IndexOf(this) - 1; j >= 0; j--)//doing in reverse for sorting by latest value in case having the same var more than once
                 {
@@ -778,7 +817,10 @@ namespace Ginger.Run
                     {
                         foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
                         {
-                            outputVariables.Add(var);
+                            if (outputVariables.Where(x=>x.Guid == var.Guid).FirstOrDefault() == null)
+                            {
+                                outputVariables.Add(var);
+                            }
                         }
                     }
                 }

@@ -70,6 +70,9 @@ namespace GingerCore.Variables
         {
             None,
             Variable,
+            GlobalVariable,
+            OutputVariable,
+            ApplicationModelParameter,
             DataSource
         }
 
@@ -510,8 +513,22 @@ namespace GingerCore.Variables
         }
 
 
-        ObservableList<string> mPossibleOutputVariables = new ObservableList<string>();
-        public ObservableList<string> PossibleOutputVariables
+        ObservableList<string> mPossibleVariables = new ObservableList<string>();
+        public ObservableList<string> PossibleVariables
+        {
+            get
+            {
+                return mPossibleVariables;
+            }
+            set
+            {
+                mPossibleVariables = value;
+                OnPropertyChanged(nameof(PossibleVariables));
+            }
+        }
+
+        ObservableList<VariableBase> mPossibleOutputVariables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> PossibleOutputVariables
         {
             get
             {
