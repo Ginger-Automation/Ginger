@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -3229,14 +3229,21 @@ namespace GingerCore.Drivers.JavaDriverLib
                 }
 
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
-                foreach (ElementLocator el in activesElementLocators)
+                foreach (ElementLocator elementLocator in activesElementLocators)
                 {
-
-                    PayLoad Response = LocateElementByLocator(el);
+                    PayLoad Response = null;
+                    if (!EI.IsAutoLearned)
+                    {
+                        Response = LocateElementIfNotAutoLearned(elementLocator);
+                    }
+                    else
+                    {
+                        Response = LocateElementByLocator(elementLocator);
+                    }
                     if (Response != null && Response.GetValueString() == "true")
                     {
-                        el.StatusError = string.Empty;
-                        el.LocateStatus = ElementLocator.eLocateStatus.Passed;
+                        elementLocator.StatusError = string.Empty;
+                        elementLocator.LocateStatus = ElementLocator.eLocateStatus.Passed;
                         if (GetOutAfterFoundElement)
                         {
                             return true;
@@ -3244,7 +3251,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                     else
                     {
-                        el.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                        elementLocator.LocateStatus = ElementLocator.eLocateStatus.Failed;
                     }
                 }
 
@@ -3299,10 +3306,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (!locator.IsAutoLearned)
                 {
-                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
-                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                    elem = LocateElementByLocator(evaluatedLocator);
+                    elem = LocateElementIfNotAutoLearned(locator);
                 }
                 else
                     elem = LocateElementByLocator(locator);
@@ -3319,6 +3323,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                 }
             }
             return null;
+        }
+
+        private PayLoad LocateElementIfNotAutoLearned(ElementLocator locator)
+        {
+            ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
+            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+            return LocateElementByLocator(evaluatedLocator);
         }
 
         public void CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> originalList)

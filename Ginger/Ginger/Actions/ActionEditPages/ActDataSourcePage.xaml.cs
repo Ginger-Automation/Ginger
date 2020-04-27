@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -777,20 +777,22 @@ namespace Ginger.Actions
                 TBH.AddBoldText(mDSTable.Name);
 
                 TBH.AddText(" ACT=");
-                if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
+                if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteRow.ToString())
                     TBH.AddBoldText("DR");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString())
                     TBH.AddBoldText("RC");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString())
                     TBH.AddBoldText("ARC");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteAll.ToString())
                     TBH.AddBoldText("DA");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.ExportToExcel.ToString())
                     TBH.AddBoldText("ETE");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed")
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUnUsed.ToString())
                     TBH.AddBoldText("NA");
-                else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUsed.ToString())
                     TBH.AddBoldText("YA");
+                else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AddRow.ToString())
+                    TBH.AddBoldText("AR");
                 else
                     TBH.AddBoldText("MASD");
 
@@ -1024,7 +1026,7 @@ namespace Ginger.Actions
                         mActDSTblElem.IsKeyValueTable = true;
                         if (ControlActionComboBox.SelectedValue != null)
                         {
-                            if (ControlActionComboBox.SelectedValue.ToString() == "GetValue")
+                            if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.GetValue.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
@@ -1036,7 +1038,7 @@ namespace Ginger.Actions
                                 }
                             }
 
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.SetValue.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
@@ -1047,7 +1049,7 @@ namespace Ginger.Actions
                                     TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.Value + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
                                 }
                             }
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteRow.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
@@ -1059,9 +1061,17 @@ namespace Ginger.Actions
                                 }
 
                             }
-                            else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString())
                             {
                                 TBH.AddBoldText(".count");
+                                TBH.AddText("}");
+                                mActDSTblElem.ValueExp = TBH.GetText();
+
+                                return;
+                            }
+                            else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AddRow.ToString())
+                            {
+                                TBH.AddBoldText(".insert");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1205,7 +1215,7 @@ namespace Ginger.Actions
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAsDone")
                             {
-                                TBH.AddBoldText(".update GINGER_USED= \"True\" where");
+                                TBH.AddBoldText(".update GINGER_USED= \"True\"");
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
                             {
@@ -1640,7 +1650,7 @@ namespace Ginger.Actions
             if (mDSTable == null|| ControlActionComboBox.SelectedValue == null)
                 return;
 
-            if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll" || ControlActionComboBox.SelectedValue.ToString() == "RowCount" || ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed" || ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
+            if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteAll.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUnUsed.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUsed.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AddRow.ToString())
             {   
                 IdentifierRow.Height = new GridLength(0);                
                 return;
@@ -1828,7 +1838,7 @@ namespace Ginger.Actions
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUsed);
                     GingerCore.General.AddComboItem(ControlActionComboBox, ActDSTableElement.eControlAction.MarkAllUnUsed);
 
-                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && !ControlActionComboBox.SelectedValue.ToString().Contains("All") && !ControlActionComboBox.SelectedValue.ToString().Contains("RowCount"))
+                    if (MarkRowPanel.Visibility == Visibility.Collapsed && ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteAll.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUnUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString() && ControlActionComboBox.SelectedValue.ToString() != ActDSTableElement.eControlAction.AddRow.ToString())
                     {                       
                         MarkRowPanel.Visibility = Visibility.Visible;                        
                         IdentifierRow.Height = new GridLength(IdentifierRow.Height.Value + 25);
@@ -1855,7 +1865,7 @@ namespace Ginger.Actions
         {
             if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
             {
-                if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString().StartsWith("Mark"))
+                if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString()== ActDSTableElement.eControlAction.MarkAllUnUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAllUsed.ToString() && ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.MarkAsDone.ToString())
                     ControlActionComboBox.SelectedValue = ActDSTableElement.eControlAction.GetValue;
 
                 //IdentifierRow.Height = new GridLength(100);
@@ -1945,7 +1955,7 @@ namespace Ginger.Actions
                 ColIden.Height = new GridLength(0);
                 cmbColumnValue.Visibility = Visibility.Collapsed;
             }
-            else if (ControlActionComboBox.SelectedValue.ToString().Contains("All") || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString()  || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString())
+            else if (ControlActionComboBox.SelectedValue.ToString().Contains("All") || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString()  || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AvailableRowCount.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AddRow.ToString())
             {
                 MarkRowPanel.Visibility = Visibility.Collapsed;
             }

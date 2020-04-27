@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -244,13 +244,17 @@ namespace Ginger.Environments
 
         private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            Database db = (Database)sender;
             if (e.PropertyName == Database.Fields.TNS)
             {
-                Database db = (Database)sender;
                 if (db.CheckUserCredentialsInTNS())
                 {
                     db.SplitUserIdPassFromTNS();
                 }
+            }
+            if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+            {
+                db.CreateConnectionString();
             }
         }
 

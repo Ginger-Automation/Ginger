@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -608,10 +608,8 @@ namespace Ginger.Run
                     RunnerExecutionWatch.StopRunWatch();
                     Status = RunsetStatus;
 
-                    if (doContinueRun == false)
-                    {                                        
-                        NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
-                    }
+                    NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
+
                     if(RunLevel == eRunLevel.Runner)
                     {
                         ExecutionLoggerManager.mExecutionLogger.EndRunSet();
@@ -1278,7 +1276,7 @@ namespace Ginger.Run
                             break;
                         sColList = sColList + "GINGER_ID,GINGER_USED,";
                         int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                        sColVals = sColVals + "'" + (rowCount + 1) + "', 'false',";
+                        sColVals = sColVals + (rowCount + 1) + ", 'False',";
                         sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                         DataSource.RunQuery(sQuery);
                         //Next Path
@@ -1318,7 +1316,7 @@ namespace Ginger.Run
                                 
                                 string sColList = "GINGER_ID,GINGER_KEY_NAME,GINGER_KEY_VALUE,";
                                 int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                                string sColVals = "'" + (rowCount + 1) + "'," + "'" + sKeyName + "','" + sKeyValue + "',";
+                                string sColVals = (rowCount + 1) + "," + "'" + sKeyName + "','" + sKeyValue + "',";
                                 sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                             }
                             else
@@ -1340,7 +1338,7 @@ namespace Ginger.Run
                                 }
                                 sColList = sColList + "GINGER_ID,GINGER_USED,";
                                 int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                                sColVals = sColVals + "'" + (rowCount+1) + "','false',";
+                                sColVals = sColVals + (rowCount+1) + ",'False',";
 
                                 sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";
@@ -2082,24 +2080,8 @@ namespace Ginger.Run
                         continue;
                     }
                     
-                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, this.DSList);
-                   
-                    //TODO: Move below condition inside calculate condition once move execution logger to Ginger core
-
-                    if (FC.ConditionCalculated.Contains("{LastActivityStatus}"))
-                    {
-                        if (mLastExecutedActivity != null)
-                        {
-                            FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", mLastExecutedActivity.Status.ToString());
-                        }
-                        else
-                        {
-                            FC.ConditionCalculated = FC.ConditionCalculated.Replace("{LastActivityStatus}", "Last executed Activity Status not available");
-                        }
-                    }
+                    FC.CalculateCondition(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, act, mLastExecutedActivity, this.DSList);
                     FC.CalcualtedValue(CurrentBusinessFlow, (ProjEnvironment)ProjEnvironment, this.DSList);
-
-                
 
                     bool IsConditionTrue= CalculateFlowControlStatus(act, mLastExecutedActivity,CurrentBusinessFlow, FC.Operator,FC.ConditionCalculated);
                  
@@ -3020,6 +3002,7 @@ namespace Ginger.Run
 
                             if (mStopRun || mStopBusinessFlow)
                             {
+                                mExecutedActionWhenStopped = act;
                                 CalculateActivityFinalStatus(activity);
                                 statusCalculationIsDone = true;
                                 return;
@@ -3824,7 +3807,7 @@ namespace Ginger.Run
                 if (mStopRun)
                     break;
 
-                if (act.Active && act.Status!=Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                if (act.Active && act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == DataRepositoryMethod.LiteDB)
                 {
                     NotifyActionEnd(act);

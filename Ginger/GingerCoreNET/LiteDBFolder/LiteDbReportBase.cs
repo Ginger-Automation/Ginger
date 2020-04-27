@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,6 +58,10 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         { }
         public string SetStatus<T>(List<T> reportColl)
         {
+            if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Stopped.ToString())))
+            {
+                return eRunStatus.Stopped.ToString();
+            }
             if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Failed.ToString())))
             {
                 return eRunStatus.Failed.ToString();
@@ -65,10 +69,6 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Blocked.ToString())))
             {
                 return eRunStatus.Blocked.ToString();
-            }
-            if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Stopped.ToString())))
-            {
-                return eRunStatus.Stopped.ToString();
             }
             if (reportColl.Count(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Passed.ToString()) || (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Skipped.ToString())) == reportColl.Count())
             {
