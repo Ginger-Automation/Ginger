@@ -30,14 +30,14 @@
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Minimum Date :</Label>
                            
                             <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="15,0,0,10">
-                                <wf:DateTimePicker  x:Name="dpMinDate" TextChanged="dpMinDate_TextChanged" Format="Short" ></wf:DateTimePicker>
+                                <wf:DateTimePicker  x:Name="dpMinDate" TextChanged="dpMinDate_TextChanged" Format="Custom" ></wf:DateTimePicker>
                             </window:WindowsFormsHost>
                         </DockPanel>
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Maximum Date :</Label>
                            
                             <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Margin="15,0,0,0">
-                                <wf:DateTimePicker  x:Name="dpMaxDate" TextChanged="dpMaxDate_TextChanged" Format="Short" ></wf:DateTimePicker>
+                                <wf:DateTimePicker  x:Name="dpMaxDate" TextChanged="dpMaxDate_TextChanged" Format="Custom" ></wf:DateTimePicker>
                             </window:WindowsFormsHost>
                         </DockPanel>
                     </StackPanel>

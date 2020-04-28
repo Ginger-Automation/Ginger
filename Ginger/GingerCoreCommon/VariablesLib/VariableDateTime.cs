@@ -101,6 +101,7 @@ namespace GingerCore.Variables
             {
                 mMinDateTime = value;
                 OnPropertyChanged("MinDateTime");
+                OnPropertyChanged("InitialDateTime");
                 OnPropertyChanged("Formula");
             }
         }
@@ -120,6 +121,7 @@ namespace GingerCore.Variables
             {
                 mMaxDateTime = value;
                 OnPropertyChanged("MaxDateTime");
+                OnPropertyChanged("InitialDateTime");
                 OnPropertyChanged("Formula");
             }
         }
@@ -141,6 +143,7 @@ namespace GingerCore.Variables
                 mDateTimeFormat = value;
                 OnPropertyChanged("DateTimeFormat");
                 OnPropertyChanged("InitialDateTime");
+                OnPropertyChanged("Formula");
             }
         }
 

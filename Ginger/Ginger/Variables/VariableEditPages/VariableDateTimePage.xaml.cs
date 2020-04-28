@@ -49,7 +49,10 @@ namespace Ginger.Variables
             dtpInitialDate.MaxDate = Convert.ToDateTime(variableDateTime.MaxDateTime);
             
             dpMinDate.Value = Convert.ToDateTime(variableDateTime.MinDateTime);
+            dpMinDate.CustomFormat = variableDateTime.DateTimeFormat;
+
             dpMaxDate.Value = Convert.ToDateTime(variableDateTime.MaxDateTime);
+            dpMaxDate.CustomFormat = variableDateTime.DateTimeFormat;
 
             txtDateFormat.Text = variableDateTime.DateTimeFormat;
 
@@ -106,6 +109,8 @@ namespace Ginger.Variables
         private void txtDateFormat_LostFocus(object sender, System.Windows.RoutedEventArgs e)
         {
             dtpInitialDate.CustomFormat = txtDateFormat.Text;
+            dpMinDate.CustomFormat = txtDateFormat.Text;
+            dpMaxDate.CustomFormat = txtDateFormat.Text;
         }
     }
 }

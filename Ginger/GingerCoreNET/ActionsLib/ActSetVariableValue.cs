@@ -148,11 +148,13 @@ namespace GingerCore.Actions
                         else
                         {
                             Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value:{varNumber.MinValue}, Max value:{varNumber.MinValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
+                            return;
                         }
                     }
                     catch (System.Exception ex)
                     {
                         Error= $"Error occured during SetValue for Variable number type..:-{ex.Message}";
+                        return;
                     }
 
                 }
@@ -161,6 +163,14 @@ namespace GingerCore.Actions
                     var varDateTime = ((VariableDateTime)Var);
                     try
                     {
+                        string[] formats = { varDateTime.DateTimeFormat };
+                        if (!DateTime.TryParseExact(calculatedValue, formats, System.Globalization.CultureInfo.InvariantCulture,
+                                                  System.Globalization.DateTimeStyles.None, out DateTime dt))
+                        {
+                            Error = $"The Value [{calculatedValue}] is not in correct format, expected format is [{varDateTime.DateTimeFormat}], {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
+                            return;
+                        }
+
                         if (DateTime.Parse(calculatedValue) >= DateTime.Parse(varDateTime.MinDateTime) && DateTime.Parse(calculatedValue) <= DateTime.Parse(varDateTime.MaxDateTime))
                         {
                             varDateTime.Value = calculatedValue;
@@ -168,11 +178,13 @@ namespace GingerCore.Actions
                         else
                         {
                             Error = $"The value {calculatedValue} is not in the date range {Var.Name}:-[Min value:{varDateTime.MinDateTime}, Max value:{varDateTime.MaxDateTime}] {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
+                            return;
                         }
                     }
                     catch (Exception ex)
                     {
                         Error= $"Invalid DateTimeFormat,{Var.Name}:-[DateTimeFormat:{varDateTime.DateTimeFormat}] :- {ex.Message}";
+                        return;
                     }
                 }
             }
