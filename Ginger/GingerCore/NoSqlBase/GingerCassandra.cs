@@ -84,7 +84,28 @@ namespace GingerCore.NoSqlBase
                 throw (e);
             }
         }
-        
+
+        public override bool MakeSureConnectionIsOpen()
+        {
+            if (!session.IsDisposed)
+            {
+                Metadata m = cluster.Metadata;
+                ICollection<string> Keyspaces = m.GetKeyspaces();
+                if (Keyspaces.Count > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return Connect();
+                }
+            }
+            else
+            {
+                return Connect();
+            }
+        }
+
         //TODO: need this while checking Test Connection , need to find a better way
         public GingerCassandra(Environments.Database mDB)
         {
@@ -415,11 +436,6 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            //if (!Connect())
-            //{
-            //    Act.Error = "Failed to connect to Cassandras DB";
-            //    return;
-            //}
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);

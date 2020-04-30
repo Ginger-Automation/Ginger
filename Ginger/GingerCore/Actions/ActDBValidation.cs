@@ -274,14 +274,12 @@ namespace GingerCore.Actions
                     if (NoSqlDriver == null)
                     {
                         NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
-                        NoSqlDriver.MakeSureConnectionIsOpen();
                     }
                     else
                     {
                         if (NoSqlDriver.GetType() != typeof(GingerCassandra))
                         {
                             NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
-                            NoSqlDriver.MakeSureConnectionIsOpen();
                         }
                     }
                     break;
@@ -289,14 +287,12 @@ namespace GingerCore.Actions
                     if (NoSqlDriver == null)
                     {
                         NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-                        NoSqlDriver.MakeSureConnectionIsOpen();
                     }
                     else
                     {
                         if (NoSqlDriver.GetType() != typeof(GingerCouchbase))
                         {
                             NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-                            NoSqlDriver.MakeSureConnectionIsOpen();
                         }
                     }
                     break;
@@ -304,19 +300,17 @@ namespace GingerCore.Actions
                     if (NoSqlDriver == null)
                     {
                         NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                        NoSqlDriver.MakeSureConnectionIsOpen();
-                        
                     }
                     else
                     {
                         if (NoSqlDriver.GetType() != typeof(GingerMongoDb))
                         {
                             NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                            NoSqlDriver.MakeSureConnectionIsOpen();
                         }
                     }
                     break;
             }
+            NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
 

@@ -38,19 +38,7 @@ namespace GingerCore.NoSqlBase
         public abstract void PerformDBAction();
 
         public abstract bool Connect();
+        public abstract bool MakeSureConnectionIsOpen();
 
-        bool isConnected = false;
-        public bool MakeSureConnectionIsOpen()
-        {
-            if (!isConnected)
-            {
-                if (Connect())
-                {
-                    isConnected = true;
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }
