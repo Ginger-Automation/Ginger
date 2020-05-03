@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="3.6.0.0" Version="12" LastUpdateBy="MENIK" LastUpdate="202004121612" />
+<GingerRepositoryItem><Header ItemGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="3.6.0.0" Version="16" LastUpdateBy="MENIK" LastUpdate="202004262016" />
 <BusinessFlow Guid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" Name="Flow_B" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Do-Work" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
@@ -22,7 +22,7 @@
 </Acts>
 
 <Variables>
-<VariableSelectionList Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="None" Name="B_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_B\Group\Do-Work" ParentType="Activity" Publish="True" Value="333">
+<VariableSelectionList Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="None" Name="B_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_B\Group\Do-Work" ParentType="Activity" Publish="True" Value="111">
 <OptionalValuesList>
 <OptionalValue Guid="f99425f7-ebb2-4e6c-a752-8eb42492b73a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="111" />
 <OptionalValue Guid="43c85b7a-0133-43b1-a21e-02fef56130df" ParentGuid="00000000-0000-0000-0000-000000000000" Value="222" />
@@ -39,7 +39,7 @@
 <ActivitiesGroups>
 <ActivitiesGroup Guid="a4cff36e-b21d-48f3-98bd-f313b5470461" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="157e82ea-3911-4618-a936-cb21ea354c84" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="6b279e7b-b583-4159-8ece-3de981aa9a3d" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 </ActivitiesGroups>
@@ -50,6 +50,14 @@
 
 <Variables>
 <VariableString Guid="bde76d0f-a68e-465e-b25c-60365886762a" MappedOutputType="None" Name="B_ID" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" />
-<VariableString Guid="840b1e0d-b95c-403a-870b-52055a9e1e3b" InitialStringValue="Meni" MappedOutputType="None" Name="B_Name" ParentGuid="00000000-0000-0000-0000-000000000000" Publish="True" SetAsOutputValue="False" />
+<VariableString Guid="840b1e0d-b95c-403a-870b-52055a9e1e3b" InitialStringValue="Meni" MappedOutputType="None" Name="B_Name" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" />
+<VariableSelectionList Guid="8c98b551-f8f7-4a9a-9cd3-e186d387721f" MappedOutputType="None" Name="B_Color" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" Value="Green">
+<OptionalValuesList>
+<OptionalValue Guid="408392d6-9deb-402a-9646-dc0ad1eaed6e" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Green" />
+<OptionalValue Guid="3c1bafa4-3e41-4748-a520-056a134a1e44" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Red" />
+<OptionalValue Guid="9b502a1c-3223-4db9-8bd9-beb2937c5f60" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Blue" />
+<OptionalValue Guid="66f234e2-8c53-426d-b77b-888f31f44616" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Black" />
+</OptionalValuesList>
+</VariableSelectionList>
 </Variables>
 </BusinessFlow></GingerRepositoryItem>

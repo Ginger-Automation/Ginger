@@ -13,7 +13,7 @@
             <ColumnDefinition Width="155"/>            
             <ColumnDefinition x:Name="xMappedValueColumn" Width="100*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" >
+        <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" DropDownOpened="xMappedTypeComboBox_DropDownOpened" DropDownClosed="xMappedTypeComboBox_DropDownClosed" Height="20" >
             <ComboBox.ToolTip>
                 <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
                     <TextBlock Text="{Binding SelectionBoxItem}"/>

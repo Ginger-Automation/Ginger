@@ -80,6 +80,8 @@ namespace Ginger.UserControlsLib
             }
         }
 
+        string _prevMappedType = null;
+
         public string MappedType
         {
             get { return (string)GetValue(MappedTypeProperty); }
@@ -138,16 +140,6 @@ namespace Ginger.UserControlsLib
         private void MappedTypePropertyChanged()
         {
             OnPropertyChanged(nameof(MappedType));
-
-            if (MappedValue != null)
-            {
-                MappedValue = string.Empty;
-            }
-
-            if (MappedType == eDataType.None.ToString())
-            {
-                MappedValue = string.Empty;
-            }
 
             //set relevant value control binding
             BindingOperations.ClearAllBindings(xVariablesComboBox);
@@ -275,6 +267,25 @@ namespace Ginger.UserControlsLib
             {
                 this.BorderThickness = new Thickness(0);
                 this.BorderBrush = null;
+            }
+        }
+
+        private void xMappedTypeComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            _prevMappedType = MappedType;
+        }
+
+        private void xMappedTypeComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (_prevMappedType != MappedType)
+            {
+                //reset value between type selection
+                MappedValue = string.Empty;
+            }
+
+            if (MappedType == eDataType.None.ToString())
+            {
+                MappedValue = string.Empty;
             }
         }
 
@@ -413,12 +424,7 @@ namespace Ginger.UserControlsLib
         }
         private void VariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            //if (MappedType == eDataType.Variable.ToString())
-            //{
-            //    xVariablesComboBox.ItemsSource = null;
-            //    xVariablesComboBox.ItemsSource = mVariablesList;
-            //    OnMappedValuePropertyChanged(this, new DependencyPropertyChangedEventArgs(ComboBox.SelectedValueProperty, MappedValue, MappedValue));
-            //}
+
             SetValueControlsData();
         }
         #endregion Variables
@@ -536,6 +542,9 @@ namespace Ginger.UserControlsLib
             }
             ADSP.ShowAsWindow();
         }
+
         #endregion DataSource
+
+
     }
 }
