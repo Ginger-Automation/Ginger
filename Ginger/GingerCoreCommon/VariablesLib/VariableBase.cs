@@ -594,6 +594,19 @@ namespace GingerCore.Variables
         }
         public abstract bool SupportSetValue { get; }
 
+        public virtual bool SetValue(string value)
+        {
+            if (this.SupportSetValue)
+            {
+                this.Value = value;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public abstract List<eSetValueOptions> GetSupportedOperations();
 
         public abstract String VariableUIType { get; }

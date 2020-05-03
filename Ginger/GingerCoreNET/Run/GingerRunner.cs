@@ -662,125 +662,106 @@ namespace Ginger.Run
             //do actual value update
             foreach (VariableBase inputVar in inputVars)
             {
-                string mappedValue = "";
-                if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)//Legacy
+                try
                 {
-                    if (variables == null)
+                    string mappedValue = "";
+                    if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)//Legacy
                     {
-                        variables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false);
-                    }
-                    VariableBase var = variables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
-                    if (var != null)
-                    {
-                        mappedValue = var.Value;
-                    }
-                }
-                else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
-                {
-                    if (outputVariables == null)
-                    {
-                        outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true);
-                    }
-                    Guid mappedVarGuid = Guid.Empty;
-                    if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
-                    {
-                        VariableBase outputVar = outputVariables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
-                        if (outputVar != null)
+                        if (variables == null)
                         {
-                            mappedValue = outputVar.Value;
+                            variables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: true, includePrevRunnersVars: false);
+                        }
+                        VariableBase var = variables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
+                        if (var != null)
+                        {
+                            mappedValue = var.Value;
                         }
                     }
-                }
-                else if (inputVar.MappedOutputType == VariableBase.eOutputType.GlobalVariable)
-                {
-                    Guid mappedVarGuid = Guid.Empty;
-                    if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
                     {
-                        VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
-                        if (globalVar != null)
+                        if (outputVariables == null)
                         {
-                            mappedValue = globalVar.Value;
+                            outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true);
+                        }
+                        Guid mappedVarGuid = Guid.Empty;
+                        if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
+                        {
+                            VariableBase outputVar = outputVariables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
+                            if (outputVar != null)
+                            {
+                                mappedValue = outputVar.Value;
+                            }
                         }
                     }
-                }
-                else if (inputVar.MappedOutputType == VariableBase.eOutputType.ApplicationModelParameter)
-                {
-                    Guid mappedModelParamGuid = Guid.Empty;
-                    if (Guid.TryParse(inputVar.MappedOutputValue, out mappedModelParamGuid))
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.GlobalVariable)
                     {
-                        GlobalAppModelParameter modelParam = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedModelParamGuid).FirstOrDefault();
-                        if (modelParam != null)
+                        Guid mappedVarGuid = Guid.Empty;
+                        if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
                         {
-                            mappedValue = modelParam.CurrentValue;
+                            VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
+                            if (globalVar != null)
+                            {
+                                mappedValue = globalVar.Value;
+                            }
                         }
                     }
-                }
-                else if(inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
-                {
-                    mappedValue = GingerCore.ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
-                }
-                else if(inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))
-                {
-                    //if input variable value mapped to none, and value is differt from origin                   
-                    if (inputVar.DiffrentFromOrigin)
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.ApplicationModelParameter)
                     {
-                        // we take value of customized variable from BusinessFlowRun
-                        VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
-                       
-                        if(runVar!=null)
+                        Guid mappedModelParamGuid = Guid.Empty;
+                        if (Guid.TryParse(inputVar.MappedOutputValue, out mappedModelParamGuid))
                         {
-                           mappedValue = runVar.Value;
+                            GlobalAppModelParameter modelParam = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedModelParamGuid).FirstOrDefault();
+                            if (modelParam != null)
+                            {
+                                mappedValue = modelParam.CurrentValue;
+                            }
+                        }
+                    }
+                    else if (inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
+                    {
+                        mappedValue = ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                    }
+                    else if (inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))//what this for???
+                    {
+                        //if input variable value mapped to none, and value is differt from origin                   
+                        if (inputVar.DiffrentFromOrigin)
+                        {
+                            // we take value of customized variable from BusinessFlowRun
+                            VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+
+                            if (runVar != null)
+                            {
+                                mappedValue = runVar.Value;
+                            }
+                        }
+                        else
+                        {
+                            if (cachedVariables == null)
+                            {
+                                BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
+                                cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
+                            }
+
+                            //If value is not different from origin we take original value from business flow on cache
+                            VariableBase cacheVariable = cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
+                            if (cacheVariable != null)
+                            {
+                                mappedValue = cacheVariable.Value;
+                            }
+                        }
+                    }
+
+                    if (mappedValue != "")
+                    {
+                        if (inputVar.SupportSetValue)
+                        {
+                            inputVar.SetValue(mappedValue);
                         }                       
                     }
-                    else
-                    {
-                        if(cachedVariables==null)
-                        {
-                            BusinessFlow cachedBusinessFlow = WorkSpace.Instance?.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(CurrentBusinessFlow.Guid);
-                            cachedVariables = cachedBusinessFlow?.GetBFandActivitiesVariabeles(true).ToList();
-                        }
-
-                        //If value is not different from origin we take original value from business flow on cache
-                        VariableBase cacheVariable= cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
-                        if(cacheVariable!= null)
-                        {
-                            mappedValue = cacheVariable.Value;
-                        }                       
-                    }
                 }
-
-                if (mappedValue != "")
+                catch(Exception ex)
                 {
-                    if (inputVar.GetType() == typeof(VariableString))
-                    {
-                        ((VariableString)inputVar).Value = mappedValue;
-                        continue;
-                    }
-                    if (inputVar.GetType() == typeof(VariableSelectionList))
-                    {
-                        if (((VariableSelectionList)inputVar).OptionalValuesList.Where(pv => pv.Value == mappedValue).FirstOrDefault() != null)
-                        {
-                            ((VariableSelectionList)inputVar).Value = mappedValue;
-                        }
-                        continue;
-                    }
-                    if (inputVar.GetType() == typeof(VariableList))
-                    {
-                        string[] possibleVals = ((VariableList)inputVar).Formula.Split(',');
-                        if (possibleVals != null && possibleVals.Contains(mappedValue))
-                        {
-                            ((VariableList)inputVar).Value = mappedValue;
-                        }
-                        continue;
-                    }
-                    if (inputVar.GetType() == typeof(VariableDynamic))
-                    {
-                        ((VariableDynamic)inputVar).ValueExpression = mappedValue;
-                    }
-                    if (inputVar.GetType() == typeof(VariableTimer))
-                    {
-                        ((VariableTimer)inputVar).Value = mappedValue;
-                    }
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to set '{0}' Input {1} mapped value, mapped data type '{2}' mapped data value '{3}'", inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.MappedOutputType, inputVar.MappedOutputValue), ex);
                 }
             }
         }
@@ -2044,52 +2025,67 @@ namespace Ginger.Run
         
         private void ProcessStoretoValue(Act act)
         {
+            List<VariableBase> optionalVars = null;
             foreach (ActReturnValue item in act.ReturnValues)
             {
-                if (item.StoreTo == ActReturnValue.eStoreTo.Variable && !String.IsNullOrEmpty(item.StoreToValue))
-                {
-                    VariableBase varb = CurrentBusinessFlow.GetHierarchyVariableByNameAndType(item.StoreToValue, "String");
-                    if (varb != null)
+                bool succeedToPerform = false;
+                if (!string.IsNullOrEmpty(item.StoreToValue))
+                {                                  
+                    try
                     {
-                        ((VariableString)varb).Value = item.Actual;
+                        switch (item.StoreTo)
+                        {
+                            case ActReturnValue.eStoreTo.Variable:
+                                if (optionalVars == null)
+                                {
+                                    optionalVars = CurrentBusinessFlow.GetAllVariables(CurrentBusinessFlow.CurrentActivity).Where(a => a.SupportSetValue == true).ToList();
+                                }
+                                VariableBase storeToVar = optionalVars.Where(x => x.Name == item.StoreToValue).FirstOrDefault();
+                                if (storeToVar != null)
+                                {
+                                    if (!string.IsNullOrEmpty(storeToVar.LinkedVariableName))
+                                    {
+                                        storeToVar = optionalVars.Where(x => x.Name == storeToVar.LinkedVariableName).FirstOrDefault();
+                                    }
+                                    if (storeToVar != null)
+                                    {
+                                        succeedToPerform = storeToVar.SetValue(item.Actual);
+                                    }
+                                }
+                                break;
+
+                            case ActReturnValue.eStoreTo.GlobalVariable:
+                                VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x=>x.SupportSetValue).ToList().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                                if (globalVar != null)
+                                {
+                                    succeedToPerform = globalVar.SetValue(item.Actual);
+                                }
+                                break;
+
+                            case ActReturnValue.eStoreTo.ApplicationModelParameter:
+                                GlobalAppModelParameter globalAppModelParameter = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                                if (globalAppModelParameter != null)
+                                {
+                                    globalAppModelParameter.CurrentValue = item.Actual;
+                                    succeedToPerform = true;
+                                }
+                                break;
+
+                            case ActReturnValue.eStoreTo.DataSource:
+                                ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
+                                VE.Calculate(item.StoreToValue);
+                                succeedToPerform = true;
+                                break;
+                        }                        
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        string msg = string.Format("Failed to perform Return Value StoreTo the {0} '{1}'", ActReturnValue.eStoreTo.Variable, item.StoreToValue.ToString());
-                        act.ExInfo += msg;
-                        Reporter.ToLog(eLogLevel.WARN, msg);
+                        Reporter.ToLog(eLogLevel.WARN, "Exception occured while performing Return Value StoreTo operation", ex);
                     }
-                }
-                //Adding for New Control
-                else if (item.StoreTo == ActReturnValue.eStoreTo.DataSource && !String.IsNullOrEmpty(item.StoreToValue))
-                {                    
-                    ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
-                    VE.Calculate(item.StoreToValue);
-                }
-                else if(item.StoreTo == ActReturnValue.eStoreTo.ApplicationModelParameter && !string.IsNullOrEmpty(item.StoreToValue))
-                {
-                    GlobalAppModelParameter globalAppModelParameter = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
-                    if (globalAppModelParameter != null)
+
+                    if (succeedToPerform == false)
                     {
-                        globalAppModelParameter.CurrentValue = item.Actual;
-                    }
-                    else
-                    {
-                        string msg = string.Format("Failed to perform Return Value StoreTo the {0} '{1}'", ActReturnValue.eStoreTo.ApplicationModelParameter, item.StoreToValue.ToString());
-                        act.ExInfo += msg;
-                        Reporter.ToLog(eLogLevel.WARN, msg);
-                    }
-                }
-                else if (item.StoreTo == ActReturnValue.eStoreTo.GlobalVariable && !string.IsNullOrEmpty(item.StoreToValue))
-                {
-                    VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
-                    if (globalVar != null)
-                    {
-                        globalVar.Value = item.Actual;
-                    }
-                    else
-                    {
-                        string msg = string.Format("Failed to perform Return Value StoreTo the {0} '{1}'", ActReturnValue.eStoreTo.GlobalVariable, item.StoreToValue.ToString());
+                        string msg = string.Format("Failed to perform Return Value StoreTo operation for the '{0}' Input Param with value '{1}'--> Store To type '{2}' and value '{3}'", item.Param, item.Actual,item.StoreTo, item.StoreToValue);
                         act.ExInfo += msg;
                         Reporter.ToLog(eLogLevel.WARN, msg);
                     }
