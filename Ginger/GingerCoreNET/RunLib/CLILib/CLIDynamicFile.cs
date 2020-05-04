@@ -180,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
                 }
-                DynamicExecutionManager.CreateUpdateRunSetFromJSON(runsetExecutor, runset);
+                DynamicExecutionManager.CreateUpdateRunSetFromJSON(runsetExecutor, exeConfiguration);
             }
             else
             {

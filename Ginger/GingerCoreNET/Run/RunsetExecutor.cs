@@ -355,6 +355,10 @@ namespace Ginger.Run
                 //reset run       
                 if (doContinueRun == false)
                 {
+                    if (WorkSpace.Instance.RunningInExecutionMode == false || RunSetConfig.ExecutionID == null)
+                    {
+                        RunSetConfig.ExecutionID = Guid.NewGuid();
+                    }
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     mStopwatch.Reset();

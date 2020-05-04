@@ -623,8 +623,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
 
-        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, RunsetExecConfig dynamicRunsetConfigs)
+        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, GingerExecConfig gingerExecConfig)
         {
+            RunsetExecConfig dynamicRunsetConfigs = gingerExecConfig.Runset;
             RunSetConfig runSetConfig = null;
             if (dynamicRunsetConfigs.Exist)
             {
@@ -639,6 +640,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
+            }
+
+            if (gingerExecConfig.ExecutionID != null)
+            {
+                runSetConfig.ExecutionID = (Guid)gingerExecConfig.ExecutionID;
             }
 
             if (dynamicRunsetConfigs.RunAnalyzer != null)

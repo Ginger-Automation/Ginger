@@ -622,6 +622,24 @@ namespace WorkspaceHold
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_C- Validating BF execution Passed");
         }
 
+        /// <summary>
+        /// Testing JSON Runset with setup of ExecutionID
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_CheckExecutionIDSet_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "DataMappingTest", "Validating correct Run set was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString(), "9ab6158b-05b4-9b9c-99f9-bde0f2299f9e", "Validating ExecutionID which was configured in JSON actually was used in run time");
+        }
+
         [TestMethod]
         public void OLDCLIDynamicRegressionTest()
         {
