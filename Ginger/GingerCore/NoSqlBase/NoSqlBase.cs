@@ -36,5 +36,9 @@ namespace GingerCore.NoSqlBase
         public abstract List<string> GetColumnList(string table);
         
         public abstract void PerformDBAction();
+
+        public abstract bool Connect();
+        public abstract bool MakeSureConnectionIsOpen();
+
     }
 }
