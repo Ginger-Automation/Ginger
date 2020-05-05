@@ -87,20 +87,27 @@ namespace GingerCore.NoSqlBase
 
         public override bool MakeSureConnectionIsOpen()
         {
-            if (!session.IsDisposed)
+            try
             {
-                Metadata m = cluster.Metadata;
-                ICollection<string> Keyspaces = m.GetKeyspaces();
-                if (Keyspaces.Count > 0)
+                if (session != null)
                 {
-                    return true;
+                    Metadata m = cluster.Metadata;
+                    ICollection<string> Keyspaces = m.GetKeyspaces();
+                    if (Keyspaces.Count > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return Connect();
+                    }
                 }
                 else
                 {
                     return Connect();
                 }
             }
-            else
+            catch (Exception ex)
             {
                 return Connect();
             }

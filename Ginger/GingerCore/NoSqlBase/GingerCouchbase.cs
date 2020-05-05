@@ -77,16 +77,20 @@ namespace GingerCore.NoSqlBase
             else { password = Db.PassCalculated; }
             try
             {
-                var clusterManager = clusterCB.CreateManager(Db.UserCalculated, password);
-                var buckets = clusterManager.ListBuckets().Value;
-                if (buckets != null)
+                if (clusterCB != null)
                 {
-                    return true;
+                    var clusterManager = clusterCB.CreateManager(Db.UserCalculated, password);
+                    var buckets = clusterManager.ListBuckets().Value;
+                    if (buckets != null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return Connect();
+                    }
                 }
-                else
-                {
-                    return Connect();
-                }
+                return Connect();
             }
             catch (Exception ex)
             {
