@@ -20,125 +20,125 @@ using System.ComponentModel;
 
 namespace GingerCore.ALM
 {
-    public class ALMConfig : INotifyPropertyChanged
-    {
-        private string mALMUserName;
-        public string ALMUserName
-        {
-            get { return mALMUserName; }
-            set
-            {
-                if (mALMUserName != value)
-                {
-                    mALMUserName = value;
-                    OnPropertyChanged(nameof(ALMUserName));
-                }
-            }
-        }
+    //public class ALMConfig : INotifyPropertyChanged
+    //{
+    //    private string mALMUserName;
+    //    public string ALMUserName
+    //    {
+    //        get { return mALMUserName; }
+    //        set
+    //        {
+    //            if (mALMUserName != value)
+    //            {
+    //                mALMUserName = value;
+    //                OnPropertyChanged(nameof(ALMUserName));
+    //            }
+    //        }
+    //    }
 
-        private string mALMDomain;
-        public string ALMDomain
-        {
-            get { return mALMDomain; }
-            set
-            {
-                if (mALMDomain != value)
-                {
-                    mALMDomain = value;
-                    OnPropertyChanged(nameof(ALMDomain));
-                }
-            }
-        }
+    //    private string mALMDomain;
+    //    public string ALMDomain
+    //    {
+    //        get { return mALMDomain; }
+    //        set
+    //        {
+    //            if (mALMDomain != value)
+    //            {
+    //                mALMDomain = value;
+    //                OnPropertyChanged(nameof(ALMDomain));
+    //            }
+    //        }
+    //    }
 
-        private bool mUseRest;
-        public bool UseRest
-        {
-            get { return mUseRest; }
-            set
-            {
-                if (mUseRest != value)
-                {
-                    mUseRest = value;
-                    OnPropertyChanged(nameof(UseRest));
-                }
-            }
-        }
+    //    private bool mUseRest;
+    //    public bool UseRest
+    //    {
+    //        get { return mUseRest; }
+    //        set
+    //        {
+    //            if (mUseRest != value)
+    //            {
+    //                mUseRest = value;
+    //                OnPropertyChanged(nameof(UseRest));
+    //            }
+    //        }
+    //    }
 
-        private string mALMProjectName;
-        public string ALMProjectName
-        {
-            get { return mALMProjectName; }
-            set
-            {
-                if (mALMProjectName != value)
-                {
-                    mALMProjectName = value;
-                    OnPropertyChanged(nameof(ALMProjectName));
-                }
-            }
-        }
+    //    private string mALMProjectName;
+    //    public string ALMProjectName
+    //    {
+    //        get { return mALMProjectName; }
+    //        set
+    //        {
+    //            if (mALMProjectName != value)
+    //            {
+    //                mALMProjectName = value;
+    //                OnPropertyChanged(nameof(ALMProjectName));
+    //            }
+    //        }
+    //    }
 
-        private string mALMPassword;
-        public string ALMPassword
-        {
-            get { return mALMPassword; }
-            set
-            {
-                if (mALMPassword != value)
-                {
-                    mALMPassword = value;
-                    OnPropertyChanged(nameof(ALMPassword));
-                }
-            }
-        }
+    //    private string mALMPassword;
+    //    public string ALMPassword
+    //    {
+    //        get { return mALMPassword; }
+    //        set
+    //        {
+    //            if (mALMPassword != value)
+    //            {
+    //                mALMPassword = value;
+    //                OnPropertyChanged(nameof(ALMPassword));
+    //            }
+    //        }
+    //    }
 
-        private string mALMServerURL;
-        public string ALMServerURL
-        {
-            get { return mALMServerURL; }
-            set
-            {
-                if (mALMServerURL != value)
-                {
-                    mALMServerURL = value;
-                    OnPropertyChanged(nameof(ALMServerURL));
-                }
-            }
-        }
-        private string mALMProjectKey;
-        public string ALMProjectKey
-        {
-            get { return mALMProjectKey; }
-            set
-            {
-                if (mALMProjectKey != value)
-                {
-                    mALMProjectKey = value;
-                    OnPropertyChanged(nameof(mALMProjectKey));
-                }
-            }
-        }
-        private string mALMConfigPackageFolderPath;
-        public string ALMConfigPackageFolderPath
-        {
-            get { return mALMConfigPackageFolderPath; }
-            set
-            {
-                if (mALMConfigPackageFolderPath != value)
-                {
-                    mALMConfigPackageFolderPath = value;
-                    OnPropertyChanged(nameof(mALMConfigPackageFolderPath));
-                }
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
-        }
-    }
+    //    private string mALMServerURL;
+    //    public string ALMServerURL
+    //    {
+    //        get { return mALMServerURL; }
+    //        set
+    //        {
+    //            if (mALMServerURL != value)
+    //            {
+    //                mALMServerURL = value;
+    //                OnPropertyChanged(nameof(ALMServerURL));
+    //            }
+    //        }
+    //    }
+    //    private string mALMProjectKey;
+    //    public string ALMProjectKey
+    //    {
+    //        get { return mALMProjectKey; }
+    //        set
+    //        {
+    //            if (mALMProjectKey != value)
+    //            {
+    //                mALMProjectKey = value;
+    //                OnPropertyChanged(nameof(mALMProjectKey));
+    //            }
+    //        }
+    //    }
+    //    private string mALMConfigPackageFolderPath;
+    //    public string ALMConfigPackageFolderPath
+    //    {
+    //        get { return mALMConfigPackageFolderPath; }
+    //        set
+    //        {
+    //            if (mALMConfigPackageFolderPath != value)
+    //            {
+    //                mALMConfigPackageFolderPath = value;
+    //                OnPropertyChanged(nameof(mALMConfigPackageFolderPath));
+    //            }
+    //        }
+    //    }
+    //    public event PropertyChangedEventHandler PropertyChanged;
+    //    public void OnPropertyChanged(string name)
+    //    {
+    //        PropertyChangedEventHandler handler = PropertyChanged;
+    //        if (handler != null)
+    //        {
+    //            handler(this, new PropertyChangedEventArgs(name));
+    //        }
+    //    }
+    //}
 }

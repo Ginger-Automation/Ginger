@@ -526,11 +526,12 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
-            if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
-            {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-                return;
-            }
+            //open defect profile page for each almtype
+            //if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
+            //    return;
+            //}
             ALMIntegration.Instance.ALMDefectsProfilesPage();
         }
 

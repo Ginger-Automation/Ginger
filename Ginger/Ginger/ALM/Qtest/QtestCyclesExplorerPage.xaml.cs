@@ -71,7 +71,7 @@ namespace Ginger.ALM.Qtest
 
             GetTreeData();
 
-            QtestCyclesExplorerTreeView.TreeTitle = "'" + ALMCore.AlmConfig.ALMDomain + " \\ " + ALMCore.AlmConfig.ALMProjectName + "' - Test Cycles Explorer";
+            QtestCyclesExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Cycles Explorer";
             QtestCyclesExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
             QtestCyclesExplorerTreeView.Tree.ItemSelected += TestLabExplorerTreeView_ItemSelected;
             foreach (QTestApiModel.TestCycleResource cycle in treeData)
@@ -93,7 +93,7 @@ namespace Ginger.ALM.Qtest
         private void GetTreeData()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            treeData = QtestConnect.Instance.GetQTestCyclesByProject(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMProject);
+            treeData = QtestConnect.Instance.GetQTestCyclesByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName);
             Mouse.OverrideCursor = null;
         }
 

@@ -116,11 +116,12 @@ namespace Ginger.Run
 
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
-            if (!ALMIntegration.Instance.AlmConfigurations.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
-            {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-                return;
-            }
+            //select alm from defects profile
+            //if (!ALMIntegration.Instance.AlmConfigurations.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
+            //    return;
+            //}
             if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
                 (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count > 0))
             {

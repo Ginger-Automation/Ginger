@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
+using GingerCore.ALM;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
@@ -218,11 +219,11 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.Instance.Solution.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
-            {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
-                return;
-            }
+            //if (!ALMCore.DefaultAlmConfig.UseRest && ALMCore.DefaultAlmConfig.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
+            //    return;
+            //}
             ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
             if ((ALMDefectProfiles == null) || (ALMDefectProfiles.Count < 1))
             {
