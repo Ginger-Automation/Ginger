@@ -10,8 +10,8 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="155"/>            
-            <ColumnDefinition x:Name="xMappedValueColumn" Width="100*"/>
+            <ColumnDefinition x:Name="xMappedTypeColumn" Width="50*" MaxWidth="180"/>            
+            <ColumnDefinition x:Name="xMappedValueColumn" Width="50*"/>
         </Grid.ColumnDefinitions>
         <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" DropDownOpened="xMappedTypeComboBox_DropDownOpened" DropDownClosed="xMappedTypeComboBox_DropDownClosed" Height="20" >
             <ComboBox.ToolTip>

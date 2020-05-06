@@ -181,11 +181,15 @@ namespace Ginger.UserControlsLib
             {
                 if (MappedType == eDataType.None.ToString())
                 {
-                    xMappedValueColumn.Width = new GridLength(0);
+                    xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
+                    xMappedTypeColumn.MaxWidth = double.MaxValue;
+                    xMappedValueColumn.Width = new GridLength(0);                   
                 }
                 else
                 {
-                    xMappedValueColumn.Width = new GridLength(100, GridUnitType.Star);
+                    xMappedTypeColumn.Width = new GridLength(50, GridUnitType.Star);
+                    xMappedTypeColumn.MaxWidth = 180;
+                    xMappedValueColumn.Width = new GridLength(50, GridUnitType.Star);
                 }
 
                 if (MappedType == eDataType.Variable.ToString()
@@ -411,7 +415,7 @@ namespace Ginger.UserControlsLib
             {
                 GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.Variable);
             }
-            if (variabelsSourceList != null)
+            if (variabelsSourceList != null && variabelsSourceList.Where(x=>string.IsNullOrEmpty(x)==false).ToList().Count > 0)
             {
                 if (EnableDataMapping)
                 {
@@ -424,7 +428,6 @@ namespace Ginger.UserControlsLib
         }
         private void VariabelsSourceList_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-
             SetValueControlsData();
         }
         #endregion Variables
@@ -445,7 +448,7 @@ namespace Ginger.UserControlsLib
                 GingerCore.General.DisableComboItem(xMappedTypeComboBox, eDataType.OutputVariable);
             }
            
-            if (outputVariabelsSourceList != null)
+            if (outputVariabelsSourceList != null && outputVariabelsSourceList.Count > 0)
             {
                 if (EnableDataMapping)
                 {
