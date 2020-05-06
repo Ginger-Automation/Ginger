@@ -188,7 +188,7 @@ namespace Ginger.ALM.Qtest
             {
                 Button importBtn = new Button();
                 importBtn.Content = "Select";
-                importBtn.Click += new RoutedEventHandler(ImportSelected);
+                importBtn.Click += new RoutedEventHandler(SelectFolder);
                 GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Select Path For Export", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
                 return mCurrentSelectedObject;
             }

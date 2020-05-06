@@ -96,22 +96,22 @@ namespace Ginger.ALM.Repository
 
         public override List<string> GetTestLabExplorer(string path)
         {
-            return QCConnect.GetTestLabExplorer(path);
+            throw new NotImplementedException();
         }
 
         public override IEnumerable<Object> GetTestSetExplorer(string path)
         {
-            return QCConnect.GetTestSetExplorer(path);
+            throw new NotImplementedException();
         }
 
         public override Object GetTSRunStatus(Object tsItem)
         {
-            return QCConnect.GetTSRunStatus(tsItem);
+            throw new NotImplementedException();
         }
 
         public override List<string> GetTestPlanExplorer(string path)
         {
-            return QCConnect.GetTestPlanExplorer(path);
+            throw new NotImplementedException();
         }
 
         #endregion General
@@ -253,16 +253,9 @@ namespace Ginger.ALM.Repository
                 }
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string parentObjectId = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             if (activtiesGroup == null) return false;
-            //if it is called from shared repository need to select path
-            if (uploadPath == null)
-            {
-                QCTestPlanExplorerPage win = new QCTestPlanExplorerPage();
-                win.xCreateBusinessFlowFolder.Visibility = Visibility.Collapsed;//no need to create separate folder
-                uploadPath = win.ShowAsWindow(eWindowShowStyle.Dialog);
-            }
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
@@ -270,7 +263,7 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
             ALMIntegration.Instance.RefreshALMItemFields(testCaseFields, true, null);
             var filterTestCaseFields = testCaseFields.Where(tc => tc.ItemType == eQCItemType.TestCase.ToString()).ToList();
-            bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, uploadPath, new ObservableList<ExternalItemFieldBase>(filterTestCaseFields), ref res);
+            bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, parentObjectId, new ObservableList<ExternalItemFieldBase>(filterTestCaseFields), ref res);
             Reporter.HideStatusMessage();
             if (exportRes)
             {
@@ -353,18 +346,10 @@ namespace Ginger.ALM.Repository
                 ExportActivitiesGroupToALM(ag, parentObjectId);
             }
 
-            if (matchingTS == null && string.IsNullOrEmpty(testLabUploadPath))
+            if (matchingTS == null && string.IsNullOrEmpty(parentObjectId))
             {
                 if(userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
-                    Reporter.ToUser(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder);
-
-                //get the QC Test Plan path to upload the activities group to
-                testLabUploadPath = SelectALMTestLabPath();
-                if (String.IsNullOrEmpty(testLabUploadPath))
-                {
-                    //no path to upload to
-                    return false;
-                }
+                    Reporter.ToUser(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder);         
             }
 
             //upload the business flow
@@ -372,9 +357,9 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             //TODO : need to update to retrieve only Test Set Item Fields -->DONE
             ObservableList<ExternalItemFieldBase> testSetFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
-            ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);
+            ALMIntegration.Instance.RefreshALMItemFields(testSetFields, true, null);    // Arvind to merge it from here
             var filterTestSetFields = testSetFields.Where(tc => tc.ItemType == eQCItemType.TestSet.ToString()).ToList();
-            bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, testLabUploadPath, new ObservableList<ExternalItemFieldBase> (filterTestSetFields), ref res);
+            bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlowToALM(businessFlow, matchingTS, parentObjectId, new ObservableList<ExternalItemFieldBase> (filterTestSetFields), ref res);
             Reporter.HideStatusMessage();
             if (exportRes)
             {
