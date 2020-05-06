@@ -45,6 +45,7 @@ using System.Windows.Automation;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GingerCore.Platforms.PlatformsInfo;
+using Amdocs.Ginger.Plugin.Core;
 
 namespace GingerCore.Drivers.JavaDriverLib
 {
@@ -259,7 +260,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     return ErrorPayLoadMessage("Failed to connect to Java agent");
                 }
-                    
+
 
                 // If connection failed then try to reconnect and if reconnect failed then go out of here
                 if (!SocketConnected(clientSocket))
@@ -857,7 +858,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         private void SetActionStatusFromResponse(Act act, PayLoad Response)
         {
             if (Response.IsErrorPayLoad())
-            {                            
+            {
                 string ErrMsg = Response.GetErrorValue();
                 act.Error = ErrMsg;
             }
@@ -1670,7 +1671,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     {
                         if (payLoad.IsErrorPayLoad())
                         {
-                            
+
                             String error = payLoad.GetErrorValue();
                             if (error.IndexOf("ERROR: Handle : ") != -1)
                             {
@@ -1970,14 +1971,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 list.AddRange(HTMLControlsPL);
                         }
                     }
-                    
+
                 }
             }
 
             if(isPOMLearn)
             {
                 list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-            }            
+            }
             return list;
 
         }
@@ -2128,7 +2129,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             EI.ElementTypeEnum = GetHTMLElementType(EI.ElementType);
             EI.Path = PL.GetValueString();
             EI.XPath = PL.GetValueString();
-            EI.RelXpath = PL.GetValueString();        
+            EI.RelXpath = PL.GetValueString();
             return EI;
         }
 
@@ -2179,7 +2180,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 case "LABEL":
                     return eElementType.Label;
 
-                case "SELECT":                
+                case "SELECT":
                     return eElementType.ComboBox;
 
                 case "TABLE":
@@ -2310,7 +2311,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             List<PayLoad> PropertiesPLs = new List<PayLoad>();
             if (response.IsErrorPayLoad())
-            {                
+            {
                 string ErrMSG = response.GetErrorValue();
                 Reporter.ToLog(eLogLevel.ERROR, "Error while fetching properties :" + ErrMSG);
             }
@@ -2526,7 +2527,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             if(ElementInfo.IsElementTypeSupportingOptionalValues(EI.ElementTypeEnum))
             {
                 EI.OptionalValuesObjectsList = ((IWindowExplorer)this).GetOptionalValuesList(EI, eLocateBy.ByXPath, EI.XPath);
-            }            
+            }
             if (EI.OptionalValuesObjectsList.Count > 0)
             {
                 EI.OptionalValuesObjectsList[0].IsDefault = true;
@@ -2636,7 +2637,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         void Amdocs.Ginger.Plugin.Core.IRecord.StartRecording(bool learnAdditionalChanges)
         {
-            DoRecordings();
+            DoRecordings(learnAdditionalChanges);
         }
 
         void Amdocs.Ginger.Plugin.Core.IRecord.ResetRecordingEventHandler()
@@ -2644,8 +2645,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             RecordingEvent = null;
         }
 
-        private void DoRecordings()
+        private bool isPOMRecording = false;
+        private void DoRecordings(bool isPomRecord = false)
         {
+            isPOMRecording = isPomRecord;
+
             PayLoad plJE = new PayLoad("CheckJExplorerExists");
             plJE.ClosePackage();
 
@@ -2702,10 +2706,13 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad plAC = new PayLoad("StopRecording");
             plAC.ClosePackage();
             Send(plAC);
+
+            isPOMRecording = false;
         }
 
         private void StartGetRecordingTimer()
         {
+            currentWindowTitle = string.Empty;
             mGetRecordingTimer = new System.Windows.Threading.DispatcherTimer();
             mGetRecordingTimer.Tick += dispatcherTimerElapsedTick;
             mGetRecordingTimer.Interval = new TimeSpan(0, 0, 1);
@@ -2714,10 +2721,10 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void dispatcherTimerElapsedTick(object sender, EventArgs e)
         {
-            GetRecording();
+            GetRecording(isPOMRecording);
         }
 
-        private void GetRecording()
+        private void GetRecording(bool isPOMRecording)
         {
             if (mGetRecordingTimer.IsEnabled == false)
                 return;
@@ -2731,8 +2738,168 @@ namespace GingerCore.Drivers.JavaDriverLib
                 List<PayLoad> list = rcAC.GetListPayLoad();
                 foreach (PayLoad pl in list)
                 {
-                    CreateAction(pl);
+                    if (isPOMRecording)
+                    {
+                        GetPOMAction(pl);
+                    }
+                    else
+                    {
+                        CreateAction(pl);
+                    }
                 }
+            }
+        }
+        protected void OnRecordingEvent(RecordingEventArgs e)
+        {
+            RecordingEvent?.Invoke(this, e);
+        }
+
+        private string currentWindowTitle = string.Empty;
+        private void GetPOMAction(PayLoad payLoad)
+        {
+            var title = ((IWindowExplorer)this).GetActiveWindow().Title;
+            if (title != currentWindowTitle)
+            {
+                currentWindowTitle = title;
+                RecordingEventArgs recordingEventArgs = new RecordingEventArgs();
+                recordingEventArgs.EventType = eRecordingEvent.PageChanged;
+                PageChangedEventArgs pageArgs = new PageChangedEventArgs()
+                {
+                    PageURL = title ,
+                    PageTitle = title,
+                    ScreenShot = Amdocs.Ginger.Common.GeneralLib.General.BitmapToBase64(GetScreenShot())
+                };
+                recordingEventArgs.EventArgs = pageArgs;
+                OnRecordingEvent(recordingEventArgs);
+            }
+
+            RecordingEventArgs args = new RecordingEventArgs();
+            args.EventType = eRecordingEvent.ElementRecorded;
+            args.EventArgs = GetElementConfigFromPayload(payLoad);
+            OnRecordingEvent(args);
+        }
+
+        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration elementActionCongifuration)
+        {
+            JavaElementInfo elementInfo = new JavaElementInfo();
+            try
+            {
+                elementInfo.XPath = Convert.ToString(elementActionCongifuration.LocateValue);
+                elementInfo.ElementType = nameof(JavaElementInfo);
+                elementInfo = (JavaElementInfo)((IWindowExplorer)this).LearnElementInfoDetails(elementInfo);
+
+                elementInfo.ElementName = elementActionCongifuration.Description;
+                if (Enum.IsDefined(typeof(eElementType), Convert.ToString(elementActionCongifuration.Type)))
+                {
+                    elementInfo.ElementTypeEnum = (eElementType)Enum.Parse(typeof(eElementType), Convert.ToString(elementActionCongifuration.Type));
+                }
+
+                foreach (var elementLocator in elementInfo.Locators)
+                {
+                    elementLocator.Active = true;
+                    elementLocator.IsAutoLearned = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred creating the elementinfo object", ex);
+            }
+
+            return elementInfo;
+        }
+        private object GetElementConfigFromPayload(PayLoad payLoad)
+        {
+            ElementActionCongifuration configArgs = new ElementActionCongifuration();
+            //
+            configArgs.LocateBy = eLocateBy.ByXPath;
+            configArgs.LocateValue = payLoad.GetValueString();
+            
+            if (!payLoad.Name.Equals("SwitchWindow"))
+            {
+                configArgs.ElementValue = payLoad.GetValueString();
+            }
+           
+            SetElementSpecificConfiguration(payLoad, configArgs);
+ 
+            configArgs.Description = string.Concat(configArgs.Operation, " ", configArgs.LocateValue);
+            configArgs.LearnedElementInfo = GetElementInfoFromActionConfiguration(configArgs);
+
+
+            return configArgs;
+        }
+
+        private static void SetElementSpecificConfiguration(PayLoad payLoad, ElementActionCongifuration configArgs)
+        {
+            switch (payLoad.Name)
+            {
+                case "JButton":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Button.ToString();
+                    break;
+                case "JTextField":
+                    var textFieldName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+                case "JTextArea":
+                case "JTextPane":
+                    var TextAreaName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+                case "JCheckBox":
+                    configArgs.Operation = ActUIElement.eElementAction.Toggle.ToString();
+                    configArgs.Type = eElementType.CheckBox.ToString();
+                    break;
+                case "JComboBox":
+                    var comboBoxName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.ComboBox.ToString();
+                    break;
+                case "JRadioButton":
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.RadioButton.ToString();
+                    break;
+                case "JTable":
+                    var tableName = payLoad.GetValueString();
+                    var JTableName = payLoad.GetValueString();
+                    var row = payLoad.GetValueString();
+                    var column = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.TableCellAction.ToString();
+                    configArgs.Type = eElementType.Table.ToString();
+                    configArgs.ControlAction = ActUIElement.eTableAction.DoubleClick.ToString();
+                    configArgs.LocateRowType = "Row Number";
+                    configArgs.ColSelectorValue = ActUIElement.eTableElementRunColSelectorValue.ColNum.ToString();
+                    configArgs.LocateColTitle = column;
+                    configArgs.WhereColumnValue = column;
+                    configArgs.RowValue = row;
+                    break;
+                case "JMenu":
+                case "JMenuItem":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.MenuItem.ToString();
+                    break;
+                case "JList":
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.ListItem.ToString();
+                    break;
+                case "JTree":
+                    var treeName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.TreeView.ToString();
+                    break;
+                case "JTabbedPane":
+                    var paneName = payLoad.GetValueString();
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.Tab.ToString();
+                    break;
+                case "SwitchWindow":
+                    configArgs.Operation = ActUIElement.eElementAction.Switch.ToString();
+                    configArgs.Type = eElementType.Window.ToString();
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -2760,14 +2927,15 @@ namespace GingerCore.Drivers.JavaDriverLib
                     string CheckBoxXPath = pl.GetValueString();
                     string CheckBoxName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActUIElement()
+                    var uiJCheckBoxAction = new ActUIElement()
                     {
                         Description = "Click checkBox '" + CheckBoxName + "'",
                         ElementLocateBy = eLocateBy.ByXPath,
                         ElementLocateValue = CheckBoxXPath,
                         ElementType = eElementType.CheckBox,
                         ElementAction = ActUIElement.eElementAction.Toggle
-                    });
+                    };
+                    BusinessFlow.AddAct(uiJCheckBoxAction);
                     break;
 
                 case "JTextField":
@@ -2775,7 +2943,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     string TextFieldValue = pl.GetValueString();
                     string TextFieldName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActUIElement()
+                    var jTextFieldUIAction = new ActUIElement()
                     {
                         Description = "Set Text Box '" + TextFieldName + "'",
                         ElementLocateBy = eLocateBy.ByXPath,
@@ -2783,7 +2951,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         Value = TextFieldValue,
                         ElementType = eElementType.TextBox,
                         ElementAction = ActUIElement.eElementAction.SetValue
-                    });
+                    };
+                    BusinessFlow.AddAct(jTextFieldUIAction);
                     break;
 
                 case "JComboBox":
@@ -2800,7 +2969,6 @@ namespace GingerCore.Drivers.JavaDriverLib
                         ElementAction = ActUIElement.eElementAction.Select
                     };
                     actUIElementJComboBox.GetOrCreateInputParam(ActUIElement.Fields.ValueToSelect, ComboBoxValue);
-
                     BusinessFlow.AddAct(actUIElementJComboBox);
 
                     break;
@@ -2809,14 +2977,16 @@ namespace GingerCore.Drivers.JavaDriverLib
                     string RadioButtonXPath = pl.GetValueString();
                     string RadioButtonName = pl.GetValueString();
 
-                    BusinessFlow.AddAct(new ActUIElement()
+                    var rbdButtonUIAction = new ActUIElement()
                     {
                         Description = "Select RadioButton'" + RadioButtonName + "'",
                         ElementLocateBy = eLocateBy.ByXPath,
                         ElementLocateValue = RadioButtonXPath,
                         ElementType = eElementType.RadioButton,
                         ElementAction = ActUIElement.eElementAction.Select
-                    });
+                    };
+                    BusinessFlow.AddAct(rbdButtonUIAction);
+
                     break;
 
                 case "JTextArea":
@@ -3046,6 +3216,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     throw new Exception("Unknown Action to create: " + pl.Name);
             }
         }
+
 
         private ActUIElement GetHTMLAction(PayLoad pl)
         {
@@ -3411,7 +3582,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     props.Add(new OptionalValue { Value = res, IsDefault = false });
                 }
-            }   
+            }
             else
             {
                 string ErrMSG = RespListDetails.GetErrorValue();
