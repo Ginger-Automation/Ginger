@@ -3012,6 +3012,12 @@
         <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
         <Setter Property="Margin" Value="0,0,0,0"/>
     </Style>
+    <Style  TargetType="WindowsFormsHost" x:Key="@WindowsFormsHostDateTimePickerStyle" >
+        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="Width" Value="215"/>
+    </Style>
 
     <Style TargetType="Label" x:Key="@SmallerInputFieldLabelStyle" >
         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}"/>
