@@ -209,12 +209,7 @@ namespace GingerCore.Variables
         {
             if (!string.IsNullOrEmpty(mPrecisionValue) && value.Contains(".") && value.Split('.')[1].Length > 0)
             {
-                float validFloat;
-                float.TryParse(value, out validFloat);
-                if ((!string.IsNullOrEmpty(mMinValue) || !string.IsNullOrEmpty(mMaxValue)) && (validFloat < Convert.ToDouble(mMinValue) || validFloat > Convert.ToDouble(mMaxValue)))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Input Number is not in range: {mMinValue}-{mMaxValue}.");
-                }
+                var validFloat = ConvertStringToNumber(value);
                 return Math.Round(Convert.ToDouble(validFloat), Convert.ToInt32(mPrecisionValue)).ToString();
             }
             else
@@ -223,16 +218,29 @@ namespace GingerCore.Variables
             }
         }
 
+        private float ConvertStringToNumber(string value)
+        {
+           bool isValidNumber = float.TryParse(value, out var validFloat);
+
+            if (!isValidNumber)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Not a valid Number : {value}");
+            }
+            if ((!string.IsNullOrEmpty(mMinValue) || !string.IsNullOrEmpty(mMaxValue)) && !CheckNumberInRange(validFloat))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Input Number is not in range: Min. Value: [{mMinValue}] - Max. Value: [{mMaxValue}].");
+            }
+
+
+            return validFloat;
+        }
+
         private  string GetValidInteger(string value)
         {
             try
             {
-                float validInteger;
-                float.TryParse(value, out validInteger);
-                if ((!string.IsNullOrEmpty(mMinValue) || !string.IsNullOrEmpty(mMaxValue)) && (validInteger < Convert.ToDouble(mMinValue) || validInteger > Convert.ToDouble(mMaxValue)))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Input Number is not in range: { mMinValue}-{ mMaxValue}.");
-                }
+                float validInteger = ConvertStringToNumber(value);
+
                 return Convert.ToInt32(validInteger).ToString();
             }
             catch (Exception ex)
@@ -275,6 +283,17 @@ namespace GingerCore.Variables
         public override void ResetValue()
         {
             Value = mInitialNumberValue;
+        }
+
+        public bool CheckNumberInRange(float number)
+        {
+            var minValue = float.Parse(this.MinValue);
+            var maxValue = float.Parse(this.MaxValue);
+            if ((number < minValue) || (number > maxValue))
+            {
+                return  false;
+            }
+            return true;
         }
     }
 }

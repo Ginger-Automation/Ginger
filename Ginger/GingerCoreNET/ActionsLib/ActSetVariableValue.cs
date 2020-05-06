@@ -141,19 +141,19 @@ namespace GingerCore.Actions
                     try
                     {
                         var varNumber = ((VariableNumber)Var);
-                        if (float.Parse(calculatedValue) >= float.Parse(varNumber.MinValue) && float.Parse(calculatedValue) <= float.Parse(varNumber.MaxValue))
+                        if (varNumber.CheckNumberInRange(float.Parse(calculatedValue)))
                         {
                             varNumber.Value = calculatedValue;
                         }
                         else
                         {
-                            Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value:{varNumber.MinValue}, Max value:{varNumber.MinValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
+                            Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value: {varNumber.MinValue}, Max value: {varNumber.MaxValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
                             return;
                         }
                     }
                     catch (System.Exception ex)
                     {
-                        Error= $"Error occured during SetValue for Variable number type..:-{ex.Message}";
+                        Error= $"Error occured during SetValue for Variable number type..:- {ex.Message}";
                         return;
                     }
 

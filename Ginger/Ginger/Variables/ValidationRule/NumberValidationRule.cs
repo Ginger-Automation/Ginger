@@ -45,11 +45,9 @@ namespace Ginger.Variables
             {
                 try
                 {
-                    var minValue = float.Parse(variableNumber.MinValue);
-                    var maxValue = float.Parse(variableNumber.MaxValue);
-                    if((result < minValue) || (result > maxValue) )
+                    if(!variableNumber.CheckNumberInRange(result) )
                     {
-                        return new ValidationResult(false, $"Please enter number in the range: MinValue[{minValue}], MaxValue[{maxValue}].");
+                        return new ValidationResult(false, $"Please enter number in the range: MinValue[{variableNumber.MinValue}], MaxValue[{variableNumber.MaxValue}].");
                     }
                 }
                 catch (System.Exception ex)
