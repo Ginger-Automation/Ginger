@@ -2646,9 +2646,9 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         private bool isPOMRecording = false;
-        private void DoRecordings(bool learnAdditionalChanges = false)
+        private void DoRecordings(bool isPomRecord = false)
         {
-            isPOMRecording = learnAdditionalChanges;
+            isPOMRecording = isPomRecord;
 
             PayLoad plJE = new PayLoad("CheckJExplorerExists");
             plJE.ClosePackage();
@@ -2706,6 +2706,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             PayLoad plAC = new PayLoad("StopRecording");
             plAC.ClosePackage();
             Send(plAC);
+
+            isPOMRecording = false;
         }
 
         private void StartGetRecordingTimer()
