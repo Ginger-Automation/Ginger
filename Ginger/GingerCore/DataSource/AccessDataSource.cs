@@ -416,10 +416,10 @@ namespace GingerCore.DataSource
 
         public override void InitConnection()
         {
-            DataSourceBase ADC;
-            ADC = new AccessDataSource();
-            ADC.FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
-
+            if (FilePath != null)
+            {
+                FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);
+            }
         }
 
         public override string AddNewCustomizedTableQuery()

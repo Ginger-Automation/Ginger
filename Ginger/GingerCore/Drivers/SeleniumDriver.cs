@@ -3145,13 +3145,12 @@ namespace GingerCore.Drivers
             {
                 if (!locator.IsAutoLearned)
                 {
-                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
-                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                    elem = LocateElementByLocator(evaluatedLocator, true);
+                    elem = LocateElementIfNotAutoLeared(locator);
                 }
                 else
+                {
                     elem = LocateElementByLocator(locator, true);
+                }
 
                 if (elem != null)
                 {
@@ -3743,7 +3742,15 @@ namespace GingerCore.Drivers
                             //filter none visible elements
                             if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
                             {
-                                continue;
+                                //for some element like select tag el.Displayed is false but element is visible in page
+                                if (el.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
+                                {
+                                    continue;
+                                }
+                                else if(el.GetCssValue("width").Equals("auto") || el.GetCssValue("height").Equals("auto"))
+                                {
+                                    continue;
+                                }
                             }
 
                             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
@@ -7460,7 +7467,16 @@ namespace GingerCore.Drivers
 
                 foreach (ElementLocator el in activesElementLocators)
                 {
-                    if (LocateElementByLocator(el, true) != null)
+                    IWebElement webElement = null;
+                    if (!el.IsAutoLearned)
+                    {
+                        webElement = LocateElementIfNotAutoLeared(el);
+                    }
+                    else
+                    {
+                        webElement = LocateElementByLocator(el, true);
+                    }
+                    if (webElement != null)
                     {
                         el.StatusError = string.Empty;
                         el.LocateStatus = ElementLocator.eLocateStatus.Passed;
@@ -7497,6 +7513,13 @@ namespace GingerCore.Drivers
             }
         }
 
+        private IWebElement LocateElementIfNotAutoLeared(ElementLocator el)
+        {
+            ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
+            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+            return LocateElementByLocator(evaluatedLocator, true);
+        }
 
         void IWindowExplorer.CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> mOriginalList)
         {

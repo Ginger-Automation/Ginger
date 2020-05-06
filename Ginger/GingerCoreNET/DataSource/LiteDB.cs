@@ -738,7 +738,7 @@ namespace GingerCoreNET.DataSource
             {
                 if (query.Contains("where") && query.Contains("GINGER_ID ="))
                 {
-                    RunQuery(query);
+                     RunQuery(query);
                     string[] querysplit = query.Split(new[] { "GINGER_ID =" }, StringSplitOptions.None);
 
                     dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1]);
@@ -1131,6 +1131,28 @@ namespace GingerCoreNET.DataSource
 
                     actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                     break;
+
+                case eControlAction.AddRow:
+                    DataSourceTable DSTable = null;
+                    ObservableList<DataSourceTable> dstTables = GetTablesList();
+                    foreach (DataSourceTable dst in dstTables)
+                    {
+                        if (dst.Name == actDSTable.DSTableName)
+                        {
+                            DSTable = dst;
+                            DSTable.DataTable = dst.DSC.GetTable(actDSTable.DSTableName);
+                            break;
+                        }
+                    }
+                    List<string> mColumnNames = GetColumnList(actDSTable.DSTableName);
+                    AddRow(mColumnNames, DSTable);
+                    SaveTable(DSTable.DataTable);
+                    //Get GingerId
+                    dt = GetTable(actDSTable.DSTableName);
+                    DataRow dr = dt.Rows[dt.Rows.Count-1];
+                    string GingerId = Convert.ToString(dr["GINGER_ID"]);
+                    actDSTable.AddOrUpdateReturnParamActual("GINGER_ID", GingerId);
+                    break;
                 default:
 
                     break;
@@ -1140,9 +1162,6 @@ namespace GingerCoreNET.DataSource
 
         public override void InitConnection()
         {
-            DataSourceBase ADC;
-            ADC = new GingerLiteDB();
-            ADC.DSType = DataSourceBase.eDSType.LiteDataBase;
             if (FilePath != null)
             {
                 FileFullPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(FilePath);

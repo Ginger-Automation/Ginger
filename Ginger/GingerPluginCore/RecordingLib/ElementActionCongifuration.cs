@@ -34,6 +34,17 @@ namespace Amdocs.Ginger.Plugin.Core
 
         public bool AddPOMToAction { get; set; }
         public string POMGuid { get; set; }
-        public string ElementGuid { get; set; }        
+        public string ElementGuid { get; set; }
+        
+        #region java driver table element specific property
+        public string WhereColumnValue { get; set; }
+        public string RowValue { get; set; }
+        public string ControlAction { get; set; }
+        public string LocateRowType { get; set; }
+
+        public string LocateColTitle { get; set; }
+        public string ColSelectorValue { get; set; }
+
+        #endregion
     }
 }
