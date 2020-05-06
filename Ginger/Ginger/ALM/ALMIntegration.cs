@@ -127,12 +127,22 @@ namespace Ginger.ALM
         }
         public bool SetDefaultAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
         {
+            //set default on the solution
             foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).ToList())
             {
                 alm.DefaultAlm = false;
             }
             GingerCoreNET.ALMLib.ALMConfig almConfig = GetCurrentAlmConfig(AlmType);
             almConfig.DefaultAlm = true;
+
+            //set default on almcore
+            foreach (GingerCoreNET.ALMLib.ALMConfig alm in ALMCore.AlmConfigs.Where(x => x.DefaultAlm == true).ToList())
+            {
+                alm.DefaultAlm = false;
+            }
+            GingerCoreNET.ALMLib.ALMConfig DefaultAlm = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == AlmType);
+            DefaultAlm.DefaultAlm = true;
+
             return true;
         }
         public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)

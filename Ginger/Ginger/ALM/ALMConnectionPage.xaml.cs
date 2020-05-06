@@ -53,7 +53,7 @@ namespace Ginger.ALM
             //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PasswordTextBox, PasswordBox.PasswordCharProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMPassword));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
-            PasswordTextBox.Password = CurrentAlmConfigurations.ALMPassword; //can't do regular binding with PasswordTextBox control for security reasons
+            PasswordTextBox.Password = CurrentAlmUserConfigurations.ALMPassword; //can't do regular binding with PasswordTextBox control for security reasons
         }
         public ALMConnectionPage(ALMIntegration.eALMConnectType almConnectStyle, bool isConnWin = false)
         {
@@ -383,6 +383,10 @@ namespace Ginger.ALM
 
         private void SaveConnectionDetails()
         {
+            if (CurrentAlmConfigurations != null)
+            {
+                ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
+            }
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
             {
@@ -584,49 +588,6 @@ namespace Ginger.ALM
             RadioButton rBtn = sender as RadioButton;
             if ((bool)rBtn.IsChecked)
             {
-                #region //switch (rBtn.Name)
-                //switch (rBtn.Name)
-                //{
-                //    case "QCRadioButton":
-                //        if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.QC)
-                //        {
-                //             WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
-                //            ClearALMConfigs();
-                //        }
-                //        break;
-                //    case "RQMRadioButton":
-                //        if ((ALMIntegration.eALMType) WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.RQM)
-                //        {
-                //            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
-                //            ClearALMConfigs();
-                //            //ALMIntegration.Instance.UpdateALMType(ALMIntegration.eALMType.RQM);
-                //            ALMIntegration.Instance.SetALMCoreConfigurations(); //Because RQM need to update the server field from existing package
-                //            SetLoadPackageButtonContent();
-                //        }
-                //        break;
-                //    case "RallyRadioButton":
-                //        if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.RALLY)
-                //        {
-                //            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY;
-                //            ClearALMConfigs();
-                //        }
-                //        break;
-                //    case "JiraRadioButton":
-                //        if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.Jira)
-                //        {
-                //            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
-                //            ClearALMConfigs();
-                //        }
-                //        break;
-                //    case "qTestRadioButton":
-                //        if ((ALMIntegration.eALMType)WorkSpace.Instance.Solution.AlmType != ALMIntegration.eALMType.Qtest)
-                //        {
-                //            WorkSpace.Instance.Solution.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
-                //            ClearALMConfigs();
-                //        }
-                //        break;
-                //}
-                #endregion
                 switch (rBtn.Name)
                 {
                     case "QCRadioButton":
@@ -676,7 +637,7 @@ namespace Ginger.ALM
                 CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(almType);
                 StyleRadioButtons();
                 SetControls();
-                //Bind again as we changed the object
+                //Bind again as we changed the objects
                 Bind();
             }
         }
@@ -737,6 +698,10 @@ namespace Ginger.ALM
 
         private void TestALMConnectionButton_Click(object sender, RoutedEventArgs e)
         {
+            if (CurrentAlmConfigurations != null)
+            {
+                ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
+            }
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             bool connectionSucc = false;
             try { connectionSucc = ALMIntegration.Instance.TestALMProjectConn(almConectStyle); }
