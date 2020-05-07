@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GingerCore.Variables;
+using System;
 using System.Globalization;
 using System.Windows.Controls;
 
@@ -6,10 +7,10 @@ namespace Ginger.Variables
 {
     public class DateTimeFormatValidationRule : ValidationRule
     {
-        private DateTime dateTimevalue;
-        public DateTimeFormatValidationRule(DateTime value)
+        private VariableDateTime dateTimeVar;
+        public DateTimeFormatValidationRule(VariableDateTime value)
         {
-            dateTimevalue = value;
+            dateTimeVar = value;
         }
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
@@ -17,7 +18,7 @@ namespace Ginger.Variables
             try
             {
                 //set date format in datetime field
-               var datetime = dateTimevalue.ToString(value as string, CultureInfo.InvariantCulture);
+               var datetime = dateTimeVar.ConvertDateTimeToSpecificFormat(value as string);
 
                 //if dateformat is invalid it will throw exception invalid date format exception
                Convert.ToDateTime(datetime);
