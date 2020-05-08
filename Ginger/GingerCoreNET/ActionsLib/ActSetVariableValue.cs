@@ -171,7 +171,7 @@ namespace GingerCore.Actions
                             return;
                         }
 
-                        if (DateTime.Parse(calculatedValue) >= DateTime.Parse(varDateTime.MinDateTime) && DateTime.Parse(calculatedValue) <= DateTime.Parse(varDateTime.MaxDateTime))
+                        if (varDateTime.CheckDateTimeWithInRange(calculatedValue))
                         {
                             varDateTime.Value = calculatedValue;
                         }
