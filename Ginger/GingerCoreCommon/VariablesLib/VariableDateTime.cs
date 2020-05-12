@@ -18,6 +18,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 
@@ -79,8 +80,16 @@ namespace GingerCore.Variables
             }
             set
             {
-                mInitialDateTime = value;
-                Value = mInitialDateTime;
+                if (!CheckDateTimeWithInRange(value))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Initial DateTime[{value}] is not in Range:- Min.DateTime [{MinDateTime}], Max.DateTime [{MaxDateTime}]");
+                }
+                else
+                {
+                    mInitialDateTime = value;
+                    Value = mInitialDateTime;
+                }
+
                 OnPropertyChanged("InitialDateTime");
                 OnPropertyChanged("Formula");
             }
@@ -141,6 +150,11 @@ namespace GingerCore.Variables
             set
             {
                 mDateTimeFormat = value;
+               
+                if(mInitialDateTime != null)
+                {
+                    InitialDateTime = ConvertDateTimeToSpecificFormat(mDateTimeFormat);
+                }
                 OnPropertyChanged("DateTimeFormat");
                 OnPropertyChanged("InitialDateTime");
                 OnPropertyChanged("Formula");
@@ -149,12 +163,11 @@ namespace GingerCore.Variables
 
         public override string GetFormula()
         {
-            mInitialDateTime = Convert.ToDateTime(mInitialDateTime).ToString(DateTimeFormat, System.Globalization.CultureInfo.InvariantCulture);
-            Value = mInitialDateTime;
-            return "Initial DateTime : "+ mInitialDateTime;
+            return "Initial DateTime : " +  mInitialDateTime;
         }
 
-        
+       
+
         public override List<eSetValueOptions> GetSupportedOperations()
         {
             var supportedOperations = new List<eSetValueOptions>();
@@ -171,6 +184,20 @@ namespace GingerCore.Variables
         public override void ResetValue()
         {
             Value = mInitialDateTime;
+        }
+
+        public string ConvertDateTimeToSpecificFormat(string format)
+        {
+            return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        public bool CheckDateTimeWithInRange(string dateTimeValue)
+        {
+            if (DateTime.Parse(dateTimeValue) >= DateTime.Parse(MinDateTime) && DateTime.Parse(dateTimeValue) <= DateTime.Parse(MaxDateTime))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
