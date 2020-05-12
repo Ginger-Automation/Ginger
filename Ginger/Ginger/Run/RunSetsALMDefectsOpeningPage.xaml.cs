@@ -116,7 +116,7 @@ namespace Ginger.Run
 
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
-            //select alm from defects profile
+            //select alm from defects profile and return if selected QC without rest
             //if (!ALMIntegration.Instance.AlmConfigurations.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
             //{
             //    Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");

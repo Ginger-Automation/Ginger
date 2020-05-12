@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -35,14 +36,24 @@ namespace GingerCore.ALM
         //public static ALMConfig AlmConfig = new ALMConfig();
 
         public static ObservableList<GingerCoreNET.ALMLib.ALMConfig> AlmConfigs { get; set; } = new ObservableList<GingerCoreNET.ALMLib.ALMConfig>();
-        
+
         public static GingerCoreNET.ALMLib.ALMConfig DefaultAlmConfig
         {
             get
             {
-                if (AlmConfigs.FirstOrDefault(x => x.DefaultAlm == true) != null)
+                GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
+                if (AlmConfig != null)
                 {
-                    return AlmConfigs.FirstOrDefault(x => x.DefaultAlm == true);
+                    GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == AlmConfig.AlmType);
+                    if (AlmUserConfig == null)
+                    {
+                        AlmUserConfig = new GingerCoreNET.ALMLib.ALMUserConfig();
+                        AlmUserConfig.AlmType = AlmConfig.AlmType;
+                        WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+                    }
+                    AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
+                    AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
+                    return AlmConfig;
                 }
                 else
                 {
@@ -73,12 +84,12 @@ namespace GingerCore.ALM
                 AlmConfigs.Add(AlmConfig);
             }
 
-            GingerCoreNET.ALMLib.ALMUserConfig CurrentAlmUserConfigurations = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
+            GingerCoreNET.ALMLib.ALMUserConfig CurrentAlmUserConfigurations = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (CurrentAlmUserConfigurations == null)
             {
                 CurrentAlmUserConfigurations = new GingerCoreNET.ALMLib.ALMUserConfig();
                 CurrentAlmUserConfigurations.AlmType = almType;
-                amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(CurrentAlmUserConfigurations);
+                WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(CurrentAlmUserConfigurations);
             }
 
             if (AlmConfig == null)
@@ -99,25 +110,6 @@ namespace GingerCore.ALM
                 AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
 
         }
-
-        //public virtual void AddOrUpdateALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
-        //{
-        //    GingerCoreNET.ALMLib.ALMConfig AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
-        //    AlmConfig.ALMServerURL = ALMServerUrl;
-        //    AlmConfig.UseRest = UseRest;
-        //    AlmConfig.ALMUserName = ALMUserName;
-        //    AlmConfig.ALMPassword = ALMPassword;
-        //    AlmConfig.ALMDomain = ALMDomain;
-        //    AlmConfig.ALMProjectName = ALMProject;
-        //    AlmConfig.ALMProjectKey = ALMProjectKey;
-        //    AlmConfig.AlmType = almType;
-
-        //    if (!String.IsNullOrEmpty(amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ConfigPackageFolderPath))
-        //        AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ConfigPackageFolderPath;
-
-        //    //if not exist add otherwise update
-        //    AlmConfigs.Add(AlmConfig);
-        //}
 
         public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
         {

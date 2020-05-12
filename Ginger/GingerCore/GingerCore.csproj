@@ -585,7 +585,6 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\JiraCore.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />

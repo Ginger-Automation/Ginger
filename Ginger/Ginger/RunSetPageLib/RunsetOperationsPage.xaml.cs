@@ -219,6 +219,7 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
+            //select alm from defects profile and return if selected QC without rest
             //if (!ALMCore.DefaultAlmConfig.UseRest && ALMCore.DefaultAlmConfig.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
             //{
             //    Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);

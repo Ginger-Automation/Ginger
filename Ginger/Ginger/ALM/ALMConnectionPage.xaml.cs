@@ -48,9 +48,6 @@ namespace Ginger.ALM
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMServerURL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.UseRest));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMUserName));
-            //tryied removing password char,event as well for binding
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PasswordTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMPassword));
-            //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(PasswordTextBox, PasswordBox.PasswordCharProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMPassword));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
             PasswordTextBox.Password = CurrentAlmUserConfigurations.ALMPassword; //can't do regular binding with PasswordTextBox control for security reasons
@@ -187,6 +184,13 @@ namespace Ginger.ALM
                 UserNameTextBox.Text = "";
                 StyleRadioButtons();
             }
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && JiraRadioButton.IsChecked == false)
+            {
+                JiraRadioButton.IsChecked = true;
+                PasswordTextBox.Password = "";
+                UserNameTextBox.Text = "";
+                StyleRadioButtons();
+            }
             else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
             {
                 RallyRadioButton.IsChecked = true;
@@ -213,6 +217,10 @@ namespace Ginger.ALM
             {
                 RQMRadioButton.IsChecked = true;
             }
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && JiraRadioButton.IsChecked == false)
+            {
+                JiraRadioButton.IsChecked = true;
+            }
             else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
             {
                 RallyRadioButton.IsChecked = true;
@@ -221,23 +229,6 @@ namespace Ginger.ALM
             {
                 qTestRadioButton.IsChecked = true;
             }
-        }
-
-        //remove below function
-        private void ClearALMConfigs()
-        {
-            ServerURLTextBox.Text = null;
-            UserNameTextBox.Text = null;
-            PasswordTextBox.Password = null;
-            CurrentAlmConfigurations.ALMPassword = null;
-            DomainComboBox.SelectedItem = null;
-            DomainComboBox.SelectedValue = null;
-            DomainComboBox.Items.Clear();
-            ProjectComboBox.SelectedItem = null;
-            ProjectComboBox.SelectedValue = null;
-            ProjectComboBox.Items.Clear();
-            RestAPICheckBox.IsChecked = false;
-            CurrentAlmConfigurations.UseRest = false;
         }
 
         private bool GetProjectsDetails()
@@ -383,10 +374,7 @@ namespace Ginger.ALM
 
         private void SaveConnectionDetails()
         {
-            if (CurrentAlmConfigurations != null)
-            {
-                ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
-            }
+            ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             if (ALMIntegration.Instance.TestALMProjectConn(almConectStyle))
             {
@@ -407,8 +395,6 @@ namespace Ginger.ALM
 
         private void CloseWindow(object sender, EventArgs e)
         {
-            //ALMIntegration.Instance.SyncConfigurations();
-            SaveALMConfigs();//Remove this line
             _pageGenericWin.Close();
         }
 
@@ -569,7 +555,6 @@ namespace Ginger.ALM
 
         private void SaveALMConfigs()
         {
-            //ALMIntegration.Instance.SyncConfigurations();
             WorkSpace.Instance.UserProfile.SaveUserProfile();
             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
         }
@@ -631,8 +616,8 @@ namespace Ginger.ALM
                 BindingOperations.ClearAllBindings(DomainComboBox);
                 BindingOperations.ClearAllBindings(ProjectComboBox);
 
-                ALMIntegration.Instance.UpdateALMType(almType);
                 ALMIntegration.Instance.SetDefaultAlmConfig(almType);
+                ALMIntegration.Instance.UpdateALMType(almType);
                 CurrentAlmConfigurations = ALMIntegration.Instance.GetCurrentAlmConfig(almType);
                 CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(almType);
                 StyleRadioButtons();
@@ -671,14 +656,12 @@ namespace Ginger.ALM
 
         private void UserNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //WorkSpace.Instance.UserProfile.ALMUserName = UserNameTextBox.Text;
             SetControls();
         }
 
         private void PasswordTextBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             CurrentAlmUserConfigurations.ALMPassword = PasswordTextBox.Password;
-            //ALMIntegration.Instance.SetALMPassword(PasswordTextBox.Password);
             SetControls();
         }
 
@@ -698,10 +681,7 @@ namespace Ginger.ALM
 
         private void TestALMConnectionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (CurrentAlmConfigurations != null)
-            {
-                ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
-            }
+            ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             bool connectionSucc = false;
             try { connectionSucc = ALMIntegration.Instance.TestALMProjectConn(almConectStyle); }

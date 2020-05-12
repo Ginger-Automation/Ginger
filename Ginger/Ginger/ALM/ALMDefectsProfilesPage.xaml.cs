@@ -97,13 +97,20 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
             _manualCheckedEvent = true;
         }
-
+        public static List<string> ALMTypes
+        {
+            get
+            {
+                return Enum.GetNames(typeof(GingerCoreNET.ALMLib.ALMIntegration.eALMType)).ToList();
+            }
+        }
         private void SetFieldsGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Name), WidthWeight = 30, Header = "Name", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Description), WidthWeight = 60, Header = "Description", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Description), WidthWeight = 30, Header = "Description", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.DefaultALM), WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ALMTypes, Header = "ALM Type" });
             view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.IsDefault), WidthWeight = 10, Header = "Default", StyleType = GridColView.eGridColStyleType.Template, HorizontalAlignment = HorizontalAlignment.Center, CellTemplate = (DataTemplate)this.grdDefectsProfile.Resources["DefaultValueTemplate"] });
 
             grdDefectsProfiles.SetAllColumnsDefaultView(view);

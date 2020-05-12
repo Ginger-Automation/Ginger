@@ -41,15 +41,10 @@ namespace Ginger.ALM
 
         private ALMIntegration()
         {
-            //UpdateALMType(ALMCore.DefaultAlmConfig.AlmType);
         }
 
         public void UpdateALMType(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
         {
-            //bool firstSync = false;
-            //if (AlmCore == null)
-            //    firstSync = true;
-
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(AlmType);
 
             switch (AlmType)
@@ -85,8 +80,8 @@ namespace Ginger.ALM
                     AlmRepo = new QtestRepository();
                     break;
             }
-            //if(firstSync)
-                SetALMCoreConfigurations(AlmType);
+
+            SetALMCoreConfigurations(AlmType);
         }
 
         public void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
@@ -96,22 +91,11 @@ namespace Ginger.ALM
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if(CurrentAlmConfigurations != null)
                 AlmCore.SetALMConfigurations(CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName, CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName, CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath);
-            //SyncConfigurations();
         }
 
         public void SyncConfigurations()
         {
-            //WorkSpace.Instance.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
-            //WorkSpace.Instance.Solution.UseRest = ALMCore.AlmConfig.UseRest;
-            //WorkSpace.Instance.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
-            //WorkSpace.Instance.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
-            //WorkSpace.Instance.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
-            //WorkSpace.Instance.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
-            //WorkSpace.Instance.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
-            //if ((eALMType)WorkSpace.Instance.Solution.AlmType == eALMType.Jira)
-            //{
-            //    WorkSpace.Instance.Solution.ConfigPackageFolderPath = ALMCore.AlmConfig.ALMConfigPackageFolderPath;
-            //}
+            
         }
 
         public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
@@ -141,6 +125,12 @@ namespace Ginger.ALM
                 alm.DefaultAlm = false;
             }
             GingerCoreNET.ALMLib.ALMConfig DefaultAlm = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == AlmType);
+            if (DefaultAlm == null)
+            {
+                DefaultAlm = new GingerCoreNET.ALMLib.ALMConfig();
+                DefaultAlm.AlmType = AlmType;
+                ALMCore.AlmConfigs.Add(DefaultAlm);
+            }
             DefaultAlm.DefaultAlm = true;
 
             return true;
@@ -189,17 +179,6 @@ namespace Ginger.ALM
             Manual,
             Auto,
             SettingsPage
-        }
-
-        public string ALMPassword(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
-        {
-            //return AlmRepo.ALMPassword();
-            return GetCurrentAlmUserConfig(almType).ALMPassword;
-        }
-
-        public void SetALMPassword(string newPassword)
-        {
-            //AlmRepo.SetALMPassword(newPassword);
         }
 
         public void SetALMProject(KeyValuePair<string,string> newProject, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
@@ -677,11 +656,15 @@ namespace Ginger.ALM
 
         public void OpenALMItemsFieldsPage()
         {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
+            UpdateALMType(AlmConfig.AlmType);
             AlmRepo.OpenALMItemsFieldsPage();
         }
 
         public void ALMDefectsProfilesPage()
         {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
+            UpdateALMType(AlmConfig.AlmType);
             AlmRepo.ALMDefectsProfilesPage();
         }
 
