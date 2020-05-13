@@ -93,7 +93,7 @@ namespace Ginger.ALM.Qtest
         private void GetTreeData()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            treeData = QtestConnect.Instance.GetQTestCyclesByProject(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMProject);
+            treeData = ((QtestCore)ALMIntegration.Instance.AlmCore).GetQTestCyclesByProject(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMProject);
             Mouse.OverrideCursor = null;
         }
 
@@ -224,6 +224,7 @@ namespace Ginger.ALM.Qtest
                     //    testSet.IsTestSetAlreadyImported();
                     ShowTestSetDetailsPanel(false);
                 }
+                _GenericWin.Close();
             }
             else
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);

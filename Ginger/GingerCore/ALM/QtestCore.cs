@@ -27,6 +27,8 @@ using TDAPIOLELib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
+using System.IO.Compression;
+using Amdocs.Ginger.IO;
 
 namespace GingerCore.ALM
 {
@@ -40,6 +42,7 @@ namespace GingerCore.ALM
         QTestApi.TestrunApi testrunApi = new QTestApi.TestrunApi();
         QTestApi.TestcaseApi testcaseApi = new QTestApi.TestcaseApi();
         QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
+        QTestApi.TestlogApi testlogApi = new QTestApi.TestlogApi();
 
         QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
         QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
@@ -227,14 +230,213 @@ namespace GingerCore.ALM
 
             return fields;
         }
+
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            // return ExportToQC.ExportExecutionDetailsToQC(bizFlow, ref result, publishToALMConfig);
-            return true;
+            result = string.Empty;
+            if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
+            {
+                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
+                return false;
+            }
+
+            try
+            {
+                //get the BF matching test set
+                ConnectALMServer();
+                testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
+                testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
+                testlogApi = new QTestApi.TestlogApi(connObj.Configuration);
+
+                QtestTestSuite testSuite = GetQtestTestSuite(bizFlow.ExternalID);
+                if (testSuite != null)
+                {
+                    //get all BF Activities groups
+                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;                    
+                    if (activGroups.Count > 0)
+                    {
+                        foreach (ActivitiesGroup activGroup in activGroups)
+                        {
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                            || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            {
+                                QtestTest tsTest = null;
+                                //go by TC ID = TC Instance ID
+                                tsTest = testSuite.Tests.Where(x => x.TestID == activGroup.ExternalID).FirstOrDefault();                              
+                                if (tsTest != null)
+                                {
+                                    //get activities in group
+                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
+                                    string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.TestName);
+                                    if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
+                                    {
+                                        String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                                        publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                                    }
+
+                                    //RunFactory runFactory = (RunFactory)tsTest.RunFactory;
+                                    //Run run = (Run)runFactory.AddItem(publishToALMConfig.VariableForTCRunNameCalculated);
+
+                                    // Attach ActivityGroup Report if needed
+                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                                    {
+                                        if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
+                                            (System.IO.Directory.Exists(activGroup.TempReportFolder)))
+                                        {
+                                            //Creating the Zip file - start
+                                            string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
+                                            string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
+
+                                            if (!System.IO.File.Exists(zipFileName))
+                                            {
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            else
+                                            {
+                                                System.IO.File.Delete(zipFileName);
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            System.IO.Directory.Delete(activGroup.TempReportFolder, true);
+                                            //Creating the Zip file - finish
+                                            //Attaching Zip file - start
+                                            
+                                            // ... to extand
+
+                                            //Attaching Zip file - finish
+                                            System.IO.File.Delete(zipFileName);
+                                        }
+                                    }
+
+                                    if (tsTest.Runs[0] != null)
+                                    {
+                                        List<QTestApiModel.StatusResource> statuses = testrunApi.GetStatusValuable((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey));
+                                        List<QTestApiModel.StatusResource> stepsStatuses = new List<QTestApiModel.StatusResource>();
+                                        QTestApiModel.StatusResource testCaseStatus = new QTestApiModel.StatusResource();
+
+                                        QTestApiModel.TestRunWithCustomFieldResource testRun = testrunApi.Get((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), (long)Convert.ToInt32(tsTest.Runs[0].RunID), "descendents");
+                                        List<QTestApiModel.TestStepLogResource> testStepLogs = new List<QTestApiModel.TestStepLogResource>();
+                                        
+                                        QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testRun.TestCase.Id);
+                                        int testStepsCount = 0;
+                                        foreach (QTestApiModel.TestStepResource step in testCase.TestSteps)
+                                        {
+                                            if (step.CalledTestCaseId != null)
+                                            {
+                                                QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), step.CalledTestCaseId);
+                                                foreach (QTestApiModel.TestStepResource nestedStep in calledTestCase.TestSteps)
+                                                {
+                                                    Activity matchingActivity = activities.Where(x => x.ExternalID == nestedStep.Id.ToString()).FirstOrDefault();
+                                                    if (matchingActivity != null)
+                                                    {
+                                                        QTestApiModel.TestStepLogResource testStepLog = new QTestApiModel.TestStepLogResource(null, nestedStep.Id);
+                                                        testStepLog.CalledTestCaseId = step.CalledTestCaseId;
+                                                        testStepLog.ParentTestStepId = step.Id;
+                                                        testStepLog.ActualResult = string.Empty;
+                                                        SetTestStepLogStatus(matchingActivity, ref testStepLog, statuses);
+                                                        stepsStatuses.Add(testStepLog.Status);
+                                                        testStepLogs.Add(testStepLog);
+                                                        testStepsCount++;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Activity matchingActivity = activities.Where(x => x.ExternalID == step.Id.ToString()).FirstOrDefault();
+                                                if (matchingActivity != null)
+                                                {
+                                                    QTestApiModel.TestStepLogResource testStepLog = new QTestApiModel.TestStepLogResource(null, step.Id);
+                                                    testStepLog.ActualResult = string.Empty;
+                                                    SetTestStepLogStatus(matchingActivity, ref testStepLog, statuses);
+                                                    stepsStatuses.Add(testStepLog.Status);
+                                                    testStepLogs.Add(testStepLog);
+                                                    testStepsCount++;
+                                                }
+                                            };
+                                        }                                        
+
+                                        //update the TC general status based on the activities status collection.                                
+                                        if (stepsStatuses.Where(x => x.Name == "Failed").Count() > 0)
+                                            testCaseStatus = statuses.Where(z => z.Name == "Failed").FirstOrDefault();
+                                        else if (stepsStatuses.Where(x => x.Name == "No Run").Count() == testStepsCount || stepsStatuses.Where(x => x.Name == "Not Applicable").Count() == testStepsCount)
+                                            testCaseStatus = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault();
+                                        else if (stepsStatuses.Where(x => x.Name == "Passed").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Passed").Count() + stepsStatuses.Where(x => x.Name == "Not Applicable").Count()) == testStepsCount)
+                                            testCaseStatus = statuses.Where(z => z.Name == "Passed").FirstOrDefault();
+                                        else
+                                            testCaseStatus = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault();
+
+                                        QTestApiModel.ManualTestLogResource automationTestLog = new QTestApiModel.ManualTestLogResource(null, null, bizFlow.StartTimeStamp, bizFlow.EndTimeStamp,
+                                                                                                                                                null, null, tsTest.TestName + " - execution", null, null,
+                                                                                                                                                null, null, null, testCaseStatus, null, testStepLogs);
+
+                                        testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
+                                    }                                   
+                                }
+                                else
+                                {
+                                    //No matching TC was found for the ActivitiesGroup in QC
+                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //No matching Test Set was found for the BF in QC
+                        result = "No matching Test Set was found in QC/ALM.";
+                    }
+
+                }
+                if (result == string.Empty)
+                {
+                    result = "Export performed successfully.";
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Unexpected error occurred- " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);               
+                return false;
+            }
+        }
+
+        public void SetTestStepLogStatus(Activity matchingActivity, ref QTestApiModel.TestStepLogResource testStepLog, List<QTestApiModel.StatusResource> statuses)
+        {
+            if (matchingActivity != null)
+            {
+                switch (matchingActivity.Status)
+                {
+                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
+                        testStepLog.Status = statuses.Where(z => z.Name == "Failed").FirstOrDefault();
+                        break;
+                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
+                        testStepLog.Status = statuses.Where(z => z.Name == "Not Applicable").FirstOrDefault();
+                        break;
+                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed:
+                        testStepLog.Status = statuses.Where(z => z.Name == "Passed").FirstOrDefault();
+                        break;
+                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
+                        testStepLog.Status = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault();
+                        break;
+                    case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
+                        testStepLog.Status = statuses.Where(z => z.Name == "Deffered").FirstOrDefault();
+                        break;
+                }
+            }
+            else
+            {
+                testStepLog.Status = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault(); ;
+            }
         }
 
         public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, QtestTest mappedTest, string parentObjectId, ObservableList<ExternalItemFieldBase> testCaseFields, ref string result)
         {
+            ConnectALMServer();
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
 
             try
@@ -248,8 +450,8 @@ namespace GingerCore.ALM
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
                     {
                         QTestApiModel.TestStepResource stepResource = new QTestApiModel.TestStepResource(   null, null, 
-                                                                                                            ((Activity)actIdent.IdentifiedActivity).Description,
-                                                                                                            ((Activity)actIdent.IdentifiedActivity).Expected);                 
+                                                                                                            ((Activity)actIdent.IdentifiedActivity).Description == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Description,
+                                                                                                            ((Activity)actIdent.IdentifiedActivity).Expected == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Expected);
                         stepResource.PlainValueText = ((Activity)actIdent.IdentifiedActivity).ActivityName;                                                                   
                         testcaseApi.AddTestStep((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testCase.Id, stepResource);
                     }
@@ -297,8 +499,7 @@ namespace GingerCore.ALM
 
         public bool ExportBusinessFlowToALM(BusinessFlow businessFlow, QtestTestSuite mappedTestSuite, string parentObjectId, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
         {
-            // return ExportToQC.ExportBusinessFlowToQC(businessFlow, mappedTestSuite, uploadPath, testSetFields, ref result);
-
+            ConnectALMServer();
             testrunApi = new QTestApi.TestrunApi(connObj.Configuration); 
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
             testsuiteApi = new QTestApi.TestsuiteApi(connObj.Configuration);
@@ -372,13 +573,25 @@ namespace GingerCore.ALM
             test.Description = testCase.Description;
             test.TestName = testCase.Name;
             test.TestID = testCase.Id.ToString();
-            testCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), z.Description, z.Description, z.Expected)));
-
+            foreach (QTestApiModel.TestStepResource testStep in testCase.TestSteps)
+            {
+                if (testStep.CalledTestCaseId != null)
+                {
+                    QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testStep.CalledTestCaseId);
+                    calledTestCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), z.Description, z.Expected)));
+                }
+                else
+                {
+                    test.Steps.Add(new QtestTestStep(testStep.Id.ToString(), testStep.Description, testStep.Expected));
+                }
+            }
+              
             return test;
         }
 
         public QtestTestSuite ImportTestSetData(QtestTestSuite TS)
         {
+            ConnectALMServer();
             testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
 
@@ -392,6 +605,16 @@ namespace GingerCore.ALM
             }
           
             return TS;
+        }
+
+        public ObservableList<QTestApiModel.TestCycleResource> GetQTestCyclesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
+        {
+            ConnectALMServer();
+            ObservableList<QTestApiModel.TestCycleResource> cyclestList = new ObservableList<QTestApiModel.TestCycleResource>();
+            QTestApi.TestcycleApi TestcycleApi = new QTestApi.TestcycleApi(connObj.Configuration);
+            cyclestList = new ObservableList<QTestApiModel.TestCycleResource>(TestcycleApi.GetTestCycles((long)Convert.ToInt32(qTestProject), null, null, "descendants"));
+
+            return cyclestList;
         }
 
         public void UpdatedQCTestInBF(ref BusinessFlow businessFlow, List<QtestTest> tcsList)

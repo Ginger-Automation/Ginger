@@ -225,14 +225,14 @@ namespace GingerCore.ALM.Qtest
                             }
                             else//not in ActivitiesGroup so get instance from repo
                             {
-                                stepActivity = (Activity)((Activity)repoStepActivity).CreateInstance();
+                                stepActivity = (Activity)((Activity)repoStepActivity).CreateInstance(true);
                                 toAddStepActivity = true;
                             }
                         }
                         else//Step not exist in Ginger repository so create new one
                         {
                             stepActivity = new Activity();
-                            stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
+                            stepActivity.ActivityName = step.Description;
                             stepActivity.ExternalID = step.StepID;
                             stepActivity.Description = step.Description;
                             stepActivity.Expected = step.Expected;
