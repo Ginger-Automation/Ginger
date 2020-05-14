@@ -27,10 +27,9 @@ namespace GingerCore.ALM.Qtest
         public string Expected { get; set; }
         public QtestTestParameter Params { get; set; }
 
-        public QtestTestStep(string stepID, string stepName, string description, string expected)
+        public QtestTestStep(string stepID, string description, string expected)
         {
             StepID = stepID;
-            StepName = stepName;
             Description = description;
             Expected = expected;
         }
