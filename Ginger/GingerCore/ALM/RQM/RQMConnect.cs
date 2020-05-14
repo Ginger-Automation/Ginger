@@ -93,7 +93,7 @@ namespace GingerCore.ALM.RQM
         {
             bool isUserAuthen;
 
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             isUserAuthen = RQMRep.IsUserAuthenticated(loginData);
 
             return isUserAuthen;
@@ -121,7 +121,7 @@ namespace GingerCore.ALM.RQM
 
         public Dictionary<string, string> GetRQMDomainProjects()
         {
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             IProjectData rqmProjectsData = RQMRep.GetVisibleProjects(loginData);
             rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
 
@@ -138,12 +138,12 @@ namespace GingerCore.ALM.RQM
         {
             GetRQMDomainProjects();
 
-            IProjectDefinitions selectedProj = rqmProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName) == true).FirstOrDefault();
+            IProjectDefinitions selectedProj = rqmProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName) == true).FirstOrDefault();
             if (selectedProj != null)
             {
                 //Save selected project details
                 connectedProjectDefenition = selectedProj;
-                ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
+                ALMCore.DefaultAlmConfig.ALMProjectName = selectedProj.ProjectName;
                 RQMCore.ALMProjectGuid = selectedProj.Guid;
                 RQMCore.ALMProjectGroupName = selectedProj.Prefix;
                 return true;

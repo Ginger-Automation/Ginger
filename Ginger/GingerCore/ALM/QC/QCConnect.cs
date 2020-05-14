@@ -184,7 +184,7 @@ namespace GingerCore.ALM.QC
                 if (IsProjectConnected)
                 {
                     mTDConn.DisconnectProject();
-                    mTDConn.Login(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword);
+                    mTDConn.Login(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
                 }
                 return true;
             }
