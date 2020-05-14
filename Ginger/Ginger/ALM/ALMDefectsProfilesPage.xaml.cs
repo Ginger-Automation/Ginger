@@ -144,10 +144,6 @@ namespace Ginger.ALM
 
         private void grdDefectsProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-        }
-
-        private void grdDefectsProfiles_RowChangedEvent(object sender, EventArgs e)
-        {
             if ((mALMDefectProfiles != null) && (_manualCheckedEvent))
             {
                 if (grdDefectsProfiles.CurrentItem != null)
@@ -155,6 +151,11 @@ namespace Ginger.ALM
                     grdDefectsFields.DataSourceList = ((ALMDefectProfile)grdDefectsProfiles.CurrentItem).ALMDefectProfileFields;
                 }
             }
+        }
+
+        private void grdDefectsProfiles_RowChangedEvent(object sender, EventArgs e)
+        {
+            //Moved to SelectionChanged
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
