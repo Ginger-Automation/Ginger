@@ -46,7 +46,7 @@ namespace Ginger.ALM
         public void UpdateALMType(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
         {
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(AlmType);
-
+            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
             switch (AlmType)
             {
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC:
@@ -80,7 +80,7 @@ namespace Ginger.ALM
                     AlmRepo = new QtestRepository();
                     break;
             }
-
+            AlmCore.GetCurrentAlmConfig();
             SetALMCoreConfigurations(AlmType);
         }
 

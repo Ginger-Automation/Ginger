@@ -249,36 +249,6 @@ namespace Ginger.SolutionGeneral
             }
         }
 
-        //private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
-        //[IsSerializedForLocalRepository]
-        //public ALMIntegration.eALMType AlmType
-        //{
-        //    get
-        //    {
-        //        return mAlmType;
-        //    }
-        //    set
-        //    {
-        //        mAlmType = value;
-        //    }
-        //}
-
-        //[IsSerializedForLocalRepository]
-        //public string ALMServerURL { get; set; }
-
-        //[IsSerializedForLocalRepository]
-        //public bool UseRest { get; set; }
-
-        //[IsSerializedForLocalRepository]
-        //public string ALMDomain { get; set; }
-
-        //[IsSerializedForLocalRepository]
-        //public string ALMProject { get; set; }
-        //[IsSerializedForLocalRepository]
-        //public string ALMProjectKey { get; set; }
-        //[IsSerializedForLocalRepository]
-        //public string ConfigPackageFolderPath { get; set; }
-
         [IsSerializedForLocalRepository]
         public ObservableList<ALMConfig> ALMConfigs
         {

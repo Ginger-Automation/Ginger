@@ -365,31 +365,6 @@ namespace Ginger
             }
         }
 
-        //[IsSerializedForLocalRepository]
-        //public string ALMUserName { get; set; }
-
-        //public string ALMPassword
-        //{
-        //    get
-        //    {
-        //        bool res = false;
-        //        string pass = EncryptionHandler.DecryptString(EncryptedALMPassword, ref res);
-        //        if (res && String.IsNullOrEmpty(pass) == false)
-        //            return pass;
-        //        else
-        //            return string.Empty;
-        //    }
-        //    set
-        //    {
-        //        bool res = false;
-        //        EncryptedALMPassword = EncryptionHandler.EncryptString(value, ref res);
-        //    }
-        //}
-        //[IsSerializedForLocalRepository]
-        //public string EncryptedALMPassword { get; set; }
-
-
-        //
         [IsSerializedForLocalRepository]
         public ObservableList<ALMUserConfig> ALMUserConfigs { get; set; } = new ObservableList<ALMUserConfig>();
 

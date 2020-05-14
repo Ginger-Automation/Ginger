@@ -37,31 +37,58 @@ namespace GingerCore.ALM
 
         public static ObservableList<GingerCoreNET.ALMLib.ALMConfig> AlmConfigs { get; set; } = new ObservableList<GingerCoreNET.ALMLib.ALMConfig>();
 
-        public static GingerCoreNET.ALMLib.ALMConfig DefaultAlmConfig
-        {
-            get
-            {
-                GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
-                if (AlmConfig != null)
-                {
-                    GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == AlmConfig.AlmType);
-                    if (AlmUserConfig == null)
-                    {
-                        AlmUserConfig = new GingerCoreNET.ALMLib.ALMUserConfig();
-                        AlmUserConfig.AlmType = AlmConfig.AlmType;
-                        WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
-                    }
-                    AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
-                    AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
-                    return AlmConfig;
-                }
-                else
-                {
-                    return AlmConfigs.FirstOrDefault();
-                }
-            }
-        }
+        public static GingerCoreNET.ALMLib.ALMConfig DefaultAlmConfig { get; set; }
 
+        public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig()
+        {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = null;
+            if (this.GetType() == typeof(GingerCore.ALM.QCCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.QCRestAPICore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.RQMCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.JiraCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.QtestCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest).FirstOrDefault();
+            }
+            if (this.GetType() == typeof(GingerCore.ALM.RallyCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY).FirstOrDefault();
+            }
+
+
+            if (AlmConfig != null)
+            {
+                GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == AlmConfig.AlmType);
+                if (AlmUserConfig == null)
+                {
+                    AlmUserConfig = new GingerCoreNET.ALMLib.ALMUserConfig();
+                    AlmUserConfig.AlmType = AlmConfig.AlmType;
+                    WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+                }
+                AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
+                AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
+            }
+            else
+            {
+                AlmConfig = AlmConfigs.FirstOrDefault();
+            }
+            DefaultAlmConfig = AlmConfig;
+            return AlmConfig;
+
+        }
+        
         public static string SolutionFolder { get; set; }
         public ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer();

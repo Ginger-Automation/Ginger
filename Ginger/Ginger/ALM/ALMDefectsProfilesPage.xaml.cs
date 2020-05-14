@@ -59,12 +59,13 @@ namespace Ginger.ALM
             InitializeComponent();
 
             mALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-            mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
-            mALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
             // populated values list (the not saved), validate selected values/fields current existing in QC
             foreach (ALMDefectProfile aLMDefectProfile in mALMDefectProfiles)
             {
+                ALMIntegration.Instance.UpdateALMType(aLMDefectProfile.AlmType);
+                mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+                mALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
                 mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
                 foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
                 {
@@ -110,7 +111,7 @@ namespace Ginger.ALM
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Name), WidthWeight = 30, Header = "Name", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
             view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Description), WidthWeight = 30, Header = "Description", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.DefaultALM), WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ALMTypes, Header = "ALM Type" });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.AlmType), WidthWeight = 30, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = ALMTypes, Header = "ALM Type", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });
             view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.IsDefault), WidthWeight = 10, Header = "Default", StyleType = GridColView.eGridColStyleType.Template, HorizontalAlignment = HorizontalAlignment.Center, CellTemplate = (DataTemplate)this.grdDefectsProfile.Resources["DefaultValueTemplate"] });
 
             grdDefectsProfiles.SetAllColumnsDefaultView(view);
@@ -194,22 +195,15 @@ namespace Ginger.ALM
             }
             newALMDefectProfile.Name = "Some Name " + (newALMDefectProfile.ID + 1).ToString();
             newALMDefectProfile.Description = "Some Description " + (newALMDefectProfile.ID + 1).ToString();
+            ALMConfig AlmConfig = ALMIntegration.Instance.GetDefaultAlmConfig();
+            newALMDefectProfile.AlmType = AlmConfig.AlmType;
             mALMDefectProfiles.Add(newALMDefectProfile);
 
             // mALMDefectProfileFields.ToList().ForEach(x => newALMDefectProfile.ALMDefectProfileFields.Add((ExternalItemFieldBase)x.CreateCopy()));
 
-            mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
-            foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
-            {
-                ExternalItemFieldBase aLMDefectProfileFieldExisted = (ExternalItemFieldBase)aLMDefectProfileField.CreateCopy();
-                if (!string.IsNullOrEmpty(aLMDefectProfileField.ExternalID))
-                {
-                    aLMDefectProfileFieldExisted.ExternalID = string.Copy(aLMDefectProfileField.ExternalID);
-                }
-                aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
-                mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
-            }
-            newALMDefectProfile.ALMDefectProfileFields = mALMDefectProfileFieldsExisted;
+            ALMIntegration.Instance.UpdateALMType(newALMDefectProfile.AlmType);
+            newALMDefectProfile.ALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+            newALMDefectProfile.ALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
             grdDefectsProfiles.DataSourceList = mALMDefectProfiles;
             grdDefectsFields.DataSourceList = newALMDefectProfile.ALMDefectProfileFields;

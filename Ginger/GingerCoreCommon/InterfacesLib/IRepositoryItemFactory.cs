@@ -62,7 +62,9 @@ namespace Amdocs.Ginger.Common
         // string GenerateTemplate(string templatename, object o);
         ITextBoxFormatter CreateTextBoxFormatter(object Textblock);
 
-        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields);
+        string GetALMConfig();
+
+        void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType);
 
         void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf);
 

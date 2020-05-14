@@ -116,12 +116,14 @@ namespace Ginger.Run
 
         private void OpenDefectForSelectedSuggestions_Click(object sender, RoutedEventArgs e)
         {
-            //select alm from defects profile and return if selected QC without rest
-            //if (!ALMIntegration.Instance.AlmConfigurations.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
-            //{
-            //    Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-            //    return;
-            //}
+            //if selected ALM is QC And UseRest=False return
+            GingerCoreNET.ALMLib.ALMConfig almConfig = ALMIntegration.Instance.GetCurrentAlmConfig(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
+            if (!almConfig.UseRest && almConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC)
+            {
+                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
+                return;
+            }
+
             if ((WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null) && (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0) &&
                 (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(x => x.ToOpenDefectFlag == true && (x.ALMDefectID == null || x.ALMDefectID == string.Empty)).ToList().Count > 0))
             {
@@ -148,6 +150,8 @@ namespace Ginger.Run
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                     var defectFields = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.ToList();
+                    //Update alm type to open defect
+                    ALMIntegration.Instance.UpdateALMType(((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).AlmType);
                     Dictionary<Guid, string> defectsOpeningResults = ALMIntegration.Instance.CreateNewALMDefects(defectsForOpening, defectFields);
 
                     if ((defectsOpeningResults != null) && (defectsOpeningResults.Count > 0))

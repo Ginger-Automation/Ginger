@@ -527,7 +527,8 @@ namespace Ginger
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
             //open defect profile page for each almtype
-            ALMIntegration.Instance.ALMDefectsProfilesPage();
+            ALMDefectsProfilesPage defectsProfilesPage = new ALMDefectsProfilesPage();
+            defectsProfilesPage.ShowAsWindow();
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
