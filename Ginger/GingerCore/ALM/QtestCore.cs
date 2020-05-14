@@ -310,20 +310,20 @@ namespace GingerCore.ALM
 
                                     if (tsTest.Runs[0] != null)
                                     {
-                                        List<QTestApiModel.StatusResource> statuses = testrunApi.GetStatusValuable((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey));
+                                        List<QTestApiModel.StatusResource> statuses = testrunApi.GetStatusValuable((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey));
                                         List<QTestApiModel.StatusResource> stepsStatuses = new List<QTestApiModel.StatusResource>();
                                         QTestApiModel.StatusResource testCaseStatus = new QTestApiModel.StatusResource();
 
-                                        QTestApiModel.TestRunWithCustomFieldResource testRun = testrunApi.Get((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), (long)Convert.ToInt32(tsTest.Runs[0].RunID), "descendents");
+                                        QTestApiModel.TestRunWithCustomFieldResource testRun = testrunApi.Get((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(tsTest.Runs[0].RunID), "descendents");
                                         List<QTestApiModel.TestStepLogResource> testStepLogs = new List<QTestApiModel.TestStepLogResource>();
                                         
-                                        QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testRun.TestCase.Id);
+                                        QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testRun.TestCase.Id);
                                         int testStepsCount = 0;
                                         foreach (QTestApiModel.TestStepResource step in testCase.TestSteps)
                                         {
                                             if (step.CalledTestCaseId != null)
                                             {
-                                                QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), step.CalledTestCaseId);
+                                                QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), step.CalledTestCaseId);
                                                 foreach (QTestApiModel.TestStepResource nestedStep in calledTestCase.TestSteps)
                                                 {
                                                     Activity matchingActivity = activities.Where(x => x.ExternalID == nestedStep.Id.ToString()).FirstOrDefault();
@@ -369,7 +369,7 @@ namespace GingerCore.ALM
                                                                                                                                                 null, null, tsTest.TestName + " - execution", null, null,
                                                                                                                                                 null, null, null, testCaseStatus, null, testStepLogs);
 
-                                        testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
+                                        testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
                                     }                                   
                                 }
                                 else
@@ -577,7 +577,7 @@ namespace GingerCore.ALM
             {
                 if (testStep.CalledTestCaseId != null)
                 {
-                    QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), testStep.CalledTestCaseId);
+                    QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testStep.CalledTestCaseId);
                     calledTestCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), z.Description, z.Expected)));
                 }
                 else
