@@ -341,7 +341,7 @@ namespace GingerCore.ALM
                                                                                                                                                 null, null, tsTest.TestName + " - execution", null, null,
                                                                                                                                                 null, null, null, testCaseStatus, null, testStepLogs);
 
-                                        QTestApiModel.TestLogResource testLog = testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
+                                        QTestApiModel.TestLogResource testLog = testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
 
                                         // Attach ActivityGroup Report if needed                                       
                                         if (publishToALMConfig.ToAttachActivitiesGroupReport)
