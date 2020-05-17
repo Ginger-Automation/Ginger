@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserConfig;
 using GingerCore;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
@@ -365,27 +366,7 @@ namespace Ginger
         }
 
         [IsSerializedForLocalRepository]
-        public string ALMUserName { get; set; }
-
-        public string ALMPassword
-        {
-            get
-            {
-                bool res = false;
-                string pass = EncryptionHandler.DecryptString(EncryptedALMPassword, ref res);
-                if (res && String.IsNullOrEmpty(pass) == false)
-                    return pass;
-                else
-                    return string.Empty;
-            }
-            set
-            {
-                bool res = false;
-                EncryptedALMPassword = EncryptionHandler.EncryptString(value, ref res);
-            }
-        }
-        [IsSerializedForLocalRepository]
-        public string EncryptedALMPassword { get; set; }
+        public ObservableList<ALMUserConfig> ALMUserConfigs { get; set; } = new ObservableList<ALMUserConfig>();
 
         GingerCore.eTerminologyType mTerminologyType;
         [IsSerializedForLocalRepository]
@@ -805,6 +786,31 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public List<string> ShownHelpLayoutsKeys = new List<string>();
-
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name.ToLower().Contains("alm"))
+                {
+                    ALMUserConfig AlmUserConfig = ALMUserConfigs.FirstOrDefault();
+                    if (AlmUserConfig == null)
+                    {
+                        AlmUserConfig = new ALMUserConfig();
+                        ALMUserConfigs.Add(AlmUserConfig);
+                    }
+                    if (name == "ALMUserName")
+                    {
+                        AlmUserConfig.ALMUserName = value;
+                        return true;
+                    }
+                    if (name == "EncryptedALMPassword")
+                    {
+                        AlmUserConfig.EncryptedALMPassword = value;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

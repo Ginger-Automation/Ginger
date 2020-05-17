@@ -326,8 +326,8 @@ namespace GingerCore.ALM.Rally
             RqmRepository rqmRep = new RqmRepository();
             List<IProjectDefinitions> rqmProjectsDataList;
             //string rqmSserverUrl = loginData.Server.ToString() + "/";
-            string rqmSserverUrl = ALMCore.AlmConfig.ALMServerURL + "/";
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
             rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
             IProjectDefinitions currentProj = rqmProjectsDataList.FirstOrDefault();

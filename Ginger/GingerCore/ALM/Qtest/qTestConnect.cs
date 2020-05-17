@@ -43,6 +43,23 @@ namespace GingerCore.ALM.Qtest
         }
         #endregion singlton
         
+        public ObservableList<QTestApiModel.TestCycleResource> GetQTestCyclesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
+        {
+            ObservableList<QTestApiModel.TestCycleResource> cyclestList = new ObservableList<QTestApiModel.TestCycleResource>();
+
+            QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
+            string granttype = "password";
+            string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
+            QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
+            connObj.Configuration.AccessToken = response.AccessToken;
+            connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
+            connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);
+
+            QTestApi.TestcycleApi TestcycleApi = new QTestApi.TestcycleApi(connObj.Configuration);
+            cyclestList = new ObservableList<QTestApiModel.TestCycleResource>(TestcycleApi.GetTestCycles((long)Convert.ToInt32(qTestProject), null, null, "descendants"));
+
+            return cyclestList;
+        }
         public string ConvertResourceType(ALM_Common.DataContracts.ResourceType resourceType)
         {
             string qTestResourceType;

@@ -33,6 +33,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -222,6 +223,7 @@ namespace amdocs.ginger.GingerCoreNET
 
             // Add gingerCoreNET classes                        
             NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
 

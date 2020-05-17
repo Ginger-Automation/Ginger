@@ -179,7 +179,7 @@ namespace GingerCore.ALM.QCRestAPI
                                     runToExport.ElementsField["cycle-id"] = tsTest.CycleId;
                                     runToExport.ElementsField["duration"] = "0";
                                     runToExport.ElementsField["subtype-id"] = "hp.qc.run.MANUAL";
-                                    runToExport.ElementsField["owner"] = ALMCore.AlmConfig.ALMUserName;
+                                    runToExport.ElementsField["owner"] = ALMCore.DefaultAlmConfig.ALMUserName;
 
                                     QCItem itemToExport = ConvertObjectValuesToQCItem(runToExport, ResourceType.TEST_RUN);
                                     ALMResponseData responseData = QCRestAPIConnect.CreateNewEntity(ResourceType.TEST_RUN, itemToExport);
