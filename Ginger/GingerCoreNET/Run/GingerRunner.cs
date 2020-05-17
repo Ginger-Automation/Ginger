@@ -665,7 +665,7 @@ namespace Ginger.Run
             List<VariableBase> variables = null;
             List<VariableBase> outputVariables = null;
             //do actual value update
-            foreach (VariableBase inputVar in inputVars.Where(x=>x.MappedOutputType != VariableBase.eOutputType.None).ToList())
+            foreach (VariableBase inputVar in inputVars)
             {
                 try
                 {
@@ -733,13 +733,12 @@ namespace Ginger.Run
                         {
                             // we take value of customized variable from BusinessFlowRun
                             VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
-
                             if (runVar != null)
                             {
                                 mappedValue = runVar.Value;
                             }
                         }
-                        else
+                        else//????
                         {
                             if (cachedVariables == null)
                             {
@@ -755,20 +754,25 @@ namespace Ginger.Run
                             }
                         }
                     }
-
-                    bool setValueRes = false;
+                    
                     if (mappedValue != null)
                     {
                         if (inputVar.SupportSetValue)
                         {
-                            setValueRes = inputVar.SetValue(mappedValue);
-                        }                       
+                            if (inputVar.SetValue(mappedValue) == false)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set Value '{0}' into '{1}' Input {2} in the '{3}' {4}. Mapped data type '{5}' mapped data value '{6}'", mappedValue, inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), CurrentBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), inputVar.MappedOutputType, inputVar.MappedOutputValue));
+                                return false;
+                            }
+                        }
                     }
-
-                    if (mappedValue == null || setValueRes == false)
+                    else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set '{0}' Input {1} mapped value in '{2}' {3}. Mapped data type '{4}' mapped data value '{5}'", inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), CurrentBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), inputVar.MappedOutputType, inputVar.MappedOutputValue));
-                        return false;
+                        if (inputVar.MappedOutputType != VariableBase.eOutputType.None)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set '{0}' Input {1} mapped value in the '{2}' {3}. Mapped data type '{4}' mapped data value '{5}'", inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), CurrentBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), inputVar.MappedOutputType, inputVar.MappedOutputValue));
+                            return false;
+                        }
                     }
                 }
                 catch(Exception ex)
