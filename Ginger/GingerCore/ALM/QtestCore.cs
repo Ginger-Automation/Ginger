@@ -23,7 +23,7 @@ using GingerCore.ALM.Qtest;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using TDAPIOLELib;
+using System.IO;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
@@ -43,6 +43,7 @@ namespace GingerCore.ALM
         QTestApi.TestcaseApi testcaseApi = new QTestApi.TestcaseApi();
         QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
         QTestApi.TestlogApi testlogApi = new QTestApi.TestlogApi();
+        QTestApi.AttachmentApi attachmentApi = new QTestApi.AttachmentApi();
 
         QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
         QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
@@ -247,6 +248,7 @@ namespace GingerCore.ALM
                 testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
                 testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
                 testlogApi = new QTestApi.TestlogApi(connObj.Configuration);
+                attachmentApi = new QTestApi.AttachmentApi(connObj.Configuration);
 
                 QtestTestSuite testSuite = GetQtestTestSuite(bizFlow.ExternalID);
                 if (testSuite != null)
@@ -277,36 +279,6 @@ namespace GingerCore.ALM
 
                                     //RunFactory runFactory = (RunFactory)tsTest.RunFactory;
                                     //Run run = (Run)runFactory.AddItem(publishToALMConfig.VariableForTCRunNameCalculated);
-
-                                    // Attach ActivityGroup Report if needed
-                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
-                                    {
-                                        if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
-                                            (System.IO.Directory.Exists(activGroup.TempReportFolder)))
-                                        {
-                                            //Creating the Zip file - start
-                                            string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
-                                            string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
-
-                                            if (!System.IO.File.Exists(zipFileName))
-                                            {
-                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
-                                            }
-                                            else
-                                            {
-                                                System.IO.File.Delete(zipFileName);
-                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
-                                            }
-                                            System.IO.Directory.Delete(activGroup.TempReportFolder, true);
-                                            //Creating the Zip file - finish
-                                            //Attaching Zip file - start
-                                            
-                                            // ... to extand
-
-                                            //Attaching Zip file - finish
-                                            System.IO.File.Delete(zipFileName);
-                                        }
-                                    }
 
                                     if (tsTest.Runs[0] != null)
                                     {
@@ -369,13 +341,39 @@ namespace GingerCore.ALM
                                                                                                                                                 null, null, tsTest.TestName + " - execution", null, null,
                                                                                                                                                 null, null, null, testCaseStatus, null, testStepLogs);
 
-                                        testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
+                                        QTestApiModel.TestLogResource testLog = testlogApi.SubmitTestLog((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), automationTestLog, (long)Convert.ToInt32(tsTest.Runs[0].RunID));
+
+                                        // Attach ActivityGroup Report if needed                                       
+                                        if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                                        {
+                                            if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
+                                                (System.IO.Directory.Exists(activGroup.TempReportFolder)))
+                                            {
+                                                //Creating the Zip file - start
+                                                string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
+                                                string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
+
+                                                if (!System.IO.File.Exists(zipFileName))
+                                                {
+                                                    ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                                }
+                                                else
+                                                {
+                                                    System.IO.File.Delete(zipFileName);
+                                                    ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                                }
+                                                System.IO.Directory.Delete(activGroup.TempReportFolder, true);
+                                                // to discuss an issue
+                                                // attachmentApi.Upload((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-logs", testLog.Id, "GingerExecutionHTMLReport.zip", "application/x-zip-compressed", File.ReadAllBytes(zipFileName));
+                                                System.IO.File.Delete(zipFileName);
+                                            }
+                                        }
                                     }                                   
                                 }
                                 else
                                 {
                                     //No matching TC was found for the ActivitiesGroup in QC
-                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in qTest.";
                                 }
                             }
                         }
@@ -383,7 +381,7 @@ namespace GingerCore.ALM
                     else
                     {
                         //No matching Test Set was found for the BF in QC
-                        result = "No matching Test Set was found in QC/ALM.";
+                        result = "No matching Test Set was found in qTest.";
                     }
 
                 }
@@ -400,7 +398,7 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);               
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to Qtest", ex);               
                 return false;
             }
         }
@@ -489,7 +487,7 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to qTest", ex);
                 return false;
             }
 
@@ -559,7 +557,7 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to qTest", ex);
                 return false;
             }
         }
