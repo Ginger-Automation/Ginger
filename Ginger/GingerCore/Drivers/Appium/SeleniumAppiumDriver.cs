@@ -566,7 +566,15 @@ namespace GingerCore.Drivers.Appium
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AdvanceDriverConfigurations)
             {
-                driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+                bool boolValue;
+                if (bool.TryParse(UserCapability.Value, out boolValue))
+                {
+                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, boolValue);
+                }
+                else
+                {
+                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+                }
             }
 
             return driverOptions;                        
@@ -772,30 +780,31 @@ namespace GingerCore.Drivers.Appium
                         if (e != null)
                         {                            
                             e.Clear();
-                            //make sure value was cleared- trying to handle clear issue in WebViews
-                            try
-                            {
-                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
-                                //Wasting time when not needed
-                                string elemntContent = e.Text; //.GetAttribute("name");
-                                if (string.IsNullOrEmpty(elemntContent) == false)
-                                {
-                                    for (int indx = 1; indx <= elemntContent.Length; indx++)
-                                    {
-                                        //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
-                                        ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
-                                        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
-                                        ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
-                                    }
-                                }
-                            }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                            ////make sure value was cleared- trying to handle clear issue in WebViews
+                            //try
+                            //{
+                            //    //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
+                            //    //Wasting time when not needed
+                            //    string elemntContent = e.Text; //.GetAttribute("name");
+                            //    if (string.IsNullOrEmpty(elemntContent) == false)
+                            //    {
+                            //        for (int indx = 1; indx <= elemntContent.Length; indx++)
+                            //        {
+                            //            //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
+                            //            ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
+                            //            //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
+                            //            ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
+                            //        }
+                            //    }
+                            //}
+                            //catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             switch (DriverPlatformType)
                             {
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                     e.SendKeys(act.GetInputParamCalculatedValue("Value"));                                    
                                     break;
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
+                                    //e.SendKeys(act.GetInputParamCalculatedValue("Value"));
                                     ((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
                                     break;
                             }
