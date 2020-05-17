@@ -451,39 +451,52 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerRunner gingerRunner)
         {
-            LiteDbRunner runner = new LiteDbRunner();
-            runner.BusinessFlowsColl.AddRange(liteDbBFList);
-            runner._id = runnerLiteDbId;
-            runner.Seq = 1;
-            runner.Name = "Automated Runner";
-            runner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
-            runner.Environment = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
-            runner.GUID = gingerRunner.Guid;
-            if (gingerRunner.BusinessFlows.Count > 0)
+            try
             {
-                runner.StartTimeStamp = gingerRunner.BusinessFlows[0].StartTimeStamp;
-                runner.EndTimeStamp = gingerRunner.BusinessFlows[0].EndTimeStamp;
-                runner.Elapsed = gingerRunner.BusinessFlows[0].Elapsed;
+                LiteDbRunner runner = new LiteDbRunner();
+                runner.BusinessFlowsColl.AddRange(liteDbBFList);
+                runner._id = runnerLiteDbId;
+                runner.Seq = 1;
+                runner.Name = "Automated Runner";
+                runner.ApplicationAgentsMappingList = gingerRunner.ApplicationAgents.Select(a => a.AgentName + "_:_" + a.AppName).ToList();
+                runner.Environment = gingerRunner.ProjEnvironment != null ? gingerRunner.ProjEnvironment.Name : string.Empty;
+                runner.GUID = gingerRunner.Guid;
+                if (gingerRunner.BusinessFlows.Count > 0)
+                {
+                    runner.StartTimeStamp = gingerRunner.BusinessFlows[0].StartTimeStamp;
+                    runner.EndTimeStamp = gingerRunner.BusinessFlows[0].EndTimeStamp;
+                    runner.Elapsed = gingerRunner.BusinessFlows[0].Elapsed;
+                }
+                runner.RunStatus = (liteDbBFList.Count > 0) ? liteDbBFList[0].RunStatus : eRunStatus.Automated.ToString();
+
+                SetRunnerChildCounts(runner);
+
+                SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
+                liteDbBFList.Clear();
+                LiteDbRunSet runSet = new LiteDbRunSet();
+                runSet._id = runSetLiteDbId;
+
+                if (ExecutionLoggerManager.RunSetReport != null)
+                {
+                    base.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
+                    runSet.SetReportData(ExecutionLoggerManager.RunSetReport);
+                }
+
+                runSet.RunnersColl.AddRange(new List<LiteDbRunner>() { runner });
+
+                runSet.StartTimeStamp = runner.StartTimeStamp;
+                runSet.EndTimeStamp = runner.EndTimeStamp;
+                runSet.Elapsed = runner.Elapsed;
+
+                SetRunSetChildCounts(runSet);
+
+                SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
             }
-            runner.RunStatus = (liteDbBFList.Count > 0) ? liteDbBFList[0].RunStatus : eRunStatus.Automated.ToString();
-
-            SetRunnerChildCounts(runner);
-
-            SaveObjToReporsitory(runner, liteDbManager.NameInDb<LiteDbRunner>());
-            liteDbBFList.Clear();
-            LiteDbRunSet runSet = new LiteDbRunSet();
-            runSet._id = runSetLiteDbId;
-            base.SetReportRunSet(ExecutionLoggerManager.RunSetReport, "");
-            runSet.SetReportData(ExecutionLoggerManager.RunSetReport);
-            runSet.RunnersColl.AddRange(new List<LiteDbRunner>() { runner });
-
-            runSet.StartTimeStamp = runner.StartTimeStamp;
-            runSet.EndTimeStamp = runner.EndTimeStamp;
-            runSet.Elapsed = runner.Elapsed;
-
-            SetRunSetChildCounts(runSet);
-
-            SaveObjToReporsitory(runSet, liteDbManager.NameInDb<LiteDbRunSet>());
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured during RunSetUpdate..", ex);
+            }
+            
         }
 
         internal override void CreateNewDirectory(string logFolder)

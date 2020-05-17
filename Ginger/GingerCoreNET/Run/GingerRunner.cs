@@ -1312,7 +1312,7 @@ namespace Ginger.Run
                             break;
                         sColList = sColList + "GINGER_ID,GINGER_USED,";
                         int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                        sColVals = sColVals + "'" + (rowCount + 1) + "', 'false',";
+                        sColVals = sColVals + (rowCount + 1) + ", 'False',";
                         sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                         DataSource.RunQuery(sQuery);
                         //Next Path
@@ -1352,7 +1352,7 @@ namespace Ginger.Run
                                 
                                 string sColList = "GINGER_ID,GINGER_KEY_NAME,GINGER_KEY_VALUE,";
                                 int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                                string sColVals = "'" + (rowCount + 1) + "'," + "'" + sKeyName + "','" + sKeyValue + "',";
+                                string sColVals = (rowCount + 1) + "," + "'" + sKeyName + "','" + sKeyValue + "',";
                                 sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                             }
                             else
@@ -1374,7 +1374,7 @@ namespace Ginger.Run
                                 }
                                 sColList = sColList + "GINGER_ID,GINGER_USED,";
                                 int rowCount = DataSource.GetRowCount(DataSourceTable.Name);
-                                sColVals = sColVals + "'" + (rowCount+1) + "','false',";
+                                sColVals = sColVals + (rowCount+1) + ",'False',";
 
                                 sQuery = DataSource.UpdateDSReturnValues(DataSourceTable.Name, sColList, sColVals);
                                 //sQuery = "INSERT INTO " + DataSourceTable.Name + "(" + sColList + "GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME,GINGER_USED) VALUES (" + sColVals + "'" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "',false)";

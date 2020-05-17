@@ -500,6 +500,29 @@
         </Setter>
     </Style>
 
+    <Style x:Key="ToolTipStyle" TargetType="{x:Type ToolTip}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}"/>
+        <Setter Property="Background"  Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
+        <Setter Property="Foreground" Value="#FFFFFF"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToolTip}">
+                    <Border x:Name="Root" CornerRadius="2" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                        <ContentPresenter Margin="2" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsOpen" Value="False">
+                            <Setter TargetName="Root" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="Button" x:Key="$CircleImageButtonStyle_Disabled">
 
         <Setter Property="Foreground" Value="Gray" />
@@ -3109,6 +3132,12 @@
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
         <Setter Property="Margin" Value="0,0,0,0"/>
+    </Style>
+    <Style  TargetType="WindowsFormsHost" x:Key="@WindowsFormsHostDateTimePickerStyle" >
+        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="Width" Value="215"/>
     </Style>
 
     <Style TargetType="Label" x:Key="@SmallerInputFieldLabelStyle" >
