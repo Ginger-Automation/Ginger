@@ -524,7 +524,26 @@ namespace GingerCore.Actions
 
         private string mExInfo;
 
-        public string ExInfo { get { return mExInfo; } set { mExInfo = value; OnPropertyChanged(Fields.ExInfo); } }
+        public string ExInfo 
+        { 
+            get 
+            { 
+                return mExInfo; 
+            }
+            set 
+            {
+                if (string.IsNullOrEmpty(mExInfo) == false && value.Contains(mExInfo) && value.IndexOf(mExInfo) == 0)//meaning act.ExInfo += was used
+                {
+                    //add line break
+                    mExInfo = string.Format("{0}{1}{2}", value.Substring(0, mExInfo.Length), Environment.NewLine, value.Substring(mExInfo.Length));
+                }
+                else
+                {
+                    mExInfo = value;
+                }
+                OnPropertyChanged(Fields.ExInfo); 
+            } 
+        }
 
         [DoNotBackup]
         public string ActClass { get { return this.GetType().ToString(); } }

@@ -2027,11 +2027,7 @@ namespace Ginger.Run
         }
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
-            //BusinessFlow bf = (BusinessFlow)(mCurrentBusinessFlowRunnerItem).ItemObject;
-            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
-            for (int i = 0; i < mCurrentSelectedRunner.BusinessflowRunnerItems.IndexOf(mCurrentBusinessFlowRunnerItem); i++)
-                prevBFs.Add((BusinessFlow)((RunnerItemPage)mCurrentSelectedRunner.BusinessflowRunnerItems[i]).ItemObject);
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.Runner, businessFlow, prevBFs);
+            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.Runner, businessFlow);
             varsPage.ShowAsWindow();
         }
         public void viewActivity(Activity activitytoView)

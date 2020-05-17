@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
@@ -66,6 +67,19 @@ namespace GingerCore.Variables
             {
                 mValue = value;
                 OnPropertyChanged("Value");
+            }
+        }
+
+        public override bool SetValue(string value)
+        {
+            if (OptionalValuesList.Where(pv => pv.Value == value).FirstOrDefault() != null)
+            {
+                Value = value;
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

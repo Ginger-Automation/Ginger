@@ -240,55 +240,63 @@ namespace Ginger.AnalyzerLib
                 {
                     if (ARV.StoreTo != ActReturnValue.eStoreTo.None)
                     {
-                        string StoreToValue = ARV.StoreToValue;
-                        ActReturnValue.eStoreTo StoreToType = ARV.StoreTo;
-                        if (StoreToType == ActReturnValue.eStoreTo.Variable)
+                        bool issueFound = false;
+                        if (string.IsNullOrEmpty(ARV.StoreToValue))
                         {
-                            if (BusinessFlow.GetAllVariables(parentActivity).Where(x => x.Name == StoreToValue).Select(x => x.Name).FirstOrDefault() == null)
+                            issueFound = true;
+                        }
+                        else
+                        {
+                            switch (ARV.StoreTo)
                             {
-                                AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                AA.Description = "Output Values is missing " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " '" + StoreToValue + "'";
-                                AA.Details = "'" + StoreToValue + "' does not exist In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                                AA.HowToFix = "Remap Output Values";
-                                AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                                AA.IssueType = eType.Error;
-                                AA.Impact = "Execution will fail in run time";
-                                AA.Severity = eSeverity.Critical;
+                                case ActReturnValue.eStoreTo.Variable:
+                                    if (BusinessFlow.GetAllVariables(parentActivity).Where(x => x.SupportSetValue && x.Name == ARV.StoreToValue).FirstOrDefault() == null)
+                                    {
+                                        issueFound = true;
+                                    }
+                                    break;
 
-                                IssuesList.Add(AA);
+                                case ActReturnValue.eStoreTo.GlobalVariable:
+                                    if (WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue && x.Guid.ToString() == ARV.StoreToValue).FirstOrDefault() == null)
+                                    {
+                                        issueFound = true;
+                                    }
+                                    break;
 
+                                case ActReturnValue.eStoreTo.ApplicationModelParameter:
+                                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == ARV.StoreToValue).FirstOrDefault() == null)
+                                    {
+                                        issueFound = true;
+                                    }
+                                    break;
+
+                                case ActReturnValue.eStoreTo.DataSource:
+                                    Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+                                    MatchCollection matches = rxDSPattern.Matches(ARV.StoreToValue);
+                                    foreach (Match match in matches)
+                                    {
+                                        if (GingerCoreNET.GeneralLib.General.CheckDataSource(match.Value, DSList) != "")
+                                        {
+                                            issueFound = true;
+                                        }
+                                    }
+                                    break;
                             }
                         }
-                        else if (StoreToType == ActReturnValue.eStoreTo.DataSource)
+                        if (issueFound)
                         {
-                            if (StoreToValue != "" && StoreToValue != null)
-                            {
-                                string chkDataSource = "";
-                                Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
-
-                                MatchCollection matches = rxDSPattern.Matches(StoreToValue);
-                                foreach (Match match in matches)
-                                {
-                                    chkDataSource = GingerCoreNET.GeneralLib.General.CheckDataSource(match.Value, DSList);
-                                    if (chkDataSource != "")
-                                    {
-                                        AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
-                                        AA.Description = chkDataSource;
-                                        AA.Details = "Invalid '" + StoreToValue + "' StoreTo Value used In " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '" + BusinessFlow.Name + "' => " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " '" + parentActivity.ActivityName + "' =>" + "Action '" + a.Description + "' ";
-                                        AA.HowToFix = "Remap Output Values";
-                                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                                        AA.IssueType = eType.Error;
-                                        AA.Impact = "Execution will fail in run time";
-                                        AA.Severity = eSeverity.Critical;
-                                        IssuesList.Add(AA);
-
-                                    }
-                                }
-                            }
+                            AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                            AA.Description = string.Format("Output Value StoreTo has in-valid configuration");
+                            AA.Details = string.Format("The '{0}' Output Value configured StoreTo from type '{1}' and value '{2}' is not valid", ARV.Param, ARV.StoreTo, ARV.StoreToValue);
+                            AA.HowToFix = "Re-configure StoreTo for the Output Value";
+                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                            AA.IssueType = eType.Error;
+                            AA.Impact = "Execution might fail in run time";
+                            AA.Severity = eSeverity.High;
+                            IssuesList.Add(AA);
                         }
                     }
                 }
-
             }
             //Disabling the below because there are many actions which shows Locate By/Value but it is not needed for most operation types
             //if (a.ObjectLocatorConfigsNeeded == true && a.ActionDescription != "Script Action" && a.ActionDescription != "File Operations")

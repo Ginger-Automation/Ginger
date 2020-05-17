@@ -46,12 +46,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
        
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), null);
         }
 
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", gingerRunner.Name, new GingerReport());
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), new GingerReport());
         }
 
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
@@ -134,21 +134,34 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                 {
                                     string propName = prop.Name;
                                     string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).NameCaption;
-                                    object propVal = prop.GetValue(obj);//obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
-                                    string propValue;
-                                    if (propVal != null)
+                                    object propValueobj = prop.GetValue(obj);//obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
+                                    string propValueStr = "";
+                                    if (propValueobj != null)
                                     {
-                                        propValue = propVal.ToString();
+                                        //special case for execution time convertion from UTC format
+                                        if (Attribute.IsDefined(prop, typeof(UsingUTCTimeFormat)))
+                                        {
+                                            try
+                                            {
+                                                propValueStr = ((DateTime)propValueobj).ToLocalTime().ToString("dd-MMM-yy HH:mm:ss");
+                                            }
+                                            catch
+                                            {
+                                                propValueStr = propValueobj.ToString();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            propValueStr = propValueobj.ToString();
+                                        }
                                     }
-                                    else
-                                    {
-                                        propValue = "";
-                                    }
-
-                                    stringBuilder.Append(propFullName).Append("= ").Append(propValue).AppendLine();
+                                    
+                                    stringBuilder.Append(propFullName).Append("= ").Append(propValueStr).AppendLine();
                                 }
                             }
-                            catch (Exception) { }
+                            catch (Exception ex) 
+                            {
+                            }
                         }
                     }
                     catch (Exception) { }                  

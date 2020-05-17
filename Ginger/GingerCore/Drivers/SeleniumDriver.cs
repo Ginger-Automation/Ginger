@@ -3110,7 +3110,7 @@ namespace GingerCore.Drivers
                 elem = LocateElementByLocator(locator, AlwaysReturn);
                 if (elem == null)
                 {
-                    act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
+                    act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
                 }
             }
 
