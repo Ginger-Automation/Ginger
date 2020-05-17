@@ -638,18 +638,23 @@ namespace Ginger.Run
             }
         }
 
-        private void PrepareVariables()
+        private bool PrepareVariables()
         {
             if (ExecutedFrom == eExecutedFrom.Run)
             {
                 //We need to set variable mapped values only when running run set
-                SetVariableMappedValues();
+                if (SetVariableMappedValues() == false)
+                {
+                    return false;
+                }
             }
 
             PrepDynamicVariables();
+
+            return true;
         }
 
-        private void SetVariableMappedValues()
+        private bool SetVariableMappedValues()
         {
             BusinessFlowRun businessFlowRun = GetCurrenrtBusinessFlowRun();
 
@@ -660,11 +665,11 @@ namespace Ginger.Run
             List<VariableBase> variables = null;
             List<VariableBase> outputVariables = null;
             //do actual value update
-            foreach (VariableBase inputVar in inputVars)
+            foreach (VariableBase inputVar in inputVars.Where(x=>x.MappedOutputType != VariableBase.eOutputType.None).ToList())
             {
                 try
                 {
-                    string mappedValue = "";
+                    string mappedValue = null;
                     if (inputVar.MappedOutputType == VariableBase.eOutputType.Variable)//Legacy
                     {
                         if (variables == null)
@@ -675,7 +680,7 @@ namespace Ginger.Run
                         if (var != null)
                         {
                             mappedValue = var.Value;
-                        }
+                        }                        
                     }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
                     {
@@ -751,19 +756,29 @@ namespace Ginger.Run
                         }
                     }
 
-                    if (mappedValue != "")
+                    bool setValueRes = false;
+                    if (mappedValue != null)
                     {
                         if (inputVar.SupportSetValue)
                         {
-                            inputVar.SetValue(mappedValue);
+                            setValueRes = inputVar.SetValue(mappedValue);
                         }                       
+                    }
+
+                    if (mappedValue == null || setValueRes == false)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set '{0}' Input {1} mapped value in '{2}' {3}. Mapped data type '{4}' mapped data value '{5}'", inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), CurrentBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), inputVar.MappedOutputType, inputVar.MappedOutputValue));
+                        return false;
                     }
                 }
                 catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to set '{0}' Input {1} mapped value, mapped data type '{2}' mapped data value '{3}'", inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.MappedOutputType, inputVar.MappedOutputValue), ex);
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to set '{0}' Input {1} mapped value in '{2}' {3}. Mapped data type '{4}' mapped data value '{5}'", inputVar.Name, GingerDicser.GetTermResValue(eTermResKey.Variable), CurrentBusinessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), inputVar.MappedOutputType, inputVar.MappedOutputValue), ex);
+                    return false;
                 }
             }
+
+            return true;
         }
 
         public List<VariableBase> GetPossibleOutputVariables(RunSetConfig runSetConfig, BusinessFlow businessFlow, bool includeGlobalVars= false, bool includePrevRunnersVars= true)
@@ -1052,8 +1067,12 @@ namespace Ginger.Run
 
                 NotifyActionStart(act);
 
+                string actionStartTimeStr = string.Empty;
                 while (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                 {
+                    // Add time stamp                     
+                    actionStartTimeStr = string.Format("Execution Start Time: {0}", DateTime.Now.ToString());
+                    
                     RunActionWithTimeOutControl(act, ActionExecutorType);
                     CalculateActionFinalStatus(act);
                     // fetch all pop-up handlers
@@ -1094,15 +1113,9 @@ namespace Ginger.Run
 
                 UpdateDSReturnValues(act);
 
-                // Add time stamp 
-                if (!string.IsNullOrEmpty(act.ExInfo))
-                {
-                    act.ExInfo = DateTime.Now.ToString() + " - " + act.ExInfo; 
-                }
-                else
-                {
-                    act.ExInfo = DateTime.Now.ToString();
-                }
+                // Add time stamp                                 
+                act.ExInfo = actionStartTimeStr + Environment.NewLine + act.ExInfo;
+                
                 ProcessScreenShot(act, ActionExecutorType);
                 mErrorHandlerExecuted = false;
 
@@ -1659,7 +1672,7 @@ namespace Ginger.Run
                             {
                                 msg = "Missing Agent for taking screen shot for the action: '" + act.Description + "'";
                                 Reporter.ToLog(eLogLevel.WARN, msg);
-                                act.ExInfo += Environment.NewLine + msg;
+                                act.ExInfo += msg;
                             }
 
 
@@ -1668,7 +1681,7 @@ namespace Ginger.Run
                             {
                                 msg = "Screen shot not captured because agent is not running for the action:'" + act.Description + "'";
                                 Reporter.ToLog(eLogLevel.WARN, msg);
-                                act.ExInfo += Environment.NewLine + msg;
+                                act.ExInfo += msg;
                             }
                             else
                             {
@@ -1688,7 +1701,7 @@ namespace Ginger.Run
                                     }
                                     else
                                     {
-                                        act.ExInfo += Environment.NewLine + screenShotAction.Error;
+                                        act.ExInfo += screenShotAction.Error;
                                     }
                                 }
                                 else if (a.AgentType == Agent.eAgentType.Service)
@@ -1703,7 +1716,7 @@ namespace Ginger.Run
                     {
                         msg = "Failed to take driver screen shot for the action: '" + act.Description + "'";
                         Reporter.ToLog(eLogLevel.WARN, msg, ex);
-                        act.ExInfo += Environment.NewLine + msg;
+                        act.ExInfo += msg;
                     }
                 }
             }
@@ -1726,7 +1739,7 @@ namespace Ginger.Run
                     if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
                     {
                         msg = "Failed to take desktop screen shot for the action: '" + act.Description + "'";
-                        act.ExInfo += Environment.NewLine + msg;
+                        act.ExInfo += msg;
                         return;
                     }
                 }
@@ -1744,7 +1757,7 @@ namespace Ginger.Run
                 if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
                 {
                     msg = "Failed to take desktop screen shot for the action: '" + act.Description + "', it might be because the screen is locked.";
-                    act.ExInfo += Environment.NewLine + msg;
+                    act.ExInfo +=  msg;
                     Reporter.ToLog(eLogLevel.WARN, msg, ex);
                 }                                      
             }
@@ -2022,72 +2035,76 @@ namespace Ginger.Run
 
             CurrentBusinessFlow.CurrentActivity.CurrentAgent = ((Agent)AA.Agent);
         }
-        
+
         private void ProcessStoretoValue(Act act)
         {
             List<VariableBase> optionalVars = null;
-            foreach (ActReturnValue item in act.ReturnValues)
+            foreach (ActReturnValue item in act.ReturnValues.Where(x => x.Active == true && string.IsNullOrEmpty(x.StoreToValue) == false).ToList())
             {
                 bool succeedToPerform = false;
-                if (!string.IsNullOrEmpty(item.StoreToValue))
-                {                                  
-                    try
+                try
+                {
+                    switch (item.StoreTo)
                     {
-                        switch (item.StoreTo)
-                        {
-                            case ActReturnValue.eStoreTo.Variable:
-                                if (optionalVars == null)
+                        case ActReturnValue.eStoreTo.Variable:
+                            if (optionalVars == null)
+                            {
+                                optionalVars = CurrentBusinessFlow.GetAllVariables(CurrentBusinessFlow.CurrentActivity).Where(a => a.SupportSetValue == true).ToList();
+                            }
+                            VariableBase storeToVar = optionalVars.Where(x => x.Name == item.StoreToValue).FirstOrDefault();
+                            if (storeToVar != null)
+                            {
+                                if (!string.IsNullOrEmpty(storeToVar.LinkedVariableName))
                                 {
-                                    optionalVars = CurrentBusinessFlow.GetAllVariables(CurrentBusinessFlow.CurrentActivity).Where(a => a.SupportSetValue == true).ToList();
+                                    storeToVar = optionalVars.Where(x => x.Name == storeToVar.LinkedVariableName).FirstOrDefault();
                                 }
-                                VariableBase storeToVar = optionalVars.Where(x => x.Name == item.StoreToValue).FirstOrDefault();
                                 if (storeToVar != null)
                                 {
-                                    if (!string.IsNullOrEmpty(storeToVar.LinkedVariableName))
-                                    {
-                                        storeToVar = optionalVars.Where(x => x.Name == storeToVar.LinkedVariableName).FirstOrDefault();
-                                    }
-                                    if (storeToVar != null)
-                                    {
-                                        succeedToPerform = storeToVar.SetValue(item.Actual);
-                                    }
+                                    succeedToPerform = storeToVar.SetValue(item.Actual);
                                 }
-                                break;
+                            }
+                            break;
 
-                            case ActReturnValue.eStoreTo.GlobalVariable:
-                                VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x=>x.SupportSetValue).ToList().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
-                                if (globalVar != null)
-                                {
-                                    succeedToPerform = globalVar.SetValue(item.Actual);
-                                }
-                                break;
+                        case ActReturnValue.eStoreTo.GlobalVariable:
+                            VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.SupportSetValue).ToList().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                            if (globalVar != null)
+                            {
+                                succeedToPerform = globalVar.SetValue(item.Actual);
+                            }
+                            break;
 
-                            case ActReturnValue.eStoreTo.ApplicationModelParameter:
-                                GlobalAppModelParameter globalAppModelParameter = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
-                                if (globalAppModelParameter != null)
-                                {
-                                    globalAppModelParameter.CurrentValue = item.Actual;
-                                    succeedToPerform = true;
-                                }
-                                break;
-
-                            case ActReturnValue.eStoreTo.DataSource:
-                                ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
-                                VE.Calculate(item.StoreToValue);
+                        case ActReturnValue.eStoreTo.ApplicationModelParameter:
+                            GlobalAppModelParameter globalAppModelParameter = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid.ToString() == item.StoreToValue).FirstOrDefault();
+                            if (globalAppModelParameter != null)
+                            {
+                                globalAppModelParameter.CurrentValue = item.Actual;
                                 succeedToPerform = true;
-                                break;
-                        }                        
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.WARN, "Exception occured while performing Return Value StoreTo operation", ex);
-                    }
+                            }
+                            break;
 
-                    if (succeedToPerform == false)
+                        case ActReturnValue.eStoreTo.DataSource:
+                            ValueExpression VE = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList, true, item.Actual);
+                            VE.Calculate(item.StoreToValue);
+                            succeedToPerform = true;
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //Reporter.ToLog(eLogLevel.WARN, "Exception occured while performing Return Value StoreTo operation", ex);
+                    act.ExInfo += string.Format("Return Value StoreTo operation exception details: {0}", ex.Message);
+                }
+
+                if (succeedToPerform == false)
+                {
+                    string msg = string.Format("Failed to perform Return Value StoreTo operation for the '{0}' Return Parameter with value '{1}'--> StoreTo Type: '{2}' and StoreTo Value: '{3}'", item.Param, item.Actual, item.StoreTo, item.StoreToValue);
+                    if (string.IsNullOrEmpty(act.Error))
                     {
-                        string msg = string.Format("Failed to perform Return Value StoreTo operation for the '{0}' Input Param with value '{1}'--> Store To type '{2}' and value '{3}'", item.Param, item.Actual,item.StoreTo, item.StoreToValue);
+                        act.Error = msg;
+                    }
+                    else
+                    {                        
                         act.ExInfo += msg;
-                        Reporter.ToLog(eLogLevel.WARN, msg);
                     }
                 }
             }
@@ -3407,16 +3424,8 @@ namespace Ginger.Run
                         ContinueTimerVariables(BusinessFlow.SolutionVariables);
                     }
                 }
-
-                
+                                
                 CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
-
-                //Do run preparations
-                
-                UpdateLastExecutingAgent();
-                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
-                PrepareVariables();
-
 
                 if (!doContinueRun)
                 {
@@ -3427,6 +3436,22 @@ namespace Ginger.Run
                     NotifyBusinessFlowStart(CurrentBusinessFlow, doContinueRun);
                 }
 
+                //Do run preparations                
+                UpdateLastExecutingAgent();
+                CurrentBusinessFlow.Environment = ProjEnvironment == null ? "" : ProjEnvironment.Name;
+                if (PrepareVariables() == false)
+                {
+                    if (CurrentBusinessFlow.Activities.Count > 0)
+                    {
+                        CurrentBusinessFlow.Activities[0].Status = eRunStatus.Failed;
+                        if (CurrentBusinessFlow.Activities[0].Acts.Count > 0)
+                        {
+                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                            CurrentBusinessFlow.Activities[0].Acts[0].Status = eRunStatus.Failed;
+                        }                        
+                    }
+                    return;//failed to prepare BF inputes as expected
+                }
                 mStopBusinessFlow = false;
                 CurrentBusinessFlow.Elapsed = null;                
                 st.Start();
@@ -3435,15 +3460,12 @@ namespace Ginger.Run
                 if (CurrentBusinessFlow.Activities.Count == 0)
                 {
                     return;//no Activities to run
-                }
-
-               
+                }               
                 
                 //Start execution
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow.ExecutionLogActivityCounter = 1;
-                    // ((ExecutionLogger)ExecutionLogger).BusinessFlowStart(CurrentBusinessFlow);
                 }
 
                 //Executing the Activities
