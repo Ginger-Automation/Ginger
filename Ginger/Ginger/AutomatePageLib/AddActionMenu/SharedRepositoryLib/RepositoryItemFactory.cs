@@ -590,9 +590,16 @@ namespace Ginger.Repository
         //}
 
        
-
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
+        public string GetALMConfig()
         {
+            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault().AlmType.ToString();
+        }
+
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        {
+            //update alm type to open defect
+            ALMIntegration.Instance.UpdateALMType(almType);
+
             Dictionary<Guid, string> defectsOpeningResults;
             if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
             {

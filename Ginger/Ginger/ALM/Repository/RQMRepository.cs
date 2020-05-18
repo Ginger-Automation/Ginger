@@ -62,7 +62,7 @@ namespace Ginger.ALM.Repository
                 importDestinationFolderPath =  WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
 
             // get activities groups
-            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
+            RQMImportReviewPage win = new RQMImportReviewPage(RQMConnect.Instance.GetRQMTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, (RQMTestPlan)selectedTestPlan), importDestinationFolderPath);
             win.ShowAsWindow();
 
             return true;
@@ -162,11 +162,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
-                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, (RQMTestPlan)testPlan);
+                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, (RQMTestPlan)testPlan);
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdatedRQMTestInBF(ref businessFlow, currentRQMTestPlan, TCsIDs.Select(x => x.Item1.ToString()).ToList());
                 }
             }
@@ -174,11 +174,11 @@ namespace Ginger.ALM.Repository
 
         public override void UpdateBusinessFlow(ref BusinessFlow businessFlow)
         {
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 if (testPlan.RQMID == ExportToRQM.GetExportedIDString(businessFlow.ExternalID, "RQMID"))
                 {
-                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,  WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, (RQMTestPlan)testPlan);
+                    RQMTestPlan currentRQMTestPlan = RQMConnect.Instance.GetRQMTestPlanFullData(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, (RQMTestPlan)testPlan);
                     ((RQMCore)ALMIntegration.Instance.AlmCore).UpdateBusinessFlow(ref businessFlow, currentRQMTestPlan);
                 }
             }
@@ -287,7 +287,7 @@ namespace Ginger.ALM.Repository
                 if (!((RQMCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
                     return false;
 
-                ALMIntegration.Instance.SetALMCoreConfigurations();
+                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM);
             }
             return true; //Browse Dialog Canceled
         }

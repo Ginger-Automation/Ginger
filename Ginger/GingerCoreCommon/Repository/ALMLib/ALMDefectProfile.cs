@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using Amdocs.Ginger.Common;
+using GingerCoreNET.ALMLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -47,6 +49,10 @@ namespace Amdocs.Ginger.Repository
         public string Description { get; set; }
 
         [IsSerializedForLocalRepository]
+        public ALMIntegration.eALMType AlmType { get; set; }
+
+
+        [IsSerializedForLocalRepository]
         public string ReportLowerLevelToShow { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -74,5 +80,13 @@ namespace Amdocs.Ginger.Repository
                 _ALMDefectProfile = value;
             }
         }
+
+        public override void PostSerialization()
+        {
+            string almType = RepositoryItemHelper.RepositoryItemFactory.GetALMConfig();
+            Enum.TryParse(almType, out ALMIntegration.eALMType AlmType);
+            this.AlmType = AlmType;
+        }
+        
     }
 }

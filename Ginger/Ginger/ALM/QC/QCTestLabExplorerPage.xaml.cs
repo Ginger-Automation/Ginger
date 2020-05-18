@@ -69,7 +69,7 @@ namespace Ginger.ALM.QC {
             tvi.Path = @"Root";
             TestLabExplorerTreeView.Tree.AddItem(tvi);
 
-            TestLabExplorerTreeView.TreeTitle = "'" + ALMCore.AlmConfig.ALMDomain + " \\ " + ALMCore.AlmConfig.ALMProjectName + "' - Test Lab Explorer";
+            TestLabExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Lab Explorer";
             TestLabExplorerTreeView.TreeTitleStyle = (Style)TryFindResource("@ucTitleStyle_3");
             TestLabExplorerTreeView.Tree.ItemSelected += TestLabExplorerTreeView_ItemSelected;
 

@@ -47,10 +47,10 @@ namespace GingerCore.ALM.Qtest
         {
             ObservableList<QTestApiModel.TestCycleResource> cyclestList = new ObservableList<QTestApiModel.TestCycleResource>();
 
-            QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.AlmConfig.ALMServerURL);
+            QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
             string granttype = "password";
             string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
-            QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, authorization);
+            QTestApiModel.OAuthResponse response = connObj.PostAccessToken(granttype, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, authorization);
             connObj.Configuration.AccessToken = response.AccessToken;
             connObj.Configuration.ApiKey.Add("Authorization", response.AccessToken);
             connObj.Configuration.ApiKeyPrefix.Add("Authorization", response.TokenType);

@@ -28,6 +28,7 @@ using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
         {
             throw new NotImplementedException();
         }
@@ -167,6 +168,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-
+        public string GetALMConfig()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
