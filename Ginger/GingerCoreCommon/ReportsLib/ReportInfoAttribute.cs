@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -71,6 +71,13 @@ namespace Ginger.Reports
         public FieldParamsIsSelected(bool IsSelected)
         {
             this.IsSelected = IsSelected;
+        }
+    }
+
+    public class UsingUTCTimeFormat : Attribute
+    {
+        public UsingUTCTimeFormat()
+        {
         }
     }
 }

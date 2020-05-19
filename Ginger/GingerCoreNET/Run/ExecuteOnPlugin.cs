@@ -279,7 +279,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
                 st.Stop();
                 long millis = st.ElapsedMilliseconds;
-                actPlugin.ExInfo += Environment.NewLine + "Elapsed: " + millis + "ms";
+                actPlugin.ExInfo +=  "Elapsed: " + millis + "ms";
             }
             catch (Exception ex)
             {

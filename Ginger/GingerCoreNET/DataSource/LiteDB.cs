@@ -565,13 +565,13 @@ namespace GingerCoreNET.DataSource
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.WARN, "Exception Occurred: ", ex);
+                            Reporter.ToLog(eLogLevel.WARN, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred: ", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
                 }
             }
             dataTable.AcceptChanges();

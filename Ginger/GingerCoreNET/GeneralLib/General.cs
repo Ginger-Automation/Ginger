@@ -270,11 +270,11 @@ namespace GingerCoreNET.GeneralLib
         }
 
         public static string CheckDataSource(string DataSourceVE, ObservableList<DataSourceBase> DSList)
-        {
+        {            
             string DSVE = DataSourceVE;
             DataSourceBase DataSource = null;
             DataSourceTable DSTable = null;
-            if (DSVE.IndexOf("{DS Name=") != 0)
+            if (string.IsNullOrEmpty(DataSourceVE) || DSVE.IndexOf("{DS Name=") != 0)
             {
                 return "Invalid Data Source Value : '" + DataSourceVE + "'";
             }
