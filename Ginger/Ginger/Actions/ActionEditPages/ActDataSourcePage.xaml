@@ -199,7 +199,11 @@
         </Expander>
         <StackPanel Name="MarkRowPanel"  Grid.Row="5" Grid.ColumnSpan="4" Margin="0,5,0,0">
             <CheckBox Grid.Column="0"  Name="MarkAsDone" Content="Mark Row As Used" Checked="MarkAsDone_Checked" Unchecked="MarkAsDone_Unchecked" Margin="0,0,0,0" HorizontalAlignment="Left" Width="212"/>
-            <CheckBox Grid.Column="1"  Name="MultiRows" Content="Multi Rows" Checked="MultiRows_Checked"  Unchecked="MultiRows_Unchecked"  Margin="150,-15,-10,0" HorizontalAlignment="Left" Width="212"/>
+            <CheckBox Grid.Column="1"  Name="MultiRows" Content="Multi Rows" Checked="MultiRows_Checked"  Unchecked="MultiRows_Unchecked"  Margin="150,-15,-10,0" HorizontalAlignment="Left" Width="212">
+                <CheckBox.ToolTip>
+                    <ToolTip Style="{StaticResource ToolTipStyle}" >Perform the same action on multiple rows which satisfy condition</ToolTip>
+                </CheckBox.ToolTip>
+            </CheckBox>
         </StackPanel>
         <Label  Name="lblDescription"  Grid.Row="6" Grid.Column="0" Content="Value Expression:" Style="{StaticResource @LabelStyle}"  HorizontalAlignment="Stretch" Margin="0,0.2,90,54" Grid.ColumnSpan="2" Grid.RowSpan="2"/>
         <StackPanel Grid.Row="6" Grid.Column="1" x:Name="DescriptionPanel" Visibility="Visible" Margin="0.2,2.2,0.4,10" Grid.ColumnSpan="3" Grid.RowSpan="2">
