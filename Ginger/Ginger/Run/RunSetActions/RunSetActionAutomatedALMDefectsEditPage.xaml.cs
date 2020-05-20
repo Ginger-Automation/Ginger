@@ -37,8 +37,8 @@ namespace Ginger.Run.RunSetActions
             InitializeComponent();
             this.runSetActionAutomatedALMDefects = runSetActionAutomatedALMDefects;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForAll);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForMarked);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeForAll));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeForMarked));
 
             if ((!(bool)RadioDefectsOpeningModeForAll.IsChecked) && (!(bool)RadioDefectsOpeningModeForMarked.IsChecked))
             {

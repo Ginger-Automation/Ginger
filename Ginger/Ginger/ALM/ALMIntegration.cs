@@ -181,13 +181,6 @@ namespace Ginger.ALM
             SettingsPage
         }
 
-        public void SetALMProject(KeyValuePair<string,string> newProject, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
-        {
-            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
-            CurrentAlmConfigurations.ALMProjectName = newProject.Value;
-            CurrentAlmConfigurations.ALMProjectKey = newProject.Key;
-        }
-
         public bool TestALMServerConn(eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;

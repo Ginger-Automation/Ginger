@@ -200,11 +200,13 @@ namespace GingerCore.ALM
                     itemfield.ItemType = testSetfieldInRestSyntax.ToString();
                     itemfield.Type = field.DataType;
 
-                    if ((field.AllowedValues != null))
+                    if (field.AllowedValues != null)
                     {
                         foreach (QTestApiModel.AllowedValueResource value in field.AllowedValues)
                         {
                             itemfield.PossibleValues.Add(value.Label);
+                            //itemfield.PossibleValues.Add(value.Value.ToString());
+                            //itemfield.PossibleValues.Add((value.Value.ToString() != null) ? value.Value : value.Label);
                         }
                     }
 
@@ -221,7 +223,7 @@ namespace GingerCore.ALM
                     }
                     else
                     {
-                        // itemfield.SelectedValue = "NA";
+                         itemfield.SelectedValue = "Unassigned";
                     }
 
                     fields.Add(itemfield);

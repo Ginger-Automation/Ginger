@@ -76,9 +76,7 @@ namespace Ginger.ALM
                 if (GetProjectsDetails())
                     ConnectProject();
             }
-            else
-                RefreshALMSolutionSettings();
-
+            
             SetControls();
             StyleRadioButtons();
             ChangeALMType();
@@ -165,45 +163,6 @@ namespace Ginger.ALM
                 if (isConnWin)
                     ConnectProjectButton.Content = "Connect";
                 else ConnectProjectButton.Content = "Save Project Mapping";
-            }
-        }
-
-        public void RefreshALMSolutionSettings()
-        {
-            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC && QCRadioButton.IsChecked == false)
-            {
-                QCRadioButton.IsChecked = true;
-                PasswordTextBox.Password = "";
-                UserNameTextBox.Text = "";
-                StyleRadioButtons();
-            }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked == false)
-            {
-                RQMRadioButton.IsChecked = true;
-                PasswordTextBox.Password = "";
-                UserNameTextBox.Text = "";
-                StyleRadioButtons();
-            }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && JiraRadioButton.IsChecked == false)
-            {
-                JiraRadioButton.IsChecked = true;
-                PasswordTextBox.Password = "";
-                UserNameTextBox.Text = "";
-                StyleRadioButtons();
-            }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
-            {
-                RallyRadioButton.IsChecked = true;
-                PasswordTextBox.Password = "";
-                UserNameTextBox.Text = "";
-                StyleRadioButtons();
-            }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest && qTestRadioButton.IsChecked == false)
-            {
-                qTestRadioButton.IsChecked = true;
-                PasswordTextBox.Password = "";
-                UserNameTextBox.Text = "";
-                StyleRadioButtons();
             }
         }
 
@@ -300,7 +259,7 @@ namespace Ginger.ALM
         {
             if (ALMIntegration.Instance.TestALMServerConn(almConectStyle))
             {
-                string currSelectedDomain = (string)DomainComboBox.SelectedItem;
+                string currSelectedDomain = CurrentAlmConfigurations.ALMDomain;
                 if (CurrentAlmConfigurations.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest)
                 {
                     if (string.IsNullOrEmpty(currSelectedDomain))
@@ -669,13 +628,9 @@ namespace Ginger.ALM
         {
             if (ProjectComboBox != null && ProjectComboBox.SelectedItem != null)
             {
-                ALMIntegration.Instance.SetALMProject((KeyValuePair<string, string>)ProjectComboBox.SelectedItem,CurrentAlmConfigurations.AlmType);
-                return;
-            }
-            if (ProjectComboBox != null && ProjectComboBox.SelectionBoxItem != null)
-            {
-                ProjectComboBox.SelectedItem = ProjectComboBox.SelectionBoxItem;
-                ALMIntegration.Instance.SetALMProject((KeyValuePair<string, string>)ProjectComboBox.SelectionBoxItem, CurrentAlmConfigurations.AlmType);
+                KeyValuePair<string, string> newProject = (KeyValuePair<string, string>)ProjectComboBox.SelectedItem;
+                CurrentAlmConfigurations.ALMProjectName = newProject.Value;
+                CurrentAlmConfigurations.ALMProjectKey = newProject.Key;
             }
         }
 

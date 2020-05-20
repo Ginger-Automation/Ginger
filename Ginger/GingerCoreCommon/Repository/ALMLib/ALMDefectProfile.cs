@@ -83,9 +83,12 @@ namespace Amdocs.Ginger.Repository
 
         public override void PostSerialization()
         {
-            string almType = RepositoryItemHelper.RepositoryItemFactory.GetALMConfig();
-            Enum.TryParse(almType, out ALMIntegration.eALMType AlmType);
-            this.AlmType = AlmType;
+            if (this.AlmType == 0)
+            {
+                string almType = RepositoryItemHelper.RepositoryItemFactory.GetALMConfig();
+                Enum.TryParse(almType, out ALMIntegration.eALMType AlmType);
+                this.AlmType = AlmType;
+            }
         }
         
     }

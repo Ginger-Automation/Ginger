@@ -229,6 +229,7 @@ namespace Ginger.Run
             RunSetActionAutomatedALMDefects RSAAAD = new RunSetActionAutomatedALMDefects();
             RSAAAD.Name = RSAAAD.Type;
             RSAAAD.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            RSAAAD.DefectsOpeningModeForAll = true;
             mRunSetConfig.RunSetActions.Add(RSAAAD);
             RunSetActionsGrid.Grid.SelectedItem = RSAAAD;
         }

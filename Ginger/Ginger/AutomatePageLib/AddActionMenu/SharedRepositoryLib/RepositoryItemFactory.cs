@@ -618,6 +618,9 @@ namespace Ginger.Repository
                     }
                 }
             }
+
+            //Set back Default Alm
+            ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
         }
 
         public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
