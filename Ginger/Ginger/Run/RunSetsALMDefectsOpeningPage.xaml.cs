@@ -145,7 +145,7 @@ namespace Ginger.Run
                         catch (Exception ex)
                         {
                             currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
-                            currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
+                            currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails != null ? defectSuggestion.ErrorDetails : "There is no error description");
                         }
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }

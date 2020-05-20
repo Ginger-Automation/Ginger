@@ -29,6 +29,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
 using System.IO.Compression;
 using Amdocs.Ginger.IO;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace GingerCore.ALM
 {
@@ -364,7 +366,7 @@ namespace GingerCore.ALM
                                                 }
                                                 System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                                 // to discuss an issue
-                                                // attachmentApi.Upload((long)Convert.ToInt32(ALMCore.AlmConfig.ALMProjectKey), "test-logs", testLog.Id, "GingerExecutionHTMLReport.zip", "application/x-zip-compressed", File.ReadAllBytes(zipFileName));
+                                                attachmentApi.Upload((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-logs", testLog.Id, "GingerExecutionHTMLReport.zip", "application/x-zip-compressed", File.ReadAllBytes(zipFileName));
                                                 System.IO.File.Delete(zipFileName);
                                             }
                                         }
@@ -576,7 +578,7 @@ namespace GingerCore.ALM
                 if (testStep.CalledTestCaseId != null)
                 {
                     QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testStep.CalledTestCaseId);
-                    calledTestCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), z.Description, z.Expected)));
+                    calledTestCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), StripHTML(z.Description), StripHTML(z.Expected))));
                 }
                 else
                 {
@@ -647,6 +649,28 @@ namespace GingerCore.ALM
             else
             {
                 return ImportFromQC.CreateNewDefectQCREST(defectsForOpening);
+            }
+        }
+
+        public static string StripHTML(string HTMLText, bool toDecodeHTML = true)
+        {
+            try
+            {
+                HTMLText = HTMLText.Replace("<br />", Environment.NewLine);
+                Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
+                var stripped = reg.Replace(HTMLText, "");
+                if (toDecodeHTML)
+                    stripped = HttpUtility.HtmlDecode(stripped);
+
+                stripped = stripped.TrimStart(new char[] { '\r', '\n' });
+                stripped = stripped.TrimEnd(new char[] { '\r', '\n' });
+
+                return stripped;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while stripping the HTML from QC TC Step Description/Expected", ex);
+                return HTMLText;
             }
         }
     }

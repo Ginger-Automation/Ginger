@@ -223,6 +223,7 @@ namespace Ginger.ALM.Qtest
                     //foreach (QCTestSetTreeItem testSet in CurrentSelectedTestSets)
                     //    testSet.IsTestSetAlreadyImported();
                     ShowTestSetDetailsPanel(false);
+                    _GenericWin.Close();
                 }
             }
             else
