@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,6 +82,7 @@ namespace Ginger.ALM
                     aLMDefectProfileFieldExisted.PossibleValues = aLMDefectProfileField.PossibleValues;
                     mALMDefectProfileFieldsExisted.Add(aLMDefectProfileFieldExisted);
                 }
+                ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
                 aLMDefectProfile.ALMDefectProfileFields = mALMDefectProfileFieldsExisted;
             }
 
@@ -98,13 +99,9 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = null;
             _manualCheckedEvent = true;
         }
-        public static List<string> ALMTypes
-        {
-            get
-            {
-                return Enum.GetNames(typeof(GingerCoreNET.ALMLib.ALMIntegration.eALMType)).ToList();
-            }
-        }
+
+        List<GingerCore.GeneralLib.ComboEnumItem> ALMTypes = GingerCore.General.GetEnumValuesForCombo(typeof(GingerCoreNET.ALMLib.ALMIntegration.eALMType));
+
         private void SetFieldsGrid()
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -119,8 +116,8 @@ namespace Ginger.ALM
             grdDefectsProfiles.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditDefectsProfile));
             grdDefectsProfiles.btnAdd.Visibility = System.Windows.Visibility.Visible;
             grdDefectsProfiles.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddDefectsProfile));
-            // grdDefectsProfiles.btnDelete.Visibility = System.Windows.Visibility.Visible;                                     //
-            // grdDefectsProfiles.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteDefectsProfile));        // to fix - should use non-generic handler !!!
+            //grdDefectsProfiles.btnDelete.Visibility = System.Windows.Visibility.Visible;                                     //
+            //grdDefectsProfiles.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteDefectsProfile));        // to fix - should use non-generic handler !!!
             grdDefectsProfiles.btnRefresh.Visibility = System.Windows.Visibility.Visible;
             grdDefectsProfiles.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshgrdDefectsProfilesHandler));
 
@@ -136,6 +133,10 @@ namespace Ginger.ALM
             view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Name), Header = "Defect's Field Name", WidthWeight = 20, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.Mandatory), Header = "Field Is Mandatory", WidthWeight = 15, ReadOnly = true, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ExternalItemFieldBase.SelectedValue), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(ExternalItemFieldBase.Fields.PossibleValues, ExternalItemFieldBase.Fields.SelectedValue, true), WidthWeight = 20 });
+
+            grdDefectsFields.btnRefresh.Visibility = System.Windows.Visibility.Visible;
+            grdDefectsFields.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshgrdDefectsFieldsHandler));
+
 
             grdDefectsFields.SetAllColumnsDefaultView(view);
             grdDefectsFields.InitViewItems();
@@ -204,10 +205,13 @@ namespace Ginger.ALM
 
             ALMIntegration.Instance.UpdateALMType(newALMDefectProfile.AlmType);
             newALMDefectProfile.ALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+            ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+
             newALMDefectProfile.ALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
             grdDefectsProfiles.DataSourceList = mALMDefectProfiles;
             grdDefectsFields.DataSourceList = newALMDefectProfile.ALMDefectProfileFields;
+            grdDefectsProfiles.Grid.SelectedItem = newALMDefectProfile;
             Mouse.OverrideCursor = null;
         }
 
@@ -232,6 +236,18 @@ namespace Ginger.ALM
 
         private void RefreshgrdDefectsProfilesHandler(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        private void RefreshgrdDefectsFieldsHandler(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            ALMDefectProfile AlmDefectProfile = (ALMDefectProfile)grdDefectsProfiles.CurrentItem;
+            ALMIntegration.Instance.UpdateALMType(AlmDefectProfile.AlmType);
+            AlmDefectProfile.ALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+            grdDefectsFields.DataSourceList = AlmDefectProfile.ALMDefectProfileFields;
+            ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+            Mouse.OverrideCursor = null;
         }
 
         private void Save(object sender, RoutedEventArgs e)

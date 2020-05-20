@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -618,6 +618,9 @@ namespace Ginger.Repository
                     }
                 }
             }
+
+            //Set back Default Alm
+            ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
         }
 
         public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
@@ -722,11 +725,15 @@ namespace Ginger.Repository
            return SourceControlUI.GetLatest(path, SourceControl);
         }
 
+        public bool Revert(string path, SourceControlBase SourceControl)
+        {
+            return SourceControlUI.Revert(path, SourceControl);
+        }
+
         public SourceControlBase GetNewSVnRepo()
         {
             return new SVNSourceControl();
         }
-
 
     }
     

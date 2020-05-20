@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -179,13 +179,6 @@ namespace Ginger.ALM
             Manual,
             Auto,
             SettingsPage
-        }
-
-        public void SetALMProject(KeyValuePair<string,string> newProject, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
-        {
-            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
-            CurrentAlmConfigurations.ALMProjectName = newProject.Value;
-            CurrentAlmConfigurations.ALMProjectKey = newProject.Key;
         }
 
         public bool TestALMServerConn(eALMConnectType almConectStyle)

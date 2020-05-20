@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ namespace Ginger.SolutionGeneral
                 }
                 if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
                 {
-                    //if (this.ALMDomain != lastSavedSolution.ALMDomain || this.ALMProject != lastSavedSolution.ALMProject || this.ALMServerURL != lastSavedSolution.ALMServerURL || this.AlmType != lastSavedSolution.AlmType)
+                    if (!this.ALMConfigs.Equals(lastSavedSolution.ALMConfigs))
                     {
                         bldExtraChangedItems.Append("ALM Details, ");
                     }                        
@@ -566,6 +566,9 @@ namespace Ginger.SolutionGeneral
             return ePlatformType.NA;
         }
 
+
+        // overriding this SerializationError here because previously we were supporting only one ALMConfig 
+        // Now we changed this to support MultiALM Connection, so serializing those values to ALMConfigs List
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
             if (errorType == SerializationErrorType.PropertyNotFound)

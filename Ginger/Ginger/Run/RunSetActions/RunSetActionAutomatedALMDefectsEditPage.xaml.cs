@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ namespace Ginger.Run.RunSetActions
             InitializeComponent();
             this.runSetActionAutomatedALMDefects = runSetActionAutomatedALMDefects;
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForAll);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, RunSetActionAutomatedALMDefects.Fields.DefectsOpeningModeForMarked);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeForAll));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeForMarked));
 
             if ((!(bool)RadioDefectsOpeningModeForAll.IsChecked) && (!(bool)RadioDefectsOpeningModeForMarked.IsChecked))
             {

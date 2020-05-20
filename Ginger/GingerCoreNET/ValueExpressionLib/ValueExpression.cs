@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -397,7 +397,7 @@ namespace GingerCore
                             Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
                             p = "";
                         }
-                        else if (sAct == "ETE") // Get Row Count
+                        else if (sAct == "ETE") // Export to Excel
                         {
                             Query = "";
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();

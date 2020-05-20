@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual("System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]" , res.ToString());
 
         }
-
+        
         [TestMethod]
         public void SaveTable()
         {
@@ -193,7 +193,7 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual( "1", a, "RowCount");
         }
-
+        
        
         [TestMethod]
         public void ExecuteGetValueNextAvailable()
@@ -262,6 +262,53 @@ namespace UnitTests.NonUITests
 
             //Assert
             Assert.AreEqual("1", value.Actual);
+        }
+
+        [TestMethod]
+        public void ExecuteMarkAsDone()
+        {
+            //Add row
+            ObservableList<DataSourceTable> dataSourceTableList = liteDB.GetTablesList();
+            DataSourceTable dataSource = null;
+            List<string> mColumnNames = null;
+            foreach (DataSourceTable dataSourceTable in dataSourceTableList)
+            {
+                if (dataSourceTable.Name == "MyCustomizedDataTable")
+                {
+                    dataSource = dataSourceTable;
+                }
+            }
+            DataTable dataTable = liteDB.GetQueryOutput(dataSource.Name);
+            dataSource.DataTable = dataTable;
+            liteDB.AddRow(mColumnNames, dataSource);
+            liteDB.SaveTable(dataTable);
+            
+            //Clean up
+            ActDSTableElement actDSTable = new ActDSTableElement();
+            string query = "db.MyCustomizedDataTable.update GINGER_USED= \"False\"";
+            actDSTable.ControlAction = ActDSTableElement.eControlAction.MarkAllUnUsed;
+            liteDB.Execute(actDSTable, query);
+
+            //Arrange
+            query = "db.MyCustomizedDataTable.update GINGER_USED= \"True\"";
+            actDSTable.ControlAction = ActDSTableElement.eControlAction.MarkAsDone;
+            actDSTable.DSTableName = "MyCustomizedDataTable";
+            actDSTable.Customized = true;
+            actDSTable.ByNextAvailable = false;
+            actDSTable.ByRowNum = true;
+            actDSTable.LocateRowValue = "0";
+            actDSTable.LocateColTitle = "GINGER_ID";
+            actDSTable.MarkUpdate = true;
+            actDSTable.AddNewReturnParams = true;
+
+            //Act
+            liteDB.Execute(actDSTable, query);
+
+            //Assert
+            query = "db.MyCustomizedDataTable.find GINGER_USED= \"True\"";
+            DataTable dt = liteDB.GetQueryOutput(query);
+
+            Assert.AreEqual(1, dt.Rows.Count);
         }
 
         [TestMethod]

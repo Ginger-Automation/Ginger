@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -3145,13 +3145,12 @@ namespace GingerCore.Drivers
             {
                 if (!locator.IsAutoLearned)
                 {
-                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
-                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                    elem = LocateElementByLocator(evaluatedLocator, true);
+                    elem = LocateElementIfNotAutoLeared(locator);
                 }
                 else
+                {
                     elem = LocateElementByLocator(locator, true);
+                }
 
                 if (elem != null)
                 {
@@ -7460,7 +7459,16 @@ namespace GingerCore.Drivers
 
                 foreach (ElementLocator el in activesElementLocators)
                 {
-                    if (LocateElementByLocator(el, true) != null)
+                    IWebElement webElement = null;
+                    if (!el.IsAutoLearned)
+                    {
+                        webElement = LocateElementIfNotAutoLeared(el);
+                    }
+                    else
+                    {
+                        webElement = LocateElementByLocator(el, true);
+                    }
+                    if (webElement != null)
                     {
                         el.StatusError = string.Empty;
                         el.LocateStatus = ElementLocator.eLocateStatus.Passed;
@@ -7497,6 +7505,13 @@ namespace GingerCore.Drivers
             }
         }
 
+        private IWebElement LocateElementIfNotAutoLeared(ElementLocator el)
+        {
+            ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
+            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+            return LocateElementByLocator(evaluatedLocator, true);
+        }
 
         void IWindowExplorer.CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> mOriginalList)
         {
