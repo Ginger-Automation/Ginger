@@ -127,8 +127,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts, Version=0.9.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.ExecuterService.Contracts.0.9.7\lib\netstandard2.0\Ginger.ExecuterService.Contracts.dll</HintPath>
+    <Reference Include="Ginger.ExecuterService.Contracts, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.ExecuterService.Contracts.1.0.1\lib\netstandard2.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.11.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.11.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -670,6 +670,14 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
+    <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
+    <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">
+      <DependentUpon>VariableDateTimePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Variables\VariableEditPages\VariableNumber.xaml.cs">
+      <DependentUpon>VariableNumber.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Variables\VariablesListViewHelper.cs" />
     <Compile Include="Variables\VariabelsListViewPage.xaml.cs">
       <DependentUpon>VariabelsListViewPage.xaml</DependentUpon>
@@ -1385,8 +1393,8 @@
     <Compile Include="UserControlsLib\UCHamburger.xaml.cs">
       <DependentUpon>UCHamburger.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControlsLib\UCStoreTo.xaml.cs">
-      <DependentUpon>UCStoreTo.xaml</DependentUpon>
+    <Compile Include="UserControlsLib\UCDataMapping.xaml.cs">
+      <DependentUpon>UCDataMapping.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\TextEditor\UCTextEditor.xaml.cs">
       <DependentUpon>UCTextEditor.xaml</DependentUpon>
@@ -3285,6 +3293,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Variables\VariableEditPages\VariableDateTimePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Variables\VariableEditPages\VariableNumber.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Variables\VariableEditPages\VariablePasswordStringPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -3758,7 +3774,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControlsLib\UCStoreTo.xaml">
+    <Page Include="UserControlsLib\UCDataMapping.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

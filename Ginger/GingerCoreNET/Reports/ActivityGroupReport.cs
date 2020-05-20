@@ -132,6 +132,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime StartTimeStamp { get { return RunListenerBase.GetDateTime(mActivitiesGroup.StartTimeStamp); }
              // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
             // set { mActivitiesGroup.StartTimeStamp = value; }
@@ -143,6 +144,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime EndTimeStamp { get { return RunListenerBase.GetDateTime(mActivitiesGroup.EndTimeStamp); }
             // !!!!!!!!!!!!!!!!!!!!!!!!!!FIXME for load
             //    set { mActivitiesGroup.EndTimeStamp = value; }

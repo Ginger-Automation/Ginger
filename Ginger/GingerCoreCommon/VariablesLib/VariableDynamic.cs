@@ -121,6 +121,12 @@ namespace GingerCore.Variables
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new NotImplementedException();
-        }        
+        }
+
+        public override bool SetValue(string value)
+        {
+            ValueExpression = value;
+            return true;
+        }
     }
 }

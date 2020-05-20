@@ -41,7 +41,7 @@
                 <Button x:Name="GridDSVEButton" Content="..." Click="GridDSVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
             <DataTemplate x:Key="StoreToObject">
-                <UCControl:UCStoreTo x:Name="StoreToObj"/>
+                <UCControl:UCDataMapping x:Name="StoreToObj"/>
             </DataTemplate>
             <DataTemplate x:Key="ClearExpectedValueBtnTemplate">
                 <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Clear Expected Value"/>

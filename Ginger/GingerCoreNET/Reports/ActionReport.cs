@@ -108,6 +108,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime StartTimeStamp { get { return mAction != null ? mAction.StartTimeStamp : startTimeStamp; } set { startTimeStamp = value; } }
 
         [JsonProperty]
@@ -116,6 +117,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime EndTimeStamp { get { return mAction != null ? mAction.EndTimeStamp : endTimeStamp; } set { endTimeStamp = value; } }
 
         [FieldParams]

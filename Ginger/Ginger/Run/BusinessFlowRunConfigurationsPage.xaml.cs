@@ -18,7 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using Ginger.Variables;
 using GingerCore;
 using GingerCore.Variables;
@@ -50,12 +52,10 @@ namespace Ginger.Run
 
         GenericWindow _pageGenericWin = null;
 
-        ObservableList<BusinessFlow> mPrevBusinessFlowsInFlow;
-
         GingerRunner mGingerRunner;
         Context mContext;
 
-        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow, ObservableList<BusinessFlow> prevBusinessFlowsInFlow)
+        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
         {
             InitializeComponent();
 
@@ -64,7 +64,6 @@ namespace Ginger.Run
             mGingerRunner = runner;
             mBusinessFlow = businessFlow;
             mContext = new Context() { BusinessFlow = businessFlow, Runner = runner };
-            mPrevBusinessFlowsInFlow = prevBusinessFlowsInFlow;
             
             mBusinessFlow.SaveBackup();
 
@@ -117,7 +116,7 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 10, BindingMode = BindingMode.OneWay, ReadOnly = true });           
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), null, nameof(VariableBase.PossibleOutputVariables), nameof(VariableBase.SupportSetValue), "Output Variable", null), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty:nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 40 });
             }                
             else if (mWindowMode == eWindowMode.SummaryView)
             {
@@ -140,29 +139,34 @@ namespace Ginger.Run
                 case eWindowMode.Configuration:                              
                     grdVariables.Title = "'" + mBusinessFlow.Name + "' Run " + GingerDicser.GetTermResValue(eTermResKey.Variables);
                     ObservableList<VariableBase> bfInputVariables = mBusinessFlow.GetBFandActivitiesVariabeles(true,true);
+                    grdVariables.DataSourceList = bfInputVariables;
 
-                    //set the Output vars can be used
-                    ObservableList<string> optionalOutputVars = new ObservableList<string>();
-                    optionalOutputVars.Add(string.Empty);//default value for clear selection
-                    //solution vars
-                    if (BusinessFlow.SolutionVariables != null)
-                        foreach (VariableBase var in BusinessFlow.SolutionVariables)
-                            optionalOutputVars.Add(var.Name);
-                    //prev bf's output vars
-                    foreach (BusinessFlow bf in mPrevBusinessFlowsInFlow)
-                    {                       
-                        foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(true, false, true))
-                            optionalOutputVars.Add(var.Name);
+                    //**Legacy--- set the Variabels can be used- user should use Global Variabels/ Output Variabels instead
+                    ObservableList<string> optionalVars = new ObservableList<string>();
+                    optionalVars.Add(string.Empty);//default value for clear selection
+                    foreach(VariableBase var in mGingerRunner.GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars:true, includePrevRunnersVars:false))
+                    {
+                        optionalVars.Add(var.Name);
                     }
-
-                    //allow setting output vars options only to variables types which supports setting value
+                    //allow setting  vars options only to variables types which supports setting value
                     foreach (VariableBase inputVar in bfInputVariables)
                     {
                         if (inputVar.SupportSetValue)                        
-                            inputVar.PossibleOutputVariables = optionalOutputVars;                        
+                            inputVar.PossibleVariables = optionalVars;                        
                     }
 
-                    grdVariables.DataSourceList = bfInputVariables;
+                    //Set Output Variabels can be used
+                    ObservableList<VariableBase> optionalOutputVars = new ObservableList<VariableBase>();                  
+                    foreach (VariableBase outputVar in mGingerRunner.GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
+                    {
+                        optionalOutputVars.Add(outputVar);
+                    }
+                    //allow setting output vars options only to variables types which supports setting value
+                    foreach (VariableBase inputVar in bfInputVariables)
+                    {
+                        if (inputVar.SupportSetValue)
+                            inputVar.PossibleOutputVariables = optionalOutputVars;
+                    }
                     break;
 
                 case eWindowMode.SummaryView:
@@ -306,10 +310,14 @@ namespace Ginger.Run
                     winButtons.Add(okBtn);
                     winButtons.Add(undoBtn);
 
+                    this.Width = 800;
+                    this.Height = 800;
                     GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Run Configurations", this, winButtons, false, "Undo & Close", CloseWinClicked);
                     break;
 
                 case eWindowMode.SummaryView:
+                    this.Width = 800;
+                    this.Height = 800;
                     GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Run Configurations", this, null, true, "Close");
                     break;
             }        

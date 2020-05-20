@@ -38,21 +38,20 @@ namespace GingerCore.NoSqlBase
        
       
 
-        public bool Connect()
+        public override bool Connect()
         {
-            
-
             try
             {
+                string queryTimeoutString = "querytimeout=";
+                int queryTimeout = 20000;//default timeout (20 seconds).
+                if (Db.TNSCalculated.ToLower().Contains(queryTimeoutString.ToLower()))
+                {
+                    string queryTimeoutValue = Db.TNSCalculated.Substring(Db.TNSCalculated.ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
+                    queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
+                }
+
                 string[] HostKeySpace = Db.TNSCalculated.Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
-
-                //Get timeout value
-                int queryTimeout = 20000;//default timeout (20 seconds).
-                if ((Act.Timeout != null) && (Act.Timeout > 20))
-                {
-                    queryTimeout = (int)Act.Timeout * 1000;
-                }
 
                 if (HostPort.Length == 2)
                 {
@@ -68,7 +67,10 @@ namespace GingerCore.NoSqlBase
 
                 if (HostKeySpace.Length > 1)
                 {
-                    session = cluster.Connect(HostKeySpace[1]);
+                    if (!HostKeySpace[1].ToLower().Contains(queryTimeoutString.ToLower()))
+                    {
+                        session = cluster.Connect(HostKeySpace[1]);
+                    }
                 }
                 else
                 {
@@ -80,6 +82,34 @@ namespace GingerCore.NoSqlBase
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
                 throw (e);
+            }
+        }
+
+        public override bool MakeSureConnectionIsOpen()
+        {
+            try
+            {
+                if (session != null)
+                {
+                    Metadata m = cluster.Metadata;
+                    ICollection<string> Keyspaces = m.GetKeyspaces();
+                    if (Keyspaces.Count > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return Connect();
+                    }
+                }
+                else
+                {
+                    return Connect();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Connect();
             }
         }
 
@@ -413,7 +443,6 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            Connect();
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);

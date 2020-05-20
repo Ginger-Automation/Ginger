@@ -28,6 +28,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.WindowExplorer;
 using GingerCore;
@@ -642,8 +643,7 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, MaxWidth = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
             GenerateStoreToVarsList();
-            ObservableList<GlobalAppModelParameter> appsModelsGlobalParamsList = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, mStoreToVarsList, mAppGlobalParamList: appsModelsGlobalParamsList) });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, variabelsSourceList: mStoreToVarsList) });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
@@ -683,11 +683,11 @@ namespace Ginger.Actions
             List<string> tempList = new List<string>();
             if (mActParentBusinessFlow != null)
             {
-                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
             }
             else
             {
-                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
                 if (mActParentActivity != null)
                 {
                     foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)

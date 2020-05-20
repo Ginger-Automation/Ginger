@@ -164,6 +164,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime StartTimeStamp { get{ return mBusinessFlow.StartTimeStamp; }  set { mBusinessFlow.StartTimeStamp = value; }
         }
         
@@ -173,6 +174,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime EndTimeStamp { get { return mBusinessFlow.EndTimeStamp; } set { mBusinessFlow.EndTimeStamp = value; }}
 
         [JsonProperty]
@@ -475,7 +477,7 @@ namespace Ginger.Reports
                 outputVars.AppendLine();
                 foreach (VariableBase var in mBusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsOutputValue: true, includeOnlyPublishedVars: true))
                 {
-                    outputVars.Append(var.ParentName).Append(" | ").Append(var.Name).Append(" = ").Append(var.Value).Append(" | ").Append(var.Description).AppendLine();
+                    outputVars.Append(var.ParentName).Append(" | ").Append(var.Name).Append(" = ").Append(var.Value).Append(" | ").Append(var.Description).Append(" | ").Append("ID = ").Append(var.Guid).AppendLine();
                 }
                 return outputVars.ToString();
             }

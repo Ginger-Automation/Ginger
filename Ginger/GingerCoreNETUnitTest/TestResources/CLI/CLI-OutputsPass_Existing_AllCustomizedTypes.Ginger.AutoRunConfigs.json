@@ -1,0 +1,167 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": true,
+    "Name": "DataMappingTest",
+    "ID": "4d49ecdb-941f-4228-a717-b1a7531555df",
+    "EnvironmentName": "Env2",
+    "EnvironmentID": "5ab6158b-05b4-4b2c-97f5-bde0f8522f3e",
+    "RunAnalyzer": true,
+    "RunInParallel": false,
+    "Runners": [
+      {
+        "Name": "Runner 1",
+        "ID": "f81e0791-3474-40ec-baab-d98f9be75c7d",
+        "EnvironmentName": "Env2",
+        "EnvironmentID": "5ab6158b-05b4-4b2c-97f5-bde0f8522f3e",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+            "AgentName": "Chrome",
+            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Flow_A",
+            "ID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+            "Active": true,
+            "InputValues": [
+              {
+                "VariableParentName": "Flow_A",
+                "VariableParentID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+                "VariableName": "A_ID",
+                "VariableID": "bde76d0f-a68e-465e-b25c-60365886762a",
+                "VariableCustomizationType": "Value",
+                "VariableCustomizedValue": "666666666"
+              },
+              {
+                "VariableParentName": "Flow_A",
+                "VariableParentID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+                "VariableName": "A_Name",
+                "VariableID": "1aba0714-ffd2-4443-bba5-b8bf4702ab52",
+                "VariableCustomizationType": "Variable",
+                "VariableCustomizedValue": "GlobalName"
+              },
+              {
+                "VariableParentName": "Flow_A",
+                "VariableParentID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+                "VariableName": "A_Color",
+                "VariableID": "284891c8-ad7e-41a5-bbf8-4e00e8d578e3",
+                "VariableCustomizationType": "ApplicationModelParameter",
+                "VariableCustomizedValue": "200203d7-3809-4158-9809-b71abcfc4b26"
+              },
+              {
+                "VariableParentName": "Flow_A\\Group\\Do-Work",
+                "VariableParentID": "b6a05602-a059-48d9-95cb-1b5878d98fc8",
+                "VariableName": "A_Type",
+                "VariableID": "b6c94841-64ab-46b6-a61d-1d2808c35370",
+                "VariableCustomizationType": "GlobalVariable",
+                "VariableCustomizedValue": "d5e3fc77-8968-43da-a1ca-4032d9938874"
+              }
+            ]
+          },
+          {
+            "Name": "Flow_B",
+            "ID": "d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f",
+            "Active": true,
+            "InputValues": [
+              {
+                "VariableParentName": "Flow_B",
+                "VariableParentID": "d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f",
+                "VariableName": "B_ID",
+                "VariableID": "bde76d0f-a68e-465e-b25c-60365886762a",
+                "VariableCustomizationType": "OutputVariable",
+                "VariableCustomizedValue": "bde76d0f-a68e-465e-b25c-60365886762a"
+              },
+              {
+                "VariableParentName": "Flow_B",
+                "VariableParentID": "d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f",
+                "VariableName": "B_Name",
+                "VariableID": "840b1e0d-b95c-403a-870b-52055a9e1e3b",
+                "VariableCustomizationType": "DataSource",
+                "VariableCustomizedValue": "{DS Name=LiteDB DST=MyKeyValueDataTable MASD=N Query QUERY=db.MyKeyValueDataTable.select GINGER_KEY_VALUE where GINGER_KEY_NAME=\"BBB\"}"
+              },
+              {
+                "VariableParentName": "Flow_B",
+                "VariableParentID": "d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f",
+                "VariableName": "B_Color",
+                "VariableID": "8c98b551-f8f7-4a9a-9cd3-e186d387721f",
+                "VariableCustomizationType": "OutputVariable",
+                "VariableCustomizedValue": "284891c8-ad7e-41a5-bbf8-4e00e8d578e3"
+              },
+              {
+                "VariableParentName": "Flow_B\\Group\\Do-Work",
+                "VariableParentID": "b6a05602-a059-48d9-95cb-1b5878d98fc8",
+                "VariableName": "B_Type",
+                "VariableID": "b6c94841-64ab-46b6-a61d-1d2808c35370",
+                "VariableCustomizationType": "GlobalVariable",
+                "VariableCustomizedValue": "d5e3fc77-8968-43da-a1ca-4032d9938874"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Runner 2",
+        "ID": "037740f4-4250-4607-ad6a-2fc9e5bd1fda",
+        "EnvironmentName": "Env2",
+        "EnvironmentID": "5ab6158b-05b4-4b2c-97f5-bde0f8522f3e",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+            "AgentName": "IE",
+            "AgentID": "bdcdb5d7-4166-4cb8-a937-8789d58e8e2f"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Flow_C",
+            "ID": "7277d999-fece-4d3a-9da7-d42da68a83d9",
+            "Active": true,
+            "InputValues": [
+              {
+                "VariableParentName": "Flow_C",
+                "VariableParentID": "7277d999-fece-4d3a-9da7-d42da68a83d9",
+                "VariableName": "C_ID",
+                "VariableID": "bde76d0f-a68e-465e-b25c-60365886762a",
+                "VariableCustomizationType": "OutputVariable",
+                "VariableCustomizedValue": "bde76d0f-a68e-465e-b25c-60365886762a"
+              },
+              {
+                "VariableParentName": "Flow_C",
+                "VariableParentID": "7277d999-fece-4d3a-9da7-d42da68a83d9",
+                "VariableName": "C_Name",
+                "VariableID": "8d7425a8-21a8-449b-88b9-b028f753ac22",
+                "VariableCustomizationType": "OutputVariable",
+                "VariableCustomizedValue": "1aba0714-ffd2-4443-bba5-b8bf4702ab52"
+              },
+              {
+                "VariableParentName": "Flow_C",
+                "VariableParentID": "7277d999-fece-4d3a-9da7-d42da68a83d9",
+                "VariableName": "C_Color",
+                "VariableID": "999237c5-d9fd-4770-83a1-341fb59e0926",
+                "VariableCustomizationType": "OutputVariable",
+                "VariableCustomizedValue": "8c98b551-f8f7-4a9a-9cd3-e186d387721f"
+              },
+              {
+                "VariableParentName": "Flow_C\\Group\\Do-Work",
+                "VariableParentID": "b6a05602-a059-48d9-95cb-1b5878d98fc8",
+                "VariableName": "C_Type",
+                "VariableID": "b6c94841-64ab-46b6-a61d-1d2808c35370",
+                "VariableCustomizationType": "Value",
+                "VariableCustomizedValue": "555"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -197,7 +197,7 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.Start, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), null);
                 }
             }
         }
@@ -216,7 +216,7 @@ namespace Ginger.Run
 
                 if (!offlineMode)
                 {
-                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Runner", gingerRunner.Name, gingerReport);
+                    ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), gingerReport);
                 }
             }
         }
