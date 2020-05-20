@@ -679,7 +679,7 @@ namespace Ginger.Run
                         VariableBase var = variables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault();
                         if (var != null)
                         {
-                            mappedValue = var.Value;
+                            mappedValue = string.IsNullOrEmpty(var.Value)?string.Empty:var.Value;
                         }                        
                     }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.OutputVariable)
@@ -694,7 +694,7 @@ namespace Ginger.Run
                             VariableBase outputVar = outputVariables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
                             if (outputVar != null)
                             {
-                                mappedValue = outputVar.Value;
+                                mappedValue = string.IsNullOrEmpty(outputVar.Value) ? string.Empty : outputVar.Value; 
                             }
                         }
                     }
@@ -706,7 +706,7 @@ namespace Ginger.Run
                             VariableBase globalVar = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
                             if (globalVar != null)
                             {
-                                mappedValue = globalVar.Value;
+                                mappedValue = string.IsNullOrEmpty(globalVar.Value) ? string.Empty : globalVar.Value;
                             }
                         }
                     }
@@ -718,13 +718,14 @@ namespace Ginger.Run
                             GlobalAppModelParameter modelParam = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedModelParamGuid).FirstOrDefault();
                             if (modelParam != null)
                             {
-                                mappedValue = modelParam.CurrentValue;
+                                mappedValue = string.IsNullOrEmpty(modelParam.CurrentValue) ? string.Empty : modelParam.CurrentValue;
                             }
                         }
                     }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.DataSource)
                     {
-                        mappedValue = ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                        string dsRes = ValueExpression.Calculate(ProjEnvironment, CurrentBusinessFlow, inputVar.MappedOutputValue, DSList);
+                        mappedValue = string.IsNullOrEmpty(dsRes) ? string.Empty : dsRes;
                     }
                     else if (inputVar.GetType() != typeof(VariablePasswordString) && inputVar.GetType() != typeof(VariableDynamic))//what this for???
                     {
@@ -735,7 +736,7 @@ namespace Ginger.Run
                             VariableBase runVar = businessFlowRun?.BusinessFlowCustomizedRunVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
                             if (runVar != null)
                             {
-                                mappedValue = runVar.Value;
+                                mappedValue = string.IsNullOrEmpty(runVar.Value) ? string.Empty : runVar.Value; 
                             }
                         }
                         else//????
@@ -750,7 +751,7 @@ namespace Ginger.Run
                             VariableBase cacheVariable = cachedVariables?.Where(v => v.ParentGuid == inputVar.ParentGuid && v.ParentName == inputVar.ParentName && v.Name == inputVar.Name).FirstOrDefault();
                             if (cacheVariable != null)
                             {
-                                mappedValue = cacheVariable.Value;
+                                mappedValue = string.IsNullOrEmpty(cacheVariable.Value) ? string.Empty : cacheVariable.Value; 
                             }
                         }
                     }
