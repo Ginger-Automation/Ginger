@@ -280,9 +280,39 @@ namespace GingerCore.Variables
             return supportedOperations;
         }
 
+        public override bool SetValue(string value)
+        {
+            bool isValidationPass = false;
+            bool isValidNumber = float.TryParse(value, out var number);
+
+            if (isValidNumber && CheckNumberInRange(number))
+            {
+                //integer type validation
+                if (!IsDecimalValue && !IsIntegerValue(value))
+                {
+                    isValidationPass = false;
+                }
+                else
+                {
+                    isValidationPass = true;
+                }
+
+            }
+
+            if (isValidationPass)
+            {
+                mInitialNumberValue = value;
+            }
+            return isValidationPass;
+        }
+
         public override void ResetValue()
         {
             Value = mInitialNumberValue;
+        }
+        private bool IsIntegerValue(string value)
+        {
+            return int.TryParse(value, out var result);
         }
 
         public bool CheckNumberInRange(float number)
