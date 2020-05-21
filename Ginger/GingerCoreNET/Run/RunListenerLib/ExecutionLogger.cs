@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(context.Environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>());
                 }
                 mVE.Value = action.RunDescription;
                 AR.RunDescription = mVE.ValueCalculated;
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(context.Environment, null, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>());
 
                 }
                 mVE.Value = activity.RunDescription;
@@ -160,7 +160,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 if (mVE == null)
                 {
-                    mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                    mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>());
                 }
                 mVE.Value = businessFlow.RunDescription;
                 BFR.RunDescription = mVE.ValueCalculated;

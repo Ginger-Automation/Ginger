@@ -320,7 +320,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             activitySeq = 0;
             var bf = context.BusinessFlow;
-            bf.Activities.ToList().ForEach(activity => this.MapActivityToLiteDb(activity, context, executedFrom));
+            foreach (Activity activity in bf.Activities)
+            {
+                context.BusinessFlow.CurrentActivity = activity;
+                this.MapActivityToLiteDb(activity, context, executedFrom);
+            }
             bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
         }
 
