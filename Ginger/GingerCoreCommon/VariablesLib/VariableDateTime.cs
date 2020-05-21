@@ -63,7 +63,7 @@ namespace GingerCore.Variables
 
         public override void GenerateAutoValue()
         {
-           //NA
+            //NA
         }
 
         [IsSerializedForLocalRepository]
@@ -102,7 +102,7 @@ namespace GingerCore.Variables
             {
                 if (string.IsNullOrEmpty(mMinDateTime))
                 {
-                   return DateTime.Now.AddYears(-1).ToString();
+                    return DateTime.Now.AddYears(-1).ToString();
                 }
                 return mMinDateTime;
             }
@@ -150,7 +150,7 @@ namespace GingerCore.Variables
             set
             {
                 mDateTimeFormat = value;
-               
+
                 if(mInitialDateTime != null)
                 {
                     InitialDateTime = ConvertDateTimeToSpecificFormat(mDateTimeFormat);
@@ -166,7 +166,7 @@ namespace GingerCore.Variables
             return "Initial DateTime : " +  mInitialDateTime;
         }
 
-       
+
 
         public override List<eSetValueOptions> GetSupportedOperations()
         {
@@ -179,6 +179,27 @@ namespace GingerCore.Variables
         public override eImageType Image
         {
             get { return eImageType.DatePicker; }
+        }
+
+        public override bool SetValue(string value)
+        {
+            try
+            {
+                if (IsValidDateTimeFormat(value) && CheckDateTimeWithInRange(value))
+                {
+                    InitialDateTime = value;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
         public override void ResetValue()
@@ -198,6 +219,20 @@ namespace GingerCore.Variables
                 return true;
             }
             return false;
+        }
+        public bool IsValidDateTimeFormat(string value)
+        {
+            string[] formats = { this.DateTimeFormat };
+            if (DateTime.TryParseExact(value, formats, System.Globalization.CultureInfo.InvariantCulture,
+                                      System.Globalization.DateTimeStyles.None, out DateTime dt))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }
