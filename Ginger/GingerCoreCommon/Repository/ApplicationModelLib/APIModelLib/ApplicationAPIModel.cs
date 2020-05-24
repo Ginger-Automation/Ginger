@@ -174,5 +174,13 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+
+        public override List<string> GetModelListsToConfigsWithExecutionData()
+        {
+            List<string> list = new List<string>();
+            list.Add(nameof(this.HttpHeaders));
+            list.Add(nameof(this.APIModelBodyKeyValueHeaders));
+            return list;
+        }
     }
 }
