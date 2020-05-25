@@ -62,10 +62,17 @@ namespace Ginger.Environments
 
         private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
+            Database selectedDB = (Database)grdAppDbs.CurrentItem;
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
-                Database selectedDB = (Database)grdAppDbs.CurrentItem;
                 selectedDB.NameBeforeEdit = selectedDB.Name;
+            }
+            if (selectedDB.DBType == Database.eDBTypes.Cassandra)
+            {
+                DataGrid dataGrid = sender as DataGrid;
+                DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.CurrentItem);
+                ToolTipService.SetToolTip(row, new ToolTip { Content = "Expected Format: host:Port/Keyspace/querytimeout=90\nKeyspace and query timeout are optional", Style= FindResource("ToolTipStyle") as Style });
+                ToolTipService.SetShowDuration(row, 15000);//15sec
             }
         }
 
@@ -245,16 +252,19 @@ namespace Ginger.Environments
         private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Database db = (Database)sender;
-            if (e.PropertyName == Database.Fields.TNS)
+            if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
             {
-                if (db.CheckUserCredentialsInTNS())
+                if (e.PropertyName == Database.Fields.TNS)
                 {
-                    db.SplitUserIdPassFromTNS();
+                    if (db.CheckUserCredentialsInTNS())
+                    {
+                        db.SplitUserIdPassFromTNS();
+                    }
                 }
-            }
-            if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
-            {
-                db.CreateConnectionString();
+                if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+                {
+                    db.CreateConnectionString();
+                }
             }
         }
 

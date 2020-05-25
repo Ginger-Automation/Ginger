@@ -117,8 +117,9 @@ namespace Amdocs.Ginger.Repository
         {
             None,
             Variable,
-            DataSource,
-            ApplicationModelParameter
+            GlobalVariable,            
+            ApplicationModelParameter,
+            DataSource
         }
         private eStoreTo mStoreTo;
         [IsSerializedForLocalRepository]

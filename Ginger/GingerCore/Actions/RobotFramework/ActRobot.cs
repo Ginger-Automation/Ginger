@@ -309,7 +309,7 @@ namespace GingerCore.Actions.RobotFramework
                 string reportOutput = FormatRobotStatsListAsPipeSeparated(lstRobotTCs);
 
                 // appending the execution stats
-                ExInfo = Environment.NewLine + reportOutput  + Environment.NewLine + ExInfo;
+                ExInfo += reportOutput;
 
                 // add output variables 
                 AddRobotStatsListToOutputVariables(lstRobotTCs);

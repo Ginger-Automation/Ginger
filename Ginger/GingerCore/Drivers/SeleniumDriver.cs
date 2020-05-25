@@ -3110,7 +3110,7 @@ namespace GingerCore.Drivers
                 elem = LocateElementByLocator(locator, AlwaysReturn);
                 if (elem == null)
                 {
-                    act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
+                    act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
                 }
             }
 
@@ -3742,7 +3742,15 @@ namespace GingerCore.Drivers
                             //filter none visible elements
                             if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
                             {
-                                continue;
+                                //for some element like select tag el.Displayed is false but element is visible in page
+                                if (el.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
+                                {
+                                    continue;
+                                }
+                                else if(el.GetCssValue("width").Equals("auto") || el.GetCssValue("height").Equals("auto"))
+                                {
+                                    continue;
+                                }
                             }
 
                             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();

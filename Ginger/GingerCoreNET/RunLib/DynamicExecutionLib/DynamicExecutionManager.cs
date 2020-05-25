@@ -382,6 +382,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             //Create execution object
             GingerExecConfig executionConfig = new GingerExecConfig();
+            
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
                 executionConfig.SolutionScmDetails = new ScmDetails();
@@ -507,7 +508,33 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 jsonInputVar.VariableName = originalVar.Name;
                                 jsonInputVar.VariableID = originalVar.Guid;
 
-                                jsonInputVar.VariableCustomizedValue = customizedVar.Value;
+                                switch (customizedVar.MappedOutputType)
+                                {
+                                    case VariableBase.eOutputType.OutputVariable:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.OutputVariable;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    case VariableBase.eOutputType.GlobalVariable:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.GlobalVariable;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    case VariableBase.eOutputType.ApplicationModelParameter:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.ApplicationModelParameter;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    case VariableBase.eOutputType.DataSource:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.DataSource;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    case VariableBase.eOutputType.Variable:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Variable;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.MappedOutputValue;
+                                        break;
+                                    default:
+                                        jsonInputVar.VariableCustomizationType = InputValue.eVariableCustomizationType.Value;
+                                        jsonInputVar.VariableCustomizedValue = customizedVar.Value;
+                                        break;
+                                }                                                                
 
                                 businessFlow.InputValues.Add(jsonInputVar);
                             }
@@ -596,8 +623,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
 
-        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, RunsetExecConfig dynamicRunsetConfigs)
+        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, GingerExecConfig gingerExecConfig)
         {
+            RunsetExecConfig dynamicRunsetConfigs = gingerExecConfig.Runset;
             RunSetConfig runSetConfig = null;
             if (dynamicRunsetConfigs.Exist)
             {
@@ -612,6 +640,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
+            }
+
+            if (gingerExecConfig.ExecutionID != null)
+            {
+                runSetConfig.ExecutionID = (Guid)gingerExecConfig.ExecutionID;
             }
 
             if (dynamicRunsetConfigs.RunAnalyzer != null)
@@ -773,13 +806,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                                 }
                                             }
                                         }
-
-                                        if (customizedInputVar != null)
-                                        {
-                                            customizedInputVar.DiffrentFromOrigin = true;
-                                            customizedInputVar.VarValChanged = true;
-                                            customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
-                                        }
                                     }
 
                                     if (customizedInputVar == null && allInputVars != null)
@@ -801,14 +827,46 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                         if (inputVar != null)
                                         {
                                             customizedInputVar = (VariableBase)inputVar.CreateCopy(false);
-                                            customizedInputVar.DiffrentFromOrigin = true;
-                                            customizedInputVar.VarValChanged = true;
-                                            customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
                                             businessFlowRun.BusinessFlowCustomizedRunVariables.Add(customizedInputVar);
                                         }
                                     }
 
-                                    if (customizedInputVar == null)
+                                    if (customizedInputVar != null)
+                                    {
+                                        customizedInputVar.DiffrentFromOrigin = true;
+                                        switch(inputValueConfig.VariableCustomizationType)
+                                        {
+                                            case InputValue.eVariableCustomizationType.Value:
+                                                customizedInputVar.VarValChanged = true;
+                                                customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.Variable://saving variable by Name- Legacy
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.Variable;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.OutputVariable:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.OutputVariable;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.GlobalVariable:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.GlobalVariable;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;    
+                                            case InputValue.eVariableCustomizationType.ApplicationModelParameter:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.ApplicationModelParameter;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.DataSource:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.DataSource;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            default:
+                                                customizedInputVar.VarValChanged = true;
+                                                customizedInputVar.Value = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                        }
+                                    }
+                                    else
                                     {
                                         string error = string.Format("Failed to find Input Variable with the details '{0}/{1}'", inputValueConfig.VariableName, inputValueConfig.VariableID);
                                         throw new Exception(error);
