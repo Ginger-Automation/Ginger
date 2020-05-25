@@ -104,12 +104,13 @@ namespace GingerCoreCommonTest.VariableTests
             var variableDateTime = new VariableDateTime();
             variableDateTime.Name = "test";
             variableDateTime.Value = "123";
-
+            variableDateTime.InitialDateTime = "01-Jan-2020";
             //Act
             string formulaStr = variableDateTime.GetFormula();
 
             //Assert
-            Assert.AreEqual(@"Initial DateTime : 01-Jan-0001 12:00:00 AM", formulaStr, "Mismatch with Default Formula String");
+            Assert.AreEqual(@"Initial DateTime : 01-Jan-2020", formulaStr, "Mismatch with Default Formula String");
+            Assert.AreEqual(variableDateTime.InitialDateTime, variableDateTime.Value);
         }
 
         [TestMethod]
@@ -141,6 +142,67 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Assert
             Assert.AreEqual("23/04/2018", variableDateTime.Value, "DateTime Value");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DateTimeVar_Test_SetValue()
+        {
+            //Arrange
+            var variableDateTime = new VariableDateTime();
+            variableDateTime.Name = "test";
+            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
+            variableDateTime.MinDateTime = "Jan 21, 2010";
+            variableDateTime.MaxDateTime = "Jan 01, 2030";
+            variableDateTime.InitialDateTime = "Jan 01, 2025";
+
+            //Act
+
+            var result = variableDateTime.SetValue("May 16, 2019");
+
+            //Assert
+            Assert.AreEqual(true, result);
+            Assert.AreEqual("May 16, 2019", variableDateTime.InitialDateTime);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DateTimeVar_Negative_Format_Test_SetValue()
+        {
+            //Arrange
+            var variableDateTime = new VariableDateTime();
+            variableDateTime.Name = "test";
+            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
+            variableDateTime.MinDateTime = "Jan 21, 2010";
+            variableDateTime.MaxDateTime = "Jan 01, 2030";
+            variableDateTime.InitialDateTime = "Jan 01, 2025";
+
+            //Act
+
+            var result = variableDateTime.SetValue("23/12/2020");
+
+            //Assert
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DateTimeVar_Negative_Range_Test_SetValue()
+        {
+            //Arrange
+            var variableDateTime = new VariableDateTime();
+            variableDateTime.Name = "test";
+            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
+            variableDateTime.MinDateTime = "Jan 21, 2010";
+            variableDateTime.MaxDateTime = "Jan 01, 2030";
+            variableDateTime.InitialDateTime = "Jan 01, 2025";
+
+            //Act
+
+            var result = variableDateTime.SetValue("Jan 31, 2030");
+
+            //Assert
+            Assert.AreEqual(false, result);
         }
     }
 }

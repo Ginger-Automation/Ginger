@@ -641,7 +641,7 @@ namespace GingerCore.Actions
                                                     ColName + " = '" + txt + "'" + sSetDataUsed +
                                                         " WHERE " + GetInputParamCalculatedValue("PrimaryKeyColumn") + "=" + rowKey + ";";
 
-                            this.ExInfo += updateSQL + Environment.NewLine;
+                            this.ExInfo += updateSQL;
 
                             OleDbCommand myCommand = new OleDbCommand();
                             myCommand.Connection = Conn;
@@ -688,7 +688,7 @@ namespace GingerCore.Actions
                         {
                             updateSQL += " WHERE " + where + ";";
                         }
-                        this.ExInfo += updateSQL + Environment.NewLine;
+                        this.ExInfo += updateSQL;
 
                         OleDbCommand myCommand = new OleDbCommand();
                         myCommand.Connection = Conn;

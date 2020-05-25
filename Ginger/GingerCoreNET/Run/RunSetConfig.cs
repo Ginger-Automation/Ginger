@@ -72,6 +72,20 @@ namespace Ginger.Run
             }
         }
 
+        private Guid? mExecutionID;
+        public Guid? ExecutionID
+        {
+            get { return mExecutionID; }
+            set
+            {
+                if (mExecutionID != value)
+                {
+                    mExecutionID = value;
+                    OnPropertyChanged(nameof(ExecutionID));
+                }
+            }
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<GingerRunner> GingerRunners = new ObservableList<GingerRunner>();
 

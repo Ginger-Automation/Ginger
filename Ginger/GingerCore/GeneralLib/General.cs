@@ -219,7 +219,7 @@ namespace GingerCore
                 // Get all possible enum vals
             foreach (object item in Enum.GetValues(Etype))
             {
-                ComboBoxItem CEI = new ComboBoxItem();                
+                ComboBoxItem CEI = new ComboBoxItem();
                 CEI.Content = item;                 
                 comboBox.Items.Add(CEI);
             }
@@ -585,22 +585,19 @@ namespace GingerCore
         }
         public static void DisableComboItem(ComboBox comboBox, object itemtoDisable)
         {
-            string itemText = itemtoDisable.ToString();
-            if (itemtoDisable.GetType().BaseType.Name == "Enum")
-                itemText = GetEnumValueDescription(itemtoDisable.GetType(), itemtoDisable);
             foreach (var item in comboBox.Items)
             {
                 if (item.GetType() == typeof(ComboBoxItem))
                 {
-                    if (((ComboBoxItem)item).Content.ToString() == itemText)
+                    if (((ComboBoxItem)item).Content.ToString() == itemtoDisable.ToString())
                     {
                         ((ComboBoxItem)item).IsEnabled = false;
                         return;
                     }
                 }
-            }
-                
+            }             
         }
+
         public static void UpdateComboItem(ComboBox comboBox, object itemtoUpdate,string newVal)
         {
             string itemText = itemtoUpdate.ToString();
@@ -621,14 +618,11 @@ namespace GingerCore
         }
         public static void EnableComboItem(ComboBox comboBox, object itemtoDisable)
         {
-            string itemText = itemtoDisable.ToString();
-            if (itemtoDisable.GetType().BaseType.Name == "Enum")
-                itemText = GetEnumValueDescription(itemtoDisable.GetType(), itemtoDisable);
             foreach (var item in comboBox.Items)
             {                
                 if (item.GetType() == typeof(ComboBoxItem))
                 {
-                    if (((ComboBoxItem)item).Content.ToString() == itemText)
+                    if (((ComboBoxItem)item).Content.ToString() == itemtoDisable.ToString())
                     {
                         ((ComboBoxItem)item).IsEnabled = true;
                         return;
@@ -636,7 +630,6 @@ namespace GingerCore
                 }
             }
         }
-
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
         {
