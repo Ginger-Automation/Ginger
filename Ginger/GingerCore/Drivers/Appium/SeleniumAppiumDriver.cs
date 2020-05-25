@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
@@ -567,14 +568,31 @@ namespace GingerCore.Drivers.Appium
             foreach (DriverConfigParam UserCapability in AdvanceDriverConfigurations)
             {
                 bool boolValue;
+                int intValue=0;
                 if (bool.TryParse(UserCapability.Value, out boolValue))
                 {
                     driverOptions.AddAdditionalCapability(UserCapability.Parameter, boolValue);
                 }
+                else if (int.TryParse(UserCapability.Value, out intValue))
+                {
+                    driverOptions.AddAdditionalCapability(UserCapability.Parameter, intValue);
+                }
+                else if(UserCapability.Value.Contains("{"))
+                {
+                    try
+                    {
+                        JObject json = JObject.Parse(UserCapability.Value);
+                        driverOptions.AddAdditionalCapability(UserCapability.Parameter, json);//for Json value to work properly, need to convert it into specific object type like: json.ToObject<selector>());
+                    }
+                    catch(Exception)
+                    {
+                        driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
+                    }
+                }
                 else
                 {
                     driverOptions.AddAdditionalCapability(UserCapability.Parameter, UserCapability.Value);
-                }
+                }                
             }
 
             return driverOptions;                        
