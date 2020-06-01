@@ -684,7 +684,10 @@ namespace GingerCore.Drivers.Appium
                                         break;
                                     }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                            catch (Exception ex) 
+                            { 
+                                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); 
+                            }
                         }
 
                         if (!skipElement)
@@ -723,7 +726,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                    //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 }
                                 break;
 
@@ -741,7 +744,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                    //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 }
                                 break;
                         }
@@ -780,7 +783,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
