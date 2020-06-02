@@ -234,6 +234,7 @@ namespace GingerCore.ALM.Qtest
                             stepActivity = new Activity();
                             stepActivity.ActivityName = step.Description;
                             stepActivity.ExternalID = step.StepID;
+                            stepActivity.ExternalID2 = step.CalledTestCaseId;
                             stepActivity.Description = step.Description;
                             stepActivity.Expected = step.Expected;
 

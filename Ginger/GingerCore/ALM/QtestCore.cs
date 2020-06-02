@@ -502,7 +502,7 @@ namespace GingerCore.ALM
         public bool ExportBusinessFlowToALM(BusinessFlow businessFlow, QtestTestSuite mappedTestSuite, string parentObjectId, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
         {
             ConnectALMServer();
-            testrunApi = new QTestApi.TestrunApi(connObj.Configuration); 
+            testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
             testsuiteApi = new QTestApi.TestsuiteApi(connObj.Configuration);
 
@@ -512,9 +512,9 @@ namespace GingerCore.ALM
                 QTestApiModel.TestSuiteWithCustomFieldResource testSuite = null;
                 if (mappedTestSuite == null)
                 {
-                    testSuite = new QTestApiModel.TestSuiteWithCustomFieldResource( null, null, null, null,
+                    testSuite = new QTestApiModel.TestSuiteWithCustomFieldResource(null, null, null, null,
                                                                                     businessFlow.Name,
-                                                                                    new List<QTestApiModel.PropertyResource>());                   
+                                                                                    new List<QTestApiModel.PropertyResource>());
                     testSuite = testsuiteApi.CreateTestSuite((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testSuite, (long)Convert.ToInt32(parentObjectId), "test-cycle");
 
                     foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
@@ -522,40 +522,46 @@ namespace GingerCore.ALM
                         QTestApiModel.TestRunWithCustomFieldResource testRun = new QTestApiModel.TestRunWithCustomFieldResource(null, null, null, null,
                                                                                                                                 ag.Name,
                                                                                                                                 new List<QTestApiModel.PropertyResource>(),
-                                                                                                                                testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(ag.ExternalID))); 
-                        testRun = testrunApi.Create((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testRun, testSuite.Id, "test-suite");                      
-                    }     
+                                                                                                                                testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(ag.ExternalID)));
+                        testRun = testrunApi.Create((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testRun, testSuite.Id, "test-suite");
+                    }
                 }
                 else
                 {
-                    //##update existing TestSuite
-                    QTestApiModel.TestSuiteWithCustomFieldResource testSuiteToUpdate = testsuiteApi.GetTestSuite((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(mappedTestSuite.ID));
+                    //##update existing TestSuite -> TestRun
+                    foreach (QtestTest test in mappedTestSuite.Tests)
+                    {
+                        QTestApiModel.TestRunWithCustomFieldResource testRun = testrunApi.Get((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(test.Runs[0].RunID), "descendents");
+                        QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testRun.TestCase.Id);
 
-                    //foreach (QtestTest test in mappedTestSuite.Tests)
-                    //{
-                        //    ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
-                        //    if (ag == null)
-                        //        testsF.RemoveItem(tsTest.ID);
-                        //    else
-                        //        existingActivitiesGroups.Add(ag);
-                    //}
+                        ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == test.TestID.ToString())).FirstOrDefault();
+                        if (ag != null)
+                        {
+                            foreach (ActivityIdentifiers actIdent in ag.ActivitiesIdentifiers)
+                            {
+                                if ((actIdent.IdentifiedActivity.ExternalID == null) && (actIdent.IdentifiedActivity.ExternalID2 == null))
+                                {
+                                    QTestApiModel.TestCaseWithCustomFieldResource newTestCase = new QTestApiModel.TestCaseWithCustomFieldResource(null, null, null, new List<QTestApiModel.PropertyResource>());
+                                    newTestCase.Description = actIdent.ActivityDescription;
+                                    newTestCase.Name = actIdent.ActivityName;
+                                    newTestCase = testcaseApi.CreateTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), newTestCase);
+                                    QTestApiModel.TestStepResource stepResource = new QTestApiModel.TestStepResource(null, null,
+                                                                                                                            ((Activity)actIdent.IdentifiedActivity).Description == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Description,
+                                                                                                                            ((Activity)actIdent.IdentifiedActivity).Expected == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Expected);
+                                    stepResource.PlainValueText = ((Activity)actIdent.IdentifiedActivity).ActivityName;
+                                    testcaseApi.AddTestStep((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase.Id, stepResource);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // existingActivitiesGroups.Add(ag);
+                        }
+                    }
                 }
 
-                //set item fields
-                //foreach (ExternalItemFieldBase field in testSetFields)
-                //{
-                //    if (field.ToUpdate || field.Mandatory)
-                //    {
-                //        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
-                //            testSet[field.ID] = field.SelectedValue;
-                //        else
-                //            try { testSet[field.ID] = "NA"; }
-                //            catch { }
-                //    }
-                //}                 
-
                 businessFlow.ExternalID = testSuite.Id.ToString();
-               
+
                 return true;
             }
             catch (Exception ex)
@@ -580,7 +586,7 @@ namespace GingerCore.ALM
                 if (testStep.CalledTestCaseId != null)
                 {
                     QTestApiModel.TestCaseWithCustomFieldResource calledTestCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testStep.CalledTestCaseId);
-                    calledTestCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), StripHTML(z.Description), StripHTML(z.Expected))));
+                    calledTestCase.TestSteps.ForEach(z => test.Steps.Add(new QtestTestStep(z.Id.ToString(), StripHTML(z.Description), StripHTML(z.Expected), testStep.CalledTestCaseId.ToString())));
                 }
                 else
                 {

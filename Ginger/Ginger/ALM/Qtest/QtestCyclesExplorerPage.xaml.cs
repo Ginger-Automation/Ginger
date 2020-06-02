@@ -149,7 +149,7 @@ namespace Ginger.ALM.Qtest
                 {
                     mCurrentSelectedTestSuites.Add((QtestSuiteTreeItem)mCurrentSelectedTreeItem);
                 }
-            }           
+            }
         }
 
         private void GetTestSetDetails(QCTestSetTreeItem testSetItem)
