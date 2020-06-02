@@ -25,7 +25,7 @@ namespace GingerCoreCommonTest.VariableTests
 {
     [TestClass]
     [Level1]
-   public class NumberVariableTest
+    public class NumberVariableTest
     {
         #region Default Class/Test Initialize Methods
         [ClassInitialize]
@@ -126,6 +126,82 @@ namespace GingerCoreCommonTest.VariableTests
 
             //Assert
             Assert.IsNull(variableNumber.Value, "Reset Value not null");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void NumberVar_Test_SetValue_Int()
+        {
+            //Arrange
+            VariableNumber variableNumber = new VariableNumber();
+            variableNumber.Name = "test";
+            variableNumber.Value = "99";
+            variableNumber.IsDecimalValue = false;
+            variableNumber.MinValue = "-100";
+            variableNumber.MaxValue = "100";
+
+            //Act
+            var result = variableNumber.SetValue("66");
+
+            //Assert
+            Assert.AreEqual(true, result);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void NumberVar_Negative_Test_SetValue_Int()
+        {
+            //Arrange
+            VariableNumber variableNumber = new VariableNumber();
+            variableNumber.Name = "test";
+            variableNumber.Value = "99";
+            variableNumber.IsDecimalValue = false;
+            variableNumber.MinValue = "-100";
+            variableNumber.MaxValue = "100";
+
+            //Act
+            var result = variableNumber.SetValue("1233");
+
+            //Assert
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void NumberVar_Test_SetValue_Float()
+        {
+            //Arrange
+            VariableNumber variableNumber = new VariableNumber();
+            variableNumber.Name = "test";
+            variableNumber.Value = "99.99";
+            variableNumber.IsDecimalValue = true;
+            variableNumber.MinValue = "-100.60";
+            variableNumber.MaxValue = "100.55";
+
+            //Act
+            var result = variableNumber.SetValue("100.3");
+
+            //Assert
+            Assert.AreEqual(true, result);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void NumberVar_Negative_Test_SetValue_Float()
+        {
+            //Arrange
+            VariableNumber variableNumber = new VariableNumber();
+            variableNumber.Name = "test";
+            variableNumber.Value = "99.99";
+            variableNumber.IsDecimalValue = true;
+            variableNumber.MinValue = "-100.60";
+            variableNumber.MaxValue = "100.55";
+
+            //Act
+            var result = variableNumber.SetValue("123.3");
+
+            //Assert
+            Assert.AreEqual(false, result);
         }
 
         [TestMethod]
