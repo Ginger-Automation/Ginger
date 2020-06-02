@@ -138,33 +138,58 @@ namespace Amdocs.Ginger.Repository
         }
         #endregion
 
-        public void SetModelConfigsWithExecutionData()
+        public virtual List<string> GetModelListsToConfigsWithExecutionData()
         {
-            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property);
+            return new List<string>();
+        }
+
+        public void SetModelConfigsWithExecutionData(object obj=null)
+        {
+            if (obj == null)
+            {
+                obj = this;
+            }
+            var properties = obj.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
-                if (mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField") continue;                
-
-                PropertyInfo PI = this.GetType().GetProperty(mi.Name);
-                dynamic value = null;
-                if (mi.MemberType == MemberTypes.Property)
-                    value = PI.GetValue(this);
-                else if (mi.MemberType == MemberTypes.Field)
-                    value = this.GetType().GetField(mi.Name).GetValue(this);
-
-                if (value != null && value is string)
+                try
                 {
-                    string valueString = (string)PI.GetValue(this);
-                    foreach (AppModelParameter AMP in AppModelParameters)
+                    if (mi.Name == "mName" || mi.Name == "Name" || mi.Name == "ItemName" || mi.Name == "RelativeFilePath" || mi.Name == "FilePath" || mi.Name == "ObjFileExt" || mi.Name == "ObjFolderName" || mi.Name == "ItemNameField") continue;
+
+                    PropertyInfo PI = obj.GetType().GetProperty(mi.Name);
+                    dynamic value = null;
+                    if (mi.MemberType == MemberTypes.Property)
+                        value = PI.GetValue(obj);
+                    else if (mi.MemberType == MemberTypes.Field)
+                        value = obj.GetType().GetField(mi.Name).GetValue(obj);
+
+                    if (value != null)
                     {
-                        valueString = valueString.Replace(AMP.PlaceHolder, AMP.ExecutionValue);
-                        PI.SetValue(this, valueString);
+                        if (value is string)
+                        {
+                            string valueString = (string)PI.GetValue(obj);
+                            foreach (AppModelParameter AMP in AppModelParameters)
+                            {
+                                valueString = valueString.Replace(AMP.PlaceHolder, AMP.ExecutionValue);
+                                PI.SetValue(obj, valueString);
+                            }
+                            foreach (GlobalAppModelParameter GAMP in GlobalAppModelParameters)
+                            {
+                                valueString = valueString.Replace(GAMP.PlaceHolder, GAMP.ExecutionValue);
+                                PI.SetValue(obj, valueString);
+                            }
+                        }
+                        else if(value is IObservableList && GetModelListsToConfigsWithExecutionData().Contains(mi.Name))
+                        {
+                            foreach (object o in value)
+                            {
+                                SetModelConfigsWithExecutionData(o);
+                            }
+                        }
                     }
-                    foreach (GlobalAppModelParameter GAMP in GlobalAppModelParameters)
-                    {
-                        valueString = valueString.Replace(GAMP.PlaceHolder, GAMP.ExecutionValue);
-                        PI.SetValue(this, valueString);
-                    }
+                }
+                catch (Exception ex)
+                {
                 }
             }
         }
