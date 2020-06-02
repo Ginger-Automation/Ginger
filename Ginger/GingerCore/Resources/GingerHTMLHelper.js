@@ -1276,8 +1276,15 @@ function define_GingerLib() {
     }
 
     GingerLib.GetAttributeValue = function (el,attribute) {
+        
+        var attributValue = el.getAttribute(attribute);
+
+        if (attributValue == null) {
+            return new GingerErrorPayLoad(404, attribute + " Attribute Not Found.");
+        }
+
         var pl = new GingerPayLoad("Attribute Value");
-        pl.AddValueString(el.getAttribute(attribute).replace(/GingerHighlight/g,''));
+        pl.AddValueString(attributValue.replace(/GingerHighlight/g,''));
         pl.ClosePackage();
         return pl;
     }
