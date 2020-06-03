@@ -163,9 +163,7 @@ namespace GingerCore.Actions
                     var varDateTime = ((VariableDateTime)Var);
                     try
                     {
-                        string[] formats = { varDateTime.DateTimeFormat };
-                        if (!DateTime.TryParseExact(calculatedValue, formats, System.Globalization.CultureInfo.InvariantCulture,
-                                                  System.Globalization.DateTimeStyles.None, out DateTime dt))
+                        if (!varDateTime.IsValidDateTimeFormat(calculatedValue))
                         {
                             Error = $"The Value [{calculatedValue}] is not in correct format, expected format is [{varDateTime.DateTimeFormat}], {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
                             return;

@@ -808,7 +808,8 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                throw new NotImplementedException("ItemImageType not defined for: " + this.GetType().FullName);                
+                //throw new NotImplementedException("ItemImageType not defined for: " + this.GetType().FullName); 
+                return eImageType.Null;
             }
         }
 

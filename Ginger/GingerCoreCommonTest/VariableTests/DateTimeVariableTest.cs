@@ -143,5 +143,66 @@ namespace GingerCoreCommonTest.VariableTests
             //Assert
             Assert.AreEqual("23/04/2018", variableDateTime.Value, "DateTime Value");
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DateTimeVar_Test_SetValue()
+        {
+            //Arrange
+            var variableDateTime = new VariableDateTime();
+            variableDateTime.Name = "test";
+            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
+            variableDateTime.MinDateTime = "Jan 21, 2010";
+            variableDateTime.MaxDateTime = "Jan 01, 2030";
+            variableDateTime.InitialDateTime = "Jan 01, 2025";
+
+            //Act
+
+            var result = variableDateTime.SetValue("May 16, 2019");
+
+            //Assert
+            Assert.AreEqual(true, result);
+            Assert.AreEqual("May 16, 2019", variableDateTime.InitialDateTime);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DateTimeVar_Negative_Format_Test_SetValue()
+        {
+            //Arrange
+            var variableDateTime = new VariableDateTime();
+            variableDateTime.Name = "test";
+            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
+            variableDateTime.MinDateTime = "Jan 21, 2010";
+            variableDateTime.MaxDateTime = "Jan 01, 2030";
+            variableDateTime.InitialDateTime = "Jan 01, 2025";
+
+            //Act
+
+            var result = variableDateTime.SetValue("23/12/2020");
+
+            //Assert
+            Assert.AreEqual(false, result);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void DateTimeVar_Negative_Range_Test_SetValue()
+        {
+            //Arrange
+            var variableDateTime = new VariableDateTime();
+            variableDateTime.Name = "test";
+            variableDateTime.DateTimeFormat = "MMM dd, yyyy";
+            variableDateTime.MinDateTime = "Jan 21, 2010";
+            variableDateTime.MaxDateTime = "Jan 01, 2030";
+            variableDateTime.InitialDateTime = "Jan 01, 2025";
+
+            //Act
+
+            var result = variableDateTime.SetValue("Jan 31, 2030");
+
+            //Assert
+            Assert.AreEqual(false, result);
+        }
     }
 }
