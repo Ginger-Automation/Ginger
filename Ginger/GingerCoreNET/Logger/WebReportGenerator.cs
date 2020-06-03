@@ -65,7 +65,10 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetGuid).ToList();
                 }
                 else
-                    filterData = dbManager.FilterCollection(result, Query.All());
+                {
+                    runSetGuid = result.IncludeAll().Max(x => x._id).AsString;
+                    filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetGuid).ToList();
+                }
                 lightDbRunSet = filterData.Last();
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
