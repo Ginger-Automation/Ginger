@@ -660,6 +660,9 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
+      <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">
@@ -2985,6 +2988,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="BusinessFlowWindows\BusinessFlowViewPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
