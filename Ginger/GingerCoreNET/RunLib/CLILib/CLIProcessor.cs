@@ -30,6 +30,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using static Amdocs.Ginger.CoreNET.RunLib.CLILib.OptionsBase;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
@@ -39,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         ICLI mCLIHandler;
         CLIHelper mCLIHelper = new CLIHelper();
 
-        public void ExecuteArgs(string[] args)
+        public async Task ExecuteArgs(string[] args)
         {
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;            
@@ -54,30 +55,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 args = newArgs;
             }
             
-            ParseArgs(args);                                        
+           await ParseArgs(args);                                        
         }
 
 
 
-        private void ParseArgs(string[] args)
+        private async Task ParseArgs(string[] args)
         {
             // FIXME: failing with exc of obj state
             // Do not show default version
             // Parser.Default.Settings.AutoVersion = false;            
-
-            int result = Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
-                    (RunOptions opts) => HandleRunOptions(opts),
-                    (GridOptions opts) => HanldeGridOption(opts),
-                    (ConfigFileOptions opts) => HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
-                    (DynamicOptions opts) => HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
-                    (ScriptOptions opts) => HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
-                    (SCMOptions opts) => HandleSCMOptions(opts),
-                    (VersionOptions opts) => HandleVersionOptions(opts),                        
-                    (ExampleOptions opts) => HandleExampleOptions(opts),
-                    (DoOptions opts) => HandleDoOptions(opts),
+            
+            int result = await Parser.Default.ParseArguments<RunOptions, GridOptions, ConfigFileOptions, DynamicOptions, ScriptOptions, SCMOptions, VersionOptions, ExampleOptions, DoOptions>(args).MapResult(
+                    async (RunOptions opts) => await HandleRunOptions(opts),
+                    async (GridOptions opts) => await HanldeGridOption(opts),
+                    async (ConfigFileOptions opts) => await HandleFileOptions("config", opts.FileName, opts.VerboseLevel),
+                    async (DynamicOptions opts) => await HandleFileOptions("dynamic", opts.FileName, opts.VerboseLevel),
+                    async (ScriptOptions opts) => await HandleFileOptions("script", opts.FileName, opts.VerboseLevel),
+                    async (SCMOptions opts) => await HandleSCMOptions(opts),
+                    async (VersionOptions opts) => await HandleVersionOptions(opts),                        
+                    async (ExampleOptions opts) => await HandleExampleOptions(opts),
+                    async (DoOptions opts) => await HandleDoOptions(opts),
                     
 
-                    errs => HandleCLIParseError(errs)
+                    async errs => await HandleCLIParseError(errs)
             );          
 
             if (result != 0)
@@ -87,36 +88,48 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }            
         }
 
-        private int HandleDoOptions(DoOptions opts)
+        private async Task<int> HandleDoOptions(DoOptions opts)
         {
-            DoOptionsHanlder.Run(opts);            
-            return 0;
-        }
-
-        private int HandleVersionOptions(VersionOptions opts)
-        {
-            PrintGingerVersionInfo();
-            return 0;
-        }
-
-        private int HandleExampleOptions(ExampleOptions exampleOptions)
-        {
-            Reporter.ToLog(eLogLevel.DEBUG, "Running example options");
-
-            switch (exampleOptions.verb)
+           return await Task.Run(() =>
             {
-                case "all":
-                    ShowExamples();
-                    break;
-                case "run":
-                    ShowExamples();
-                    break;
-                default:
-                    Reporter.ToLog(eLogLevel.ERROR, "Unknown verb '" + exampleOptions.verb + "' ");
-                    return 1;                    
-            }
-            
-            return 0;
+                DoOptionsHanlder.Run(opts);
+                return 0;
+            });
+          
+        }
+
+        private async Task<int> HandleVersionOptions(VersionOptions opts)
+        {
+           return await Task.Run(() =>
+            {
+                PrintGingerVersionInfo();
+                return 0;
+            });
+           
+        }
+
+        private async Task<int> HandleExampleOptions(ExampleOptions exampleOptions)
+        {
+           return await Task.Run(() =>
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Running example options");
+
+                switch (exampleOptions.verb)
+                {
+                    case "all":
+                        ShowExamples();
+                        break;
+                    case "run":
+                        ShowExamples();
+                        break;
+                    default:
+                        Reporter.ToLog(eLogLevel.ERROR, "Unknown verb '" + exampleOptions.verb + "' ");
+                        return 1;
+                }
+
+                return 0;
+            });
+         
         }
 
       
@@ -222,16 +235,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        private int HandleSCMOptions(SCMOptions sCmOptions)
+        private async Task<int> HandleSCMOptions(SCMOptions sCmOptions)
         {
-            SetVerboseLevel(sCmOptions.VerboseLevel);
-            Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
-            CLISCM cliSCM = new CLISCM();
-            cliSCM.Download(sCmOptions);
-            return Environment.ExitCode;
+           return await Task.Run(() =>
+            {
+                SetVerboseLevel(sCmOptions.VerboseLevel);
+                Reporter.ToLog(eLogLevel.INFO, "Running SCM options");
+                CLISCM cliSCM = new CLISCM();
+                cliSCM.Download(sCmOptions);
+                return Environment.ExitCode;
+            });
+      
         }
 
-        private int HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
+        private async Task<int> HandleFileOptions(string fileType, string fileName, eVerboseLevel verboseLevel)
         {
             try
             {
@@ -277,7 +294,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     }
                 }
 
-                ExecuteRunSet();
+                await ExecuteRunSet();
 
                 return Environment.ExitCode;
             }
@@ -290,38 +307,42 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
 
-        private int HanldeGridOption(GridOptions gridOptions)
+        private async Task<int> HanldeGridOption(GridOptions gridOptions)
         {
-            SetVerboseLevel(gridOptions.VerboseLevel);
-
-            Reporter.ToLog(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);            
-            GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);   
-            gingerGrid.Start();
-
-            if (gridOptions.Tracker)
+           return await Task.Run(() =>
             {
-                ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
-            }
+                SetVerboseLevel(gridOptions.VerboseLevel);
 
-            Console.WriteLine();
-            Console.WriteLine("---------------------------------------------------");
-            Console.WriteLine("-               Press 'q' exit                    -");
-            Console.WriteLine("---------------------------------------------------");
+                Reporter.ToLog(eLogLevel.INFO, "Starting Ginger Grid at port: " + gridOptions.Port);
+                GingerGrid gingerGrid = new GingerGrid(gridOptions.Port);
+                gingerGrid.Start();
 
-            if (!Console.IsInputRedirected && !WorkSpace.Instance.RunningFromUnitTest)  // for example unit test redirect input, or we can run without input like from Jenkins
-            {
-                ConsoleKey consoleKey = ConsoleKey.A;
-                while (consoleKey != ConsoleKey.Q)
+                if (gridOptions.Tracker)
                 {
-                    ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
-                    consoleKey = consoleKeyInfo.Key;
+                    ServiceGridTracker serviceGridTracker = new ServiceGridTracker(gingerGrid);
                 }
-            }
 
-            return 0; 
+                Console.WriteLine();
+                Console.WriteLine("---------------------------------------------------");
+                Console.WriteLine("-               Press 'q' exit                    -");
+                Console.WriteLine("---------------------------------------------------");
+
+                if (!Console.IsInputRedirected && !WorkSpace.Instance.RunningFromUnitTest)  // for example unit test redirect input, or we can run without input like from Jenkins
+                {
+                    ConsoleKey consoleKey = ConsoleKey.A;
+                    while (consoleKey != ConsoleKey.Q)
+                    {
+                        ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
+                        consoleKey = consoleKeyInfo.Key;
+                    }
+                }
+
+                return 0;
+            });
+
         }
 
-        private int HandleRunOptions(RunOptions runOptions)
+        private async Task<int> HandleRunOptions(RunOptions runOptions)
         {
             SetVerboseLevel(runOptions.VerboseLevel);
 
@@ -348,7 +369,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 return Environment.ExitCode;
             }
             
-            ExecuteRunSet();
+             await ExecuteRunSet();
 
             mCLIHelper.PostExecution();
 
@@ -370,25 +391,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             
         }
 
-        private int HandleCLIParseError(IEnumerable<Error> errs)
+        private async Task<int> HandleCLIParseError(IEnumerable<Error> errs)
         {
-            if (errs.Count() == 1 && errs.First() is HelpVerbRequestedError)
+           return await Task.Run(() =>
             {
-                // User requested help 
-                PrintGingerCLIHelp();
-                return 0;
-            }
-            else if (errs.Count() == 1 && errs.First() is VersionRequestedError)
-            {
-                // User requested version
-                PrintGingerVersionInfo();
-                return 0;
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Please fix the arguments and try again");
-                return 1;
-            }
+                if (errs.Count() == 1 && errs.First() is HelpVerbRequestedError)
+                {
+                    // User requested help 
+                    PrintGingerCLIHelp();
+                    return 0;
+                }
+                else if (errs.Count() == 1 && errs.First() is VersionRequestedError)
+                {
+                    // User requested version
+                    PrintGingerVersionInfo();
+                    return 0;
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Please fix the arguments and try again");
+                    return 1;
+                }
+            });
+
+           
             
         }
 
@@ -413,14 +439,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
         
 
-        void ExecuteRunSet()
+        async Task ExecuteRunSet()
         {            
             Reporter.ToLog(eLogLevel.INFO, string.Format("Executing {0}... ", GingerDicser.GetTermResValue(eTermResKey.RunSet)));            
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 
-                mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
+               await mCLIHandler.Execute(WorkSpace.Instance.RunsetExecutor);
 
                 stopwatch.Stop();
                 Reporter.ToLog(eLogLevel.INFO, "Execution Elapsed time: " + stopwatch.Elapsed);

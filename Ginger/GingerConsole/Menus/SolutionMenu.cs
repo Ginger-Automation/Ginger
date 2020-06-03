@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.GingerConsole
             return SolutionMenu;
         }
 
-        private void RunSet()
+        private async void RunSet()
         {
             Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Name?");
             string runSetName = Console.ReadLine();
@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.GingerConsole
             Console.WriteLine("starting RunSetConfig execution");
             RunsetExecutor runsetExecuto = new RunsetExecutor();
             runsetExecuto.RunSetConfig = runSetConfig;
-            runsetExecuto.RunRunset();            
+           await runsetExecuto.RunRunset();            
 
             Console.WriteLine("Execution completed");            
         }

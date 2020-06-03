@@ -338,15 +338,15 @@ namespace Ginger.Run
 
         public async Task<int> RunRunsetAsync(bool doContinueRun = false)
         {
-            var result = await Task.Run(() =>
+            var result = await Task.Run(async () =>
             {
-                RunRunset(doContinueRun);
+               await RunRunset(doContinueRun);
                 return 1;
             });
             return result;
         }
 
-        public void RunRunset(bool doContinueRun = false)
+        public async Task RunRunset(bool doContinueRun = false)
         {
             try
             {
@@ -477,6 +477,9 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+
+                await  Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+               
             }
             finally
             {

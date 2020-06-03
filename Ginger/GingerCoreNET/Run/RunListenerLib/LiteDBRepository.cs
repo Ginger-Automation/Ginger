@@ -21,16 +21,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.CentralExecutionLogger;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using AutoMapper;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Environments;
 using LiteDB;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -44,7 +49,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public List<LiteDbBusinessFlow> liteDbBFList = new List<LiteDbBusinessFlow>();
         public List<LiteDbActivityGroup> liteDbAGList = new List<LiteDbActivityGroup>();
         public List<LiteDbActivity> liteDbActivityList = new List<LiteDbActivity>();
-        public List<LiteDbAction> liteDbActionList = new List<LiteDbAction>();
+        public List<LiteDbAction> liteDbActionList = new List<LiteDbAction>();       
         private eRunStatus lastBfStatus;
         private eRunStatus lastRunnertStatus;
         private ObjectId lastBfObjId;
@@ -117,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
             }
-            liteDbActionList.Add(liteDbAction);
+            liteDbActionList.Add(liteDbAction);        
             SaveObjToReporsitory(liteDbAction, liteDbManager.NameInDb<LiteDbAction>());
             if (executedFrom == eExecutedFrom.Automation)
             {
@@ -505,7 +510,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
-        {
+        {          
             return;
         }
 
@@ -547,6 +552,167 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override string GetLogFolder(string folder)
         {
             return string.Empty;
+        }
+
+        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        {
+            //Get the latest execution details from LiteDB
+            LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
+            LiteDbRunSet liteDbRunSet = dbManager.GetLatestExecutionRunsetData(runsetId?.ToString());
+            List<string> screenshotList= PopulateMissingFieldsAndGetScreenshotsList(liteDbRunSet, executionId);
+            
+            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+
+            //Map the data to AccountReportRunset Object
+            AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
+            accountReportRunSet.ExecutionId = executionId;
+            
+
+            //Publish the Data and screenshots to Central DB
+            await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
+            await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
+
+
+            //Delete local data if configured
+            if(deleteLocalData== eDeleteLocalDataOnPublish.Yes)
+            {
+                try
+                {
+                    dbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error when deleting local LiteDB data after Publis", ex);
+                }
+                     
+
+                foreach (string screenshot in screenshotList)
+                {
+                    try
+                    {
+                        File.Delete(screenshot);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Deleting screenshots after published to central db", ex);
+                    }
+                }
+            }
+           
+
+            return true;
+        }
+
+        private List<string> PopulateMissingFieldsAndGetScreenshotsList(LiteDbRunSet liteDbRunSet, Guid executionId)
+        {
+            List<string> allScreenshots = new List<string>();
+            //select template 
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
+
+            //populate data based on level
+            if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()))
+            {
+                _HTMLReportConfig.ExecutionStatisticsCountBy = HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions;
+            }
+
+          
+            List<string> runSetEnv = new List<string>();
+
+            liteDbRunSet.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+            liteDbRunSet.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunSet.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunSet.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+            if (liteDbRunSet.Elapsed.HasValue)
+            {
+                liteDbRunSet.Elapsed = Math.Round(liteDbRunSet.Elapsed.Value, 2);
+            }
+            foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
+            {
+                if (!runSetEnv.Contains(liteDbRunner.Environment))
+                {
+                    runSetEnv.Add(liteDbRunner.Environment);
+                }
+
+                liteDbRunner.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+                liteDbRunner.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbRunner.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbRunner.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+                if (liteDbRunner.Elapsed.HasValue)
+                {
+                    liteDbRunner.Elapsed = Math.Round(liteDbRunner.Elapsed.Value, 2);
+                }
+                else { liteDbRunner.Elapsed = 0; }
+                foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
+                {
+
+                    liteDbBusinessFlow.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutableItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+                    liteDbBusinessFlow.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbBusinessFlow.ChildPassedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()], liteDbBusinessFlow.ChildExecutedItemsCount[_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()]));
+
+                    if (liteDbBusinessFlow.Elapsed.HasValue)
+                    {
+                        liteDbBusinessFlow.Elapsed = Math.Round(liteDbBusinessFlow.Elapsed.Value, 2);
+                    }
+                    else { liteDbBusinessFlow.Elapsed = 0; }
+
+                    foreach(LiteDbActivityGroup liteDbActivityGroup in liteDbBusinessFlow.ActivitiesGroupsColl)
+                    {
+                        foreach (LiteDbActivity liteDbActivity in liteDbActivityGroup.ActivitiesColl)
+                        {
+
+                            liteDbActivity.ExecutionRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildExecutedItemsCount, liteDbActivity.ChildExecutableItemsCount));
+
+                            liteDbActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildPassedItemsCount, liteDbActivity.ChildExecutedItemsCount));
+
+
+                            if (liteDbActivity.Elapsed.HasValue)
+                            {
+                                liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
+                            }
+                            else { liteDbActivity.Elapsed = 0; }
+                            foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
+                            {
+                                List<string> newScreenShotsList = new List<string>();
+                                if (liteDbAction.Elapsed.HasValue)
+                                {
+                                    liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value / 1000, 4);
+                                }
+                                else { liteDbAction.Elapsed = 0; }
+                                if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
+                                    liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
+                                foreach (string screenshot in liteDbAction.ScreenShots)
+                                {
+                                    allScreenshots.Add(screenshot);
+                                    string newScreenshotPath =executionId.ToString()+"/"+ Path.GetFileName(screenshot);
+
+                                    newScreenShotsList.Add(newScreenshotPath);                            
+                                }
+                                liteDbAction.ScreenShots = newScreenShotsList;
+                            }
+                        }
+                    }
+
+                   
+                }
+            }
+
+            if (runSetEnv.Count > 0)
+            {
+                liteDbRunSet.Environment = string.Join(",", runSetEnv);
+            }
+            return allScreenshots;
+        }
+
+        private string CalculateExecutionOrPassRate(int firstItem, int secondItem)
+        {
+            if (secondItem != 0)
+            {
+                return (firstItem * 100 / secondItem).ToString();
+            }
+            else
+            {
+                return "0";
+            }
         }
     }
 }

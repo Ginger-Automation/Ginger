@@ -57,19 +57,8 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     return lightDbRunSet;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
-                var result = dbManager.GetRunSetLiteData();
-                List<LiteDbRunSet> filterData = null;
-                if (!string.IsNullOrEmpty(runSetGuid))
-                {
-                    filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetGuid).ToList();
-                }
-                else
-                {
-                    runSetGuid = result.IncludeAll().Max(x => x._id).AsString;
-                    filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetGuid).ToList();
-                }
-                lightDbRunSet = filterData.Last();
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
+                lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
                 response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);

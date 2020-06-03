@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -91,7 +92,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.ERROR, "SCM options are not implemented yet");
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async Task Execute(RunsetExecutor runsetExecutor)
         {
             // NA            
         }
