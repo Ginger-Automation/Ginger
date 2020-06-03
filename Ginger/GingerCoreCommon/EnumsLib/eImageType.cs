@@ -262,6 +262,7 @@ namespace Amdocs.Ginger.Common.Enums
         ALM,
         CSV,
         Clipboard,
+        ID,
         #endregion
 
         #region Source control Images     
