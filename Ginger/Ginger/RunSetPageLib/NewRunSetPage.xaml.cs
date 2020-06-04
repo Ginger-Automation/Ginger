@@ -566,6 +566,7 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);            
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));

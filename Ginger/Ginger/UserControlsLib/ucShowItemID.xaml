@@ -9,8 +9,8 @@
     <Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Height="22">
             <usercontrols:ucButton x:Name="xShowIDBtn" ToolTip="Click to View Item ID" ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonType="ImageButton" ButtonImageType="ID" Click="xShowIDBtn_Click" VerticalAlignment="Center" />
-            <TextBlock x:Name="xIDLbl" Style="{StaticResource $TextBlockStyle}" FontSize="11" VerticalAlignment="Center" Margin="0,2,0,0"/>
-            <usercontrols:ucButton x:Name="xCopyBtn" ToolTip="Copy ID to Clipboard" ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonType="ImageButton" ButtonImageType="Copy" Click="xCopyBtn_Click" Margin="-3,0,0,0" VerticalAlignment="Center" />
+            <TextBlock x:Name="xIDLbl" Style="{StaticResource $TextBlockStyle}" FontSize="11" VerticalAlignment="Center" Margin="0,2,0,0" ToolTip="Item ID"/>
+            <usercontrols:ucButton x:Name="xCopyBtn" ToolTip="Copy ID to Clipboard" ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonType="ImageButton" ButtonImageType="Copy" Click="xCopyBtn_Click" Margin="-3,-2,0,0" VerticalAlignment="Center" />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -9,7 +9,8 @@
       xmlns:state="clr-namespace:Ginger.MoveToGingerWPF.Run_Set_Pages"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
       mc:Ignorable="d" 
-      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Run Set"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Run Set"
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
@@ -357,7 +358,10 @@
                         </Border>
                     </TabItem.Header>
                     <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
-                        <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,0,0,0">Name:</Label>
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                            <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                            <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                        </StackPanel>
                         <TextBox x:Name="xRunSetNameTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="25" FontWeight="Bold"></TextBox>
                         <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" Margin="-5,5,0,0">Description:</Label>
                         <TextBox x:Name="xRunSetDescriptionTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" DockPanel.Dock="Top" Height="50"></TextBox>

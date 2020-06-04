@@ -200,6 +200,7 @@ namespace Ginger.Actions
 
             BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mAction, nameof(Act.ActionType), BindingMode: BindingMode.OneWay);
             xDescriptionTextBox.BindControl(mAction, nameof(Act.Description));
+            xShowIDUC.Init(mAction);
             xRunDescritpionUC.Init(mContext, mAction, nameof(Act.RunDescription));
             xTagsViewer.Init(mAction.Tags);
 
