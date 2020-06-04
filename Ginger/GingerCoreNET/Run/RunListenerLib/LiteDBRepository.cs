@@ -607,7 +607,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             List<string> allScreenshots = new List<string>();
             //select template 
-            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsDefault == true)).FirstOrDefault();
+            HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => x.IsDefault ).FirstOrDefault();
 
             //populate data based on level
             if (string.IsNullOrEmpty(_HTMLReportConfig.ExecutionStatisticsCountBy.ToString()))
@@ -679,7 +679,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                 }
                                 else { liteDbAction.Elapsed = 0; }
                                 if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
+                                {
                                     liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
+                                }
+                                    
                                 foreach (string screenshot in liteDbAction.ScreenShots)
                                 {
                                     allScreenshots.Add(screenshot);

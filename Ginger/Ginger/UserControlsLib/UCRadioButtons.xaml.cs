@@ -100,7 +100,9 @@ namespace Ginger.UserControlsLib
                     var button = new RadioButton() { Tag = Enum.GetName(enumType, val), Name = Enum.GetName(enumType, val), Content = GingerCore.General.GetEnumValueDescription(enumType, Enum.GetName(enumType, val)), Margin = new Thickness(5, 5, 0, 0), Style = (Style)TryFindResource("@InputRadioButtonStyle") };
                     button.AddHandler(Button.ClickEvent, new RoutedEventHandler(RadioButton_Click));//default handler
                     if (extraRadioButtonCheckedHandler != null)
+                    {
                         button.Checked += extraRadioButtonCheckedHandler;//extra handler
+                    }                       
                         
                     panel.Children.Add(button);
 
@@ -108,7 +110,7 @@ namespace Ginger.UserControlsLib
 
                 });
 
-            string currentValue = obj.GetType().GetProperty(property)?.GetValue(obj)?.ToString(); ;
+            string currentValue = obj.GetType().GetProperty(property)?.GetValue(obj)?.ToString();
 
             string[] radioTitles = Enum.GetNames(enumType);
 

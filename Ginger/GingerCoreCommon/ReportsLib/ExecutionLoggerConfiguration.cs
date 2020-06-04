@@ -115,8 +115,7 @@ namespace Ginger.Reports
             }
             set
             {
-                mPublishLogToCentralDB = value;
-                //OnPropertyChanged(nameof(PublishLogToCentralDB));
+                mPublishLogToCentralDB = value;               
             }
         }
 
@@ -132,7 +131,6 @@ namespace Ginger.Reports
             set
             {
                 mDeleteLocalDataOnPublish = value;
-                //OnPropertyChanged(nameof(DeleteLocalDataOnPublish));
             }
         }
 

@@ -53,9 +53,7 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
 
             IMapper iMapper = config.CreateMapper();
 
-            var destination = iMapper.Map<LiteDbRunSet, AccountReportRunSet>(runSet);
-            
-            //destination.ElapsedEndTimeStamp = runSet.Elapsed;
+            var destination = iMapper.Map<LiteDbRunSet, AccountReportRunSet>(runSet);           
             return destination;
         }
 
@@ -106,7 +104,10 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
             }
 
             if (temp.Any())
-               await  UploadImageAsync(executionId, temp);
+            {
+                await UploadImageAsync(executionId, temp);
+            }    
+               
 
         }
 
@@ -117,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB,null,  "Publishing Execution screenshots to central DB");
-                RestRequest restRequest = (RestRequest)new RestRequest("/AccountReport/UploadFiles/",Method.POST);
+                RestRequest restRequest = new RestRequest("/AccountReport/UploadFiles/",Method.POST);
                 restRequest.AddHeader("Content-Type", "multipart/form-data");     
                 restRequest.AddHeader("ExecutionId", executionId.ToString());
 
