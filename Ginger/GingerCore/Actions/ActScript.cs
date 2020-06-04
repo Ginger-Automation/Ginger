@@ -370,21 +370,15 @@ namespace GingerCore.Actions
             return fileName;
         }
 
-        bool DeleteTempFile(string filePath)
+        void DeleteTempFile(string filePath)
         {
             if (!string.IsNullOrEmpty(filePath))
             {
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
-                    return true;
-                }
-                else
-                {
-                    return false;
                 }
             }
-            return true;
         }
     }
 }
