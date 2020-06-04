@@ -3123,8 +3123,9 @@ namespace GingerCore.Drivers
             Driver.SwitchTo().DefaultContent();
             if (EI.Path != null)
             {
-                string[] spliter = new string[] { "," };
-                string[] iframesPathes = EI.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                //split Path by commo outside of brackets 
+                var spliter = new Regex(@",(?![^\[]*[\]])");
+                string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
                     Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
