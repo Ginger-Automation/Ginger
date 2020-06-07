@@ -385,6 +385,7 @@ namespace Ginger
             {
                 while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning == true)
                 {
+                    Thread.Sleep(500);
                     GingerCore.General.DoEvents();
                 }
             }           
