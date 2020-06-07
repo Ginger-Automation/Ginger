@@ -381,7 +381,7 @@ namespace Ginger
             CW.Show();
             GingerCore.General.DoEvents();
 
-            while(WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning)
+            while(WorkSpace.Instance?.Solution?.LoggerConfigurations?.IsPublishToCentralDBRunning==true)
             {                
                 GingerCore.General.DoEvents();
             }
