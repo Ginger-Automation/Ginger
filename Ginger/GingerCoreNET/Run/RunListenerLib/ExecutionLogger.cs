@@ -195,6 +195,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             else
             {
+                gingerReport.GingerRunner = gingerRunner;
                 if (runnerCount != 0)
                 {
                     gingerReport.Seq = runnerCount;
