@@ -136,12 +136,12 @@ namespace Amdocs.Ginger.GingerConsole
             WorkSpace.Init(ws, startLocalGrid);
         }
 
-        private static void ProcessArgs(string[] args)
+        private async static void ProcessArgs(string[] args)
         {
             InitWorkSpace(false);                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);            
+           await CLI.ExecuteArgs(args);            
         }
 
        

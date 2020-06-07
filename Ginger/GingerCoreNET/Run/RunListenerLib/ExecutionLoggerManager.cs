@@ -140,7 +140,7 @@ namespace Ginger.Run
             public List<string> GingerAggentMapping;
             public Guid Ginger_GUID;
         };
-        public ParentGingerData GingerData = new ParentGingerData();
+        public ParentGingerData GingerData = new ParentGingerData();     
 
         // TODO: remove the need for env - get it from notify event !!!!!!
         public ExecutionLoggerManager(Context context, eExecutedFrom executedFrom = eExecutedFrom.Run)
@@ -825,6 +825,31 @@ namespace Ginger.Run
         public void RunnerRunUpdate(ObjectId RunnerLiteDbId)
         {
             throw new NotImplementedException();
+        }
+
+        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
+        {
+            if(Configuration.PublishLogToCentralDB== ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            {
+                try
+                {
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("######## Publishing {0} Execution details to central DB", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                    Configuration.IsPublishToCentralDBRunning = true;
+
+                    await mExecutionLogger.SendExecutionLogToCentralDBAsync(runsetId, executionId, Configuration.DeleteLocalDataOnPublish); 
+                    
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Execution details Publish to Central DB Completed", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception during Send exeuction data to central DB", ex);
+                }
+                finally
+                {
+                    Configuration.IsPublishToCentralDBRunning = false;
+                }
+              
+            }            
         }
     }
 }

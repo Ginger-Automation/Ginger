@@ -292,10 +292,10 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private void RunNewCLI(string[] args)
+        private async void RunNewCLI(string[] args)
         {                    
             CLIProcessor cLIProcessor = new CLIProcessor();
-            cLIProcessor.ExecuteArgs(args);
+           await cLIProcessor.ExecuteArgs(args);
 
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown(Environment.ExitCode);

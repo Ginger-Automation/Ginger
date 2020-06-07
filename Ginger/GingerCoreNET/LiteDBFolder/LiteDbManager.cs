@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
@@ -63,9 +64,30 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return name;
         }
 
+        public LiteDbRunSet GetLatestExecutionRunsetData(string runsetId)
+        {
+            var result = GetRunSetLiteData();
+            List<LiteDbRunSet> filterData = null;
+            if (!string.IsNullOrEmpty(runsetId))
+            {
+                filterData = result.IncludeAll().Find(a => a._id.ToString() == runsetId).ToList();
+            }
+            else
+            {
+                runsetId = result.IncludeAll().Max(x => x._id).AsString;
+                filterData = result.IncludeAll().Find(a => a._id.ToString() == runsetId).ToList();
+            }
+            return filterData.Last();
+        }
+
         public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
         {
             return dbConnector.FilterCollection(baseColl, query);
+        }
+
+        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet)
+        {
+            return dbConnector.DeleteDocumentByLiteDbRunSet(liteDbRunSet);            
         }
 
         public LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
