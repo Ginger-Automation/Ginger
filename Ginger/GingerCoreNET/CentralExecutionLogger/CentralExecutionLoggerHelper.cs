@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
             string message = string.Format(" execution data to Central DB for Runset: {0} , Execution Id:{1}", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
             try
             {            
-                IRestResponse response = await restClient.ExecuteAsync(restRequest);
+                IRestResponse response = await restClient.ExecuteTaskAsync(restRequest);
                 if(response.IsSuccessful)
                 {                    
                     Reporter.ToLog(eLogLevel.INFO, "Successfully sent "+message);
@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
                 {
                     restRequest.AddFile(Path.GetFileName(item), item);
                 }
-                IRestResponse response =  await restClient.ExecuteAsync(restRequest);
+                IRestResponse response =  await restClient.ExecuteTaskAsync(restRequest);
               
                 if (response.IsSuccessful)
                 {
