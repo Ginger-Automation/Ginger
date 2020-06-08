@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -31,6 +32,7 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace GingerTest.Variable_Dependancies
 {
@@ -44,6 +46,8 @@ namespace GingerTest.Variable_Dependancies
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {
+            
+
             BF1 = new BusinessFlow();
             BF1.Name = "VariableDependancyTest";
             BF1.Active = true;
@@ -104,6 +108,14 @@ namespace GingerTest.Variable_Dependancies
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
             BF1.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
+
+            if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            {
+                string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
+                WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
+            }
+          
+
 
             mGR = new GingerRunner();
             mGR.Name = "Test Runner";

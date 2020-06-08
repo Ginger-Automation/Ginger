@@ -21,6 +21,7 @@ using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -55,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         /// <param name="runsetExecutor"></param>
         void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor);
 
-        void Execute(RunsetExecutor runsetExecutor);
+        Task Execute(RunsetExecutor runsetExecutor);
 
         bool IsFileBasedConfig { get; }
     }
