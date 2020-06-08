@@ -65,17 +65,31 @@ namespace Ginger.Reports
         private void SetControls()
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFolderMaximumSizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
+
+            xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB), 
+                xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration, 
+                nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
+            //, new RoutedEventHandler(PublishLogToCentralDBRadioButton_Click)
+
+            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
+            xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
+            nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
+           
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, 
+                nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
+
 
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
-                ExecutionResultFolderPnl.IsEnabled = true;
+               
                 executionResultOnRadioBtnsPnl.IsChecked = true;
                 executionResultOffRadioBtnsPnl.IsChecked = false;
             }
             else
             {
-                ExecutionResultFolderPnl.IsEnabled = false;
+               
                 executionResultOnRadioBtnsPnl.IsChecked = false;
                 executionResultOffRadioBtnsPnl.IsChecked = true;
             }
@@ -99,22 +113,31 @@ namespace Ginger.Reports
         }
 
         private void executionResultOnRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
-        {
-            _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;
+        {            
+            _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = true;            
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled));
-            if (ExecutionResultFolderPnl != null)
+            if (xLoggerSettingsGrid != null)
             {
-                ExecutionResultFolderPnl.IsEnabled = true;
+                xLoggerSettingsGrid.Visibility = Visibility.Visible;
+
+                if (xCentralExecutionLoggerGrid != null && _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                {
+                    xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
+                }
             }
         }
 
         private void executionResultOffRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
-        {
-            _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = false;
+        {           
+            _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled = false;            
             _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled));
-            if (ExecutionResultFolderPnl != null)
+            if (xLoggerSettingsGrid != null)
             {
-                ExecutionResultFolderPnl.IsEnabled = false;
+                xLoggerSettingsGrid.Visibility = Visibility.Collapsed;
+                if(xCentralExecutionLoggerGrid!=null)
+                {
+                    xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
+                }                
             }
         }
 
@@ -129,7 +152,7 @@ namespace Ginger.Reports
 
             try
             {
-                if (Convert.ToInt16(SizeTextBox.Text.ToString()) < 50)
+                if (Convert.ToInt16(xFolderMaximumSizeTextBox.Text.ToString()) < 50)
                 {
                     Reporter.ToUser(eUserMsgKey.FolderSizeTooSmall);
                     return;
@@ -147,11 +170,15 @@ namespace Ginger.Reports
         }
         private void TextFileRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
         {
-            if (ExecutionResultFolderPnl != null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                ExecutionResultFolderPnl.IsEnabled = true;
-                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+            if ( _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {              
+                 xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
+                xFolderMaximumSizeLabel.Visibility = Visibility.Visible;
+                xFolderMaximumSizeTextBox.Visibility = Visibility.Visible;
+                _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile; 
+                
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
+                _selectedExecutionLoggerConfiguration.PublishLogToCentralDB = ExecutionLoggerConfiguration.ePublishToCentralDB.No;
                 if (isControlsSet)
                 {
                     Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
@@ -160,9 +187,11 @@ namespace Ginger.Reports
         }
         private void LiteDbRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
         {
-            if (ExecutionResultFolderPnl != null && _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
-            {
-                ExecutionResultFolderPnl.IsEnabled = true;
+            if ( _selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
+            {               
+                xCentralExecutionLoggerGrid.Visibility = Visibility.Visible;
+                xFolderMaximumSizeLabel.Visibility = Visibility.Collapsed;
+                xFolderMaximumSizeTextBox.Visibility = Visibility.Collapsed;
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
                 _selectedExecutionLoggerConfiguration.OnPropertyChanged(nameof(ExecutionLoggerConfiguration.SelectedDataRepositoryMethod));
                 if (isControlsSet)
@@ -170,6 +199,31 @@ namespace Ginger.Reports
                     Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
                 }
             }
+            
         }
+
+        private void PublishLogToCentralDBRadioButton_CheckedHandler(object sender, RoutedEventArgs e)
+        {
+            string value = ((RadioButton)sender).Tag?.ToString();
+
+            ExecutionLoggerConfiguration.ePublishToCentralDB publishToCentralDB;
+
+            Enum.TryParse(value, out publishToCentralDB);
+
+            if (publishToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
+            {
+                xEndPointURLLabel.Visibility = Visibility.Visible;
+                 xEndPointURLTextBox.Visibility = Visibility.Visible;
+                xDeleteLocalData.Visibility = Visibility.Visible;
+                xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Visible;
+            }
+           else
+            {
+                xEndPointURLLabel.Visibility = Visibility.Collapsed;
+                xEndPointURLTextBox.Visibility = Visibility.Collapsed;
+                xDeleteLocalData.Visibility = Visibility.Collapsed;
+                xDeleteLocalDataOnPublishPanel.Visibility = Visibility.Collapsed;
+            }
+        }               
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -89,9 +90,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async Task Execute(RunsetExecutor runsetExecutor)
         {
-            runsetExecutor.RunRunset();
+            await runsetExecutor.RunRunset();
         }       
 
 

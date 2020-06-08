@@ -619,6 +619,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     widgetsActionslist.Add(ActUIElement.eElementAction.ScrollUp);
                     widgetsActionslist.Add(ActUIElement.eElementAction.ScrollDown);
                     widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetAttrValue);
                     break;
             }
 
@@ -637,6 +638,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             mWidgetsElementsTypeList.Add(eElementType.CheckBox);
             mWidgetsElementsTypeList.Add(eElementType.Label);
             mWidgetsElementsTypeList.Add(eElementType.Span);
+            mWidgetsElementsTypeList.Add(eElementType.Div);
 
             return mWidgetsElementsTypeList;
         }
