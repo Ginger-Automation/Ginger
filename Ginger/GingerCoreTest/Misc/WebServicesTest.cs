@@ -68,6 +68,8 @@ namespace UnitTests.NonUITests
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
 
+            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder,"ExecutionResults");
+
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF WebServices Web API";

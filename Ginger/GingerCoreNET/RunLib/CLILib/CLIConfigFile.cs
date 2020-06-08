@@ -23,6 +23,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCoreNET.SourceControl;
 using System;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -46,9 +47,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async Task Execute(RunsetExecutor runsetExecutor)
         {            
-            runsetExecutor.RunRunset();            
+            await runsetExecutor.RunRunset();            
         }
 
 
