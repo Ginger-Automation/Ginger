@@ -20,6 +20,7 @@ using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCoreNET.RosLynLib;
 using System;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -67,9 +68,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
-        {                                    
-            var rc = CodeProcessor.ExecuteNew(mScriptFile);            
+        public async Task Execute(RunsetExecutor runsetExecutor)
+        {
+            await Task.Run(() =>
+            {
+                var rc = CodeProcessor.ExecuteNew(mScriptFile);
+            });                   
         }
     }
 }
