@@ -23,6 +23,7 @@ using Ginger.SolutionGeneral;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -41,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return "aaa";
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async Task Execute(RunsetExecutor runsetExecutor)
         {
             throw new NotImplementedException();
         }
