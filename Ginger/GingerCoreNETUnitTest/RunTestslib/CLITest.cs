@@ -18,6 +18,7 @@ using Amdocs.Ginger.Common;
 using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using System.Threading.Tasks;
 
 namespace WorkspaceHold
 {
@@ -78,8 +79,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
             
@@ -102,8 +106,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" + configFile });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "ConfigFile=" + configFile });
+            }).Wait();
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
             
@@ -119,8 +126,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "-t" });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "-t" });
+            }).Wait();
             // Assert            
             // ????
 
@@ -136,7 +146,12 @@ namespace WorkspaceHold
                 CLIProcessor CLI = new CLIProcessor();
 
                 // Act            
-                CLI.ExecuteArgs(new string[] { "--blabla" });
+               
+
+                Task.Run(async () =>
+                {
+                    await CLI.ExecuteArgs(new string[] { "--blabla" });
+                }).Wait();
 
                 // Assert                            
                 Assert.AreEqual(eLogLevel.ERROR, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
@@ -144,7 +159,7 @@ namespace WorkspaceHold
             }
 
         }
-
+       
         [TestMethod]
         public void CLIHelp()
         {
@@ -154,15 +169,19 @@ namespace WorkspaceHold
                 mConsoleMessages.Clear();
                 CLIProcessor CLI = new CLIProcessor();
 
-                // Act            
-                CLI.ExecuteArgs(new string[] { "help" });
+                // Act         
+                 Task.Run(async () =>
+                {
+                    await CLI.ExecuteArgs(new string[] { "help" });
+                }).Wait();
+               
 
                 // Assert            
                 Assert.AreEqual(1, mConsoleMessages.Count, "message count");
                 Assert.IsTrue(mConsoleMessages[0].MessageToConsole.Contains("Ginger support"), "help message");
             }
         }
-
+       
         [TestMethod]
         public void CLIGridWithoutParams()
         {
@@ -173,8 +192,11 @@ namespace WorkspaceHold
                 CLIProcessor CLI = new CLIProcessor();
 
                 // Act            
-                CLI.ExecuteArgs(new string[] { "grid" });
-
+               
+                Task.Run(async () =>
+                {
+                    await CLI.ExecuteArgs(new string[] { "grid" });
+                }).Wait();
                 // Assert            
                 Assert.AreEqual(1, mConsoleMessages.Count, "There is 1 line of help");
                 Assert.AreEqual(eLogLevel.INFO, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
@@ -213,8 +235,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f" ,runSetAutoRunConfiguration.ConfigFileFullPath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "BF RunStatus=Passed");
         }
@@ -241,8 +266,12 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", runSetAutoRunConfiguration.ConfigFileFullPath });
+           
 
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed" );
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
@@ -260,8 +289,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });      
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed");
 
@@ -299,8 +331,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+          
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed");
 
@@ -338,8 +373,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed");
 
@@ -377,8 +415,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test_Dynamic", "Validating correct Run set was executed");
 
@@ -419,8 +460,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test_Dynamic", "Validating correct Run set was executed");
 
@@ -461,8 +505,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Runset_DataPass", "Validating correct Run set was executed");
 
@@ -501,8 +548,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Runset_DataPass", "Validating correct Run set was executed");
 
@@ -541,8 +591,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "DataMappingTest", "Validating correct Run set was executed");
 
@@ -582,8 +635,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "VirtualTest", "Validating correct Run set was executed");
 
@@ -633,7 +689,12 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
 
             // Assert        
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "DataMappingTest", "Validating correct Run set was executed");
@@ -654,10 +715,13 @@ namespace WorkspaceHold
 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "Dynamic=" + configFile });
-
-                // Assert            
-                Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+                
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "Dynamic=" + configFile });
+            }).Wait();
+            // Assert            
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
 
         [TestMethod]
@@ -678,8 +742,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
@@ -702,7 +769,12 @@ namespace WorkspaceHold
 
             // Act
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "script", "-f" , scriptFile });
+         
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "script", "-f", scriptFile });
+            }).Wait();
 
             // Assert
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -726,7 +798,11 @@ namespace WorkspaceHold
             // Act            
             CLIProcessor CLI = new CLIProcessor();
             string[] args = CommandLineToStringArray(runSetAutoRunConfiguration.CLIContent).ToArray();
-            CLI.ExecuteArgs(args);
+      
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(args);
+            }).Wait();
 
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -742,7 +818,12 @@ namespace WorkspaceHold
             
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);
+            
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(args);
+            }).Wait();
 
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -788,8 +869,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args.ToArray());
-
+         
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(args.ToArray());
+            }).Wait();
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
             
