@@ -102,7 +102,6 @@ namespace GingerCore.Actions
 
         string DataBuffer="";
         string ErrorBuffer="";
-        string TempFileName = "";
         public override String ActionType
         {
             get
@@ -149,6 +148,8 @@ namespace GingerCore.Actions
             }
             DataBuffer = "";
             ErrorBuffer = "";
+            string TempFileName = "";
+
             System.Diagnostics.Process p = new System.Diagnostics.Process();
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.UseShellExecute = false;
@@ -241,6 +242,7 @@ namespace GingerCore.Actions
                         else
                         {
                             //TODO: Need to create temp file based on the selected interpreter
+                            this.Error = "This type of script is not supported.";
                         }
                     }
                     if (string.IsNullOrEmpty(p.StartInfo.Arguments))
@@ -301,29 +303,36 @@ namespace GingerCore.Actions
                     sRC = sRC.Substring(i + GingerRCStart.Length , i2 - i - GingerRCEnd.Length-2);
                 }
             }
-
-            string[] RCValues = sRC.Split('\n');
-            foreach (string RCValue in RCValues)
+            if (i >= 0 && i2 > 0)
             {
-                if (RCValue.Length > 0) // Ignore empty lines
+                string[] RCValues = sRC.Split('\n');
+                foreach (string RCValue in RCValues)
                 {
-                    string Param;
-                    string Value;
-                    i = RCValue.IndexOf('=');
-                    if (i > 0)
+                    if (RCValue.Length > 0) // Ignore empty lines
                     {
-                        Param = RCValue.Substring(0, i);
-                        //the rest is the value
-                        Value = RCValue.Substring(Param.Length + 1);
+                        string Param;
+                        string Value;
+                        i = RCValue.IndexOf('=');
+                        if (i > 0)
+                        {
+                            Param = RCValue.Substring(0, i);
+                            //the rest is the value
+                            Value = RCValue.Substring(Param.Length + 1);
+                        }
+                        else
+                        {
+                            // in case of bad RC not per Ginger style we show it as "?" with value
+                            Param = "???";
+                            Value = RCValue;
+                        }
+                        AddOrUpdateReturnParamActual(Param, Value);
                     }
-                    else
-                    {
-                        // in case of bad RC not per Ginger style we show it as "?" with value
-                        Param = "???";
-                        Value = RCValue;
-                    }
-                    AddOrUpdateReturnParamActual(Param, Value);
                 }
+            }
+            else
+            {
+                //No params found so return the full output
+                AddOrUpdateReturnParamActual("???", sRC);
             }
         }
         public string GetCommandText(ActScript act)
@@ -376,7 +385,14 @@ namespace GingerCore.Actions
             {
                 if (File.Exists(filePath))
                 {
-                    File.Delete(filePath);
+                    try
+                    {
+                        File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+                    }
                 }
             }
         }
