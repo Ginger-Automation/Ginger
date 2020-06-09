@@ -486,7 +486,7 @@ namespace Ginger.AnalyzerLib
                     {
                         AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
                         AA.Description = "The Input Value Parameter " + AIV.Param + " is Duplicate";
-                        AA.Details = "The Input Value Parameter: '" + AIV.Param + "' is duplicate in the ActInputValues Xml";
+                        AA.Details = "The Input Value Parameter: '" + AIV.Param + "' is duplicate in the ActInputValues";
                         AA.HowToFix = "Open action Edit page and save it.";
                         AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
                         AA.IssueType = eType.Warning;
@@ -579,7 +579,6 @@ namespace Ginger.AnalyzerLib
         }
         private static void FixRemoveDuplicateActInputValues(object sender, EventArgs e)
         {
-            //look for Action with same name and re-map the Flow Control            
             AnalyzeAction AA = (AnalyzeAction)sender;
             if (AA.ErrorInfoObject == null)
             {
