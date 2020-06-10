@@ -138,7 +138,7 @@ namespace GingerCore.ALM.RQM
         {
             GetRQMDomainProjects();
 
-            IProjectDefinitions selectedProj = rqmProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName) == true).FirstOrDefault();
+            IProjectDefinitions selectedProj = rqmProjectsDataList.Where(x => x.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
             if (selectedProj != null)
             {
                 //Save selected project details

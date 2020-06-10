@@ -196,7 +196,9 @@ namespace GingerCore.ALM.QC
                                     //get all execution status for all steps
                                     ObservableList<string> stepsStatuses = new ObservableList<string>();
                                     foreach (Step step in stepsList)
+                                    {
                                         stepsStatuses.Add(step.Status);
+                                    }
 
                                     //update the TC general status based on the activities status collection.                                
                                     if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
@@ -311,7 +313,7 @@ namespace GingerCore.ALM.QC
                 {
                     if (field.ToUpdate || field.Mandatory)
                     {
-                        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                        if (!string.IsNullOrEmpty(field.SelectedValue) && field.SelectedValue != "NA")
                         {
                             test[field.ID] = field.SelectedValue;
                         }
@@ -476,8 +478,11 @@ namespace GingerCore.ALM.QC
                     if (field.ToUpdate || field.Mandatory)
                     {
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                        {
                             testSet[field.ID] = field.SelectedValue;
+                        }
                         else
+                        {
                             try
                             {
                                 testSet[field.ID] = "NA";
@@ -488,6 +493,7 @@ namespace GingerCore.ALM.QC
                                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to Qtest", ex);
                                 return false;
                             }
+                        }
                     }
                 }
 

@@ -95,11 +95,6 @@ namespace Ginger.ALM
             }
         }
 
-        public void SyncConfigurations()
-        {
-            
-        }
-
         public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();

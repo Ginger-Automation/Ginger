@@ -106,7 +106,9 @@ namespace Ginger.ALM.Qtest
             {
                 short number;
                 if (Int16.TryParse(detail[1], out number))
+                {
                     total += number;
+                }
             }
             Label totalTcsNum = new Label();
             totalTcsNum.Content = "Total Number of TC's: " + total;
@@ -205,7 +207,9 @@ namespace Ginger.ALM.Qtest
         private void SelectFolder(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
+            {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select a folder item");
+            }
             else
             {
                 _GenericWin.Close();
@@ -217,14 +221,16 @@ namespace Ginger.ALM.Qtest
             if (mCurrentSelectedTreeItem != null)
             {
                 if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSuites))
-                {                   
-                    LoadDataBizFlows();                   
+                {
+                    LoadDataBizFlows();
                     ShowTestSetDetailsPanel(false);
                     _GenericWin.Close();
                 }
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void Cancel_Clicked(object sender, EventArgs e)

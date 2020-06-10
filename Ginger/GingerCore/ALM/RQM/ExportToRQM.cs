@@ -196,9 +196,8 @@ namespace GingerCore.ALM.RQM
                                 currentActivity.ActivityData.AttachmentsColl.Add(reportAttachment);
 
                                 string exportJarFilePath = Assembly.GetExecutingAssembly().Location.Replace(@"GingerCore.dll", "") + @"ALM\\RQM\\JAVA";
-                                resultInfo = RQMConnect.Instance.RQMRep.UploadAttachmetToRQMAndGetIds(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, exportJarFilePath);
-
-                                resultInfo = RQMConnect.Instance.RQMRep.UpdateTestCaseWithNewAttachmentID(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity);
+                                RQMConnect.Instance.RQMRep.UploadAttachmetToRQMAndGetIds(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, exportJarFilePath);
+                                RQMConnect.Instance.RQMRep.UpdateTestCaseWithNewAttachmentID(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity);
 
                                 //Attaching Zip file - finish
                                 System.IO.File.Delete(zipFileName);

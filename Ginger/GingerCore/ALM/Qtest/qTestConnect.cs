@@ -45,7 +45,7 @@ namespace GingerCore.ALM.Qtest
         
         public ObservableList<QTestApiModel.TestCycleResource> GetQTestCyclesByProject(string qTestServerUrl, string qTestUserName, string qTestPassword, string qTestProject)
         {
-            ObservableList<QTestApiModel.TestCycleResource> cyclestList = new ObservableList<QTestApiModel.TestCycleResource>();
+            ObservableList<QTestApiModel.TestCycleResource> cyclestList;
 
             QTestApi.LoginApi connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
             string granttype = "password";
