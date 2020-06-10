@@ -994,11 +994,8 @@ namespace Ginger.Run
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in Run Action", ex);
-                if (string.IsNullOrEmpty(act.Error))
-                {
-                    act.Error = act.Error +"\nException in Run Action " + ex.Message;
-                    act.Status = eRunStatus.Failed;
-                }
+                act.Error = act.Error + "\nException in Run Action " + ex.Message;
+                act.Status = eRunStatus.Failed;
             }
         }
 
