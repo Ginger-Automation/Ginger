@@ -89,8 +89,10 @@ namespace Ginger.ALM
             GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
 
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
-            if(CurrentAlmConfigurations != null)
+            if (CurrentAlmConfigurations != null)
+            {
                 AlmCore.SetALMConfigurations(CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName, CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName, CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath);
+            }
         }
 
         public void SyncConfigurations()
@@ -100,7 +102,7 @@ namespace Ginger.ALM
 
         public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
             if (AlmConfig == null)
             {
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
@@ -112,7 +114,7 @@ namespace Ginger.ALM
         public bool SetDefaultAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
         {
             //set default on the solution
-            foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).ToList())
+            foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).ToList())
             {
                 alm.DefaultAlm = false;
             }
@@ -120,7 +122,7 @@ namespace Ginger.ALM
             almConfig.DefaultAlm = true;
 
             //set default on almcore
-            foreach (GingerCoreNET.ALMLib.ALMConfig alm in ALMCore.AlmConfigs.Where(x => x.DefaultAlm == true).ToList())
+            foreach (GingerCoreNET.ALMLib.ALMConfig alm in ALMCore.AlmConfigs.Where(x => x.DefaultAlm).ToList())
             {
                 alm.DefaultAlm = false;
             }
@@ -692,7 +694,7 @@ namespace Ginger.ALM
         }
         public GingerCoreNET.ALMLib.ALMIntegration.eALMType GetALMType()
         {
-            return ALMCore.AlmConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault().AlmType;
+            return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
         }
     }
 }

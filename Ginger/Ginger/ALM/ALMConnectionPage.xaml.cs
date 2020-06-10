@@ -68,7 +68,9 @@ namespace Ginger.ALM
             {
                 RallyRadioButton.Visibility = Visibility.Hidden;
                 if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY)
+                {
                     CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
+                }
             }
 
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
@@ -136,7 +138,9 @@ namespace Ginger.ALM
                 RQMLoadConfigPackageButton.IsEnabled = true;
                 qTestRadioButton.IsEnabled = true;
                 if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM)
+                {
                     ServerURLTextBox.IsEnabled = false;
+                }
                 else
                 {
                     ServerURLTextBox.IsEnabled = true;
@@ -168,23 +172,23 @@ namespace Ginger.ALM
 
         private void ChangeALMType()
         {
-            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC && QCRadioButton.IsChecked == false)
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC && QCRadioButton.IsChecked != null ? (bool)QCRadioButton.IsChecked : false)
             {
                 QCRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked == false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked != null ? (bool)RQMRadioButton.IsChecked : false)
             {
                 RQMRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && JiraRadioButton.IsChecked == false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && JiraRadioButton.IsChecked != null ? (bool)JiraRadioButton.IsChecked : false)
             {
                 JiraRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked == false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked != null ? (bool)RallyRadioButton.IsChecked : false)
             {
                 RallyRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest && qTestRadioButton.IsChecked == false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest && qTestRadioButton.IsChecked != null ? (bool)qTestRadioButton.IsChecked : false)
             {
                 qTestRadioButton.IsChecked = true;
             }
@@ -265,8 +269,9 @@ namespace Ginger.ALM
                     if (string.IsNullOrEmpty(currSelectedDomain))
                     {
                         if (string.IsNullOrEmpty(CurrentAlmConfigurations.ALMDomain))
+                        {
                             return;
-
+                        }
                         currSelectedDomain = CurrentAlmConfigurations.ALMDomain;
                         DomainComboBox.SelectedItem = currSelectedDomain;
                     }
@@ -494,6 +499,8 @@ namespace Ginger.ALM
                     JiraRadioButton.FontWeight = FontWeights.Regular;
                     JiraRadioButton.Foreground = Brushes.Black;
                     break;
+                default:
+                    break;
             }
         }
 
@@ -535,36 +542,23 @@ namespace Ginger.ALM
                 switch (rBtn.Name)
                 {
                     case "QCRadioButton":
-                        if (almType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC)
-                        {
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
-                        }
                         break;
                     case "RQMRadioButton":
-                        if (almType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM)
-                        {
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
                             ALMIntegration.Instance.SetALMCoreConfigurations(almType); //Because RQM need to update the server field from existing package
                             SetLoadPackageButtonContent();
-                        }
                         break;
                     case "RallyRadioButton":
-                        if (almType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY)
-                        {
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY;
-                        }
                         break;
                     case "JiraRadioButton":
-                        if (almType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
-                        {
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira;
-                        }
                         break;
                     case "qTestRadioButton":
-                        if (almType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest)
-                        {
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
-                        }
+                        break;
+                    default:
                         break;
                 }
                 //Clear bindings

@@ -73,6 +73,7 @@ namespace Ginger.ALM.Qtest.TreeViewItems
         
         void ITreeViewItem.SetTools(ITreeView TV)
         {
+            // there is not tools needed at this stage
         }
     }
 }

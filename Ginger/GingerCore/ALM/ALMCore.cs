@@ -33,8 +33,6 @@ namespace GingerCore.ALM
 
     public abstract class ALMCore
     {
-        //public static ALMConfig AlmConfig = new ALMConfig();
-
         public static ObservableList<GingerCoreNET.ALMLib.ALMConfig> AlmConfigs { get; set; } = new ObservableList<GingerCoreNET.ALMLib.ALMConfig>();
 
         public static GingerCoreNET.ALMLib.ALMConfig DefaultAlmConfig { get; set; }
@@ -134,8 +132,9 @@ namespace GingerCore.ALM
             AlmConfig.AlmType = almType;
 
             if (!String.IsNullOrEmpty(ALMConfigPackageFolderPath))
+            {
                 AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
-
+            }
         }
 
         public BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)

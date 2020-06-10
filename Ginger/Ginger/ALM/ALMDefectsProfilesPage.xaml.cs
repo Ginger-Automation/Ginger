@@ -207,7 +207,7 @@ namespace Ginger.ALM
             newALMDefectProfile.ALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
             ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
 
-            newALMDefectProfile.ALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
+            newALMDefectProfile.ALMDefectProfileFields.Where(z => z.Mandatory).ToList().ForEach(x => x.SelectedValue = string.Empty);
 
             grdDefectsProfiles.DataSourceList = mALMDefectProfiles;
             grdDefectsFields.DataSourceList = newALMDefectProfile.ALMDefectProfileFields;

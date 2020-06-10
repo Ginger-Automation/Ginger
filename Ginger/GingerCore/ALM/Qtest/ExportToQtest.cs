@@ -29,6 +29,7 @@ using System.Reflection;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Common.InterfacesLib;
+using System.Text;
 
 namespace GingerCore.ALM.QC
 {
@@ -99,7 +100,7 @@ namespace GingerCore.ALM.QC
                                         {
                                             //Creating the Zip file - start
                                             string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
-                                            string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
+                                            string zipFileName = targetZipPath + "\\" + TestCaseName + "_GingerHTMLReport.zip";
                                             
                                             if (!System.IO.File.Exists(zipFileName))
                                             {
@@ -132,7 +133,6 @@ namespace GingerCore.ALM.QC
                                     StepFactory stepF = run.StepFactory;
                                     List stepsList = stepF.NewList("");
 
-                                    //int i = 0;
                                     int index = 1;
                                     foreach (Step step in stepsList)
                                     {
@@ -147,7 +147,10 @@ namespace GingerCore.ALM.QC
                                                     step.Status = "Failed";
                                                     List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
-                                                    foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
+                                                    foreach (Act act in failedActs)
+                                                    {
+                                                        errors += act.Error + Environment.NewLine;
+                                                    }
                                                     step["ST_ACTUAL"] = errors;
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
@@ -159,7 +162,6 @@ namespace GingerCore.ALM.QC
                                                     step["ST_ACTUAL"] = "Passed as expected";
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped:
-                                                    //step.Status = "No Run";
                                                     step.Status = "N/A";
                                                     step["ST_ACTUAL"] = "Skipped";
                                                     break;
@@ -171,15 +173,21 @@ namespace GingerCore.ALM.QC
                                                     step.Status = "Not Completed";
                                                     step["ST_ACTUAL"] = "Not Completed";
                                                     break;
+                                                default:
+                                                    break;
                                             }
                                         }
                                         else
                                         {
                                             //Step not exist in Ginger so left as "No Run" unless it is step data
                                             if (step.Name.ToUpper() == "STEP DATA")
+                                            {
                                                 step.Status = "Passed";
+                                            }
                                             else
+                                            {
                                                 step.Status = "No Run";
+                                            }
                                         }
                                         step.Post();
                                         index++;
@@ -192,13 +200,21 @@ namespace GingerCore.ALM.QC
 
                                     //update the TC general status based on the activities status collection.                                
                                     if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
+                                    {
                                         run.Status = "Failed";
-                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == stepsList.Count || stepsStatuses.Where(x => x == "N/A").Count()== stepsList.Count)
+                                    }
+                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == stepsList.Count || stepsStatuses.Where(x => x == "N/A").Count() == stepsList.Count)
+                                    {
                                         run.Status = "No Run";
+                                    }
                                     else if (stepsStatuses.Where(x => x == "Passed").Count() == stepsList.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == stepsList.Count)
+                                    {
                                         run.Status = "Passed";
+                                    }
                                     else
+                                    {
                                         run.Status = "Not Completed";
+                                    }
                                     run.Post();
                                 }
                                 else
@@ -229,9 +245,7 @@ namespace GingerCore.ALM.QC
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- "+ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
-                //if (!silentMode)
-                //    Reporter.ToUser(eUserMsgKey.ErrorWhileExportingExecDetails, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);               
                 return false;
             }
         }
@@ -274,7 +288,9 @@ namespace GingerCore.ALM.QC
                     foreach (DesignStep step in stepsList)
                     {
                         if (activitiesGroup.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.ExternalID == step.ID.ToString()).FirstOrDefault() == null)
+                        {
                             stepF.RemoveItem(step.ID);
+                        }
                     }
 
                     //delete the existing parameters
@@ -296,10 +312,22 @@ namespace GingerCore.ALM.QC
                     if (field.ToUpdate || field.Mandatory)
                     {
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                        {
                             test[field.ID] = field.SelectedValue;
+                        }
                         else
-                            try { test[field.ID] = "NA"; }
-                            catch { }
+                        {
+                            try 
+                            {
+                                test[field.ID] = "NA";
+                            }
+                            catch (Exception ex)
+                            {
+                                result = "Unexpected error occurred- " + ex.Message;
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to Qtest", ex);
+                                return false;
+                            }
+                        }
                     }
                 }
                 
@@ -311,19 +339,20 @@ namespace GingerCore.ALM.QC
 
                 //Add/update all test steps + Parameters
                 foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
+                {
                     ExportActivityAsTestStep(test, (Activity)actIdent.IdentifiedActivity);
-
+                }
                 return true;
             }
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Activities Group to Qtest", ex);
                 return false;
             }
         }
 
-        private static bool ExportActivityAsTestStep(Test test, Activity activity)
+        private static void ExportActivityAsTestStep(Test test, Activity activity)
         {
             DesignStepFactory stepF;
             DesignStep step = null;
@@ -331,17 +360,21 @@ namespace GingerCore.ALM.QC
 
             stepF = test.DesignStepFactory;
 
-            if (string.IsNullOrEmpty(activity.ExternalID) == false)
+            if (!string.IsNullOrEmpty(activity.ExternalID))
             {
                 //look for existing step                    
                 stepsList = stepF.NewList("");
                 if (stepsList != null && stepsList.Count > 0)
+                {
                     foreach (DesignStep s in stepsList)
+                    {
                         if (s.ID.ToString() == activity.ExternalID)
                         {
                             step = s;//step already exist 
                             break;
                         }
+                    }
+                }
             }
 
             if (step == null)
@@ -361,7 +394,11 @@ namespace GingerCore.ALM.QC
                 paramsSigns = "<br />Parameters:<br />";
                 foreach (VariableBase var in activity.Variables)
                 {
-                    paramsSigns += "&lt;&lt;&lt;" + var.Name.ToLower() + "&gt;&gt;&gt;<br />";
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("&lt;&lt;&lt;");
+                    sb.Append(var.Name.ToLower());
+                    sb.Append("&gt;&gt;&gt;<br />");
+                    paramsSigns = sb.ToString();
                     //try to add the parameter to the test case parameters list
                     try
                     {
@@ -379,7 +416,9 @@ namespace GingerCore.ALM.QC
             {
                 actsDesc = "Actions:<br />";
                 foreach (Act act in activity.Acts)
+                {
                     actsDesc += act.Description + "<br />";
+                }
             }
             description = description.Replace("<<&Actions&>>", actsDesc);
             step.StepDescription = description;
@@ -391,7 +430,6 @@ namespace GingerCore.ALM.QC
             step.Post();
 
             activity.ExternalID = step.ID.ToString();
-            return true;
         }
 
         public static bool ExportBusinessFlowToQtest(BusinessFlow businessFlow, TestSet mappedTestSet, string uploadPath, ObservableList<ExternalItemFieldBase> testSetFields, ref string result)
@@ -414,7 +452,6 @@ namespace GingerCore.ALM.QC
                 else
                 {
                     //##update existing test set
-                    //testSet = mappedTestSet;
                     testSet = ImportFromQC.GetQCTestSet(mappedTestSet.ID.ToString());
                      
                     TSTestFactory testsF = (TSTestFactory)testSet.TSTestFactory;
@@ -423,9 +460,13 @@ namespace GingerCore.ALM.QC
                     {
                         ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == tsTest.TestId.ToString() && x.ExternalID2 == tsTest.ID.ToString())).FirstOrDefault();
                         if (ag == null)
+                        {
                             testsF.RemoveItem(tsTest.ID);
+                        }
                         else
+                        {
                             existingActivitiesGroups.Add(ag);
+                        }
                     }
                 }
                 
@@ -437,8 +478,16 @@ namespace GingerCore.ALM.QC
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                             testSet[field.ID] = field.SelectedValue;
                         else
-                            try { testSet[field.ID] = "NA"; }
-                            catch { }
+                            try
+                            {
+                                testSet[field.ID] = "NA";
+                            }
+                            catch (Exception ex)
+                            {
+                                result = "Unexpected error occurred- " + ex.Message;
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the Business Flow to Qtest", ex);
+                                return false;
+                            }
                     }
                 }
 
@@ -491,7 +540,7 @@ namespace GingerCore.ALM.QC
                 TSTestFactory testCasesF = testSet.TSTestFactory;
                 foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
                 {
-                    if (existingActivitiesGroups.Contains(ag) == false && string.IsNullOrEmpty(ag.ExternalID) == false && ImportFromQC.GetQCTest(ag.ExternalID) != null)
+                    if (!existingActivitiesGroups.Contains(ag) && !string.IsNullOrEmpty(ag.ExternalID) && ImportFromQC.GetQCTest(ag.ExternalID) != null)
                     {
                         TSTest tsTest = testCasesF.AddItem(ag.ExternalID);
                         if (tsTest != null)
@@ -554,37 +603,28 @@ namespace GingerCore.ALM.QC
                         {
                             MandatoryFields.Add(BugField.UserLabel, BugField.ColumnName);
                             if (FieldList.Count > 0)
+                            {
                                 MandatoryListSelections.Add(BugField.UserLabel, FieldList);
-                            else MandatoryListSelections.Add(BugField.UserLabel, null);
+                            }
+                            else
+                            {
+                                MandatoryListSelections.Add(BugField.UserLabel, null);
+                            }
                         }
                     }
                 }
-                //end of get mandatory fileds
-                /*
-                            Bug bug = bugFactory.AddItem(System.DBNull.Value);
-                            //start of populate mandatory field with first one from dropdown
-                            foreach (dynamic item in MandatoryFields)
-                            {
-                                dynamic staticSelection = MandatoryListSelections.Where(M => M.Key == item.Key).Select(m => m.Value).FirstOrDefault();
-                                bug[item.Value] = staticSelection[0]; //statically selecting first item in list
-                            }
-                            //end of populate mandatory fields
-                */
+
                 Bug bug = bugFactory.AddItem(System.DBNull.Value);
-                bug.Status = Status;
-                //bug.Project = "Internal";            
+                bug.Status = Status;           
                 bug.Summary = Summary;
                 bug.DetectedBy = DetectedBy;
                 bug["BG_USER_08"] = Version;
-                //bug.AssignedTo = "Nobody";
-                //bug.Priority = "Low";
 
                 bug.Post();
                 return bug.ID;
             }
             catch (Exception ex)
             {
-                //String Text = "Defect Creation Failed.";
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return 0;
             }

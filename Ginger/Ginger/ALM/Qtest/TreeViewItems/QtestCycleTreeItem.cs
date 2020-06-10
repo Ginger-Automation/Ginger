@@ -72,9 +72,7 @@ namespace Ginger.ALM.Qtest.TreeViewItems
 
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, "@WorkFlow_16x16.png");
-            // return TreeViewUtils.CreateItemHeader(Name, "@TestSet_16x16.png");
-            // return TreeViewUtils.CreateItemHeader(Name, "@Folder_16x16.png");
+            return TreeViewUtils.CreateItemHeader(Name, "@WorkFlow_16x16.png");          
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -99,6 +97,7 @@ namespace Ginger.ALM.Qtest.TreeViewItems
         
         void ITreeViewItem.SetTools(ITreeView TV)
         {
+            // there is not tools needed at this stage
         }
     }
 }

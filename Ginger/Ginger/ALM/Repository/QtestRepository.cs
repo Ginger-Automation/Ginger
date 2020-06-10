@@ -137,7 +137,7 @@ namespace Ginger.ALM.Repository
                 foreach (QtestSuiteTreeItem testSuiteItem in selectedTestSuites)
                 {
                     //check if some of the Test Set was already imported                
-                    if (testSuiteItem.AlreadyImported == true)
+                    if (testSuiteItem.AlreadyImported)
                     {
                         Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSuiteItem.Name);
                         if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
@@ -153,7 +153,10 @@ namespace Ginger.ALM.Repository
                     }
                 }
 
-                if (testSuitesItemsToImport.Count == 0) return false; //noting to import
+                if (testSuitesItemsToImport.Count == 0)
+                {
+                    return false; //noting to import
+                }
 
                 //Refresh Ginger repository and allow GingerQC to use it
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();               
@@ -261,7 +264,6 @@ namespace Ginger.ALM.Repository
             string res = string.Empty;
             //TODO: retireve test case fields -->DONE
             ObservableList<ExternalItemFieldBase> testCaseFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
-            // ALMIntegration.Instance.RefreshALMItemFields(testCaseFields, true, null);
             var filterTestCaseFields = testCaseFields.Where(tc => tc.ItemType == eQCItemType.TestCase.ToString()).ToList();
             bool exportRes = ((QtestCore)ALMIntegration.Instance.AlmCore).ExportActivitiesGroupToALM(activtiesGroup, matchingTC, parentObjectId, new ObservableList<ExternalItemFieldBase>(filterTestCaseFields), ref res);
             Reporter.HideStatusMessage();

@@ -31,10 +31,14 @@ namespace GingerCoreNET.ALMLib
             {
                 bool res = false;
                 string pass = EncryptionHandler.DecryptString(EncryptedALMPassword, ref res);
-                if (res && String.IsNullOrEmpty(pass) == false)
+                if (res && !String.IsNullOrEmpty(pass))
+                {
                     return pass;
+                }
                 else
+                {
                     return string.Empty;
+                }
             }
             set
             {

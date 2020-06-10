@@ -216,12 +216,9 @@ namespace Ginger.ALM.Qtest
         {
             if (mCurrentSelectedTreeItem != null)
             {
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSuites) == true)
-                {
-                    //Refresh the explorer selected tree items import status
-                    LoadDataBizFlows();
-                    //foreach (QCTestSetTreeItem testSet in CurrentSelectedTestSets)
-                    //    testSet.IsTestSetAlreadyImported();
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSuites))
+                {                   
+                    LoadDataBizFlows();                   
                     ShowTestSetDetailsPanel(false);
                     _GenericWin.Close();
                 }

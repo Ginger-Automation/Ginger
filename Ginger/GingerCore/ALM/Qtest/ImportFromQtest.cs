@@ -36,7 +36,6 @@ namespace GingerCore.ALM.Qtest
     {
         static QTestApi.LoginApi connObj = new QTestApi.LoginApi();
         static QTestApi.ProjectApi projectsApi = new QTestApi.ProjectApi();
-        static QTestApi.TestsuiteApi testsuiteApi = new QTestApi.TestsuiteApi();
         static QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
 
         static QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
@@ -47,16 +46,8 @@ namespace GingerCore.ALM.Qtest
         
         public static QtestTestSuite ImportTestSuiteData(QtestTestSuite TS, long projectId)
         {
-            testsuiteApi = new QTestApi.TestsuiteApi(connObj.Configuration);
+            QTestApi.TestsuiteApi testsuiteApi = new QTestApi.TestsuiteApi(connObj.Configuration);
             QTestApiModel.TestSuiteWithCustomFieldResource testSuite = testsuiteApi.GetTestSuite(projectId, (long)Convert.ToInt32(TS.ID));
-            
-            // List TSTests = GetListTSTest(TS);
-
-            // foreach (TSTest tsTest in TSTests)
-            // {
-            //    TS.Tests.Add(ImportTSTest(tsTest)); //(equivalent to Activities)
-            // }
-
             return TS;
         }
 
@@ -65,13 +56,11 @@ namespace GingerCore.ALM.Qtest
             QtestTest newTSTest = new QtestTest();
             string linkedTest = string.Empty;
 
-            //Get the TC general details
-         
+            //Get the TC general details         
             newTSTest.TestID = tsTest.TestID;
             newTSTest.TestName = tsTest.TestName;
 
             //Get the TC design steps
-            // List TSTestSteps = GetListTSTestSteps(tsTest);
             foreach (QtestTestStep tsStep in tsTest.Steps)
             {
                 QtestTestStep newtsStep = new QtestTestStep();
@@ -81,31 +70,6 @@ namespace GingerCore.ALM.Qtest
                 newtsStep.Expected = tsStep.Expected;
                 newTSTest.Steps.Add(newtsStep);
             }
-
-            ////Get the TC parameters and their selected value
-            //if (linkedTest != null)
-            //{
-            //    if ((linkedTest.Split(';')[0].ToString() != tsTest.Name.ToString()) || (linkedTest.Split(';')[0].ToString() != tsTest.TestName.ToString()))
-            //    {
-            //        if (newTSTest.Description == null)
-            //        {
-            //            newTSTest.Description = string.Empty;
-            //        }
-            //        newTSTest.Description = tsTest.TestName.ToString() + System.Environment.NewLine + newTSTest.Description;
-            //    }
-            //}
-            //else
-            //{
-            //    //Regular TC
-            //    for (int i = 0; i <= tsTest.Params.Count - 1; i++)
-            //    {
-            //        QtestTestParameter newtsVar = new QtestTestParameter();
-            //        if (tsTest.Parameters.na(i) != null) { newtsVar.Name = tsTest.Params.ParamName(i); }
-            //        if (tsTest.Params.ParamValue(i) != null) { newtsVar.Value = tsTest.Params.ParamValue(i).ToString(); }
-            //        if (tsTest.Params.Type(i) != null) { newtsVar.Type = tsTest.Params.Type(i).ToString(); }
-            //        newTSTest.Parameters.Add(newtsVar);
-            //    }                
-            //}
 
             //Get the TC execution history
             try
@@ -141,7 +105,10 @@ namespace GingerCore.ALM.Qtest
         {
             try
             {
-                if (testSuite == null) return null;
+                if (testSuite == null)
+                {
+                    return null;
+                }
 
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
@@ -223,9 +190,9 @@ namespace GingerCore.ALM.Qtest
                                 stepActivity.Expected = StripHTML(step.Expected);
                                 stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                             }
-                            else//not in ActivitiesGroup so get instance from repo
+                            else // not in ActivitiesGroup so get instance from repo
                             {
-                                stepActivity = (Activity)((Activity)repoStepActivity).CreateInstance(true);
+                                stepActivity = (Activity)(repoStepActivity).CreateInstance(true);
                                 toAddStepActivity = true;
                             }
                         }
@@ -1020,31 +987,20 @@ namespace GingerCore.ALM.Qtest
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
 
-            //if (QCRestAPIConnect.QcRestClient == null)
-            //{
-            //    string qcbin = "qcbin";
-            //    QCRestAPIConnect.QcRestClient = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 12);
-            //}
-
-            //if (QCRestAPIConnect.QcRestClient.Login())
+            if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
             {
-                if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
-                    return GetALMItemFields();
-                else
-                {
-                    //string fieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(resourceType);
-                    List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
-
-                    fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
-                }
+                return GetALMItemFields();
             }
+            else
+            {
+                List<QTestApiModel.FieldResource> fieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
 
-
-            //fieldApi = new QTestApi.FieldApi(connObj.Configuration);
-            //fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), resourceType.ToString());
+                fields.Append(AddFieldsValues(fieldsCollection, resourceType.ToString()));
+            }
 
             return fields;
         }
+
         private static ObservableList<ExternalItemFieldBase> GetALMItemFields()
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
@@ -1053,29 +1009,12 @@ namespace GingerCore.ALM.Qtest
             //QC   ->testSet,    testCase,  designStep,testInstance,designStep,run
             //QTest->test-suites,test-cases,
 
-            //string testSetfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_SET);
             List<QTestApiModel.FieldResource> testSetfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
-
-            //string testCasefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CASE);
             List<QTestApiModel.FieldResource> testCasefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-cases");
-
-            ////string designStepfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP);
-            //List<QTestApiModel.FieldResource> designStepfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
-
-            ////string testInstancefieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_CYCLE);
-            //List<QTestApiModel.FieldResource> testInstancefieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-suites");
-
-            //string designStepParamsfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.DESIGN_STEP_PARAMETERS);
-            //List<QTestApiModel.FieldResource> designStepParamsfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-runs");
-
-            //string runfieldInRestSyntax = QCRestAPIConnect.ConvertResourceType(ALM_Common.DataContracts.ResourceType.TEST_RUN);
             List<QTestApiModel.FieldResource> runfieldsCollection = fieldApi.GetFields((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), "test-runs");
 
             fields.Append(AddFieldsValues(testSetfieldsCollection, "test-suites"));
             fields.Append(AddFieldsValues(testCasefieldsCollection, "test-cases"));
-            //fields.Append(AddFieldsValues(designStepfieldsCollection, designStepfieldInRestSyntax));
-            //fields.Append(AddFieldsValues(testInstancefieldsCollection, testInstancefieldInRestSyntax));
-            //fields.Append(AddFieldsValues(designStepParamsfieldsCollection, designStepParamsfieldInRestSyntax));
             fields.Append(AddFieldsValues(runfieldsCollection, "test-runs"));
 
             return fields;
@@ -1088,7 +1027,10 @@ namespace GingerCore.ALM.Qtest
             {
                 foreach (QTestApiModel.FieldResource field in testSetfieldsCollection)
                 {
-                    if (string.IsNullOrEmpty(field.Label)) continue;
+                    if (string.IsNullOrEmpty(field.Label))
+                    {
+                        continue;
+                    }
 
                     ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
                     itemfield.ID = field.OriginalName;
@@ -1099,26 +1041,14 @@ namespace GingerCore.ALM.Qtest
                     itemfield.SystemFieled = bool.TryParse(field.SystemField.ToString(), out isCheck);
                     if (itemfield.Mandatory)
                         itemfield.ToUpdate = true;
-                    itemfield.ItemType = testSetfieldInRestSyntax.ToString();
+                    itemfield.ItemType = testSetfieldInRestSyntax;
                     itemfield.Type = field.DataType;
-
-                    //if ((field.ListId != null) && (field.ListId != string.Empty) && (field.FieldValues != null) && (field.FieldValues.Count > 0))
-                    //{
-                    //    foreach (string value in field.AllowedValues)
-                    //    {
-                    //        itemfield.PossibleValues.Add(value);
-                    //    }
-                    //}
 
                     if (itemfield.PossibleValues.Count > 0)
                     {
                         itemfield.SelectedValue = field.DefaultValue;
                     }
-                    else
-                    {
-                        // itemfield.SelectedValue = "NA";
-                    }
-
+                   
                     fields.Add(itemfield);
                 }
             }
