@@ -216,6 +216,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
     </Reference>
+    <Reference Include="QTestAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\QTestAPI.dll</HintPath>
+    </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
@@ -495,6 +499,12 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
+      <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestCycleTreeItem.cs" />
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestSuiteTreeItem.cs" />
+    <Compile Include="ALM\Repository\QtestRepository.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ApiConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
@@ -2697,6 +2707,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
