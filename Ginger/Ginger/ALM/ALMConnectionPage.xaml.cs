@@ -559,6 +559,7 @@ namespace Ginger.ALM
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
                         break;
                     default:
+                        //Not used
                         break;
                 }
                 //Clear bindings

@@ -146,12 +146,12 @@ namespace GingerCore.ALM.QC
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed:
                                                     step.Status = "Failed";
                                                     List<IAct> failedActs= matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
-                                                    string errors = string.Empty;
+                                                    StringBuilder errors = new StringBuilder();
                                                     foreach (Act act in failedActs)
                                                     {
-                                                        errors = errors + act.Error + Environment.NewLine;
+                                                        errors.AppendLine(act.Error);
                                                     }
-                                                    step["ST_ACTUAL"] = errors;
+                                                    step["ST_ACTUAL"] = errors.ToString();
                                                     break;
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.NA:
                                                     step.Status = "N/A";
@@ -172,6 +172,9 @@ namespace GingerCore.ALM.QC
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
                                                     step.Status = "Not Completed";
                                                     step["ST_ACTUAL"] = "Not Completed";
+                                                    break;
+                                                default:
+                                                    //Not used
                                                     break;
                                             }
                                         }
@@ -411,16 +414,16 @@ namespace GingerCore.ALM.QC
             }
             description = description.Replace("<<&Parameters&>>", paramsSigns);
 
-            string actsDesc = string.Empty;
+            StringBuilder actsDesc = new StringBuilder();
             if (activity.Acts.Count > 0)
             {
-                actsDesc = "Actions:<br />";
+                actsDesc.Append("Actions:<br />");
                 foreach (Act act in activity.Acts)
                 {
-                    actsDesc = actsDesc + act.Description + "<br />";
+                    actsDesc.Append(act.Description + "<br />");
                 }
             }
-            description = description.Replace("<<&Actions&>>", actsDesc);
+            description = description.Replace("<<&Actions&>>", actsDesc.ToString());
             step.StepDescription = description;
 
             string expectedTemplate =
