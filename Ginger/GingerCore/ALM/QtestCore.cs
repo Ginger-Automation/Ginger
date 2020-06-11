@@ -424,8 +424,6 @@ namespace GingerCore.ALM
                     case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending:
                         testStepLog.Status = statuses.Where(z => z.Name == "Deffered").FirstOrDefault();
                         break;
-                    default:
-                        break;
                 }
             }
             else

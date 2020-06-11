@@ -172,23 +172,23 @@ namespace Ginger.ALM
 
         private void ChangeALMType()
         {
-            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC && QCRadioButton.IsChecked != null ? (bool)QCRadioButton.IsChecked : false)
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC && (bool)QCRadioButton.IsChecked)
             {
                 QCRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM && RQMRadioButton.IsChecked != null ? (bool)RQMRadioButton.IsChecked : false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM && (bool)RQMRadioButton.IsChecked)
             {
                 RQMRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && JiraRadioButton.IsChecked != null ? (bool)JiraRadioButton.IsChecked : false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && (bool)JiraRadioButton.IsChecked)
             {
                 JiraRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && RallyRadioButton.IsChecked != null ? (bool)RallyRadioButton.IsChecked : false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY && (bool)RallyRadioButton.IsChecked)
             {
                 RallyRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest && qTestRadioButton.IsChecked != null ? (bool)qTestRadioButton.IsChecked : false)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest && (bool)qTestRadioButton.IsChecked)
             {
                 qTestRadioButton.IsChecked = true;
             }

@@ -149,7 +149,7 @@ namespace GingerCore.ALM.QC
                                                     string errors = string.Empty;
                                                     foreach (Act act in failedActs)
                                                     {
-                                                        errors += act.Error + Environment.NewLine;
+                                                        errors = errors + act.Error + Environment.NewLine;
                                                     }
                                                     step["ST_ACTUAL"] = errors;
                                                     break;
@@ -172,8 +172,6 @@ namespace GingerCore.ALM.QC
                                                 case Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running:
                                                     step.Status = "Not Completed";
                                                     step["ST_ACTUAL"] = "Not Completed";
-                                                    break;
-                                                default:
                                                     break;
                                             }
                                         }
@@ -419,7 +417,7 @@ namespace GingerCore.ALM.QC
                 actsDesc = "Actions:<br />";
                 foreach (Act act in activity.Acts)
                 {
-                    actsDesc += act.Description + "<br />";
+                    actsDesc = actsDesc + act.Description + "<br />";
                 }
             }
             description = description.Replace("<<&Actions&>>", actsDesc);
@@ -477,7 +475,7 @@ namespace GingerCore.ALM.QC
                 {
                     if (field.ToUpdate || field.Mandatory)
                     {
-                        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                        if (!string.IsNullOrEmpty(field.SelectedValue) && field.SelectedValue != "NA")
                         {
                             testSet[field.ID] = field.SelectedValue;
                         }
