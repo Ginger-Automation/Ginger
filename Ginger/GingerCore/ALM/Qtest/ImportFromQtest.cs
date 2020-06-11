@@ -138,7 +138,7 @@ namespace GingerCore.ALM.Qtest
                         List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
-                        tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
+                        tcActivsGroup = (ActivitiesGroup)(repoActivsGroup).CreateInstance(true);
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID)); 
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
@@ -231,7 +231,9 @@ namespace GingerCore.ALM.Qtest
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+                            {
                                 paramSelectedValue = tcParameter.Value;
+                            }
                             else
                             {
                                 isflowControlParam = null;//empty value
@@ -827,13 +829,13 @@ namespace GingerCore.ALM.Qtest
                         string linkedVariable = null;
                         if (paramSelectedValue.StartsWith("#$#"))
                         {
-                            string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
+                            string[] valueParts = paramSelectedValue.Split(new [] { "#$#" }, StringSplitOptions.None);
                             if (valueParts.Count() == 3)
                             {
                                 linkedVariable = valueParts[1];
                                 paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
 
-                                if (busVariables.Keys.Contains(linkedVariable) == false)
+                                if (!busVariables.Keys.Contains(linkedVariable))
                                 {
                                     busVariables.Add(linkedVariable, valueParts[2]);
                                 }
@@ -938,7 +940,7 @@ namespace GingerCore.ALM.Qtest
                         }
 
                         //add linked variable if needed
-                        if (string.IsNullOrEmpty(linkedVariable) == false)
+                        if (!string.IsNullOrEmpty(linkedVariable))
                         {
                             stepActivityVar.LinkedVariableName = linkedVariable;
                         }
