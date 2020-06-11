@@ -500,6 +500,7 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = Brushes.Black;
                     break;
                 default:
+                    //Default not used
                     break;
             }
         }
