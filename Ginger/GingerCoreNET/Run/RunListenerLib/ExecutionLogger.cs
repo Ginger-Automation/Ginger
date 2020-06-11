@@ -29,6 +29,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -233,5 +235,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         public abstract string GetLogFolder(string folder);
+
+
+        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
     }
 }
