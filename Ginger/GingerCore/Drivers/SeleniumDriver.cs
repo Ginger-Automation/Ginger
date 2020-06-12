@@ -3123,6 +3123,18 @@ namespace GingerCore.Drivers
             Driver.SwitchTo().DefaultContent();
             if (EI.Path != null)
             {
+                if (!EI.IsAutoLearned)
+                {
+                    ControlProperty ctrlProp = new ControlProperty() { Value = EI.Path };
+                    ControlProperty evaluatedLocator = ctrlProp.CreateInstance() as ControlProperty;
+                    ValueExpression VE = new ValueExpression(null, null);
+                    EI.Path = VE.Calculate(evaluatedLocator.Value);
+                    if(EI.Path  == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Concat("Expression : ",evaluatedLocator.Value," evaluated to null value."));
+                        return;
+                    }
+                }
                 //split Path by commo outside of brackets 
                 var spliter = new Regex(@",(?![^\[]*[\]])");
                 string[] iframesPathes = spliter.Split(EI.Path);

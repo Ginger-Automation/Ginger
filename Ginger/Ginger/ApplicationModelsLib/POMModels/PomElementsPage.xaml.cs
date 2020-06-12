@@ -582,10 +582,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (e.Column.Header.ToString() == nameof(ControlProperty.Value))
             {
                 ControlProperty ctrlProp = e.EditingElement.DataContext as ControlProperty;
-                
-                ControlProperty evaluatedLocator = ctrlProp.CreateInstance() as ControlProperty;
-                ValueExpression VE = new ValueExpression(null,null);
-                ctrlProp.Value = VE.Calculate(evaluatedLocator.Value);
                 mSelectedElement.Path = ctrlProp != null ? ctrlProp.Value : "";
             }
         }
