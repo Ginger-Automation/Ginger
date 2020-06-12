@@ -559,6 +559,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Name), WidthWeight = 25 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ControlProperty.Value), WidthWeight = 75 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.PageGrid.Resources["xPropertyValueVETemplate"] });
 
             xPropertiesGrid.SetAllColumnsDefaultView(view);
             xPropertiesGrid.InitViewItems();
@@ -581,6 +582,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (e.Column.Header.ToString() == nameof(ControlProperty.Value))
             {
                 ControlProperty ctrlProp = e.EditingElement.DataContext as ControlProperty;
+                
+                ControlProperty evaluatedLocator = ctrlProp.CreateInstance() as ControlProperty;
+                ValueExpression VE = new ValueExpression(null,null);
+                ctrlProp.Value = VE.Calculate(evaluatedLocator.Value);
                 mSelectedElement.Path = ctrlProp != null ? ctrlProp.Value : "";
             }
         }
@@ -790,6 +795,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
             else
             {
                 ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVarb, nameof(ElementLocator.LocateValue), null);
+                VEEW.ShowAsWindow();
+            }
+        }
+
+        private void xPropertyValueVEButton_Click(object sender, RoutedEventArgs e)
+        {
+            ControlProperty selectedVerb = (ControlProperty)xPropertiesGrid.CurrentItem;
+            ElementInfo elementInfo = (ElementInfo)xMainElementsGrid.CurrentItem;
+            if (elementInfo.IsAutoLearned)
+            {
+               Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You can not edit Property which was auto learned.");
+               disabeledLocatorsMsgShown = true;
+            }
+            else
+            {
+                ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(selectedVerb, nameof(ControlProperty.Value), null);
                 VEEW.ShowAsWindow();
             }
         }
