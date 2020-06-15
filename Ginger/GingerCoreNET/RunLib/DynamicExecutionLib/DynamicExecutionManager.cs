@@ -961,9 +961,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             mailOperation = new RunSetActionHTMLReportSendEmail();
                             //defualt settings
-                            //mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
-                            //mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
-                            //mailOperation.Email.IsBodyHTML = true;
+                            mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
                         }
 
                         //mail settings
@@ -1049,22 +1047,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         EmailAttachment reportAttachment = mailOperation.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
                         if (runsetOperationConfigMail.IncludeAttachmentReport != null)
                         {
-                            if (reportAttachment == null)
+                            if (runsetOperationConfigMail.IncludeAttachmentReport == true && reportAttachment == null)
                             {
                                 //defualt settings for report attachment
                                 reportAttachment = new EmailHtmlReportAttachment();
                                 reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
-                                //((EmailHtmlReportAttachment)reportAttachment).SelectedHTMLReportTemplateID = 100;//default report template
+                                ((EmailHtmlReportAttachment)reportAttachment).SelectedHTMLReportTemplateID = 100;//default report template
                                 reportAttachment.ZipIt = true;
                                 mailOperation.EmailAttachments.Add(reportAttachment);
                             }
-                            else
+                            else if (runsetOperationConfigMail.IncludeAttachmentReport == false && reportAttachment != null)
                             {
-                                if (reportAttachment != null)
-                                {
-                                    mailOperation.EmailAttachments.Remove(reportAttachment);
-                                    reportAttachment = null;
-                                }
+                                mailOperation.EmailAttachments.Remove(reportAttachment);
+                                reportAttachment = null;
                             }
                         }
                         if (reportAttachment != null && runsetOperationConfigMail.AttachmentReportTemplateID != null)
@@ -1151,7 +1146,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             runSetOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfig.RunAt.ToString(), true);
                         }
 
-                        if (!dynamicRunsetConfigs.Exist)
+                        if (!runSetConfig.RunSetActions.Contains(runSetOperation))
                         {
                             runSetConfig.RunSetActions.Add(runSetOperation);
                         }
