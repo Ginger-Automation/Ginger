@@ -940,22 +940,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         RunSetActionHTMLReportSendEmail mailOperation = null;
                         if (dynamicRunsetConfigs.Exist)
                         {
-                            RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
-                                                new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
-                                                new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
-                                                runSetConfig.RunSetActions);
-                            if (oper != null)
+                            try
                             {
-                                mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                                                    new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
+                                                    new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
+                                                    runSetConfig.RunSetActions);
+                                if (oper != null)
+                                {
+                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("{0} operation was not found so configuring new one", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                             }
                         }
-                        else
+                        
+                        if (mailOperation == null)//not found 
                         {
                             mailOperation = new RunSetActionHTMLReportSendEmail();
                             //defualt settings
-                            mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
-                            mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
-                            mailOperation.Email.IsBodyHTML = true;
+                            //mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
+                            //mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
+                            //mailOperation.Email.IsBodyHTML = true;
                         }
 
                         //mail settings
@@ -1101,7 +1109,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 }
                             }
                         }
-
                         runSetOperation = mailOperation;
                     }
                     else if (runsetOperationConfig is JsonReportOperationExecConfig)
