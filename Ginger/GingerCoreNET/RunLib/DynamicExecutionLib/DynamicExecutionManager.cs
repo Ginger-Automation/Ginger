@@ -431,6 +431,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             runset.RunAnalyzer = cliHelper.RunAnalyzer;
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
+            runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
 
             if (runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
             {
@@ -561,6 +562,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     mailReportConfig.RunAt = (OperationExecConfigBase.eOperationRunAt)Enum.Parse(typeof(OperationExecConfigBase.eOperationRunAt), runsetMailReport.RunAt.ToString(), true);
                     mailReportConfig.Active = runsetMailReport.Active;
 
+                    //standard mail
                     mailReportConfig.MailSettings = new SendMailSettings();
                     if (runsetMailReport.Email.EmailMethod == GingerCore.GeneralLib.Email.eEmailMethod.OUTLOOK)
                     {
@@ -578,20 +580,54 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             mailReportConfig.MailSettings.SmtpDetails.User = runsetMailReport.Email.SMTPUser;
                             mailReportConfig.MailSettings.SmtpDetails.Password = runsetMailReport.Email.SMTPPass;
                         }
-                    }
+                    }                   
                     mailReportConfig.MailSettings.MailFrom = runsetMailReport.MailFrom;
                     mailReportConfig.MailSettings.MailTo = runsetMailReport.MailTo;
                     mailReportConfig.MailSettings.MailCC = runsetMailReport.MailCC;
                     mailReportConfig.MailSettings.Subject = runsetMailReport.Subject;
-
-                    mailReportConfig.Comments = runsetMailReport.Comments;
-                    if (runsetMailReport.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault() != null)
+                    //Report mail content
+                    mailReportConfig.Comments = runsetMailReport.Comments;                   
+                    switch (runsetMailReport.HTMLReportTemplate)
                     {
-                        mailReportConfig.IncludeAttachmentReport = true;
+                        case RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport:
+                            mailReportConfig.BodyContentType = MailReportOperationExecConfig.eBodyContentType.HTMLReport;
+                            mailReportConfig.BodyReportTemplateID = runsetMailReport.selectedHTMLReportTemplateID;
+                            break;
+                        case RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText:
+                            mailReportConfig.BodyContentType = MailReportOperationExecConfig.eBodyContentType.FreeText;
+                            mailReportConfig.BodyTextContent = runsetMailReport.Bodytext;
+                            break;
                     }
-                    else
+                    //Report mail attachments     
+                    mailReportConfig.IncludeAttachmentReport = false;
+                    foreach (EmailAttachment mailAttachment in runsetMailReport.EmailAttachments)
                     {
-                        mailReportConfig.IncludeAttachmentReport = false;
+                        if (mailAttachment.AttachmentType == EmailAttachment.eAttachmentType.Report)
+                        {
+                            EmailHtmlReportAttachment reportAttachment = ((EmailHtmlReportAttachment)mailAttachment);
+                            mailReportConfig.IncludeAttachmentReport = true;
+                            mailReportConfig.AttachmentReportTemplateID = reportAttachment.SelectedHTMLReportTemplateID;
+                            if (reportAttachment.IsLinkEnabled)
+                            {
+                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Link;                                   
+                            }
+                            else
+                            {
+                                mailReportConfig.AttachmentReportAttachType = MailReportOperationExecConfig.ReportAttachType.Zip;
+                            }
+                            if (reportAttachment.IsAlternameFolderUsed && !string.IsNullOrEmpty(reportAttachment.ExtraInformation))
+                            {
+                                mailReportConfig.CustomizedReportFolder = reportAttachment.ExtraInformation;
+                            }
+                        }
+                        else
+                        {
+                            if (mailReportConfig.FilesPathToAttach == null)
+                            {
+                                mailReportConfig.FilesPathToAttach = new List<string>();
+                            }
+                            mailReportConfig.FilesPathToAttach.Add(mailAttachment.Name);
+                        }
                     }
 
                     runset.Operations.Add(mailReportConfig);
@@ -655,6 +691,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             if (dynamicRunsetConfigs.RunInParallel != null)
             {
                 runSetConfig.RunModeParallel = (bool)dynamicRunsetConfigs.RunInParallel;
+            }
+
+            if (dynamicRunsetConfigs.StopRunnersOnFailure != null)
+            {
+                runSetConfig.StopRunnersOnFailure = (bool)dynamicRunsetConfigs.StopRunnersOnFailure;
             }
 
             //Add or Update Runners
@@ -899,23 +940,31 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         RunSetActionHTMLReportSendEmail mailOperation = null;
                         if (dynamicRunsetConfigs.Exist)
                         {
-                            RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
-                                                new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
-                                                new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
-                                                runSetConfig.RunSetActions);
-                            if (oper != null)
+                            try
                             {
-                                mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                RunSetActionBase oper = FindItemByIDAndName<RunSetActionBase>(
+                                                    new Tuple<string, Guid?>(nameof(RunSetActionBase.Guid), runsetOperationConfigMail.ID),
+                                                    new Tuple<string, string>(nameof(RunSetActionBase.Name), runsetOperationConfigMail.Name),
+                                                    runSetConfig.RunSetActions);
+                                if (oper != null)
+                                {
+                                    mailOperation = (RunSetActionHTMLReportSendEmail)oper;
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("{0} operation was not found so configuring new one", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                             }
                         }
-                        else
+                        
+                        if (mailOperation == null)//not found 
                         {
                             mailOperation = new RunSetActionHTMLReportSendEmail();
-                            mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
+                            //defualt settings
                             mailOperation.selectedHTMLReportTemplateID = 100;//ID to mark defualt template
-                            mailOperation.Email.IsBodyHTML = true;
-                        }                        
+                        }
 
+                        //mail settings
                         if (runsetOperationConfigMail.MailSettings.EmailMethod != null)
                         {
                             if (runsetOperationConfigMail.MailSettings.EmailMethod == SendMailSettings.eEmailMethod.OUTLOOK)
@@ -948,48 +997,113 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 }
                             }
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.MailFrom) == false)
+                        if (runsetOperationConfigMail.MailSettings.MailFrom != null)
                         {
                             mailOperation.MailFrom = runsetOperationConfigMail.MailSettings.MailFrom;
                             mailOperation.Email.MailFrom = runsetOperationConfigMail.MailSettings.MailFrom;
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.MailTo) == false)
+                        if (runsetOperationConfigMail.MailSettings.MailTo != null)
                         {
                             mailOperation.MailTo = runsetOperationConfigMail.MailSettings.MailTo;
                             mailOperation.Email.MailTo = runsetOperationConfigMail.MailSettings.MailTo;
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.MailCC) == false)
+                        if (runsetOperationConfigMail.MailSettings.MailCC != null)
                         {
                             mailOperation.MailCC = runsetOperationConfigMail.MailSettings.MailCC;
                         }
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.MailSettings.Subject) == false)
+                        if (runsetOperationConfigMail.MailSettings.Subject != null)
                         {
                             mailOperation.Subject = runsetOperationConfigMail.MailSettings.Subject;
                             mailOperation.Email.Subject = runsetOperationConfigMail.MailSettings.Subject;
                         }
 
-                        if (string.IsNullOrEmpty(runsetOperationConfigMail.Comments) == false)
+                        //report mail content
+                        if (runsetOperationConfigMail.Comments != null)
                         {
                             mailOperation.Comments = runsetOperationConfigMail.Comments;
                         }
+                        if (runsetOperationConfigMail.BodyContentType != null)
+                        {
+                            switch (runsetOperationConfigMail.BodyContentType)
+                            {
+                                case MailReportOperationExecConfig.eBodyContentType.HTMLReport:
+                                    mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.HTMLReport;
+                                    break;
+                                case MailReportOperationExecConfig.eBodyContentType.FreeText:
+                                    mailOperation.HTMLReportTemplate = RunSetActionHTMLReportSendEmail.eHTMLReportTemplate.FreeText;
+                                    break;
+                            }
+                        }
+                        if (runsetOperationConfigMail.BodyReportTemplateID != null)
+                        {
+                            mailOperation.selectedHTMLReportTemplateID = (int)runsetOperationConfigMail.BodyReportTemplateID;
+                        }
+                        if (runsetOperationConfigMail.BodyTextContent != null)
+                        {
+                            mailOperation.Bodytext = runsetOperationConfigMail.BodyTextContent;
+                        }
+
+                        //report attachments
+                        EmailAttachment reportAttachment = mailOperation.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
                         if (runsetOperationConfigMail.IncludeAttachmentReport != null)
                         {
-                            if (runsetOperationConfigMail.IncludeAttachmentReport == true)
+                            if (runsetOperationConfigMail.IncludeAttachmentReport == true && reportAttachment == null)
                             {
-                                if (mailOperation.EmailAttachments.Count == 0)
-                                {
-                                    EmailHtmlReportAttachment reportAttachment = new EmailHtmlReportAttachment();
-                                    reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
-                                    reportAttachment.ZipIt = true;
-                                    mailOperation.EmailAttachments.Add(reportAttachment);
-                                }
+                                //defualt settings for report attachment
+                                reportAttachment = new EmailHtmlReportAttachment();
+                                reportAttachment.AttachmentType = EmailAttachment.eAttachmentType.Report;
+                                ((EmailHtmlReportAttachment)reportAttachment).SelectedHTMLReportTemplateID = 100;//default report template
+                                reportAttachment.ZipIt = true;
+                                mailOperation.EmailAttachments.Add(reportAttachment);
                             }
-                            else 
+                            else if (runsetOperationConfigMail.IncludeAttachmentReport == false && reportAttachment != null)
                             {
-                                mailOperation.EmailAttachments.Clear();
+                                mailOperation.EmailAttachments.Remove(reportAttachment);
+                                reportAttachment = null;
+                            }
+                        }
+                        if (reportAttachment != null && runsetOperationConfigMail.AttachmentReportTemplateID != null)
+                        {
+                            ((EmailHtmlReportAttachment)reportAttachment).SelectedHTMLReportTemplateID = (int)runsetOperationConfigMail.AttachmentReportTemplateID;
+                        }
+                        if (reportAttachment != null && runsetOperationConfigMail.AttachmentReportAttachType != null)
+                        {
+                            switch (runsetOperationConfigMail.AttachmentReportAttachType)
+                            {
+                                case MailReportOperationExecConfig.ReportAttachType.Zip:
+                                    ((EmailHtmlReportAttachment)reportAttachment).ZipIt = true;
+                                    ((EmailHtmlReportAttachment)reportAttachment).IsLinkEnabled = false;
+                                    break;
+                                case MailReportOperationExecConfig.ReportAttachType.Link:
+                                    ((EmailHtmlReportAttachment)reportAttachment).ZipIt = false;
+                                    ((EmailHtmlReportAttachment)reportAttachment).IsLinkEnabled = true;
+                                    break;
+                            }
+                        }
+                        if (reportAttachment != null && runsetOperationConfigMail.CustomizedReportFolder != null)
+                        {                                                        
+                            ((EmailHtmlReportAttachment)reportAttachment).ExtraInformation = runsetOperationConfigMail.CustomizedReportFolder;
+                            if (string.IsNullOrEmpty(runsetOperationConfigMail.CustomizedReportFolder))
+                            {
+                                ((EmailHtmlReportAttachment)reportAttachment).IsAlternameFolderUsed = false;
+                            }
+                            else
+                            {
+                                ((EmailHtmlReportAttachment)reportAttachment).IsAlternameFolderUsed = true;
                             }
                         }
 
+                        if (runsetOperationConfigMail.FilesPathToAttach != null)
+                        {
+                            foreach(string attachmentPath in runsetOperationConfigMail.FilesPathToAttach)
+                            {
+                                EmailAttachment exsitingAttachment = mailOperation.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.File && x.Name.Trim().ToLower() == attachmentPath.Trim().ToLower()).FirstOrDefault();
+                                if (exsitingAttachment == null)
+                                {
+                                    mailOperation.EmailAttachments.Add(new EmailAttachment() { AttachmentType = EmailAttachment.eAttachmentType.File, Name = attachmentPath });
+                                }
+                            }
+                        }
                         runSetOperation = mailOperation;
                     }
                     else if (runsetOperationConfig is JsonReportOperationExecConfig)
@@ -1032,7 +1146,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             runSetOperation.RunAt = (RunSetActionBase.eRunAt)Enum.Parse(typeof(RunSetActionBase.eRunAt), runsetOperationConfig.RunAt.ToString(), true);
                         }
 
-                        if (!dynamicRunsetConfigs.Exist)
+                        if (!runSetConfig.RunSetActions.Contains(runSetOperation))
                         {
                             runSetConfig.RunSetActions.Add(runSetOperation);
                         }

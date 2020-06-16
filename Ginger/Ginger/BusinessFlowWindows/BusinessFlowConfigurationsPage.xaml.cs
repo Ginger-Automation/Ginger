@@ -124,6 +124,7 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
+            xShowIDUC.Init(mBusinessFlow);
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));

@@ -5,16 +5,20 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Run.GingerRunnerConfigurationsPage" 
       mc:Ignorable="d" 
-        xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Run"
+        xmlns:h="clr-namespace:Ginger.Help"
+    xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Run"
       Height="350" Width="500"
 	Title="Runner Configurations">
 
     <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <DockPanel  Margin="10">
-            <StackPanel x:Name="xNamePnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,0">
-                <Label Content="Name:" Style="{StaticResource $LabelStyle}" Width="100"/>
-                <TextBox x:Name="xNameTextBox" Margin="0,0,0,0" Style="{StaticResource $MultiRowsTextBoxStyle}" Width="250" FontSize="14" FontWeight="Bold"/>
-            </StackPanel>
+            <DockPanel x:Name="xNamePnl" DockPanel.Dock="Top" Margin="0,0,0,0">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                    <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                    <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                </StackPanel>
+                <TextBox x:Name="xNameTextBox" DockPanel.Dock="Top" Margin="0,0,0,0" Style="{StaticResource $MultiRowsTextBoxStyle}"  FontSize="14" FontWeight="Bold"/>
+            </DockPanel>
 
             <StackPanel x:Name="xRunOptionPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label Content="Run Option:" Style="{StaticResource $LabelStyle}" Width="100"/>

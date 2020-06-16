@@ -115,6 +115,7 @@ namespace Ginger.BusinessFlowPages
             xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
             GingerCore.General.FillComboFromEnumObj(xErrorHandlerMappingCmb, mActivity.ErrorHandlerMappingType);
             xTagsViewer.Init(mActivity.Tags);
+            xShowIDUC.Init(mActivity);
             BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
             BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
             BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
