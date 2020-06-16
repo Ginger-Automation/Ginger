@@ -126,6 +126,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void InitializeUIByActionType()
         {
+            xShowIDUC.Init(mApplicationAPIModel);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Description));
 

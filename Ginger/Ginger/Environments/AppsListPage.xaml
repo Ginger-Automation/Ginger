@@ -5,7 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger" x:Class="Ginger.Environments.AppsListPage" 
       mc:Ignorable="d" 
-     xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Environment"
+     xmlns:h="clr-namespace:Ginger.Help"
+    xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Environment"
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="AppsListPage">
 
@@ -15,7 +16,10 @@
             <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Environment Name:"/>
+            <StackPanel Orientation="Horizontal">
+                <Label Style="{StaticResource $LabelStyle}" Content="Environment Name:"/>
+                <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+            </StackPanel>
             <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"></TextBox>
             <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,5,0,0" HorizontalAlignment="Left"/>
             

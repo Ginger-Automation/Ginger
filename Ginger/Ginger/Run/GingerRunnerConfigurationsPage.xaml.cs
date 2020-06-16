@@ -43,6 +43,7 @@ namespace Ginger.Run
             mContext = context;
            
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mRunner, nameof(GingerRunner.Name));
+            xShowIDUC.Init(mRunner);
 
             mRunner.UpdateApplicationAgents();
             if (mPageViewMode == ePageViewMode.AutomatePage)

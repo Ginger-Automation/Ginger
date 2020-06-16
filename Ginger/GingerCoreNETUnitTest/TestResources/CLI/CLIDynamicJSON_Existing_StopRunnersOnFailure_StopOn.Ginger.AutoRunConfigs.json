@@ -1,0 +1,87 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": true,
+    "Name": "MultiRunnersStopOnFailureTest",
+    "ID": "de09f77a-53e4-4557-93d7-42913e89f151",
+    "EnvironmentName": "Env1",
+    "EnvironmentID": "a3a457f7-a545-4137-840e-33c2bd530791",
+    "RunAnalyzer": false,
+    "RunInParallel": false,
+    "StopRunnersOnFailure": true,
+    "Runners": [
+      {
+        "Name": "Runner 1",
+        "ID": "add7480e-2f17-4c98-abf3-8dc1a6bd4f36",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+            "AgentName": "Chrome",
+            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Flow_A",
+            "ID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+            "Active": true
+          }
+        ]
+      },
+      {
+        "Name": "Runner 2",
+        "ID": "c9730940-6557-4315-a608-53ba33bacdf0",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+            "AgentName": "Chrome",
+            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Flow_D",
+            "ID": "86ad108b-bddc-4cce-ba17-c8bb50fe2c66",
+            "Active": true,
+            "InputValues": [
+              {
+                "VariableParentName": "Flow_D",
+                "VariableParentID": "86ad108b-bddc-4cce-ba17-c8bb50fe2c66",
+                "VariableName": "ValidationVar",
+                "VariableID": "7c2af54d-4fe8-49df-bcc7-0103ce1ecc5e",
+                "VariableCustomizationType": "Value",
+                "VariableCustomizedValue": "333"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "Name": "Runner 3",
+        "ID": "a59b94cf-8c08-4718-9b1a-5427791f3621",
+        "OnFailureRunOption": "ContinueToRunall",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+            "AgentName": "Chrome",
+            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Flow_C",
+            "ID": "7277d999-fece-4d3a-9da7-d42da68a83d9",
+            "Active": true
+          }
+        ]
+      }
+    ]
+  }
+}
