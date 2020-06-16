@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.ALM;
 
 namespace Ginger.ALM.RQM
 {
@@ -68,7 +69,7 @@ namespace Ginger.ALM.RQM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             ObservableList<RQMTestPlan> mRQMTestPlansListSortedByDate = new ObservableList<RQMTestPlan>();
-            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
+            foreach (RQMTestPlan testPlan in RQMConnect.Instance.GetRQMTestPlansByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectKey, System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\ALM\RQM_Configs")).OrderByDescending(item => item.CreationDate))
             {
                 mRQMTestPlansListSortedByDate.Add(testPlan);
             }

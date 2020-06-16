@@ -33,8 +33,8 @@ namespace GingerCore.ALM.QC
         public string LinkedTestID { get; set; }
         public string Description { get; set; }
         //Called Test Parameters
-        public List<QCTSTestParameter> Parameters { get; set; }  
-        public List<QCTSTestStep> Steps { get; set; } 
-        public List<QCTSTestRun> Runs { get; set; } 
+        public List<QCTSTestParameter> Parameters { get; set; }
+        public List<QCTSTestStep> Steps { get; set; }
+        public List<QCTSTestRun> Runs { get; set; }
     }
 }

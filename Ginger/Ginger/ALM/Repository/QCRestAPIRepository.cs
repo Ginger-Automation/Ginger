@@ -333,13 +333,14 @@ namespace Ginger.ALM.Repository
                                 //testPlanUploadPath = "";
                                 string parentId = matchingTC.ElementsField["parent-id"].ToString();
 
-                                QCTestFolder testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderById(parentId);
+                                //need to test as the function changed in the library
+                                QCTestFolder testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderDetails(parentId);
                                 string revrsePath = testPlanFolder.Name + "/";
 
                                 string testPlanRootFolderId = QCRestAPIConnect.QcRestClient.GetTestPlanRootFolder().Id;
                                 while (testPlanFolder.Id != testPlanRootFolderId)
                                 {
-                                    testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderById(testPlanFolder.ParentId);
+                                    testPlanFolder = QCRestAPIConnect.QcRestClient.GetTestPlanFolderDetails(testPlanFolder.ParentId);
                                     revrsePath = revrsePath + testPlanFolder.Name + "/";
                                 }
                                 revrsePath = revrsePath.Substring(0, revrsePath.Length - 1);
