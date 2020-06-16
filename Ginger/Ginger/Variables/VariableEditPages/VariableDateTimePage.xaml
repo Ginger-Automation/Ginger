@@ -24,7 +24,7 @@
                     <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">DateTime Format :</Label>
-                            <TextBox   x:Name="txtDateFormat" LostFocus="txtDateFormat_LostFocus" Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,20" ></TextBox>
+                            <TextBox   x:Name="txtDateFormat" TextChanged="txtDateFormat_TextChanged"  Style="{StaticResource @TextBoxStyle}" Margin="0,0,0,20" ></TextBox>
                         </DockPanel>
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Minimum Date :</Label>
