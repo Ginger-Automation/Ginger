@@ -53,7 +53,7 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                         mAutoRunWizard.CliHelper.DownloadUpgradeSolutionFromSourceControl = true;
                     }
                     mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
-                    mAutoRunWizard.CliHelper.RunAnalyzer = true;
+                    mAutoRunWizard.CliHelper.RunAnalyzer = mAutoRunWizard.RunsetConfig.RunWithAnalyzer;
                     BindingHandler.ObjFieldBinding(xDownloadsolutionCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.DownloadUpgradeSolutionFromSourceControl));
                     BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));

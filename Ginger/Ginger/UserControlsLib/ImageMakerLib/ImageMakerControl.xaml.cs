@@ -824,6 +824,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Clipboard:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Clipboard);
                     break;
+                case eImageType.ID:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.IdCardOutline);
+                    break;
                 #endregion
 
                 #region ElementType Images

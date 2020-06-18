@@ -6,7 +6,8 @@
       xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"      
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Report"
+       xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Report"
       
 	Title="New HTML Report Template">
 
@@ -36,7 +37,8 @@
                         <StackPanel>
                                 <StackPanel x:Name="TemplateName" Margin="10,10,0,0" HorizontalAlignment="Left">
                                     <DockPanel >
-                                        <Label Content="Template Name:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12" DockPanel.Dock="Left"></Label>
+                                        <Label Content="Name:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12" DockPanel.Dock="Left"></Label>
+                                        <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="0,0,0,0"/>
                                         <usercontrols:ImageMakerControl x:Name="xDefualtImage" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default Template" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="0,0,10,0" />
                                     </DockPanel>
                                 
@@ -45,7 +47,7 @@
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel x:Name="TemplateDescription" Margin="10,10,0,0" HorizontalAlignment="Left">
-                                <Label Content="Template Description:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
+                                <Label Content="Description:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"></Label>
                                 <StackPanel Margin="5,0,0,0" Orientation="Horizontal" >
                                     <TextBox x:Name="TemplateDescriptionTextBox" VerticalAlignment="Stretch" Width="484px" Style="{StaticResource @TextBoxStyle}" Height="45" AcceptsReturn="True" AcceptsTab="True" TextChanged="TemplateDescriptionTextBox_TextChanged" />
                                 </StackPanel>
