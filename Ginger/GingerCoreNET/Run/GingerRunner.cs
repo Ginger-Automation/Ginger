@@ -3836,7 +3836,7 @@ namespace Ginger.Run
             }
         }
 
-        private void SetNextBusinessFlowsBlockedStatus()
+        public void SetNextBusinessFlowsBlockedStatus()
         {
             foreach (BusinessFlow bf in BusinessFlows.Where(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
@@ -4442,7 +4442,7 @@ namespace Ginger.Run
             }
         }
 
-        private void GiveUserFeedback()
+        public void GiveUserFeedback()
         {
             uint eventTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)

@@ -23,8 +23,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 {
     public class ApplicationPlatform : RepositoryItemBase
     {
-        [IsSerializedForLocalRepository]
-        public Guid GUID { get; set; }
+        //[IsSerializedForLocalRepository]
+        //public Guid GUID { get; set; }//Need to be deleted, conflicts with base 'Guid' property
 
         string mAppName;
         [IsSerializedForLocalRepository]
@@ -65,8 +65,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public Guid CoreGUID { get; set; }
+        //[IsSerializedForLocalRepository]
+        //public Guid CoreGUID { get; set; }//needs to be deleted
 
         ePlatformType mPlatform;
         [IsSerializedForLocalRepository]
