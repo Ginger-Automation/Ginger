@@ -32,7 +32,7 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level3]
-    public class VBScript 
+    public class BATScriptTest
     {
 
         [TestInitialize]
@@ -43,50 +43,51 @@ namespace UnitTests.NonUITests
 
 
         /// <summary>
-        /// Running a free VBS command
+        /// Running a free Batch command
         /// </summary>
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  //[Timeout(60000)]
         public void FreeCommand()
         {
+            // Arrange
             ActScript v = new ActScript();
-            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
+            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
             v.ScriptCommand = ActScript.eScriptAct.FreeCommand;
             v.AddNewReturnParams = true;
-            v.AddOrUpdateInputParamCalculatedValue("Free Command", "NumberB=10\r\nNumberA=20\r\nDim Result\r\nResult= int(NumberA) + int(NumberB)\r\nWscript.Echo \"Add=\" & Result");
+            v.AddOrUpdateInputParamCalculatedValue("Free Command", "@echo off \r\nSET /A a = 5 \r\nSET /A b = 10 \r\nSET /A c = %a% + %b% \r\necho Add=%c% ");
 
+            //Act
             v.Execute();
 
+            //Assert
             Assert.AreEqual(v.Error, null);
-            Assert.AreEqual(v.ReturnValues[0].Actual.Contains("Add=30"), true);
+            Assert.AreEqual(v.ReturnValues[0].Actual.Contains("Add=15"), true);
         }
 
         /// <summary>
-        /// Running a free VBS file with arguments
+        /// Running a free Batch file with arguments
         /// </summary>
         [TestMethod]  [Timeout(60000)]
         public void RunScriptAPlusB()
         {
             // Arrange
             ActScript v = new ActScript();
-            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
+            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
             v.AddNewReturnParams = true;
             v.ScriptCommand = ActScript.eScriptAct.Script;
             v.AddOrUpdateInputParamCalculatedValue("p1", "5");
             v.AddOrUpdateInputParamCalculatedValue("p2", "7");            
 
-            v.ScriptName = "APlusB.vbs";
+            v.ScriptName = "BatchScriptWithArgs.bat";
             v.ScriptPath = TestResources.GetTestResourcesFolder("");
 
             //Act
             v.Execute();
 
             //Assert
-           Assert.AreEqual(v.Error , null);
-           Assert.AreEqual(v.ReturnValues[0].Param, "TXT");
-           Assert.AreEqual(v.ReturnValues[0].Actual, "5 + 7 = 12");
+            Assert.AreEqual(v.Error , null);
 
-           Assert.AreEqual(v.ReturnValues[1].Param, "Total");
-           Assert.AreEqual(v.ReturnValues[1].Actual, "12");
+            Assert.AreEqual(v.ReturnValues[0].Param, "Result");
+            Assert.AreEqual(v.ReturnValues[0].Actual, "12");
 
         }
 

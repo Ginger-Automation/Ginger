@@ -75,6 +75,7 @@
     <Compile Include="Misc\UnixShellTest.cs" />
     <Compile Include="Misc\UsedVariablesTest.cs" />
     <Compile Include="Misc\ValueExpressionTest.cs" />
+    <Compile Include="Misc\BATScriptTest.cs" />
     <Compile Include="Misc\VBScriptTest.cs" />
     <Compile Include="Misc\WebServicesTest.cs" />
     <Compile Include="Misc\XLSFunctionsTest.cs" />
@@ -155,6 +156,9 @@
     <Content Include="TestResources\Converter\IB1.Ginger.Agent.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="TestResources\BatchScriptWithArgs.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestResources\Converter\IPDLSAM.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
