@@ -651,13 +651,6 @@ namespace Ginger.ALM
             AlmRepo.OpenALMItemsFieldsPage();
         }
 
-        //public void ALMDefectsProfilesPage()
-        //{
-        //    GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
-        //    UpdateALMType(AlmConfig.AlmType);
-        //    AlmRepo.ALMDefectsProfilesPage();
-        //}
-
         public bool LoadALMConfigurations()
         {
             return AlmRepo.LoadALMConfigurations();

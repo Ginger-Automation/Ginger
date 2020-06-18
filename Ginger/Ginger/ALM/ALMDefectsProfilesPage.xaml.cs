@@ -219,7 +219,7 @@ namespace Ginger.ALM
             ALMDefectProfile AlmDefectProfile = (ALMDefectProfile)grdDefectsProfiles.CurrentItem;
             {
                 mALMDefectProfileFields = FetchDefectFields(AlmDefectProfile.AlmType);
-                mALMDefectProfileFields.Where(z => z.Mandatory != true).ToList().ForEach(x => x.SelectedValue = string.Empty);
+                mALMDefectProfileFields.Where(z => z.Mandatory).ToList().ForEach(x => x.SelectedValue = string.Empty);
                 mALMDefectProfileFieldsExisted = new ObservableList<ExternalItemFieldBase>();
                 foreach (ExternalItemFieldBase aLMDefectProfileField in mALMDefectProfileFields)
                 {
@@ -344,12 +344,11 @@ namespace Ginger.ALM
 
         ObservableList<ExternalItemFieldBase> FetchDefectFields(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
         {
-            ObservableList<ExternalItemFieldBase> defectFields = new ObservableList<ExternalItemFieldBase>();
             try
             {
                 Mouse.OverrideCursor = Cursors.Wait;
                 ALMIntegration.Instance.UpdateALMType(AlmType);
-                defectFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
+                mALMDefectProfileFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, ALM_Common.DataContracts.ResourceType.DEFECT, null);
             }
             catch (Exception ex)
             {
@@ -360,7 +359,7 @@ namespace Ginger.ALM
                 ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
                 Mouse.OverrideCursor = null;
             }
-            return defectFields;
+            return mALMDefectProfileFields;
         }
     }
 }
