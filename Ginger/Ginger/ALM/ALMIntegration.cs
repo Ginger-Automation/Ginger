@@ -41,19 +41,16 @@ namespace Ginger.ALM
 
         private ALMIntegration()
         {
-            UpdateALMType((eALMType) WorkSpace.Instance.Solution.AlmType);
         }
 
-        public void UpdateALMType(eALMType AlmType)
+        public void UpdateALMType(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
         {
-            bool firstSync = false;
-            if (AlmCore == null)
-                firstSync = true;
-
+            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(AlmType);
+            ALMCore.DefaultAlmConfig = CurrentAlmConfigurations;
             switch (AlmType)
             {
-                case eALMType.QC:
-                    if (! WorkSpace.Instance.Solution.UseRest)
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC:
+                    if (!CurrentAlmConfigurations.UseRest)
                     {
                         AlmCore = new QCCore();
                         AlmRepo = new QCRepository();
@@ -65,51 +62,103 @@ namespace Ginger.ALM
                     }
                     break;
 
-                case eALMType.RQM:
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM:
                     AlmCore = new RQMCore();
                     AlmRepo = new RQMRepository();
                     break;
 
-                case eALMType.RALLY:
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
                     AlmCore = new RallyCore();
                     AlmRepo = new RallyRepository();
                     break;
-                case eALMType.Jira:
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
                     AlmCore = new JiraCore();
                     AlmRepo = new JIRA_Repository(AlmCore);
                     break;
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
+                    AlmCore = new QtestCore();
+                    AlmRepo = new QtestRepository();
+                    break;
             }
-            if(firstSync)
-                SetALMCoreConfigurations();
+            AlmCore.GetCurrentAlmConfig();
+            SetALMCoreConfigurations(AlmType);
         }
 
-        public void SetALMCoreConfigurations()
+        public void SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
         {
+            GingerCoreNET.ALMLib.ALMConfig CurrentAlmConfigurations = GetCurrentAlmConfig(almType);
+
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
-            AlmCore.SetALMConfigurations(WorkSpace.Instance.Solution.ALMServerURL, WorkSpace.Instance.Solution.UseRest, WorkSpace.Instance.UserProfile.ALMUserName, WorkSpace.Instance.UserProfile.ALMPassword, WorkSpace.Instance.Solution.ALMDomain, WorkSpace.Instance.Solution.ALMProject, WorkSpace.Instance.Solution.ALMProjectKey);
-            SyncConfigurations();
-        }
-
-        public void SyncConfigurations()
-        {
-            WorkSpace.Instance.Solution.ALMServerURL = ALMCore.AlmConfig.ALMServerURL;
-            WorkSpace.Instance.Solution.UseRest = ALMCore.AlmConfig.UseRest;
-            WorkSpace.Instance.UserProfile.ALMUserName = ALMCore.AlmConfig.ALMUserName;
-            WorkSpace.Instance.UserProfile.ALMPassword = ALMCore.AlmConfig.ALMPassword;
-            WorkSpace.Instance.Solution.ALMDomain = ALMCore.AlmConfig.ALMDomain;
-            WorkSpace.Instance.Solution.ALMProject = ALMCore.AlmConfig.ALMProjectName;
-            WorkSpace.Instance.Solution.ALMProjectKey = ALMCore.AlmConfig.ALMProjectKey;
-            if ((eALMType)WorkSpace.Instance.Solution.AlmType == eALMType.Jira)
+            if (CurrentAlmConfigurations != null)
             {
-                WorkSpace.Instance.Solution.ConfigPackageFolderPath = ALMCore.AlmConfig.ALMConfigPackageFolderPath;
+                AlmCore.SetALMConfigurations(CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName, CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName, CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath);
             }
         }
 
-        public ALMConfig AlmConfigurations
+        public GingerCoreNET.ALMLib.ALMConfig GetDefaultAlmConfig()
         {
-            get { return ALMCore.AlmConfig; }
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            if (AlmConfig == null)
+            {
+                AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
+                AlmConfig.DefaultAlm = true;
+                WorkSpace.Instance.Solution.ALMConfigs.Add(AlmConfig);
+            }
+            return AlmConfig;
         }
+        public bool SetDefaultAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType AlmType)
+        {
+            //set default on the solution
+            foreach (GingerCoreNET.ALMLib.ALMConfig alm in WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).ToList())
+            {
+                alm.DefaultAlm = false;
+            }
+            GingerCoreNET.ALMLib.ALMConfig almConfig = GetCurrentAlmConfig(AlmType);
+            almConfig.DefaultAlm = true;
 
+            //set default on almcore
+            foreach (GingerCoreNET.ALMLib.ALMConfig alm in ALMCore.AlmConfigs.Where(x => x.DefaultAlm).ToList())
+            {
+                alm.DefaultAlm = false;
+            }
+            GingerCoreNET.ALMLib.ALMConfig DefaultAlm = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == AlmType);
+            if (DefaultAlm == null)
+            {
+                DefaultAlm = new GingerCoreNET.ALMLib.ALMConfig();
+                DefaultAlm.AlmType = AlmType;
+                ALMCore.AlmConfigs.Add(DefaultAlm);
+            }
+            DefaultAlm.DefaultAlm = true;
+
+            return true;
+        }
+        public GingerCoreNET.ALMLib.ALMConfig GetCurrentAlmConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almType);
+            if (AlmConfig == null)
+            {
+                AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
+                AlmConfig.AlmType = almType;
+                WorkSpace.Instance.Solution.ALMConfigs.Add(AlmConfig);
+            }
+
+            return AlmConfig;
+
+        }
+        public GingerCoreNET.ALMLib.ALMUserConfig GetCurrentAlmUserConfig(GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        {
+            GingerCoreNET.ALMLib.ALMUserConfig AlmUserConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
+            if (AlmUserConfig == null)
+            {
+                AlmUserConfig = new GingerCoreNET.ALMLib.ALMUserConfig();
+                AlmUserConfig.AlmType = almType;
+                WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+            }
+
+            return AlmUserConfig;
+
+        }
+        
         #region SingleTon
         private static readonly ALMIntegration _instance = new ALMIntegration();
         public static ALMIntegration Instance
@@ -121,36 +170,12 @@ namespace Ginger.ALM
         }
         #endregion
 
-        public enum eALMType
-        {
-            QC = 1,
-            RQM = 2,
-            RALLY = 3,
-            Jira = 4
-        }
-
         public enum eALMConnectType
         {
             Silence,
             Manual,
             Auto,
             SettingsPage
-        }
-
-        public string ALMPassword()
-        {
-            return AlmRepo.ALMPassword();
-        }
-
-        public void SetALMPassword(string newPassword)
-        {
-            AlmRepo.SetALMPassword(newPassword);
-            ALMCore.AlmConfig.ALMPassword = newPassword;
-        }
-
-        public void SetALMProject(KeyValuePair<string,string> newProject)
-        {
-            AlmRepo.SetALMProject(newProject);
         }
 
         public bool TestALMServerConn(eALMConnectType almConectStyle)
@@ -621,11 +646,15 @@ namespace Ginger.ALM
 
         public void OpenALMItemsFieldsPage()
         {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
+            UpdateALMType(AlmConfig.AlmType);
             AlmRepo.OpenALMItemsFieldsPage();
         }
 
         public void ALMDefectsProfilesPage()
         {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
+            UpdateALMType(AlmConfig.AlmType);
             AlmRepo.ALMDefectsProfilesPage();
         }
 
@@ -658,9 +687,9 @@ namespace Ginger.ALM
         {
             return AlmRepo.GetTestPlanExplorer(path);
         }
-        public eALMType GetALMType()
+        public GingerCoreNET.ALMLib.ALMIntegration.eALMType GetALMType()
         {
-            return (eALMType)WorkSpace.Instance.Solution.AlmType;
+            return ALMCore.AlmConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType;
         }
     }
 }

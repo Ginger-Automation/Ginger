@@ -679,6 +679,93 @@ namespace WorkspaceHold
         }
 
         /// <summary>
+        /// Testing JSON existing Runset with multi Runners and StopOnFailure turn on
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOn_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "MultiRunnersStopOnFailureTest", "Validating correct Run set was executed");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Status.ToString(), "Passed", "Validating correct Runner Status");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Runner 2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Status.ToString(), "Failed", "Validating correct Runner Status");
+
+            //Runner 3
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Runner 3", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Blocked", "Validating correct Runner Status");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset with multi Runners and StopOnFailure turn off
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "MultiRunnersStopOnFailureTest", "Validating correct Run set was executed");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Status.ToString(), "Passed", "Validating correct Runner Status");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Runner 2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Status.ToString(), "Failed", "Validating correct Runner Status");
+
+            //Runner 3
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Runner 3", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Passed", "Validating correct Runner Status");
+        }
+
+        /// <summary>
+        /// Testing JSON virtual Runset with multi Runners and StopOnFailure turn on
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_Virtual_StopRunnersOnFailure_StopOn_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Virtual_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Virtual MultiRunnersStopOnFailureTest", "Validating correct Run set was executed");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Virtual Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Status.ToString(), "Passed", "Validating correct Runner Status");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Virtual Runner 2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Status.ToString(), "Failed", "Validating correct Runner Status");
+
+            //Runner 3
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Virtual Runner 3", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Blocked", "Validating correct Runner Status");
+        }
+
+        /// <summary>
         /// Testing JSON Runset with setup of ExecutionID
         /// </summary>   
         [TestMethod]

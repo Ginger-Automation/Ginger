@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="de09f77a-53e4-4557-93d7-42913e89f151" ItemType="RunSetConfig" CreatedBy="MENIK" Created="202006071426" GingerVersion="3.6.0.0" Version="7" LastUpdateBy="MENIK" LastUpdate="202006082020" />
+<RunSetConfig Guid="de09f77a-53e4-4557-93d7-42913e89f151" Name="MultiRunnersStopOnFailureTest" ParentGuid="00000000-0000-0000-0000-000000000000" RunModeParallel="False" RunWithAnalyzer="False" StopRunnersOnFailure="True">
+<GingerRunners>
+<GingerRunner Guid="add7480e-2f17-4c98-abf3-8dc1a6bd4f36" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="aa2f27c9-16e5-466e-ad41-ba34841fa72d" AgentName="Chrome" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="429c589e-b2bc-44e6-93e6-576ac4b721dc" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" BusinessFlowInstanceGuid="b369a08b-542f-4768-a51d-9635378fb38f" BusinessFlowIsActive="True" BusinessFlowName="Flow_A" Guid="3ad391be-4058-41bb-9cbe-3e2587467f99" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</BusinessFlowsRunList>
+</GingerRunner>
+<GingerRunner Guid="c9730940-6557-4315-a608-53ba33bacdf0" Name="Runner 2" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="aa2f27c9-16e5-466e-ad41-ba34841fa72d" AgentName="Chrome" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="f14d2c74-2313-4956-b4b5-1c875a6117c2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="86ad108b-bddc-4cce-ba17-c8bb50fe2c66" BusinessFlowInstanceGuid="5924de8e-e1e4-4f70-9473-f08aba39ab6d" BusinessFlowIsActive="True" BusinessFlowName="Flow_D" Guid="46645ec3-6829-45b7-a84d-234dbd0e9147" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="7c2af54d-4fe8-49df-bcc7-0103ce1ecc5e" InitialStringValue="333" MappedOutputType="None" Name="ValidationVar" ParentGuid="86ad108b-bddc-4cce-ba17-c8bb50fe2c66" ParentName="Flow_D" ParentType="Business Flow" Publish="True" SetAsOutputValue="False" VarValChanged="True" />
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+<GingerRunner Guid="a59b94cf-8c08-4718-9b1a-5427791f3621" Name="Runner 3" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="aa2f27c9-16e5-466e-ad41-ba34841fa72d" AgentName="Chrome" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="2487b7fc-e686-470d-8a92-398e8456a71f" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" BusinessFlowInstanceGuid="fcdfdbf2-a830-4699-86fb-0ebdb960c1a8" BusinessFlowIsActive="True" BusinessFlowName="Flow_C" Guid="2709c2c7-b243-478b-94cd-726be297b947" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+</RunSetConfig></GingerRepositoryItem>
