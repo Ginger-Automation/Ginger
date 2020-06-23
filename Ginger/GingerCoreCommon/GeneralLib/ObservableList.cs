@@ -25,6 +25,8 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
+using System.Xml;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
 
@@ -257,13 +259,10 @@ namespace Amdocs.Ginger.Common
         {
             return Items.AsEnumerable<T>();
         }
-
-        
-        string mStringData = null;
+                
         string mFilterStringData = null;
         MemoryStream mMemoryStream = null;
         int mDataLen;
-
 
         protected new IList<T> Items
         {
@@ -284,7 +283,7 @@ namespace Amdocs.Ginger.Common
         bool mAvoidLazyLoad = false;
         public bool AvoidLazyLoad { get { return mAvoidLazyLoad; } set { mAvoidLazyLoad = value; } }
 
-        public string StringData { get { return mStringData; } set { mStringData = value; } }
+        public LazyLoadListDetails LazyLoadDetails { get; set; }
 
         public MemoryStream StringDataMS { get { return mMemoryStream; } set { mMemoryStream = value; } }
         public int DataLen { get { return mDataLen; } set { mDataLen = value; } }
@@ -298,21 +297,21 @@ namespace Amdocs.Ginger.Common
             return base.GetEnumerator();
         }
 
-        public void DoLazyLoadItem(string s)
-        {
-            //option 1 simple string 
-            StringData = s;
+        //public void DoLazyLoadItem(string s)
+        //{
+        //    //option 1 simple string 
+        //    StringData = s;
 
-            //Option 2 compressed string
-            // observableList.StringData = StringCompressor.CompressString(s);
+        //    //Option 2 compressed string
+        //    // observableList.StringData = StringCompressor.CompressString(s);
 
-            //option 3 MS
-            //StringDataMS = StringCompressor.CompressStringToBytes(s);
-            // DataLen = s.Length;
+        //    //option 3 MS
+        //    //StringDataMS = StringCompressor.CompressStringToBytes(s);
+        //    // DataLen = s.Length;
 
-            mLazyLoad = true;
+        //    mLazyLoad = true;
 
-        }
+        //}
 
         bool loadingata = false;
 
@@ -335,36 +334,17 @@ namespace Amdocs.Ginger.Common
             {
                 loadingata = true;
                 // We need 2nd check as it might changed after lock released
-
                 if (!mLazyLoad) return;   //since several functions can try to get data we need to lock and verify before we convert 
 
-                //Option 1
-                string s = mStringData;
-
-                // Option 2
-                // string s = StringCompressor.DecompressString(mStringData);
-
-                //Option 3
-                // string s = StringCompressor.DecompressStringFromBytes(mMemoryStream, mDataLen);
-
-                ObservableList<T> l = new ObservableList<T>();
                 try
                 {
-                    NewRepositorySerializer.DeserializeObservableListFromText(this, s);
+                    NewRepositorySerializer.DeserializeObservableListFromText(this, LazyLoadDetails.DataAsString);
                 }
                 catch (Exception ex)
-                {
-                    string serlizedStringToShowInLog = s;
-                    if (string.IsNullOrEmpty(serlizedStringToShowInLog) == false && serlizedStringToShowInLog.Length > 1000)
-                    {
-                        serlizedStringToShowInLog = serlizedStringToShowInLog.Substring(0, 1000) + "...";
-                    }
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load section: '{0}'", serlizedStringToShowInLog), ex);
+                {                    
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load list '{0}' from file '{1}'", LazyLoadDetails.Config.ListName, LazyLoadDetails.XmlFilePath), ex);
                 }
 
-                mStringData = null;
-                //mMemoryStream.Dispose();
-                //mMemoryStream = null;
                 mLazyLoad = false;
                 loadingata = false;
                 mAvoidLazyLoad = true;

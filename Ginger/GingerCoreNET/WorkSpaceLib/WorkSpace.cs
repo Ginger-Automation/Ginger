@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
@@ -107,13 +108,11 @@ namespace amdocs.ginger.GingerCoreNET
         private static void AddLazyLoad()
         {
             // TODO: add RI type, and use attr on field
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
-        }
-
-      
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(BusinessFlow.Activities), LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath });
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(Activity.Acts), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(ApplicationPOMModel.UnMappedUIElements), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(ApplicationPOMModel.MappedUIElements), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });
+        }      
 
         public void StartLocalGrid()
         {

@@ -155,7 +155,7 @@ namespace GingerCore.Repository
                     bool b = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoad;
                     if (b)
                     {
-                        string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).StringData;
+                        string s = ((IObservableList)(ri.GetType().GetField(fi.Name).GetValue(ri))).LazyLoadDetails.DataAsString;
                         xml.WriteStartElement("Activities");
                         xml.WriteString(s);
                         xml.WriteEndElement();
@@ -375,7 +375,8 @@ namespace GingerCore.Repository
             {
                 // We can save line/col and reload later when needed
                 string s = xdr.ReadOuterXml();
-                observableList.DoLazyLoadItem(s);
+                //observableList.DoLazyLoadItem(s);
+
                 observableList.LazyLoad = true;
                 return;
             }

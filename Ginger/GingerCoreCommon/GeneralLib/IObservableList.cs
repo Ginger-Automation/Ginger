@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Common
 {
@@ -40,7 +41,7 @@ namespace Amdocs.Ginger.Common
 
         bool AvoidLazyLoad { get; set; }
 
-        string StringData { get; set; }
+        LazyLoadListDetails LazyLoadDetails { get; set; }
 
         MemoryStream StringDataMS { get; set; }
 
@@ -48,7 +49,7 @@ namespace Amdocs.Ginger.Common
 
         List<object> ListItems { get; }
 
-        void DoLazyLoadItem(string s);
+        //void DoLazyLoadItem(string s);
 
         bool SyncCurrentItemWithViewSelectedItem { get; set; } 
         bool SyncViewSelectedItemWithCurrentItem { get; set; } 

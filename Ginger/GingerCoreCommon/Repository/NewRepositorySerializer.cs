@@ -28,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -338,17 +339,12 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        //TODO: Make it class.attr
-        static List<string> LazyLoadAttr = new List<string>();
+        static List<LazyLoadListConfig> LazyLoadListConfigs = new List<LazyLoadListConfig>();
 
-        public static void AddLazyLoadAttr(string name)
+        public static void AddLazyLoadConfig(LazyLoadListConfig config)
         {
-            LazyLoadAttr.Add(name);
-        }
-
-       
-
-        
+            LazyLoadListConfigs.Add(config);
+        }               
 
         private void xmlwriteSingleObjectField(XmlTextWriter xml, string Name, Object obj)
         {
@@ -586,18 +582,22 @@ namespace Amdocs.Ginger.Repository
         private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
         {
             // read list of object into the list, add one by one, like activities, actions etc.
-
             if (ParentObj is RepositoryItemBase && ((RepositoryItemBase)ParentObj).ItemBeenReloaded)
             {
                 observableList.Clear();//clearing existing list items in case it is been reloaded
             }
-
             //TODO: Think/check if we want to make all observe as lazy load
-            if (LazyLoadAttr.Contains(xdr.Name) && observableList.AvoidLazyLoad == false)
+            LazyLoadListConfig lazyLoadConfig = LazyLoadListConfigs.Where(x => x.ListName == xdr.Name).FirstOrDefault();
+            if (lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
             {
-                // We can save line/col and reload later when needed
-                string s = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
-                observableList.DoLazyLoadItem(s);
+                observableList.LazyLoadDetails = new LazyLoadListDetails();
+                observableList.LazyLoadDetails.Config = lazyLoadConfig;
+                observableList.LazyLoadDetails.XmlFilePath = "C:\\Ginger Solutions\\PreformanceTest\\BusinessFlows\\Flow 1.Ginger.BusinessFlow.xml";
+                if (lazyLoadConfig.LazyLoadType == LazyLoadListConfig.eLazyLoadType.StringData)
+                {
+                    observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
+                }
+                observableList.LazyLoad = true;
                 return;
             }
 
