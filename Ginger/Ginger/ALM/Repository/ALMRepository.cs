@@ -32,22 +32,6 @@ namespace Ginger.ALM.Repository
         ALMItemsFieldsConfigurationPage mALMFieldsPage = null;
         ALMDefectsProfilesPage mALMDefectsProfilesPage = null;
 
-        public string ALMPassword()
-        {
-            return  WorkSpace.Instance.UserProfile.ALMPassword;
-        }
-
-        public void SetALMPassword(string newPassword)
-        {
-             WorkSpace.Instance.UserProfile.ALMPassword = newPassword;
-        }
-
-        public void SetALMProject(KeyValuePair<string, string> project)
-        {
-            WorkSpace.Instance.Solution.ALMProject = project.Value;
-            WorkSpace.Instance.Solution.ALMProjectKey = project.Key;
-        }
-
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);
         public abstract string SelectALMTestPlanPath();
         public abstract string SelectALMTestLabPath();

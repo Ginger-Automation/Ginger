@@ -190,7 +190,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
+            ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
             base.SetReportRunSet(runSetReport, logFolder);
+            
             if (logFolder == null)
             {
                 SaveObjToReporsitory(runSetReport, Path.Combine(runSetReport.LogFolder,"RunSet.txt"));

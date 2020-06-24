@@ -5,6 +5,7 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void CreateCustomerLogo(object a, string t)
         {
             
-        }
-
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
-        {
-            throw new NotImplementedException();
         }
 
         public object CreateNewReportTemplate()
@@ -148,6 +144,16 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void WaitForAutoRunWindowClose()
         {
             // NA
+        }
+
+        public string GetALMConfig()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        {
+            throw new NotImplementedException();
         }
     }
 }

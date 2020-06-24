@@ -42,19 +42,19 @@ namespace GingerCore.ALM.JIRA
         }
         public void CreateJiraRepository()
         {
-            jiraRepositoryObj = new JiraRepository.JiraRepository(ALMCore.AlmConfig.ALMConfigPackageFolderPath);
+            jiraRepositoryObj = new JiraRepository.JiraRepository(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
         }
         public bool SetJiraProjectFullDetails()
         {
             GetJiraDomainProjects();
-            List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
-            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.Prefix.Equals(ALMCore.AlmConfig.ALMProjectKey)).FirstOrDefault();
+            List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
+            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.Prefix.Equals(ALMCore.DefaultAlmConfig.ALMProjectKey)).FirstOrDefault();
             if (selectedProj != null)
             {
                 //Save selected project details
                 connectedProjectDefenition = selectedProj;
-                ALMCore.AlmConfig.ALMProjectName = selectedProj.ProjectName;
-                ALMCore.AlmConfig.ALMProjectKey = selectedProj.Prefix;
+                ALMCore.DefaultAlmConfig.ALMProjectName = selectedProj.ProjectName;
+                ALMCore.DefaultAlmConfig.ALMProjectKey = selectedProj.Prefix;
                 JiraCore.ALMProjectGuid = selectedProj.Guid;
                 JiraCore.ALMProjectGroupName = selectedProj.Prefix;
                 return true;
@@ -79,7 +79,7 @@ namespace GingerCore.ALM.JIRA
         {
             bool isUserAuthen;
 
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             isUserAuthen = jiraRepositoryObj.IsUserAuthenticated(loginData);
 
             return isUserAuthen;
@@ -95,7 +95,7 @@ namespace GingerCore.ALM.JIRA
             }
             if (jiraDomainsProjectsDataList.Count > 0)
             {
-                currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.AlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
+                currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
                 jiraProjects = currentDomainProject.ToDictionary(x => x.Prefix, x => x.ProjectName);
             }
             return jiraProjects;
@@ -103,7 +103,7 @@ namespace GingerCore.ALM.JIRA
         
         internal List<string> GetJiraDomains()
         {
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             jiraDomainsProjectsDataList = jiraRepositoryObj.GetLoginProjects(loginData.User, loginData.Password, loginData.Server).DataResult;
             List<string> jiraDomains = new List<string>();
             foreach (var domain in jiraDomainsProjectsDataList)
