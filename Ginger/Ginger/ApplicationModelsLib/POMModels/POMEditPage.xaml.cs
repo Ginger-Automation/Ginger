@@ -103,6 +103,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mBusinessFlowControl = new ucBusinessFlowMap(mPOM, nameof(mPOM.MappedBusinessFlow));
             xFrameBusinessFlowControl.Content = mBusinessFlowControl;
 
+            xShowIDUC.Init(mPOM);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));

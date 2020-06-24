@@ -38,6 +38,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.ALM.Repository
 {
+    public enum eQCItemType { TestCase, TestSet, Defect }
+
     class QCRepository : ALMRepository
     {
         Test matchingTC = null;

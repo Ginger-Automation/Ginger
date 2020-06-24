@@ -302,7 +302,7 @@ namespace Ginger.ALM.Repository
                 if (!((JiraCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
                     return false;
 
-                ALMIntegration.Instance.SetALMCoreConfigurations();
+                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira);
             }
             return true; //Browse Dialog Canceled
         }

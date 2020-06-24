@@ -86,7 +86,7 @@ namespace Ginger.SolutionGeneral
                 }
                 if (solutionItemToSave != eSolutionItemToSave.ALMSettings)
                 {
-                    if (this.ALMDomain != lastSavedSolution.ALMDomain || this.ALMProject != lastSavedSolution.ALMProject || this.ALMServerURL != lastSavedSolution.ALMServerURL || this.AlmType != lastSavedSolution.AlmType)
+                    if (!this.ALMConfigs.Equals(lastSavedSolution.ALMConfigs))
                     {
                         bldExtraChangedItems.Append("ALM Details, ");
                     }                        
@@ -249,35 +249,13 @@ namespace Ginger.SolutionGeneral
             }
         }
 
-        private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
         [IsSerializedForLocalRepository]
-        public ALMIntegration.eALMType AlmType
+        public ObservableList<ALMConfig> ALMConfigs
         {
-            get
-            {
-                return mAlmType;
-            }
-            set
-            {
-                mAlmType = value;
-            }
-        }
+            get;
+            set;
+        } = new ObservableList<ALMConfig>();
 
-        [IsSerializedForLocalRepository]
-        public string ALMServerURL { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public bool UseRest { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public string ALMDomain { get; set; }
-
-        [IsSerializedForLocalRepository]
-        public string ALMProject { get; set; }
-        [IsSerializedForLocalRepository]
-        public string ALMProjectKey { get; set; }
-        [IsSerializedForLocalRepository]
-        public string ConfigPackageFolderPath { get; set; }
         public void SetReportsConfigurations()
         {
             try {
@@ -586,6 +564,72 @@ namespace Ginger.SolutionGeneral
                 return platform;
             }
             return ePlatformType.NA;
+        }
+
+
+        // overriding this SerializationError here because previously we were supporting only one ALMConfig 
+        // Now we changed this to support MultiALM Connection, so serializing those values to ALMConfigs List
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name.ToLower().Contains("alm") || name.ToLower().Contains("userest") || name.ToLower().Contains("configpackagefolderpath"))
+                {
+                    ALMConfig AlmConfig = ALMConfigs.FirstOrDefault();
+                    if (AlmConfig == null)
+                    {
+                        AlmConfig = new ALMConfig();
+                        AlmConfig.DefaultAlm = true;
+                        ALMConfigs.Add(AlmConfig);
+                    }
+                    if (name == "ALMServerURL")
+                    {
+                        AlmConfig.ALMServerURL = value;
+                        return true;
+                    }
+                    if (name == "AlmType")
+                    {
+                        AlmConfig.AlmType = (ALMIntegration.eALMType)Enum.Parse(typeof(ALMIntegration.eALMType), value);
+
+                        //Add the AlmType to user profile as well
+                        ALMUserConfig AlmUserConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault();
+                        if (AlmUserConfig == null)
+                        {
+                            AlmUserConfig = new ALMUserConfig();
+                            amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
+                        }
+                        AlmUserConfig.AlmType = AlmConfig.AlmType;
+                        return true;
+                    }
+                    if (name == "ALMDomain")
+                    {
+                        AlmConfig.ALMDomain = value;
+                        return true;
+                    }
+                    if (name == "ALMProject")
+                    {
+                        AlmConfig.ALMProjectName = value;
+                        return true;
+                    }
+                    if (name == "ALMProjectKey")
+                    {
+                        AlmConfig.ALMProjectKey = value;
+                        return true;
+                    }
+                    if (name == "UseRest")
+                    {
+                        bool.TryParse(value, out bool res);
+                        AlmConfig.UseRest = res;
+                        return true;
+                    }
+                    if (name == "ConfigPackageFolderPath")
+                    {
+                        AlmConfig.ALMConfigPackageFolderPath = value;
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
     }
