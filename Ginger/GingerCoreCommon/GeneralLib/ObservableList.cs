@@ -345,6 +345,7 @@ namespace Amdocs.Ginger.Common
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load list '{0}' from file '{1}'", LazyLoadDetails.Config.ListName, LazyLoadDetails.XmlFilePath), ex);
                 }
 
+                LazyLoadDetails.DataAsString = null;
                 mLazyLoad = false;
                 loadingata = false;
                 mAvoidLazyLoad = true;

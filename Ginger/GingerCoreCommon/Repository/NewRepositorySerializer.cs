@@ -550,9 +550,10 @@ namespace Amdocs.Ginger.Repository
 
                 // After we are done reading the RI header attrs we moved to the main object
                 xdr.Read();
-
-                RootObj = xmlReadObject(null, xdr, targetObj);
+                
+                RootObj = xmlReadObject(null, xdr, targetObj, filePath:filePath);
                 ((RepositoryItemBase)RootObj).RepositoryItemHeader = RIH;
+                
             }
             else
             {
@@ -588,11 +589,11 @@ namespace Amdocs.Ginger.Repository
             }
             //TODO: Think/check if we want to make all observe as lazy load
             LazyLoadListConfig lazyLoadConfig = LazyLoadListConfigs.Where(x => x.ListName == xdr.Name).FirstOrDefault();
-            if (lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
+            if (ParentObj is RepositoryItemBase && lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
             {
                 observableList.LazyLoadDetails = new LazyLoadListDetails();
                 observableList.LazyLoadDetails.Config = lazyLoadConfig;
-                observableList.LazyLoadDetails.XmlFilePath = "C:\\Ginger Solutions\\PreformanceTest\\BusinessFlows\\Flow 1.Ginger.BusinessFlow.xml";
+                observableList.LazyLoadDetails.XmlFilePath = ((RepositoryItemBase)ParentObj).FilePath;
                 if (lazyLoadConfig.LazyLoadType == LazyLoadListConfig.eLazyLoadType.StringData)
                 {
                     observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
@@ -650,7 +651,7 @@ namespace Amdocs.Ginger.Repository
         // public static Assembly GingerCoreNETAssembly = typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryItem).Assembly;
         public static Assembly GingerCoreCommonAssembly = typeof(RepositoryItemBase).Assembly;        
 
-        private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
+        private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null, string filePath = "")
         {
             //TODO: check order of creation and remove unused
             string className = xdr.Name;            
@@ -671,7 +672,7 @@ namespace Amdocs.Ginger.Repository
                         }
                         else
                         {
-                            throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
+                            throw new Exception(string.Format("NewRepositorySerializer: Unable to create object for the class type '{0}'", className));
                         }
                     }
                 }
@@ -680,7 +681,10 @@ namespace Amdocs.Ginger.Repository
                     obj = targetObj;
                 }             
 
-
+                if (string.IsNullOrEmpty(filePath) == false && obj != null && obj.GetType().IsSubclassOf(typeof(RepositoryItemBase)))
+                {
+                    ((RepositoryItemBase)obj).FilePath = filePath;
+                }
 
                 SetObjectSerializedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
@@ -699,9 +703,7 @@ namespace Amdocs.Ginger.Repository
                     {                     
                         throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
-
                     
-
                     // We check if it is list by arg count - List<string> will have string etc...
                     // another option is check the name to start with List, Observe...
                     //or find a better way

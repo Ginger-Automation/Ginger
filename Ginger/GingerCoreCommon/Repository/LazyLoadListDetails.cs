@@ -29,25 +29,33 @@ namespace Amdocs.Ginger.Common.Repository
 
         private void LoadXMLDataIntoString()
         {
-            XmlReaderSettings xdrSettings = new XmlReaderSettings()
+            lock (this)
             {
-                IgnoreComments = true,
-                IgnoreWhitespace = true,
-                CloseInput = true
-            };
-            try
-            {
-                using (XmlReader xdr = XmlReader.Create(XmlFilePath, xdrSettings))
+                if (mDataAsString != null)
                 {
-                    xdr.MoveToContent();
-                    xdr.ReadToDescendant("Activities");
-                    mDataAsString = xdr.ReadOuterXml();
+                    return;
                 }
-            }
-            catch(Exception ex)
-            {                
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to pull the XML data of the list '{0}' from file '{1}'", Config.ListName, XmlFilePath), ex);
-                mDataAsString = string.Empty;
+
+                XmlReaderSettings xdrSettings = new XmlReaderSettings()
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true,
+                    CloseInput = true
+                };
+                try
+                {
+                    using (XmlReader xdr = XmlReader.Create(XmlFilePath, xdrSettings))
+                    {
+                        xdr.MoveToContent();
+                        xdr.ReadToDescendant(Config.ListName);
+                        mDataAsString = xdr.ReadOuterXml();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to pull the XML data of the list '{0}' from file '{1}'", Config.ListName, XmlFilePath), ex);
+                    mDataAsString = string.Empty;
+                }
             }
         }
     }
