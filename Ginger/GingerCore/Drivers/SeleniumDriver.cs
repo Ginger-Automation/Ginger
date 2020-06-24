@@ -3125,13 +3125,11 @@ namespace GingerCore.Drivers
             {
                 if (!EI.IsAutoLearned)
                 {
-                    ControlProperty ctrlProp = new ControlProperty() { Value = EI.Path };
-                    ControlProperty evaluatedLocator = ctrlProp.CreateInstance() as ControlProperty;
                     ValueExpression VE = new ValueExpression(null, null);
-                    EI.Path = VE.Calculate(evaluatedLocator.Value);
+                    EI.Path = VE.Calculate(EI.Path);
                     if(EI.Path  == null)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Concat("Expression : ",evaluatedLocator.Value," evaluated to null value."));
+                        Reporter.ToLog(eLogLevel.ERROR, string.Concat("Expression : ", EI.Path, " evaluated to null value."));
                         return;
                     }
                 }
