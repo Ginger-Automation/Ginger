@@ -119,14 +119,13 @@ namespace Ginger.Variables
             // this inner method checks if user is still typing
             async Task<bool> UserKeepsTyping()
             {
+                var txt = txtDateFormat.Text;
                 await Task.Delay(1000);
-                UpdateIntialDateTimePicker();
-                return true;
+                return txt != txtDateFormat.Text;
             }
-            if (await UserKeepsTyping())
-            {
-                return;
-            }
+            if (await UserKeepsTyping() || dtpInitialDate.CustomFormat == txtDateFormat.Text) return;
+
+            UpdateIntialDateTimePicker();
         }
     }
 }
