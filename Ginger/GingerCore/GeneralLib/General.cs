@@ -906,6 +906,43 @@ namespace GingerCore
             else
                 return TryFindParent<T>(parentObject);
         }
+
+        /// <summary>
+        /// This function is used to replace the password value from the string with *****
+        /// </summary>
+        /// <param name="dataString">The string argument which has password value</param>
+        /// <returns></returns>
+        public static string HidePasswordFromString(string dataString)
+        {
+            string passwordValue = dataString.Replace(" ", "");//remove spaces
+            string passwordString = string.Empty;
+            //Matching string
+            if (dataString.ToLower().Contains("pwd="))
+            {
+                passwordString = "pwd=";
+            }
+            else
+            {
+                passwordString = "password=";
+            }
+            //get the password value based on start and end index
+            passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
+            int startIndex = passwordValue.ToLower().IndexOf(passwordString) + passwordString.Length;
+            int endIndex = -1;
+            if (passwordValue.Contains(";"))
+            {
+                endIndex = passwordValue.ToLower().IndexOf(";");
+            }
+            if (endIndex == -1)
+            {
+                passwordValue = passwordValue.Substring(startIndex);
+            }
+            else
+            {
+                passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
+            }
+            return dataString.Replace(passwordValue, "*****");
+        }
     }
 }
 
