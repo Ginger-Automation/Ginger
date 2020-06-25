@@ -494,7 +494,9 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + ConnectionString, e);
+                //Hide paasword from the ConnectionString
+                connectConnectionString = connectConnectionString.Replace(connectConnectionString.Substring(connectConnectionString.ToLower().IndexOf("password") + "password".Length), "=*****");
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + connectConnectionString, e);
                 throw (e);
             }
             return false;
