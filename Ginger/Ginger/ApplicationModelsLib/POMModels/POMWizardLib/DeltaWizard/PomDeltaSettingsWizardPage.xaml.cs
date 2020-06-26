@@ -159,7 +159,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList)
+                {
                     elem.Selected = valueToSet;
+                }
             }
         }
 
@@ -169,7 +171,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 bool valueToSet = !mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
                 foreach (UIElementFilter elem in mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList)
+                {
                     elem.Selected = valueToSet;
+                }
             }
         }
 
