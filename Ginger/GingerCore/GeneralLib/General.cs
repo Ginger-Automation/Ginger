@@ -921,9 +921,14 @@ namespace GingerCore
             {
                 passwordString = "pwd=";
             }
-            else
+            else if (dataString.ToLower().Contains("password="))
             {
                 passwordString = "password=";
+            }
+            else
+            {
+                //returning origional as it does not conatain matching string
+                return dataString;
             }
             //get the password value based on start and end index
             passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
