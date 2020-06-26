@@ -1422,51 +1422,58 @@ namespace Ginger.Run
 
         public void ProcessInputValueForDriver(Act act)
         {
-            //Handle all input values, create Value for Driver for each            
-            try
+            //Handle all input values, create Value for Driver for each  
+            if (act.ValueExpression == null)
             {
-                if (act.ValueExpression == null)
+                act.ValueExpression = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
+            }
+            act.ValueExpression.DecryptFlag = true;
+            foreach (var IV in act.InputValues)
+            {
+                if (!string.IsNullOrEmpty(IV.Value))
                 {
-                    act.ValueExpression = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
-                }
-                act.ValueExpression.DecryptFlag = true;
-                foreach (var IV in act.InputValues)
-                {
-                    if (!string.IsNullOrEmpty(IV.Value))
+                    try
                     {
                         IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        IV.ValueForDriver = string.Empty;
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
                     }
                 }
-
-                //Handle actions which needs VE processing like Tuxedo, we need to calculate the UD file values before execute, which is in different list not in ACT.Input list
-                List<ObservableList<ActInputValue>> list = act.GetInputValueListForVEProcessing();
-                if (list != null) // Will happen only if derived action implemented this function, since it needs processing for VEs
+                else
                 {
-                    foreach (var subList in list)
+                    IV.ValueForDriver = string.Empty;
+                }
+            }
+
+            //Handle actions which needs VE processing like Tuxedo, we need to calculate the UD file values before execute, which is in different list not in ACT.Input list
+            List<ObservableList<ActInputValue>> list = act.GetInputValueListForVEProcessing();
+            if (list != null) // Will happen only if derived action implemented this function, since it needs processing for VEs
+            {
+                foreach (var subList in list)
+                {
+                    foreach (var IV in subList)
                     {
-                        foreach (var IV in subList)
+                        if (!string.IsNullOrEmpty(IV.Value))
                         {
-                            if (!string.IsNullOrEmpty(IV.Value))
+                            try
                             {
                                 IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                IV.ValueForDriver = string.Empty;
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
                             }
+                        }
+                        else
+                        {
+                            IV.ValueForDriver = string.Empty;
                         }
                     }
                 }
-                act.ValueExpression.DecryptFlag = true;
             }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ProcessInputValueForDriver : ", ex);
-            }
+            act.ValueExpression.DecryptFlag = true;
         }
 
         private void ProcessWait(Act act, Stopwatch st)
