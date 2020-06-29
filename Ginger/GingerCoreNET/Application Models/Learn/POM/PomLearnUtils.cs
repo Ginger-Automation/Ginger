@@ -149,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             uIElementList.AddRange(AutoMapBasicElementTypesList.ToList());
             uIElementList.AddRange(AutoMapAdvanceElementTypesList.ToList());
 
-            SelectedElementTypesList = uIElementList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
+            SelectedElementTypesList = uIElementList.Where(x => x.Selected).Select(x => x.ElementType).ToList();
             mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();           
         }
 
