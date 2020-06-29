@@ -214,11 +214,6 @@ namespace Ginger.Run
                             {
                                 CopyCustomizedVariableConfigurations(customizedVar, originalVar);
                             }
-                            else
-                            {
-                                originalVar.DiffrentFromOrigin = false;
-                                originalVar.MappedOutputVariable = null;
-                            }
                         });
                     }
                     BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
