@@ -362,5 +362,53 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(actDB.DBName, db.Name, "Names");
 
         }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromString()
+        {
+            //Access Db
+            string ConString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:/myAccessFile.accdb;Jet OLEDB:Database Password=MyDbPassword;";
+            string Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+
+            //Oracle Db uses pwd
+            ConString = "SERVER=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));uid=myUsername;pwd=myPassword;";
+            Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("pwd=*****"), true);
+
+            //Oracle Db uses password
+            ConString = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));User Id=myUsername;Password=myPassword;";
+            Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+
+            //PostgreSQL 
+            ConString = "Server=127.0.0.1;Port=5432;Database=myDataBase;User Id =myUsername;Password=myPassword;";
+            Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+
+            //MySQL 
+            ConString = "Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;";
+            Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Pwd=*****"), true);
+
+            //DB2 
+            ConString = "Server=myAddress:myPortNumber;Database=myDataBase;UID=myUsername;PWD=myPassword;";
+            Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("PWD=*****"), true);
+
+            //SQLServer 
+            ConString = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+            Result = General.HidePasswordFromString(ConString);
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+
+        }
     }
 }

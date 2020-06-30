@@ -909,6 +909,7 @@ namespace GingerCore
 
         /// <summary>
         /// This function is used to replace the password value from the string with *****
+        /// It will also remove all the spaces.
         /// </summary>
         /// <param name="dataString">The string argument which has password value</param>
         /// <returns></returns>
