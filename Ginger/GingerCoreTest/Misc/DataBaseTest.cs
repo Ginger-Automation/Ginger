@@ -368,7 +368,6 @@ namespace UnitTests.NonUITests
         public void TestHidePasswordFromAccessConnectionString()
         {
             //Arrange
-            //Access Db
             string ConString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:/myAccessFile.accdb;Jet OLEDB:Database Password=MyDbPassword;";
             //Act
             string Result = General.HidePasswordFromString(ConString);
@@ -383,9 +382,7 @@ namespace UnitTests.NonUITests
         public void TestHidePasswordFromOracleConnectionString()
         {
             //Arrange
-            //Oracle Db uses pwd
             string ConStringUsingPwd = "SERVER=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));uid=myUsername;pwd=myPassword;";
-            //Oracle Db uses password
             string ConStringUsingPassword = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));User Id=myUsername;Password=myPassword;";
             
             //Act
@@ -408,7 +405,6 @@ namespace UnitTests.NonUITests
         public void TestHidePasswordFromPostgreSQLConnectionString()
         {
             //Arrange
-            //Access Db
             string ConString = "Server=127.0.0.1;Port=5432;Database=myDataBase;User Id =myUsername;Password=myPassword;";
             //Act
             string Result = General.HidePasswordFromString(ConString);
@@ -423,7 +419,6 @@ namespace UnitTests.NonUITests
         public void TestHidePasswordFromMySQLConnectionString()
         {
             //Arrange
-            //Access Db
             string ConString = "Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;";
             //Act
             string Result = General.HidePasswordFromString(ConString);
@@ -438,7 +433,6 @@ namespace UnitTests.NonUITests
         public void TestHidePasswordFromDB2ConnectionString()
         {
             //Arrange
-            //Access Db
             string ConString = "Server=myAddress:myPortNumber;Database=myDataBase;UID=myUsername;PWD=myPassword;";
             //Act
             string Result = General.HidePasswordFromString(ConString);
@@ -453,7 +447,6 @@ namespace UnitTests.NonUITests
         public void TestHidePasswordFromSQLServerConnectionString()
         {
             //Arrange
-            //Access Db
             string ConString = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
             //Act
             string Result = General.HidePasswordFromString(ConString);
