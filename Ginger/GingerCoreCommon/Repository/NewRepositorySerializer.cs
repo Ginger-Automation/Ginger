@@ -598,6 +598,10 @@ namespace Amdocs.Ginger.Repository
                 {
                     observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
                 }
+                else
+                {
+                    xdr.ReadOuterXml();//so xdr will progress
+                }
                 observableList.LazyLoad = true;
                 return;
             }
