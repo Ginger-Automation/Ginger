@@ -18,6 +18,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using GingerCore.Variables;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.Variables
@@ -106,11 +107,25 @@ namespace Ginger.Variables
             }
         }
 
-        private void txtDateFormat_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+        private void UpdateIntialDateTimePicker()
         {
             dtpInitialDate.CustomFormat = txtDateFormat.Text;
             dpMinDate.CustomFormat = txtDateFormat.Text;
             dpMaxDate.CustomFormat = txtDateFormat.Text;
+        }
+
+        private async void txtDateFormat_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // this inner method checks if user is still typing
+            async Task<bool> UserKeepsTyping()
+            {
+                var txt = txtDateFormat.Text;
+                await Task.Delay(1000);
+                return txt != txtDateFormat.Text;
+            }
+            if (await UserKeepsTyping() || dtpInitialDate.CustomFormat == txtDateFormat.Text) return;
+
+            UpdateIntialDateTimePicker();
         }
     }
 }
