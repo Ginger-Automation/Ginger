@@ -32,7 +32,7 @@ namespace UnitTests.NonUITests
 {
     [TestClass]
     [Level3]
-    public class VBScript 
+    public class ScriptTest 
     {
 
         [TestInitialize]
@@ -46,7 +46,7 @@ namespace UnitTests.NonUITests
         /// Running a free VBS command
         /// </summary>
         [TestMethod]  [Timeout(60000)]
-        public void FreeCommand()
+        public void FreeCommandVBS()
         {
             ActScript v = new ActScript();
             v.ScriptInterpreterType = ActScript.eScriptInterpreterType.VBS;
@@ -64,7 +64,7 @@ namespace UnitTests.NonUITests
         /// Running a free VBS file with arguments
         /// </summary>
         [TestMethod]  [Timeout(60000)]
-        public void RunScriptAPlusB()
+        public void RunScriptAPlusBVBS()
         {
             // Arrange
             ActScript v = new ActScript();
@@ -90,7 +90,55 @@ namespace UnitTests.NonUITests
 
         }
 
+        /// <summary>
+        /// Running a free Batch command
+        /// </summary>
+        [TestMethod]  //[Timeout(60000)]
+        public void FreeCommandBAT()
+        {
+            // Arrange
+            ActScript v = new ActScript();
+            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
+            v.ScriptCommand = ActScript.eScriptAct.FreeCommand;
+            v.AddNewReturnParams = true;
+            v.AddOrUpdateInputParamCalculatedValue("Free Command", "@echo off \r\nSET /A a = 5 \r\nSET /A b = 10 \r\nSET /A c = %a% + %b% \r\necho Add=%c% ");
 
+            //Act
+            v.Execute();
+
+            //Assert
+            Assert.AreEqual(v.Error, null);
+            Assert.AreEqual(v.ReturnValues[0].Actual.Contains("Add=15"), true);
+        }
+
+        /// <summary>
+        /// Running a free Batch file with arguments
+        /// </summary>
+        [TestMethod]
+        [Timeout(60000)]
+        public void RunScriptAPlusBBAT()
+        {
+            // Arrange
+            ActScript v = new ActScript();
+            v.ScriptInterpreterType = ActScript.eScriptInterpreterType.BAT;
+            v.AddNewReturnParams = true;
+            v.ScriptCommand = ActScript.eScriptAct.Script;
+            v.AddOrUpdateInputParamCalculatedValue("p1", "5");
+            v.AddOrUpdateInputParamCalculatedValue("p2", "7");
+
+            v.ScriptName = "BatchScriptWithArgs.bat";
+            v.ScriptPath = TestResources.GetTestResourcesFolder("");
+
+            //Act
+            v.Execute();
+
+            //Assert
+            Assert.AreEqual(v.Error, null);
+
+            Assert.AreEqual(v.ReturnValues[0].Param, "Result");
+            Assert.AreEqual(v.ReturnValues[0].Actual, "12");
+
+        }
 
     }
 }
