@@ -80,7 +80,11 @@ namespace GingerCoreNET.Application_Models
                 PrepareCurrentPOMElementsData();
                 if (PomLearnUtils.LearnOnlyMappedElements)
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.AutoMapElementTypesList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true);
+                    var uIElementList = new List<UIElementFilter>();
+                    uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
+                    uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
+
+                    mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true);
                 }
                 else
                 {
