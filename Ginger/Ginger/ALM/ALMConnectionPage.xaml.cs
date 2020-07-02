@@ -456,7 +456,7 @@ namespace Ginger.ALM
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    SetLoadJiraPackageButtonContent();
+                    SetLoadPackageButtonContent();
                     
                     ServerURLTextBox.Cursor = null;
                     QCRadioButton.FontWeight = FontWeights.Regular;
@@ -494,21 +494,6 @@ namespace Ginger.ALM
                 default:
                     //Default not used
                     break;
-            }
-        }
-
-        private void SetLoadJiraPackageButtonContent()
-        {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
-            {
-                RQMLoadConfigPackageButton.Content = "Replace";
-                ExampleURLHint.Content = "and click Replace to change Jira Configuration Package";
-
-            }
-            else
-            {
-                RQMLoadConfigPackageButton.Content = "Load";
-                ExampleURLHint.Content = "and Load Jira Configuration Package";
             }
         }
 
@@ -585,13 +570,19 @@ namespace Ginger.ALM
             if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
             {
                 RQMLoadConfigPackageButton.Content = "Replace";
-                ExampleURLHint.Content = "and click Replace to change RQM Configuration Package";
-
             }
             else
             {
                 RQMLoadConfigPackageButton.Content = "Load";
-                ExampleURLHint.Content = "and Load RQM Configuration Package";
+            }
+
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
+            {
+                ExampleURLHint.Content = "and click Replace to change " + CurrentAlmConfigurations.AlmType + " Configuration Package";
+            }
+            else
+            {
+                ExampleURLHint.Content = "and Load " + CurrentAlmConfigurations.AlmType + " Configuration Package";
             }
         }
 
