@@ -129,8 +129,8 @@
       <HintPath>..\packages\Gherkin.4.0.0\lib\net45\Gherkin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ginger.ExecuterService.Contracts.1.0.1\lib\netstandard2.0\Ginger.ExecuterService.Contracts.dll</HintPath>
+    <Reference Include="Ginger.ExecuterService.Contracts, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ginger.ExecuterService.Contracts.1.0.3\lib\netstandard2.0\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.11.1.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.11.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -215,6 +215,10 @@
     <Reference Include="QCRestClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\GingerCore\DLLs\QCRestClient.dll</HintPath>
+    </Reference>
+    <Reference Include="QTestAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\QTestAPI.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
     <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
@@ -495,6 +499,12 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
+      <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestCycleTreeItem.cs" />
+    <Compile Include="ALM\Qtest\TreeViewItems\QtestSuiteTreeItem.cs" />
+    <Compile Include="ALM\Repository\QtestRepository.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiConversionConfigurationWzardPage.xaml.cs">
       <DependentUpon>ApiConversionConfigurationWzardPage.xaml</DependentUpon>
     </Compile>
@@ -672,6 +682,12 @@
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
+    <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
+      <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
+      <DependentUpon>ucShowItemID.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Variables\ValidationRule\NumberValidationRule.cs" />
     <Compile Include="Variables\ValidationRule\DateTimeFormatValidationRule.cs" />
     <Compile Include="Variables\VariableEditPages\VariableDateTimePage.xaml.cs">
@@ -2132,6 +2148,9 @@
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
+    <None Include="ALMRESTConfiguration\appsettings_QTest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Ginger.ruleset" />
     <EmbeddedResource Include="Resources\LiteDB.db" />
     <None Include="Resources\VBSTemplate.bmp" />
@@ -2700,6 +2719,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiConversionConfigurationWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2999,6 +3022,14 @@
     <Page Include="BusinessFlowWindows\BusinessFlowViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\ucShowItemID.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Variables\VariabelsListViewPage.xaml">
       <SubType>Designer</SubType>

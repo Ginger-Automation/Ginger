@@ -566,9 +566,9 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
-            TagsViewer.Init(mRunSetConfig.Tags);
-            BindingHandler.ObjFieldBinding(xRunWithAnalyzercheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.RunWithAnalyzer));
+            TagsViewer.Init(mRunSetConfig.Tags);            
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
         }
 
@@ -996,8 +996,7 @@ namespace Ginger.Run
         {
             this.Dispatcher.Invoke(() =>
             {
-                // to check run mode of already created runset
-                SetExecutionModeIcon();
+                // to check run mode of already created runset                
                 SetEnvironmentsCombo();
                 xRunnersCanvasFrame.Refresh();
                 xRunnersCanvasFrame.NavigationService.Refresh();
@@ -1564,7 +1563,7 @@ namespace Ginger.Run
 
             if (mRunSetConfig.GingerRunners.Count == 2)
             {
-                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xExecutionModeBtn, "Click here to set if Runners will run in parallel or in sequential order");
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xRunnersExecutionConfigBtn, "Click here to set if Runners will run in parallel or sequential order plus extra configurations");
             }
         }
         
@@ -1771,25 +1770,12 @@ namespace Ginger.Run
             SaveRunSetConfig();           
         }
         
-        private void SetExecutionModeIcon()
-        {
-            if (RunSetConfig.RunModeParallel)
-            {
-                xExecutionModeBtn.ButtonImageType = eImageType.ParallelExecution;
-                xExecutionModeBtn.ToolTip = "Runners Configured to Run in Parallel, Click to Change it to Run in Sequence";
-            }
-            else
-            {
-                xExecutionModeBtn.ButtonImageType = eImageType.SequentialExecution;
-                xExecutionModeBtn.ToolTip = "Runners Configured to Run in Sequence, Click to Change it to Run in Parallel";
-            }
-        }
-        private void executionMode_Click(object sender, RoutedEventArgs e)
+        private void xRunnersExecutionConfigBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            RunSetConfig.RunModeParallel = (!RunSetConfig.RunModeParallel);
-            SetExecutionModeIcon();
+            RunsetRunnersConfigPage config = new RunsetRunnersConfigPage(mRunSetConfig);
+            config.ShowAsWindow();
         }
 
         private void xBusinessflowListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2546,5 +2532,6 @@ namespace Ginger.Run
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
+
     }
 }

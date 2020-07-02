@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="86ad108b-bddc-4cce-ba17-c8bb50fe2c66" ItemType="BusinessFlow" CreatedBy="MENIK" Created="202004121459" GingerVersion="3.6.0.0" Version="26" LastUpdateBy="MENIK" LastUpdate="202006082020" />
+<BusinessFlow Elapsed="2094" Guid="86ad108b-bddc-4cce-ba17-c8bb50fe2c66" Name="Flow_D" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Do-Work" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="app1">
+<Acts>
+<ActDummy Active="True" Description="Dummy Action 1" Guid="7eead893-8067-4fab-8d8a-6a5dd0309060" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="0c13c007-2692-4fe7-892a-41bbc4e80266" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActDummy Active="True" Description="Dummy Action 2" Guid="43671660-6272-4f39-b342-b8762afed798" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="f5914b29-562b-45b9-9890-9bd0430883a2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+<ActDummy Active="True" Description="Validation" Guid="8f8be004-ec65-42c7-9ced-344d53c87402" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow">
+<FlowControls>
+<FlowControl Active="True" BusinessFlowControlAction="GoToBusinessFlow" Condition="{CS Exp=!&quot;{Var Name=ValidationVar}&quot;.Equals(&quot;111&quot;)}" FlowControlAction="FailActionAndStopBusinessFlow" Guid="6885eaa5-96e4-47f0-8f1c-bd51b4fc971d" Operator="CSharp" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</FlowControls>
+
+<InputValues>
+<ActInputValue Guid="d2eae862-3362-4740-9871-9b958da8d734" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</InputValues>
+</ActDummy>
+</Acts>
+
+<Variables>
+<VariableSelectionList Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="None" Name="B_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_B\Group\Do-Work" ParentType="Activity" Publish="True" Value="111">
+<OptionalValuesList>
+<OptionalValue Guid="f99425f7-ebb2-4e6c-a752-8eb42492b73a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="111" />
+<OptionalValue Guid="43c85b7a-0133-43b1-a21e-02fef56130df" ParentGuid="00000000-0000-0000-0000-000000000000" Value="222" />
+<OptionalValue Guid="225422b4-fc18-4069-bd74-b2a89be8b4e3" ParentGuid="00000000-0000-0000-0000-000000000000" Value="333" />
+<OptionalValue Guid="afcaed39-23dd-48fa-bc07-b3da1886c7a7" ParentGuid="00000000-0000-0000-0000-000000000000" Value="444" />
+<OptionalValue Guid="3879aa10-64c2-4cbc-b4c8-93fc5c76a3dd" ParentGuid="00000000-0000-0000-0000-000000000000" Value="555" />
+<OptionalValue Guid="f9787519-0757-49f0-9d86-87fa978b6156" ParentGuid="00000000-0000-0000-0000-000000000000" Value="666" />
+</OptionalValuesList>
+</VariableSelectionList>
+</Variables>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="a4cff36e-b21d-48f3-98bd-f313b5470461" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ActivityName="Do-Work" Guid="d1ba44a2-0fc0-4448-acb3-4dfb3ea37537" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="app1" Guid="ae1b4761-ef27-47e6-928c-7d96a811d8e7" LastExecutingAgentName="Chrome" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Guid="bde76d0f-a68e-465e-b25c-60365886762a" MappedOutputType="None" Name="B_ID" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" />
+<VariableString Guid="7c2af54d-4fe8-49df-bcc7-0103ce1ecc5e" InitialStringValue="111" MappedOutputType="None" Name="ValidationVar" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" SetAsOutputValue="False" />
+<VariableString Guid="840b1e0d-b95c-403a-870b-52055a9e1e3b" InitialStringValue="Meni" MappedOutputType="None" Name="B_Name" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" />
+<VariableSelectionList Guid="8c98b551-f8f7-4a9a-9cd3-e186d387721f" MappedOutputType="None" Name="B_Color" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" Value="Green">
+<OptionalValuesList>
+<OptionalValue Guid="408392d6-9deb-402a-9646-dc0ad1eaed6e" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Green" />
+<OptionalValue Guid="3c1bafa4-3e41-4748-a520-056a134a1e44" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Red" />
+<OptionalValue Guid="9b502a1c-3223-4db9-8bd9-beb2937c5f60" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Blue" />
+<OptionalValue Guid="66f234e2-8c53-426d-b77b-888f31f44616" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Black" />
+</OptionalValuesList>
+</VariableSelectionList>
+</Variables>
+</BusinessFlow></GingerRepositoryItem>
