@@ -96,7 +96,7 @@ namespace GingerCore
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
-        private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled);
+        private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
         private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
