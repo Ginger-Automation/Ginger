@@ -84,12 +84,8 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConfigureProxyCheckBox, CheckBox.IsCheckedProperty, mSourceControl, nameof(SourceControlBase.SourceControlConfigureProxy));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyAddressTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyAddress));
-            if (String.IsNullOrEmpty( WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress))
-                mSourceControl.SourceControlProxyAddress = @"http://genproxy.amdocs.com";
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProxyPortTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlProxyPort));
-            if (String.IsNullOrEmpty( WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort))
-                mSourceControl.SourceControlProxyPort = @"8080";
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
 
