@@ -595,7 +595,6 @@
     <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
     <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\QtestCore.cs" />
-    <Compile Include="ALM\Qtest\ExportToQtest.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
