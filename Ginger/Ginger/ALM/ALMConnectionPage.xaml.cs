@@ -567,13 +567,13 @@ namespace Ginger.ALM
 
         private void SetLoadPackageButtonContent()
         {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
+            if (string.IsNullOrEmpty(ServerURLTextBox.Text))
             {
-                RQMLoadConfigPackageButton.Content = "Replace";
+                RQMLoadConfigPackageButton.Content = "Load";
             }
             else
             {
-                RQMLoadConfigPackageButton.Content = "Load";
+                RQMLoadConfigPackageButton.Content = "Replace";
             }
 
             if (!string.IsNullOrEmpty(ServerURLTextBox.Text))
