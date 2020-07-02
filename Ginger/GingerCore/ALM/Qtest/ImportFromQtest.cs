@@ -230,8 +230,8 @@ namespace GingerCore.ALM.Qtest
                             stepActivityVar.Name = step.Params.Name;
                             ObservableList<OptionalValue> optionalValuesList = new ObservableList<OptionalValue>();
                             step.Params.Values.ForEach(z => optionalValuesList.Add(new OptionalValue(z)));
-                            ((VariableSelectionList)stepActivityVar).OptionalValuesList = optionalValuesList;
-                            ((VariableSelectionList)stepActivityVar).SetValue(step.Params.Value);
+                            (stepActivityVar).OptionalValuesList = optionalValuesList;
+                            (stepActivityVar).SetValue(step.Params.Value);
                             stepActivity.AddVariable(stepActivityVar);
                         }                                
                     }
