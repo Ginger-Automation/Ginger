@@ -110,7 +110,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Proxy Settings | Host:Port Example: genproxy.amdocs.com:8080")]
+        [UserConfiguredDescription("Proxy Settings | Host:Port Example: [sub-domain.]example.com:8080")]
         public string WebServicesProxy { get; set; }
 
         [UserConfigured]
