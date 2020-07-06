@@ -47,7 +47,6 @@ namespace Ginger.ALM
             InitializeComponent();
 
             mItemsFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
-            ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
             if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 RunWorker(true);

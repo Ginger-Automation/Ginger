@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.Common
         Search, DownloadingMissingPluginPackages,
         GingerLoadingInfo,
         StaticStatusMessage, StaticStatusProcess, PasteProcess,
-        NewVersionAvailable, CleaningLegacyActions
+        NewVersionAvailable, CleaningLegacyActions, PublishingToCentralDB
     }
 
     public static class StatusMsgsPool
@@ -159,7 +159,9 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.DownloadingMissingPluginPackages, new StatusMsg(eStatusMsgType.PROCESS, "Restoring Missing Plugins Packages", "Restoring Missing Plugin Packages..."));
 
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.GingerLoadingInfo, new StatusMsg(eStatusMsgType.PROCESS, "loading", "{0}"));
-            
+
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.PublishingToCentralDB, new StatusMsg(eStatusMsgType.PROCESS, "Publishing...", "{0}"));
+
 
 
         }

@@ -381,6 +381,14 @@ namespace Ginger
             CW.Show();
             GingerCore.General.DoEvents();
 
+            if(WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations!=null)
+            {
+                while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning == true)
+                {
+                    Thread.Sleep(500);
+                    GingerCore.General.DoEvents();
+                }
+            }           
 
             WorkSpace.Instance.Close();
 
@@ -526,12 +534,9 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
-            if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
-            {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-                return;
-            }
-            ALMIntegration.Instance.ALMDefectsProfilesPage();
+            //open defect profile page for each almtype
+            ALMDefectsProfilesPage defectsProfilesPage = new ALMDefectsProfilesPage();
+            defectsProfilesPage.ShowAsWindow();
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)

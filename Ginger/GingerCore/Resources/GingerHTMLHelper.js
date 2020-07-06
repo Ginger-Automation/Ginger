@@ -406,6 +406,10 @@ function define_GingerLib() {
             else if (ControlAction == "ScrollUp") {
                 return GingerLib.ScrollUp(el, Value);
             }
+            else if (ControlAction == "GetAttrValue")
+            {
+                return GingerLib.GetAttributeValue(el, Value);
+            }
                 //TODO: Add More actions handling here
 
             else {
@@ -1267,6 +1271,20 @@ function define_GingerLib() {
             Elems.push(el.options[i].text);
         }
         pl.AddValueList(Elems);
+        pl.ClosePackage();
+        return pl;
+    }
+
+    GingerLib.GetAttributeValue = function (el,attribute) {
+        
+        var attributValue = el.getAttribute(attribute);
+
+        if (attributValue == null) {
+            return new GingerErrorPayLoad(404, attribute + " Attribute Not Found.");
+        }
+
+        var pl = new GingerPayLoad("Attribute Value");
+        pl.AddValueString(attributValue.replace(/GingerHighlight/g,''));
         pl.ClosePackage();
         return pl;
     }

@@ -590,9 +590,16 @@ namespace Ginger.Repository
         //}
 
        
-
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
+        public string GetALMConfig()
         {
+            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
+        }
+
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType)
+        {
+            //update alm type to open defect
+            ALMIntegration.Instance.UpdateALMType(almType);
+
             Dictionary<Guid, string> defectsOpeningResults;
             if ((defectsForOpening != null) && (defectsForOpening.Count > 0))
             {
@@ -611,6 +618,9 @@ namespace Ginger.Repository
                     }
                 }
             }
+
+            //Set back Default Alm
+            ALMIntegration.Instance.UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
         }
 
         public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)

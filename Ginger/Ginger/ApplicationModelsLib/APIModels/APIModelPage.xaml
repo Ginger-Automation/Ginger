@@ -19,7 +19,10 @@
 
             <StackPanel Orientation="Vertical">
                 <StackPanel  Margin="5,0,10,0">
-                    <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                        <UserControlsLib1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                    </StackPanel>
                     <TextBox x:Name="txtName" Style="{StaticResource $TextBoxStyle}" FontSize="14" FontWeight="Bold" />
                 </StackPanel>
 

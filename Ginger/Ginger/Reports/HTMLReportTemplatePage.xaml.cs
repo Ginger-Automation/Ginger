@@ -206,6 +206,7 @@ namespace Ginger.Reports
         {
             SetIsDefualtImage();
             NewTemplateNameTextBox.Text = _HTMLReportConfiguration.Name.ToString();
+            xShowIDUC.Init(_HTMLReportConfiguration);
             TemplateDescriptionTextBox.BindControl(_HTMLReportConfiguration, nameof(HTMLReportConfiguration.Description));
             htmlShowFirstIterationOnRadioBtn.IsChecked = _HTMLReportConfiguration.ShowAllIterationsElements;
             htmlShowFirstIterationOffRadioBtn.IsChecked = !_HTMLReportConfiguration.ShowAllIterationsElements;

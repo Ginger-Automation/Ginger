@@ -76,7 +76,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRestClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
     </Reference>
@@ -209,7 +209,7 @@
       <HintPath>..\packages\MySql.Data.8.0.16\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=4.0.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.4.0.7\lib\net451\Npgsql.dll</HintPath>
@@ -243,14 +243,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\QCRestClient.dll</HintPath>
     </Reference>
+    <Reference Include="QTestAPI">
+      <HintPath>DLLs\QTestAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Rally.RestApi, Version=3.3.1.0, Culture=neutral, PublicKeyToken=09c9d263d3ce713f, processorArchitecture=MSIL">
       <HintPath>..\packages\Rally.RestApi.3.3.1\lib\net45\Rally.RestApi.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="RQMExport, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -581,7 +581,6 @@
     <Compile Include="Actions\XML\ActXMLTagValidation.cs" />
     <Compile Include="Actions\XML\ActXMLProcessing.cs" />
     <Compile Include="Actions\XML\XMLProcessor.cs" />
-    <Compile Include="ALM\ALMConfig.cs" />
     <Compile Include="ALM\ALMCore.cs" />
     <Compile Include="ALM\JiraCore.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraExportManager.cs" />
@@ -591,6 +590,9 @@
     <Compile Include="ALM\JIRA\JiraTest.cs" />
     <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
     <Compile Include="ALM\JIRA\JiraTestStep.cs" />
+    <Compile Include="ALM\QtestCore.cs" />
+    <Compile Include="ALM\Qtest\ExportToQtest.cs" />
+    <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
     <Compile Include="ALM\QCRestAPI\ExportToQCRestAPI.cs" />
     <Compile Include="ALM\QCRestAPI\ImportFromQCRest.cs" />
@@ -605,6 +607,12 @@
     <Compile Include="ALM\QC\QCTSTestParameter.cs" />
     <Compile Include="ALM\QC\QCTSTestRun.cs" />
     <Compile Include="ALM\QC\QCTSTestStep.cs" />
+    <Compile Include="ALM\Qtest\QtestTestRun.cs" />
+    <Compile Include="ALM\Qtest\QtestTestSuite.cs" />
+    <Compile Include="ALM\Qtest\QtestTest.cs" />
+    <Compile Include="ALM\Qtest\QtestTestParameter.cs" />
+    <Compile Include="ALM\Qtest\QtestTestStep.cs" />
+    <Compile Include="ALM\Qtest\QtestConnect.cs" />
     <Compile Include="ALM\RallyCore.cs" />
     <Compile Include="ALM\Rally\ImportFromRally.cs" />
     <Compile Include="ALM\Rally\RallyConnect.cs" />
@@ -834,6 +842,7 @@
     <Content Include="DLLs\QCRestClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="DLLs\RestSharp.dll" />
     <Content Include="DLLs\RQMExport.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -102,7 +102,6 @@ namespace GingerCore.Actions
 
         string DataBuffer="";
         string ErrorBuffer="";
-
         public override String ActionType
         {
             get
@@ -141,7 +140,7 @@ namespace GingerCore.Actions
         }
         public override void Execute()
         {
-            if (ScriptName == null)
+            if (ScriptName == null && ScriptCommand == eScriptAct.Script)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Script file not Selected. Kindly select suitable file");
                 this.Error = "Script file not loaded. Kindly select suitable file";
@@ -149,6 +148,8 @@ namespace GingerCore.Actions
             }
             DataBuffer = "";
             ErrorBuffer = "";
+            string TempFileName = "";
+
             System.Diagnostics.Process p = new System.Diagnostics.Process();
             p.StartInfo.CreateNoWindow = true;
             p.StartInfo.UseShellExecute = false;
@@ -159,14 +160,6 @@ namespace GingerCore.Actions
             switch (ScriptInterpreterType)
             {
                 case eScriptInterpreterType.BAT:
-                    if (File.Exists(GetSystemDirectory() + @"\cmd.exe"))
-                    {
-                        p.StartInfo.FileName = GetSystemDirectory() + @"\cmd.exe";
-                    }
-                    else
-                    {
-                        p.StartInfo.FileName = @"cmd";
-                    }
                     break;
                 case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.VBS:
@@ -194,28 +187,88 @@ namespace GingerCore.Actions
                     p.StartInfo.WorkingDirectory = ScriptPath;
             }
             else
-                p.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\scripts\"); 
+                p.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\scripts\");
             try
             {
                 string Params = GetCommandText(this);
-                p.StartInfo.Arguments ="\""+ ScriptName +"\" "+ Params;
-                if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
-                    p.StartInfo.Arguments = " /k " + ScriptName + " " + Params;
-            
-                    p.Start();
-                           
-            p.BeginOutputReadLine();
-            p.BeginErrorReadLine();
-            p.WaitForExit();
-            while (!p.HasExited)
-            {
-                Thread.Sleep(100);
-            }
+                if (ScriptCommand == eScriptAct.Script)
+                {
+                    if (ScriptInterpreterType == eScriptInterpreterType.BAT)
+                    {
+                        p.StartInfo.FileName = System.IO.Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
+                        p.StartInfo.Arguments = Params;
+                    }
+                    else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
+                    {
+                        p.StartInfo.Arguments = " /k " + ScriptName + " " + Params;
+                    }
+                    else
+                    {
+                        p.StartInfo.Arguments = "\"" + ScriptName + "\" " + Params;
+                    }
+                }
+                else
+                {
+                    if (ScriptInterpreterType == eScriptInterpreterType.VBS)
+                    {
+                        TempFileName = CreateTempFile("vbs");
+                    }
+                    else if (ScriptInterpreterType == eScriptInterpreterType.BAT)
+                    {
+                        TempFileName = CreateTempFile("bat");
+                        p.StartInfo.FileName = TempFileName;
+                    }
+                    else if (ScriptInterpreterType == eScriptInterpreterType.Other)
+                    {
+                        if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("cmd.exe"))
+                        {
+                            TempFileName = CreateTempFile("cmd");
+                        }
+                        else if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("powershell.exe"))
+                        {
+                            TempFileName = CreateTempFile("ps1");
+                            p.StartInfo.Arguments = @"-executionpolicy bypass -file .\" + TempFileName + " " + Params;
+                        }
+                        else if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("python.exe"))
+                        {
+                            TempFileName = CreateTempFile("py");
+                        }
+                        else if (ScriptInterpreter != null && ScriptInterpreter.ToLower().Contains("perl.exe"))
+                        {
+                            TempFileName = CreateTempFile("pl");
+                        }
+                        else
+                        {
+                            //TODO: Need to create temp file based on the selected interpreter
+                            this.Error = "This type of script is not supported.";
+                        }
+                    }
+                    
+                    if (string.IsNullOrEmpty(p.StartInfo.Arguments) && ScriptInterpreterType != eScriptInterpreterType.BAT)
+                    {
+                        p.StartInfo.Arguments = "\"" + TempFileName + "\"";
+                    }
+                    File.WriteAllText(TempFileName, Params);
+                }
+                
+                p.Start();
+
+                p.BeginOutputReadLine();
+                p.BeginErrorReadLine();
+                p.WaitForExit();
+                while (!p.HasExited)
+                {
+                    Thread.Sleep(100);
+                }
             }
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, e.Message);
                 this.Error = "Failed to execute the script. Details: " + e.Message;
+            }
+            finally
+            {
+                DeleteTempFile(TempFileName);
             }
             if (!string.IsNullOrEmpty(ErrorBuffer))
             {
@@ -249,39 +302,36 @@ namespace GingerCore.Actions
                     sRC = sRC.Substring(i + GingerRCStart.Length , i2 - i - GingerRCEnd.Length-2);
                 }
             }
-
-            if (i>=0 && i2> 0)
-            {             
-                    string[] RCValues = sRC.Split('\n');
-                    foreach (string RCValue in RCValues)
+            if (i >= 0 && i2 > 0)
+            {
+                string[] RCValues = sRC.Split('\n');
+                foreach (string RCValue in RCValues)
+                {
+                    if (RCValue.Length > 0) // Ignore empty lines
                     {
-                        if (RCValue.Length > 0) // Ignore empty lines
-                        {                                                                
-                            string Param;
-                            string Value;
-                            i = RCValue.IndexOf('=');
-                            if (i > 0) 
-                            {
-                                Param = RCValue.Substring(0, i);
-                                //the rest is the value
-                                Value = RCValue.Substring(Param.Length + 1);
-                            }
-                            else
-                            {
-                                // in case of bad RC not per Ginger style we show it as "?" with value
-                                Param = "???";
-                                Value = RCValue;
-                            }
-                            AddOrUpdateReturnParamActual(Param, Value);
-                      }
+                        string Param;
+                        string Value;
+                        i = RCValue.IndexOf('=');
+                        if (i > 0)
+                        {
+                            Param = RCValue.Substring(0, i);
+                            //the rest is the value
+                            Value = RCValue.Substring(Param.Length + 1);
+                        }
+                        else
+                        {
+                            // in case of bad RC not per Ginger style we show it as "?" with value
+                            Param = "???";
+                            Value = RCValue;
+                        }
+                        AddOrUpdateReturnParamActual(Param, Value);
                     }
-              
-                
+                }
             }
             else
             {
                 //No params found so return the full output
-                AddOrUpdateReturnParamActual("???", sRC);                
+                AddOrUpdateReturnParamActual("???", sRC);
             }
         }
         public string GetCommandText(ActScript act)
@@ -303,6 +353,46 @@ namespace GingerCore.Actions
                 default:
                     Reporter.ToUser(eUserMsgKey.UnknownConsoleCommand, act.ScriptCommand);
                     return "Error - unknown command";
+            }
+        }
+
+        string CreateTempFile(string extenion)
+        {
+            string fileName = string.Empty;
+            try
+            {
+                if (!string.IsNullOrEmpty(SolutionFolder))
+                {
+                    fileName = Path.Combine(SolutionFolder, @"Documents\scripts\", Guid.NewGuid().ToString() + "." + extenion);
+                }
+                else
+                {
+                    fileName = Path.GetTempPath() + Guid.NewGuid().ToString() + "." + extenion;
+                }
+            }
+            catch (Exception ex)
+            {
+                //this to overcome speical IT settings which doesn't allow local personal folders
+                fileName = "" + Environment.GetFolderPath(Environment.SpecialFolder.InternetCache) + @"\" + Guid.NewGuid().ToString() + "." + extenion;
+            }
+            return fileName;
+        }
+
+        void DeleteTempFile(string filePath)
+        {
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                if (File.Exists(filePath))
+                {
+                    try
+                    {
+                        File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+                    }
+                }
             }
         }
     }

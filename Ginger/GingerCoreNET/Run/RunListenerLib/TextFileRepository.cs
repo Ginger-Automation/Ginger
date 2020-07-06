@@ -33,6 +33,8 @@ using System.IO;
 using Amdocs.Ginger.Common.GeneralLib;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -188,7 +190,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
+            ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
             base.SetReportRunSet(runSetReport, logFolder);
+            
             if (logFolder == null)
             {
                 SaveObjToReporsitory(runSetReport, Path.Combine(runSetReport.LogFolder,"RunSet.txt"));
@@ -228,6 +232,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal override void StartRunSet()
         {
             return;
+        }
+
+        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -994,6 +994,8 @@ namespace Ginger.Run
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in Run Action", ex);
+                act.Error = act.Error + "\nException in Run Action " + ex.Message;
+                act.Status = eRunStatus.Failed;
             }
         }
 
@@ -1420,18 +1422,24 @@ namespace Ginger.Run
 
         public void ProcessInputValueForDriver(Act act)
         {
-            //Handle all input values, create Value for Driver for each            
-
+            //Handle all input values, create Value for Driver for each  
             if (act.ValueExpression == null)
-            {                
+            {
                 act.ValueExpression = new ValueExpression(ProjEnvironment, CurrentBusinessFlow, DSList);
             }
             act.ValueExpression.DecryptFlag = true;
             foreach (var IV in act.InputValues)
             {
                 if (!string.IsNullOrEmpty(IV.Value))
-                {                     
-                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                {
+                    try
+                    {
+                        IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                    }
                 }
                 else
                 {
@@ -1448,8 +1456,15 @@ namespace Ginger.Run
                     foreach (var IV in subList)
                     {
                         if (!string.IsNullOrEmpty(IV.Value))
-                        {                            
-                            IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                        {
+                            try
+                            {
+                                IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                            }
                         }
                         else
                         {
@@ -3834,7 +3849,7 @@ namespace Ginger.Run
             }
         }
 
-        private void SetNextBusinessFlowsBlockedStatus()
+        public void SetNextBusinessFlowsBlockedStatus()
         {
             foreach (BusinessFlow bf in BusinessFlows.Where(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
             {
@@ -4440,7 +4455,7 @@ namespace Ginger.Run
             }
         }
 
-        private void GiveUserFeedback()
+        public void GiveUserFeedback()
         {
             uint eventTime = RunListenerBase.GetEventTime();
             foreach (RunListenerBase runnerListener in mRunListeners)

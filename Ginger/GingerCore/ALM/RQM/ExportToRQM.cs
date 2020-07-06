@@ -73,7 +73,7 @@ namespace GingerCore.ALM.RQM
                 return false;
             }
 
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
 
             // 
             // get data about execution records per current test plan - start
@@ -92,10 +92,10 @@ namespace GingerCore.ALM.RQM
                 RQMProject currentRQMProjectMapping;
                 if (RQMProjectList.RQMProjects.Count > 0)
                 {
-                    currentRQMProjectMapping = RQMProjectList.RQMProjects.Where(x => x.Name == ALMCore.AlmConfig.ALMProjectName || x.Name == "DefaultProjectName").FirstOrDefault();
+                    currentRQMProjectMapping = RQMProjectList.RQMProjects.Where(x => x.Name == ALMCore.DefaultAlmConfig.ALMProjectName || x.Name == "DefaultProjectName").FirstOrDefault();
                     if (currentRQMProjectMapping != null)
                     {
-                        testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMProjectName, GetExportedIDString(businessFlow.ExternalID, "RQMID"));
+                        testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, GetExportedIDString(businessFlow.ExternalID, "RQMID"));
 
                         if (testPlan == null)
                         {
@@ -130,7 +130,7 @@ namespace GingerCore.ALM.RQM
             // Updating of Execution Record Results (test plan level)
             try
             {
-                resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
+                resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
             }
             catch
             {
@@ -145,7 +145,7 @@ namespace GingerCore.ALM.RQM
                 {
                     if ((rQMTestSuite.ACL_TestSuite_Copy != null) && (rQMTestSuite.TestSuiteExecutionRecord.CurrentTestSuiteResult.ACL_TestSuiteLog_Copy != null))
                     {
-                        resultInfo = RQMConnect.Instance.RQMRep.CreateTestSuiteLog(loginData, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, rQMTestSuite.ACL_TestSuite_Copy, rQMTestSuite.TestSuiteExecutionRecord.CurrentTestSuiteResult.ACL_TestSuiteLog_Copy);
+                        resultInfo = RQMConnect.Instance.RQMRep.CreateTestSuiteLog(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, rQMTestSuite.ACL_TestSuite_Copy, rQMTestSuite.TestSuiteExecutionRecord.CurrentTestSuiteResult.ACL_TestSuiteLog_Copy);
                     }
                 }
             }
@@ -196,9 +196,8 @@ namespace GingerCore.ALM.RQM
                                 currentActivity.ActivityData.AttachmentsColl.Add(reportAttachment);
 
                                 string exportJarFilePath = Assembly.GetExecutingAssembly().Location.Replace(@"GingerCore.dll", "") + @"ALM\\RQM\\JAVA";
-                                resultInfo = RQMConnect.Instance.RQMRep.UploadAttachmetToRQMAndGetIds(loginData, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, exportJarFilePath);
-
-                                resultInfo = RQMConnect.Instance.RQMRep.UpdateTestCaseWithNewAttachmentID(loginData, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity);
+                                RQMConnect.Instance.RQMRep.UploadAttachmetToRQMAndGetIds(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, exportJarFilePath);
+                                RQMConnect.Instance.RQMRep.UpdateTestCaseWithNewAttachmentID(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity);
 
                                 //Attaching Zip file - finish
                                 System.IO.File.Delete(zipFileName);
@@ -232,7 +231,7 @@ namespace GingerCore.ALM.RQM
         {
             try
             {
-                LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+                LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
 
                 if (string.IsNullOrEmpty(activGroup.ExternalID))
                 {
@@ -266,7 +265,7 @@ namespace GingerCore.ALM.RQM
                                 testSuite.ACL_TestSuite_Copy = new TestSuite();
                                 testSuite.ACL_TestSuite_Copy.TestSuiteName = testSuite.Name;
                                 testSuite.ACL_TestSuite_Copy.TestSuiteExportID = testSuite.RQMID;
-                                resultInfo = RQMConnect.Instance.RQMRep.CreateTestSuiteExecutionRecord(loginData, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, testSuite.ACL_TestSuite_Copy, bfExportedID, businessFlow.Name.ToString());
+                                resultInfo = RQMConnect.Instance.RQMRep.CreateTestSuiteExecutionRecord(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, testSuite.ACL_TestSuite_Copy, bfExportedID, businessFlow.Name.ToString());
 
                                 if (resultInfo.IsSuccess)
                                 {
@@ -288,7 +287,7 @@ namespace GingerCore.ALM.RQM
                             // after creating of execution record at RQM and as object at Ginger (or checking that it's exists)
                             // need to create testsuiteLOG on it and add test caseexecution records on it Ginger (the objects at RQM will be created after loop)
                             ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
-                            resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivityWithInTestSuite(loginData, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, businessFlow.Name, testSuite.Name.ToString());
+                            resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivityWithInTestSuite(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, businessFlow.Name, testSuite.Name.ToString());
                             if (resultInfo.IsSuccess)
                             {
                                 if ((testSuite.TestSuiteExecutionRecord.TestSuiteResults == null) || (testSuite.TestSuiteExecutionRecord.TestSuiteResults.Count == 0) || (testSuite.TestSuiteExecutionRecord.CurrentTestSuiteResult == null))
@@ -336,7 +335,7 @@ namespace GingerCore.ALM.RQM
                         else
                         {
                             // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
-                            resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, businessFlow.Name);
+                            resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, businessFlow.Name);
                             if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
                             {
                                 string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
@@ -428,7 +427,7 @@ namespace GingerCore.ALM.RQM
 
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             //ActivityPlan is TestPlan in RQM and BusinessFlow in Ginger
             List<IActivityPlan> testPlanList = new List<IActivityPlan>(); //1
             ActivityPlan testPlan = new ActivityPlan();
@@ -447,7 +446,7 @@ namespace GingerCore.ALM.RQM
                 RQMConnect.Instance.RQMRep.GetConection();
 
                 ResultInfo resultInfo;
-                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.AlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
+                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
 
 
                 // Deal with response from RQM after export
@@ -490,7 +489,7 @@ namespace GingerCore.ALM.RQM
         public bool ExportBusinessFlowToRQM(BusinessFlow businessFlow, ObservableList<ExternalItemFieldBase> ExternalItemsFields, ref string result)
         {
             mExternalItemsFields = ExternalItemsFields;
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
 
             //ActivityPlan is TestPlan in RQM and BusinessFlow in Ginger
             List<IActivityPlan> testPlanList = new List<IActivityPlan>(); //1
@@ -514,7 +513,7 @@ namespace GingerCore.ALM.RQM
 
                 RQMConnect.Instance.RQMRep.GetConection();
 
-                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.AlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.AlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
+                resultInfo = RQMConnect.Instance.RQMRep.ExportTestPlan(loginData, testPlanList, ALMCore.DefaultAlmConfig.ALMServerURL, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, null);
             }
             catch (Exception ex)
             {

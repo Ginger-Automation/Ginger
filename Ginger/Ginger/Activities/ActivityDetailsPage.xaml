@@ -7,6 +7,7 @@
       xmlns:Activities="clr-namespace:Ginger.Actions"
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Ginger.UserControlsLib"
       h:GingerHelpProvider.HelpString="Activity"
       d:DesignHeight="600" d:DesignWidth="800"      
       Title="ActivityConfigurationsPage">
@@ -19,7 +20,10 @@
                     <ColumnDefinition x:Name="xSharedRepoInstanceUCCol" Width="50"/>
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0">
-                    <Label Style="{StaticResource $LabelStyle}" Content="Name:" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                        <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
+                        <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                    </StackPanel>
                     <TextBox x:Name="xActivityNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30"/>
                     <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Top"/>
                     <TextBox x:Name="xActivityDescriptionTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50"></TextBox>
