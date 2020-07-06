@@ -160,14 +160,6 @@ namespace GingerCore.Actions
             switch (ScriptInterpreterType)
             {
                 case eScriptInterpreterType.BAT:
-                    if (File.Exists(GetSystemDirectory() + @"\cmd.exe"))
-                    {
-                        p.StartInfo.FileName = GetSystemDirectory() + @"\cmd.exe";
-                    }
-                    else
-                    {
-                        p.StartInfo.FileName = @"cmd";
-                    }
                     break;
                 case eScriptInterpreterType.JS:
                 case eScriptInterpreterType.VBS:
@@ -201,7 +193,12 @@ namespace GingerCore.Actions
                 string Params = GetCommandText(this);
                 if (ScriptCommand == eScriptAct.Script)
                 {
-                    if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
+                    if (ScriptInterpreterType == eScriptInterpreterType.BAT)
+                    {
+                        p.StartInfo.FileName = System.IO.Path.Combine(p.StartInfo.WorkingDirectory, ScriptName);
+                        p.StartInfo.Arguments = Params;
+                    }
+                    else if (ScriptInterpreter != null && ScriptInterpreter.Contains("cmd.exe"))
                     {
                         p.StartInfo.Arguments = " /k " + ScriptName + " " + Params;
                     }
@@ -219,6 +216,7 @@ namespace GingerCore.Actions
                     else if (ScriptInterpreterType == eScriptInterpreterType.BAT)
                     {
                         TempFileName = CreateTempFile("bat");
+                        p.StartInfo.FileName = TempFileName;
                     }
                     else if (ScriptInterpreterType == eScriptInterpreterType.Other)
                     {
@@ -245,7 +243,8 @@ namespace GingerCore.Actions
                             this.Error = "This type of script is not supported.";
                         }
                     }
-                    if (string.IsNullOrEmpty(p.StartInfo.Arguments))
+                    
+                    if (string.IsNullOrEmpty(p.StartInfo.Arguments) && ScriptInterpreterType != eScriptInterpreterType.BAT)
                     {
                         p.StartInfo.Arguments = "\"" + TempFileName + "\"";
                     }
