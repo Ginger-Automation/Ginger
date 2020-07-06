@@ -23,7 +23,14 @@
                             <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Elements Types to Auto Map"/>
                         </Expander.Header>
                         <Expander.Content>
-                            <Ginger:ucGrid x:Name="xAutoMapElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                            <TabControl>
+                                <TabItem Header="Basic Elements">
+                                    <Ginger:ucGrid x:Name="xAutoMapBasicElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                                </TabItem>
+                                <TabItem Header="Advanced Elements">
+                                    <Ginger:ucGrid x:Name="xAutoMapAdvancedElementTypesGrid" AutomationProperties.AutomationId="AutoMapAdvancedElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                                </TabItem>
+                            </TabControl>
                         </Expander.Content>
                     </Expander>
                     <Expander x:Name="xElementLocatorsSettingsExpander" DockPanel.Dock="Top" Visibility="Visible"  IsExpanded="False" Margin="5,0,0,15">
