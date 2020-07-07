@@ -1,0 +1,41 @@
+    <UserControl x:Class="Ginger.UserControlsLib.UCDataMapping"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="320">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="xMappedTypeColumn" Width="50*" MaxWidth="180"/>            
+            <ColumnDefinition x:Name="xMappedValueColumn" Width="50*"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox x:Name="xMappedTypeComboBox" Grid.Column="0" VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" DropDownOpened="xMappedTypeComboBox_DropDownOpened" DropDownClosed="xMappedTypeComboBox_DropDownClosed" Height="20" >
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <ComboBox x:Name="xVariablesComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <ComboBox x:Name="xOptionalValuesComboBox" Grid.Column="1"  VerticalAlignment="Top" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Height="20" FontWeight="Bold" Visibility="Collapsed">
+            <ComboBox.ToolTip>
+                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Self}}">
+                    <TextBlock Text="{Binding SelectionBoxItem}"/>
+                </ToolTip>
+            </ComboBox.ToolTip>
+        </ComboBox>
+        <Button x:Name="xDSConfigBtn" Grid.Column="1" VerticalAlignment="Top" Click="xDSConfigBtn_Click" HorizontalAlignment="Right" Height="21" Width="20" Margin="0,0,0.6,0" Style="{StaticResource $InputButtonStyle}" Visibility="Visible">...</Button>
+        <TextBox x:Name="xDSExpressionTxtbox" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBoxStyle}" FontWeight="Bold" Height="21" Margin="0,0,22,0" IsReadOnly="True" BorderThickness="0,0,0,1" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" Visibility="Visible"></TextBox>
+    </Grid>
+</UserControl>
+    

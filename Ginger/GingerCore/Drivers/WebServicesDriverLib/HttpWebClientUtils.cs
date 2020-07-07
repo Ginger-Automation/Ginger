@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -331,7 +331,7 @@ namespace GingerCore.Actions.WebAPI
             catch (Exception ex)
             {
                 mAct.Error = "Failed to created the HTTP Client";
-                mAct.ExInfo += Environment.NewLine + ex.Message + Environment.NewLine + ex.InnerException;
+                mAct.ExInfo += ex.Message + Environment.NewLine + ex.InnerException;
                 return null;
             }
         }
@@ -408,7 +408,7 @@ namespace GingerCore.Actions.WebAPI
                     return false;
                 }
                 mAct.Error = "Request execution failed, reason: " + WE.Message;
-                mAct.ExInfo += Environment.NewLine + WE.Message;
+                mAct.ExInfo += WE.Message;
             }
             Reporter.ToLog(eLogLevel.DEBUG, "Returning true on the end of the SendRequest method");
             return true;
@@ -439,7 +439,7 @@ namespace GingerCore.Actions.WebAPI
             catch (Exception WE)
             {
                 mAct.Error = "Response include error code, Response Code:" + WE.Message;
-                mAct.ExInfo += System.Environment.NewLine + WE.Message;
+                mAct.ExInfo += WE.Message;
                 return false;
             }
         }

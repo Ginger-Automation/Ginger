@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
@@ -57,9 +58,11 @@ namespace Ginger.Activities
             mActivitiesGroup.SaveBackup();
             mBusinessFlow = parentBusinessFlow;
 
+            xShowIDUC.Init(mActivitiesGroup);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.AutomationPrecentage), BindingMode.OneWay);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivitiesGroup, nameof(RepositoryItemBase.Publish));
 
             SetGroupedActivitiesGridView();
             grdGroupedActivities.DataSourceList = mActivitiesGroup.ActivitiesIdentifiers;
@@ -83,7 +86,7 @@ namespace Ginger.Activities
             grdGroupedActivities.ShowUpDown = Visibility.Visible;
             grdGroupedActivities.ShowDelete = Visibility.Visible;
 
-            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another Activity to this Group", BtnAdd_Click);
+            grdGroupedActivities.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Add, "Add Another " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " to this Group", BtnAdd_Click);
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)

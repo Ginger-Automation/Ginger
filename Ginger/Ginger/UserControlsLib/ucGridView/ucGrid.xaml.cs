@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1500,64 +1500,7 @@ public void RemoveCustomView(string viewName)
             return template;
         }
 
-        public static DataTemplate GetStoreToTemplate(string StoreTo, string StoretoValue, ObservableList<string> mVariableList, string VariableList = "", string SupportSetValue = "", string varLabel = "", ObservableList<GlobalAppModelParameter> mAppGlobalParamList = null)//Actreturnva
-        {
-            DataTemplate template = new DataTemplate();
-            FrameworkElementFactory Storeto = new FrameworkElementFactory(typeof(UCStoreTo));
-
-            if (mVariableList != null)
-            {
-                //ObservableList<string> varList = new ObservableList<string>();
-                //foreach (string str in mVariableList)
-                //    varList.Add(str);
-                //Storeto.SetValue(UCStoreTo.ItemsSourceProperty, varList);
-                Storeto.SetValue(UCStoreTo.ItemsSourceProperty, mVariableList);
-            }                
-            else
-            {
-                Binding comboItemsSourceBinding = new Binding(VariableList);
-                comboItemsSourceBinding.Mode = BindingMode.TwoWay;
-                comboItemsSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                Storeto.SetBinding(UCStoreTo.ItemsSourceProperty, comboItemsSourceBinding);
-            }
-
-            if (mAppGlobalParamList != null)
-            {
-                ObservableList<ComboItem> appModelGlobalParamsComboItemsList = new ObservableList<ComboItem>();
-                foreach (GlobalAppModelParameter param in mAppGlobalParamList)
-                {
-                    appModelGlobalParamsComboItemsList.Add(new ComboItem() { text = param.PlaceHolder, Value = param.Guid });
-                }
-
-                Storeto.SetValue(UCStoreTo.ItemsSourceGlobalParamProperty, appModelGlobalParamsComboItemsList);
-            }
-
-            if (varLabel != "")
-            {
-                Storeto.SetValue(UCStoreTo.VarLabelProperty, varLabel);
-            }
-
-            Binding selectedStoreToBinding = new Binding(StoreTo);
-            selectedStoreToBinding.Mode = BindingMode.TwoWay;
-            selectedStoreToBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            Storeto.SetBinding(UCStoreTo.CheckedProperty, selectedStoreToBinding);
-                        
-            Binding selectedValueBinding = new Binding(StoretoValue);
-            selectedValueBinding.Mode = BindingMode.TwoWay;
-            selectedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-            Storeto.SetBinding(UCStoreTo.TextProperty, selectedValueBinding);
-
-            if(SupportSetValue != "")
-            {
-                Binding allowStoreBinding = new Binding(SupportSetValue);
-                allowStoreBinding.Mode = BindingMode.OneWay;
-                allowStoreBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                Storeto.SetBinding(UCStoreTo.AllowStoreProperty, allowStoreBinding);
-            }
-
-            template.VisualTree = Storeto;
-            return template;
-        }
+        
 
         public static DataTemplate getDataColValueExpressionTemplate(string Path,Context context)
         {

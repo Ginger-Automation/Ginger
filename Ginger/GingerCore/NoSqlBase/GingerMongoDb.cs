@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace GingerCore.NoSqlBase
         string DbName;
       
 
-        public bool Connect()
+        public override bool Connect()
         {
             try
             {
@@ -124,6 +124,25 @@ namespace GingerCore.NoSqlBase
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Mongo DB", e);
                 return false;
+            }
+        }
+
+        public override bool MakeSureConnectionIsOpen()
+        {
+            try
+            {
+                if (GetDatabaseList().Contains(DbName))
+                {
+                    return true;
+                }
+                else
+                {
+                    return Connect();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Connect();
             }
         }
 
@@ -251,11 +270,6 @@ namespace GingerCore.NoSqlBase
         }
         public override void PerformDBAction()
         {
-            if (!Connect())
-            {
-                Act.Error = "Failed to connect to Mongo DB";
-                return;
-            }
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = Act.SQL;
             string SQLCalculated = VE.ValueCalculated;

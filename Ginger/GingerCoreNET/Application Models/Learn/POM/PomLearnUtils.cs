@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,8 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
     {
         RepositoryFolder<ApplicationPOMModel> mPomModelsFolder;
         public ApplicationPOMModel POM;
-        public ObservableList<UIElementFilter> AutoMapElementTypesList = new ObservableList<UIElementFilter>();
+        public ObservableList<UIElementFilter> AutoMapBasicElementTypesList = new ObservableList<UIElementFilter>();
+        public ObservableList<UIElementFilter> AutoMapAdvanceElementTypesList = new ObservableList<UIElementFilter>();
         public List<eElementType> SelectedElementTypesList = new List<eElementType>();
         public ObservableList<ElementLocator> ElementLocatorsSettingsList = new ObservableList<ElementLocator>();
         List<eLocateBy> mElementLocatorsList = new List<eLocateBy>();
@@ -144,7 +145,11 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
         public void PrepareLearningConfigurations()
         {
-            SelectedElementTypesList = AutoMapElementTypesList.Where(x => x.Selected == true).Select(x => x.ElementType).ToList();
+            var uIElementList = new List<UIElementFilter>();
+            uIElementList.AddRange(AutoMapBasicElementTypesList.ToList());
+            uIElementList.AddRange(AutoMapAdvanceElementTypesList.ToList());
+
+            SelectedElementTypesList = uIElementList.Where(x => x.Selected).Select(x => x.ElementType).ToList();
             mElementLocatorsList = ElementLocatorsSettingsList.Select(x => x.LocateBy).ToList();           
         }
 

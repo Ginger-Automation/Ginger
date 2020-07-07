@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -631,7 +631,7 @@ namespace GingerCore.ALM.QCRestAPI
             if(QCRestAPIConnect.QcRestClient == null)
             {
                 string qcbin = "qcbin";
-                QCRestAPIConnect.QcRestClient = new QCClient(ALMCore.AlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName, 12);
+                QCRestAPIConnect.QcRestClient = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 12);
             }
 
             if (QCRestAPIConnect.QcRestClient.Login())

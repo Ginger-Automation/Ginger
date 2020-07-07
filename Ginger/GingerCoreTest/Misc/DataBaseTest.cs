@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -361,6 +361,99 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(actDB.DBName, db.Name, "Names");
 
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromAccessConnectionString()
+        {
+            //Arrange
+            string ConString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:/myAccessFile.accdb;Jet OLEDB:Database Password=MyDbPassword;";
+            //Act
+            string Result = General.HidePasswordFromString(ConString);
+            //Assert
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+            Assert.AreEqual(Result.Contains("MyDbPassword"), false);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromOracleConnectionString()
+        {
+            //Arrange
+            string ConStringUsingPwd = "SERVER=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));uid=myUsername;pwd=myPassword;";
+            string ConStringUsingPassword = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=MyHost)(PORT=MyPort))(CONNECT_DATA=(SERVICE_NAME=MyOracleSID)));User Id=myUsername;Password=myPassword;";
+            
+            //Act
+            string ResultPwd = General.HidePasswordFromString(ConStringUsingPwd);
+            string ResultPassword = General.HidePasswordFromString(ConStringUsingPassword);
+            
+            //Assert
+            Assert.AreNotEqual(ConStringUsingPwd, ResultPwd);
+            Assert.AreEqual(ResultPwd.Contains("pwd=*****"), true);
+            Assert.AreEqual(ResultPwd.Contains("myPassword"), false);
+
+            Assert.AreNotEqual(ConStringUsingPassword, ResultPassword);
+            Assert.AreEqual(ResultPassword.Contains("Password=*****"), true);
+            Assert.AreEqual(ResultPassword.Contains("myPassword"), false);
+
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromPostgreSQLConnectionString()
+        {
+            //Arrange
+            string ConString = "Server=127.0.0.1;Port=5432;Database=myDataBase;User Id =myUsername;Password=myPassword;";
+            //Act
+            string Result = General.HidePasswordFromString(ConString);
+            //Assert
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+            Assert.AreEqual(Result.Contains("myPassword"), false);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromMySQLConnectionString()
+        {
+            //Arrange
+            string ConString = "Server=myServerAddress;Database=myDataBase;Uid=myUsername;Pwd=myPassword;";
+            //Act
+            string Result = General.HidePasswordFromString(ConString);
+            //Assert
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Pwd=*****"), true);
+            Assert.AreEqual(Result.Contains("myPassword"), false);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromDB2ConnectionString()
+        {
+            //Arrange
+            string ConString = "Server=myAddress:myPortNumber;Database=myDataBase;UID=myUsername;PWD=myPassword;";
+            //Act
+            string Result = General.HidePasswordFromString(ConString);
+            //Assert
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("PWD=*****"), true);
+            Assert.AreEqual(Result.Contains("myPassword"), false);
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void TestHidePasswordFromSQLServerConnectionString()
+        {
+            //Arrange
+            string ConString = "Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;";
+            //Act
+            string Result = General.HidePasswordFromString(ConString);
+            //Assert
+            Assert.AreNotEqual(ConString, Result);
+            Assert.AreEqual(Result.Contains("Password=*****"), true);
+            Assert.AreEqual(Result.Contains("myPassword"), false);
         }
     }
 }

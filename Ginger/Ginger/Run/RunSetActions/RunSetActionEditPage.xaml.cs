@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,12 +36,13 @@ namespace Ginger.Run.RunSetActions
             InitializeComponent();
             mRunSetAction = RunSetAction;
 
+            xShowIDUC.Init(mRunSetAction);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Name);
             RunAtComboBox.Init(mRunSetAction, RunSetActionBase.Fields.RunAt,mRunSetAction.GetRunOptions());
 
             GingerCore.General.FillComboFromEnumObj(ConditionComboBox, RunSetAction.Condition);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, RunSetActionBase.Fields.Condition);
-
+            
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Status);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, RunSetActionBase.Fields.Errors);
 

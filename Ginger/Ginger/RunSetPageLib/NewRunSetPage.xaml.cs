@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -561,14 +561,15 @@ namespace Ginger.Run
                 mFlowDiagram.CanvasHeight = 240;
                 mFlowDiagram.CanvasWidth = mRunSetConfig.GingerRunners.Count() * 620;
             }
-
         }
+
         void InitRunSetConfigurations()
         {
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
-            TagsViewer.Init(mRunSetConfig.Tags);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunWithAnalyzercheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RunSetConfig.RunWithAnalyzer));
+            BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xShowIDUC.Init(mRunSetConfig);
+            BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
+            TagsViewer.Init(mRunSetConfig.Tags);            
+            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mRunSetConfig, nameof(RepositoryItemBase.Publish));
         }
 
         void InitRunSetInfoSection()
@@ -995,8 +996,7 @@ namespace Ginger.Run
         {
             this.Dispatcher.Invoke(() =>
             {
-                // to check run mode of already created runset
-                SetExecutionModeIcon();
+                // to check run mode of already created runset                
                 SetEnvironmentsCombo();
                 xRunnersCanvasFrame.Refresh();
                 xRunnersCanvasFrame.NavigationService.Refresh();
@@ -1563,7 +1563,7 @@ namespace Ginger.Run
 
             if (mRunSetConfig.GingerRunners.Count == 2)
             {
-                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xExecutionModeBtn, "Click here to set if Runners will run in parallel or in sequential order");
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xRunnersExecutionConfigBtn, "Click here to set if Runners will run in parallel or sequential order plus extra configurations");
             }
         }
         
@@ -1770,25 +1770,12 @@ namespace Ginger.Run
             SaveRunSetConfig();           
         }
         
-        private void SetExecutionModeIcon()
-        {
-            if (RunSetConfig.RunModeParallel)
-            {
-                xExecutionModeBtn.ButtonImageType = eImageType.ParallelExecution;
-                xExecutionModeBtn.ToolTip = "Runners Configured to Run in Parallel, Click to Change it to Run in Sequence";
-            }
-            else
-            {
-                xExecutionModeBtn.ButtonImageType = eImageType.SequentialExecution;
-                xExecutionModeBtn.ToolTip = "Runners Configured to Run in Sequence, Click to Change it to Run in Parallel";
-            }
-        }
-        private void executionMode_Click(object sender, RoutedEventArgs e)
+        private void xRunnersExecutionConfigBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            RunSetConfig.RunModeParallel = (!RunSetConfig.RunModeParallel);
-            SetExecutionModeIcon();
+            RunsetRunnersConfigPage config = new RunsetRunnersConfigPage(mRunSetConfig);
+            config.ShowAsWindow();
         }
 
         private void xBusinessflowListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2026,24 +2013,23 @@ namespace Ginger.Run
         }
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
-            //BusinessFlow bf = (BusinessFlow)(mCurrentBusinessFlowRunnerItem).ItemObject;
-            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
-            for (int i = 0; i < mCurrentSelectedRunner.BusinessflowRunnerItems.IndexOf(mCurrentBusinessFlowRunnerItem); i++)
-                prevBFs.Add((BusinessFlow)((RunnerItemPage)mCurrentSelectedRunner.BusinessflowRunnerItems[i]).ItemObject);
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.Runner, businessFlow, prevBFs);
+            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.Runner, businessFlow);
             varsPage.ShowAsWindow();
         }
         public void viewActivity(Activity activitytoView)
         {
             Activity ac = activitytoView;
             GingerWPF.BusinessFlowsLib.ActivityPage w = new GingerWPF.BusinessFlowsLib.ActivityPage(ac, new Context() { BusinessFlow = mCurrentBusinessFlowRunnerItemObject, Activity=ac }, General.eRIPageViewMode.View);
+            mContext.BusinessFlow.CurrentActivity = activitytoView;
             w.ShowAsWindow();
         }
 
         public void viewAction(Act actiontoView)
         {
+            mContext.BusinessFlow.CurrentActivity = (Activity)(mCurrentActivityRunnerItem).ItemObject;
             Act act = actiontoView;
             ActionEditPage w = new ActionEditPage(act, General.eRIPageViewMode.View,mCurrentBusinessFlowRunnerItemObject,mCurrentActivityRunnerItemObject);
+            
             w.ShowAsWindow();
         }
 
@@ -2546,5 +2532,6 @@ namespace Ginger.Run
         {
             ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
+
     }
 }

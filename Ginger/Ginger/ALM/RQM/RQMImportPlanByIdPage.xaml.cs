@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using amdocs.ginger.GingerCoreNET;
+using GingerCore.ALM;
 
 namespace Ginger.ALM.RQM
 {
@@ -75,8 +76,8 @@ namespace Ginger.ALM.RQM
             testPlanId = txtTestPlanId.Text;
             if (testPlanId != "")
             {
-                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject( WorkSpace.Instance.Solution.ALMServerURL,  WorkSpace.Instance.UserProfile.ALMUserName,
-                     WorkSpace.Instance.UserProfile.ALMPassword,  WorkSpace.Instance.Solution.ALMProject, testPlanId);
+                RQMTestPlan testPlan = RQMConnect.Instance.GetRQMTestPlanByIdByProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName,
+                     ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMProjectName, testPlanId);
                 ImportTestPlan(testPlan);
             }
             else

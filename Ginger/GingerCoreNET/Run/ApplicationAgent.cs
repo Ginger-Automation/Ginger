@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -29,16 +30,6 @@ namespace GingerCore.Platforms
     public class ApplicationAgent : RepositoryItemBase, IApplicationAgent
     {
         private Agent mAgent;
-
-        public  static partial class Fields
-        {
-            public static string Selected = "Selected";
-            public static string AppName = "AppName";
-            public static string AgentName = "AgentName";
-            public static string AppAndAgent = "AppAndAgent";
-            public static string Agent = "Agent";
-        }
-
 
         //Change to target
         private string mAppName;
@@ -53,11 +44,37 @@ namespace GingerCore.Platforms
                 if (mAppName != value)
                 {
                     mAppName = value;
-                    OnPropertyChanged(Fields.AppName);
+                    OnPropertyChanged(nameof(AppName));
                 }
             }
         }
-        
+
+        private Guid mAppID;
+        [IsSerializedForLocalRepository]
+        public Guid AppID
+        {
+            get
+            {
+                if (mAppID == Guid.Empty)
+                {
+                    ApplicationPlatform appPlat = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                    if (appPlat != null)
+                    {
+                        mAppID = appPlat.Guid;
+                    }
+                }
+                return mAppID;
+            }
+            set
+            {
+                if (mAppID != value)
+                {
+                    mAppID = value;
+                    OnPropertyChanged(nameof(AppID));
+                }
+            }
+        }
+
         // No need to serialized as it used only in runtime        
         public Agent Agent 
         {
@@ -71,12 +88,13 @@ namespace GingerCore.Platforms
                     AgentName = mAgent.Name;
                     mAgent.PropertyChanged += Agent_OnPropertyChange;
                 }
-                OnPropertyChanged(Fields.Agent);  
-                OnPropertyChanged(Fields.AgentName);  
-                OnPropertyChanged(Fields.AppAndAgent);                
+                OnPropertyChanged(nameof(Agent));  
+                OnPropertyChanged(nameof(AgentName));
+                OnPropertyChanged(nameof(AgentID));
+                OnPropertyChanged(nameof(AppAndAgent));                
             }
         }
-       // public IAgent agent { get; set; } 
+       
         private string mAgentName;
         [IsSerializedForLocalRepository]
         public string AgentName
@@ -97,7 +115,27 @@ namespace GingerCore.Platforms
             set
             {
                 mAgentName = value;
-                OnPropertyChanged(Fields.AgentName);
+                OnPropertyChanged(nameof(AgentName));
+            }
+        }
+
+        private Guid mAgentID;
+        [IsSerializedForLocalRepository]
+        public Guid AgentID
+        {
+            get
+            {
+                if (Agent != null)
+                {
+                    if (mAgentID != Agent.Guid)
+                        mAgentID = Agent.Guid;
+                }
+                return mAgentID;
+            }
+            set
+            {
+                mAgentID = value;
+                OnPropertyChanged(nameof(AgentID));
             }
         }
 
@@ -122,7 +160,7 @@ namespace GingerCore.Platforms
         {
             if (e.PropertyName == GingerCore.Agent.Fields.Name)
             {
-               OnPropertyChanged(Fields.AgentName);
+               OnPropertyChanged(nameof(AgentName));
             }
         }
 
@@ -151,7 +189,7 @@ namespace GingerCore.Platforms
                 List<IAgent> possibleAgents = new List<IAgent>();
 
                 //find out the target application platform
-                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == AppName).FirstOrDefault();//todo: make it be based on AppID and not name
                 if (ap != null)
                 {
                     ePlatformType appPlatform = ap.Platform;

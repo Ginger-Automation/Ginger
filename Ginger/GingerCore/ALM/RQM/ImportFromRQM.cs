@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -840,11 +840,11 @@ namespace GingerCore.ALM.RQM
 
             RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
             List<IProjectDefinitions> rqmProjectsDataList;
-            string rqmSserverUrl = ALMCore.AlmConfig.ALMServerURL + "/";
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.AlmConfig.ALMUserName, Password = ALMCore.AlmConfig.ALMPassword, Server = ALMCore.AlmConfig.ALMServerURL };
+            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
             IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
             rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-            IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.AlmConfig.ALMProjectName)).FirstOrDefault();
+            IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
             string rqmDomain = currentProj.Prefix;
             string rqmProject = currentProj.ProjectName;
 

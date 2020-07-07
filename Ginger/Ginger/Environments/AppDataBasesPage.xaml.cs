@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -62,10 +62,17 @@ namespace Ginger.Environments
 
         private void grdMain_PreparingCellForEdit(object sender, DataGridPreparingCellForEditEventArgs e)
         {
+            Database selectedDB = (Database)grdAppDbs.CurrentItem;
             if (e.Column.Header.ToString() == nameof(Database.Name))
             {
-                Database selectedDB = (Database)grdAppDbs.CurrentItem;
                 selectedDB.NameBeforeEdit = selectedDB.Name;
+            }
+            if (selectedDB.DBType == Database.eDBTypes.Cassandra)
+            {
+                DataGrid dataGrid = sender as DataGrid;
+                DataGridRow row = (DataGridRow)dataGrid.ItemContainerGenerator.ContainerFromItem(dataGrid.CurrentItem);
+                ToolTipService.SetToolTip(row, new ToolTip { Content = "Expected Format: host:Port/Keyspace/querytimeout=90\nKeyspace and query timeout are optional", Style= FindResource("ToolTipStyle") as Style });
+                ToolTipService.SetShowDuration(row, 15000);//15sec
             }
         }
 
@@ -160,16 +167,7 @@ namespace Ginger.Environments
                 db.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
                 db.ProjEnvironment = mContext.Environment;
                 db.BusinessFlow =  null;
-                if (string.IsNullOrEmpty(db.ConnectionString) && !string.IsNullOrEmpty(db.TNS) && db.TNS.ToLower().Contains("data source=") && db.TNS.ToLower().Contains("password=") && db.TNS.ToLower().Contains("user id="))
-                {
-                    System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
-                    scSB.ConnectionString = db.TNS;
-                    db.TNS = scSB.DataSource;
-                    db.User = scSB.UserID;
-                    db.Pass = scSB.Password;
-                    db.ConnectionString = scSB.ConnectionString;
-                }
-
+                
                 db.CloseConnection();
                 if (db.Connect(true))
                 {
@@ -236,14 +234,39 @@ namespace Ginger.Environments
         {
             Database db = new Database();
             db.Name = "New";
+            db.PropertyChanged += db_PropertyChanged;
             grdAppDbs.DataSourceList.Add(db);
         }
 
         private void SetGridData()
         {
+            foreach (Database db in AppOwner.Dbs)
+            {
+                db.PropertyChanged -= db_PropertyChanged;
+                db.PropertyChanged += db_PropertyChanged;
+            }
             grdAppDbs.DataSourceList = AppOwner.Dbs;
         }
         #endregion Functions
+
+        private void db_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Database db = (Database)sender;
+            if (db.DBType != Database.eDBTypes.Cassandra && db.DBType != Database.eDBTypes.Couchbase && db.DBType != Database.eDBTypes.MongoDb)
+            {
+                if (e.PropertyName == Database.Fields.TNS)
+                {
+                    if (db.CheckUserCredentialsInTNS())
+                    {
+                        db.SplitUserIdPassFromTNS();
+                    }
+                }
+                if (e.PropertyName == Database.Fields.TNS || e.PropertyName == Database.Fields.User || e.PropertyName == Database.Fields.Pass)
+                {
+                    db.CreateConnectionString();
+                }
+            }
+        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

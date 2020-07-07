@@ -1,0 +1,43 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "Runset": {
+    "Exist": true,
+    "Name": "Runset_DataPass",
+    "ID": "a59e85b0-a787-4155-8bbe-4abc4aed44d6",
+    "Runners": [
+      {
+        "Name": "Runner 1",
+        "ID": "6a6b0f08-74cd-4ffe-ab66-77b8b845b27b",
+        "BusinessFlows": [
+          {
+            "Name": "Flow_A",
+            "ID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+            "InputValues": [
+              {
+                "VariableParentName": "Flow_A",
+                "VariableParentID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+                "VariableName": "A_ID",
+                "VariableID": "bde76d0f-a68e-465e-b25c-60365886762a",
+                "VariableCustomizedValue": "676767"
+              },
+              {
+                "VariableParentName": "Flow_A",
+                "VariableParentID": "41bcc59c-ca8d-4e62-acf8-f69c72eb9894",
+                "VariableName": "A_Color",
+                "VariableID": "284891c8-ad7e-41a5-bbf8-4e00e8d578e3",
+                "VariableCustomizedValue": "Blue"
+              },
+              {
+                "VariableParentName": "Flow_A\\Group\\Do-Work",
+                "VariableParentID": "b6a05602-a059-48d9-95cb-1b5878d98fc8",
+                "VariableName": "A_Type",
+                "VariableID": "b6c94841-64ab-46b6-a61d-1d2808c35370",
+                "VariableCustomizedValue": "444"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

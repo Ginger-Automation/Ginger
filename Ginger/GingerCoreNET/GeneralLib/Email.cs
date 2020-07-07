@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -355,6 +355,17 @@ namespace GingerCore.GeneralLib
                 
                 smtp.Send(myMail);
 
+                //clear and dispose attachments
+                if (myMail.Attachments != null)
+                {
+                    foreach (Attachment attachment in myMail.Attachments)
+                    {
+                        attachment.Dispose();
+                    }
+                    myMail.Attachments.Clear();
+                    myMail.Attachments.Dispose();
+                }
+                myMail.Dispose();
                 return true;
             }
             catch (Exception ex)
@@ -375,7 +386,7 @@ namespace GingerCore.GeneralLib
                 {
                     Event = "Failed: " + ex.Message;
                 }
-                Reporter.ToLog(eLogLevel.DEBUG, "Failed to send mail", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to send mail", ex);
 
                 return false;
             }

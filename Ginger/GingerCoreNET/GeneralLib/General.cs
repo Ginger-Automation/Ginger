@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -270,11 +270,11 @@ namespace GingerCoreNET.GeneralLib
         }
 
         public static string CheckDataSource(string DataSourceVE, ObservableList<DataSourceBase> DSList)
-        {
+        {            
             string DSVE = DataSourceVE;
             DataSourceBase DataSource = null;
             DataSourceTable DSTable = null;
-            if (DSVE.IndexOf("{DS Name=") != 0)
+            if (string.IsNullOrEmpty(DataSourceVE) || DSVE.IndexOf("{DS Name=") != 0)
             {
                 return "Invalid Data Source Value : '" + DataSourceVE + "'";
             }
@@ -403,8 +403,15 @@ namespace GingerCoreNET.GeneralLib
                         {
                             xlPackage.Load(stream);
                         }
-                        var ws = xlPackage.Workbook.Worksheets.Add(sheetName);
-                        ws.Cells["A1"].LoadFromDataTable(dataTable, true);
+                        //delete existing worksheet if worksheet with same name already exist
+                        OfficeOpenXml.ExcelWorksheet excelWorksheet = xlPackage.Workbook.Worksheets.FirstOrDefault(x => x.Name == sheetName);
+                        if (excelWorksheet != null)
+                        {
+                            xlPackage.Workbook.Worksheets.Delete(sheetName);
+                        }
+                        excelWorksheet = xlPackage.Workbook.Worksheets.Add(sheetName);
+
+                        excelWorksheet.Cells["A1"].LoadFromDataTable(dataTable, true);
                         File.WriteAllBytes(filePath, xlPackage.GetAsByteArray());
                     }
                     else

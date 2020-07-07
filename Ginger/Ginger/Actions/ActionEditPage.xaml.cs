@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.WindowExplorer;
 using GingerCore;
@@ -199,6 +200,7 @@ namespace Ginger.Actions
 
             BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mAction, nameof(Act.ActionType), BindingMode: BindingMode.OneWay);
             xDescriptionTextBox.BindControl(mAction, nameof(Act.Description));
+            xShowIDUC.Init(mAction);
             xRunDescritpionUC.Init(mContext, mAction, nameof(Act.RunDescription));
             xTagsViewer.Init(mAction.Tags);
 
@@ -642,8 +644,7 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, MaxWidth = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
             GenerateStoreToVarsList();
-            ObservableList<GlobalAppModelParameter> appsModelsGlobalParamsList = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetStoreToTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, mStoreToVarsList, mAppGlobalParamList: appsModelsGlobalParamsList) });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, variabelsSourceList: mStoreToVarsList) });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
@@ -683,11 +684,11 @@ namespace Ginger.Actions
             List<string> tempList = new List<string>();
             if (mActParentBusinessFlow != null)
             {
-                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                tempList = mActParentBusinessFlow.GetAllVariables(mActParentActivity).Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
             }
             else
             {
-                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.VariableType == "String").Select(a => a.Name).ToList();
+                tempList = WorkSpace.Instance.Solution.Variables.Where(a => a.SupportSetValue == true).Select(a => a.Name).ToList();
                 if (mActParentActivity != null)
                 {
                     foreach (GingerCore.Variables.VariableBase var in mActParentActivity.Variables)
@@ -1373,6 +1374,19 @@ namespace Ginger.Actions
             foreach (DataSourceBase ds in mDSList)
                 mDSNames.Add(ds.Name);
             GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
+            // Added Check to get already saved ActOutDataSourceConfig params
+            if (mAction.DSOutputConfigParams.Count > 0)
+            {
+                if (mAction.OutDSParamMapType == null)
+                {
+                    mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
+                }
+                if (mAction.OutDataSourceName == null || mAction.OutDataSourceTableName == null)
+                {
+                    mAction.OutDataSourceName = mAction.DSOutputConfigParams[0].DSName;
+                    mAction.OutDataSourceTableName = mAction.DSOutputConfigParams[0].DSTable;
+                }
+            }
             if (mAction.OutDataSourceName != null && mAction.OutDataSourceTableName != null && mAction.OutDataSourceName != "" && mAction.OutDataSourceTableName != "")
             {
                 xDataSourceNameCombo.SelectedValue = mAction.OutDataSourceName;

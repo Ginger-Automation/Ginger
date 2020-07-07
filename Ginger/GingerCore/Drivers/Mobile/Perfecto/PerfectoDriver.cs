@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Proxy Settings, if set, Proxy will be considered otherwise it will go to system proxy e.g 'genproxy.amdocs.com:8080'")]
+        [UserConfiguredDescription("Proxy Settings, if set, Proxy will be considered otherwise it will go to system proxy e.g '[sub-domain.]example.com:8080'")]
         public string ProxySettings { get; set; }
 
         public bool ConnectedToDevice = false;

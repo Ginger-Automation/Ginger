@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -98,8 +98,7 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public string Where { set; get; }
-        
-        [IsSerializedForLocalRepository]
+
         public string SQL
         {
             get
@@ -266,28 +265,53 @@ namespace GingerCore.Actions
             }
         }
 
+        NoSqlBase.NoSqlBase NoSqlDriver = null;
         private void HandleNoSQLDBAction()
         {
-            NoSqlBase.NoSqlBase NoSqlDriver = null;
-
-            switch(this.DB.DBType)
+            switch (this.DB.DBType)
             {
                 case Database.eDBTypes.Cassandra:
-                    NoSqlDriver= new GingerCassandra(DBValidationType,DB,this);
-                    NoSqlDriver.PerformDBAction();
-                   
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerCassandra))
+                        {
+                            NoSqlDriver = new GingerCassandra(DBValidationType, DB, this);
+                        }
+                    }
                     break;
                 case Database.eDBTypes.Couchbase:
-                    NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
-                    NoSqlDriver.PerformDBAction();
-
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerCouchbase))
+                        {
+                            NoSqlDriver = new GingerCouchbase(DBValidationType, DB, this);
+                        }
+                    }
                     break;
                 case Database.eDBTypes.MongoDb:
-                    NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
-                    NoSqlDriver.PerformDBAction();
-
+                    if (NoSqlDriver == null)
+                    {
+                        NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        if (NoSqlDriver.GetType() != typeof(GingerMongoDb))
+                        {
+                            NoSqlDriver = new GingerMongoDb(DBValidationType, DB, this);
+                        }
+                    }
                     break;
             }
+            NoSqlDriver.MakeSureConnectionIsOpen();
+            NoSqlDriver.PerformDBAction();
         }
 
         private bool SetDBConnection()

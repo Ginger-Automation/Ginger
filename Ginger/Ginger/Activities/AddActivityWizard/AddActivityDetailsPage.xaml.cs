@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ namespace Ginger.BusinessFlowPages
         private void XAddGroupBtn_Click(object sender, RoutedEventArgs e)
         {
             string groupName = string.Empty;
-            if (InputBoxWindow.GetInputWithValidation("New Group", "New Group Name:", ref groupName))
+            if (InputBoxWindow.GetInputWithValidation(GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup,"New"), GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup, "New", "Name:"), ref groupName))
             {
                 if (!string.IsNullOrEmpty(groupName))
                 {

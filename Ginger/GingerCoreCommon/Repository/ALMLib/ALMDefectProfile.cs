@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using Amdocs.Ginger.Common;
+using GingerCoreNET.ALMLib;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -47,6 +49,10 @@ namespace Amdocs.Ginger.Repository
         public string Description { get; set; }
 
         [IsSerializedForLocalRepository]
+        public ALMIntegration.eALMType AlmType { get; set; }
+
+
+        [IsSerializedForLocalRepository]
         public string ReportLowerLevelToShow { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -74,5 +80,16 @@ namespace Amdocs.Ginger.Repository
                 _ALMDefectProfile = value;
             }
         }
+
+        public override void PostSerialization()
+        {
+            if (this.AlmType == 0)
+            {
+                string almType = RepositoryItemHelper.RepositoryItemFactory.GetALMConfig();
+                Enum.TryParse(almType, out ALMIntegration.eALMType AlmType);
+                this.AlmType = AlmType;
+            }
+        }
+        
     }
 }

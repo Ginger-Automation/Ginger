@@ -1,5 +1,5 @@
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -405,6 +405,10 @@ function define_GingerLib() {
             }
             else if (ControlAction == "ScrollUp") {
                 return GingerLib.ScrollUp(el, Value);
+            }
+            else if (ControlAction == "GetAttrValue")
+            {
+                return GingerLib.GetAttributeValue(el, Value);
             }
                 //TODO: Add More actions handling here
 
@@ -1267,6 +1271,20 @@ function define_GingerLib() {
             Elems.push(el.options[i].text);
         }
         pl.AddValueList(Elems);
+        pl.ClosePackage();
+        return pl;
+    }
+
+    GingerLib.GetAttributeValue = function (el,attribute) {
+        
+        var attributValue = el.getAttribute(attribute);
+
+        if (attributValue == null) {
+            return new GingerErrorPayLoad(404, attribute + " Attribute Not Found.");
+        }
+
+        var pl = new GingerPayLoad("Attribute Value");
+        pl.AddValueString(attributValue.replace(/GingerHighlight/g,''));
         pl.ClosePackage();
         return pl;
     }

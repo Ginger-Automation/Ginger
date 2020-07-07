@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,8 +68,9 @@ namespace Amdocs.Ginger.GingerConsole
             {
                 if (args.Count() > 0)
                 {
+                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments...");
                     ProcessArgs(args);                    
-                    Reporter.ToLog(eLogLevel.DEBUG, "Processing command line arguments completed");
+                    Reporter.ToLog(eLogLevel.INFO, "Processing command line arguments completed");
                 }
                 else
                 {
@@ -135,12 +136,12 @@ namespace Amdocs.Ginger.GingerConsole
             WorkSpace.Init(ws, startLocalGrid);
         }
 
-        private static void ProcessArgs(string[] args)
+        private async static void ProcessArgs(string[] args)
         {
             InitWorkSpace(false);                 
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);            
+           await CLI.ExecuteArgs(args);            
         }
 
        

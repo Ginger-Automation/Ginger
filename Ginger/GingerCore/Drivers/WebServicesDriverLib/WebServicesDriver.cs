@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Proxy Settings | Host:Port Example: genproxy.amdocs.com:8080")]
+        [UserConfiguredDescription("Proxy Settings | Host:Port Example: [sub-domain.]example.com:8080")]
         public string WebServicesProxy { get; set; }
 
         [UserConfigured]

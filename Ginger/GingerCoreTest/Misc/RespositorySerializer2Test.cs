@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,9 +19,12 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
+using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace UnitTests.NonUITests
@@ -30,16 +33,26 @@ namespace UnitTests.NonUITests
     [Level1]
     public class RespositorySerializer2Test
     {
+        static TestHelper mTestHelper = new TestHelper();
+        public TestContext TestContext { get; set; }
+
+        NewRepositorySerializer RS = new NewRepositorySerializer();
+
+        string Separator = Path.DirectorySeparatorChar.ToString();
+
         [ClassInitialize]        
-        public static void ClassInitialize(TestContext TC)
+        public static void ClassInitialize(TestContext TestContext)
         {
             //TODO::
+            mTestHelper.ClassInitialize(TestContext);
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(ActValidation).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(BusinessFlow).Assembly);
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-
+            mTestHelper.TestInitialize(TestContext);
         }
 
         [TestMethod]  [Timeout(60000)]
@@ -48,6 +61,46 @@ namespace UnitTests.NonUITests
             //read old xml using old RS
             // read old using RS2, save and load
             //compare
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ConditionValidationTest()
+        {
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "ConditionVal.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Count);
+        }
+
+        public void DBActInputValuesTest()
+        {
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "DBActionInputValuesTest.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "SQL").ToList().Count);
+        }
+        public void ExcelActInputValuesTest()
+        {
+            //Arrange
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "ActExcelInputValuesTest.Ginger.BusinessFlow.xml");
+
+            //Load BF
+            //Act
+            BusinessFlow businessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
+
+            //Assert
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts[0].InputValues.Where(x => x.Param == "ExcelFileName").ToList().Count);
         }
 
         //[Ignore]
@@ -59,11 +112,11 @@ namespace UnitTests.NonUITests
 
         //    //Arrange
         //    //GingerCore.Repository.RepositorySerializerInitilizer OldSR = new GingerCore.Repository.RepositorySerializerInitilizer();
-            
+
 
         //    //GingerCore.Repository.RepositorySerializerInitilizer.InitClassTypesDictionary();
         //    NewRepositorySerializer RS2 = new NewRepositorySerializer();
-            
+
         //    string fileName = Common.getGingerUnitTesterDocumentsFolder() + @"Repository\BigFlow1.Ginger.BusinessFlow.xml";
 
         //    //Act
@@ -82,7 +135,7 @@ namespace UnitTests.NonUITests
         //    // BF2.Activities.Remove(BF2.Activities[10]);
 
         //    //Assert
-            
+
         //    // System.IO.File.WriteAllText(@"c:\temp\BF1.xml", s);
         //   // Assert.AreEqual(78, BF.Activities.Count);
         //    //Assert.AreEqual(78, BF2.Activities.Count);

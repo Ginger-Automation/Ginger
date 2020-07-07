@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Run;
 using Ginger.Reports;
@@ -45,23 +46,23 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
        
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", gingerRunner.Name, null);
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), null);
         }
 
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", gingerRunner.Name, new GingerReport());
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), new GingerReport());
         }
 
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlow = businessFlow;
-            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), new BusinessFlowReport(businessFlow));
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, new BusinessFlowReport(businessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), new BusinessFlowReport(businessFlow));
         }
 
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
@@ -96,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
         {
-            if (Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.ReportAllAlsoToConsole == true)//needed for not derlling the objects if not needed to be reported
+            if (WorkSpace.Instance != null && WorkSpace.Instance.RunningInExecutionMode || Reporter.AppLoggingLevel == eAppReporterLoggingLevel.Debug || Reporter.ReportAllAlsoToConsole == true)//needed for not derlling the objects if not needed to be reported
             {
                 string prefix = string.Empty;
 
@@ -133,27 +134,47 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                 {
                                     string propName = prop.Name;
                                     string propFullName = ((FieldParamsNameCaption)prop.GetCustomAttribute(typeof(FieldParamsNameCaption))).NameCaption;
-                                    object propVal = prop.GetValue(obj);//obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
-                                    string propValue;
-                                    if (propVal != null)
+                                    object propValueobj = prop.GetValue(obj);//obj.GetType().GetProperty(propName, BindingFlags.Public | BindingFlags.Instance).GetValue(obj).ToString();
+                                    string propValueStr = "";
+                                    if (propValueobj != null)
                                     {
-                                        propValue = propVal.ToString();
+                                        //special case for execution time convertion from UTC format
+                                        if (Attribute.IsDefined(prop, typeof(UsingUTCTimeFormat)))
+                                        {
+                                            try
+                                            {
+                                                propValueStr = ((DateTime)propValueobj).ToLocalTime().ToString("dd-MMM-yy HH:mm:ss");
+                                            }
+                                            catch
+                                            {
+                                                propValueStr = propValueobj.ToString();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            propValueStr = propValueobj.ToString();
+                                        }
                                     }
-                                    else
-                                    {
-                                        propValue = "";
-                                    }
-
-                                    stringBuilder.Append(propFullName).Append("= ").Append(propValue).AppendLine();
+                                    
+                                    stringBuilder.Append(propFullName).Append("= ").Append(propValueStr).AppendLine();
                                 }
                             }
-                            catch (Exception) { }
+                            catch (Exception ex) 
+                            {
+                            }
                         }
                     }
                     catch (Exception) { }                  
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, stringBuilder.ToString());
+                if (WorkSpace.Instance.RunningInExecutionMode || Reporter.ReportAllAlsoToConsole == true)
+                {
+                    Reporter.ToLog(eLogLevel.INFO, stringBuilder.ToString());
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, stringBuilder.ToString());
+                }
             }
         }
 

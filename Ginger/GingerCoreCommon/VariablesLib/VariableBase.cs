@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -70,6 +70,9 @@ namespace GingerCore.Variables
         {
             None,
             Variable,
+            GlobalVariable,
+            OutputVariable,
+            ApplicationModelParameter,
             DataSource
         }
 
@@ -510,8 +513,22 @@ namespace GingerCore.Variables
         }
 
 
-        ObservableList<string> mPossibleOutputVariables = new ObservableList<string>();
-        public ObservableList<string> PossibleOutputVariables
+        ObservableList<string> mPossibleVariables = new ObservableList<string>();
+        public ObservableList<string> PossibleVariables
+        {
+            get
+            {
+                return mPossibleVariables;
+            }
+            set
+            {
+                mPossibleVariables = value;
+                OnPropertyChanged(nameof(PossibleVariables));
+            }
+        }
+
+        ObservableList<VariableBase> mPossibleOutputVariables = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> PossibleOutputVariables
         {
             get
             {
@@ -576,6 +593,19 @@ namespace GingerCore.Variables
             }
         }
         public abstract bool SupportSetValue { get; }
+
+        public virtual bool SetValue(string value)
+        {
+            if (this.SupportSetValue)
+            {
+                this.Value = value;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public abstract List<eSetValueOptions> GetSupportedOperations();
 

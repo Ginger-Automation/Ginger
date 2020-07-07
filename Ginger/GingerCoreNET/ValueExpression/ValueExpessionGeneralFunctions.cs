@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
             }
             catch
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "User provided invalid base 64 string for decrypt");
+                Reporter.ToLog(eLogLevel.WARN, "User provided invalid base 64 string for decrypt");
                 return "Invalid Base64 String";
 
             }

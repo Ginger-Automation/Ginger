@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 
@@ -124,5 +125,19 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return true; } }
+
+        public override bool SetValue(string value)
+        {
+            string[] possibleVals = Formula.Split(',');
+            if (possibleVals != null && possibleVals.Contains(value))
+            {
+                Value = value;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

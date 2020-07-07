@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -462,11 +462,8 @@ namespace Ginger.Run
         {
             if (CheckCurrentRunnerIsNotRuning()) return;
 
-            BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            ObservableList<BusinessFlow> prevBFs = new ObservableList<BusinessFlow>();
-            for (int i = 0; i < mBusinessflowRunnerItems.IndexOf((RunnerItemPage)sender); i++)
-                prevBFs.Add((BusinessFlow)((RunnerItemPage)mBusinessflowRunnerItems[i]).ItemObject);
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mRunner, bf, prevBFs);
+            BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;           
+            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mRunner, bf);
             varsPage.ShowAsWindow();
         }
         //Contains event fired for Change of BusinessFlow/Activities/Actions changed

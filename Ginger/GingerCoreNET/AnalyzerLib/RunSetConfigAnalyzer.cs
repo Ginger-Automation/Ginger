@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,8 +19,12 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using GingerCore;
 using GingerCore.Platforms;
+using GingerCore.Variables;
 
 namespace Ginger.AnalyzerLib
 {
@@ -75,8 +79,69 @@ namespace Ginger.AnalyzerLib
                     }
                 }
             }
+
+            //check all configured mapped data still valid
+            foreach (GingerRunner GR in RSC.GingerRunners)
+            {
+                foreach (BusinessFlow bf in GR.BusinessFlows)
+                {
+                    List<VariableBase> inputVars = bf.GetBFandActivitiesVariabeles(true).ToList();
+                    List<VariableBase> optionalVariables = null;
+                    List<VariableBase> optionalOutputVariables = null;
+                    foreach (VariableBase inputVar in inputVars)
+                    {
+                        bool issueExist = false;
+                        Guid mappedGuid = Guid.Empty;
+                        switch (inputVar.MappedOutputType)
+                        {
+                            case VariableBase.eOutputType.Variable:
+                                if (optionalVariables == null)
+                                {
+                                    optionalVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars: true, includePrevRunnersVars: false);
+                                }
+                                issueExist = optionalVariables.Where(x => x.Name == inputVar.MappedOutputValue).FirstOrDefault() == null;
+                                break;
+                            case VariableBase.eOutputType.OutputVariable:
+                                if (optionalOutputVariables == null)
+                                {
+                                    optionalOutputVariables = GR.GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
+                                }                                
+                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
+                                issueExist = optionalOutputVariables.Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                break;
+                            case VariableBase.eOutputType.GlobalVariable:                                
+                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
+                                issueExist = WorkSpace.Instance.Solution.Variables.Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                break;
+                            case VariableBase.eOutputType.ApplicationModelParameter:
+                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
+                                issueExist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>().Where(x => x.Guid == mappedGuid).FirstOrDefault() == null;
+                                break;
+                            case VariableBase.eOutputType.DataSource:
+                                issueExist = string.IsNullOrEmpty(inputVar.MappedOutputValue);
+                                break;
+                        }
+
+                        if (issueExist)
+                        {
+                            //create error
+                            RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
+                            AGR.ItemParent = GR.Name;
+                            AGR.Description = string.Format("Configured input {0} data mapping from type '{1}' is missing", GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.MappedOutputType);
+                            AGR.Details = string.Format("In '{0}' Runner, '{1}' {2}, the configured input {3} '{4}' data mapping from type '{5}' and value '{6}' is missing", GR.Name, bf.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.Name, inputVar.MappedOutputType, inputVar.MappedOutputValue);
+                            AGR.HowToFix = string.Format("Re-configure the missing input {0} data mapping", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                            AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                            AGR.IssueType = eType.Error;
+                            AGR.Impact = "Execution might fail due to wrong data mapping";
+                            AGR.Severity = eSeverity.High;
+                            AGR.Selected = false;
+                        }
+                    }
+                }
+            }
+
             return IssuesList;
-        }
+        }        
 
         static RunSetConfigAnalyzer CreateNewIssue(List<AnalyzerItemBase> IssuesList, RunSetConfig RSC)
         {

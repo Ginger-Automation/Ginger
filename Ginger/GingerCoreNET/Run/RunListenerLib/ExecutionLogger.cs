@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -195,6 +197,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             else
             {
+                gingerReport.GingerRunner = gingerRunner;
                 if (runnerCount != 0)
                 {
                     gingerReport.Seq = runnerCount;
@@ -233,5 +236,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         public abstract string GetLogFolder(string folder);
+
+
+        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
     }
 }

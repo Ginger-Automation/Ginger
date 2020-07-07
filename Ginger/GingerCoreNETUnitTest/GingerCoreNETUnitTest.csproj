@@ -71,13 +71,55 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="DataSource\DataSourceTest.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Reports\NewHTMLReportTest.cs">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="TestResources\CLI\CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLIDynamicJSON_Virtual_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-OutputsPass_Virtual_AllCustomizedTypes.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-OutputsPass_Existing_AllCustomizedTypes.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-OutputsPass_Existing_RegularInputCustomized.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-OutputsPass_Existing_NotCustomized.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyIDs.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-CustomExistingRunset_OnlyNames.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-CustomExistingRunset.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CLI\CLI-Default Run Set.Ginger.AutoRunConfigs.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-NotExisting_OnlyNames.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\CLI\CLI-NotExisting.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Excel\ExportedDS.xlsx">
@@ -374,6 +416,9 @@
     <None Update="TestResources\Solutions\BasicSimple\Agents\Amdo CSP - Agent 1.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\BasicSimple\Applications Models\POM Models\FacebookSignUp.Ginger.ApplicationPOMModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\BasicSimple\BusinessFlows\Business Flow 1.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -395,16 +440,67 @@
     <None Update="TestResources\Solutions\BasicSimple\Reports\TextFileDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\CLI\Agents\Chrome.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Agents\IE.Ginger.Agent.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Applications Models\API Models\CheckPhoneNumber_PhoneVerifySoap.Ginger.ApplicationAPIModel.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Applications Models\Global Models Parameters\AAA.Ginger.GlobalAppModelParameter.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Calculator.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_A.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_B.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_C.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\BusinessFlows\Flow_D.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\DataSources\LiteDB.Ginger.DataSource.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\CLI\Environments\Default.Ginger.Environment.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\CLI\Environments\Env1.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Environments\Env2.Ginger.Environment.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\CLI\Ginger.Solution.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\Solutions\CLI\RunSetConfigs\Calc_Test.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\RunSetConfigs\DataMappingTest.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\Solutions\CLI\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\RunSetConfigs\MultiRunnersStopOnFailureTest.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\RunSetConfigs\Runset_DataPass.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\EmailWebReport\BusinessFlows\Jira Demo.Ginger.BusinessFlow.xml">

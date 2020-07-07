@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,22 +31,6 @@ namespace Ginger.ALM.Repository
     {
         ALMItemsFieldsConfigurationPage mALMFieldsPage = null;
         ALMDefectsProfilesPage mALMDefectsProfilesPage = null;
-
-        public string ALMPassword()
-        {
-            return  WorkSpace.Instance.UserProfile.ALMPassword;
-        }
-
-        public void SetALMPassword(string newPassword)
-        {
-             WorkSpace.Instance.UserProfile.ALMPassword = newPassword;
-        }
-
-        public void SetALMProject(KeyValuePair<string, string> project)
-        {
-            WorkSpace.Instance.Solution.ALMProject = project.Value;
-            WorkSpace.Instance.Solution.ALMProjectKey = project.Key;
-        }
 
         public abstract bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle);
         public abstract string SelectALMTestPlanPath();

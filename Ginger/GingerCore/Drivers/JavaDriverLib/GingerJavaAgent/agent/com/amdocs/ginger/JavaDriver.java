@@ -1,5 +1,5 @@
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -310,7 +310,6 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 						+ "" + LocateBy + "," 
 						+ "" + LocateValue + ","
 						+ "" + Value);
-			
 				PayLoad plrc= HandleElementAction(LocateBy, LocateValue, ControlAction, Value,"", "");
 			return plrc;			
 		}		
@@ -1113,7 +1112,10 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			if(ControlAction.equalsIgnoreCase("Click")|| ControlAction.equalsIgnoreCase("Select")||
 					ControlAction.equalsIgnoreCase("GetControlProperty")
 					||ControlAction.equalsIgnoreCase("AsyncSelect")
-					||ControlAction.equalsIgnoreCase("SelectByIndex"))
+					||ControlAction.equalsIgnoreCase("SelectByIndex")
+					||ControlAction.equalsIgnoreCase("AsyncClick")
+					||ControlAction.equalsIgnoreCase("DoubleClick"))
+				
 			{
 				if(mValueToSelect!=null && !mValueToSelect.isEmpty())
 				{
@@ -1131,7 +1133,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 	{
 		implicitBrowserWait = (implicitBrowserWait > 0) ? implicitBrowserWait : mCommandTimeout;
 		
-		Component browser = FindElementWithImplicitSync(LocateBy, LocateValue);
+		Component browser = FindElementWithImplicitSync(LocateBy, LocateValue,true);
 					
 		if (browser != null)
 		{
@@ -1513,7 +1515,7 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 	
 
 	
-	private Component FindElementWithImplicitSync(String LocateBy, String LocateValue)
+	private Component FindElementWithImplicitSync(String LocateBy, String LocateValue, boolean checkElementEnabled)
 	{
 
 		Component comp=mSwingHelper.FindElement(LocateBy,LocateValue);
@@ -1539,9 +1541,16 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			{
 				comp=mSwingHelper.FindElement(LocateBy, LocateValue);				
 			}
-			else if (comp.isVisible() && comp.isEnabled() && comp.isShowing())
+			else if (comp.isVisible() && comp.isShowing())
 			{				
-				bStopWaiting=true;
+				if (checkElementEnabled ==false)
+				{
+					bStopWaiting=true;
+				}		
+				else if (comp.isEnabled())
+				{
+					bStopWaiting=true;
+				}
 			}		
 			
 			try {
@@ -1565,8 +1574,9 @@ private PayLoad HandleElementAction(String locateBy, String locateValue,
 		Component c=null;		
 			//If the action is for IsEnabled or IsVisible property then no need of sync		
 			if (IsImplicitSyncRequired(controlAction, Value)) 
-			{
-				c = FindElementWithImplicitSync(locateBy, locateValue);
+			{				
+				boolean checkIsEnabled= IsEnabledCheckRequired(controlAction, Value); //If Action is Get Value then skip enabled check but do implicit sync
+				c = FindElementWithImplicitSync(locateBy, locateValue, checkIsEnabled);
 			} 
 			else 
 			{
@@ -1818,6 +1828,11 @@ private PayLoad TypeKeys(Component c,String Value) {
 	
 	private TreePath SearchTreeNodes(JTree tree,String locateValue, StringBuilder searchResult) 
 	{
+		if(locateValue.isEmpty()) 
+		{
+			TreePath rootPath= tree.getPathForRow(0);
+			return rootPath;
+		}
 			
 		List<String> nodes= Utils.SplitStringWithForwardSlash(locateValue);		
 				
@@ -1919,6 +1934,25 @@ private PayLoad TypeKeys(Component c,String Value) {
 		return true;
 	}
 
+	private Boolean IsEnabledCheckRequired(String controlAction, String Value)
+	{
+		if(controlAction.equals("GetValue"))
+		{
+			return false;
+		}
+		else if(controlAction.equals("GetControlProperty"))
+		{
+			if(Value!=null)
+			{
+				if(Value.equals("Value") )
+				{
+					return false;
+				}
+			}		
+		}
+		return true;
+
+	}
 	
 
 	//TODO: fix coordinate to be better with X,Y not string...
@@ -2868,7 +2902,6 @@ private PayLoad GetComponentState(Component c)
 		 if (c instanceof JTree)
 		 {
 			GingerAgent.WriteLog("c instance of JTree");
-			
 			StringBuilder searchResultMessage=new  StringBuilder();
 			TreePath nodePath = SearchTreeNodes(((JTree)c),value,searchResultMessage);
 			if (nodePath != null)
@@ -4351,7 +4384,7 @@ private PayLoad SetComponentFocus(Component c)
 		GingerAgent.WriteLog("Inside Table Action");
 		GingerAgent.WriteLog("controlAction = " + controlAction);
 		GingerAgent.WriteLog("Cell Locator = " + cellLocator.toString());
-		Component ct = FindElementWithImplicitSync(locateBy, locateValue);
+		Component ct = FindElementWithImplicitSync(locateBy, locateValue,true);
 		if (ct == null) 
 		{
 			return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Table Element Not Found by locate value:" + locateValue);

@@ -1,0 +1,82 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "Runset": {
+    "Exist": true,
+    "Name": "Calc_Test",
+    "ID": "2056f2c3-6e8f-4da6-933d-2b0419c8fecb",
+    "EnvironmentName": "Env1",
+    "EnvironmentID": "a3a457f7-a545-4137-840e-33c2bd530791",
+    "RunAnalyzer": false,
+    "Runners": [
+      {
+        "Name": "Runner 1",
+        "ID": "5ab73bd2-60fb-489e-9062-482fd80d97e7",
+        "EnvironmentName": "Env2",
+        "EnvironmentID": "5ab6158b-05b4-4b2c-97f5-bde0f8522f3e",
+        "AppAgentMappings": [
+          {
+            "ApplicationName": "app1",
+            "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
+            "AgentName": "IE",
+            "AgentID": "bdcdb5d7-4166-4cb8-a937-8789d58e8e2f"
+          }
+        ],
+        "BusinessFlows": [
+          {
+            "Name": "Calculator_Test",
+            "ID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
+            "Instance": 1,
+            "InputValues": [
+              {
+                "VariableParentName": "Calculator_Test",
+                "VariableParentID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
+                "VariableName": "DoMultiply?",
+                "VariableID": "ae0a73da-817b-435b-8f92-a960412e7ed1",
+                "VariableCustomizedValue": "No"
+              },
+              {
+                "VariableParentName": "Calculator_Test\\Sum\\Do Sum",
+                "VariableParentID": "9bff4443-2186-46d4-824e-68d068e3e4cc",
+                "VariableName": "SecondNum_ForSum",
+                "VariableID": "4de03f61-031e-41dc-91f0-e689a001bd5a",
+                "VariableCustomizedValue": "44"
+              }
+            ]
+          },
+          {
+            "Name": "Calculator_Test",
+            "ID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
+            "Instance": 2,
+            "InputValues": [
+              {
+                "VariableParentName": "Calculator_Test",
+                "VariableParentID": "8d4572b1-0058-4bcd-8009-cf7f7be75d9c",
+                "VariableName": "DoDivide?",
+                "VariableID": "d9f050b3-3535-4b14-8026-f086029b35e9",
+                "VariableCustomizedValue": "Yes"
+              },
+              {
+                "VariableParentName": "Calculator_Test\\Divide\\Do Divide",
+                "VariableParentID": "4d6949ee-bd24-4b97-be01-f6fc686eeba9",
+                "VariableName": "SecondNum_ForDivide",
+                "VariableID": "c2563db3-2073-4cb4-8147-6db5af758b00",
+                "VariableCustomizedValue": "1"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Operations": [
+      {
+        "$type": "RunsetOperations.MailReportOperationExecConfig, Ginger.ExecuterService.Contracts",
+        "MailSettings": {
+          "MailTo": "bbb@amdocs.com",
+          "Subject": "Test44"
+        },
+        "Name": "Send HTML Report Email",
+        "ID": "82f0bfde-e6b1-4cf5-9826-e480ed8859be"
+      }
+    ]
+  }
+}

@@ -41,7 +41,7 @@
                 <Button x:Name="GridDSVEButton" Content="..." Click="GridDSVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
             </DataTemplate>
             <DataTemplate x:Key="StoreToObject">
-                <UCControl:UCStoreTo x:Name="StoreToObj"/>
+                <UCControl:UCDataMapping x:Name="StoreToObj"/>
             </DataTemplate>
             <DataTemplate x:Key="ClearExpectedValueBtnTemplate">
                 <Button x:Name="ClearExpectedValueBtn" Content="X" Click="GridClearExpectedValueBtn_Click"  Style="{DynamicResource DataGridCellButtonStyle}" ToolTip="Clear Expected Value"/>
@@ -72,7 +72,10 @@
                                         <Label Style="{StaticResource $LabelStyle}" Content="Action Type:" />
                                         <Label x:Name="xTypeLbl" Style="{StaticResource $LabelStyle}" Content="Type" Margin="-5,0,0,0"/>
                                     </StackPanel>
-                                    <Label Style="{StaticResource $LabelStyle}" Content="Description:" DockPanel.Dock="Top" HorizontalAlignment="Left"/>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                        <Label Style="{StaticResource $LabelStyle}" Content="Description:"/>
+                                        <UCControl:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                    </StackPanel>
                                     <TextBox x:Name="xDescriptionTextBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Height="30"/>
                                     <Label Style="{StaticResource $LabelStyle}" Content="Run Description:" DockPanel.Dock="Top"/>
                                     <Actions:UCValueExpression  x:Name="xRunDescritpionUC" DockPanel.Dock="Top" HorizontalAlignment="Stretch"/>

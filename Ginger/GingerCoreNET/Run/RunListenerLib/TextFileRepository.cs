@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ using System.IO;
 using Amdocs.Ginger.Common.GeneralLib;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -188,7 +190,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override void SetReportRunSet(RunSetReport runSetReport, string logFolder)
         {
+            ExecutionLoggerManager.RunSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
             base.SetReportRunSet(runSetReport, logFolder);
+            
             if (logFolder == null)
             {
                 SaveObjToReporsitory(runSetReport, Path.Combine(runSetReport.LogFolder,"RunSet.txt"));
@@ -217,7 +221,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal override void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline)
         {
             if (!offline)
-                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder,executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmss")));
+                ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(Path.Combine(execResultsFolder,executionLoggerHelper.folderNameNormalazing(ExecutionLoggerManager.RunSetReport.Name.ToString()) + "_" + currentExecutionDateTime.ToString("MMddyyyy_HHmmssfff")));
             else
                 ExecutionLoggerManager.RunSetReport.LogFolder = executionLoggerHelper.GetLoggerDirectory(execResultsFolder);
             DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(ExecutionLoggerManager.RunSetReport.LogFolder, maxFolderSize);
@@ -228,6 +232,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         internal override void StartRunSet()
         {
             return;
+        }
+
+        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

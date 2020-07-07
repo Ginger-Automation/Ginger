@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCoreNET.SourceControl;
 using System;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -46,13 +47,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async Task Execute(RunsetExecutor runsetExecutor)
         {            
-            runsetExecutor.RunRunset();            
+            await runsetExecutor.RunRunset();            
         }
 
 
-        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string sConfig = null;
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
@@ -104,7 +105,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             return sConfig;
         }
 
-        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
         {
             cliHelper.ShowAutoRunWindow = true; // // default is true to keep backward compatibility
             using (System.IO.StringReader reader = new System.IO.StringReader(content))
@@ -142,34 +143,53 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                         case "Solution":
                         case "solution":
                             cliHelper.Solution = value;                            
-                            break;
-                        case "Env":
-                        case "env":
-                            cliHelper.Env = value;                        
-                            break;
-                        case "RunSet":
-                        case "runset":
-                            cliHelper.Runset = value;                            
-                            break;
+                            break;                                              
                         case "ShowAutoRunWindow": // Support old style
                         case "showui": // TODO: use CLIOptionClassHelper.GetAttrLongName<RunOptions>(nameof(RunOptions.ShowUI)):
                             cliHelper.ShowAutoRunWindow = bool.Parse(value);
-                            break;
-                        case "RunAnalyzer":
-                        case "analyze":
-                            cliHelper.RunAnalyzer = bool.Parse(value);                            
-                            break;
+                            break;                       
                         case "artifacts-path":
                             cliHelper.TestArtifactsFolder = value;
                             break;
-                        default:
-                            Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
-                            throw new ArgumentException("Unknown argument", param);
+                        //default:
+                        //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                        //    throw new ArgumentException("Unknown argument", param);
                     }
                 }                
             }            
         }
 
+        public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        {
+            using (System.IO.StringReader reader = new System.IO.StringReader(content))
+            {
+                string arg;
+                while ((arg = reader.ReadLine()) != null)
+                {
+                    int i = arg.IndexOf('=');
+                    string param = arg.Substring(0, i).Trim();
+                    string value = arg.Substring(i + 1).Trim();
 
+                    switch (param)
+                    {
+                        case "RunSet":
+                        case "runset":
+                            cliHelper.Runset = value;
+                            break;
+                        case "Env":
+                        case "env":
+                            cliHelper.Env = value;
+                            break;
+                        case "RunAnalyzer":
+                        case "analyze":
+                            cliHelper.RunAnalyzer = bool.Parse(value);
+                            break;
+                        //default:
+                        //    Reporter.ToLog(eLogLevel.ERROR, "Unknown argument: '" + param + "'");
+                        //    throw new ArgumentException("Unknown argument", param);
+                    }
+                }
+            }
+        }
     }
 }

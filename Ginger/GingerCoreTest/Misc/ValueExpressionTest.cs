@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -620,6 +620,32 @@ namespace UnitTests.NonUITests
            Assert.AreEqual(v, "In404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848Your new brightspot Mobile Phone number is: 404-200-3848");
         }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void RegExtractLastChars()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = @"{RegEx Fun=  1 Pat=.+([\d\D]{4})$ P1=abcdefghijkl}";
+            //Act
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "ijkl");
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void RegExtractLastCharsWithNewLine()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = @"{RegEx Fun=  1 Pat=.+([\d\D]{4})$ P1=abcdef" + Environment.NewLine + "ghijkl}";
+            //Act
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "ijkl");
+        }
         [TestMethod]  [Timeout(60000)]
         public void VBS_2_Plus_2()
         {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
         {
             throw new NotImplementedException();
         }
@@ -113,6 +114,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
           return  SourceControlIntegration.GetLatest(path, SourceControl);
         }
 
+        public bool Revert(string path, SourceControlBase SourceControl)
+        {
+            return SourceControlIntegration.Revert(SourceControl, path);
+        }
+
         public SourceControlBase GetNewSVnRepo()
         {
             throw new PlatformNotSupportedException("SVN Repositories are not supported yet on Ginger CLI");
@@ -162,6 +168,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-
+        public string GetALMConfig()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

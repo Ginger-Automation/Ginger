@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -302,7 +302,7 @@ namespace Ginger.ALM.Repository
                 if (!((JiraCore)ALMIntegration.Instance.AlmCore).IsConfigPackageExists())
                     return false;
 
-                ALMIntegration.Instance.SetALMCoreConfigurations();
+                ALMIntegration.Instance.SetALMCoreConfigurations(GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira);
             }
             return true; //Browse Dialog Canceled
         }

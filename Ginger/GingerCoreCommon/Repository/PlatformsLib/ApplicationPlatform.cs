@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 {
     public class ApplicationPlatform : RepositoryItemBase
     {
-        [IsSerializedForLocalRepository]
-        public Guid GUID { get; set; }
+        //[IsSerializedForLocalRepository]
+        //public Guid GUID { get; set; }//Need to be deleted, conflicts with base 'Guid' property
 
         string mAppName;
         [IsSerializedForLocalRepository]
@@ -65,8 +65,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public Guid CoreGUID { get; set; }
+        //[IsSerializedForLocalRepository]
+        //public Guid CoreGUID { get; set; }//needs to be deleted
 
         ePlatformType mPlatform;
         [IsSerializedForLocalRepository]

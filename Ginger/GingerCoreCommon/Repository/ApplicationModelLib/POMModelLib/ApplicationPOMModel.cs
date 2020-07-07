@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -86,6 +86,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         private ObservableList<ElementInfo> mUnMappedElements;
+        /// <summary>
+        /// Been used to identify if UnMappedUIElements were lazy loaded already or not
+        /// </summary>
+        public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) ? mUnMappedElements.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements
         {
@@ -98,6 +103,10 @@ namespace Amdocs.Ginger.Repository
                 if (mUnMappedElements.LazyLoad)
                 {
                     mUnMappedElements.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mUnMappedElements);
+                    }
                 }
                 return mUnMappedElements;
             }
@@ -108,6 +117,11 @@ namespace Amdocs.Ginger.Repository
         }
 
         private ObservableList<ElementInfo> mMappedElements;
+        /// <summary>
+        /// Been used to identify if MappedUIElements were lazy loaded already or not
+        /// </summary>
+        public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) ? mMappedElements.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements
         {
@@ -120,6 +134,10 @@ namespace Amdocs.Ginger.Repository
                 if (mMappedElements.LazyLoad)
                 {
                     mMappedElements.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mMappedElements);
+                    }
                 }
                 return mMappedElements;
             }
@@ -161,12 +179,30 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ScreenShotImage { get { return mScreenShotImage; } set { if (mScreenShotImage != value) { mScreenShotImage = value; OnPropertyChanged(nameof(ScreenShotImage)); } } }
 
+        private eImageType eImageType;
         public override eImageType ItemImageType
         {
             get
             {
-                return eImageType.ApplicationPOMModel;
+                 return eImageType;
             }
+        }
+
+        public void SetItemImageType(ePlatformType platformType)
+        {
+            switch (platformType)
+            {
+                case ePlatformType.Web:
+                    eImageType = eImageType.Globe;
+                    break;
+                case ePlatformType.Java:
+                    eImageType = eImageType.Java;
+                    break;
+                default:
+                    eImageType = eImageType.ApplicationPOMModel;
+                break;
+            }
+            
         }
 
         public override string ItemNameField

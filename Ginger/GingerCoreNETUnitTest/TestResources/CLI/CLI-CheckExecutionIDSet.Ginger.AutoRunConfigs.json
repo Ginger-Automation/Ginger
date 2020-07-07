@@ -1,0 +1,15 @@
+{
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "ExecutionID": "9ab6158b-05b4-9b9c-99f9-bde0f2299f9e",
+  "Runset": {
+    "Exist": true,
+    "Name": "DataMappingTest",
+    "ID": "4d49ecdb-941f-4228-a717-b1a7531555df",
+    "EnvironmentName": "Env2",
+    "EnvironmentID": "5ab6158b-05b4-4b2c-97f5-bde0f8522f3e",
+    "RunAnalyzer": true,
+    "RunInParallel": false
+  }
+}

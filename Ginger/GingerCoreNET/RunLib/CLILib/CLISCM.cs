@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using CommandLine;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -39,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             SCMOptions options = new SCMOptions();
             //options.Solution = solution.Folder;
@@ -91,15 +92,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             Reporter.ToLog(eLogLevel.ERROR, "SCM options are not implemented yet");
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
+        public async Task Execute(RunsetExecutor runsetExecutor)
         {
             // NA            
         }
 
 
-        public void LoadContent(string args, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
-        {
-                        
+        public void LoadGeneralConfigurations(string args, CLIHelper cliHelper)
+        {                        
+        }
+
+        public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        {            
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,6 +73,7 @@ namespace Ginger.Variables
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            xShowIDUC.Init(mVariable);
             mVariable.NameBeforeEdit = mVariable.Name;            
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
@@ -82,6 +83,7 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsInputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsInputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
 
             if (mode ==eEditMode.Global)
             {
@@ -114,6 +116,7 @@ namespace Ginger.Variables
                 xSharedRepoInstanceUC.IsEnabled = false;
                 xSetAsInputValueCheckBox.IsEnabled = false;
                 xSetAsOutputValueCheckBox.IsEnabled = false;
+                xPublishcheckbox.IsEnabled = false;
                 xLinkedvariableCombo.IsEnabled = false;
                 xPublishValueToLinkedVarBtn.IsEnabled = false;
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -111,22 +113,31 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void SetAutoMapElementTypes()
         {
-            if (mWizard.mPomLearnUtils.AutoMapElementTypesList.Count == 0)
+            if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count == 0 || mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count == 0)
             {
                 switch (mAppPlatform)
                 {
                     case ePlatformType.Web:
-                        foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new WebPlatform().GetPlatformElementTypesData().ToList())
-                        {
-                            mWizard.mPomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
-                        }
+                        SetAutoMapPlatformElements(new WebPlatform().GetPlatformElementTypesData().ToList());
                         break;
                     case ePlatformType.Java:
-                        foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in new JavaPlatform().GetPlatformElementTypesData().ToList())
-                        {
-                            mWizard.mPomLearnUtils.AutoMapElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
-                        }
+                        SetAutoMapPlatformElements(new JavaPlatform().GetPlatformElementTypesData().ToList());
                         break;
+                }
+            }
+        }
+
+        private void SetAutoMapPlatformElements(List<PlatformInfoBase.ElementTypeData> elementTypeDataList)
+        {
+            foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in elementTypeDataList)
+            {
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
+                }
+                else
+                {
+                    mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
                 }
             }
         }
@@ -134,7 +145,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         private void SetAutoMapElementTypesGridView()
         {
             //tool bar
-            xAutoMapElementTypesGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllElements));
+            xAutoMapBasicElementTypesGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllBasicElements));
+            xAutoMapAdvancedlementTypesGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllAdvancedElements));
 
             //Set the Data Grid columns            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -144,8 +156,34 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementType), Header = "Element Type", WidthWeight = 100, ReadOnly=true });
             view.GridColsView.Add(new GridColView() { Field = nameof(UIElementFilter.ElementExtraInfo), Header = "Element Extra Info", WidthWeight = 100, ReadOnly = true });
 
-            xAutoMapElementTypesGrid.SetAllColumnsDefaultView(view);
-            xAutoMapElementTypesGrid.InitViewItems();
+            xAutoMapBasicElementTypesGrid.SetAllColumnsDefaultView(view);
+            xAutoMapBasicElementTypesGrid.InitViewItems();
+            xAutoMapAdvancedlementTypesGrid.SetAllColumnsDefaultView(view);
+            xAutoMapAdvancedlementTypesGrid.InitViewItems();
+        }
+
+        private void CheckUnCheckAllAdvancedElements(object sender, RoutedEventArgs e)
+        {
+            if (mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count > 0)
+            {
+                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList[0].Selected;
+                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList)
+                {
+                    elem.Selected = valueToSet;
+                }
+            }
+        }
+
+        private void CheckUnCheckAllBasicElements(object sender, RoutedEventArgs e)
+        {
+            if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count > 0)
+            {
+                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapBasicElementTypesList[0].Selected;
+                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapBasicElementTypesList)
+                {
+                    elem.Selected = valueToSet;
+                }
+            }
         }
 
         private void SetElementLocatorsSettingsGridView()
@@ -161,18 +199,6 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xElementLocatorsSettingsGrid.InitViewItems();
 
             xElementLocatorsSettingsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-        }
-
-        private void CheckUnCheckAllElements(object sender, RoutedEventArgs e)
-        {
-            if (mWizard.mPomLearnUtils.AutoMapElementTypesList.Count > 0)
-            {
-                bool valueToSet = !mWizard.mPomLearnUtils.AutoMapElementTypesList[0].Selected;
-                foreach (UIElementFilter elem in mWizard.mPomLearnUtils.AutoMapElementTypesList)
-                {
-                    elem.Selected = valueToSet;
-                }
-            }
         }
 
         private void XAgentControlUC_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -203,8 +229,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         private void ClearAutoMapElementTypesSection()
         {
-            mWizard.mPomLearnUtils.AutoMapElementTypesList = new ObservableList<UIElementFilter>();
-            xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementTypesList;
+            mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = new ObservableList<UIElementFilter>();
+            xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
+
+            mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = new ObservableList<UIElementFilter>();
+            xAutoMapAdvancedlementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
         }
 
         private void SetAutoMapElementTypesSection()
@@ -212,7 +241,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.xAgentConfigsExpander.IsExpanded = false;
 
             SetAutoMapElementTypes();
-            xAutoMapElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapElementTypesList;
+            xAutoMapBasicElementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapBasicElementTypesList;
+            xAutoMapAdvancedlementTypesGrid.DataSourceList = mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList;
         }
 
         private void SetElementLocatorsSettingsSection()

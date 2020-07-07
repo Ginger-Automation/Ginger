@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ namespace GingerCore.ALM
         }
         public JiraCore()
         {
-            jiraRepObj = new JiraRepository.JiraRepository(AlmConfig.ALMConfigPackageFolderPath);
+            jiraRepObj = new JiraRepository.JiraRepository(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath);
             exportMananger = new JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
@@ -92,7 +92,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
-            AlmConfig.ALMDomain = ALMDomainName;
+            ALMCore.DefaultAlmConfig.ALMDomain = ALMDomainName;
             return jiraConnectObj.GetJiraDomainProjects();
         }
 
@@ -174,7 +174,7 @@ namespace GingerCore.ALM
             string CurrJiraConfigPath = Path.Combine(ALMCore.SolutionFolder, "Configurations", "JiraConfigurationsPackage");
             if (Directory.Exists(Path.Combine(CurrJiraConfigPath, "JiraSettings")))
             {
-                AlmConfig.ALMConfigPackageFolderPath = CurrJiraConfigPath;
+                ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath = CurrJiraConfigPath;
                 jiraConnectObj.CreateJiraRepository();
                 return true;
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Helpers;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -133,6 +135,55 @@ namespace GingerCore.Actions
                 else if (Var.GetType() == typeof(VariableDynamic))
                 {
                     ((VariableDynamic)Var).ValueExpression = this.Value;
+                }
+                else if (Var.GetType() == typeof(VariableNumber))
+                {
+                    try
+                    {
+                        var varNumber = ((VariableNumber)Var);
+                        if (varNumber.CheckNumberInRange(float.Parse(calculatedValue)))
+                        {
+                            varNumber.Value = calculatedValue;
+                        }
+                        else
+                        {
+                            Error = $"The value {calculatedValue} is not in the range, {Var.Name}:-[Min value: {varNumber.MinValue}, Max value: {varNumber.MaxValue}]   {GingerDicser.GetTermResValue(eTermResKey.Variable) }.";
+                            return;
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Error= $"Error occured during SetValue for Variable number type..:- {ex.Message}";
+                        return;
+                    }
+
+                }
+                else if(Var.GetType() == typeof(VariableDateTime))
+                {
+                    var varDateTime = ((VariableDateTime)Var);
+                    try
+                    {
+                        if (!varDateTime.IsValidDateTimeFormat(calculatedValue))
+                        {
+                            Error = $"The Value [{calculatedValue}] is not in correct format, expected format is [{varDateTime.DateTimeFormat}], {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
+                            return;
+                        }
+
+                        if (varDateTime.CheckDateTimeWithInRange(calculatedValue))
+                        {
+                            varDateTime.Value = calculatedValue;
+                        }
+                        else
+                        {
+                            Error = $"The value {calculatedValue} is not in the date range {Var.Name}:-[Min value:{varDateTime.MinDateTime}, Max value:{varDateTime.MaxDateTime}] {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Error= $"Invalid DateTimeFormat,{Var.Name}:-[DateTimeFormat:{varDateTime.DateTimeFormat}] :- {ex.Message}";
+                        return;
+                    }
                 }
             }
             else if (SetVariableValueOption == VariableBase.eSetValueOptions.ResetValue)

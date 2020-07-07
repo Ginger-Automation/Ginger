@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,16 +19,14 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET
 {
@@ -284,6 +282,7 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     actUI = PlatformInfo.GetPlatformAction(null, args);
                 }
+
                 AddActionToBusinessFlow(actUI, einfo);
             }
             catch (Exception ex)

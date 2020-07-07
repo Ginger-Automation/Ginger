@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace GingerCore.NoSqlBase
         
      
 
-        public bool Connect()
+        public override bool Connect()
         {
             try
             {
@@ -62,6 +62,39 @@ namespace GingerCore.NoSqlBase
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Couchbase DB", e);
                 return false;
+            }
+        }
+
+        public override bool MakeSureConnectionIsOpen()
+        {
+            bool res = false;
+            string password = string.Empty;
+            string pass = EncryptionHandler.DecryptString(Db.PassCalculated.ToString(), ref res, false);
+            if (res)
+            {
+                password = pass;
+            }
+            else { password = Db.PassCalculated; }
+            try
+            {
+                if (clusterCB != null)
+                {
+                    var clusterManager = clusterCB.CreateManager(Db.UserCalculated, password);
+                    var buckets = clusterManager.ListBuckets().Value;
+                    if (buckets != null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return Connect();
+                    }
+                }
+                return Connect();
+            }
+            catch (Exception ex)
+            {
+                return Connect();
             }
         }
 
@@ -136,11 +169,6 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            if (!Connect())
-            {
-                Act.Error = "Failed to connect to Couchbase DB";
-                return;
-            }
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);

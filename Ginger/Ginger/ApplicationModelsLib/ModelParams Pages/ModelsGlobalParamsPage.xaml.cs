@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -89,16 +89,17 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {            
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.PlaceHolder), Header = gridPlaceholderHeader, WidthWeight = 100, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.Description), Header = "Description", WidthWeight = 150, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 80, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.PlaceHolder), Header = gridPlaceholderHeader, WidthWeight = 30, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.Description), Header = "Description", WidthWeight = 30, AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.Guid), Header = "ID", WidthWeight = 10, ReadOnly=true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
 
             if (!mSelectionModePage)
             {
                 xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam);
 
                 view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
-                view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 80, AllowSorting = true });
+                view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 20, AllowSorting = true });
 
                 xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));                
                 xModelsGlobalParamsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteSelectedEvent));
@@ -141,6 +142,19 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             xModelsGlobalParamsGrid.AddToolbarTool("@Import_16x16.png", "Import Optional Values For Parameters", new RoutedEventHandler(ImportOptionalValuesForGlobalParameters));
             xModelsGlobalParamsGrid.AddToolbarTool(eImageType.ExcelFile, "Export Parameters to Excel File", new RoutedEventHandler(ExportOptionalValuesForParameters));
             xModelsGlobalParamsGrid.AddToolbarTool(eImageType.DataSource, "Export Parameters to DataSource", new RoutedEventHandler(ExportParametersToDataSource));
+            xModelsGlobalParamsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
+        }
+
+        private void CopySelectedItemID(object sender, RoutedEventArgs e)
+        {
+            if (xModelsGlobalParamsGrid.Grid.SelectedItem != null)
+            {
+                Clipboard.SetText(((RepositoryItemBase)xModelsGlobalParamsGrid.Grid.SelectedItem).Guid.ToString());
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void ImportOptionalValuesForGlobalParameters(object sender, RoutedEventArgs e)

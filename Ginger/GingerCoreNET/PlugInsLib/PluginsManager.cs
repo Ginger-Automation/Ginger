@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -219,7 +219,7 @@ namespace Amdocs.Ginger.Repository
 
         public void CloseAllRunningPluginProcesses()
         {            
-            Reporter.ToConsole(eLogLevel.DEBUG, "Closing all Running Plugin Processes");
+            Reporter.ToLog(eLogLevel.INFO, "Closing all Running Plugins Processes");
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
                 WorkSpace.Instance.LocalGingerGrid.NodeList.Clear();//??? do proper Reset()
@@ -329,13 +329,13 @@ namespace Amdocs.Ginger.Repository
 
                     if (isPrivatePlugin(SolutionPlugin))
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Private plugin folder no need to download");
+                        Reporter.ToLog(eLogLevel.INFO, "Private plugin folder no need to download");
                         continue;   // this is private plugin located on the developer machine will not be able to download from online
                     }
                     
                     if (OnlinePlugins == null)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Getting online plugins index");
+                        Reporter.ToLog(eLogLevel.INFO, "Getting online plugins index");
                         OnlinePlugins = WorkSpace.Instance.PlugInsManager.GetOnlinePluginsIndex();
                     }
 
@@ -347,12 +347,12 @@ namespace Amdocs.Ginger.Repository
                         continue;
                     }
 
-                    Reporter.ToLog(eLogLevel.DEBUG, "Checking plugin release: version=" + SolutionPlugin.PluginPackageVersion);
+                    Reporter.ToLog(eLogLevel.INFO, "Checking plugin release: version=" + SolutionPlugin.PluginPackageVersion);
                     OnlinePluginPackageRelease OPR = OnlinePlugin.Releases.Where(x => x.Version == SolutionPlugin.PluginPackageVersion).FirstOrDefault();
 
                     if (OPR != null)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Plugin version found starting install");
+                        Reporter.ToLog(eLogLevel.INFO, "Plugin version found starting install");
                         OnlinePlugin.InstallPluginPackage(OPR);
                     }
                     else

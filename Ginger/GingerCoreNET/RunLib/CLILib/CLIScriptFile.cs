@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCoreNET.RosLynLib;
 using System;
+using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 {
@@ -45,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string CreateContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
+        public string CreateConfigurationsContent(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             string txt = string.Format("OpenSolution(@\"{0}\");", solution.Folder) + Environment.NewLine;
             txt += string.Format("OpenRunSet(\"{0}\",\"{1}\");", runsetExecutor.RunSetConfig.Name, runsetExecutor.RunsetExecutionEnvironment.Name) + Environment.NewLine;
@@ -57,14 +58,22 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             return txt;
         }
 
-        public void Execute(RunsetExecutor runsetExecutor)
-        {                                    
-            var rc = CodeProcessor.ExecuteNew(mScriptFile);            
+        public void LoadGeneralConfigurations(string content, CLIHelper cliHelper)
+        {
+            mScriptFile = content;
         }
 
-        public void LoadContent(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
+        public void LoadRunsetConfigurations(string content, CLIHelper cliHelper, RunsetExecutor runsetExecutor)
         {
-            mScriptFile = content;            
+            
+        }
+
+        public async Task Execute(RunsetExecutor runsetExecutor)
+        {
+            await Task.Run(() =>
+            {
+                var rc = CodeProcessor.ExecuteNew(mScriptFile);
+            });                   
         }
     }
 }

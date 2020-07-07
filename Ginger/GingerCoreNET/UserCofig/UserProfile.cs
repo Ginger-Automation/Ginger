@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserConfig;
 using GingerCore;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
@@ -365,27 +366,7 @@ namespace Ginger
         }
 
         [IsSerializedForLocalRepository]
-        public string ALMUserName { get; set; }
-
-        public string ALMPassword
-        {
-            get
-            {
-                bool res = false;
-                string pass = EncryptionHandler.DecryptString(EncryptedALMPassword, ref res);
-                if (res && String.IsNullOrEmpty(pass) == false)
-                    return pass;
-                else
-                    return string.Empty;
-            }
-            set
-            {
-                bool res = false;
-                EncryptedALMPassword = EncryptionHandler.EncryptString(value, ref res);
-            }
-        }
-        [IsSerializedForLocalRepository]
-        public string EncryptedALMPassword { get; set; }
+        public ObservableList<ALMUserConfig> ALMUserConfigs { get; set; } = new ObservableList<ALMUserConfig>();
 
         GingerCore.eTerminologyType mTerminologyType;
         [IsSerializedForLocalRepository]
@@ -551,7 +532,7 @@ namespace Ginger
                     {
                         //create backup to the user profile so user won't lose all of it configs in case he went back to old Ginger version
                         //TODO- allow recover from newer User Profile version in code instead creating new user profile
-                        Reporter.ToLog(eLogLevel.DEBUG, "Creating backup copy for the User Profile file");
+                        Reporter.ToLog(eLogLevel.INFO, "Creating backup copy for the User Profile file");
                         File.Copy(UserProfileFilePath, UserProfileFilePath.Replace("Ginger.UserProfile.xml", "Ginger.UserProfile-Backup.xml"), true);
                     }
                     catch(Exception ex2)
@@ -805,6 +786,31 @@ namespace Ginger
 
         [IsSerializedForLocalRepository]
         public List<string> ShownHelpLayoutsKeys = new List<string>();
-
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType == SerializationErrorType.PropertyNotFound)
+            {
+                if (name.ToLower().Contains("alm"))
+                {
+                    ALMUserConfig AlmUserConfig = ALMUserConfigs.FirstOrDefault();
+                    if (AlmUserConfig == null)
+                    {
+                        AlmUserConfig = new ALMUserConfig();
+                        ALMUserConfigs.Add(AlmUserConfig);
+                    }
+                    if (name == "ALMUserName")
+                    {
+                        AlmUserConfig.ALMUserName = value;
+                        return true;
+                    }
+                    if (name == "EncryptedALMPassword")
+                    {
+                        AlmUserConfig.EncryptedALMPassword = value;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

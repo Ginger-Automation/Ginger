@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using GingerCore.Variables;
-using Newtonsoft.Json;
-using System.Data;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Run;
 using GingerCore;
-using Amdocs.Ginger.Run;
+using GingerCore.Variables;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Ginger.Reports
 {
@@ -165,6 +164,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime StartTimeStamp { get{ return mBusinessFlow.StartTimeStamp; }  set { mBusinessFlow.StartTimeStamp = value; }
         }
         
@@ -174,6 +174,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime EndTimeStamp { get { return mBusinessFlow.EndTimeStamp; } set { mBusinessFlow.EndTimeStamp = value; }}
 
         [JsonProperty]
@@ -463,6 +464,22 @@ namespace Ginger.Reports
                     dt.Select("Name  = '" + elementsAfter[0] + "'").FirstOrDefault()["ValueAfterExec"] = elementsAfter[1];
                 }
                 return dt;
+            }
+        }
+
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsNameCaption("Output Variables Details")]
+        public string OutputVariablesDetails
+        {
+            get
+            {
+                StringBuilder outputVars = new StringBuilder();
+                outputVars.AppendLine();
+                foreach (VariableBase var in mBusinessFlow.GetBFandActivitiesVariabeles(includeParentDetails: true, includeOnlySetAsOutputValue: true, includeOnlyPublishedVars: true))
+                {
+                    outputVars.Append(var.ParentName).Append(" | ").Append(var.Name).Append(" = ").Append(var.Value).Append(" | ").Append(var.Description).Append(" | ").Append("ID = ").Append(var.Guid).AppendLine();
+                }
+                return outputVars.ToString();
             }
         }
 

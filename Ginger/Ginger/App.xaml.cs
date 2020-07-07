@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -184,11 +184,19 @@ namespace Ginger
 
             if (mExceptionsDic[ex.Message] <= 3)
             {
-                Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
+                }
             }
 
-            // Clear the err so it will not crash
-            e.Handled = true;
+            Environment.ExitCode = -1;
+
+            if (!WorkSpace.Instance.RunningInExecutionMode)
+            {
+                // Clear the err so it will not crash
+                e.Handled = true;
+            }
         }
 
 
@@ -284,10 +292,10 @@ namespace Ginger
             ShowWindow(handle, SW_SHOW);
         }
 
-        private void RunNewCLI(string[] args)
+        private async void RunNewCLI(string[] args)
         {                    
             CLIProcessor cLIProcessor = new CLIProcessor();
-            cLIProcessor.ExecuteArgs(args);
+           await cLIProcessor.ExecuteArgs(args);
 
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown(Environment.ExitCode);
@@ -303,9 +311,7 @@ namespace Ginger
 
             MainWindow = new MainWindow();
             MainWindow.Show();
-            GingerCore.General.DoEvents();
-
-            MainWindow.Init();
+            GingerCore.General.DoEvents();            
 
             if (WorkSpace.Instance.UserProfile != null)
             {
@@ -315,6 +321,8 @@ namespace Ginger
             {
                 LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType.Default);
             }
+
+            MainWindow.Init();
         }
 
 

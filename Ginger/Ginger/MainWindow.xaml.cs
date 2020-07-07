@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ using Ginger.SolutionGeneral;
 using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
@@ -64,7 +65,7 @@ namespace Ginger
             InitializeComponent();            
             lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
-            
+
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
             Telemetry.eventHandler += TelemetryEventHandler;
@@ -117,6 +118,8 @@ namespace Ginger
                 {
                     xRecentSolutionsMenuItem.Visibility = Visibility.Visible;
                 }
+                xBusinessFlowsListItemText.Text = GingerDicser.GetTermResValue(eTermResKey.BusinessFlows).ToUpper();
+                xRunListItemText.Text = GingerDicser.GetTermResValue(eTermResKey.RunSets).ToUpper();
 
                 //Status Bar            
                 xLogErrorsPnl.Visibility = Visibility.Collapsed;
@@ -378,6 +381,14 @@ namespace Ginger
             CW.Show();
             GingerCore.General.DoEvents();
 
+            if(WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations!=null)
+            {
+                while (WorkSpace.Instance.Solution.LoggerConfigurations.IsPublishToCentralDBRunning == true)
+                {
+                    Thread.Sleep(500);
+                    GingerCore.General.DoEvents();
+                }
+            }           
 
             WorkSpace.Instance.Close();
 
@@ -523,12 +534,9 @@ namespace Ginger
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
         {
-            if(!ALMIntegration.Instance.AlmConfigurations.UseRest && ALMIntegration.Instance.GetALMType() != ALMIntegration.eALMType.Jira)
-            {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI, "");
-                return;
-            }
-            ALMIntegration.Instance.ALMDefectsProfilesPage();
+            //open defect profile page for each almtype
+            ALMDefectsProfilesPage defectsProfilesPage = new ALMDefectsProfilesPage();
+            defectsProfilesPage.ShowAsWindow();
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)

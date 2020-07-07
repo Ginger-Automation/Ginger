@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,13 +37,13 @@ namespace GingerCore.ALM
 
         public override bool ConnectALMServer()
         {
-            return QCRestAPIConnect.ConnectQCServer(ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword);
+            return QCRestAPIConnect.ConnectQCServer(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
         }
 
         public override bool ConnectALMProject()
         {
-            ALMCore.AlmConfig.ALMProjectName = ALMCore.AlmConfig.ALMProjectKey;
-            return QCRestAPIConnect.ConnectQCProject(ALMCore.AlmConfig.ALMServerURL, ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMDomain, ALMCore.AlmConfig.ALMProjectName);
+            ALMCore.DefaultAlmConfig.ALMProjectName = ALMCore.DefaultAlmConfig.ALMProjectKey;
+            return QCRestAPIConnect.ConnectQCProject(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName);
         }
 
         public override void DisconnectALMServer()
@@ -58,8 +58,8 @@ namespace GingerCore.ALM
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
-            ALMCore.AlmConfig.ALMDomain = ALMDomainName;
-            return QCRestAPIConnect.GetQCDomainProjects(ALMCore.AlmConfig.ALMDomain);
+            ALMCore.DefaultAlmConfig.ALMDomain = ALMDomainName;
+            return QCRestAPIConnect.GetQCDomainProjects(ALMCore.DefaultAlmConfig.ALMDomain);
         }
 
         public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)

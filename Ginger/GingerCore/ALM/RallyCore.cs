@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ namespace GingerCore.ALM
 
         public override bool ConnectALMServer()
         {
-            string username = ALMCore.AlmConfig.ALMUserName;
-            string password = ALMCore.AlmConfig.ALMPassword;
-            string serverUrl = ALMCore.AlmConfig.ALMServerURL;
+            string username = ALMCore.DefaultAlmConfig.ALMUserName;
+            string password = ALMCore.DefaultAlmConfig.ALMPassword;
+            string serverUrl = ALMCore.DefaultAlmConfig.ALMServerURL;
 
             try
             {              
@@ -81,7 +81,7 @@ namespace GingerCore.ALM
         {            
             try
             {
-                restApi.Authenticate(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, proxy: null, allowSSO: false);
+                restApi.Authenticate(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, proxy: null, allowSSO: false);
                 if (restApi.AuthenticationState == RallyRestApi.AuthenticationResult.Authenticated)
                 {
                     return true; 
@@ -114,11 +114,11 @@ namespace GingerCore.ALM
             List<string> domains = new List<string>();
             try
             {
-                if (!string.IsNullOrEmpty(ALMCore.AlmConfig.ALMUserName) &&  !string.IsNullOrEmpty(ALMCore.AlmConfig.ALMPassword) && !string.IsNullOrEmpty(ALMCore.AlmConfig.ALMServerURL))
+                if (!string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMUserName) &&  !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMPassword) && !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMServerURL))
                 {
                     if (restApi.AuthenticationState != RallyRestApi.AuthenticationResult.Authenticated)
                     {
-                        restApi.Authenticate(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, proxy: null, allowSSO: false);
+                        restApi.Authenticate(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, proxy: null, allowSSO: false);
                     }
 
                     DynamicJsonObject sub = restApi.GetSubscription("Workspaces");
@@ -144,11 +144,11 @@ namespace GingerCore.ALM
             List<string> projects = new List<string>();
             try
             {
-                if (!string.IsNullOrEmpty(ALMCore.AlmConfig.ALMUserName) && !string.IsNullOrEmpty(ALMCore.AlmConfig.ALMPassword) && !string.IsNullOrEmpty(ALMCore.AlmConfig.ALMServerURL))
+                if (!string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMUserName) && !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMPassword) && !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMServerURL))
                 {
                     if (restApi.AuthenticationState != RallyRestApi.AuthenticationResult.Authenticated)
                     {
-                        restApi.Authenticate(ALMCore.AlmConfig.ALMUserName, ALMCore.AlmConfig.ALMPassword, ALMCore.AlmConfig.ALMServerURL, proxy: null, allowSSO: false);
+                        restApi.Authenticate(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, proxy: null, allowSSO: false);
                     }
 
                     DynamicJsonObject sub = restApi.GetSubscription("Workspaces");

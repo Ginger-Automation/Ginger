@@ -15,6 +15,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Amdocs.Ginger.Common;
+using Ginger.Run.RunSetActions;
+using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
+using System.Threading.Tasks;
 
 namespace WorkspaceHold
 {
@@ -75,8 +79,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
             
@@ -99,8 +106,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" + configFile });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "ConfigFile=" + configFile });
+            }).Wait();
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
             
@@ -116,8 +126,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "-t" });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "-t" });
+            }).Wait();
             // Assert            
             // ????
 
@@ -133,7 +146,12 @@ namespace WorkspaceHold
                 CLIProcessor CLI = new CLIProcessor();
 
                 // Act            
-                CLI.ExecuteArgs(new string[] { "--blabla" });
+               
+
+                Task.Run(async () =>
+                {
+                    await CLI.ExecuteArgs(new string[] { "--blabla" });
+                }).Wait();
 
                 // Assert                            
                 Assert.AreEqual(eLogLevel.ERROR, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
@@ -141,7 +159,7 @@ namespace WorkspaceHold
             }
 
         }
-
+       
         [TestMethod]
         public void CLIHelp()
         {
@@ -151,15 +169,19 @@ namespace WorkspaceHold
                 mConsoleMessages.Clear();
                 CLIProcessor CLI = new CLIProcessor();
 
-                // Act            
-                CLI.ExecuteArgs(new string[] { "help" });
+                // Act         
+                 Task.Run(async () =>
+                {
+                    await CLI.ExecuteArgs(new string[] { "help" });
+                }).Wait();
+               
 
                 // Assert            
                 Assert.AreEqual(1, mConsoleMessages.Count, "message count");
                 Assert.IsTrue(mConsoleMessages[0].MessageToConsole.Contains("Ginger support"), "help message");
             }
         }
-
+       
         [TestMethod]
         public void CLIGridWithoutParams()
         {
@@ -170,8 +192,11 @@ namespace WorkspaceHold
                 CLIProcessor CLI = new CLIProcessor();
 
                 // Act            
-                CLI.ExecuteArgs(new string[] { "grid" });
-
+               
+                Task.Run(async () =>
+                {
+                    await CLI.ExecuteArgs(new string[] { "grid" });
+                }).Wait();
                 // Assert            
                 Assert.AreEqual(1, mConsoleMessages.Count, "There is 1 line of help");
                 Assert.AreEqual(eLogLevel.INFO, mConsoleMessages[0].LogLevel, "message loglevel is ERROR");
@@ -190,12 +215,10 @@ namespace WorkspaceHold
         public static void ConsoleMessageEvent(eLogLevel logLevel, string messageToConsole)
         {
             mConsoleMessages.Add(new ConsoleMessage(){LogLevel = logLevel, MessageToConsole = messageToConsole});
-        }
-
-        
+        }        
 
         [TestMethod]
-        public void CLIDynamicTest()
+        public void CLIDynamicXMLTest()
         {
             // Arrange
             PrepareForCLICreationAndExecution();
@@ -207,15 +230,562 @@ namespace WorkspaceHold
 
             RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
             runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
-            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicXML();
+            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.XML);
             runSetAutoRunConfiguration.CreateContentFile();
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "dynamic", "-f" ,runSetAutoRunConfiguration.ConfigFileFullPath });
-
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert            
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "BF RunStatus=Passed");
+        }
+
+
+        /// <summary>
+        /// Testing JSON config creation and execution
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_CreateAndExecute_Test()
+        {
+            // Arrange
+            PrepareForCLICreationAndExecution(runsetName:"Calc_Test");
+            // Create config file
+            CLIHelper cLIHelper = new CLIHelper();
+            cLIHelper.RunAnalyzer = true;
+            cLIHelper.ShowAutoRunWindow = false;
+            cLIHelper.DownloadUpgradeSolutionFromSourceControl = false;
+            
+            RunSetAutoRunConfiguration runSetAutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, cLIHelper);
+            runSetAutoRunConfiguration.ConfigFileFolderPath = mTempFolder;
+            runSetAutoRunConfiguration.SelectedCLI = new CLIDynamicFile(CLIDynamicFile.eFileType.JSON);
+            runSetAutoRunConfiguration.CreateContentFile();
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+           
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed" );
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset with customized Values execution
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_ExistingCustomized_IDsAndNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-CustomExistingRunset.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env1", "Validating correct customized Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct customized Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "IE", "Validating correct customized Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoMultiply?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForSum").FirstOrDefault().Value, "44", "Validating Customized Activity level String Variable");           
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (same instance of BF)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "Yes", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "bbb@amdocs.com", "Validating customized report mail Address");
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "Test44", "Validating customized report mail Subject");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset with customized Values execution only using items Names
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_ExistingCustomized_OnlyNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-CustomExistingRunset_OnlyNames.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+          
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env1", "Validating correct customized Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct customized Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "IE", "Validating correct customized Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoMultiply?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForSum").FirstOrDefault().Value, "44", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (same instance of BF)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "Yes", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "bbb@amdocs.com", "Validating customized report mail Address");
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "Test44", "Validating customized report mail Subject");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset with customized Values execution while only items IDs is provided
+        /// </summary>
+        [TestMethod]
+        public void CLIDynamicJSON_ExistingCustomized_OnlyIDs_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-CustomExistingRunset_OnlyIDs.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test", "Validating correct Run set was executed");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env1", "Validating correct customized Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct customized Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "IE", "Validating correct customized Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoMultiply?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForSum").FirstOrDefault().Value, "44", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (same instance of BF)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "Yes", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "bbb@amdocs.com", "Validating customized report mail Address");
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "Test44", "Validating customized report mail Subject");
+        }
+
+        /// <summary>
+        /// Testing JSON non existing Runset 
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_NotExist_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-NotExisting.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test_Dynamic", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner Dynamic", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env1", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "IE", "Validating correct Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoMultiply?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForSum").FirstOrDefault().Value, "44", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (same instance of BF)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Stopped, "Validating BF execution Stopped");
+
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "menik@amdocs.com", "Validating report mail Address");
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "AAA", "Validating report mail Subject");
+        }
+
+        /// <summary>
+        /// Testing JSON non existing Runset with only items names
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_NotExist_OnlyNames_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-NotExisting_OnlyNames.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Calc_Test_Dynamic", "Validating correct Run set was executed");
+
+            //Runner 
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner Dynamic", "Validating correct Runner Name");
+
+            //Envs Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env1", "Validating correct Run set Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct Runner Environment");
+
+            //Agent Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "IE", "Validating correct Runner Agent");
+
+            //BF 1 Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoMultiply?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForSum").FirstOrDefault().Value, "44", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Validating BF execution Passed");
+
+            //BF 2 Validation (same instance of BF)
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Calculator_Test", "Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "DoDivide?").FirstOrDefault().Value, "No", "Validating Customized BF level Selection List Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "SecondNum_ForDivide").FirstOrDefault().Value, "1", "Validating Customized Activity level String Variable");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Stopped, "Validating BF execution Stopped");
+
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).MailTo, "menik@amdocs.com", "Validating report mail Address");
+            Assert.AreEqual(((RunSetActionHTMLReportSendEmail)(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions[0])).Subject, "AAA", "Validating report mail Subject");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset of outputs pass without customization
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_OutputsPass_Existing_NotCustomized_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-OutputsPass_Existing_NotCustomized.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Runset_DataPass", "Validating correct Run set was executed");
+
+            //Flow A Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Flow_A", "Flow_A- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_ID").FirstOrDefault().Value, "1212", "A_ID Variable- Validating Run set configured value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Color").FirstOrDefault().Value, "Black", "A_Color Variable- Validating Run set configured value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Type").FirstOrDefault().Value, "222", "A_Type Variable- Validating Run set configured value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Name").FirstOrDefault().Value, "Meni", "A_Name Variable- Validating default value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_A- Validating BF execution Passed");
+
+            //Flow B Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].Name, "Flow_B", "Flow_B- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_ID").FirstOrDefault().Value, "1212", "B_ID Variable- Validating Run set configured output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Type").FirstOrDefault().Value, "222", "B_Type Variable- Validating Run set configured output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Name").FirstOrDefault().Value, "Meni", "B_Name Variable- Validating default value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].RunStatus, eRunStatus.Passed, "Flow_B- Validating BF execution Passed");
+
+            //Flow C Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Flow_C", "Flow_C- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_ID").FirstOrDefault().Value, "1212", "C_ID Variable- Validating Run set configured output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Color").FirstOrDefault().Value, "Black", "C_Color Variable- Validating Run set configured value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Type").FirstOrDefault().Value, "222", "C_Type Variable- Validating Run set configured output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Name").FirstOrDefault().Value, "Meni", "C_Name Variable- Validating default value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Passed, "Flow_C- Validating BF execution Passed");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset of outputs pass with regular input values customization
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_OutputsPass_Existing_RegularInputCustomized_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-OutputsPass_Existing_RegularInputCustomized.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Runset_DataPass", "Validating correct Run set was executed");
+
+            //Flow A Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Flow_A", "Flow_A- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_ID").FirstOrDefault().Value, "676767", "A_ID Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Color").FirstOrDefault().Value, "Blue", "A_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Type").FirstOrDefault().Value, "444", "A_Type Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Name").FirstOrDefault().Value, "Meni", "A_Name Variable- Validating default value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_A- Validating BF execution Passed");
+
+            //Flow B Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].Name, "Flow_B", "Flow_B- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_ID").FirstOrDefault().Value, "676767", "B_ID Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Type").FirstOrDefault().Value, "444", "B_Type Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Name").FirstOrDefault().Value, "Meni", "B_Name Variable- Validating default value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].RunStatus, eRunStatus.Passed, "Flow_B- Validating BF execution Passed");
+
+            //Flow C Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].Name, "Flow_C", "Flow_C- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_ID").FirstOrDefault().Value, "676767", "C_ID Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Color").FirstOrDefault().Value, "Blue", "C_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Type").FirstOrDefault().Value, "444", "C_Type Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Name").FirstOrDefault().Value, "Meni", "C_Name Variable- Validating default value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[2].RunStatus, eRunStatus.Passed, "Flow_C- Validating BF execution Passed");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset of data mapping with all supported types
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_OutputsPass_Existing_AllCustomizedTypes_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-OutputsPass_Existing_AllCustomizedTypes.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "DataMappingTest", "Validating correct Run set was executed");
+
+            //Flow A Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Flow_A", "Flow_A- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_ID").FirstOrDefault().Value, "666666666", "A_ID Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Name").FirstOrDefault().Value, "Trump", "A_Name Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Color").FirstOrDefault().Value, "Black", "A_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Type").FirstOrDefault().Value, "444", "A_Type Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_A- Validating BF execution Passed");
+
+            //Flow B Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].Name, "Flow_B", "Flow_B- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_ID").FirstOrDefault().Value, "666666666", "B_ID Variable- Validating customized output data pass worked as expected");
+            //Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Name").FirstOrDefault().Value, "OK", "B_Name Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Color").FirstOrDefault().Value, "Black", "B_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Type").FirstOrDefault().Value, "444", "B_Type Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].RunStatus, eRunStatus.Passed, "Flow_B- Validating BF execution Passed");
+
+            //Flow C Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].Name, "Flow_C", "Flow_C- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_ID").FirstOrDefault().Value, "666666666", "C_ID Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Name").FirstOrDefault().Value, "Trump", "C_Name Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Color").FirstOrDefault().Value, "Black", "C_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Type").FirstOrDefault().Value, "555", "C_Type Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_C- Validating BF execution Passed");
+        }
+
+        /// <summary>
+        /// Testing JSON virtual Runset of data mapping with all supported types
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_OutputsPass_Virtual_AllCustomizedTypes_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-OutputsPass_Virtual_AllCustomizedTypes.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "VirtualTest", "Validating correct Run set was executed");
+
+            //Env Validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment.Name, "Env2", "Validating correct Run set Environment");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "VirtualRunner1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ProjEnvironment.Name, "Env2", "Validating correct Runner Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].ApplicationAgents[0].AgentName, "Chrome", "Validating correct Runner Agent");
+            //Flow A Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].Name, "Flow_A", "Flow_A- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_ID").FirstOrDefault().Value, "666666666", "A_ID Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Name").FirstOrDefault().Value, "Trump", "A_Name Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Color").FirstOrDefault().Value, "Black", "A_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "A_Type").FirstOrDefault().Value, "444", "A_Type Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_A- Validating BF execution Passed");
+            //Flow B Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].Name, "Flow_B", "Flow_B- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_ID").FirstOrDefault().Value, "666666666", "B_ID Variable- Validating customized output data pass worked as expected");
+            //Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Name").FirstOrDefault().Value, "OK", "B_Name Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Color").FirstOrDefault().Value, "Black", "B_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "B_Type").FirstOrDefault().Value, "444", "B_Type Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[1].RunStatus, eRunStatus.Passed, "Flow_B- Validating BF execution Passed");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "VirtualRunner2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].ProjEnvironment.Name, "Env2", "Validating correct Runner Environment");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].ApplicationAgents[0].AgentName, "IE", "Validating correct Runner Agent");
+            //Flow C Input validation
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].Name, "Flow_C", "Flow_C- Validating correct Business Flow was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_ID").FirstOrDefault().Value, "666666666", "C_ID Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Name").FirstOrDefault().Value, "Trump", "C_Name Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Color").FirstOrDefault().Value, "Black", "C_Color Variable- Validating customized value was used");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].GetBFandActivitiesVariabeles(false).Where(x => x.Name == "C_Type").FirstOrDefault().Value, "555", "C_Type Variable- Validating customized output data pass worked as expected");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].BusinessFlows[0].RunStatus, eRunStatus.Passed, "Flow_C- Validating BF execution Passed");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset with multi Runners and StopOnFailure turn on
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOn_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "MultiRunnersStopOnFailureTest", "Validating correct Run set was executed");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Status.ToString(), "Passed", "Validating correct Runner Status");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Runner 2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Status.ToString(), "Failed", "Validating correct Runner Status");
+
+            //Runner 3
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Runner 3", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Blocked", "Validating correct Runner Status");
+        }
+
+        /// <summary>
+        /// Testing JSON existing Runset with multi Runners and StopOnFailure turn off
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "MultiRunnersStopOnFailureTest", "Validating correct Run set was executed");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Status.ToString(), "Passed", "Validating correct Runner Status");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Runner 2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Status.ToString(), "Failed", "Validating correct Runner Status");
+
+            //Runner 3
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Runner 3", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Passed", "Validating correct Runner Status");
+        }
+
+        /// <summary>
+        /// Testing JSON virtual Runset with multi Runners and StopOnFailure turn on
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_Virtual_StopRunnersOnFailure_StopOn_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Virtual_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "Virtual MultiRunnersStopOnFailureTest", "Validating correct Run set was executed");
+
+            //Runner 1
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Name, "Virtual Runner 1", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].Status.ToString(), "Passed", "Validating correct Runner Status");
+
+            //Runner 2
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Name, "Virtual Runner 2", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[1].Status.ToString(), "Failed", "Validating correct Runner Status");
+
+            //Runner 3
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Virtual Runner 3", "Validating correct Runner Name");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Blocked", "Validating correct Runner Status");
+        }
+
+        /// <summary>
+        /// Testing JSON Runset with setup of ExecutionID
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_CheckExecutionIDSet_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+            }).Wait();
+
+            // Assert        
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name, "DataMappingTest", "Validating correct Run set was executed");
+            Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString(), "9ab6158b-05b4-9b9c-99f9-bde0f2299f9e", "Validating ExecutionID which was configured in JSON actually was used in run time");
         }
 
         [TestMethod]
@@ -232,12 +802,14 @@ namespace WorkspaceHold
 
                 // Act            
                 CLIProcessor CLI = new CLIProcessor();
-                CLI.ExecuteArgs(new string[] { "Dynamic=" + configFile });
-
-                // Assert            
-                Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
+                
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "Dynamic=" + configFile });
+            }).Wait();
+            // Assert            
+            Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
-
 
         [TestMethod]
         public void OLDCLIConfigFileTest()
@@ -257,8 +829,11 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
-
+           
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "ConfigFile=" + runSetAutoRunConfiguration.ConfigFileFullPath });
+            }).Wait();
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
@@ -281,7 +856,12 @@ namespace WorkspaceHold
 
             // Act
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(new string[] { "script", "-f" , scriptFile });
+         
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(new string[] { "script", "-f", scriptFile });
+            }).Wait();
 
             // Assert
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -305,16 +885,15 @@ namespace WorkspaceHold
             // Act            
             CLIProcessor CLI = new CLIProcessor();
             string[] args = CommandLineToStringArray(runSetAutoRunConfiguration.CLIContent).ToArray();
-            CLI.ExecuteArgs(args);
+      
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(args);
+            }).Wait();
 
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
         }
-
-
-        
-
-
 
         [TestMethod]
         public void CLIArgsWithDoNotAnalyzeTest()
@@ -326,7 +905,12 @@ namespace WorkspaceHold
             
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args);
+            
+
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(args);
+            }).Wait();
 
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
@@ -335,104 +919,16 @@ namespace WorkspaceHold
         }
 
 
-        private void PrepareForCLICreationAndExecution()
+        private void PrepareForCLICreationAndExecution(string runsetName= "Default Run Set", string envName = "Default")
         {            
             WorkSpace.Instance.OpenSolution(mSolutionFolder);
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
             RunsetExecutor runsetExecutor = new RunsetExecutor();
-            runsetExecutor.RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == "Default" select x).SingleOrDefault();
-            runsetExecutor.RunSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Default Run Set" select x).SingleOrDefault();
+            runsetExecutor.RunsetExecutionEnvironment = (from x in SR.GetAllRepositoryItems<ProjEnvironment>() where x.Name == envName select x).SingleOrDefault();
+            runsetExecutor.RunSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runsetName select x).SingleOrDefault();
             WorkSpace.Instance.RunsetExecutor = runsetExecutor;
             WorkSpace.Instance.RunsetExecutor.InitRunners();
         }
-
-
-
-
-        //[Ignore]
-        //[TestMethod]
-        //public void RunFlow()
-        //{
-        //    // Arrange
-        //    WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-        //    WorkSpace.Init(WSEH);
-        //    WorkSpace.Instance.RunningFromUnitTest = true;
-
-        //    WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-
-        //    // Create script file
-
-        //    // Generate a script which contains something like below and exeucte it
-        //    // int i = 1;
-        //    // i++;
-        //    // OpenSolution(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\GingerCoreNETUnitTest\bin\Debug\netcoreapp2.2\TestResources\Solutions\CLI");
-        //    // OpenRunSet("Default Run Set", "Default");
-        //    // CreateExecutionSummaryJSON(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\GingerCoreNETUnitTest\bin\Debug\netcoreapp2.2\TempFolder\runset.json");
-        //    // i
-
-        //    string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
-        //    string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
-        //    string jsonFileName = TestResources.GetTempFile("runset.json");
-        //    string txt = "int i=1;" + Environment.NewLine;
-        //    txt += "i++;" + Environment.NewLine;
-        //    txt += nameof(GingerScriptGlobals.OpenSolution) + "(@\"" + CLISolutionFolder + "\");" + Environment.NewLine;
-        //    txt += nameof(GingerScriptGlobals.RunBusinessFlow) + "(\"Flow 1\");" + Environment.NewLine;    // Runset, env
-
-
-        //    txt += "i" + Environment.NewLine;  // script rc
-        //    System.IO.File.WriteAllText(scriptFile, txt);
-
-
-        //    // Act
-        //    CLIProcessor CLI = new CLIProcessor();
-        //    CLI.ExecuteArgs(new string[] { "--scriptfile=" , scriptFile });
-
-        //    // Assert
-        //    // Assert.AreEqual("1")
-        //    // Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
-        //}
-
-        //[Ignore]
-        //[TestMethod]
-        //public void TestRunSetHTMLReport()
-        //{
-        //    // Arrange
-        //    WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
-        //    WorkSpace.Init(WSEH);
-        //    WorkSpace.Instance.RunningFromUnitTest = true;
-        //    WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new UnitTestRepositoryItemFactory());
-
-        //    // Create script file
-
-        //    // Generate a script which contains something like below and exeucte it
-        //    // int i = 1;
-        //    // i++;
-        //    // OpenSolution(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\GingerCoreNETUnitTest\bin\Debug\netcoreapp2.2\TestResources\Solutions\CLI");
-        //    // OpenRunSet("Default Run Set", "Default");
-        //    // CreateExecutionSummaryJSON(@"C:\Users\yaronwe\source\repos\Ginger\Ginger\GingerCoreNETUnitTest\bin\Debug\netcoreapp2.2\TempFolder\runset.json");
-        //    // i
-
-        //    string CLISolutionFolder = TestResources.GetTestResourcesFolder(@"Solutions\CLI");
-        //    string scriptFile = TestResources.GetTempFile("runset1.ginger.script");
-        //    string jsonFileName = TestResources.GetTempFile("runset.json");
-        //    string txt = "int i=1;" + Environment.NewLine;
-        //    txt += "i++;" + Environment.NewLine;
-        //    txt += nameof(GingerScriptGlobals.OpenSolution) + "(@\"" + CLISolutionFolder + "\");" + Environment.NewLine;
-        //    txt += nameof(GingerScriptGlobals.OpenRunSet) + "(\"Default Run Set\", \"Default\");" + Environment.NewLine;    // Runset, env
-        //    txt += nameof(GingerScriptGlobals.CreateExecutionHTMLReport) + "(@\"" + jsonFileName + "\");" + Environment.NewLine;    // summary json
-
-
-        //    txt += "i" + Environment.NewLine;  // script rc
-        //    System.IO.File.WriteAllText(scriptFile, txt);
-
-        //    // Act
-        //    CLIProcessor CLI = new CLIProcessor();
-        //    CLI.ExecuteArgs(new string[] { "--scriptfile=", scriptFile });
-
-        //    // Assert
-        //    // Assert.AreEqual("1")
-        //    Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed, "BF RunStatus=Passed");
-
 
         [TestMethod]
         public void NewCLIArgsRegressionTest()
@@ -460,13 +956,15 @@ namespace WorkspaceHold
 
             // Act            
             CLIProcessor CLI = new CLIProcessor();
-            CLI.ExecuteArgs(args.ToArray());
-
+         
+            Task.Run(async () =>
+            {
+                await CLI.ExecuteArgs(args.ToArray());
+            }).Wait();
             // Assert            
             Assert.AreEqual(eRunStatus.Passed, WorkSpace.Instance.RunsetExecutor.Runners[0].BusinessFlows[0].RunStatus, "BF RunStatus=Passed");
             
         }
-
 
         [TestMethod]
         public void NewCreateCLIArgs()
@@ -538,5 +1036,14 @@ namespace WorkspaceHold
         }
 
 
+        private string CreateTempJSONConfigFile(string resourceJSONFilePath, string solutionPath)
+        {
+            GingerExecConfig config = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(System.IO.File.ReadAllText(resourceJSONFilePath));
+            config.SolutionLocalPath = solutionPath;            
+            string tempJSONConfigFilePath = TestResources.GetTempFile(System.IO.Path.GetFileName(resourceJSONFilePath));
+            System.IO.File.WriteAllText(tempJSONConfigFilePath, DynamicExecutionManager.SerializeDynamicExecutionToJSON(config));
+
+            return tempJSONConfigFilePath;
+        }
     }
 }

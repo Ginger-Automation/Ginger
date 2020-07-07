@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ namespace Ginger.BusinessFlowPages
                 xScreenTxt.IsEnabled = false;
                 xExpectedTxt.IsEnabled = false;
                 xMandatoryActivityCB.IsEnabled = false;
+                xPublishcheckbox.IsEnabled = false;
                 xTargetApplicationComboBox.IsEnabled = false;
                 xRunOptionCombo.IsEnabled = false;
                 xAutomationStatusCombo.IsEnabled = false;
@@ -101,6 +102,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
+            BindingOperations.ClearAllBindings(xPublishcheckbox);
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);            
         }
@@ -113,12 +115,14 @@ namespace Ginger.BusinessFlowPages
             xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
             GingerCore.General.FillComboFromEnumObj(xErrorHandlerMappingCmb, mActivity.ErrorHandlerMappingType);
             xTagsViewer.Init(mActivity.Tags);
+            xShowIDUC.Init(mActivity);
             BindingHandler.ObjFieldBinding(xActivityNameTxtBox, TextBox.TextProperty, mActivity, nameof(Activity.ActivityName));
             BindingHandler.ObjFieldBinding(xActivityDescriptionTxt, TextBox.TextProperty, mActivity, nameof(Activity.Description));
             BindingHandler.ObjFieldBinding(xExpectedTxt, TextBox.TextProperty, mActivity, nameof(Activity.Expected));
             BindingHandler.ObjFieldBinding(xScreenTxt, TextBox.TextProperty, mActivity, nameof(Activity.Screen));
             xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
+            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
             if (mContext != null && mContext.BusinessFlow != null)
             {
                 xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;

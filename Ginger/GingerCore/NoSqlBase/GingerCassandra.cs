@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,28 +38,39 @@ namespace GingerCore.NoSqlBase
        
       
 
-        public bool Connect()
+        public override bool Connect()
         {
             try
             {
+                string queryTimeoutString = "querytimeout=";
+                int queryTimeout = 20000;//default timeout (20 seconds).
+                if (Db.TNSCalculated.ToLower().Contains(queryTimeoutString.ToLower()))
+                {
+                    string queryTimeoutValue = Db.TNSCalculated.Substring(Db.TNSCalculated.ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
+                    queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
+                }
+
                 string[] HostKeySpace = Db.TNSCalculated.Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
 
                 if (HostPort.Length == 2)
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
-                        cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).Build();
+                        cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                     else
-                        cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).Build();
+                        cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                 }
                 else
                 {
-                    cluster = Cluster.Builder().AddContactPoint(Db.TNSCalculated).Build();
+                    cluster = Cluster.Builder().AddContactPoint(Db.TNSCalculated).WithQueryTimeout(queryTimeout).Build();
                 }
 
                 if (HostKeySpace.Length > 1)
                 {
-                    session = cluster.Connect(HostKeySpace[1]);
+                    if (!HostKeySpace[1].ToLower().Contains(queryTimeoutString.ToLower()))
+                    {
+                        session = cluster.Connect(HostKeySpace[1]);
+                    }
                 }
                 else
                 {
@@ -71,6 +82,34 @@ namespace GingerCore.NoSqlBase
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
                 throw (e);
+            }
+        }
+
+        public override bool MakeSureConnectionIsOpen()
+        {
+            try
+            {
+                if (session != null)
+                {
+                    Metadata m = cluster.Metadata;
+                    ICollection<string> Keyspaces = m.GetKeyspaces();
+                    if (Keyspaces.Count > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return Connect();
+                    }
+                }
+                else
+                {
+                    return Connect();
+                }
+            }
+            catch (Exception ex)
+            {
+                return Connect();
             }
         }
 
@@ -404,7 +443,6 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            Connect();
             string SQL = Act.SQL;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);

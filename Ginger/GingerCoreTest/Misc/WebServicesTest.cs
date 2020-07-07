@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -67,6 +67,8 @@ namespace UnitTests.NonUITests
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+
+            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder,"ExecutionResults");
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.GingerConsole
 
                 // solution.SourceControl = new SVNSourceControl();
                                 
-                Reporter.ToConsole(eLogLevel.ERROR, "Source Control of type SVN is not yet supported in GingerConsole");
+                Reporter.ToLog(eLogLevel.ERROR, "Source Control of type SVN is not yet supported in GingerConsole");
             }
         }
 
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.GingerConsole
 
         public void SolutionClosed()
         {
-            Reporter.ToConsole(eLogLevel.INFO, "Solution Closed");
+            Reporter.ToLog(eLogLevel.INFO, "Solution Closed");
         }
     }
 }

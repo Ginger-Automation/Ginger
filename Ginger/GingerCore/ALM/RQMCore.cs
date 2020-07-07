@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ using Newtonsoft.Json;
 using GingerCore.External;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
+using System.Linq;
 
 namespace GingerCore.ALM
 {
@@ -74,7 +75,8 @@ namespace GingerCore.ALM
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomain)
         {
-            AlmConfig.ALMDomain = ALMDomain;
+            //set the domain of the default ALM
+            DefaultAlmConfig.ALMDomain = ALMDomain;
             return RQMConnect.Instance.GetRQMDomainProjects();
         }
 
@@ -114,15 +116,27 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
-        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey)
+        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType, string ALMConfigPackageFolderPath)
         {
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
+
+            GingerCoreNET.ALMLib.ALMUserConfig CurrentAlmUserConfigurations = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
+
+            //if not exist add otherwise update
+            if (AlmConfig == null)
+            {
+                AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
+                AlmConfigs.Add(AlmConfig);
+            }
             AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
             AlmConfig.UseRest = UseRest;
-            AlmConfig.ALMUserName = ALMUserName;
-            AlmConfig.ALMPassword = ALMPassword;
+            AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
+            AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
+            AlmConfig.AlmType = almType;
+            AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
         }
         
         #region RQM Configurations Package

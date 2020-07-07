@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -219,7 +219,7 @@ namespace GingerCore
                 // Get all possible enum vals
             foreach (object item in Enum.GetValues(Etype))
             {
-                ComboBoxItem CEI = new ComboBoxItem();                
+                ComboBoxItem CEI = new ComboBoxItem();
                 CEI.Content = item;                 
                 comboBox.Items.Add(CEI);
             }
@@ -492,7 +492,7 @@ namespace GingerCore
             }
             catch(IOException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}", ex);
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
             
         }
@@ -585,22 +585,19 @@ namespace GingerCore
         }
         public static void DisableComboItem(ComboBox comboBox, object itemtoDisable)
         {
-            string itemText = itemtoDisable.ToString();
-            if (itemtoDisable.GetType().BaseType.Name == "Enum")
-                itemText = GetEnumValueDescription(itemtoDisable.GetType(), itemtoDisable);
             foreach (var item in comboBox.Items)
             {
                 if (item.GetType() == typeof(ComboBoxItem))
                 {
-                    if (((ComboBoxItem)item).Content.ToString() == itemText)
+                    if (((ComboBoxItem)item).Content.ToString() == itemtoDisable.ToString())
                     {
                         ((ComboBoxItem)item).IsEnabled = false;
                         return;
                     }
                 }
-            }
-                
+            }             
         }
+
         public static void UpdateComboItem(ComboBox comboBox, object itemtoUpdate,string newVal)
         {
             string itemText = itemtoUpdate.ToString();
@@ -621,14 +618,11 @@ namespace GingerCore
         }
         public static void EnableComboItem(ComboBox comboBox, object itemtoDisable)
         {
-            string itemText = itemtoDisable.ToString();
-            if (itemtoDisable.GetType().BaseType.Name == "Enum")
-                itemText = GetEnumValueDescription(itemtoDisable.GetType(), itemtoDisable);
             foreach (var item in comboBox.Items)
             {                
                 if (item.GetType() == typeof(ComboBoxItem))
                 {
-                    if (((ComboBoxItem)item).Content.ToString() == itemText)
+                    if (((ComboBoxItem)item).Content.ToString() == itemtoDisable.ToString())
                     {
                         ((ComboBoxItem)item).IsEnabled = true;
                         return;
@@ -636,7 +630,6 @@ namespace GingerCore
                 }
             }
         }
-
 
         public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
         {
@@ -912,6 +905,49 @@ namespace GingerCore
                 return parent;
             else
                 return TryFindParent<T>(parentObject);
+        }
+
+        /// <summary>
+        /// This function is used to replace the password value from the string with *****
+        /// It will also remove all the spaces.
+        /// </summary>
+        /// <param name="dataString">The string argument which has password value</param>
+        /// <returns></returns>
+        public static string HidePasswordFromString(string dataString)
+        {
+            string passwordValue = dataString.Replace(" ", "");//remove spaces
+            string passwordString = string.Empty;
+            //Matching string
+            if (dataString.ToLower().Contains("pwd="))
+            {
+                passwordString = "pwd=";
+            }
+            else if (dataString.ToLower().Contains("password="))
+            {
+                passwordString = "password=";
+            }
+            else
+            {
+                //returning origional as it does not conatain matching string
+                return dataString;
+            }
+            //get the password value based on start and end index
+            passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
+            int startIndex = passwordValue.ToLower().IndexOf(passwordString) + passwordString.Length;
+            int endIndex = -1;
+            if (passwordValue.Contains(";"))
+            {
+                endIndex = passwordValue.ToLower().IndexOf(";");
+            }
+            if (endIndex == -1)
+            {
+                passwordValue = passwordValue.Substring(startIndex);
+            }
+            else
+            {
+                passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
+            }
+            return dataString.Replace(passwordValue, "*****");
         }
     }
 }

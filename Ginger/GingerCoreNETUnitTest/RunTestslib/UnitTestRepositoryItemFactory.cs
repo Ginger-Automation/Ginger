@@ -5,6 +5,7 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             
         }
 
-        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields)
-        {
-            throw new NotImplementedException();
-        }
-
         public object CreateNewReportTemplate()
         {
             throw new NotImplementedException();
@@ -47,12 +43,12 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList)
         {
-            throw new NotImplementedException();
+            return new ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)
         {
-            throw new NotImplementedException();
+            return new ValueExpression(obj, attr);
         }
 
         public void DisplayAsOutlookMail()
@@ -135,6 +131,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
+        public bool Revert(string path, SourceControlBase SourceControl)
+        {
+            throw new NotImplementedException();
+        }
+
         public SourceControlBase GetNewSVnRepo()
         {
             throw new NotImplementedException();
@@ -143,6 +144,16 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public void WaitForAutoRunWindowClose()
         {
             // NA
+        }
+
+        public string GetALMConfig()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        {
+            throw new NotImplementedException();
         }
     }
 }

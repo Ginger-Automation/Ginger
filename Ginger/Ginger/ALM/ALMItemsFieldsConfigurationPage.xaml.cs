@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ namespace Ginger.ALM
             InitializeComponent();
 
             mItemsFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
-            ALMIntegration.Instance.RefreshALMItemFields(mItemsFields, false, null);
             if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 RunWorker(true);

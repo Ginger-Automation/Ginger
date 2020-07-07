@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
+using GingerCore.ALM;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
@@ -218,11 +219,6 @@ namespace Ginger.Run
 
         private void AddAutomatedALMDefectsOperation(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.Instance.Solution.UseRest && WorkSpace.Instance.Solution.AlmType != GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
-            {
-                Reporter.ToUser(eUserMsgKey.ALMDefectsUserInOtaAPI);
-                return;
-            }
             ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
             if ((ALMDefectProfiles == null) || (ALMDefectProfiles.Count < 1))
             {
@@ -233,6 +229,7 @@ namespace Ginger.Run
             RunSetActionAutomatedALMDefects RSAAAD = new RunSetActionAutomatedALMDefects();
             RSAAAD.Name = RSAAAD.Type;
             RSAAAD.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            RSAAAD.DefectsOpeningModeForAll = true;
             mRunSetConfig.RunSetActions.Add(RSAAAD);
             RunSetActionsGrid.Grid.SelectedItem = RSAAAD;
         }

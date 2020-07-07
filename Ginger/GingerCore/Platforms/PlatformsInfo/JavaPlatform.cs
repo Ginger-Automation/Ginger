@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -163,6 +163,16 @@ namespace GingerCore.Platforms.PlatformsInfo
                         ElementLocateValue = actConfig.LocateValue,
                         Value = actConfig.ElementValue
                     };
+                    
+                    if(elementInfo.ElementTypeEnum.Equals(eElementType.Table))
+                    {
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, actConfig.WhereColumnValue);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, actConfig.LocateRowType);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowValue, actConfig.RowValue);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.ColSelectorValue, actConfig.ColSelectorValue);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
+                    }
 
                     pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
                 }
@@ -609,6 +619,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     widgetsActionslist.Add(ActUIElement.eElementAction.ScrollUp);
                     widgetsActionslist.Add(ActUIElement.eElementAction.ScrollDown);
                     widgetsActionslist.Add(ActUIElement.eElementAction.TriggerJavaScriptEvent);
+                    widgetsActionslist.Add(ActUIElement.eElementAction.GetAttrValue);
                     break;
             }
 
@@ -627,6 +638,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             mWidgetsElementsTypeList.Add(eElementType.CheckBox);
             mWidgetsElementsTypeList.Add(eElementType.Label);
             mWidgetsElementsTypeList.Add(eElementType.Span);
+            mWidgetsElementsTypeList.Add(eElementType.Div);
 
             return mWidgetsElementsTypeList;
         }
@@ -887,6 +899,15 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override string GetNextBtnToolTip()
         {
             return "Switch Window";
+        }
+
+        /// <summary>
+        /// This method is used to check if the platform supports POM
+        /// </summary>
+        /// <returns></returns>
+        public override bool IsPlatformSupportPOM()
+        {
+            return true;
         }
     }
 }

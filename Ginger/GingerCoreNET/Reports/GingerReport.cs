@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.Utility;
+using Ginger.Run;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Ginger.Run;
-using GingerCore;
-using GingerCore.Variables;
-using Newtonsoft.Json;
-using System.IO;
 using System.Data;
-using Amdocs.Ginger.CoreNET.Utility;
+using System.IO;
+using System.Linq;
 
 namespace Ginger.Reports
 {
@@ -48,6 +46,8 @@ namespace Ginger.Reports
             public static string BusinessFlowsDetails = "BusinessFlowsDetails";
             public static string ApplicationAgentsMapping = "ApplicationAgentsMapping";
         }
+
+        public GingerRunner GingerRunner { get; set; }
 
         private bool _showAllIterationsElements = false;
         public bool AllIterationElements
@@ -99,6 +99,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime StartTimeStamp { get; set; }
 
         [JsonProperty]
@@ -107,6 +108,7 @@ namespace Ginger.Reports
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
+        [UsingUTCTimeFormat]
         public DateTime EndTimeStamp { get; set; }
 
         [JsonProperty]
@@ -170,21 +172,32 @@ namespace Ginger.Reports
         {
             get
             {
-                if (TotalBusinessFlowsFailed > 0)
+                if (BusinessFlowReports != null && BusinessFlowReports.Count > 0)
                 {
-                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    if (TotalBusinessFlowsFailed > 0)
+                    {
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    }
+                    else if ((from x in BusinessFlowReports where x.IsBlocked == true select x).Count() > 0)
+                    {
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
+                    }
+                    else if ((from x in BusinessFlowReports where x.IsStopped == true select x).Count() > 0)
+                    {
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
+                    }
+                    else if ((from x in BusinessFlowReports where (x.IsPassed == true || x.IsSkipped == true) select x).Count() == TotalBusinessFlows)
+                    {
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    }
+                    else
+                    {
+                        return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
+                    }
                 }
-                else if ((from x in BusinessFlowReports where x.IsBlocked == true select x).Count() > 0)
+                else if(GingerRunner != null)
                 {
-                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
-                }
-                else if ((from x in BusinessFlowReports where x.IsStopped == true select x).Count() > 0)
-                {
-                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
-                }
-                else if ((from x in BusinessFlowReports where (x.IsPassed == true || x.IsSkipped == true) select x).Count() == TotalBusinessFlows)
-                {
-                    return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+                    return GingerRunner.Status;
                 }
                 else
                 {
@@ -209,7 +222,18 @@ namespace Ginger.Reports
         {
             get
             {
-                return BusinessFlowReports.Count();
+                if (BusinessFlowReports != null && BusinessFlowReports.Count > 0)
+                {
+                    return BusinessFlowReports.Count();
+                }
+                else if (GingerRunner != null)
+                {
+                    return GingerRunner.BusinessFlows.Where(x => x.Active == true).ToList().Count();
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
@@ -299,7 +323,15 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in BusinessFlowReports where x.IsPassed == true select x).Count();
+                int count = 0;
+                if (BusinessFlowReports != null && BusinessFlowReports.Count > 0)
+                {
+                    count = (from x in BusinessFlowReports where x.IsPassed == true select x).Count();
+                }
+                else if (GingerRunner != null)
+                {
+                    count = (from x in GingerRunner.BusinessFlows where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed select x).Count();
+                }
                 return count;
             }
         }

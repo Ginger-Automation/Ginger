@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="4d49ecdb-941f-4228-a717-b1a7531555df" ItemType="RunSetConfig" CreatedBy="MENIK" Created="202004261825" GingerVersion="3.6.0.0" Version="22" LastUpdateBy="MENIK" LastUpdate="202005031041" />
+<RunSetConfig Guid="4d49ecdb-941f-4228-a717-b1a7531555df" Name="DataMappingTest" ParentGuid="00000000-0000-0000-0000-000000000000" RunModeParallel="False">
+<GingerRunners>
+<GingerRunner Guid="f81e0791-3474-40ec-baab-d98f9be75c7d" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall" SpecificEnvironmentName="Env2" UseSpecificEnvironment="True">
+<ApplicationAgents>
+<ApplicationAgent AgentID="aa2f27c9-16e5-466e-ad41-ba34841fa72d" AgentName="Chrome" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="12b7a4c7-f0b9-4acd-af64-adb15584e66b" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" BusinessFlowInstanceGuid="91a33476-5e6d-41e4-a5e1-5a2d7ffa7fd6" BusinessFlowIsActive="True" BusinessFlowName="Flow_A" Guid="e9d1a73b-0b11-4b5e-b3bf-b8b5ec740fd5" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="bde76d0f-a68e-465e-b25c-60365886762a" InitialStringValue="666666666" MappedOutputType="None" Name="A_ID" ParentGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ParentName="Flow_A" ParentType="Business Flow" Publish="True" VarValChanged="True" />
+<VariableString DiffrentFromOrigin="True" Guid="1aba0714-ffd2-4443-bba5-b8bf4702ab52" InitialStringValue="Meni" MappedOutputType="Variable" MappedOutputValue="GlobalName" Name="A_Name" ParentGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ParentName="Flow_A" ParentType="Business Flow" Publish="True" />
+<VariableSelectionList DiffrentFromOrigin="True" Guid="284891c8-ad7e-41a5-bbf8-4e00e8d578e3" MappedOutputType="ApplicationModelParameter" MappedOutputValue="200203d7-3809-4158-9809-b71abcfc4b26" Name="A_Color" ParentGuid="41bcc59c-ca8d-4e62-acf8-f69c72eb9894" ParentName="Flow_A" ParentType="Business Flow" Publish="True" Value="Black">
+<OptionalValuesList>
+<OptionalValue Guid="9749e8e9-a02c-4ffe-a4f0-4d4ed3bbc5d4" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Green" />
+<OptionalValue Guid="9680a137-4d23-46e1-b4f8-87ca34468318" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Red" />
+<OptionalValue Guid="9083aa86-78a7-4848-a592-a0469ad4194d" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Blue" />
+<OptionalValue Guid="7156a518-0858-4576-9635-ede3d2d08369" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Black" />
+</OptionalValuesList>
+</VariableSelectionList>
+<VariableSelectionList DiffrentFromOrigin="True" Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="GlobalVariable" MappedOutputValue="d5e3fc77-8968-43da-a1ca-4032d9938874" Name="A_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_A\Group\Do-Work" ParentType="Activity" Publish="True" Value="444">
+<OptionalValuesList>
+<OptionalValue Guid="f99425f7-ebb2-4e6c-a752-8eb42492b73a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="111" />
+<OptionalValue Guid="43c85b7a-0133-43b1-a21e-02fef56130df" ParentGuid="00000000-0000-0000-0000-000000000000" Value="222" />
+<OptionalValue Guid="225422b4-fc18-4069-bd74-b2a89be8b4e3" ParentGuid="00000000-0000-0000-0000-000000000000" Value="333" />
+<OptionalValue Guid="afcaed39-23dd-48fa-bc07-b3da1886c7a7" ParentGuid="00000000-0000-0000-0000-000000000000" Value="444" />
+<OptionalValue Guid="3879aa10-64c2-4cbc-b4c8-93fc5c76a3dd" ParentGuid="00000000-0000-0000-0000-000000000000" Value="555" />
+<OptionalValue Guid="f9787519-0757-49f0-9d86-87fa978b6156" ParentGuid="00000000-0000-0000-0000-000000000000" Value="666" />
+</OptionalValuesList>
+</VariableSelectionList>
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+<BusinessFlowRun BusinessFlowGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" BusinessFlowInstanceGuid="523b9517-0a78-421f-839c-2fd42a33b338" BusinessFlowIsActive="True" BusinessFlowName="Flow_B" Guid="c67d3e21-64e5-43eb-843f-0204255f16c4" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="bde76d0f-a68e-465e-b25c-60365886762a" InitialStringValue="666666666" MappedOutputType="OutputVariable" MappedOutputValue="bde76d0f-a68e-465e-b25c-60365886762a" Name="B_ID" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" />
+<VariableString DiffrentFromOrigin="True" Guid="840b1e0d-b95c-403a-870b-52055a9e1e3b" InitialStringValue="Meni" MappedOutputType="DataSource" MappedOutputValue="{DS Name=LiteDB DST=MyKeyValueDataTable MASD=N Query QUERY=db.MyKeyValueDataTable.select GINGER_KEY_VALUE where GINGER_KEY_NAME=&quot;BBB&quot;}" Name="B_Name" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" />
+<VariableSelectionList DiffrentFromOrigin="True" Guid="8c98b551-f8f7-4a9a-9cd3-e186d387721f" MappedOutputType="OutputVariable" MappedOutputValue="284891c8-ad7e-41a5-bbf8-4e00e8d578e3" Name="B_Color" ParentGuid="d0a5695a-4bd4-49ac-8ea5-ffa12a167e0f" ParentName="Flow_B" ParentType="Business Flow" Publish="True" Value="Black">
+<OptionalValuesList>
+<OptionalValue Guid="408392d6-9deb-402a-9646-dc0ad1eaed6e" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Green" />
+<OptionalValue Guid="3c1bafa4-3e41-4748-a520-056a134a1e44" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Red" />
+<OptionalValue Guid="9b502a1c-3223-4db9-8bd9-beb2937c5f60" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Blue" />
+<OptionalValue Guid="66f234e2-8c53-426d-b77b-888f31f44616" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Black" />
+</OptionalValuesList>
+</VariableSelectionList>
+<VariableSelectionList DiffrentFromOrigin="True" Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="GlobalVariable" MappedOutputValue="d5e3fc77-8968-43da-a1ca-4032d9938874" Name="B_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_B\Group\Do-Work" ParentType="Activity" Publish="True" Value="444">
+<OptionalValuesList>
+<OptionalValue Guid="f99425f7-ebb2-4e6c-a752-8eb42492b73a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="111" />
+<OptionalValue Guid="43c85b7a-0133-43b1-a21e-02fef56130df" ParentGuid="00000000-0000-0000-0000-000000000000" Value="222" />
+<OptionalValue Guid="225422b4-fc18-4069-bd74-b2a89be8b4e3" ParentGuid="00000000-0000-0000-0000-000000000000" Value="333" />
+<OptionalValue Guid="afcaed39-23dd-48fa-bc07-b3da1886c7a7" ParentGuid="00000000-0000-0000-0000-000000000000" Value="444" />
+<OptionalValue Guid="3879aa10-64c2-4cbc-b4c8-93fc5c76a3dd" ParentGuid="00000000-0000-0000-0000-000000000000" Value="555" />
+<OptionalValue Guid="f9787519-0757-49f0-9d86-87fa978b6156" ParentGuid="00000000-0000-0000-0000-000000000000" Value="666" />
+</OptionalValuesList>
+</VariableSelectionList>
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+<GingerRunner Guid="037740f4-4250-4607-ad6a-2fc9e5bd1fda" Name="Runner 2" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall" SpecificEnvironmentName="Env2" UseSpecificEnvironment="True">
+<ApplicationAgents>
+<ApplicationAgent AgentID="bdcdb5d7-4166-4cb8-a937-8789d58e8e2f" AgentName="IE" AppID="e514fcc7-9e32-40c4-badf-845930479277" AppName="app1" Guid="110720f7-92dd-44c2-9bf2-1cdf05d4392a" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" BusinessFlowInstanceGuid="d58d5d87-bfc3-4c52-a828-d61d94247a1a" BusinessFlowIsActive="True" BusinessFlowName="Flow_C" Guid="cf2fdda6-8f8a-47f3-bb5b-f779d12a48c9" ParentGuid="00000000-0000-0000-0000-000000000000">
+<BusinessFlowCustomizedRunVariables>
+<VariableString DiffrentFromOrigin="True" Guid="bde76d0f-a68e-465e-b25c-60365886762a" InitialStringValue="666666666" MappedOutputType="OutputVariable" MappedOutputValue="bde76d0f-a68e-465e-b25c-60365886762a" Name="C_ID" ParentGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" ParentName="Flow_C" ParentType="Business Flow" Publish="True" />
+<VariableString DiffrentFromOrigin="True" Guid="8d7425a8-21a8-449b-88b9-b028f753ac22" InitialStringValue="Meni" MappedOutputType="OutputVariable" MappedOutputValue="1aba0714-ffd2-4443-bba5-b8bf4702ab52" Name="C_Name" ParentGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" ParentName="Flow_C" ParentType="Business Flow" Publish="True" />
+<VariableSelectionList DiffrentFromOrigin="True" Guid="999237c5-d9fd-4770-83a1-341fb59e0926" MappedOutputType="OutputVariable" MappedOutputValue="8c98b551-f8f7-4a9a-9cd3-e186d387721f" Name="C_Color" ParentGuid="7277d999-fece-4d3a-9da7-d42da68a83d9" ParentName="Flow_C" ParentType="Business Flow" Publish="True" Value="Black">
+<OptionalValuesList>
+<OptionalValue Guid="aae29c03-7b1f-40e1-8757-187e42864eed" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Green" />
+<OptionalValue Guid="06f25c95-6177-4116-a243-3b87860d6c83" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Red" />
+<OptionalValue Guid="ab0e21d4-25a1-4234-bc83-98a377b79e0d" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Blue" />
+<OptionalValue Guid="2fab2888-d989-465c-a964-315d74936e1d" ParentGuid="00000000-0000-0000-0000-000000000000" Value="Black" />
+</OptionalValuesList>
+</VariableSelectionList>
+<VariableSelectionList DiffrentFromOrigin="True" Guid="b6c94841-64ab-46b6-a61d-1d2808c35370" MappedOutputType="None" Name="C_Type" ParentGuid="b6a05602-a059-48d9-95cb-1b5878d98fc8" ParentName="Flow_C\Group\Do-Work" ParentType="Activity" Publish="True" Value="555" VarValChanged="True">
+<OptionalValuesList>
+<OptionalValue Guid="f99425f7-ebb2-4e6c-a752-8eb42492b73a" ParentGuid="00000000-0000-0000-0000-000000000000" Value="111" />
+<OptionalValue Guid="43c85b7a-0133-43b1-a21e-02fef56130df" ParentGuid="00000000-0000-0000-0000-000000000000" Value="222" />
+<OptionalValue Guid="225422b4-fc18-4069-bd74-b2a89be8b4e3" ParentGuid="00000000-0000-0000-0000-000000000000" Value="333" />
+<OptionalValue Guid="afcaed39-23dd-48fa-bc07-b3da1886c7a7" ParentGuid="00000000-0000-0000-0000-000000000000" Value="444" />
+<OptionalValue Guid="3879aa10-64c2-4cbc-b4c8-93fc5c76a3dd" ParentGuid="00000000-0000-0000-0000-000000000000" Value="555" />
+<OptionalValue Guid="f9787519-0757-49f0-9d86-87fa978b6156" ParentGuid="00000000-0000-0000-0000-000000000000" Value="666" />
+</OptionalValuesList>
+</VariableSelectionList>
+</BusinessFlowCustomizedRunVariables>
+</BusinessFlowRun>
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+</RunSetConfig></GingerRepositoryItem>

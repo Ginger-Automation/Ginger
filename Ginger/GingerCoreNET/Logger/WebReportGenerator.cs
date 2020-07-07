@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,18 +57,10 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     return lightDbRunSet;
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
                 DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
-                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
-                var result = dbManager.GetRunSetLiteData();
-                List<LiteDbRunSet> filterData = null;
-                if (!string.IsNullOrEmpty(runSetGuid))
-                {
-                    filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetGuid).ToList();
-                }
-                else
-                    filterData = dbManager.FilterCollection(result, Query.All());
-                lightDbRunSet = filterData.Last();
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
+                lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
                 PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
-                string json = Newtonsoft.Json.JsonConvert.SerializeObject(filterData.Last());
+                string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
                 response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);
             }
             catch (Exception ex)

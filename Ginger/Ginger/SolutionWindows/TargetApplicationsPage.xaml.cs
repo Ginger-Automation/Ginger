@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
@@ -62,16 +63,21 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, "Target Applications", saveAllHandler: SaveHandler, addHandler: AddApplication);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
+            //List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
+            //view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly=true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
-            List<string> platformesTypesList = GingerCore.General.GetEnumValues(typeof(ePlatformType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = platformesTypesList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
+
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
             xTargetApplicationsGrid.InitViewItems();
             
             xTargetApplicationsGrid.Grid.PreparingCellForEdit += ApplicationGrid_PreparingCellForEdit;
             xTargetApplicationsGrid.Grid.CellEditEnding += ApplicationGrid_CellEditEnding;
+
+            xTargetApplicationsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
         }
 
         private void LoadGridData()
@@ -89,6 +95,18 @@ namespace Ginger.SolutionWindows
                 xTargetApplicationsGrid.DataSourceList = new ObservableList<ApplicationPlatform>();
             }
                 
+        }
+
+        private void CopySelectedItemID(object sender, RoutedEventArgs e)
+        {
+            if (xTargetApplicationsGrid.Grid.SelectedItem != null)
+            {
+                Clipboard.SetText(((RepositoryItemBase)xTargetApplicationsGrid.Grid.SelectedItem).Guid.ToString());
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void SaveHandler(object sender, RoutedEventArgs e)

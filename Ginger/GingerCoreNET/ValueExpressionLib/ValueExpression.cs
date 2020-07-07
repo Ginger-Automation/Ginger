@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ namespace GingerCore
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
-        private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled);
+        private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
         private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
@@ -397,7 +397,7 @@ namespace GingerCore
                             Query = "Select COUNT(*) FROM " + DSTable + " WHERE GINGER_USED <> 'True' or GINGER_USED is null";
                             p = "";
                         }
-                        else if (sAct == "ETE") // Get Row Count
+                        else if (sAct == "ETE") // Export to Excel
                         {
                             Query = "";
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
@@ -621,18 +621,7 @@ namespace GingerCore
                     DataSource.RunQuery(updateQuery);
                     mValueCalculated = "";
                 }
-                else if (sAct == "ETE" && bDone == true)
-                {
-                    if (ExcelSheet == "")
-                        ExcelSheet = DSTable;
-                    if (ExcelPath.ToLower().EndsWith(".xlsx"))
-                    {
-                        DataSource.ExporttoExcel(DSTable, ExcelPath, ExcelSheet);
-                        mValueCalculated = "";
-                    }
-                    else
-                        mValueCalculated = "The Export Excel can be *.xlsx only";
-                }
+                
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {

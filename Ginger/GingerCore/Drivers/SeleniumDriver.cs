@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2020 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -3110,7 +3110,7 @@ namespace GingerCore.Drivers
                 elem = LocateElementByLocator(locator, AlwaysReturn);
                 if (elem == null)
                 {
-                    act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
+                    act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
                 }
             }
 
@@ -3123,8 +3123,19 @@ namespace GingerCore.Drivers
             Driver.SwitchTo().DefaultContent();
             if (EI.Path != null)
             {
-                string[] spliter = new string[] { "," };
-                string[] iframesPathes = EI.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                if (!EI.IsAutoLearned)
+                {
+                    ValueExpression VE = new ValueExpression(null, null);
+                    EI.Path = VE.Calculate(EI.Path);
+                    if(EI.Path  == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Concat("Expression : ", EI.Path, " evaluated to null value."));
+                        return;
+                    }
+                }
+                //split Path by commo outside of brackets 
+                var spliter = new Regex(@",(?![^\[]*[\]])");
+                string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
                     Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
@@ -3145,13 +3156,12 @@ namespace GingerCore.Drivers
             {
                 if (!locator.IsAutoLearned)
                 {
-                    ElementLocator evaluatedLocator = locator.CreateInstance() as ElementLocator;
-                    ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
-                    evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                    elem = LocateElementByLocator(evaluatedLocator, true);
+                    elem = LocateElementIfNotAutoLeared(locator);
                 }
                 else
+                {
                     elem = LocateElementByLocator(locator, true);
+                }
 
                 if (elem != null)
                 {
@@ -3743,7 +3753,15 @@ namespace GingerCore.Drivers
                             //filter none visible elements
                             if (!el.Displayed || el.Size.Width == 0 || el.Size.Height == 0)
                             {
-                                continue;
+                                //for some element like select tag el.Displayed is false but element is visible in page
+                                if (el.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase) )
+                                {
+                                    continue;
+                                }
+                                else if(el.GetCssValue("width").Equals("auto") || el.GetCssValue("height").Equals("auto"))
+                                {
+                                    continue;
+                                }
                             }
 
                             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
@@ -5108,8 +5126,8 @@ namespace GingerCore.Drivers
                 var v = ((IJavaScriptExecutor)Driver).ExecuteScript(script3, null);
             }
             catch (OpenQA.Selenium.WebDriverException e)
-            {                
-                StopRecordingIfAgentClosed();
+            {
+                StopRecordingIfAgentClosed(e.Message);
             }
             catch (Exception ex)
             {
@@ -5412,7 +5430,7 @@ namespace GingerCore.Drivers
                     }
                     catch (OpenQA.Selenium.WebDriverException e)
                     {                        
-                        StopRecordingIfAgentClosed();
+                        StopRecordingIfAgentClosed(e.Message);
                     }
                     catch (Exception e)
                     {
@@ -5493,11 +5511,16 @@ namespace GingerCore.Drivers
         /// <summary>
         /// This method is used to stop recording if the agent is not reachable
         /// </summary>
-        private void StopRecordingIfAgentClosed()
+        private void StopRecordingIfAgentClosed(string errorDetails)
         {
+            if (this.IsRunning())
+            {
+                return;
+            }
             IsRecording = false;
             RecordingEventArgs args = new RecordingEventArgs();
             args.EventType = eRecordingEvent.StopRecording;
+            args.EventArgs = errorDetails;
             OnRecordingEvent(args);
         }
 
@@ -6342,10 +6365,17 @@ namespace GingerCore.Drivers
 
             if (act.ElementLocateBy != eLocateBy.NA && (!act.ElementType.Equals(eElementType.Window) && !act.ElementAction.Equals(ActUIElement.eElementAction.Switch)))
             {
-                e = LocateElement(act);
-                if (e == null && act.ElementAction != ActUIElement.eElementAction.IsVisible)
+                if (act.ElementAction.Equals(ActUIElement.eElementAction.IsVisible))
                 {
-                    act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    e = LocateElement(act,true);
+                }
+                else
+                {
+                    e = LocateElement(act);
+                    if (e == null)
+                    {
+                        act.Error += "Element not found: " + act.ElementLocateBy + "=" + act.ElementLocateValueForDriver;
+                    }
                 }
             }
 
@@ -7448,7 +7478,16 @@ namespace GingerCore.Drivers
 
                 foreach (ElementLocator el in activesElementLocators)
                 {
-                    if (LocateElementByLocator(el, true) != null)
+                    IWebElement webElement = null;
+                    if (!el.IsAutoLearned)
+                    {
+                        webElement = LocateElementIfNotAutoLeared(el);
+                    }
+                    else
+                    {
+                        webElement = LocateElementByLocator(el, true);
+                    }
+                    if (webElement != null)
                     {
                         el.StatusError = string.Empty;
                         el.LocateStatus = ElementLocator.eLocateStatus.Passed;
@@ -7485,6 +7524,13 @@ namespace GingerCore.Drivers
             }
         }
 
+        private IWebElement LocateElementIfNotAutoLeared(ElementLocator el)
+        {
+            ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
+            ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
+            evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
+            return LocateElementByLocator(evaluatedLocator, true);
+        }
 
         void IWindowExplorer.CollectOriginalElementsDataForDeltaCheck(ObservableList<ElementInfo> mOriginalList)
         {
