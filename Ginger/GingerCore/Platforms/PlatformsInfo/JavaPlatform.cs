@@ -781,6 +781,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.Dialog,
                     IsCommonElementType = false
                 });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Browser,
+                    IsCommonElementType = false
+                });
             }
             return mPlatformElementTypeOperations;
         }

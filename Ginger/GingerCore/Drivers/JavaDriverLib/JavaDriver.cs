@@ -1907,6 +1907,35 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
+        private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
+        {
+            var javaElementInfo = new JavaElementInfo()
+            {
+                XPath = currentFramePath
+            };
+            InitializeBrowser(javaElementInfo);
+
+            var hTMLControlsPayLoad = GetBrowserVisibleControls();
+
+            foreach (var htmlElement in hTMLControlsPayLoad)
+            {
+                //if (!selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
+                //{
+                //    continue;
+                //}
+               ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
+                
+                htmlElement.IsAutoLearned = true;
+                elementInfoList.Add(htmlElement);
+                //if (eElementType.Iframe == htmlElement.ElementTypeEnum)
+                //{
+                //    string xpath = htmlElement.XPath;
+                //}
+            }
+
+           // return General.ConvertObservableListToList<ElementInfo>(elementInfoList);
+        }
+
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false)
         {
             List<ElementInfo> list = new List<ElementInfo>();
@@ -1930,6 +1959,11 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if(isPOMLearn)
                     {
+                        if(ci.ElementType.Contains("browser") && filteredElementType.Contains(eElementType.Browser))
+                        {
+                            GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
+                            continue;
+                        }
                         ((IWindowExplorer)this).LearnElementInfoDetails(ci);
                         // set the Flag in case you wish to learn the element or not
                         bool learnElement = true;
@@ -2294,6 +2328,26 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
+                if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
+                {
+                    list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
+                }
+                if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
+                {
+                    list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+                }
+                if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
+                {
+                    list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+                }
+                if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+                {
+                    list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+                }
+                if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
+                {
+                    list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+                }
                 PayLoad PLReq = new PayLoad("GetElementProperties");
                 PLReq.AddValue(ElementInfo.Path);
                 PLReq.AddValue(ElementInfo.XPath);
