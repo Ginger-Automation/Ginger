@@ -70,14 +70,14 @@ namespace Ginger.SourceControl
             string error = string.Empty;
             bool IsFileUpdated = true;
             RepositoryFolderBase repositoryFolderBase = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(Path.GetDirectoryName(path));
-            repositoryFolderBase.PauseFileWatcher();
+            repositoryFolderBase?.PauseFileWatcher();
             if (!SourceControl.UpdateFile(path, ref error))
             {
                 IsFileUpdated = false;
                 Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
                 return IsFileUpdated;
             }
-            repositoryFolderBase.ResumeFileWatcher();
+            repositoryFolderBase?.ResumeFileWatcher();
             return IsFileUpdated;
         }
 
