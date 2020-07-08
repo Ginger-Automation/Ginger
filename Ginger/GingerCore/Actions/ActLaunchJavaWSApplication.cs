@@ -998,6 +998,11 @@ namespace GingerCore.Actions
             //if yes that means java agent is already attached to this process
             try
             {
+                if(id == -1)
+                {
+                    return false;
+                }
+
                 Process process = Process.GetProcessById(id);
                 ProcessModuleCollection processModules = process.Modules;
                 ProcessModule module;
