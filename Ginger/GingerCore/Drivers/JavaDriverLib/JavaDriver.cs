@@ -1919,13 +1919,17 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             foreach (var htmlElement in hTMLControlsPayLoad)
             {
-                //if (!selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
-                //{
-                //    continue;
-                //}
+                if (!selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
+                {
+                    continue;
+                }
                ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
                 
                 htmlElement.IsAutoLearned = true;
+                htmlElement.Active = true;
+                htmlElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath", Value = currentFramePath });
+                htmlElement.IsWidget = true;
+                
                 elementInfoList.Add(htmlElement);
                 //if (eElementType.Iframe == htmlElement.ElementTypeEnum)
                 //{
