@@ -3121,7 +3121,7 @@ namespace GingerCore.Drivers
         {
             UnhighlightLast();
             Driver.SwitchTo().DefaultContent();
-            if (EI.Path != null)
+            if (!string.IsNullOrEmpty(EI.Path))
             {
                 if (!EI.IsAutoLearned)
                 {
