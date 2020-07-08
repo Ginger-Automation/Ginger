@@ -3121,10 +3121,21 @@ namespace GingerCore.Drivers
         {
             UnhighlightLast();
             Driver.SwitchTo().DefaultContent();
-            if (EI.Path != null)
+            if (!string.IsNullOrEmpty(EI.Path))
             {
-                string[] spliter = new string[] { "," };
-                string[] iframesPathes = EI.Path.Split(spliter, StringSplitOptions.RemoveEmptyEntries);
+                if (!EI.IsAutoLearned)
+                {
+                    ValueExpression VE = new ValueExpression(null, null);
+                    EI.Path = VE.Calculate(EI.Path);
+                    if(EI.Path  == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Concat("Expression : ", EI.Path, " evaluated to null value."));
+                        return;
+                    }
+                }
+                //split Path by commo outside of brackets 
+                var spliter = new Regex(@",(?![^\[]*[\]])");
+                string[] iframesPathes = spliter.Split(EI.Path);
                 foreach (string iframePath in iframesPathes)
                 {
                     Driver.SwitchTo().Frame(Driver.FindElement(By.XPath(iframePath)));
