@@ -797,7 +797,7 @@ namespace GingerCore.Drivers.Appium
                         e = LocateElement(act);                                                
                         if (e != null)
                         {                            
-                            e.Clear();
+                            //e.Clear();
                             ////make sure value was cleared- trying to handle clear issue in WebViews
                             //try
                             //{
@@ -819,11 +819,13 @@ namespace GingerCore.Drivers.Appium
                             switch (DriverPlatformType)
                             {
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
+                                    e.Clear();
                                     e.SendKeys(act.GetInputParamCalculatedValue("Value"));                                    
                                     break;
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                    //e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-                                    ((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
+                                    //e.Clear();
+                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                                    //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
                                     break;
                             }
                             if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
