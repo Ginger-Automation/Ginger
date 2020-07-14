@@ -246,7 +246,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             Elapsed = activityReport.Elapsed;
             RunStatus = activityReport.RunStatus;
             VariablesAfterExec = activityReport.VariablesAfterExec;
-            //VariablesBeforeExec = activityReport.VariablesBeforeExec;
+            VariablesBeforeExec = activityReport.VariablesBeforeExec;
         }
     }
     
