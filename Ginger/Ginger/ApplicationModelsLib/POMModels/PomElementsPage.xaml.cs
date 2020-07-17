@@ -693,7 +693,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
+                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator },IsWidget= CurrentEI.IsWidget });
             }
         }
 

@@ -148,7 +148,15 @@ namespace GingerCore.Platforms.PlatformsInfo
             Act elementAction = null;
             if (elementInfo != null)
             {
-                List<ActUIElement.eElementAction> elementTypeOperations = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
+                List<ActUIElement.eElementAction> elementTypeOperations = new List<ActUIElement.eElementAction>();
+                if (elementInfo.IsWidget)
+                {
+                    elementTypeOperations = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
+                }
+                else
+                {
+                    elementTypeOperations = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
+                }
                 if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
@@ -173,7 +181,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
                     }
-
+                    if (elementInfo.IsWidget)
+                    {
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
+                    }
                     pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
                 }
             }
@@ -201,6 +212,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.List:
                 case eElementType.RadioButton:                
                 case eElementType.Button:
+                case eElementType.TableItem:
                     return  ActUIElement.eElementAction.Click.ToString();
 
                 case eElementType.CheckBox:
@@ -599,6 +611,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.RadioButton:
                 case eElementType.CheckBox:
                 case eElementType.Span:
+                case eElementType.TableItem:
                     widgetsActionslist.Add(ActUIElement.eElementAction.Click);
                     widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
@@ -639,6 +652,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             mWidgetsElementsTypeList.Add(eElementType.Label);
             mWidgetsElementsTypeList.Add(eElementType.Span);
             mWidgetsElementsTypeList.Add(eElementType.Div);
+            mWidgetsElementsTypeList.Add(eElementType.TableItem);
 
             return mWidgetsElementsTypeList;
         }

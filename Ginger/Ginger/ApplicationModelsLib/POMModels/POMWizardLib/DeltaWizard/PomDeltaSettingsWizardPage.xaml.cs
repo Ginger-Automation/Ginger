@@ -95,7 +95,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
                 else
                 {
-                    mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
+                    var elementExtInfo = string.Empty;
+                    if (mAppPlatform.Equals(ePlatformType.Java))
+                    {
+                        elementExtInfo = "For Embedded Html.";
+                    }
+                    mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, elementTypeOperation.IsCommonElementType));
                 }
             }
         }

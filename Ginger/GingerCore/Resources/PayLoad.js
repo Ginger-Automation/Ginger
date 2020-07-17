@@ -348,6 +348,24 @@ GingerPayLoad.prototype.GetListPayLoad = function()
     }
 }
 
+GingerPayLoad.prototype.GetKeyValue = function () {
+
+    var keyValueObject = {};
+    var byteValue = this.ReadValueType();
+
+    if (byteValue == 8) {
+
+        var key = this.GetValueString();
+        var value = this.GetValueString();
+
+        keyValueObject[key] = value;
+    }
+    
+    return keyValueObject;
+  
+}
+
+
 GingerPayLoad.prototype.ReadPayLoad = function ()
 {
     var len = this.ReadLen();

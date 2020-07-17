@@ -125,6 +125,17 @@ function define_GingerLib() {
            var ElementLocateValue = inputValues["ElementLocateValue"];
            var Value = inputValues["Value"];
 
+            //For Widgets POM element
+            if (ElementLocateBy === "POMElement") {
+                
+                var pomLocaters = PayLoad.GetKeyValue();
+
+                for (var key in pomLocaters) {
+                    ElementLocateBy = key;
+                    ElementLocateValue = pomLocaters[key];
+                }
+            }
+
             if (ElementAction === "TriggerJavaScriptEvent")
             {
                 var IsMouseEvent = inputValues["IsMouseEvent"];
