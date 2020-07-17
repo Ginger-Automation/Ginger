@@ -563,6 +563,11 @@ namespace Amdocs.Ginger.Repository
                     {
                         RepositoryFolder<T> rf = GetSubFolder(fn);
                         rf.StopFileWatcherRecursive();
+                        rf.DeleteFolderCacheItemsRecursive();
+                        if (mSubFoldersCache != null)
+                        {
+                            mSubFoldersCache.Remove(rf);
+                        }
                     }
                     break;
                 case WatcherChangeTypes.Deleted:
