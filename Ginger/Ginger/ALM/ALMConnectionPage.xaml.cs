@@ -245,6 +245,9 @@ namespace Ginger.ALM
 
             if (DomainComboBox.Items.Count > 0)
             {
+                //sort
+                DomainComboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Descending));
+
                 if (string.IsNullOrEmpty(currDomain) == false)
                 {
                     if (DomainComboBox.Items.Contains(currDomain))
@@ -254,7 +257,9 @@ namespace Ginger.ALM
                     }
                 }
                 if (DomainComboBox.SelectedIndex == -1)
+                {
                     DomainComboBox.SelectedIndex = 0;
+                }
             }
         }
 
@@ -309,7 +314,6 @@ namespace Ginger.ALM
                         CurrentAlmConfigurations.ALMProjectName = ProjectComboBox.Text;
                         CurrentAlmConfigurations.ALMProjectKey = ProjectComboBox.SelectedValue.ToString();
                     }
-
                 }
             }
         }
