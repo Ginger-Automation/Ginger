@@ -73,6 +73,7 @@ namespace Amdocs.Ginger.Repository
         public  void SaveToFile(RepositoryItemBase ri, string FileName)
         {
             string txt = SerializeToString(ri);
+
             File.WriteAllText(FileName, txt);
         }
 

@@ -352,7 +352,7 @@ namespace amdocs.ginger.GingerCoreNET
         public bool OpenSolution(string solutionFolder)
         {                      
             try
-            {               
+            {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
 
@@ -388,7 +388,7 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution.xml into object");
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile);
                 if (solution == null)
                 {
@@ -412,9 +412,9 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-                Solution = solution;                
+                Solution = solution;
                 UserProfile.LoadRecentAppAgentMapping();
-                
+
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -422,13 +422,12 @@ namespace amdocs.ginger.GingerCoreNET
 
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
-                
+
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)  
                 {
                     UserProfile.AddSolutionToRecent(solution);
                 }
-
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 
