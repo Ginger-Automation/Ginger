@@ -734,6 +734,12 @@
     <None Update="Reports\Ginger-Web-Client\main.5c9395fe36c9ac94e13c.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main.9a7f41ac158394ee2cff.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.ac18b79c87efc4589d26.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -765,6 +771,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\styles.ec0b85177c760405ccbd.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

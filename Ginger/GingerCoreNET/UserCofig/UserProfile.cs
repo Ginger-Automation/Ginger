@@ -414,12 +414,12 @@ namespace Ginger
             try
             {
                 SaveRecentAppAgentsMapping();
+
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while saving Recent App-Agents Mapping for User Profile save", ex);
             }
-
             RepositorySerializer.SaveToFile(this, UserProfileFilePath);
         }
 

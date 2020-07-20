@@ -4,16 +4,17 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="ALM"
+      xmlns:h="clr-namespace:Ginger.Help"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="ALM"
       Height="540" Width="350"
 	Title="ALM Connection Settings">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Background="{StaticResource $BackgroundColor_LightGray}">
             <StackPanel>
-                <StackPanel x:Name="ALMSelectPanel"  Visibility="Collapsed">
+                <StackPanel x:Name="ALMSelectPanel"  Visibility="Visible">
                     <DockPanel Background="{StaticResource $Color_DarkBlue}">
-                        <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 1: Select ALM</Label>
+                        <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 1: Select ALM Type</Label>
                     </DockPanel>
 
                     <Grid Margin="10,10,0,10">
@@ -22,16 +23,26 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal" x:Name="ALMRDsType">
                             <RadioButton x:Name="QCRadioButton" IsChecked="True" Content="QC" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="0" Margin="5,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageQC" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                        
                             <RadioButton x:Name="RQMRadioButton" Content="RQM" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="1" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRQM" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+
                             <RadioButton x:Name="JiraRadioButton" Content="JIRA" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="2" Margin="15,0,0,0"></RadioButton>
-                            <RadioButton x:Name="qTestRadioButton" Content="Qtest" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="3" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageJIRA" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+
+                            <RadioButton x:Name="qTestRadioButton" Content="QTest" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="3" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageQTest" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+
                             <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="4" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRally" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
                 <StackPanel x:Name="ALMSettingsPannel">
-                    <StackPanel x:Name="ALMServerDetailsPanel" Visibility="Collapsed">
+                    <StackPanel x:Name="ALMServerDetailsPanel" Visibility="Visible">
                         <DockPanel Background="{StaticResource $Color_DarkBlue}">
                             <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 2: Server Details</Label>
                         </DockPanel>
@@ -49,7 +60,7 @@
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="ServerURLTextBox" Style="{StaticResource @TextBoxStyle}" TextChanged="ServerURLTextBox_TextChanged" Height="25" VerticalAlignment="Top" />
+                                <TextBox x:Name="ServerURLTextBox" Style="{StaticResource @TextBoxStyle}" TextChanged="ServerURLTextBox_TextChanged" MouseEnter="ShowToolTip" Height="25" VerticalAlignment="Top" />
                                 <Button x:Name="RQMLoadConfigPackageButton" Click="LoadRQMConfigPackageButton_Click" Content="Load" Style="{StaticResource @WindowButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Visible"></Button>
                             </Grid>
 
@@ -64,11 +75,11 @@
                                 <PasswordBox x:Name="PasswordTextBox" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
                             </StackPanel>
                         </StackPanel>
-                        <CheckBox x:Name="RestAPICheckBox" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
+                        <CheckBox x:Name="RestAPICheckBox" IsChecked="True" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
                         <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked" Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
                     </StackPanel>
 
-                    <StackPanel x:Name="ALMProjectDetailsPanel"  Visibility="Collapsed">
+                    <StackPanel x:Name="ALMProjectDetailsPanel"  Visibility="Visible">
                         <DockPanel Background="{StaticResource $Color_DarkBlue}">
                             <Label x:Name="loginToProjectlbl" Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch" >Step 3: Project Details</Label>
                         </DockPanel>
