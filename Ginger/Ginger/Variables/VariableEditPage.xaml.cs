@@ -111,7 +111,8 @@ namespace Ginger.Variables
             if (setGeneralConfigsAsReadOnly)
             {
                 xVarNameTxtBox.IsEnabled = false;
-                xVarDescritpiontxtBox.IsEnabled = false;
+                xVarDescritpiontxtBox.Background = System.Windows.Media.Brushes.Transparent;
+                xVarDescritpiontxtBox.IsReadOnly = true;
                 xTagsViewer.IsEnabled = false;
                 xSharedRepoInstanceUC.IsEnabled = false;
                 xSetAsInputValueCheckBox.IsEnabled = false;
