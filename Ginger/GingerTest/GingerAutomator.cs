@@ -49,7 +49,7 @@ namespace GingerTest
         public static bool Highlight { get { return false; }  }
 
         public static GingerAutomator StartSession()
-        {            
+        {
             SessionCount++;
             TestMutex.WaitOne();  // Make sure we run one session at a time, wait for session to be free
             if (app == null)
@@ -60,7 +60,8 @@ namespace GingerTest
                 {
                     Thread.Sleep(100);
                 }
-            }            
+
+            }
             return gingerAutomatorInstance;
         }
 
@@ -97,7 +98,7 @@ namespace GingerTest
 
                 app.HideConsoleWindow();
                 app.StartGingerUI();
-                
+
                 GingerPOMBase.Dispatcher = app.GetMainWindowDispatcher();
 
                 //Ginger.App.MainWindow.Closed += (sender1, e1) => 
@@ -106,7 +107,7 @@ namespace GingerTest
                 MainWindowPOM = new MainWindowPOM(Ginger.App.MainWindow);
 
                 // Makes the thread support message pumping                 
-                System.Windows.Threading.Dispatcher.Run();                                    
+                System.Windows.Threading.Dispatcher.Run();
             });
 
 
