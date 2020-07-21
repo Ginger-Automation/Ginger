@@ -37,15 +37,11 @@ namespace Amdocs.Ginger.Common
 
         void SaveUndoData();
 
-        bool LazyLoad { get; set; }
+        bool LazyLoad { get;}
 
         bool AvoidLazyLoad { get; set; }
 
-        LazyLoadListDetails LazyLoadDetails { get; set; }
-
-        MemoryStream StringDataMS { get; set; }
-
-        int DataLen { get; set; }
+        LazyLoadListDetails LazyLoadDetails { get; set; }        
 
         List<object> ListItems { get; }
 

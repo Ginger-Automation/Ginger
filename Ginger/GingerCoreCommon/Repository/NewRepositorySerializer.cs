@@ -602,8 +602,7 @@ namespace Amdocs.Ginger.Repository
                 else
                 {
                     xdr.ReadOuterXml();//so xdr will progress
-                }
-                observableList.LazyLoad = true;
+                }                
                 return;
             }
 

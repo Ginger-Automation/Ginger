@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -427,7 +428,9 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             ObservableList<Activity> activities = new ObservableList<Activity>();
             string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "ActivityTest.Ginger.Activity.xml"));
 
-            activities.DoLazyLoadItem(activityXml);
+            activities.LazyLoadDetails = new LazyLoadListDetails();
+            activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData };
+            activities.LazyLoadDetails.DataAsString = activityXml;
 
             Assert.AreEqual(true, activities.LazyLoad);
 

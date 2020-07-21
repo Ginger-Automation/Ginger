@@ -376,8 +376,8 @@ namespace GingerCore.Repository
                 // We can save line/col and reload later when needed
                 string s = xdr.ReadOuterXml();
                 //observableList.DoLazyLoadItem(s);
-
-                observableList.LazyLoad = true;
+                //observableList.LazyLoad = true;
+                //Lazy load was not really implemented for old RepositorySerilizer
                 return;
             }
             

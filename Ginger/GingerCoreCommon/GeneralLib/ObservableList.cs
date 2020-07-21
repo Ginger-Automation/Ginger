@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.Common
         {
             get
             {
-                if (mLazyLoad)
+                if (LazyLoad)
                 {
                     LoadLazyInfo();
                 }
@@ -261,14 +261,14 @@ namespace Amdocs.Ginger.Common
         }
                 
         string mFilterStringData = null;
-        MemoryStream mMemoryStream = null;
-        int mDataLen;
+        
+       
 
         protected new IList<T> Items
         {
             get
             {
-                if (mLazyLoad)
+                if (LazyLoad)
                 {
                     LoadLazyInfo();
                 }
@@ -276,48 +276,43 @@ namespace Amdocs.Ginger.Common
             }
         }
 
-        bool mLazyLoad = false;
-        bool IObservableList.LazyLoad { get { return mLazyLoad; } set { mLazyLoad = value; } }
-        public bool LazyLoad { get { return mLazyLoad; } }
+        public LazyLoadListDetails LazyLoadDetails { get; set; }
+
+        bool IObservableList.LazyLoad 
+        { 
+            get { return LazyLoad; } 
+        }
+        public bool LazyLoad 
+        { 
+            get 
+            { 
+                if (LazyLoadDetails == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return (!LazyLoadDetails.DataWasLoaded);
+                }
+            } 
+        }
 
         bool mAvoidLazyLoad = false;
         public bool AvoidLazyLoad { get { return mAvoidLazyLoad; } set { mAvoidLazyLoad = value; } }
 
-        public LazyLoadListDetails LazyLoadDetails { get; set; }
-
-        public MemoryStream StringDataMS { get { return mMemoryStream; } set { mMemoryStream = value; } }
-        public int DataLen { get { return mDataLen; } set { mDataLen = value; } }
-
         public new IEnumerator<T> GetEnumerator()
         {
-            if (mLazyLoad)
+            if (LazyLoad)
             {
                 LoadLazyInfo();
             }
             return base.GetEnumerator();
         }
 
-        //public void DoLazyLoadItem(string s)
-        //{
-        //    //option 1 simple string 
-        //    StringData = s;
-
-        //    //Option 2 compressed string
-        //    // observableList.StringData = StringCompressor.CompressString(s);
-
-        //    //option 3 MS
-        //    //StringDataMS = StringCompressor.CompressStringToBytes(s);
-        //    // DataLen = s.Length;
-
-        //    mLazyLoad = true;
-
-        //}
-
         bool loadingata = false;
-
         public void LoadLazyInfo()
         {
-            if (!mLazyLoad) return;
+            if (!LazyLoad) return;
             if (loadingata) // //since several functions can call in parallel we might enter when status is already loadingdata, so we wait for it to complete, then return
             {
                 int count = 0;
@@ -334,7 +329,7 @@ namespace Amdocs.Ginger.Common
             {
                 loadingata = true;
                 // We need 2nd check as it might changed after lock released
-                if (!mLazyLoad) return;   //since several functions can try to get data we need to lock and verify before we convert 
+                if (!LazyLoad) return;   //since several functions can try to get data we need to lock and verify before we convert 
 
                 try
                 {
@@ -346,7 +341,7 @@ namespace Amdocs.Ginger.Common
                 }
 
                 LazyLoadDetails.DataAsString = null;
-                mLazyLoad = false;
+                LazyLoadDetails.DataWasLoaded = true;
                 loadingata = false;
                 mAvoidLazyLoad = true;
             }

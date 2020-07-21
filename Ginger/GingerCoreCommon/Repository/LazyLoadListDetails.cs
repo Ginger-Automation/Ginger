@@ -25,6 +25,8 @@ namespace Amdocs.Ginger.Common.Repository
                 mDataAsString = value;
             }
         }
+
+        public bool DataWasLoaded = false;
         
 
         private void LoadXMLDataIntoString()

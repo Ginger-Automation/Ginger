@@ -282,7 +282,7 @@ namespace GingerCore
                 if (mActivities.LazyLoad)
                 {
                     mActivities.LoadLazyInfo();
-                    LazyLoadFlagForUnitTest = true; 
+                    mLazyLoadFlagForUnitTest = true; 
                     AttachActivitiesGroupsAndActivities(mActivities);
                     if (this.DirtyStatus != eDirtyStatus.NoTracked)
                     {
