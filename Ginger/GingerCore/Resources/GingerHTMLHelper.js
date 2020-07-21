@@ -376,6 +376,11 @@ function define_GingerLib() {
         }
         else {
 
+            //Adding action for POM Element
+            if (ControlAction === "LocateElementByLocator") {
+                return true;
+            }
+
             if (ControlAction == "SetValue") {
                 return GingerLib.SetElementValue(el, Value);
             } 

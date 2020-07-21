@@ -3600,7 +3600,16 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad LocateWidgetElementByLocators(ElementLocator elementLocator)
         {
-            throw new NotImplementedException();
+            var locateBy = elementLocator.LocateBy.ToString();
+            var locateValue = elementLocator.LocateValue;
+            if(!elementLocator.IsAutoLearned)
+            {
+                locateBy = elementLocator.LocateBy.ToString();
+                locateValue = new ValueExpression(this.Environment, this.BusinessFlow).Calculate(elementLocator.LocateValue);
+            }
+            PayLoad payLoad = new PayLoad("HTMLElementAction", "LocateElementByLocator", locateBy, locateValue,"");
+
+            return payLoad;
         }
 
         public PayLoad LocateElementByLocator(ElementLocator locator)
