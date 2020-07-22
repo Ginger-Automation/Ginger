@@ -423,25 +423,46 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
         /// </summary>
         [TestMethod]        
-        public void ActiviyLazyLoad()
+        public void ActivitiesLazyLoadViaStringData()
         {
+            //arrange
             ObservableList<Activity> activities = new ObservableList<Activity>();
             string activityXml = File.ReadAllText(TestResources.GetTestResourcesFile(@"XML" + Path.DirectorySeparatorChar + "ActivityTest.Ginger.Activity.xml"));
-
             activities.LazyLoadDetails = new LazyLoadListDetails();
             activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData };
             activities.LazyLoadDetails.DataAsString = activityXml;
 
-            Assert.AreEqual(true, activities.LazyLoad);
-
+            //act
             if (activities.LazyLoad)
             {
                 activities.LoadLazyInfo();
             }
 
+            //assert
+            Assert.AreEqual(1, activities.Count);
+            Assert.AreEqual(false, activities.LazyLoad);            
+        }
+
+        /// <summary>
+        /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void ActivitiesLazyLoadViaNodeLPath()
+        {
+            //arragne
+            ObservableList<Activity> activities = new ObservableList<Activity>();
+            activities.LazyLoadDetails = new LazyLoadListDetails() { XmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder(@"XML"), "ActivityTest.Ginger.Activity.xml")};
+            activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath, ListName=nameof(BusinessFlow.Activities)};
+
+            //act
+            if (activities.LazyLoad)
+            {
+                activities.LoadLazyInfo();
+            }
+
+            //assert            
             Assert.AreEqual(1, activities.Count);
             Assert.AreEqual(false, activities.LazyLoad);
-            
         }
 
         /// <summary>

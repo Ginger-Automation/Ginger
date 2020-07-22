@@ -49,7 +49,10 @@ namespace Amdocs.Ginger.Common.Repository
                     using (XmlReader xdr = XmlReader.Create(XmlFilePath, xdrSettings))
                     {
                         xdr.MoveToContent();
-                        xdr.ReadToDescendant(Config.ListName);
+                        if (xdr.Name != Config.ListName)
+                        {
+                            xdr.ReadToDescendant(Config.ListName);
+                        }
                         mDataAsString = xdr.ReadOuterXml();
                     }
                 }

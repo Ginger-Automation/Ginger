@@ -928,7 +928,7 @@ namespace UnitTests.NonUITests
         public void FlowcontrolTest_WithBFCreateCopy()
         {
             //Arrange
-            BusinessFlow bf = new BusinessFlow("Test");
+            BusinessFlow bf = new BusinessFlow("Test");            
 
             Activity activity = new Activity();
             activity.ActivityName = "Login";
@@ -966,8 +966,10 @@ namespace UnitTests.NonUITests
             bf.Activities.Add(activity);
             bf.Activities.Add(activity2);
 
-            activity2.ActivityName = "Test_New";                        
-            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+            activity2.ActivityName = "Test_New";
+            string tempFile = TestResources.GetTempFile("BF.xml");
+            bf.RepositorySerializer.SaveToFile(bf, tempFile);
+            bf.FilePath = tempFile;
 
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();
@@ -1119,8 +1121,11 @@ namespace UnitTests.NonUITests
             bf.Activities.Add(activity);
             bf.Activities.Add(activity2);
 
-          
+
             //Act
+            string tempFile = TestResources.GetTempFile("BF_ActivityVariableDependancyTest_WithCreateInstance.xml");
+            bf.RepositorySerializer.SaveToFile(bf, tempFile);
+            bf.FilePath = tempFile;
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();
          
             Guid newBFVarGuid = bfCopy.Variables.Where(x => x.Name == "bfVariable1").FirstOrDefault().Guid;
