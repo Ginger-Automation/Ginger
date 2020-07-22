@@ -593,16 +593,29 @@ namespace Amdocs.Ginger.Repository
             if (ParentObj is RepositoryItemBase && lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
             {
                 observableList.LazyLoadDetails = new LazyLoadListDetails();
-                observableList.LazyLoadDetails.Config = lazyLoadConfig;
-                observableList.LazyLoadDetails.XmlFilePath = ((RepositoryItemBase)ParentObj).FilePath;
-                if (lazyLoadConfig.LazyLoadType == LazyLoadListConfig.eLazyLoadType.StringData)
+                observableList.LazyLoadDetails.Config = new LazyLoadListConfig() { ListName = lazyLoadConfig.ListName, LazyLoadType = lazyLoadConfig.LazyLoadType };//copying the values so original config won't get changed
+                switch(observableList.LazyLoadDetails.Config.LazyLoadType)
                 {
-                    observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
-                }
-                else
-                {
-                    xdr.ReadOuterXml();//so xdr will progress
-                }                
+                    case LazyLoadListConfig.eLazyLoadType.NodePath:
+                        if (string.IsNullOrEmpty(((RepositoryItemBase)ParentObj).FilePath) == false 
+                                && File.Exists(((RepositoryItemBase)ParentObj).FilePath)
+                                    && ((RepositoryItemBase)ParentObj).DirtyStatus != Common.Enums.eDirtyStatus.Modified)
+                        {
+                            observableList.LazyLoadDetails.XmlFilePath = ((RepositoryItemBase)ParentObj).FilePath;
+                            xdr.ReadOuterXml();//so xdr will progress
+                        }
+                        else //can't go with NodePath approch because no file to refernce or file do not have latest data
+                        {
+                            observableList.LazyLoadDetails.Config.LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData;
+                            observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml();
+                        }
+                        break;
+
+                    case LazyLoadListConfig.eLazyLoadType.StringData:
+                    default:
+                        observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml();
+                        break;
+                }                           
                 return;
             }
 

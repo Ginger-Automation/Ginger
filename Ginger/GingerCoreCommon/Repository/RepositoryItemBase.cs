@@ -621,7 +621,7 @@ namespace Amdocs.Ginger.Repository
             // Create a copy by serialized and load from the text, it will not copy all attrs only the one which are saved to XML
             string s = RepositorySerializer.SerializeToString(this);
             // TODO: fixme not good practice and not safe, add param to handle in function or another solution...
-            RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:this.FilePath);            
+            RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:string.Empty);            
             //change the GUID of duplicated item
             if (setNewGUID && duplicatedItem != null)
             {
@@ -690,7 +690,7 @@ namespace Amdocs.Ginger.Repository
                 s = s.Replace(mapper.Original.ToString(), mapper.newGuid.ToString());
             }
 
-            return (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath: this.FilePath);
+            return (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath: string.Empty);
         }
 
 
