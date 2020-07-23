@@ -35,9 +35,9 @@ namespace Ginger.Run.RunSetActions
         {
             mRunSetActionSendFreeEmail = runSetActionSendFreeEmail;
             InitializeComponent();
-            if (runSetActionSendFreeEmail.Email == null)
+            if (mRunSetActionSendFreeEmail.Email == null)
             {
-                runSetActionSendFreeEmail.Email = new Email();
+                mRunSetActionSendFreeEmail.Email = new Email();
             }
 
             RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(mRunSetActionSendFreeEmail.Email);
