@@ -555,11 +555,7 @@ namespace Amdocs.Ginger.Repository
                     // change happen when new file is added, for now we can ignore, as we will get also file added event
 
                     //if the folder is deleted(shift + del) by the user from the file system and not from Ginger
-                    try
-                    {
-                        Directory.GetFiles(e.FullPath);
-                    }
-                    catch (Exception ex)
+                    if (DirectoryVisibleButNotAccessible(e.FullPath))
                     {
                         RepositoryFolder<T> rf = GetSubFolder(fn);
                         rf.StopFileWatcherRecursive();
@@ -567,7 +563,6 @@ namespace Amdocs.Ginger.Repository
                     break;
                 case WatcherChangeTypes.Deleted:
                     RepositoryFolder<T> sf2 = GetSubFolder(fn);
-                    //sf2.StopFileWatcherRecursive();
                     sf2.DeleteFolderCacheItemsRecursive();
 
                     //delete the folder from folders cache  
@@ -581,7 +576,22 @@ namespace Amdocs.Ginger.Repository
             SolutionRepository.RefreshParentFoldersSoucerControlStatus(e.FullPath);
             return;
         }
-
+        public bool DirectoryVisibleButNotAccessible(string path)
+        {
+            try
+            {
+                Directory.GetDirectories(path);
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
         void WaitforFileIsReadable(string fileName)
         {
             //retry max 10 times
