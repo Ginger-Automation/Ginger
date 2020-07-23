@@ -188,8 +188,16 @@ namespace Ginger.ALM
 
         private bool GetProjectsDetails()
         {
+            if (string.IsNullOrEmpty(CurrentAlmConfigurations.ALMServerURL))
+            {
+                return false;
+            }
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-
+            //Removing ending "/" from the ServerURL for JIRA
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira && CurrentAlmConfigurations.ALMServerURL.EndsWith("/"))
+            {
+                CurrentAlmConfigurations.ALMServerURL = CurrentAlmConfigurations.ALMServerURL.Substring(0, CurrentAlmConfigurations.ALMServerURL.LastIndexOf("/"));
+            }
             bool almConn = false;
             ALMIntegration.Instance.UpdateALMType(CurrentAlmConfigurations.AlmType);
 
@@ -237,6 +245,9 @@ namespace Ginger.ALM
 
             if (DomainComboBox.Items.Count > 0)
             {
+                //sort
+                DomainComboBox.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("", System.ComponentModel.ListSortDirection.Descending));
+
                 if (string.IsNullOrEmpty(currDomain) == false)
                 {
                     if (DomainComboBox.Items.Contains(currDomain))
@@ -246,7 +257,9 @@ namespace Ginger.ALM
                     }
                 }
                 if (DomainComboBox.SelectedIndex == -1)
+                {
                     DomainComboBox.SelectedIndex = 0;
+                }
             }
         }
 
@@ -301,7 +314,6 @@ namespace Ginger.ALM
                         CurrentAlmConfigurations.ALMProjectName = ProjectComboBox.Text;
                         CurrentAlmConfigurations.ALMProjectKey = ProjectComboBox.SelectedValue.ToString();
                     }
-
                 }
             }
         }
@@ -654,6 +666,21 @@ namespace Ginger.ALM
         private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExampleURLHint.Content = "Example: http://server:8080/almbin";
+        }
+        private void ShowToolTip(object sender, MouseEventArgs e)
+        {
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+            {
+                ToolTipService.SetToolTip(ServerURLTextBox, new ToolTip { Content = "Example: http://server", Style = FindResource("ToolTipStyle") as Style });
+            }
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC || CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY)
+            {
+                ToolTipService.SetToolTip(ServerURLTextBox, new ToolTip { Content = "Example: http://server:8080/almbin", Style = FindResource("ToolTipStyle") as Style });
+            }
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest)
+            {
+                ToolTipService.SetToolTip(ServerURLTextBox, new ToolTip { Content = "Example: https://qtest-url.com/", Style = FindResource("ToolTipStyle") as Style });
+            }
         }
     }
 }
