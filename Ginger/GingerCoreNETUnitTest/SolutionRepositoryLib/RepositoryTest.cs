@@ -891,7 +891,6 @@ namespace UnitTests.NonUITests
         [TestMethod]  [Timeout(60000)]
         public void CopyAction()
         {
-
             //Arrange
             ActUIElement actGotoURL = new ActUIElement();
             actGotoURL.Description = "www.google.com";
@@ -900,9 +899,28 @@ namespace UnitTests.NonUITests
             ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy();
 
             //Assert
-            Assert.AreEqual(actGotoURL.Description, a2.Description);
-            
+            Assert.AreEqual(actGotoURL.Description, a2.Description);            
+        }
 
+        [TestMethod]
+        [Timeout(60000)]
+        public void CopyActivities()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow();
+            Activity activity1 = new Activity() { ActivityName = "Activiy1" };
+            bf.Activities.Add(activity1);
+            string tempFile = TestResources.GetTempFile("BF_Copytest.xml");
+            bf.RepositorySerializer.SaveToFile(bf, tempFile);
+
+            //Act
+            Activity activity2 = new Activity() { ActivityName = "Activiy2" };
+            bf.Activities.Add(activity2);
+            BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy();
+
+            //Assert
+            Assert.AreEqual(bfCopy.Activities.Count, 2);
+            Assert.AreEqual(bfCopy.Activities[1].ActivityName, "Activiy2");
         }
 
         [TestMethod]  [Timeout(60000)]
