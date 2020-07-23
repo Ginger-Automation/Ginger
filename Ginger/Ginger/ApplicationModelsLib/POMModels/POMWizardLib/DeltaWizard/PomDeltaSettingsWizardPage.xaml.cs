@@ -98,11 +98,29 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     var elementExtInfo = string.Empty;
                     if (mAppPlatform.Equals(ePlatformType.Java))
                     {
-                        elementExtInfo = "For Embedded Html.";
+                        elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
                     }
                     mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, elementTypeOperation.IsCommonElementType));
                 }
             }
+        }
+
+        private string SetElementExtInfo(eElementType elementType)
+        {
+            var elementExtInfo = string.Empty;
+            switch (elementType)
+            {
+                case eElementType.Browser:
+                case eElementType.Div:
+                case eElementType.Span:
+                case eElementType.HyperLink:
+                    elementExtInfo = "For Embedded Html";
+                    break;
+                default:
+                    elementExtInfo = string.Empty;
+                    break;
+            }
+            return elementExtInfo;
         }
 
         private void SetElementLocatorsSettingsData()

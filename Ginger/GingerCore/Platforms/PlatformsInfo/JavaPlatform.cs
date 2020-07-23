@@ -800,6 +800,21 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.Browser,
                     IsCommonElementType = false
                 });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Div,
+                    IsCommonElementType = false
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Span,
+                    IsCommonElementType = false
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.HyperLink,
+                    IsCommonElementType = false
+                });
             }
             return mPlatformElementTypeOperations;
         }

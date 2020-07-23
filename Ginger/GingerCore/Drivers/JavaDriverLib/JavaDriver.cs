@@ -1925,6 +1925,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
+        private static CancellationTokenSource cts;
         private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
             var javaElementInfo = new JavaElementInfo()
@@ -1934,34 +1935,44 @@ namespace GingerCore.Drivers.JavaDriverLib
             InitializeBrowser(javaElementInfo);
 
             var hTMLControlsPayLoad = GetBrowserVisibleControls();
+
+            cts = new CancellationTokenSource();
             try
             {
-                foreach (var htmlElement in hTMLControlsPayLoad)
-                {
-                    if (mStopProcess)
-                    {
-                        break;
-                    }
+                ParallelOptions pOptions = new ParallelOptions();
+                pOptions.MaxDegreeOfParallelism = 16;
+                pOptions.CancellationToken = cts.Token;
 
-                    //if (!selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
-                    //{
-                    //    continue;
-                    //}
+                Parallel.ForEach(hTMLControlsPayLoad, pOptions, (htmlElement, loopState) =>
+                 {
+                     if (mStopProcess)
+                     {
+                         cts.Cancel();
+                     }
+                     pOptions.CancellationToken.ThrowIfCancellationRequested();
+                     if (selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
+                     {
+                         htmlElement.IsAutoLearned = true;
+                         htmlElement.Active = true;
+                         htmlElement.IsWidget = true;
 
-                    htmlElement.IsAutoLearned = true;
-                    htmlElement.Active = true;
-                    htmlElement.IsWidget = true;
+                         ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
+                         htmlElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath", Value = currentFramePath });
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
-                    htmlElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath", Value = currentFramePath });
+                         elementInfoList.Add(htmlElement);
 
-                    //TODO: Handle to learn iframe element
-                    if (eElementType.Iframe.Equals(htmlElement.ElementTypeEnum))
-                    {
+                         //TODO: Handle to learn iframe element
+                         if (eElementType.Iframe.Equals(htmlElement.ElementTypeEnum))
+                         {
 
-                    }
-                    elementInfoList.Add(htmlElement);
-                }
+                         }
+                     }
+
+                 });
+            }
+            catch (OperationCanceledException e)
+            {
+
             }
             catch (Exception ex)
             {
