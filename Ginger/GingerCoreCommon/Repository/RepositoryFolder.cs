@@ -555,7 +555,7 @@ namespace Amdocs.Ginger.Repository
                     // change happen when new file is added, for now we can ignore, as we will get also file added event
 
                     //if the folder is deleted(shift + del) by the user from the file system and not from Ginger
-                    if (DirectoryVisibleButNotAccessible(e.FullPath))
+                    if (IsDirectoryVisibleButNotAccessible(e.FullPath))
                     {
                         RepositoryFolder<T> rf = GetSubFolder(fn);
                         rf.StopFileWatcherRecursive();
@@ -576,7 +576,7 @@ namespace Amdocs.Ginger.Repository
             SolutionRepository.RefreshParentFoldersSoucerControlStatus(e.FullPath);
             return;
         }
-        public bool DirectoryVisibleButNotAccessible(string path)
+        public bool IsDirectoryVisibleButNotAccessible(string path)
         {
             try
             {
