@@ -1926,15 +1926,30 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         private static CancellationTokenSource cts;
+        private bool isBrowserElementLearned = false;
         private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
             var javaElementInfo = new JavaElementInfo()
             {
                 XPath = currentFramePath
             };
-            InitializeBrowser(javaElementInfo);
+
+            if (!isBrowserElementLearned)
+            {
+                InitializeBrowser(javaElementInfo);
+            }
+            else
+            {
+                return;
+            }
+            
 
             var hTMLControlsPayLoad = GetBrowserVisibleControls();
+
+            if(hTMLControlsPayLoad.Count > 0)
+            {
+                isBrowserElementLearned = true;
+            }
 
             cts = new CancellationTokenSource();
             try
