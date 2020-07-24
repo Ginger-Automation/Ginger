@@ -30,26 +30,58 @@ namespace Ginger.Run.RunSetActions
     /// </summary>
     public partial class RunSetActionSendFreeEmailEditPage : Page
     {
+        RunSetActionSendFreeEmail mRunSetActionSendFreeEmail;
         public RunSetActionSendFreeEmailEditPage(RunSetActionSendFreeEmail runSetActionSendFreeEmail)
         {
+            mRunSetActionSendFreeEmail = runSetActionSendFreeEmail;
             InitializeComponent();
-            if (runSetActionSendFreeEmail.Email == null)
+            if (mRunSetActionSendFreeEmail.Email == null)
             {
-                runSetActionSendFreeEmail.Email = new Email();
+                mRunSetActionSendFreeEmail.Email = new Email();
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendFreeEmail.Email);
+            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(mRunSetActionSendFreeEmail.Email);
             Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
-            MailFromTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
-            MailToTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
-            MailCCTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
-            SubjectTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
-            BodyTextBox.Init(context, runSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
+            MailFromTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
+            xMailFromDisplayNameTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFromDisplayName));
+            MailToTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailTo));
+            MailCCTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailCC));
+            SubjectTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Subject));
+            BodyTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.Bodytext));
             BodyTextBox.AdjustHight(100);
-            if (string.IsNullOrEmpty(runSetActionSendFreeEmail.MailTo))
+            
+            if (string.IsNullOrEmpty(mRunSetActionSendFreeEmail.MailTo))
             {
-                runSetActionSendFreeEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
+                mRunSetActionSendFreeEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
+
+            if (mRunSetActionSendFreeEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
+            {
+                if (string.IsNullOrEmpty(mRunSetActionSendFreeEmail.MailFromDisplayName))
+                {
+                    mRunSetActionSendFreeEmail.MailFromDisplayName = "_Amdocs Ginger Automation";
+                }
+            }
+            ShowDisplayNameOption();
+        }
+
+        private void ShowDisplayNameOption()
+        {
+            if (mRunSetActionSendFreeEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
+            {
+                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xLabelMailFromDisplayName.Visibility = Visibility.Collapsed;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Label_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ShowDisplayNameOption();
         }
     }
 }

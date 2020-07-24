@@ -30,6 +30,7 @@ using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.Drivers.Common;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -171,6 +172,10 @@ namespace Ginger.BusinessFlowPages
                     eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyActionAndOfferNew, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                     if (userSelection == eUserMsgSelection.Yes)
                     {
+                        if (selectedAction.Platform == ePlatformType.NA)
+                        {
+                            selectedAction.Platform = mContext.Platform;
+                        }
                         instance = ((IObsoleteAction)selectedAction).GetNewAction();
                         instance.Description = instance.ActionType;
                     }
