@@ -71,6 +71,10 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(nameof(MailFrom)); } } }
 
+        private string mMailFromDisplayName;
+        [IsSerializedForLocalRepository]
+        public string MailFromDisplayName { get { return mMailFromDisplayName; } set { if (mMailFromDisplayName != value) { mMailFromDisplayName = value; OnPropertyChanged(nameof(mMailFromDisplayName)); } } }
+
         private string mMailCC;
         [IsSerializedForLocalRepository]
         public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(nameof(MailCC)); } } }
@@ -120,6 +124,10 @@ namespace Ginger.Run.RunSetActions
 
             mVE.Value = MailFrom;
             Email.MailFrom = mVE.ValueCalculated;
+
+            mVE.Value = MailFromDisplayName;
+            Email.MailFromDisplayName = mVE.ValueCalculated;
+
             mVE.Value = MailTo;
             Email.MailTo = mVE.ValueCalculated;
             mVE.Value = MailCC;
