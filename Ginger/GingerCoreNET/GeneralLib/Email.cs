@@ -68,6 +68,24 @@ namespace GingerCore.GeneralLib
             }
         }
 
+        private string mMailFromDisplayName;
+        [IsSerializedForLocalRepository]
+         public string MailFromDisplayName
+        {
+            get
+            {
+                return mMailFromDisplayName;
+            }
+            set
+            {
+                if (mMailFromDisplayName != value)
+                {
+                    mMailFromDisplayName = value;
+                    OnPropertyChanged(nameof(MailFromDisplayName));
+                }
+            }
+        }
+
         private string mMailTo;
         [IsSerializedForLocalRepository]
         public string MailTo
@@ -279,7 +297,7 @@ namespace GingerCore.GeneralLib
                     return false;
                 }
                 mVE.Value = MailFrom;
-                var fromAddress = new MailAddress(mVE.ValueCalculated, "_Amdocs Ginger Automation");
+                var fromAddress = new MailAddress(mVE.ValueCalculated, MailFromDisplayName);
 
                 mVE.Value = SMTPMailHost;
                 string mailHost = mVE.ValueCalculated;

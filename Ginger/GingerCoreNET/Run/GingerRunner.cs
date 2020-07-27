@@ -2239,7 +2239,7 @@ namespace Ginger.Run
                                 break;
                             case eFlowControlAction.FailActionAndStopBusinessFlow:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                act.Error = "Failed due to Flow Control rule";
+                                act.Error += " Failed due to Flow Control rule";
                                 act.ExInfo += FC.ConditionCalculated;
                                 mStopBusinessFlow = true;
                                 CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
