@@ -43,6 +43,7 @@ namespace Ginger.Actions.Communication
         private void Bind()
         {
             MailFromTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFrom));
+            xMailFromDisplayNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.MailFromDisplayName));
             MailToTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailto));
             MailCCTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Mailcc));
             SubjectTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Subject));
@@ -54,10 +55,34 @@ namespace Ginger.Actions.Communication
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xcbEnableSSL, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.EnableSSL, "true"));
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xcbConfigureCredential, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActeMail.Fields.ConfigureCredential,"false"));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(AttachmentFilename, TextBox.TextProperty, mAct, nameof(ActeMail.AttachmentFileName));
-            if (mAct.MailOption!=null && mAct.MailOption == Email.eEmailMethod.OUTLOOK.ToString())
+
+            if (mAct.MailOption != null && mAct.MailOption == Email.eEmailMethod.OUTLOOK.ToString())
+            {
                 RadioOutlookMailOption.IsChecked = true;
+            }
             else
-                RadioSMTPMailOption.IsChecked = true;            
+            {
+                RadioSMTPMailOption.IsChecked = true;
+                if(string.IsNullOrEmpty(mAct.MailFromDisplayName))
+                {
+                    mAct.MailFromDisplayName = "_Amdocs Ginger Automation";
+                }
+            }
+            ShowDisplayNameOption();
+        }
+
+        private void ShowDisplayNameOption()
+        {
+            if (mAct.MailOption != null && mAct.MailOption == Email.eEmailMethod.SMTP.ToString())
+            {
+                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xLabelMailFromDisplayName.Visibility = Visibility.Collapsed;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
@@ -77,6 +102,9 @@ namespace Ginger.Actions.Communication
                 mAct.MailOption = Email.eEmailMethod.OUTLOOK.ToString();
 
                 xSMTPConfig.Visibility = Visibility.Collapsed;
+
+                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
             }
             catch(Exception ex)
             {
@@ -93,6 +121,9 @@ namespace Ginger.Actions.Communication
                 mAct.MailOption = Email.eEmailMethod.SMTP.ToString();
 
                 xSMTPConfig.Visibility = Visibility.Visible;
+                
+                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
             {
@@ -120,6 +151,11 @@ namespace Ginger.Actions.Communication
                     xSMTPPassTextBox.Text = string.Empty;
                 }
             }
+        }
+
+        private void Label_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ShowDisplayNameOption();
         }
     }
 }
