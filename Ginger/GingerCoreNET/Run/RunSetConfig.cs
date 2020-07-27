@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore.GeneralLib;
@@ -86,8 +87,36 @@ namespace Ginger.Run
             }
         }
 
+        private ObservableList<GingerRunner> mGingerRunners;
+        /// <summary>
+        /// Been used to identify if Activity Variables were lazy loaded already or not
+        /// </summary>
+        public bool GingerRunnersLazyLoad { get { return (mGingerRunners != null) ? mGingerRunners.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
-        public ObservableList<GingerRunner> GingerRunners = new ObservableList<GingerRunner>();
+        public ObservableList<GingerRunner> GingerRunners
+        {
+            get
+            {
+                if (mGingerRunners == null)
+                {
+                    mGingerRunners = new ObservableList<GingerRunner>();
+                }
+                if (mGingerRunners.LazyLoad)
+                {
+                    mGingerRunners.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mGingerRunners);
+                    }
+                }
+                return mGingerRunners;
+            }
+            set
+            {
+                mGingerRunners = value;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<RunSetActionBase> RunSetActions = new ObservableList<RunSetActionBase>();

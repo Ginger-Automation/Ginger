@@ -133,11 +133,13 @@ namespace GingerCore.Actions
         public eDatabaseTye DatabaseType
         {
             get
-            {try
+            {
+                try
                 {
-                    if (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb)
+                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb))
                         return eDatabaseTye.NoSQL;
-                    else return eDatabaseTye.Relational;
+                    else 
+                        return eDatabaseTye.Relational;
                 }
 
                 catch

@@ -372,8 +372,36 @@ namespace GingerCore
             }
         }
 
+        private ObservableList<VariableBase> mVariables;
+        /// <summary>
+        /// Been used to identify if Activity Variables were lazy loaded already or not
+        /// </summary>
+        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables
+        {
+            get
+            {
+                if (mVariables == null)
+                {
+                    mVariables = new ObservableList<VariableBase>();
+                }
+                if (mVariables.LazyLoad)
+                {
+                    mVariables.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mVariables);
+                    }
+                }
+                return mVariables;
+            }
+            set
+            {
+                mVariables = value;
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();

@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -440,8 +442,37 @@ namespace Ginger.SolutionGeneral
         }
 
 
+        private ObservableList<VariableBase> mVariables;
+        /// <summary>
+        /// Been used to identify if Solution Variables were lazy loaded already or not
+        /// </summary>
+        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
+        [IsLazyLoad]
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables
+        {
+            get
+            {
+                if (mVariables == null)
+                {
+                    mVariables = new ObservableList<VariableBase>();
+                }
+                if (mVariables.LazyLoad)
+                {
+                    mVariables.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mVariables);
+                    }
+                }
+                return mVariables;
+            }
+            set
+            {
+                mVariables = value;
+            }
+        }
+
 
         [IsSerializedForLocalRepository]
         public ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; } = new ObservableList<ExecutionLoggerConfiguration>();
@@ -535,7 +566,7 @@ namespace Ginger.SolutionGeneral
             }
         }
 
-        ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        ObservableList<ExecutionLoggerConfiguration> ISolution.ExecutionLoggerConfigurationSetList { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }        
 
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> ExternalItemsFields = new ObservableList<ExternalItemFieldBase>();

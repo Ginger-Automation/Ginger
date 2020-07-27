@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using GingerCore;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -608,6 +609,160 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Assert.AreEqual(unMapped.Count, 1, "Validating POM Un Mappped Elements were loaded 2"); //TODO: move HtmlElementInfo to .NET core project for enabeling this Assert
             Assert.AreEqual(poms[0].MappedUIElementsLazyLoad, false, "Validating POM Mappped Elements were not loaded 1");
             //Assert.AreEqual(mapped.Count, 15, "Validating POM Mappped Elements were not loaded 2 "); //TODO: move HtmlElementInfo to .NET core project for enabeling this Assert
+        }
+
+        /// <summary>
+        /// BF Variabels Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void BFVariablesLazyLoadTest_NotLoaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();            
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].VariablesLazyLoad, true, "Validating Bf Variables were not loaded");
+        }
+
+        /// <summary>
+        /// BF Variabels Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void BFVariablesLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<VariableBase> variables = bfs[0].Variables;
+            
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].VariablesLazyLoad, false, "Validating Bf Variables were loaded 1");
+            Assert.AreEqual(variables.Count, 2, "Validating Bf Variables were loaded 2");
+        }
+
+        /// <summary>
+        /// Activity Variables Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void ActivityVariablesLazyLoadTest_NotLoaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<Activity> activities = bfs[0].Activities;
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].ActivitiesLazyLoad, false, "Validating Bf Activities were loaded 1");
+            Assert.AreEqual(activities.Count, 1, "Validating Bf Activities were loaded 2");
+            Assert.AreEqual(activities[0].VariablesLazyLoad, true, "Validating Activity Variables were not loaded");
+        }
+
+        /// <summary>
+        /// Activity Variables Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void ActivityVariablesLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
+            ObservableList<Activity> activities = bfs[0].Activities;
+            ObservableList<VariableBase> variables = activities[0].Variables;
+
+            //Assert
+            Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
+            Assert.AreEqual(bfs[0].ActivitiesLazyLoad, false, "Validating Bf Activities were loaded 1");
+            Assert.AreEqual(activities.Count, 1, "Validating Bf Activities were loaded 2");
+            Assert.AreEqual(activities[0].VariablesLazyLoad, false, "Validating Activity variables were loaded 1");
+            Assert.AreEqual(variables.Count, 1, "Validating Activity variables were loaded 2 ");
+        }
+
+        ///// <summary>
+        ///// Global Variabels Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        ///// </summary>
+        //[TestMethod]
+        //public void GlobalVariablesLazyLoadTest_NotLoaded()
+        //{
+        //    //Arrange
+        //    WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            
+        //    //Act
+        //    SolutionRepository SR = WorkSpace.Instance.SolutionRepository;            
+            
+        //    //Assert          
+        //    Assert.AreEqual(WorkSpace.Instance.Solution.VariablesLazyLoad, true, "Validating Global Variables were not loaded");
+        //}
+
+        /// <summary>
+        /// Global Variabels Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void GlobalVariablesLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+
+            //Act
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+            ObservableList<VariableBase> variables = WorkSpace.Instance.Solution.Variables;
+
+            //Assert            
+            Assert.AreEqual(WorkSpace.Instance.Solution.VariablesLazyLoad, false, "Validating Global Variables were loaded 1");
+            Assert.AreEqual(variables.Count, 3, "Validating Global Variables were loaded 2");
+        }
+
+        /// <summary>
+        /// Run set Runners Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void RunsetRunnersLazyLoadTest_NotLoaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<RunSetConfig> runSetConfigs = SR.GetAllRepositoryItems<RunSetConfig>();
+
+            //Assert
+            Assert.AreEqual(runSetConfigs.Count, 1, "Validating run sets were loaded");
+            Assert.AreEqual(runSetConfigs[0].GingerRunnersLazyLoad, true, "Validating run set runners were not loaded");
+        }
+
+        /// <summary>
+        /// Run set Runners Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
+        /// </summary>
+        [TestMethod]
+        public void RunsetRunnersLazyLoadTest_Loaded()
+        {
+            //Arrange
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
+            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
+
+            //Act
+            ObservableList<RunSetConfig> runSetConfigs = SR.GetAllRepositoryItems<RunSetConfig>();
+            ObservableList<GingerRunner> runners = runSetConfigs[0].GingerRunners;
+
+            //Assert
+            Assert.AreEqual(runSetConfigs.Count, 1, "Validating run sets were loaded");
+            Assert.AreEqual(runSetConfigs[0].GingerRunnersLazyLoad, false, "Validating run set runners were loaded 1");
+            Assert.AreEqual(runners.Count, 1, "Validating run set runners were loaded 2");
         }
     }
 }

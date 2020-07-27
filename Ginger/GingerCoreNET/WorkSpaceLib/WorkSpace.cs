@@ -109,9 +109,11 @@ namespace amdocs.ginger.GingerCoreNET
         {
             // TODO: add RI type, and use attr on field
             NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(BusinessFlow.Activities), LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath });
-            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(Activity.Acts), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });
-            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(ApplicationPOMModel.UnMappedUIElements), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });
-            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(ApplicationPOMModel.MappedUIElements), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(Activity.Acts), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData });//using StringData because 'Acts' node is not unique in the XML nodes
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(BusinessFlow.Variables), LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData }); //using StringData because 'Variables' node is not unique in the XML nodes
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(ApplicationPOMModel.UnMappedUIElements), LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath });
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(ApplicationPOMModel.MappedUIElements), LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath });
+            NewRepositorySerializer.AddLazyLoadConfig(new LazyLoadListConfig() { ListName = nameof(RunSetConfig.GingerRunners), LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath });
         }      
 
         public void StartLocalGrid()
