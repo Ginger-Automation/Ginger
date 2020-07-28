@@ -555,10 +555,12 @@ namespace Amdocs.Ginger.Repository
                     // change happen when new file is added, for now we can ignore, as we will get also file added event
 
                     //if the folder is deleted(shift + del) by the user from the file system and not from Ginger
-                    if (IsDirectoryVisibleButNotAccessible(e.FullPath))
+                    //it comes as changed first then goes to deledted so need to stop/pause file watcher so that the folder should get deleted from the file system
+                    RepositoryFolder<T> rf = GetSubFolder(fn);
+                    rf.PauseFileWatcher();
+                    if (Directory.Exists(e.FullPath))
                     {
-                        RepositoryFolder<T> rf = GetSubFolder(fn);
-                        rf.StopFileWatcherRecursive();
+                        rf.ResumeFileWatcher();
                     }
                     break;
                 case WatcherChangeTypes.Deleted:
