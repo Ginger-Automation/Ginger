@@ -63,15 +63,36 @@ namespace Ginger.Run.RunSetActions
             SubjectTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Subject));
             BodyTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Bodytext));
             CommentTextBox.Init(context, runSetActionHTMLReportSendEmail, nameof(RunSetActionHTMLReportSendEmail.Comments));
-
+           
+            xMailFromDisplayNameTextBox.Init(context, runSetActionHTMLReportSendEmail,nameof(RunSetActionHTMLReportSendEmail.MailFromDisplayName));
+            
             BodyTextBox.AdjustHight(100);
 
             if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailTo))
             {
                 runSetActionHTMLReportSendEmail.MailFrom =  WorkSpace.Instance.UserProfile.UserEmail;
             }
+            if (string.IsNullOrEmpty(runSetActionHTMLReportSendEmail.MailFromDisplayName))
+            {
+                runSetActionHTMLReportSendEmail.MailFromDisplayName = "_Amdocs Ginger Automation";
+            }
             InitAttachmentsGrid();
             RadioButtonInit();
+            ShowDisplayNameOption();
+        }
+
+        private void ShowDisplayNameOption()
+        {
+            if(runSetActionHTMLReportSendEmail.Email.EmailMethod == Email.eEmailMethod.SMTP)
+            {
+                xLabelMailFromDisplayName.Visibility = Visibility.Visible;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xLabelMailFromDisplayName.Visibility = Visibility.Collapsed;
+                xMailFromDisplayNameTextBox.Visibility = Visibility.Collapsed;
+            }
         }
         public void RadioButtonInit()
         {
@@ -228,5 +249,9 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
+        private void TabItem_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ShowDisplayNameOption();
+        }
     }
 }

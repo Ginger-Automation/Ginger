@@ -60,7 +60,7 @@
                                     <ColumnDefinition Width="3*"/>
                                     <ColumnDefinition Width="1*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="ServerURLTextBox" Style="{StaticResource @TextBoxStyle}" TextChanged="ServerURLTextBox_TextChanged" Height="25" VerticalAlignment="Top" />
+                                <TextBox x:Name="ServerURLTextBox" Style="{StaticResource @TextBoxStyle}" TextChanged="ServerURLTextBox_TextChanged" MouseEnter="ShowToolTip" Height="25" VerticalAlignment="Top" />
                                 <Button x:Name="RQMLoadConfigPackageButton" Click="LoadRQMConfigPackageButton_Click" Content="Load" Style="{StaticResource @WindowButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Visible"></Button>
                             </Grid>
 

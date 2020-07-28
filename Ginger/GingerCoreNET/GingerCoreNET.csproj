@@ -734,6 +734,9 @@
     <None Update="Reports\Ginger-Web-Client\main.5c9395fe36c9ac94e13c.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main.9a7f41ac158394ee2cff.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
