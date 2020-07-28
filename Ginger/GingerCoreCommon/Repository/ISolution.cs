@@ -28,7 +28,6 @@ namespace Amdocs.Ginger.Repository
     {
         string Name { get; set; }
         string Folder { get; set; }
-        bool VariablesLazyLoad { get; }
         ObservableList<VariableBase> Variables { get; set; }
         ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
         ObservableList<ExecutionLoggerConfiguration> ExecutionLoggerConfigurationSetList { get; set; }

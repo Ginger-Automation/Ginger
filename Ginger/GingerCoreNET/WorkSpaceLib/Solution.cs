@@ -441,37 +441,8 @@ namespace Ginger.SolutionGeneral
             return report;
         }
 
-
-        private ObservableList<VariableBase> mVariables;
-        /// <summary>
-        /// Been used to identify if Solution Variables were lazy loaded already or not
-        /// </summary>
-        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
-        [IsLazyLoad]
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables
-        {
-            get
-            {
-                if (mVariables == null)
-                {
-                    mVariables = new ObservableList<VariableBase>();
-                }
-                if (mVariables.LazyLoad)
-                {
-                    mVariables.LoadLazyInfo();
-                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
-                    {
-                        this.TrackObservableList(mVariables);
-                    }
-                }
-                return mVariables;
-            }
-            set
-            {
-                mVariables = value;
-            }
-        }
+        public ObservableList<VariableBase> Variables { get; set; }        
 
 
         [IsSerializedForLocalRepository]

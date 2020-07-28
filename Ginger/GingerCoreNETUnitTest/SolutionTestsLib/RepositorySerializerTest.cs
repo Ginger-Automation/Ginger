@@ -693,40 +693,6 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual(variables.Count, 1, "Validating Activity variables were loaded 2 ");
         }
 
-        ///// <summary>
-        ///// Global Variabels Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
-        ///// </summary>
-        //[TestMethod]
-        //public void GlobalVariablesLazyLoadTest_NotLoaded()
-        //{
-        //    //Arrange
-        //    WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
-            
-        //    //Act
-        //    SolutionRepository SR = WorkSpace.Instance.SolutionRepository;            
-            
-        //    //Assert          
-        //    Assert.AreEqual(WorkSpace.Instance.Solution.VariablesLazyLoad, true, "Validating Global Variables were not loaded");
-        //}
-
-        /// <summary>
-        /// Global Variabels Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
-        /// </summary>
-        [TestMethod]
-        public void GlobalVariablesLazyLoadTest_Loaded()
-        {
-            //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"));
-
-            //Act
-            SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
-            ObservableList<VariableBase> variables = WorkSpace.Instance.Solution.Variables;
-
-            //Assert            
-            Assert.AreEqual(WorkSpace.Instance.Solution.VariablesLazyLoad, false, "Validating Global Variables were loaded 1");
-            Assert.AreEqual(variables.Count, 3, "Validating Global Variables were loaded 2");
-        }
-
         /// <summary>
         /// Run set Runners Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
         /// </summary>

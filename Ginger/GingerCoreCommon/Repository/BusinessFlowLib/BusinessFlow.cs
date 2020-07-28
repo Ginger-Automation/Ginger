@@ -269,7 +269,7 @@ namespace GingerCore
         /// Been used to identify if Activities were loaded by lazy load or not
         /// </summary>
         public bool ActivitiesLazyLoad { get { return (mActivities != null) ? mActivities.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
         {
@@ -332,7 +332,7 @@ namespace GingerCore
         /// Been used to identify if BF Variables were lazy loaded already or not
         /// </summary>
         public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
         {

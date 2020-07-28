@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore.GeneralLib;
@@ -92,7 +93,7 @@ namespace Ginger.Run
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
         public bool GingerRunnersLazyLoad { get { return (mGingerRunners != null) ? mGingerRunners.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<GingerRunner> GingerRunners
         {

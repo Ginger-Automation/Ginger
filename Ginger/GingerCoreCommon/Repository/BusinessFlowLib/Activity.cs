@@ -346,7 +346,7 @@ namespace GingerCore
         /// Been used to identify if Acts were lazy loaded already or not
         /// </summary>
         public bool ActsLazyLoad { get { return (mActs != null) ? mActs.LazyLoad : false; } }                           
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<IAct> Acts
         {
@@ -377,7 +377,7 @@ namespace GingerCore
         /// Been used to identify if Activity Variables were lazy loaded already or not
         /// </summary>
         public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
         public ObservableList<VariableBase> Variables
         {
