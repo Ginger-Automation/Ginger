@@ -590,6 +590,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xPropertiesGrid.Grid.CommitEdit();
 
+            if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Java)
+            {
+                mSelectedElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath" });
+                mSelectedElement.Properties.Add(new ControlProperty() { Name = "IsWidgetElement",Value="false" });
+            }
+
             ControlProperty elemProp = new ControlProperty() { Name = parentFramePropertyName };
             mSelectedElement.Properties.Add(elemProp);
             xPropertiesGrid.Grid.SelectedItem = elemProp;
@@ -693,7 +699,34 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator },IsWidget= CurrentEI.IsWidget });
+                var testElement = new ElementInfo();
+                testElement.Path = CurrentEI.Path;
+                testElement.Locators = new ObservableList<ElementLocator>() { mSelectedLocator };
+
+                //For Java Driver Widgets
+
+                if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
+                {
+                    if (!mSelectedElement.IsAutoLearned)
+                    {
+                        var isPOMWidgetEl = mSelectedElement.Properties.Where(x => x.Name.Equals("IsWidgetElement")).FirstOrDefault();
+                        if (isPOMWidgetEl != null)
+                        {
+                            if (isPOMWidgetEl.Value.Equals("true"))
+                            {
+                                mSelectedElement.IsPOMWidgetElement = true;
+                            }
+                        }
+                    }
+                    if (CurrentEI.IsPOMWidgetElement)
+                    {
+                        testElement.IsPOMWidgetElement = true;
+                        testElement.Properties = CurrentEI.Properties;
+                    }
+                }
+
+                
+                mWinExplorer.TestElementLocators(testElement);
             }
         }
 

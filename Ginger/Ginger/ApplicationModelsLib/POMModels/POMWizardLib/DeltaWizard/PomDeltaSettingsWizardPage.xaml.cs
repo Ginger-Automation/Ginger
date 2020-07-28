@@ -96,11 +96,17 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 else
                 {
                     var elementExtInfo = string.Empty;
+                    var isSelected = elementTypeOperation.IsCommonElementType;
                     if (mAppPlatform.Equals(ePlatformType.Java))
                     {
                         elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
+
+                        if(elementTypeOperation.ElementType.Equals(eElementType.Browser))
+                        {
+                            isSelected = true;
+                        }
                     }
-                    mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, elementTypeOperation.IsCommonElementType));
+                    mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, isSelected));
                 }
             }
         }
@@ -111,6 +117,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             switch (elementType)
             {
                 case eElementType.Browser:
+                    elementExtInfo = "For Embedded Html (Mandatory)";
+                    break;
                 case eElementType.Div:
                 case eElementType.Span:
                 case eElementType.HyperLink:

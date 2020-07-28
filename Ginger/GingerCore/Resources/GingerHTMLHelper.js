@@ -356,7 +356,6 @@ function define_GingerLib() {
     //---------
         
     GingerLib.HandleHTMLControlAction = function (ControlAction, LocateBy, LocateValue, Value) {
-
         var el = undefined;
         if (ControlAction == "Visible" || ControlAction == "Enabled")
         {          
@@ -378,7 +377,10 @@ function define_GingerLib() {
 
             //Adding action for POM Element
             if (ControlAction === "LocateElementByLocator") {
-                return true;
+                var pl = new GingerPayLoad("OK");
+                pl.AddValueString("true");
+                pl.ClosePackage();
+                return pl;
             }
 
             if (ControlAction == "SetValue") {

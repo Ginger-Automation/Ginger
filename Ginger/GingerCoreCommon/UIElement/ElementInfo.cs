@@ -392,9 +392,9 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public bool Selected { get; set; }
 
-        //Adding to distinguish swing and widget elements for javadriver
+        //Adding to distinguish swing and widget POM elements for javadriver
         [IsSerializedForLocalRepository]
-        public bool IsWidget { get; set; } = false;
+        public bool IsPOMWidgetElement { get; set; } = false;
 
         // should be override in sub class when possible for lazy loading
         public virtual string GetAbsoluteXpath()

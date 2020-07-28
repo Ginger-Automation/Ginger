@@ -526,10 +526,10 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void IntializeIfWidgetsElement(ElementInfo currentPOMElementInfo)
         {
-            if (currentPOMElementInfo.IsWidget)
+            if (currentPOMElementInfo.IsPOMWidgetElement)
             {
                 var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals("ParentBrowserPath")).FirstOrDefault();
-                if (path != null)
+                if (path != null  && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
                 }
@@ -1925,7 +1925,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
-        private static CancellationTokenSource cts;
+       // private static CancellationTokenSource cts;
         private bool isBrowserElementLearned = false;
         private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
@@ -1951,25 +1951,24 @@ namespace GingerCore.Drivers.JavaDriverLib
                 isBrowserElementLearned = true;
             }
 
-            cts = new CancellationTokenSource();
+            //cts = new CancellationTokenSource();
             try
             {
-                ParallelOptions pOptions = new ParallelOptions();
-                pOptions.MaxDegreeOfParallelism = 16;
-                pOptions.CancellationToken = cts.Token;
+                //ParallelOptions pOptions = new ParallelOptions();
+                //pOptions.MaxDegreeOfParallelism = 16;
+                //pOptions.CancellationToken = cts.Token;
 
-                Parallel.ForEach(hTMLControlsPayLoad, pOptions, (htmlElement, loopState) =>
-                 {
+                foreach(var htmlElement in hTMLControlsPayLoad)
+                {
                      if (mStopProcess)
                      {
-                         cts.Cancel();
+                        break;
                      }
-                     pOptions.CancellationToken.ThrowIfCancellationRequested();
                      if (selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
                      {
                          htmlElement.IsAutoLearned = true;
                          htmlElement.Active = true;
-                         htmlElement.IsWidget = true;
+                         htmlElement.IsPOMWidgetElement = true;
 
                          ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
                          htmlElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath", Value = currentFramePath });
@@ -1983,11 +1982,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                          }
                      }
 
-                 });
-            }
-            catch (OperationCanceledException e)
-            {
-
+                 }
             }
             catch (Exception ex)
             {
@@ -1997,6 +1992,8 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
         {
+            isBrowserElementLearned = false;
+
             List<ElementInfo> list = new List<ElementInfo>();
 
             PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
@@ -2357,7 +2354,10 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                IntializeIfWidgetsElement(ElementInfo);
+                if(ElementInfo.IsPOMWidgetElement)
+                {
+                    IntializeIfWidgetsElement(ElementInfo);
+                }
 
                 HTMLElementInfo HEI = (HTMLElementInfo)ElementInfo;
                 if (ElementInfo.ElementType.Contains("JEditor"))
@@ -2395,31 +2395,40 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
+                if(ElementInfo.IsPOMWidgetElement)
                 {
-                    list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
+                    if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
+                    {
+                        list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
+                    }
+                    if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
+                    {
+                        list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+                    }
+                    if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
+                    {
+                        list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+                    }
+                    if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
+                    {
+                        list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+                    }
+                    if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
+                    {
+                        list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+                    }
+
+                    return list;
                 }
-                if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
+                else
                 {
-                    list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+                    PayLoad PLReq = new PayLoad("GetElementProperties");
+                    PLReq.AddValue(ElementInfo.Path);
+                    PLReq.AddValue(ElementInfo.XPath);
+                    PLReq.ClosePackage();
+                    response = Send(PLReq);
                 }
-                if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
-                {
-                    list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
-                }
-                if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
-                {
-                    list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
-                }
-                if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
-                {
-                    list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
-                }
-                PayLoad PLReq = new PayLoad("GetElementProperties");
-                PLReq.AddValue(ElementInfo.Path);
-                PLReq.AddValue(ElementInfo.XPath);
-                PLReq.ClosePackage();
-                response = Send(PLReq);
+                
             }
             else
             {
@@ -2669,7 +2678,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (Response.Name == "HTMLElement")
                 {
-                    return GetHTMLElementInfoFromPL(Response);
+                    var htmlElement = GetHTMLElementInfoFromPL(Response);
+                    htmlElement.IsPOMWidgetElement = true;
+                    return htmlElement;
                 }
                 else if (Response.Name == "RequireInitializeBrowser")
                 {
@@ -3505,12 +3516,12 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private Bitmap MergeBitmapsImage(Bitmap bmp1, Bitmap bmp2)
         {
-            Bitmap result = new Bitmap(Math.Max(bmp1.Width, bmp2.Width),
+            Bitmap result = new Bitmap(bmp1.Width + bmp2.Width,
                                        Math.Max(bmp1.Height, bmp2.Height));
             using (Graphics graphics = Graphics.FromImage(result))
             {
-                graphics.DrawImage(bmp2, Point.Empty);
-                graphics.DrawImage(bmp1, Point.Empty);
+                graphics.DrawImage(bmp2, 0,0);
+                graphics.DrawImage(bmp1, bmp2.Width,0);
             }
             return result;
         }
@@ -3567,14 +3578,14 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
 
-                if (EI.IsWidget)
+                if (EI.IsPOMWidgetElement)
                 {
                     IntializeIfWidgetsElement(EI);
                 }
                 foreach (ElementLocator elementLocator in activesElementLocators)
                 {
                     PayLoad Response = null;
-                    if (EI.IsWidget)
+                    if (EI.IsPOMWidgetElement)
                     {
                         Response = LocateWidgetElementByLocators(elementLocator);
                     }
@@ -3634,8 +3645,18 @@ namespace GingerCore.Drivers.JavaDriverLib
                 locateValue = new ValueExpression(this.Environment, this.BusinessFlow).Calculate(elementLocator.LocateValue);
             }
             PayLoad payLoad = new PayLoad("HTMLElementAction", "LocateElementByLocator", locateBy, locateValue,"");
+            var response = Send(payLoad);
+            
+            if (response.IsErrorPayLoad())
+            {
+                string ErrMSG = response.GetErrorValue();
+                return null;
+            }
+            else
+            {
+                return response;
+            }
 
-            return payLoad;
         }
 
         public PayLoad LocateElementByLocator(ElementLocator locator)

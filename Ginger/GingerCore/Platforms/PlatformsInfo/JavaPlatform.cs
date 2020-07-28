@@ -149,7 +149,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (elementInfo != null)
             {
                 List<ActUIElement.eElementAction> elementTypeOperations = new List<ActUIElement.eElementAction>();
-                if (elementInfo.IsWidget)
+                if (elementInfo.IsPOMWidgetElement)
                 {
                     elementTypeOperations = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
                 }
@@ -181,7 +181,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
                     }
-                    if (elementInfo.IsWidget)
+                    if (elementInfo.IsPOMWidgetElement)
                     {
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
                     }
