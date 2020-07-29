@@ -592,8 +592,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Java)
             {
-                mSelectedElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath" });
-                mSelectedElement.Properties.Add(new ControlProperty() { Name = "IsWidgetElement",Value="false" });
+                mSelectedElement.Properties.Add(new ControlProperty() { Name = mSelectedElement.ParentBrowserPath});
+                mSelectedElement.Properties.Add(new ControlProperty() { Name = mSelectedElement.IsPOMWidgetElement,Value="false" });
             }
 
             ControlProperty elemProp = new ControlProperty() { Name = parentFramePropertyName };
@@ -707,22 +707,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
                 {
-                    if (!mSelectedElement.IsAutoLearned)
-                    {
-                        var isPOMWidgetEl = mSelectedElement.Properties.Where(x => x.Name.Equals("IsWidgetElement")).FirstOrDefault();
+                    var isPOMWidgetEl = mSelectedElement.Properties.Where(x => x.Name.Equals(mSelectedElement.IsPOMWidgetElement)).FirstOrDefault();
                         if (isPOMWidgetEl != null)
                         {
                             if (isPOMWidgetEl.Value.Equals("true"))
                             {
-                                mSelectedElement.IsPOMWidgetElement = true;
+                                testElement.Properties = CurrentEI.Properties;
                             }
                         }
-                    }
-                    if (CurrentEI.IsPOMWidgetElement)
-                    {
-                        testElement.IsPOMWidgetElement = true;
-                        testElement.Properties = CurrentEI.Properties;
-                    }
                 }
 
                 

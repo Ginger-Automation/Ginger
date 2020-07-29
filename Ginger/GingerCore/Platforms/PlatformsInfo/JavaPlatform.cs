@@ -142,14 +142,23 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
+        private static bool IsPOMWidgetElement(ElementInfo currentPOMElementInfo)
+        {
+            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(currentPOMElementInfo.IsPOMWidgetElement)).FirstOrDefault();
+            if (isPoMWidgetElement != null)
+            {
+                return Convert.ToBoolean(isPoMWidgetElement.Value);
+            }
+            return false;
+        }
         public override Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
         {
             var pomExcutionUtil = new POMExecutionUtils();
             Act elementAction = null;
             if (elementInfo != null)
             {
-                List<ActUIElement.eElementAction> elementTypeOperations = new List<ActUIElement.eElementAction>();
-                if (elementInfo.IsPOMWidgetElement)
+                List<ActUIElement.eElementAction> elementTypeOperations;
+                if (IsPOMWidgetElement(elementInfo))
                 {
                     elementTypeOperations = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
                 }
@@ -181,7 +190,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
                     }
-                    if (elementInfo.IsPOMWidgetElement)
+                    if (IsPOMWidgetElement(elementInfo))
                     {
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
                     }

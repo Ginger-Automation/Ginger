@@ -353,7 +353,7 @@ GingerPayLoad.prototype.GetKeyValue = function () {
     var keyValueObject = {};
     var byteValue = this.ReadValueType();
 
-    if (byteValue == 8) {
+    if (byteValue === 8) {
 
         var key = this.GetValueString();
         var value = this.GetValueString();

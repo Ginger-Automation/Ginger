@@ -86,6 +86,9 @@ namespace GingerCore.Drivers.JavaDriverLib
         public bool LogCommunication { get; set; }
         private DispatcherTimer mGetRecordingTimer;
 
+        //For POM widgets Element
+        private bool isBrowserElementLearned = false;
+
         public override bool IsWindowExplorerSupportReady()
         {
             return true;
@@ -526,14 +529,24 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private void IntializeIfWidgetsElement(ElementInfo currentPOMElementInfo)
         {
-            if (currentPOMElementInfo.IsPOMWidgetElement)
+            if (IsPOMWidgetElement(currentPOMElementInfo))
             {
-                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals("ParentBrowserPath")).FirstOrDefault();
-                if (path != null  && !string.IsNullOrEmpty(path.Value))
+                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(currentPOMElementInfo.ParentBrowserPath)).FirstOrDefault();
+                if (path != null && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
                 }
             }
+        }
+
+        private static bool IsPOMWidgetElement(ElementInfo currentPOMElementInfo)
+        {
+            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(currentPOMElementInfo.IsPOMWidgetElement)).FirstOrDefault();
+            if (isPoMWidgetElement != null)
+            {
+                return Convert.ToBoolean(isPoMWidgetElement.Value);
+            }
+            return false;
         }
 
         private static void UpdateRunDetails(ActUIElement act, ElementLocator locateElement, PayLoad response)
@@ -1925,8 +1938,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
-       // private static CancellationTokenSource cts;
-        private bool isBrowserElementLearned = false;
+
         private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
             var javaElementInfo = new JavaElementInfo()
@@ -1950,14 +1962,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 isBrowserElementLearned = true;
             }
-
-            //cts = new CancellationTokenSource();
             try
             {
-                //ParallelOptions pOptions = new ParallelOptions();
-                //pOptions.MaxDegreeOfParallelism = 16;
-                //pOptions.CancellationToken = cts.Token;
-
                 foreach(var htmlElement in hTMLControlsPayLoad)
                 {
                      if (mStopProcess)
@@ -1966,14 +1972,16 @@ namespace GingerCore.Drivers.JavaDriverLib
                      }
                      if (selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
                      {
-                         htmlElement.IsAutoLearned = true;
-                         htmlElement.Active = true;
-                         htmlElement.IsPOMWidgetElement = true;
+                        htmlElement.IsAutoLearned = true;
+                        htmlElement.Active = true;
 
-                         ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
-                         htmlElement.Properties.Add(new ControlProperty() { Name = "ParentBrowserPath", Value = currentFramePath });
-
-                         elementInfoList.Add(htmlElement);
+                        htmlElement.Properties.Add(new ControlProperty() { Name = htmlElement.IsPOMWidgetElement, Value = "true" });
+                        
+                        ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
+                        
+                        htmlElement.Properties.Add(new ControlProperty() { Name = htmlElement.ParentBrowserPath, Value = currentFramePath });
+                        
+                        elementInfoList.Add(htmlElement);
 
                          //TODO: Handle to learn iframe element
                          if (eElementType.Iframe.Equals(htmlElement.ElementTypeEnum))
@@ -2354,7 +2362,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                if(ElementInfo.IsPOMWidgetElement)
+                if(IsPOMWidgetElement(ElementInfo))
                 {
                     IntializeIfWidgetsElement(ElementInfo);
                 }
@@ -2395,8 +2403,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             else if (ElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                if(ElementInfo.IsPOMWidgetElement)
+                if(IsPOMWidgetElement(ElementInfo))
                 {
+                    list.Add(new ControlProperty() { Name = ElementInfo.IsPOMWidgetElement, Value = "true" });
                     if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
                     {
                         list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
@@ -2679,7 +2688,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 if (Response.Name == "HTMLElement")
                 {
                     var htmlElement = GetHTMLElementInfoFromPL(Response);
-                    htmlElement.IsPOMWidgetElement = true;
+                    htmlElement.Properties.Add(new ControlProperty() { Name = htmlElement.IsPOMWidgetElement, Value = "true" });
                     return htmlElement;
                 }
                 else if (Response.Name == "RequireInitializeBrowser")
@@ -3578,14 +3587,14 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                 List<ElementLocator> activesElementLocators = EI.Locators.Where(x => x.Active == true).ToList();
 
-                if (EI.IsPOMWidgetElement)
+                if (IsPOMWidgetElement(EI))
                 {
                     IntializeIfWidgetsElement(EI);
                 }
                 foreach (ElementLocator elementLocator in activesElementLocators)
                 {
                     PayLoad Response = null;
-                    if (EI.IsPOMWidgetElement)
+                    if (IsPOMWidgetElement(EI))
                     {
                         Response = LocateWidgetElementByLocators(elementLocator);
                     }
