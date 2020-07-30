@@ -235,7 +235,16 @@ namespace GingerCore.Actions
                             base.Error = "Destination Folder doesn't exists";
                             return;
                         }
-                        System.IO.File.Move(calculatedSourceFilePath, Path.Combine( DestinationFolder ,Path.GetFileName(calculatedSourceFilePath)));                      
+                        string fileName = string.Empty;
+                        if (!string.IsNullOrEmpty(DestinationFile))
+                        {
+                            fileName = DestinationFile;
+                        }
+                        else
+                        {
+                            fileName = Path.GetFileName(calculatedSourceFilePath);
+                        }
+                        System.IO.File.Move(calculatedSourceFilePath, Path.Combine(DestinationFolder, fileName));                      
                     }
                     else
                     {
