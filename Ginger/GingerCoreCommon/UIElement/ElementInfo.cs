@@ -392,11 +392,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         public bool Selected { get; set; }
 
-        //Adding to distinguish swing and widget POM elements for javadriver
-        private const string mIsPOMWidgetElement = "IsWidgetElement";
-        public string IsPOMWidgetElement { get { return mIsPOMWidgetElement; } }
-        private const string mParentBrowserPath = "ParentBrowserPath";
-        public string ParentBrowserPath { get { return mParentBrowserPath; } }
 
         // should be override in sub class when possible for lazy loading
         public virtual string GetAbsoluteXpath()

@@ -531,7 +531,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (IsPOMWidgetElement(currentPOMElementInfo))
             {
-                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(currentPOMElementInfo.ParentBrowserPath)).FirstOrDefault();
+                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentBrowserPath)).FirstOrDefault();
                 if (path != null && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
@@ -541,7 +541,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private static bool IsPOMWidgetElement(ElementInfo currentPOMElementInfo)
         {
-            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(currentPOMElementInfo.IsPOMWidgetElement)).FirstOrDefault();
+            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.IsPOMWidgetElement)).FirstOrDefault();
             if (isPoMWidgetElement != null)
             {
                 return Convert.ToBoolean(isPoMWidgetElement.Value);
@@ -1958,9 +1958,13 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             var hTMLControlsPayLoad = GetBrowserVisibleControls();
 
-            if(hTMLControlsPayLoad.Count > 0)
+            if(hTMLControlsPayLoad !=null && hTMLControlsPayLoad.Count > 0)
             {
                 isBrowserElementLearned = true;
+            }
+            else
+            {
+                isBrowserElementLearned = false;
             }
             try
             {
@@ -1975,19 +1979,14 @@ namespace GingerCore.Drivers.JavaDriverLib
                         htmlElement.IsAutoLearned = true;
                         htmlElement.Active = true;
 
-                        htmlElement.Properties.Add(new ControlProperty() { Name = htmlElement.IsPOMWidgetElement, Value = "true" });
+                        htmlElement.Properties.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement, Value = "true" });
                         
                         ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
                         
-                        htmlElement.Properties.Add(new ControlProperty() { Name = htmlElement.ParentBrowserPath, Value = currentFramePath });
+                        htmlElement.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath, Value = currentFramePath });
                         
                         elementInfoList.Add(htmlElement);
 
-                         //TODO: Handle to learn iframe element
-                         if (eElementType.Iframe.Equals(htmlElement.ElementTypeEnum))
-                         {
-
-                         }
                      }
 
                  }
@@ -2405,26 +2404,26 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if(IsPOMWidgetElement(ElementInfo))
                 {
-                    list.Add(new ControlProperty() { Name = ElementInfo.IsPOMWidgetElement, Value = "true" });
+                    list.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement, Value = "true" });
                     if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
                     {
-                        list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
+                        list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
                     }
                     if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
                     {
-                        list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+                        list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                     }
                     if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                     {
-                        list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+                        list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
                     }
                     if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
                     {
-                        list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+                        list.Add(new ControlProperty() { Name = ElementProperty.XPath, Value = ElementInfo.XPath });
                     }
                     if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
                     {
-                        list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+                        list.Add(new ControlProperty() { Name = ElementProperty.RelativeXPath, Value = ((HTMLElementInfo)ElementInfo).RelXpath });
                     }
 
                     return list;
@@ -2688,7 +2687,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 if (Response.Name == "HTMLElement")
                 {
                     var htmlElement = GetHTMLElementInfoFromPL(Response);
-                    htmlElement.Properties.Add(new ControlProperty() { Name = htmlElement.IsPOMWidgetElement, Value = "true" });
+                    htmlElement.Properties.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement, Value = "true" });
                     return htmlElement;
                 }
                 else if (Response.Name == "RequireInitializeBrowser")
@@ -3791,6 +3790,10 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
+            if (IsPOMWidgetElement(ElementInfo))
+            {
+                return GetWidgetElementOptionalValueList(ElementInfo,elementLocateBy,elementLocateValue);
+            }
             ObservableList<OptionalValue> props = new ObservableList<OptionalValue>();
             PayLoad PLListDetails = new PayLoad(JavaDriver.CommandType.WindowExplorerOperation.ToString());
             PLListDetails.AddEnumValue(JavaDriver.WindowExplorerOperationType.GetOptionalValuesList);
@@ -3812,6 +3815,34 @@ namespace GingerCore.Drivers.JavaDriverLib
                 Reporter.ToLog(eLogLevel.DEBUG, "Error while fetching optional values :" + ErrMSG);
             }
             return props;
+        }
+
+        private ObservableList<OptionalValue> GetWidgetElementOptionalValueList(ElementInfo elementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            ObservableList<OptionalValue> optionalValues = new ObservableList<OptionalValue>();
+            if(elementInfo.ElementTypeEnum.Equals(eElementType.ComboBox))
+            {
+                PayLoad payLoad = new PayLoad("HTMLElementAction", "GetListDetails", "ByXPath", elementInfo.XPath, "");
+                PayLoad response = Send(payLoad);
+
+                if (response.IsErrorPayLoad())
+                {
+                    string ErrMSG = response.GetErrorValue();
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while fetching optional values :" + ErrMSG);
+                }
+                var strList = response.GetListString();
+                foreach (var item in strList)
+                {
+                    optionalValues.Add(new OptionalValue() { Value=item,IsDefault=false});
+                }
+
+            }
+            else if(!string.IsNullOrEmpty(elementInfo.Value))
+            {
+                optionalValues.Add(new OptionalValue() { Value = elementInfo.Value, IsDefault = true });
+            }
+
+            return optionalValues;
         }
     }
 }

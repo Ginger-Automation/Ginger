@@ -144,7 +144,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         private static bool IsPOMWidgetElement(ElementInfo currentPOMElementInfo)
         {
-            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(currentPOMElementInfo.IsPOMWidgetElement)).FirstOrDefault();
+            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.IsPOMWidgetElement)).FirstOrDefault();
             if (isPoMWidgetElement != null)
             {
                 return Convert.ToBoolean(isPoMWidgetElement.Value);

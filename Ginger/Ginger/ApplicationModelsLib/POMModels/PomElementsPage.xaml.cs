@@ -592,11 +592,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Java)
             {
-                mSelectedElement.Properties.Add(new ControlProperty() { Name = mSelectedElement.ParentBrowserPath});
-                mSelectedElement.Properties.Add(new ControlProperty() { Name = mSelectedElement.IsPOMWidgetElement,Value="false" });
+                mSelectedElement.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath});
+                mSelectedElement.Properties.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement,Value="false" });
             }
 
-            ControlProperty elemProp = new ControlProperty() { Name = parentFramePropertyName };
+            ControlProperty elemProp = new ControlProperty() { Name = ElementProperty.ParentIFrame };
             mSelectedElement.Properties.Add(elemProp);
             xPropertiesGrid.Grid.SelectedItem = elemProp;
             xPropertiesGrid.ScrollToViewCurrentItem();
@@ -707,7 +707,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
                 if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
                 {
-                    var isPOMWidgetEl = mSelectedElement.Properties.Where(x => x.Name.Equals(mSelectedElement.IsPOMWidgetElement)).FirstOrDefault();
+                    var isPOMWidgetEl = mSelectedElement.Properties.Where(x => x.Name.Equals(ElementProperty.IsPOMWidgetElement)).FirstOrDefault();
                         if (isPOMWidgetEl != null)
                         {
                             if (isPOMWidgetEl.Value.Equals("true"))

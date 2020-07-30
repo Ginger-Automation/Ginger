@@ -202,7 +202,17 @@ GingerPayLoad.prototype.AddValueInt = function (value) {
         }
     }
 
-    //5 Add List of Strings
+//5 Add List of Strings
+    GingerPayLoad.prototype.AddValueList = function (listString) {
+        this.CheckBuffer(listString.length + 5);
+        this.WriteValueType(5);
+        this.WriteLen(listString.length);
+
+        for (var i = 0; i < listString.length; i++) {
+            var val = listString[i];
+            this.WriteString(val);
+        }
+    }
 
     GingerPayLoad.prototype.AddListPayLoad = function (PayLoadList) {
         this.CheckBuffer(5);      
