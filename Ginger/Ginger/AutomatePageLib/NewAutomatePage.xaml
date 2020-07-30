@@ -285,7 +285,7 @@
             </DockPanel>
         </ScrollViewer>
 
-        <Border Grid.Row="2" Background="White" BorderThickness="0">
+        <Border x:Name="xItemsTabsSection" Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1">
                     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -324,5 +324,15 @@
                 </TabItem>
             </TabControl>
         </Border>
+
+        <StackPanel x:Name="xItemsLoadingPnl" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
+            <UserControls:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource x:Name="xLoadWindowText" Text="Loading [BusinessFlow]..."/>
+                </Label.Content>
+            </Label>
+        </StackPanel>
+
     </Grid>
 </Page>

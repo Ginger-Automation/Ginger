@@ -613,6 +613,11 @@ namespace GingerWPF.BusinessFlowsLib
         {
             this.Dispatcher.Invoke(() =>
             {
+                xSaveBusinessFlowBtn.IsEnabled = !mExecutionIsInProgress;
+                xUndoChangesBtn.IsEnabled = !mExecutionIsInProgress;
+                xResetFlowBtn.IsEnabled = !mExecutionIsInProgress;
+                xBusinessFlowOperationssPnl.IsEnabled = !mExecutionIsInProgress;
+
                 if (mExecutionIsInProgress)
                 {
                     xRunFlowBtn.ButtonImageType = eImageType.Running;
@@ -1078,7 +1083,7 @@ namespace GingerWPF.BusinessFlowsLib
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ShowBusinessFlowsList, mBusinessFlow);
         }
 
-        private void xSaveBusinessFlowBtn_Click(object sender, RoutedEventArgs e)
+        private async void xSaveBusinessFlowBtn_Click(object sender, RoutedEventArgs e)
         {
             //warn in case dynamic shared repository Activities are included and going to be deleted
             if (mBusinessFlow.Activities.Where(x => x.AddDynamicly == true).FirstOrDefault() != null)
@@ -1091,18 +1096,73 @@ namespace GingerWPF.BusinessFlowsLib
 
             Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-            WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mBusinessFlow);
+
+            SwapLoadingPrefixText("Saving", false);
+            xItemsTabsSection.Visibility = Visibility.Collapsed;
+            xItemsLoadingPnl.Visibility = Visibility.Visible;
+
+            await WorkSpace.Instance.SolutionRepository.SaveRepositoryItemAsync(mBusinessFlow);
+
             Reporter.HideStatusMessage();
+
+            xItemsTabsSection.Visibility = Visibility.Visible;
+            xItemsLoadingPnl.Visibility = Visibility.Collapsed;
+            SwapLoadingPrefixText("Saving", true);
         }
 
-        private void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
+        public string loadingText { get; set; } = "Loading [BusinessFlow]...";
+
+        void SwapLoadingPrefixText(string swappedText, bool IsReset)
+        {
+            if (string.IsNullOrEmpty(swappedText))
+            {
+                return;
+            }
+
+            if (IsReset)
+            {
+                loadingText = loadingText.Replace(swappedText, "Loading");
+            }
+            else
+            {
+                loadingText = loadingText.Replace("Loading", swappedText);
+            }
+
+            xLoadWindowText.Text = loadingText;
+        }
+
+        private async void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            if (Ginger.General.UndoChangesInRepositoryItem(mBusinessFlow, true))
+            if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, mBusinessFlow.ItemName) == eUserMsgSelection.Yes)
             {
-                mActivitiesPage.ListView.UpdateGrouping();
-                mBusinessFlow.SaveBackup();
+                xItemsTabsSection.Visibility = Visibility.Collapsed;
+                xItemsLoadingPnl.Visibility = Visibility.Visible;
+                SwapLoadingPrefixText("Undoing", false);
+
+                try
+                {
+                    //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", mBusinessFlow.ItemName));
+                    await Task.Run(() => mBusinessFlow.RestoreFromBackup(true, true));
+
+                    mActivitiesPage.ListView.UpdateGrouping();
+                    mBusinessFlow.SaveBackup();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Failed to undo changes to the item '{0}', please view log for more details", mBusinessFlow.ItemName));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to undo changes to the item '{0}'", mBusinessFlow.ItemName), ex);
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                    //Mouse.OverrideCursor = null;
+                    xItemsTabsSection.Visibility = Visibility.Visible;
+                    xItemsLoadingPnl.Visibility = Visibility.Collapsed;
+                    SwapLoadingPrefixText("Undoing", true);
+                }
             }
         }
 
