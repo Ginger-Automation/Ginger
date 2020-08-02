@@ -72,12 +72,13 @@ namespace Amdocs.Ginger.Repository
 
         //DO Not save
         protected ConcurrentDictionary<string, object> mBackupDic;
+        protected bool mBackupInProgress = false;
 
         public bool IsBackupExist
         {
             get
             {
-                if (mBackupDic != null)
+                if (mBackupDic != null && mBackupInProgress == false)
                 {
                     return true;
                 }
@@ -210,81 +211,105 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void SaveBackup()
+        public async Task SaveBackupAsync()
+        {
+            await Task.Run(() => 
+            {
+                SaveBackup();
+            });
+        }
+
+        public bool SaveBackup()
         {
             if (DirtyStatus != eDirtyStatus.NoChange) 
             {
-                CreateBackup();                
+                return CreateBackup();                
             }
             else
             {
-                CreateBackup(true);
+                return CreateBackup(true);
             }
         }
 
         // Deep backup keep obj ref and all prop, restore to real original situation
-        public void CreateBackup(bool isLocalBackup = false)
+        public bool CreateBackup(bool isLocalBackup = false)
         {
-            if (!isLocalBackup)
+            if (mBackupInProgress)
             {
-                mBackupDic = new ConcurrentDictionary<string, object>();
+                return false;
             }
-            mLocalBackupDic = new ConcurrentDictionary<string, object>();
 
-            var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
-            Parallel.ForEach(properties, mi =>
+            try
             {
-                if (IsDoNotBackupAttr(mi))
-                {
-                    return;
-                }
+                mBackupInProgress = true;
 
                 if (!isLocalBackup)
                 {
-                    if (mi.Name == nameof(mBackupDic))
+                    mBackupDic = new ConcurrentDictionary<string, object>();
+                }
+                mLocalBackupDic = new ConcurrentDictionary<string, object>();
+
+                var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+                Parallel.ForEach(properties, mi =>
+                {
+                    if (IsDoNotBackupAttr(mi))
                     {
-                        return; // since we are running on repo item which contain the dic we need to ignore trying to save it...
+                        return;
                     }
 
-                }
-                if (mi.Name == nameof(mLocalBackupDic))
-                {
-                    return;
-                }
-                object v = null;
-                if (mi.MemberType == MemberTypes.Property)
-                {
+                    if (!isLocalBackup)
+                    {
+                        if (mi.Name == nameof(mBackupDic))
+                        {
+                            return; // since we are running on repo item which contain the dic we need to ignore trying to save it...
+                    }
+
+                    }
+                    if (mi.Name == nameof(mLocalBackupDic))
+                    {
+                        return;
+                    }
+                    object v = null;
+                    if (mi.MemberType == MemberTypes.Property)
+                    {
                     //Make sure we can do set - not all props have set, so do not save if there is only get
                     PropertyInfo PI = this.GetType().GetProperty(mi.Name);
-                    if (PI.CanWrite)
-                    {
+                        if (PI.CanWrite)
+                        {
                         //TODO: mark with no backup
                         //TODO: find better way, make it generic
                         if (mi.Name != nameof(FileName) && mi.Name != nameof(FilePath) && mi.Name != nameof(ObjFolderName) && mi.Name != nameof(ObjFileExt) && mi.Name != nameof(ContainingFolder) && mi.Name != nameof(ContainingFolderFullPath)) // Will cause err to get filename on each repo item
                         {
-                            v = PI.GetValue(this);
+                                v = PI.GetValue(this);
+                            }
                         }
                     }
-                }
-                else if (mi.MemberType == MemberTypes.Field)
-                {
-                    v = this.GetType().GetField(mi.Name).GetValue(this);
-                }
+                    else if (mi.MemberType == MemberTypes.Field)
+                    {
+                        v = this.GetType().GetField(mi.Name).GetValue(this);
+                    }
 
-                if (!isLocalBackup)
-                {
-                    mBackupDic.TryAdd(mi.Name, v);
-                }
+                    if (!isLocalBackup)
+                    {
+                        mBackupDic.TryAdd(mi.Name, v);
+                    }
 
-                if (v is IObservableList)
-                {
-                    BackupList(mi.Name, (IObservableList)v, isLocalBackup);
-                }
-                else
-                {
-                    mLocalBackupDic.TryAdd(mi.Name, v);
-                }
-            });
+                    if (v is IObservableList)
+                    {
+                        BackupList(mi.Name, (IObservableList)v, isLocalBackup);
+                    }
+                    else
+                    {
+                        mLocalBackupDic.TryAdd(mi.Name, v);
+                    }
+                });
+
+                return true;
+            }
+            finally
+            {
+                mBackupInProgress = false;
+            }
         }
 
         private bool IsDoNotBackupAttr(MemberInfo mi)
@@ -335,8 +360,13 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        public void ClearBackup(bool isLocalBackup = false)
+        public bool ClearBackup(bool isLocalBackup = false)
         {
+            if (mBackupInProgress)
+            {
+                return false;
+            }
+
             var properties = this.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Field);
             foreach (MemberInfo mi in properties)
             {
@@ -363,22 +393,29 @@ namespace Amdocs.Ginger.Repository
                 mBackupDic = null;                
             }
             mLocalBackupDic = null;
+
+            return true;
         }
 
-        private void RestoreBackup(bool isLocalBackup = false)
+        private bool RestoreBackup(bool isLocalBackup = false)
         {
+            if (mBackupInProgress)
+            {
+                return false;
+            }
+
             if (isLocalBackup)
             {
                 if (mLocalBackupDic == null || mLocalBackupDic.Count == 0)
                 {
-                    return;
+                    return false;
                 }
             }
             else
             {
                 if (mBackupDic == null || mBackupDic.Count == 0)
                 {
-                    return;
+                    return false;
                 }
             }
 
@@ -473,7 +510,8 @@ namespace Amdocs.Ginger.Repository
             {
                 if (mLocalBackupDic.Count() != 0)
                 {
-                    // TODO: err handler                    
+                    // TODO: err handler
+                    return false;
                 }
             }
             else
@@ -481,8 +519,11 @@ namespace Amdocs.Ginger.Repository
                 if (mBackupDic.Count() != 0)
                 {
                     // TODO: err handler 
+                    return false;
                 }
             }
+
+            return true;
         }
 
         private void RestoreList(string Name, IObservableList v, bool isLocalBackup = false)
@@ -536,12 +577,18 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
+        public bool RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
         {
-            RestoreBackup(isLocalBackup);
-            if (clearBackup)
+            try
             {
-                ClearBackup(isLocalBackup); 
+                return RestoreBackup(isLocalBackup);
+            }
+            finally
+            {
+                if (clearBackup)
+                {
+                    ClearBackup(isLocalBackup);
+                }
             }
         }
 

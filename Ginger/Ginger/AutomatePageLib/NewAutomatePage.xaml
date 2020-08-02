@@ -287,32 +287,42 @@
 
         <Border Grid.Row="2" Background="White" BorderThickness="0">
             <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
-                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1">
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="382"/>
-                            <ColumnDefinition Width="300*"/>
-                            <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
-                        </Grid.ColumnDefinitions>
+                <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" >
+                    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}" >
+                            <UserControls:ImageMakerControl DockPanel.Dock="Top" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
+                            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal">
+                                <Label.Content>
+                                    <GingerCore:ucTextDicResource Text="Loading [Activities]..."/>
+                                </Label.Content>
+                            </Label>
+                        </DockPanel>
+                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="382"/>
+                                <ColumnDefinition Width="300*"/>
+                                <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5"/>
+                            </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
-                            <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
-                        </Border>
+                            <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                                <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
+                            </Border>
 
-                        <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0"/>
+                            <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0"/>
 
-                        <StackPanel x:Name="xCurrentActivityLoadingIconPnl" Grid.Column="1" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
-                            <UserControls:ImageMakerControl x:Name="xCurrentActivityLoadingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-                            <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
-                        </StackPanel>
+                            <StackPanel x:Name="xCurrentActivityLoadingIconPnl" Grid.Column="1" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
+                                <UserControls:ImageMakerControl x:Name="xCurrentActivityLoadingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
+                                <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
+                            </StackPanel>
 
-                        <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
 
-                        <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
+                            <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
 
-                        <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="5,0,0,0"/>
-                        <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
-                    </Grid>
+                            <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="5,0,0,0"/>
+                            <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
+                        </Grid>
+                    </DockPanel>
                 </TabItem>
 
                 <TabItem x:Name="xBfVariablesTab" Style="{StaticResource $CoolMainTab}" TabIndex="2" Margin="-20,0,0,0">

@@ -45,6 +45,8 @@ namespace GingerWPF.BusinessFlowsLib
     public partial class ActivityPage : Page
     {
         Activity mActivity;
+        public Activity Activity { get { return mActivity; } }
+        
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
 

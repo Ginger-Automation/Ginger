@@ -25,6 +25,7 @@ using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.DragDropLib;
+using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -87,15 +88,18 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private void SetListViewData()
+        private async void SetListViewData()
         {
             if (mBusinessFlow != null)
             {
                 //List Data
                 xActivitiesListView.DataSourceList = mBusinessFlow.Activities;
+
                 //List Grouping
                 xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
-                SetSharedRepositoryMark();
+
+                //shared repo indicator
+                await Task.Run(() => this.SetSharedRepositoryMark());                
             }
             else
             {
