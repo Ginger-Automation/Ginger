@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                if (mLocalBackupDic != null)
+                if (mLocalBackupDic != null && mBackupInProgress == false)
                 {
                     return true;
                 }
