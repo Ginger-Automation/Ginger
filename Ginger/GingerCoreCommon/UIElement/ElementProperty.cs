@@ -20,7 +20,6 @@ namespace Amdocs.Ginger.Common.UIElement
 {
     public static class ElementProperty
     {
-        public const string IsPOMWidgetElement = "IsWidgetElement";
         public const string ParentBrowserPath = "ParentBrowserPath";
         public const string ElementType = "Element Type";
         public const string PlatformElementType = "Platform Element Type";

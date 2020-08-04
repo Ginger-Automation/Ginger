@@ -121,7 +121,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         SetAutoMapPlatformElements(new WebPlatform().GetPlatformElementTypesData().ToList());
                         break;
                     case ePlatformType.Java:
-                        SetAutoMapPlatformElements(new JavaPlatform().GetPlatformElementTypesData().ToList());
+                        var elementList = new JavaPlatform().GetUIElementFilterList();
+                        mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                        mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
                         break;
                 }
             }
@@ -137,40 +139,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 }
                 else
                 {
-                    var elementExtInfo = string.Empty;
-                    var isSelected = elementTypeOperation.IsCommonElementType;
-                    if (mAppPlatform.Equals(ePlatformType.Java))
-                    {
-                        elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
-                        if(elementTypeOperation.ElementType.Equals(eElementType.Browser))
-                        {
-                            isSelected = true;
-                        }
-                    }
-                    mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, isSelected));
+                    mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
                 }
             }
         }
 
-        private string SetElementExtInfo(eElementType elementType)
-        {
-            var elementExtInfo = string.Empty;
-            switch(elementType)
-            {
-                case eElementType.Browser:
-                    elementExtInfo = "For Embedded Html (Mandatory)";
-                    break;
-                case eElementType.Div:
-                case eElementType.Span:
-                case eElementType.HyperLink:
-                    elementExtInfo = "For Embedded Html";
-                    break;
-                default:
-                    elementExtInfo = string.Empty;
-                    break;
-            }
-            return elementExtInfo;
-        }
 
         private void SetAutoMapElementTypesGridView()
         {

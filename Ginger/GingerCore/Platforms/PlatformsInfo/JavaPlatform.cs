@@ -142,15 +142,6 @@ namespace GingerCore.Platforms.PlatformsInfo
             return UIElementsActionsList;
         }
 
-        private static bool IsPOMWidgetElement(ElementInfo currentPOMElementInfo)
-        {
-            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.IsPOMWidgetElement)).FirstOrDefault();
-            if (isPoMWidgetElement != null)
-            {
-                return Convert.ToBoolean(isPoMWidgetElement.Value);
-            }
-            return false;
-        }
         public override Act GetPlatformActionByElementInfo(ElementInfo elementInfo, ElementActionCongifuration actConfig)
         {
             var pomExcutionUtil = new POMExecutionUtils();
@@ -158,7 +149,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             if (elementInfo != null)
             {
                 List<ActUIElement.eElementAction> elementTypeOperations;
-                if (IsPOMWidgetElement(elementInfo))
+                if (elementInfo.GetType().Equals(typeof(HTMLElementInfo)))
                 {
                     elementTypeOperations = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
                 }
@@ -190,7 +181,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
                     }
-                    if (IsPOMWidgetElement(elementInfo))
+                    if (elementInfo.GetType().Equals(typeof(HTMLElementInfo)))
                     {
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
                     }
@@ -828,6 +819,52 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mPlatformElementTypeOperations;
         }
 
+        public Dictionary<string,ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
+            ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
+            foreach (ElementTypeData elementTypeOperation in GetPlatformElementTypesData())
+            {
+                var elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    uIBasicElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, true));
+                }
+                else
+                {
+                    var isSelected = elementTypeOperation.IsCommonElementType;
+                    if(elementTypeOperation.ElementType.Equals(eElementType.Browser))
+                    {
+                        isSelected = true;
+                    }
+                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, isSelected));
+                }
+            }
+
+            Dictionary<string, ObservableList<UIElementFilter>> elementListDic = new Dictionary<string, ObservableList<UIElementFilter>>();
+            elementListDic.Add("Basic", new ObservableList<UIElementFilter>(uIBasicElementFilters));
+            elementListDic.Add("Advanced", new ObservableList<UIElementFilter>(uIAdvancedElementFilters));
+
+            return elementListDic;
+        }
+
+        private string SetElementExtInfo(eElementType elementType)
+        {
+            var elementExtInfo = string.Empty;
+            switch (elementType)
+            {
+                case eElementType.Browser:
+                case eElementType.Div:
+                case eElementType.Span:
+                case eElementType.HyperLink:
+                    elementExtInfo = "For Embedded Html";
+                    break;
+                default:
+                    elementExtInfo = string.Empty;
+                    break;
+            }
+            return elementExtInfo;
+        }
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
             List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
@@ -925,10 +962,10 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();            
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique), Supported Widgets Only." });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Recommended (sensitive to page design changes),Supported Widgets Only." });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique), Supported for widgets elements only" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Recommended (sensitive to page design changes),Supported for widgets elements only" });
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
-            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes),Supported Widgets Only." });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes),Supported for widgets elements only" });
 
             return learningLocatorsList;
         }

@@ -541,10 +541,9 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private static bool IsPOMWidgetElement(ElementInfo currentPOMElementInfo)
         {
-            var isPoMWidgetElement = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.IsPOMWidgetElement)).FirstOrDefault();
-            if (isPoMWidgetElement != null)
+            if(currentPOMElementInfo.GetType() == typeof(HTMLElementInfo))
             {
-                return Convert.ToBoolean(isPoMWidgetElement.Value);
+                return true;
             }
             return false;
         }
@@ -1978,8 +1977,6 @@ namespace GingerCore.Drivers.JavaDriverLib
                      {
                         htmlElement.IsAutoLearned = true;
                         htmlElement.Active = true;
-
-                        htmlElement.Properties.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement, Value = "true" });
                         
                         ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
                         
@@ -2026,7 +2023,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                     if (isPOMLearn)
                     {
-                        if (ci.ElementType.Contains("browser") && filteredElementType.Contains(eElementType.Browser))
+                        if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
                         {
                             GetWidgetsElementList(filteredElementType, foundElementsList, ci.XPath);
                         }
@@ -2404,10 +2401,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if(IsPOMWidgetElement(ElementInfo))
                 {
-                    list.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement, Value = "true" });
-                    if (!string.IsNullOrWhiteSpace(ElementInfo.ElementTypeEnum.ToString()))
+                    if (!string.IsNullOrWhiteSpace(Convert.ToString(ElementInfo.ElementTypeEnum)))
                     {
-                        list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
+                        list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = Convert.ToString(ElementInfo.ElementTypeEnum) });
                     }
                     if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
                     {
@@ -2686,9 +2682,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 if (Response.Name == "HTMLElement")
                 {
-                    var htmlElement = GetHTMLElementInfoFromPL(Response);
-                    htmlElement.Properties.Add(new ControlProperty() { Name = ElementProperty.IsPOMWidgetElement, Value = "true" });
-                    return htmlElement;
+                    return GetHTMLElementInfoFromPL(Response);
                 }
                 else if (Response.Name == "RequireInitializeBrowser")
                 {
