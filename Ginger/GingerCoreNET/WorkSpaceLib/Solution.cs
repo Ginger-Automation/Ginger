@@ -442,7 +442,7 @@ namespace Ginger.SolutionGeneral
         }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables { get; set; }        
+        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
 
 
         [IsSerializedForLocalRepository]

@@ -477,7 +477,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mBusinessFlow.DirtyStatus == eDirtyStatus.NoChange)
                     {
                         Reporter.ToStatus(eStatusMsgKey.CreatingBackupProcess, null, mBusinessFlow.Name);
-                        await mBusinessFlow.SaveBackupAsync();
+                        await mBusinessFlow.SaveBackupAsync().ConfigureAwait(false);
                         Reporter.HideStatusMessage();
                     }
                 }
