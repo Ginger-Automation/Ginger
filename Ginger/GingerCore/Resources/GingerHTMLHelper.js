@@ -125,6 +125,17 @@ function define_GingerLib() {
            var ElementLocateValue = inputValues["ElementLocateValue"];
            var Value = inputValues["Value"];
 
+            //For Widgets POM element
+            if (ElementLocateBy === "POMElement") {
+                
+                var pomLocaters = PayLoad.GetKeyValue();
+
+                for (var key in pomLocaters) {
+                    ElementLocateBy = key;
+                    ElementLocateValue = pomLocaters[key];
+                }
+            }
+
             if (ElementAction === "TriggerJavaScriptEvent")
             {
                 var IsMouseEvent = inputValues["IsMouseEvent"];
@@ -345,7 +356,6 @@ function define_GingerLib() {
     //---------
         
     GingerLib.HandleHTMLControlAction = function (ControlAction, LocateBy, LocateValue, Value) {
-
         var el = undefined;
         if (ControlAction == "Visible" || ControlAction == "Enabled")
         {          
@@ -364,6 +374,14 @@ function define_GingerLib() {
             return new GingerErrorPayLoad(404, ErrorMessage);
         }
         else {
+
+            //Adding action for POM Element
+            if (ControlAction === "LocateElementByLocator") {
+                var pl = new GingerPayLoad("OK");
+                pl.AddValueString("true");
+                pl.ClosePackage();
+                return pl;
+            }
 
             if (ControlAction == "SetValue") {
                 return GingerLib.SetElementValue(el, Value);
