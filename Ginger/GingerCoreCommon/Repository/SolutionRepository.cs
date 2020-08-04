@@ -140,11 +140,7 @@ namespace Amdocs.Ginger.Repository
 
         public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
         {
-            repositoryItem.OngoingAsyncSaveProcess = true;
-
-            await Task.Run(() => SaveRepositoryItem(repositoryItem)).ConfigureAwait(false);
-
-            repositoryItem.OngoingAsyncSaveProcess = false;
+            await Task.Run(() => SaveRepositoryItem(repositoryItem));
         }
 
         /// <summary>
@@ -191,70 +187,6 @@ namespace Amdocs.Ginger.Repository
             repositoryItem.CreateBackup();
             timeTaken = (DateTime.Now - startTime).TotalSeconds;
             Reporter.ToLog(eLogLevel.INFO, "repositoryItem.CreateBackup() took " + timeTaken + " seconds");
-        }
-
-        public static RepositoryItemBase DuplicateRepositoryItem(RepositoryItemBase repoItem)
-        {
-            Type typeSource = repoItem.GetType();
-            var objTarget = Activator.CreateInstance(typeSource) as RepositoryItemBase;
-
-            var Properties = repoItem.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
-
-            Parallel.ForEach(Properties, mi =>
-            {
-                if(RepositoryItemBase.IsDoNotBackupAttr(mi))
-                {
-                    return;
-                }
-
-                object memberValue = null;
-
-                if (mi.MemberType == MemberTypes.Property)
-                {
-                    var PI = repoItem.GetType().GetProperty(mi.Name);
-
-                    if (PI.CanWrite)
-                    {
-                        memberValue = PI.GetValue(repoItem);
-
-                        if (memberValue is IObservableList && typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
-                        {
-                            IObservableList copiedList = (IObservableList)PI.GetValue(objTarget);
-                            DuplicateList((IObservableList)memberValue, copiedList);
-
-                            PI.SetValue(objTarget, copiedList);
-                        }
-                        else
-                        {
-                            PI.SetValue(objTarget, memberValue);
-                        }
-                    }
-                }
-                else
-                {
-                    FieldInfo FI = repoItem.GetType().GetField(mi.Name);
-
-                    memberValue = FI.GetValue(repoItem);
-                    FI.SetValue(objTarget, memberValue);
-                }
-            });
-
-            return objTarget;
-        }
-
-        static void DuplicateList(IObservableList sourceList, IObservableList targetList)
-        {
-            foreach (object item in sourceList)
-            {
-                if (item is RepositoryItemBase)
-                {
-                    targetList.Add(DuplicateRepositoryItem(item as RepositoryItemBase));
-                }
-                else
-                {
-                    targetList.Add(item);
-                }
-            }
         }
 
         public void Close()

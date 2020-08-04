@@ -168,10 +168,7 @@ namespace Ginger.Run
             ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
             foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
             {
-                DateTime strtTime = DateTime.Now;
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                double elpsd = (DateTime.Now - strtTime).TotalSeconds;
-                Reporter.ToLog(eLogLevel.INFO, "InitRunner --> GetAllRepositoryItems<BusinessFlow>() took " + elpsd + " seconds");
 
                 BusinessFlow businessFlow = (from x in businessFlows where x.Guid == businessFlowRun.BusinessFlowGuid select x).FirstOrDefault();
                 //Fail over to try and find by name
@@ -187,10 +184,7 @@ namespace Ginger.Run
                 else
                 {
                     // Very slow
-                    strtTime = DateTime.Now;
                     BusinessFlow BFCopy = (BusinessFlow)businessFlow.CreateCopy(false);
-                    elpsd = (DateTime.Now - strtTime).TotalSeconds;
-                    Reporter.ToLog(eLogLevel.INFO, "InitRunner --> COPY Business Flow took " + elpsd + " seconds");
 
                     BFCopy.ContainingFolder = businessFlow.ContainingFolder;
                     BFCopy.Reset();

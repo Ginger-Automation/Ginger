@@ -73,8 +73,6 @@ namespace Amdocs.Ginger.Repository
         //DO Not save
         protected ConcurrentDictionary<string, object> mBackupDic;
 
-        public bool OngoingAsyncSaveProcess = false;
-
         public bool IsBackupExist
         {
             get
@@ -289,7 +287,7 @@ namespace Amdocs.Ginger.Repository
             });
         }
 
-        public static bool IsDoNotBackupAttr(MemberInfo mi)
+        public bool IsDoNotBackupAttr(MemberInfo mi)
         {
             var IsSerializedAttr = mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
             if (IsSerializedAttr == null)
@@ -618,9 +616,80 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
+        private RepositoryItemBase DuplicateRepositoryItem(RepositoryItemBase repoItem)
+        {
+            Type typeSource = repoItem.GetType();
+            var objTarget = Activator.CreateInstance(typeSource) as RepositoryItemBase;
+
+            var Properties = repoItem.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
+
+            Parallel.ForEach(Properties, mi =>
+            {
+                if (IsDoNotBackupAttr(mi))
+                {
+                    return;
+                }
+
+                object memberValue = null;
+
+                if (mi.MemberType == MemberTypes.Property)
+                {
+                    try
+                    {
+                        var PI = repoItem.GetType().GetProperty(mi.Name);
+
+                        if (PI.CanWrite)
+                        {
+                            memberValue = PI.GetValue(repoItem);
+
+                            if (memberValue is IObservableList && typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
+                            {
+                                IObservableList copiedList = (IObservableList)PI.GetValue(objTarget);
+                                DuplicateList((IObservableList)memberValue, copiedList);
+
+                                PI.SetValue(objTarget, copiedList);
+                            }
+                            else
+                            {
+                                PI.SetValue(objTarget, memberValue);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Create Repository Item Copy Error", ex);
+                    }
+                }
+                else
+                {
+                    FieldInfo FI = repoItem.GetType().GetField(mi.Name);
+
+                    memberValue = FI.GetValue(repoItem);
+                    FI.SetValue(objTarget, memberValue);
+                }
+            });
+
+            return objTarget;
+        }
+
+        private void DuplicateList(IObservableList sourceList, IObservableList targetList)
+        {
+            foreach (object item in sourceList)
+            {
+                if (item is RepositoryItemBase)
+                {
+                    targetList.Add(DuplicateRepositoryItem(item as RepositoryItemBase));
+                }
+                else
+                {
+                    targetList.Add(item);
+                }
+            }
+        }
+
         public RepositoryItemBase CreateCopy(bool setNewGUID = true)
         {
-            var duplicatedItem = SolutionRepository.DuplicateRepositoryItem(this);
+            var duplicatedItem = DuplicateRepositoryItem(this);
             //change the GUID of duplicated item
             if (duplicatedItem != null)
             {
