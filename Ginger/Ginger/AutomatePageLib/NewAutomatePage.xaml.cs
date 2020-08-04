@@ -140,7 +140,7 @@ namespace GingerWPF.BusinessFlowsLib
                         return;
                     }
                     ExecutionLoggerManager.RunSetReport = mRunSetReport;
-                }                
+                }
             }
         }
 
@@ -295,9 +295,9 @@ namespace GingerWPF.BusinessFlowsLib
                 ExpandAddActionsPnl();
                 Ginger.General.DoEvents();
                 App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsPageHelp", xAddActionMenuFrame, string.Format("List of options is dynamic, options are loaded based on the target platform of current {0} and on it mapped Agent status.For example, “Record” option will be added only if the platform is UI based (like Web, Java, etc.) and Agent it loaded", GingerDicser.GetTermResValue(eTermResKey.Activity)));
-            } 
+            }
             else
-            {                
+            {
                 CollapseAddActionsPnl();
             }
         }
@@ -414,7 +414,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         xBDDOperationsMenu.Visibility = Visibility.Visible;
                     }
-                    
+
                     if (mActivitiesPage == null)
                     {
                         mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
@@ -609,14 +609,26 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.UpdateApplicationAgents();
         }
 
+        void ToggleProcessButtons(bool isEnabled)
+        {
+            xSaveBusinessFlowBtn.IsEnabled = isEnabled;
+            xUndoChangesBtn.IsEnabled = isEnabled;
+            xResetFlowBtn.IsEnabled = isEnabled;
+            xBusinessFlowOperationssPnl.IsEnabled = isEnabled;
+            xRunFlowBtn.IsEnabled = isEnabled;
+            xEnvironmentComboBox.IsEnabled = isEnabled;
+
+            if (mApplicationAgentsMapPage != null)
+            {
+                mApplicationAgentsMapPage.MappingList.IsEnabled = isEnabled;
+            }
+        }
+
         private void SetUIElementsBehaverDuringExecution()
         {
             this.Dispatcher.Invoke(() =>
             {
-                xSaveBusinessFlowBtn.IsEnabled = !mExecutionIsInProgress;
-                xUndoChangesBtn.IsEnabled = !mExecutionIsInProgress;
-                xResetFlowBtn.IsEnabled = !mExecutionIsInProgress;
-                xBusinessFlowOperationssPnl.IsEnabled = !mExecutionIsInProgress;
+                ToggleProcessButtons(!mExecutionIsInProgress);
 
                 if (mExecutionIsInProgress)
                 {
@@ -680,7 +692,7 @@ namespace GingerWPF.BusinessFlowsLib
                             activity.Acts.SyncViewSelectedItemWithCurrentItem = true;
                         }
                     }
-                }                
+                }
             });
         }
 
@@ -918,7 +930,7 @@ namespace GingerWPF.BusinessFlowsLib
                 mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
-                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);               
+                var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);
 
                 if (mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
@@ -926,7 +938,7 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
                     mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
                 }
-                             
+
             }
             catch(Exception ex)
             {
@@ -1013,11 +1025,11 @@ namespace GingerWPF.BusinessFlowsLib
             xEnvironmentComboBox.DisplayMemberPath = nameof(ProjEnvironment.Name);
             xEnvironmentComboBox.SelectedValuePath = nameof(ProjEnvironment.Guid);
             xEnvironmentComboBox.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().AsCollectionViewOrderBy(nameof(ProjEnvironment.Name));
-            
+
             if(GingerCoreNET.GeneralLib.General.CreateDefaultEnvironment())
             {
                 xEnvironmentComboBox.SelectedIndex = 0;
-            }            
+            }
             else
             {
                 //select last used environment
@@ -1094,20 +1106,19 @@ namespace GingerWPF.BusinessFlowsLib
                 }
             }
 
-            Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name,
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.SaveItem, null, mBusinessFlow.Name,
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                SwapLoadingPrefixText("Saving", false);
 
-            SwapLoadingPrefixText("Saving", false);
-            xItemsTabsSection.Visibility = Visibility.Collapsed;
-            xItemsLoadingPnl.Visibility = Visibility.Visible;
-
-            await WorkSpace.Instance.SolutionRepository.SaveRepositoryItemAsync(mBusinessFlow);
-
-            Reporter.HideStatusMessage();
-
-            xItemsTabsSection.Visibility = Visibility.Visible;
-            xItemsLoadingPnl.Visibility = Visibility.Collapsed;
-            SwapLoadingPrefixText("Saving", true);
+                await WorkSpace.Instance.SolutionRepository.SaveRepositoryItemAsync(mBusinessFlow);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+                SwapLoadingPrefixText("Saving", true);
+            }
         }
 
         public string loadingText { get; set; } = "Loading [BusinessFlow]...";
@@ -1122,13 +1133,18 @@ namespace GingerWPF.BusinessFlowsLib
             if (IsReset)
             {
                 loadingText = loadingText.Replace(swappedText, "Loading");
+                xItemsTabsSection.Visibility = Visibility.Visible;
+                xItemsLoadingPnl.Visibility = Visibility.Collapsed;
             }
             else
             {
                 loadingText = loadingText.Replace("Loading", swappedText);
+                xItemsTabsSection.Visibility = Visibility.Collapsed;
+                xItemsLoadingPnl.Visibility = Visibility.Visible;
             }
 
             xLoadWindowText.Text = loadingText;
+            ToggleProcessButtons(IsReset);
         }
 
         private async void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
@@ -1137,13 +1153,10 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, mBusinessFlow.ItemName) == eUserMsgSelection.Yes)
             {
-                xItemsTabsSection.Visibility = Visibility.Collapsed;
-                xItemsLoadingPnl.Visibility = Visibility.Visible;
                 SwapLoadingPrefixText("Undoing", false);
 
                 try
                 {
-                    //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", mBusinessFlow.ItemName));
                     await Task.Run(() => mBusinessFlow.RestoreFromBackup(true, true));
 
@@ -1158,9 +1171,6 @@ namespace GingerWPF.BusinessFlowsLib
                 finally
                 {
                     Reporter.HideStatusMessage();
-                    //Mouse.OverrideCursor = null;
-                    xItemsTabsSection.Visibility = Visibility.Visible;
-                    xItemsLoadingPnl.Visibility = Visibility.Collapsed;
                     SwapLoadingPrefixText("Undoing", true);
                 }
             }
@@ -1557,7 +1567,7 @@ namespace GingerWPF.BusinessFlowsLib
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_GoBackToBFsHelp", xGoToBFsTreeBtn, string.Format("Click here to go back to {0} tree", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_BusinessFlowLayerHelp", xBusinessFlowItemComboBox, string.Format("Select here which layer of {0} you want to configure: {1}, {2} or Details", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
-            App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");            
+            App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AddActionsBtnHelp", xAddActionsBtn, "Click here to view all options to add automation Actions into your flow");
         }
     }
