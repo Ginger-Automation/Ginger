@@ -889,6 +889,8 @@ namespace Ginger.Run
             }
 
             xBusinessflowName.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), mCurrentSelectedRunner.Runner.BusinessFlows.Count);
+
+            /// Avoid selecting the first BusinessFlow as default to avoid Activities loading for saving the Runset load time
             //if (xBusinessflowsRunnerItemsListView.Items.Count > 0)
             //{
             //    xBusinessflowsRunnerItemsListView.SelectedItem = mCurrentSelectedRunner.BusinessflowRunnerItems[0];

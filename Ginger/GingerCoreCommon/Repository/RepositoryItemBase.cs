@@ -287,7 +287,7 @@ namespace Amdocs.Ginger.Repository
             });
         }
 
-        public bool IsDoNotBackupAttr(MemberInfo mi)
+        private bool IsDoNotBackupAttr(MemberInfo mi)
         {
             var IsSerializedAttr = mi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
             if (IsSerializedAttr == null)

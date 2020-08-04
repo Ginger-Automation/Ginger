@@ -1112,7 +1112,7 @@ namespace GingerWPF.BusinessFlowsLib
                                       GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                 SwapLoadingPrefixText("Saving", false);
 
-                await WorkSpace.Instance.SolutionRepository.SaveRepositoryItemAsync(mBusinessFlow);
+                await WorkSpace.Instance.SolutionRepository.SaveRepositoryItemAsync(mBusinessFlow).ConfigureAwait(false);
             }
             finally
             {

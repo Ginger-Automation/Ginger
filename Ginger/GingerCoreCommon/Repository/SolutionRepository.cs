@@ -156,13 +156,7 @@ namespace Amdocs.Ginger.Repository
 
             repositoryItem.UpdateBeforeSave();
 
-            DateTime startTime = DateTime.Now;
-
             string txt = RepositorySerializer.SerializeToString(repositoryItem);
-
-            double timeTaken = (DateTime.Now - startTime).TotalSeconds;
-
-            Reporter.ToLog(eLogLevel.INFO, "RepositorySerializer.SerializeToString(repositoryItem) took " + timeTaken + " seconds");
 
             string filePath = CreateRepositoryItemFileName(repositoryItem);
             RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
@@ -174,19 +168,10 @@ namespace Amdocs.Ginger.Repository
 
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
             {
-                startTime = DateTime.Now;
-
                 repositoryItem.SetDirtyStatusToNoChange();
-
-                timeTaken = (DateTime.Now - startTime).TotalSeconds;
-                Reporter.ToLog(eLogLevel.INFO, "repositoryItem.SetDirtyStatusToNoChange() took " + timeTaken + " seconds");
             }
 
-            startTime = DateTime.Now;
-
             repositoryItem.CreateBackup();
-            timeTaken = (DateTime.Now - startTime).TotalSeconds;
-            Reporter.ToLog(eLogLevel.INFO, "repositoryItem.CreateBackup() took " + timeTaken + " seconds");
         }
 
         public void Close()
