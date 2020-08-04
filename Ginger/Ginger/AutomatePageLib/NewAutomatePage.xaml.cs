@@ -1158,7 +1158,7 @@ namespace GingerWPF.BusinessFlowsLib
                 try
                 {
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", mBusinessFlow.ItemName));
-                    await Task.Run(() => mBusinessFlow.RestoreFromBackup(true, true));
+                    await Task.Run(() => mBusinessFlow.RestoreFromBackup(true, true)).ConfigureAwait(false);
 
                     mActivitiesPage.ListView.UpdateGrouping();
                     mBusinessFlow.SaveBackup();

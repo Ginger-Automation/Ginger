@@ -1073,18 +1073,6 @@ namespace Amdocs.Ginger.Repository
             DirtyStatus = eDirtyStatus.NoChange;
 
             // Properties
-            //foreach (PropertyInfo PI in this.GetType().GetProperties().Where(pi =>
-            //    pi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute)) != null
-            //        && typeof(IObservableList).IsAssignableFrom(pi.PropertyType)
-            //            && (pi.GetValue(this) as IObservableList) != null))
-            //{
-            //    IObservableList obj = (IObservableList)PI.GetValue(this);
-
-            //    foreach (object o in obj)
-            //        if (o is RepositoryItemBase)
-            //            ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
-            //}
-
             foreach (PropertyInfo PI in this.GetType().GetProperties())
             {
                 var token = PI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
@@ -1101,17 +1089,6 @@ namespace Amdocs.Ginger.Repository
             }
 
             // Fields
-            //foreach (FieldInfo FI in this.GetType().GetFields().Where(fi =>
-            //    fi.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute)) != null
-            //        && typeof(IObservableList).IsAssignableFrom(fi.FieldType)
-            //            && (fi.GetValue(this) as IObservableList) != null))
-            //{
-            //    IObservableList obj = (IObservableList)FI.GetValue(this);
-
-            //    foreach (object o in obj)
-            //        if (o is RepositoryItemBase)
-            //            ((RepositoryItemBase)o).SetDirtyStatusToNoChange();
-            //}
             foreach (FieldInfo FI in this.GetType().GetFields())
             {
                 var token = FI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));

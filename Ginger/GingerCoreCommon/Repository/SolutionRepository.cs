@@ -142,7 +142,7 @@ namespace Amdocs.Ginger.Repository
         {
             repositoryItem.OngoingAsyncSaveProcess = true;
 
-            await Task.Run(() => SaveRepositoryItem(repositoryItem));
+            await Task.Run(() => SaveRepositoryItem(repositoryItem)).ConfigureAwait(false);
 
             repositoryItem.OngoingAsyncSaveProcess = false;
         }
