@@ -146,7 +146,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
             ResetValue();
         }
