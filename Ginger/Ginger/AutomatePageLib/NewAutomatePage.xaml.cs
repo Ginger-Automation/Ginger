@@ -1167,6 +1167,12 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (CheckIfExecutionIsInProgress()) return;
 
+            if (mBusinessFlow.IsLocalBackupExist == false)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Backup not created or still in progress for '{0}'", mBusinessFlow.ItemName));
+                return;
+            }
+
             if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, mBusinessFlow.ItemName) == eUserMsgSelection.Yes)
             {
                 SwapLoadingPrefixText("Undoing", false);
