@@ -494,6 +494,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (Ginger.General.UndoChangesInRepositoryItem(mActivity, true))
             {
+                mActionsPage.xGoToActionsList.DoClick();
                 mActivity.SaveBackup();
             }
         }

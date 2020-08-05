@@ -773,7 +773,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (obj is RepositoryItemBase)
                 {
-                    ((RepositoryItemBase)obj).PostSerialization();
+                    ((RepositoryItemBase)obj).PostDeserialization();
                 }
 
                 return obj;
@@ -801,7 +801,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (obj is RepositoryItemBase)
                 {
-                    ((RepositoryItemBase)obj).PreSerialization();
+                    ((RepositoryItemBase)obj).PreDeserialization();
                 }
 
                 return obj;

@@ -1157,7 +1157,129 @@ namespace UnitTests.NonUITests
 
         }
 
-        
+        [TestMethod]
+        public void CopyRepoItem_RefItemsTest()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow("Test");
 
+            Activity activity = new Activity();
+            activity.ActivityName = "Login";
+
+            ActUIElement actGotoURL = new ActUIElement();
+            actGotoURL.Description = "Launch";
+
+            activity.Acts.Add(actGotoURL);
+
+            Activity activity2 = new Activity();
+            activity2.ActivityName = "Test";
+
+            ActDummy act2 = new ActDummy();
+            act2.Description = "WaitForApp";
+
+            activity.Acts.Add(act2);
+
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity);
+            bf.Activities.Add(activity2);
+
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+
+            //Act
+            BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy();
+            Activity activity3 = new Activity();
+            activity3.ActivityName = "NewActivity";
+            bf.Activities.Add(activity3);
+
+            activity2.ActivityName = "Test_New";
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreEqual(bf.Name, copiedItem.Name);
+            Assert.AreEqual(2, copiedItem.Activities.Count);
+            Assert.AreEqual(3, bf.Activities.Count);
+            Assert.AreNotSame(bf, copiedItem);
+
+            Assert.IsTrue(bf.Activities.Contains(activity3));
+            Assert.IsFalse(copiedItem.Activities.Contains(activity3));
+
+            Assert.IsNotNull(bf.Activities.Where(a => a.ActivityName == activity2.ActivityName).FirstOrDefault());
+            Assert.IsNull(copiedItem.Activities.Where(a => a.ActivityName == activity2.ActivityName).FirstOrDefault());
+
+            Assert.IsNotNull(copiedItem.Activities.Where(a => a.ActivityName == "Test").FirstOrDefault());
+            Assert.IsNull(bf.Activities.Where(a => a.ActivityName == "Test").FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void CopyRepoItem_ChildItemsTest()
+        {
+            //Arrange
+            Activity activity = new Activity() { ActivityName = "TestActivity", };
+            ActDummy act1 = new ActDummy() { ItemName = "Act1" };
+            activity.Acts.Add(act1);
+
+            activity.RepositorySerializer.SaveToFile(activity, TestResources.GetTempFile("Activity.xml"));
+
+            //Act
+            var copiedItem = activity.CreateCopy() as Activity;
+            ActDummy act2 = new ActDummy() { ItemName = "Act2" };
+            activity.Acts.Add(act2);
+
+            act1.ItemName = "NewName";
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreEqual(activity.ItemName, copiedItem.ItemName);
+            Assert.AreEqual(1, copiedItem.Acts.Count);
+            Assert.AreEqual(2, activity.Acts.Count);
+
+            Assert.AreNotSame(activity, copiedItem);
+
+            Assert.IsTrue(activity.Acts.Contains(act2));
+            Assert.IsFalse(copiedItem.Acts.Contains(act2));
+
+            Assert.IsTrue(activity.Acts[0].ItemName == "NewName");
+            Assert.IsFalse(copiedItem.Acts[0].ItemName == "NewName");
+        }
+
+        [TestMethod]
+        public void CopyRepoItem_TrackCopyTest()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow("Test");
+
+            Activity activity = new Activity();
+            activity.ActivityName = "Login";
+
+            ActUIElement actGotoURL = new ActUIElement();
+            actGotoURL.Description = "Launch";
+
+            activity.Acts.Add(actGotoURL);
+
+            Activity activity2 = new Activity();
+            activity2.ActivityName = "Test";
+
+            ActDummy act2 = new ActDummy();
+            act2.Description = "WaitForApp";
+
+            activity.Acts.Add(act2);
+
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity);
+
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+
+            bf.Activities.Add(activity2);
+
+            //Act
+            BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy();
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreEqual(bf.Name, copiedItem.Name);
+            Assert.AreEqual(2, copiedItem.Activities.Count);
+            Assert.AreEqual(2, bf.Activities.Count);
+            Assert.AreNotSame(bf, copiedItem);
+        }
     }
 }

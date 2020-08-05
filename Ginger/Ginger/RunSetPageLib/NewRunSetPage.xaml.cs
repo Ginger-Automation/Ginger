@@ -265,7 +265,7 @@ namespace Ginger.Run
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
 
-            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;            
+            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;
             xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
 
             xActivitiesRunnerItemsListView.SelectionChanged -= xActionsListView_SelectionChanged;
@@ -889,10 +889,12 @@ namespace Ginger.Run
             }
 
             xBusinessflowName.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), mCurrentSelectedRunner.Runner.BusinessFlows.Count);
-            if (xBusinessflowsRunnerItemsListView.Items.Count > 0)
-            {
-                xBusinessflowsRunnerItemsListView.SelectedItem = mCurrentSelectedRunner.BusinessflowRunnerItems[0];
-            }
+
+            /// Avoid selecting the first BusinessFlow as default to avoid Activities loading for saving the Runset load time
+            //if (xBusinessflowsRunnerItemsListView.Items.Count > 0)
+            //{
+            //    xBusinessflowsRunnerItemsListView.SelectedItem = mCurrentSelectedRunner.BusinessflowRunnerItems[0];
+            //}
         }
        
         private void RunnerPageEvent(RunnerPageEventArgs EventArgs)
@@ -1807,36 +1809,36 @@ namespace Ginger.Run
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
-                try
-                {
-                    xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Visible;
-                    xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
-                    General.DoEvents();//for seeing the processing icon better to do with Async
+                    try
+                    {
+                        xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Visible;
+                        xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
+                        General.DoEvents();//for seeing the processing icon better to do with Async
 
-                    xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
-                    
-                }
-                finally
-                {
-                    xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Collapsed;
-                    xActivitiesRunnerItemsListView.Visibility = Visibility.Visible;
-                }
-                if (!((BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject).Active)
-                {
-                    mCurrentBusinessFlowRunnerItem.xItemName.Foreground = Brushes.Gray;
-                }
-                else
-                {
-                    mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
-                }
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
 
-                mContext.BusinessFlow = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
+                    }
+                    finally
+                    {
+                        xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Collapsed;
+                        xActivitiesRunnerItemsListView.Visibility = Visibility.Visible;
+                    }
+                    if (!((BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject).Active)
+                    {
+                        mCurrentBusinessFlowRunnerItem.xItemName.Foreground = Brushes.Gray;
+                    }
+                    else
+                    {
+                        mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
+                    }
+
+                    mContext.BusinessFlow = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
             }
             else
             {
                 xActivitiesRunnerItemsListView.ItemsSource = null;
                 mContext.BusinessFlow = null;
-            }            
+            }
         }
 
         private void xActivitiesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

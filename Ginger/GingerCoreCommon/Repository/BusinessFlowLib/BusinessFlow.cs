@@ -279,21 +279,26 @@ namespace GingerCore
                 {
                     mActivities = new ObservableList<Activity>();
                 }
-                if (mActivities.LazyLoad)
-                {
-                    mActivities.LoadLazyInfo();
-                    mLazyLoadFlagForUnitTest = true; 
-                    AttachActivitiesGroupsAndActivities(mActivities);
-                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
-                    {
-                        this.TrackObservableList(mActivities);
-                    }
-                }
+                DoActivitiesLazyLoad();
                 return mActivities;
             }
             set
             {
                 mActivities = value;
+            }
+        }
+
+        private void DoActivitiesLazyLoad()
+        {
+            if (mActivities.LazyLoad)
+            {
+                mActivities.LoadLazyInfo();
+                mLazyLoadFlagForUnitTest = true;
+                AttachActivitiesGroupsAndActivities(mActivities);
+                if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                {
+                    this.TrackObservableList(mActivities);
+                }
             }
         }
 
@@ -1537,12 +1542,22 @@ namespace GingerCore
 
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
             if (mAttachActivitiesGroupsWasDone)
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
             }
+        }
+
+        public override void PrepareItemToBeCopied()
+        {
+            DoActivitiesLazyLoad();//call activities for making sure lazy load was done and activities groups attach was done
+        }
+
+        public override void UpdateCopiedItem()
+        {
+            AttachActivitiesGroupsAndActivities();
         }
 
     }

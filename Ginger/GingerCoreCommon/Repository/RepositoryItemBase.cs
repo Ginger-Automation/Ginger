@@ -59,11 +59,11 @@ namespace Amdocs.Ginger.Repository
         private string mExternalID;
         [IsSerializedForLocalRepository]
         public string ExternalID { get { return mExternalID; } set { if (mExternalID != value) { mExternalID = value; OnPropertyChanged(nameof(ExternalID)); } } }
-        
+
         private string mExternalID2;
         [IsSerializedForLocalRepository]
         public string ExternalID2 { get { return mExternalID2; } set { if (mExternalID2 != value) { mExternalID2 = value; OnPropertyChanged(nameof(ExternalID2)); } } }
-        
+
         public LiteDB.ObjectId LiteDbId { get; set; }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }
@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.Repository
         }
 
         protected ConcurrentDictionary<string, object> mLocalBackupDic;
-     
+
         public bool IsLocalBackupExist
         {
             get
@@ -172,13 +172,13 @@ namespace Amdocs.Ginger.Repository
             }
             return ShortName;
         }
-        
+
         static NewRepositorySerializer mRepositorySerializer = new NewRepositorySerializer();
         public IRepositorySerializer RepositorySerializer
         {
             get
-            {                
-                return mRepositorySerializer;                
+            {
+                return mRepositorySerializer;
             }
         }
 
@@ -191,9 +191,9 @@ namespace Amdocs.Ginger.Repository
                 DirtyCheck(name);
             }
         }
-        
+
         public bool AllowAutoSave { get; set; }
-        
+
         Guid mGuid = Guid.Empty;
         [IsSerializedForLocalRepository]
         public Guid Guid
@@ -331,7 +331,7 @@ namespace Amdocs.Ginger.Repository
         public void BackupList(string Name, IObservableList v, bool isLocalBackup = false)
         {
             //TODO: if v is Lazy bak the text without drill down
-            List<object> list = new List<object>();  
+            List<object> list = new List<object>();
             foreach (object o in v)
             {
                 // Run back on each item, so will drill down the hierarchy
@@ -343,10 +343,10 @@ namespace Amdocs.Ginger.Repository
             }
             // we keep the original list of items in special name like: Activities~List
             if (!isLocalBackup)
-            {                
+            {
                 mBackupDic.TryAdd(Name + "~List", list);
-            }                        
-            mLocalBackupDic.TryAdd(Name + "~List", list);            
+            }
+            mLocalBackupDic.TryAdd(Name + "~List", list);
         }
 
         // Item which will not be saved to the XML - for example dynamic activities or temp output values - no expected or store to
@@ -390,7 +390,7 @@ namespace Amdocs.Ginger.Repository
             }
             if (!isLocalBackup)
             {
-                mBackupDic = null;                
+                mBackupDic = null;
             }
             mLocalBackupDic = null;
 
@@ -447,10 +447,10 @@ namespace Amdocs.Ginger.Repository
 
                         if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
                         {
-                            IObservableList list = (IObservableList)PI.GetValue(this);                            
+                            IObservableList list = (IObservableList)PI.GetValue(this);
                             if (list != null)
-                            {                          
-                                RestoreList(mi.Name, list, isLocalBackup);                     
+                            {
+                                RestoreList(mi.Name, list, isLocalBackup);
                             }
                         }
                         else
@@ -477,7 +477,7 @@ namespace Amdocs.Ginger.Repository
 
                     if (typeof(IObservableList).IsAssignableFrom(fi.FieldType))
                     {
-                        IObservableList list = (IObservableList)fi.GetValue(this);                       
+                        IObservableList list = (IObservableList)fi.GetValue(this);
                         if (list != null)
                         {
                             RestoreList(mi.Name, list, isLocalBackup);
@@ -496,7 +496,7 @@ namespace Amdocs.Ginger.Repository
                 object item = null;
                 if (isLocalBackup)
                 {
-                    
+
                     mLocalBackupDic.TryRemove(mi.Name, out item);
                 }
                 else
@@ -538,7 +538,7 @@ namespace Amdocs.Ginger.Repository
                 //This is Temporary fix- Inputvalues list throwing observable collection cannot be modified exception
                 Reporter.ToLog(eLogLevel.DEBUG, "Clearing list values for restoring from back up", ex);
             }
-            
+
 
             object Backuplist;
             bool b;
@@ -628,7 +628,7 @@ namespace Amdocs.Ginger.Repository
         {
             get
             {
-                throw new NotImplementedException("Repository Item didn't implement ItemNameField - " + this.GetType().FullName);                
+                throw new NotImplementedException("Repository Item didn't implement ItemNameField - " + this.GetType().FullName);
             }
         }
 
@@ -663,35 +663,112 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
-        public RepositoryItemBase CreateCopy(bool setNewGUID = true)
+        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy)
         {
-            // Create a copy by serialized and load from the text, it will not copy all attrs only the one which are saved to XML
-            string s = RepositorySerializer.SerializeToString(this);
-            // TODO: fixme not good practice and not safe, add param to handle in function or another solution...
-            RepositoryItemBase duplicatedItem = (RepositoryItemBase)RepositorySerializer.DeserializeFromText(this.GetType(), s, filePath:string.Empty);            
-            //change the GUID of duplicated item
-            if (setNewGUID && duplicatedItem != null)
+            Type objType = repoItemToCopy.GetType();
+            var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
+
+            var objMembers = repoItemToCopy.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
+
+            repoItemToCopy.PrepareItemToBeCopied();
+            targetObj.PreDeserialization();
+            Parallel.ForEach(objMembers, mi =>
             {
-                duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
-                duplicatedItem.ExternalID = string.Empty;
-                duplicatedItem.Guid = Guid.NewGuid();
+                try
+                {
+                    if (IsDoNotBackupAttr(mi))
+                    {
+                        return;
+                    }
 
-                List<GuidMapper> guidMappingList = new List<GuidMapper>();
+                    object memberValue = null;
 
-                //set new GUID also to child items
-                UpdateRepoItemGuids(duplicatedItem,  guidMappingList);
-                duplicatedItem= duplicatedItem.GetUpdatedRepoItem(guidMappingList);
-            }
+                    if (mi.MemberType == MemberTypes.Property)
+                    {
+                        var propInfo = repoItemToCopy.GetType().GetProperty(mi.Name);
 
-            duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
+                        if (propInfo.CanWrite)
+                        {
+                            memberValue = propInfo.GetValue(repoItemToCopy);
+                            if (memberValue is IObservableList && typeof(IObservableList).IsAssignableFrom(propInfo.PropertyType))
+                            {
+                                IObservableList copiedList = (IObservableList)propInfo.GetValue(targetObj);
+                                CopyRIList((IObservableList)memberValue, copiedList);
+                                propInfo.SetValue(targetObj, copiedList);
+                            }
+                            else
+                            {
+                                propInfo.SetValue(targetObj, memberValue);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        FieldInfo fieldInfo = repoItemToCopy.GetType().GetField(mi.Name);
+                        memberValue = fieldInfo.GetValue(repoItemToCopy);
+                        fieldInfo.SetValue(targetObj, memberValue);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
+                }
+            });
+            targetObj.PostDeserialization();
+            targetObj.UpdateCopiedItem();            
 
-            return duplicatedItem;
+            return targetObj;
         }
 
+        private void CopyRIList(IObservableList sourceList, IObservableList targetList)
+        {
+            foreach (object item in sourceList)
+            {
+                if (item is RepositoryItemBase)
+                {
+                    targetList.Add(CopyRIObject(item as RepositoryItemBase));
+                }
+                else
+                {
+                    targetList.Add(item);
+                }
+            }
+        }
 
+        protected bool ItemCopyIsInProgress= false;
+        public RepositoryItemBase CreateCopy(bool setNewGUID = true)
+        {
+            try
+            {
+                ItemCopyIsInProgress = true;
 
+                var duplicatedItem = CopyRIObject(this);
+                //change the GUID of duplicated item
+                if (duplicatedItem != null)
+                {
+                    if (setNewGUID)
+                    {
+                        duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
+                        duplicatedItem.ExternalID = string.Empty;
+                        duplicatedItem.Guid = Guid.NewGuid();
 
+                        List<GuidMapper> guidMappingList = new List<GuidMapper>();
 
+                        //set new GUID also to child items
+                        UpdateRepoItemGuids(duplicatedItem, guidMappingList);
+                        duplicatedItem = duplicatedItem.GetUpdatedRepoItem(guidMappingList);
+                    }
+
+                    duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
+                }
+
+                return duplicatedItem;
+            }
+            finally
+            {
+                ItemCopyIsInProgress = false;
+            }
+        }
 
         private void UpdateRepoItemGuids(RepositoryItemBase item, List<GuidMapper> guidMappingList)
         {
@@ -703,7 +780,7 @@ namespace Amdocs.Ginger.Repository
 
                 // we drill down to ObservableList
                 if (typeof(IObservableList).IsAssignableFrom(PI.FieldType))
-                {                    
+                {
                     IObservableList obj = (IObservableList)PI.GetValue(item);
                     if (obj == null) return;
                     List<object> items = ((IObservableList)obj).ListItems;
@@ -766,7 +843,7 @@ namespace Amdocs.Ginger.Repository
         public virtual string RelativeFilePath { get; set; }
 
         public virtual void UpdateBeforeSave()
-        {            
+        {
             this.ClearBackup();
         }
 
@@ -880,9 +957,9 @@ namespace Amdocs.Ginger.Repository
         public void RefreshSourceControlStatus()
         {
             if (SourceControl != null && mSourceControlStatus != eImageType.Null)
-            {                
+            {
                 mSourceControlStatus = SourceControl.GetFileStatusForRepositoryItemPath(mFilePath);
-                OnPropertyChanged(nameof(SourceControlStatus));                                
+                OnPropertyChanged(nameof(SourceControlStatus));
             }
         }
 
@@ -984,7 +1061,7 @@ namespace Amdocs.Ginger.Repository
                         // not RI no tracking...
                     }
                 }
-            }           
+            }
         }
 
         ConcurrentBag<string> DirtyTrackingFields;
@@ -1164,7 +1241,7 @@ namespace Amdocs.Ginger.Repository
         {
             RepositoryItemBase copiedItem = this.CreateCopy();
             copiedItem.ParentGuid = this.Guid;
-            if (originFromSharedRepository) 
+            if (originFromSharedRepository)
             {
                 copiedItem.IsSharedRepositoryInstance = true;
                 copiedItem.ExternalID = this.ExternalID;
@@ -1184,7 +1261,7 @@ namespace Amdocs.Ginger.Repository
                 if (mIsSharedRepositoryInstance != value)
                 {
                     mIsSharedRepositoryInstance = value;
-                    
+
                     OnPropertyChanged(nameof(SharedRepoInstanceImage));
                     OnPropertyChanged(nameof(IsSharedRepositoryInstance));
                 }
@@ -1196,11 +1273,11 @@ namespace Amdocs.Ginger.Repository
             get
             {
                 if (IsSharedRepositoryInstance)
-                { 
+                {
                     return eImageType.SharedRepositoryItem;
                 }
                 else
-                { 
+                {
                     return eImageType.NonSharedRepositoryItem;
                 }
             }
@@ -1218,13 +1295,13 @@ namespace Amdocs.Ginger.Repository
 
         public static void ObjectsDeepCopy(RepositoryItemBase sourceObj, RepositoryItemBase targetObj)
         {
-            NewRepositorySerializer repoSer = new NewRepositorySerializer(); 
+            NewRepositorySerializer repoSer = new NewRepositorySerializer();
 
             string sourceObjXml = repoSer.SerializeToString(sourceObj);
-            NewRepositorySerializer RS = new NewRepositorySerializer();            
+            NewRepositorySerializer RS = new NewRepositorySerializer();
 
             RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
-         }
+        }
 
         public virtual void UpdateItemFieldForReposiotryUse()
         {
@@ -1237,18 +1314,18 @@ namespace Amdocs.Ginger.Repository
         }
 
         /// <summary>
-        /// This method is being called when object type is read in xml which is being serialzied and before the properties/fields are updated
+        /// This method is being called when object type is read in xml which is being deserialzied and before the properties/fields are updated
         /// Overrid this method if you need to initial repository item as soon as it is created to set default for example
         /// </summary>
-        public virtual void PreSerialization()
-        {            
+        public virtual void PreDeserialization()
+        {
         }
 
         /// <summary>
-        /// This method is being called afetr object type is read from xml and all properties/fields been serialzied
+        /// This method is being called afetr object type is read from xml and all properties/fields been deserialzied
         /// Use this method to do updates to the object being serialzied 
         /// </summary>
-        public virtual void PostSerialization()
+        public virtual void PostDeserialization()
         {
         }
 
@@ -1264,6 +1341,22 @@ namespace Amdocs.Ginger.Repository
         {
             // override method in sub class need to impelment and return true if handled
             return false;
+        }
+
+        /// <summary>
+        /// This method is being called on original item to be copied before copy process is starting
+        /// Overrid this method if you need to modify some object member before it been copied
+        /// </summary>
+        public virtual void PrepareItemToBeCopied()
+        {
+        }
+
+        /// <summary>
+        /// This method is being called on copied item after copy process is ended
+        /// Overrid this method if you need to modify some object member after it been copied
+        /// </summary>
+        public virtual void UpdateCopiedItem()
+        {
         }
 
         bool mPublish = false;

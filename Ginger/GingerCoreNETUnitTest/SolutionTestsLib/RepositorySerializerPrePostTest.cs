@@ -71,12 +71,12 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             public int Age { get; set; }
 
 
-            public override void PreSerialization()
+            public override void PreDeserialization()
             {
                 NewAge = 1;
             }
 
-            public override void PostSerialization()
+            public override void PostDeserialization()
             {
                 if (Age == 0)
                 {

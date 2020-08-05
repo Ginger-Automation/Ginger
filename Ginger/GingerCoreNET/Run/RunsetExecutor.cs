@@ -169,6 +169,7 @@ namespace Ginger.Run
             foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
                 BusinessFlow businessFlow = (from x in businessFlows where x.Guid == businessFlowRun.BusinessFlowGuid select x).FirstOrDefault();
                 //Fail over to try and find by name
                 if (businessFlow == null)
@@ -184,6 +185,7 @@ namespace Ginger.Run
                 {
                     // Very slow
                     BusinessFlow BFCopy = (BusinessFlow)businessFlow.CreateCopy(false);
+
                     BFCopy.ContainingFolder = businessFlow.ContainingFolder;
                     BFCopy.Reset();
                     BFCopy.Active = businessFlowRun.BusinessFlowIsActive;

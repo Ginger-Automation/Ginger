@@ -83,7 +83,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
            //Note: we need to reset all variables postserialization except variableSelectionList, thats why empty overriden method. 
         }
