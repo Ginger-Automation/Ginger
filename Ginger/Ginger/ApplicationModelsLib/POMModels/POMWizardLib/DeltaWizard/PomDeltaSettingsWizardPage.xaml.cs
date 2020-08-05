@@ -77,7 +77,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                         SetPlatformAutoMapElements(new WebPlatform().GetPlatformElementTypesData().ToList());
                         break;
                     case ePlatformType.Java:
-                        SetPlatformAutoMapElements(new JavaPlatform().GetPlatformElementTypesData().ToList());
+                        var elementList = new JavaPlatform().GetUIElementFilterList();
+                        mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                        mWizard.mPomDeltaUtils.PomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
                         break;
                 }
             }
@@ -99,6 +101,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 }
             }
         }
+
+       
 
         private void SetElementLocatorsSettingsData()
         {
