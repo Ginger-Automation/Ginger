@@ -1281,5 +1281,136 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(2, bf.Activities.Count);
             Assert.AreNotSame(bf, copiedItem);
         }
+
+        [TestMethod]
+        public void CopyItem_ChildWithNewGUIDTest()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow("Test");
+
+            Activity activity = new Activity();
+            activity.ActivityName = "Login";
+
+            ActDummy dumAct = new ActDummy();
+            //Guid sfGuid = Guid.NewGuid();
+            FlowControl sampleFC = new FlowControl()
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.GoToAction,
+                ConditionCalculated = "aaa",
+                ValueCalculated = "bbb",
+            };
+
+            dumAct.FlowControls.Add(sampleFC);
+
+            activity.Acts.Add(dumAct);
+
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity);
+
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+
+            //Act
+            BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy(true);
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
+            Assert.AreNotEqual(bf.Guid, copiedItem.Guid);
+            Assert.AreNotEqual(bf.Activities[0].Guid, copiedItem.Activities[0].Guid);
+            Assert.AreNotEqual(sampleFC.Guid, copiedItem.Activities[0].Acts[0].FlowControls[0].Guid);
+
+            /// FlowControlAction must be same as it contains IsSerializable attribute
+            Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
+
+            /// ValueCalculated & ConditionCalculated must be unset/null as it doen't contain IsSerializable attribute
+            Assert.AreNotEqual(sampleFC.ValueCalculated, copiedItem.Activities[0].Acts[0].FlowControls[0].ValueCalculated);
+            Assert.AreNotEqual(sampleFC.ConditionCalculated, copiedItem.Activities[0].Acts[0].FlowControls[0].ConditionCalculated);
+        }
+
+        [TestMethod]
+        public void CopyItem_ChildWithSameGUIDTest()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow("Test");
+
+            Activity activity = new Activity();
+            activity.ActivityName = "Login";
+
+            ActDummy dumAct = new ActDummy();
+            //Guid sfGuid = Guid.NewGuid();
+            FlowControl sampleFC = new FlowControl()
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.GoToAction,
+                ConditionCalculated = "aaa",
+                ValueCalculated = "bbb",
+            };
+
+            dumAct.FlowControls.Add(sampleFC);
+
+            activity.Acts.Add(dumAct);
+
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity);
+
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+
+            //Act
+            BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy(false);
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
+            Assert.AreEqual(bf.Guid, copiedItem.Guid);
+            Assert.AreEqual(bf.Activities[0].Guid, copiedItem.Activities[0].Guid);
+            Assert.AreEqual(sampleFC.Guid, copiedItem.Activities[0].Acts[0].FlowControls[0].Guid);
+
+            /// FlowControlAction must be same as it contains IsSerializable attribute
+            Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
+
+            /// ValueCalculated & ConditionCalculated must be unset/null as it doen't contain IsSerializable attribute
+            Assert.AreNotEqual(sampleFC.ValueCalculated, copiedItem.Activities[0].Acts[0].FlowControls[0].ValueCalculated);
+            Assert.AreNotEqual(sampleFC.ConditionCalculated, copiedItem.Activities[0].Acts[0].FlowControls[0].ConditionCalculated);
+        }
+
+        [TestMethod]
+        public void CopyItem_GUIDTest()
+        {
+            //Arrange
+            ActDummy dumAct = new ActDummy();
+            FlowControl sampleFC = new FlowControl()
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.GoToAction,
+                ConditionCalculated = "aaa",
+                ValueCalculated = "bbb",
+                Guid = Guid.NewGuid()
+            };
+
+            dumAct.FlowControls.Add(sampleFC);
+
+            //Act
+            var copiedItem = (ActDummy)dumAct.CreateCopy(false);    /// Copied Item will have same GUIDs
+            var copiedItemNew = (ActDummy)dumAct.CreateCopy(true);  /// Copied Item will have different GUIDs
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreNotSame(dumAct, copiedItem);
+            Assert.AreEqual(dumAct.Guid, copiedItem.Guid);
+            Assert.AreEqual(sampleFC.Guid, copiedItem.ActFlowControls[0].Guid);
+            Assert.IsNull(copiedItem.FlowControls[0].ValueCalculated);
+            Assert.AreEqual(dumAct.ParentGuid, copiedItem.ParentGuid);
+            Assert.AreEqual(dumAct.ExternalID, copiedItem.ExternalID);
+
+            Assert.IsNotNull(copiedItemNew);
+            Assert.AreNotSame(dumAct, copiedItemNew);
+            Assert.AreNotEqual(dumAct.Guid, copiedItemNew.Guid);
+            Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid);
+            Assert.IsNull(copiedItemNew.FlowControls[0].ValueCalculated);
+            Assert.AreEqual(Guid.Empty, copiedItemNew.ParentGuid);
+            Assert.AreEqual(string.Empty, copiedItemNew.ExternalID);
+        }
+
     }
 }

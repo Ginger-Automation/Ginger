@@ -670,7 +670,7 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
-        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy)
+        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, bool SetNewGUID)
         {
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
@@ -700,7 +700,7 @@ namespace Amdocs.Ginger.Repository
                             if (memberValue is IObservableList && typeof(IObservableList).IsAssignableFrom(propInfo.PropertyType))
                             {
                                 IObservableList copiedList = (IObservableList)propInfo.GetValue(targetObj);
-                                CopyRIList((IObservableList)memberValue, copiedList);
+                                CopyRIList((IObservableList)memberValue, copiedList, SetNewGUID);
                                 propInfo.SetValue(targetObj, copiedList);
                             }
                             else
@@ -721,19 +721,25 @@ namespace Amdocs.Ginger.Repository
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
                 }
             });
+            
+            if(SetNewGUID)
+            {
+                targetObj.Guid = Guid.NewGuid();
+            }
+
             targetObj.PostDeserialization();
             targetObj.UpdateCopiedItem();            
 
             return targetObj;
         }
 
-        private void CopyRIList(IObservableList sourceList, IObservableList targetList)
+        private void CopyRIList(IObservableList sourceList, IObservableList targetList, bool SetNewGUID)
         {
             foreach (object item in sourceList)
             {
                 if (item is RepositoryItemBase)
                 {
-                    targetList.Add(CopyRIObject(item as RepositoryItemBase));
+                    targetList.Add(CopyRIObject(item as RepositoryItemBase, SetNewGUID));
                 }
                 else
                 {
@@ -749,7 +755,7 @@ namespace Amdocs.Ginger.Repository
             {
                 ItemCopyIsInProgress = true;
 
-                var duplicatedItem = CopyRIObject(this);
+                var duplicatedItem = CopyRIObject(this, setNewGUID);
                 //change the GUID of duplicated item
                 if (duplicatedItem != null)
                 {
@@ -758,12 +764,6 @@ namespace Amdocs.Ginger.Repository
                         duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                         duplicatedItem.ExternalID = string.Empty;
                         duplicatedItem.Guid = Guid.NewGuid();
-
-                        List<GuidMapper> guidMappingList = new List<GuidMapper>();
-
-                        //set new GUID also to child items
-                        UpdateRepoItemGuids(duplicatedItem, guidMappingList);
-                        duplicatedItem = duplicatedItem.GetUpdatedRepoItem(guidMappingList);
                     }
 
                     duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
