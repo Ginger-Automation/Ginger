@@ -101,12 +101,14 @@ namespace Ginger.Run
         {
             get
             {
-                if (xBusinessflowsRunnerItemsListView != null && xBusinessflowsRunnerItemsListView.Items.Count > 0)
+                if (xBusinessflowsRunnerItemsListView != null && xBusinessflowsRunnerItemsListView.Items.Count > 0
+                        && xBusinessflowsRunnerItemsListView.SelectedItem != null)
                 {
-                    if (xBusinessflowsRunnerItemsListView.SelectedItem == null)
-                    {
-                        xBusinessflowsRunnerItemsListView.SelectedIndex = 0;
-                    }
+                    /// Avoid selecting the first BusinessFlow as default to avoid Activities loading for saving the Runset load time
+                    //if (xBusinessflowsRunnerItemsListView.SelectedItem == null)
+                    //{
+                    //    xBusinessflowsRunnerItemsListView.SelectedIndex = 0;
+                    //}
 
                     return (RunnerItemPage)xBusinessflowsRunnerItemsListView.SelectedItem;
                 }

@@ -1141,26 +1141,29 @@ namespace GingerWPF.BusinessFlowsLib
 
         void SwapLoadingPrefixText(string swappedText, bool IsReset)
         {
-            if (string.IsNullOrEmpty(swappedText))
+            Dispatcher.Invoke(() =>
             {
-                return;
-            }
+                if (string.IsNullOrEmpty(swappedText))
+                {
+                    return;
+                }
 
-            if (IsReset)
-            {
-                loadingText = loadingText.Replace(swappedText, "Loading");
-                xItemsTabsSection.Visibility = Visibility.Visible;
-                xItemsLoadingPnl.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                loadingText = loadingText.Replace("Loading", swappedText);
-                xItemsTabsSection.Visibility = Visibility.Collapsed;
-                xItemsLoadingPnl.Visibility = Visibility.Visible;
-            }
+                if (IsReset)
+                {
+                    loadingText = loadingText.Replace(swappedText, "Loading");
+                    xItemsTabsSection.Visibility = Visibility.Visible;
+                    xItemsLoadingPnl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    loadingText = loadingText.Replace("Loading", swappedText);
+                    xItemsTabsSection.Visibility = Visibility.Collapsed;
+                    xItemsLoadingPnl.Visibility = Visibility.Visible;
+                }
 
-            xLoadWindowText.Text = loadingText;
-            ToggleProcessButtons(IsReset);
+                xLoadWindowText.Text = loadingText;
+                ToggleProcessButtons(IsReset);
+            });
         }
 
         private async void xUndoChangesBtn_Click(object sender, RoutedEventArgs e)
@@ -1175,10 +1178,9 @@ namespace GingerWPF.BusinessFlowsLib
 
             if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, mBusinessFlow.ItemName) == eUserMsgSelection.Yes)
             {
-                SwapLoadingPrefixText("Undoing", false);
-
                 try
                 {
+                    SwapLoadingPrefixText("Undoing", false);
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", mBusinessFlow.ItemName));
                     await Task.Run(() => mBusinessFlow.RestoreFromBackup(true, true));
 

@@ -579,17 +579,24 @@ namespace Amdocs.Ginger.Repository
 
         public bool RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
         {
+            bool isRestored = false;
             try
             {
-                return RestoreBackup(isLocalBackup);
+                isRestored = RestoreBackup(isLocalBackup);
+            }
+            catch(Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured in the Undo Process", exc);
             }
             finally
             {
-                if (clearBackup)
+                if (isRestored && clearBackup)
                 {
                     ClearBackup(isLocalBackup);
                 }
             }
+
+            return isRestored;
         }
 
         private string mFileName = null;
