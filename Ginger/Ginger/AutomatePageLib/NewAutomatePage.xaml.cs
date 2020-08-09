@@ -388,7 +388,7 @@ namespace GingerWPF.BusinessFlowsLib
                     try
                     {
                         xActivitiesLoadingPnl.Visibility = Visibility.Visible;
-                        xActivitiesDataGrid.Visibility = Visibility.Collapsed;                        
+                        xActivitiesDataGrid.Visibility = Visibility.Collapsed;
 
                         mContext.BusinessFlow = mBusinessFlow;
 
@@ -529,7 +529,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void SetActivityEditPage()
         {
             try
-            {              
+            {
                 if (mActivityPage != null && mActivityPage.Activity == mContext.Activity)
                 {
                     return;
@@ -548,6 +548,7 @@ namespace GingerWPF.BusinessFlowsLib
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
+                        ToggleActivityPageUIButtons(!mExecutionIsInProgress);
                     }
                 }
                 else
@@ -640,11 +641,17 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
+        void ToggleActivityPageUIButtons(bool IsEnabled)
+        {
+            mActivityPage.SetUIElementsBehaverBasedOnRunnerStatus(IsEnabled);
+        }
+
         private void SetUIElementsBehaverDuringExecution()
         {
             this.Dispatcher.Invoke(() =>
             {
                 ToggleProcessButtons(!mExecutionIsInProgress);
+                ToggleActivityPageUIButtons(!mExecutionIsInProgress);
 
                 if (mExecutionIsInProgress)
                 {

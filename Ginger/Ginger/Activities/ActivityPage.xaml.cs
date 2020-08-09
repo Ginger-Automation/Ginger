@@ -46,7 +46,7 @@ namespace GingerWPF.BusinessFlowsLib
     {
         Activity mActivity;
         public Activity Activity { get { return mActivity; } }
-        
+
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
 
@@ -72,6 +72,19 @@ namespace GingerWPF.BusinessFlowsLib
 
             SetUIView();
             BindControlsToActivity();
+        }
+
+        public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xUndoBtn.IsEnabled = IsRunning;
+                xExtraOperationsMenu.IsEnabled = IsRunning;
+                xContinueRunBtn.IsEnabled = IsRunning;
+                xRunBtn.IsEnabled = IsRunning;
+                xRunSelectedActionBtn.IsEnabled = IsRunning;
+                xResetBtn.IsEnabled = IsRunning;
+            });
         }
 
         private void SetUIView()
@@ -274,7 +287,7 @@ namespace GingerWPF.BusinessFlowsLib
         //        mConfigurationsPage = null;
         //    }
         //}
-       
+
         private void mActivity_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             UpdateDescription();
@@ -287,36 +300,36 @@ namespace GingerWPF.BusinessFlowsLib
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
                 SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
-                    if (mActivity != null)
-                    {
-                        //Application info
-                        //if (!string.IsNullOrEmpty(mActivity.Description))
-                        //{
-                        //    if (mActivity.Description.Length > 100)
-                        //    {
-                        //        xDescTextBlockHelper.AddText("Description: " + mActivity.Description.Substring(0,99) + "...");
-                        //    }
-                        //    else
-                        //    {
-                        //        xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
-                        //    }
-                        //    xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
-                        //    xDescTextBlockHelper.AddLineBreak();
-                        //}
-                        //if (!string.IsNullOrEmpty(mActivity.RunDescription))
-                        //{
-                        //    xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
-                        //    xDescTextBlockHelper.AddLineBreak();
-                        //}
-                        //if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
-                        //{
-                        //    xDescTextBlockHelper.AddText("Parent Group: " + mActivity.ActivitiesGroupID);
-                        //    xDescTextBlockHelper.AddLineBreak();
-                        //}
-                        xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
-                    }
+                if (mActivity != null)
+                {
+                    //Application info
+                    //if (!string.IsNullOrEmpty(mActivity.Description))
+                    //{
+                    //    if (mActivity.Description.Length > 100)
+                    //    {
+                    //        xDescTextBlockHelper.AddText("Description: " + mActivity.Description.Substring(0,99) + "...");
+                    //    }
+                    //    else
+                    //    {
+                    //        xDescTextBlockHelper.AddText("Description: " + mActivity.Description);
+                    //    }
+                    //    xDescTextBlockHelper.AddText(" " + Ginger.General.GetTagsListAsString(mActivity.Tags));
+                    //    xDescTextBlockHelper.AddLineBreak();
+                    //}
+                    //if (!string.IsNullOrEmpty(mActivity.RunDescription))
+                    //{
+                    //    xDescTextBlockHelper.AddText("Run Description: " + mActivity.RunDescription);
+                    //    xDescTextBlockHelper.AddLineBreak();
+                    //}
+                    //if (!string.IsNullOrEmpty(mActivity.ActivitiesGroupID))
+                    //{
+                    //    xDescTextBlockHelper.AddText("Parent Group: " + mActivity.ActivitiesGroupID);
+                    //    xDescTextBlockHelper.AddLineBreak();
+                    //}
+                    xDescTextBlockHelper.AddText("Target: " + mActivity.TargetApplication);
+                }
             });
-        
+
         }
 
         private void xUploadToShareRepoMenuItem_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -327,12 +340,12 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         private void xRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {           
+        {
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActivity, mActivity);
         }
 
         private void xContinueRunBtn_Click(object sender, System.Windows.RoutedEventArgs e)
-        {            
+        {
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.ContinueActivityRun, mActivity);
         }
 
@@ -365,7 +378,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActionsPage.ListView.CurrentItem != null)
             {
-               App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act>(mActivity, (Act)mActionsPage.ListView.CurrentItem));                
+                App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act>(mActivity, (Act)mActionsPage.ListView.CurrentItem));
             }
             else
             {
@@ -397,7 +410,7 @@ namespace GingerWPF.BusinessFlowsLib
             string closeContent = "Undo & Close";
 
             Button okBtn = new Button();
-            okBtn.Content = "Ok";            
+            okBtn.Content = "Ok";
             okBtn.Click += new RoutedEventHandler(OkBtn_Click);
 
             Button undoBtn = new Button();
@@ -429,7 +442,7 @@ namespace GingerWPF.BusinessFlowsLib
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     winButtons.Add(okBtn);
                     CloseHandler = new RoutedEventHandler(OkBtn_Click);
-                    closeContent = okBtn.Content.ToString();                    
+                    closeContent = okBtn.Content.ToString();
                     break;
             }
 
