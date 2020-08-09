@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -90,7 +91,7 @@ namespace Amdocs.Ginger.Repository
         /// Been used to identify if UnMappedUIElements were lazy loaded already or not
         /// </summary>
         public bool UnMappedUIElementsLazyLoad { get { return (mUnMappedElements != null) ? mUnMappedElements.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> UnMappedUIElements
         {
@@ -121,7 +122,7 @@ namespace Amdocs.Ginger.Repository
         /// Been used to identify if MappedUIElements were lazy loaded already or not
         /// </summary>
         public bool MappedUIElementsLazyLoad { get { return (mMappedElements != null) ? mMappedElements.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<ElementInfo> MappedUIElements
         {

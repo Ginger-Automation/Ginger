@@ -72,7 +72,8 @@ namespace Ginger.Repository
                 //TODO: check that retrieve also sub folder business flows
                 ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                foreach (BusinessFlow BF in BizFlows)
+                //foreach (BusinessFlow BF in BizFlows)
+                Parallel.ForEach(BizFlows, BF =>
                 {
                     string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(BF.Name);
                     if (mRepoItem is Activity)
@@ -92,7 +93,7 @@ namespace Ginger.Repository
                                 else
                                     type = RepositoryItemUsage.eUsageTypes.Instance;
 
-                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated};
+                                RepositoryItemUsage itemUsage = new RepositoryItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, businessFlowName), UsageItem = a, UsageItemName = a.ActivityName, UsageExtraDetails = "Number of Actions: " + a.Acts.Count().ToString(), UsageItemType = type, Selected = true, Status = RepositoryItemUsage.eStatus.NotUpdated };
                                 itemUsage.SetItemPartesFromEnum(typeof(eItemParts));
                                 RepoItemUsages.Add(itemUsage);
                             }
@@ -195,7 +196,7 @@ namespace Ginger.Repository
                             }
                         }
                     }
-                }
+                });
             }
             catch (Exception ex)
             {

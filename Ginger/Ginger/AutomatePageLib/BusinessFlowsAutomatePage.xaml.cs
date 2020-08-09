@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowWindows
             Reset();
         }
 
-        private void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
+        private async void App_AutomateBusinessFlowEvent(AutomateEventArgs args)
         {
             if (args.EventType == AutomateEventArgs.eEventType.Automate)
             {
@@ -58,9 +58,10 @@ namespace Ginger.BusinessFlowWindows
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Automate Page...");
                     if (mNewAutomatePage == null)
                     {
-                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
+                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);                        
                     }
-                    xContentFrame.Content = mNewAutomatePage;
+                    xContentFrame.Content = mNewAutomatePage;                    
+                    await mNewAutomatePage.LoadBusinessFlowToAutomate((BusinessFlow)args.Object);
                 }
                 finally
                 {
