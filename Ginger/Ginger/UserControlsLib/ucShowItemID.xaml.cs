@@ -33,6 +33,7 @@ namespace Ginger.UserControlsLib
         public void Init(RepositoryItemBase item)
         {
             mRepoItem = item;
+            InitView();
         }
 
         private void InitView()

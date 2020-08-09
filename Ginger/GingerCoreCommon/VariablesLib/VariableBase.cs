@@ -631,5 +631,12 @@ namespace GingerCore.Variables
                 return nameof(this.Name);
             }
         }
+
+        public virtual void SetInitialSetup()
+        {
+            Name = string.Format("New {0}", VariableUIType);
+            SetAsInputValue = false;
+            SetAsOutputValue = false;
+        }
     }
 }
