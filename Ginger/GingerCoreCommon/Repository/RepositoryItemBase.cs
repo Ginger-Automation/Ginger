@@ -579,17 +579,24 @@ namespace Amdocs.Ginger.Repository
 
         public bool RestoreFromBackup(bool isLocalBackup = false, bool clearBackup = true)
         {
+            bool isRestored = false;
             try
             {
-                return RestoreBackup(isLocalBackup);
+                isRestored = RestoreBackup(isLocalBackup);
+            }
+            catch(Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured in the Undo Process", exc);
             }
             finally
             {
-                if (clearBackup)
+                if (isRestored && clearBackup)
                 {
                     ClearBackup(isLocalBackup);
                 }
             }
+
+            return isRestored;
         }
 
         private string mFileName = null;
@@ -713,7 +720,8 @@ namespace Amdocs.Ginger.Repository
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
                 }
-            });
+            });           
+
             targetObj.PostDeserialization();
             targetObj.UpdateCopiedItem();            
 
@@ -754,7 +762,7 @@ namespace Amdocs.Ginger.Repository
 
                         List<GuidMapper> guidMappingList = new List<GuidMapper>();
 
-                        //set new GUID also to child items
+                        //set new GUID also to child items	
                         UpdateRepoItemGuids(duplicatedItem, guidMappingList);
                         duplicatedItem = duplicatedItem.GetUpdatedRepoItem(guidMappingList);
                     }

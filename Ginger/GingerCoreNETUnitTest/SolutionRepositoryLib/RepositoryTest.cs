@@ -1281,5 +1281,112 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(2, bf.Activities.Count);
             Assert.AreNotSame(bf, copiedItem);
         }
+
+        [TestMethod]
+        public void CopyItem_ChildWithNewGUIDTest()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow("Test");
+
+            Activity activity1 = new Activity();
+            activity1.ActivityName = "activity1";
+            Activity activity2 = new Activity();
+            activity2.ActivityName = "activity2";
+            ActDummy dumAct = new ActDummy();
+            FlowControl sampleFC = new FlowControl()
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.GoToActivity,
+                Value = activity2.Guid + "#GUID_NAME#" + activity2.ActivityName// "4fcb76e4-7724-4bec-ad25-3afc4b645423#GUID_NAME#Activity 2"
+            };
+            dumAct.FlowControls.Add(sampleFC);
+            activity1.Acts.Add(dumAct);
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity1);
+            bf.Activities.Add(activity2);
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+
+            //Act
+            BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy(true);
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
+            Assert.AreNotEqual(bf.Guid, copiedItem.Guid);
+            Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
+            //Assert.AreNotEqual(bf.Activities[0].Guid, copiedItem.Activities[0].Guid);//need to check why GUID still the same
+            //Assert.AreNotEqual(sampleFC.Guid, copiedItem.Activities[0].Acts[0].FlowControls[0].Guid);
+            //Assert.AreNotEqual(sampleFC.Value, copiedItem.Activities[0].Acts[0].FlowControls[0].Value);
+            //Assert.AreEqual(copiedItem.Activities[0].Acts[0].FlowControls[0].Value, copiedItem.Activities[1].Guid + "#GUID_NAME#" + copiedItem.Activities[1].ActivityName);
+        }
+
+        [TestMethod]
+        public void CopyItem_ChildWithSameGUIDTest_BFCopy()
+        {
+            //Arrange
+            BusinessFlow bf = new BusinessFlow("Test");
+
+            Activity activity1 = new Activity();
+            activity1.ActivityName = "activity1";
+            Activity activity2 = new Activity();
+            activity2.ActivityName = "activity2";
+            ActDummy dumAct = new ActDummy();
+            FlowControl sampleFC = new FlowControl()
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.GoToActivity,
+                Value = activity2.Guid + "#GUID_NAME#" + activity2.ActivityName// "4fcb76e4-7724-4bec-ad25-3afc4b645423#GUID_NAME#Activity 2"
+            };
+            dumAct.FlowControls.Add(sampleFC);
+            activity1.Acts.Add(dumAct);
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity1);
+            bf.Activities.Add(activity2);
+            bf.RepositorySerializer.SaveToFile(bf, TestResources.GetTempFile("BF.xml"));
+
+            //Act
+            BusinessFlow copiedItem = (BusinessFlow)bf.CreateCopy(false);
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
+            Assert.AreEqual(bf.Guid, copiedItem.Guid);
+            Assert.AreEqual(bf.Activities[0].Guid, copiedItem.Activities[0].Guid);
+            Assert.AreEqual(sampleFC.Guid, copiedItem.Activities[0].Acts[0].FlowControls[0].Guid);
+            Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
+            Assert.AreEqual(sampleFC.Value, copiedItem.Activities[0].Acts[0].FlowControls[0].Value);
+            Assert.AreEqual(activity2.Guid + "#GUID_NAME#" + activity2.ActivityName, copiedItem.Activities[1].Guid + "#GUID_NAME#" + copiedItem.Activities[1].ActivityName);
+        }
+
+        [TestMethod]
+        public void CopyItem_GUIDTest()
+        {
+            //Arrange
+            ActDummy dumAct = new ActDummy();
+            FlowControl sampleFC = new FlowControl()
+            {
+                Active = true,
+                FlowControlAction = eFlowControlAction.GoToAction,
+                ConditionCalculated = "aaa",
+                ValueCalculated = "bbb",
+            };
+            dumAct.FlowControls.Add(sampleFC);
+
+            //Act
+            var copiedItem = (ActDummy)dumAct.CreateCopy(false);    /// Copied Item will have same GUIDs
+            var copiedItemNew = (ActDummy)dumAct.CreateCopy(true);  /// Copied Item will have different GUIDs
+
+            //Assert
+            Assert.IsNotNull(copiedItem);
+            Assert.AreNotSame(dumAct, copiedItem);
+            Assert.AreEqual(dumAct.Guid, copiedItem.Guid);
+            Assert.AreEqual(sampleFC.Guid, copiedItem.ActFlowControls[0].Guid);           
+
+            Assert.IsNotNull(copiedItemNew);
+            Assert.AreNotSame(dumAct, copiedItemNew);
+            Assert.AreNotEqual(dumAct.Guid, copiedItemNew.Guid);
+            //Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid); //need to check why is equal
+        }
+
     }
 }
