@@ -269,7 +269,7 @@ namespace GingerCore
         /// Been used to identify if Activities were loaded by lazy load or not
         /// </summary>
         public bool ActivitiesLazyLoad { get { return (mActivities != null) ? mActivities.LazyLoad : false; } }
-        [IsLazyLoad]
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.NodePath)]
         [IsSerializedForLocalRepository]
         public ObservableList<Activity> Activities
         {
@@ -279,21 +279,26 @@ namespace GingerCore
                 {
                     mActivities = new ObservableList<Activity>();
                 }
-                if (mActivities.LazyLoad)
-                {
-                    mActivities.LoadLazyInfo();
-                    LazyLoadFlagForUnitTest = true; 
-                    AttachActivitiesGroupsAndActivities(mActivities);
-                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
-                    {
-                        this.TrackObservableList(mActivities);
-                    }
-                }
+                DoActivitiesLazyLoad();
                 return mActivities;
             }
             set
             {
                 mActivities = value;
+            }
+        }
+
+        private void DoActivitiesLazyLoad()
+        {
+            if (mActivities.LazyLoad)
+            {
+                mActivities.LoadLazyInfo();
+                mLazyLoadFlagForUnitTest = true;
+                AttachActivitiesGroupsAndActivities(mActivities);
+                if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                {
+                    this.TrackObservableList(mActivities);
+                }
             }
         }
 
@@ -327,8 +332,36 @@ namespace GingerCore
             }
         }
 
+        private ObservableList<VariableBase> mVariables;
+        /// <summary>
+        /// Been used to identify if BF Variables were lazy loaded already or not
+        /// </summary>
+        public bool VariablesLazyLoad { get { return (mVariables != null) ? mVariables.LazyLoad : false; } }
+        [IsLazyLoad (LazyLoadListConfig.eLazyLoadType.StringData)]
         [IsSerializedForLocalRepository]
-        public ObservableList<VariableBase> Variables { get; set; } = new ObservableList<VariableBase>();
+        public ObservableList<VariableBase> Variables
+        {
+            get
+            {
+                if (mVariables == null)
+                {
+                    mVariables = new ObservableList<VariableBase>();
+                }
+                if (mVariables.LazyLoad)
+                {
+                    mVariables.LoadLazyInfo();
+                    if (this.DirtyStatus != eDirtyStatus.NoTracked)
+                    {
+                        this.TrackObservableList(mVariables);
+                    }
+                }
+                return mVariables;
+            }
+            set
+            {
+                mVariables = value;
+            }
+        }
 
 
         public static ObservableList<VariableBase> SolutionVariables;
@@ -1509,12 +1542,22 @@ namespace GingerCore
 
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
             if (mAttachActivitiesGroupsWasDone)
             {
                 AttachActivitiesGroupsAndActivities();//so attach will be done also in case BF will be reloaded by FileWatcher
             }
+        }
+
+        public override void PrepareItemToBeCopied()
+        {
+            DoActivitiesLazyLoad();//call activities for making sure lazy load was done and activities groups attach was done
+        }
+
+        public override void UpdateCopiedItem()
+        {
+            AttachActivitiesGroupsAndActivities();
         }
 
     }

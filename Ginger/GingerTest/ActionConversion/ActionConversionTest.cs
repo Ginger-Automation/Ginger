@@ -1014,15 +1014,15 @@ namespace GingerTest
             var javaPomFile = TestResources.GetTestResourcesFile(@"JavaLegacyToPOMxml\Java Swing Test App.Ginger.ApplicationPOMModel.xml");
             
             //Load BF
-            mBF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(businessFlowFile);
-
+            mBF = (BusinessFlow)RepositorySerializer.DeserializeFromFile(businessFlowFile);           
             mBF.Activities[0].SelectedForConversion = true;
 
             //Load POM
             ApplicationPOMModel applicationPOM = (ApplicationPOMModel)RepositorySerializer.DeserializeFromFile(javaPomFile);
-            mSolutionRepository.AddRepositoryItem(applicationPOM);
-
+            applicationPOM.FilePath = applicationPOM.Name;//so new file will be created for it
+            mSolutionRepository.AddRepositoryItem(applicationPOM);            
             ExecuteActionConversion(true, true, string.Empty, true, applicationPOM.Guid);
+
             //Assert
             Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementLocateBy.ToString(),eLocateBy.POMElement.ToString());
             Assert.AreEqual(((ActUIElement)mBF.Activities[1].Acts[1]).ElementAction.ToString(), ((ActJavaElement)mBF.Activities[0].Acts[1]).ControlAction.ToString());

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="734ab9e6-b756-440a-a903-5dddb7d953a0" ItemType="RunSetConfig" CreatedBy="MENIK" Created="202007271907" GingerVersion="3.6.0.0" Version="2" LastUpdateBy="MENIK" LastUpdate="202007271907" />
+<RunSetConfig Guid="734ab9e6-b756-440a-a903-5dddb7d953a0" Name="Run Set 1" ParentGuid="00000000-0000-0000-0000-000000000000">
+<GingerRunners>
+<GingerRunner Guid="00fd6a9f-823a-4db8-9559-dbccf0e74d64" Name="Runner 1" ParentGuid="00000000-0000-0000-0000-000000000000" RunOption="ContinueToRunall">
+<ApplicationAgents>
+<ApplicationAgent AgentID="ce0eb14d-7a78-47e4-971f-f933285936d9" AgentName="Amdo CSP - Agent 1" AppID="67845df5-359a-4706-a1de-71d7db092e2c" AppName="Amdo CSP" Guid="b58e2e07-3506-4efb-8d9e-a21c01cb5ba2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ApplicationAgents>
+
+<BusinessFlowsRunList>
+<BusinessFlowRun BusinessFlowGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" BusinessFlowInstanceGuid="07eb9e78-2376-449e-a724-5f6c17992c34" BusinessFlowIsActive="True" BusinessFlowName="Business Flow 1" Guid="fe1e4915-728c-42bd-805e-3d4d4f3c0710" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</BusinessFlowsRunList>
+</GingerRunner>
+</GingerRunners>
+</RunSetConfig></GingerRepositoryItem>

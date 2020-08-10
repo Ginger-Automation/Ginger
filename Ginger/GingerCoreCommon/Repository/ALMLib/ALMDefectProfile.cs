@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
             if (this.AlmType == 0)
             {

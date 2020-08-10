@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
@@ -98,22 +99,10 @@ namespace amdocs.ginger.GingerCoreNET
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
-            }
-            AddLazyLoad();            
+            }           
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
-        }
-
-        private static void AddLazyLoad()
-        {
-            // TODO: add RI type, and use attr on field
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
-        }
-
-      
+        }     
 
         public void StartLocalGrid()
         {

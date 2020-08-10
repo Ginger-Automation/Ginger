@@ -1,24 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.5.0.0" Version="3" LastUpdateBy="aditijag" LastUpdate="201912271450" />
-<BusinessFlow Active="False" Guid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<GingerRepositoryItem><Header ItemGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ItemType="BusinessFlow" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.6.0.0" Version="7" LastUpdateBy="MENIK" LastUpdate="202007281133" />
+<BusinessFlow Active="False" Elapsed="1049" Guid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" Name="Business Flow 1" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
 <Activities>
 <Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="Amdo CSP">
 <Acts>
-<ActDummy Active="True" Description="Dummy Action" Guid="bab71db4-e1d5-4146-80d4-88c7ad85202a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
-<ActDummy Active="True" Description="Dummy Action" Guid="46b7f844-ad74-43f2-9073-7a454d507401" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+<ActDummy Active="True" Description="Dummy Action" Guid="bab71db4-e1d5-4146-80d4-88c7ad85202a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow" />
+<ActDummy Active="True" Description="Dummy Action" Guid="46b7f844-ad74-43f2-9073-7a454d507401" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WaitVE="0" WindowsToCapture="OnlyActiveWindow" />
 </Acts>
+
+<Variables>
+<VariableString Guid="707c994b-bdc7-48b3-892a-4fda77737c9a" InitialStringValue="aaa" MappedOutputType="None" Name="Activity_Var1" ParentGuid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ParentName="Business Flow 1\Group\Activity 1" ParentType="Activity" />
+</Variables>
 </Activity>
 </Activities>
 
 <ActivitiesGroups>
 <ActivitiesGroup Guid="2bd65414-2bf6-4185-8f9c-2daf34519086" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
 <ActivitiesIdentifiers>
-<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ActivityName="Activity 1" Guid="4e6e82c4-7c46-43a7-8970-a98fee64a4b2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4fa2ffd2-dc73-4f53-9d68-bad6db7b64dc" ActivityName="Activity 1" Guid="eac37ae1-9668-408a-ae98-3e740fa1718d" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </ActivitiesIdentifiers>
 </ActivitiesGroup>
 </ActivitiesGroups>
 
 <TargetApplications>
-<TargetApplication AppName="Amdo CSP" Guid="74f2f292-f647-4336-9b17-588850dbd70c" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<TargetApplication AppName="Amdo CSP" Guid="74f2f292-f647-4336-9b17-588850dbd70c" LastExecutingAgentName="Amdo CSP - Agent 1" ParentGuid="00000000-0000-0000-0000-000000000000" />
 </TargetApplications>
+
+<Variables>
+<VariableString Guid="be62539e-34d1-49d1-a550-02fa394ece94" InitialStringValue="bb" MappedOutputType="None" Name="BF_Var_1" ParentGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ParentName="Business Flow 1" ParentType="Business Flow" />
+<VariableSelectionList Guid="53f0e69d-fac0-4285-b843-f79dfa9cb2c8" MappedOutputType="None" Name="BF_Var_2" ParentGuid="4484405c-0cf7-4d8b-95e9-97df761fdcc3" ParentName="Business Flow 1" ParentType="Business Flow" Value="cc1">
+<OptionalValuesList>
+<OptionalValue Guid="91c9c29b-7995-407d-b16a-101b9816fafc" ParentGuid="00000000-0000-0000-0000-000000000000" Value="cc1" />
+<OptionalValue Guid="70062ced-13cd-45d8-9e26-a100648cd62f" ParentGuid="00000000-0000-0000-0000-000000000000" Value="cc2" />
+</OptionalValuesList>
+</VariableSelectionList>
+</Variables>
 </BusinessFlow></GingerRepositoryItem>

@@ -1,15 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<GingerRepositoryItem><Header ItemGuid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" ItemType="Solution" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.5.0.0" Version="4" LastUpdateBy="aditijag" LastUpdate="201912271450" />
-<Solution AlmType="QC" Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
+<GingerRepositoryItem><Header ItemGuid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" ItemType="Solution" CreatedBy="YARONWE" Created="201905220334" GingerVersion="3.6.0.0" Version="6" LastUpdateBy="MENIK" LastUpdate="202007271925" />
+<Solution Guid="9908f3ae-b8b5-4c05-ad7b-efc3ce7b684b" Name="Simple Basic" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ALMConfigs>
+<ALMConfig AlmType="QC" DefaultAlm="True" Guid="1a53b707-51bf-4c37-a5bf-b34c18ab8483" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ALMConfigs>
+
 <ApplicationPlatforms>
-<ApplicationPlatform AppName="Amdo CSP" CoreGUID="00000000-0000-0000-0000-000000000000" Guid="67845df5-359a-4706-a1de-71d7db092e2c" GUID="00000000-0000-0000-0000-000000000000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
+<ApplicationPlatform AppName="Amdo CSP" Guid="67845df5-359a-4706-a1de-71d7db092e2c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Web" />
 </ApplicationPlatforms>
 
 <ExecutionLoggerConfigurationSetList>
-<ExecutionLoggerConfiguration ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="b93db740-57f0-4952-985a-fe23f1ace85e" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
+<ExecutionLoggerConfiguration DeleteLocalDataOnPublish="No" ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="b93db740-57f0-4952-985a-fe23f1ace85e" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" PublishLogToCentralDB="No" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
 </ExecutionLoggerConfigurationSetList>
 
 <HTMLReportsConfigurationSetList>
 <HTMLReportsConfiguration Guid="1cb99b99-114f-425a-83f2-b561a9f6c162" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
 </HTMLReportsConfigurationSetList>
+
+<Variables>
+<VariableString Guid="3752fbb8-e98f-450c-bfcc-eee2c1caafb8" MappedOutputType="None" Name="Global_Var1" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<VariableString Guid="c28d41d4-6384-4e97-ab09-a1724f0709bc" MappedOutputType="None" Name="Global_Var2" ParentGuid="00000000-0000-0000-0000-000000000000" />
+<VariableString Guid="b81bf8d5-643c-4c5f-9775-61166891d723" MappedOutputType="None" Name="Global_Var3" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</Variables>
 </Solution></GingerRepositoryItem>
