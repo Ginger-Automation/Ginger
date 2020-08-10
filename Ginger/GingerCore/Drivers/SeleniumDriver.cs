@@ -4563,28 +4563,28 @@ namespace GingerCore.Drivers
                 //Base properties 
                 if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
                 {
-                    list.Add(new ControlProperty() { Name = "Platform Element Type", Value = ElementInfo.ElementType });
+                    list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                 }
-                list.Add(new ControlProperty() { Name = "Element Type", Value = ElementInfo.ElementTypeEnum.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                 {
-                    list.Add(new ControlProperty() { Name = "Parent IFrame", Value = ElementInfo.Path });
+                    list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
                 }
                 if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
                 {
-                    list.Add(new ControlProperty() { Name = "XPath", Value = ElementInfo.XPath });
+                    list.Add(new ControlProperty() { Name = ElementProperty.XPath, Value = ElementInfo.XPath });
                 }
                 if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
                 {
-                    list.Add(new ControlProperty() { Name = "Relative XPath", Value = ((HTMLElementInfo)ElementInfo).RelXpath });
+                    list.Add(new ControlProperty() { Name = ElementProperty.RelativeXPath, Value = ((HTMLElementInfo)ElementInfo).RelXpath });
                 }
-                list.Add(new ControlProperty() { Name = "Height", Value = ((IWebElement)ElementInfo.ElementObject).Size.Height.ToString() });
-                list.Add(new ControlProperty() { Name = "Width", Value = ((IWebElement)ElementInfo.ElementObject).Size.Width.ToString() });
-                list.Add(new ControlProperty() { Name = "X", Value = ((IWebElement)ElementInfo.ElementObject).Location.X.ToString() });
-                list.Add(new ControlProperty() { Name = "Y", Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ((IWebElement)ElementInfo.ElementObject).Size.Height.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ((IWebElement)ElementInfo.ElementObject).Size.Width.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ((IWebElement)ElementInfo.ElementObject).Location.X.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Value))
                 {
-                    list.Add(new ControlProperty() { Name = "Value", Value = ElementInfo.Value });
+                    list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
                 }
 
                 if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
@@ -4605,7 +4605,7 @@ namespace GingerCore.Drivers
                         if (ElementInfo.OptionalValuesObjectsList.Count > 0)
                         {
                             ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                            list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
+                            list.Add(new ControlProperty() { Name = ElementProperty.OptionalValues, Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                         }
 
                     }

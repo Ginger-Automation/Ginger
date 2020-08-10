@@ -68,7 +68,7 @@ namespace GingerCoreNETUnitTest.AutoPilot
             {
                 var tempFile = TestResources.GetTestResourcesFile(fileName);
                 ApplicationAPIModel appModel = RS.DeserializeFromFile(typeof(ApplicationAPIModel), tempFile) as ApplicationAPIModel;
-
+                appModel.FilePath = appModel.Name;//so it will get new file path when been added to repository later
                 if (appModel != null)
                 {
                     existingAPIsList.Add(appModel);

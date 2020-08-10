@@ -202,7 +202,17 @@ GingerPayLoad.prototype.AddValueInt = function (value) {
         }
     }
 
-    //5 Add List of Strings
+//5 Add List of Strings
+    GingerPayLoad.prototype.AddValueList = function (listString) {
+        this.CheckBuffer(listString.length + 5);
+        this.WriteValueType(5);
+        this.WriteLen(listString.length);
+
+        for (var i = 0; i < listString.length; i++) {
+            var val = listString[i];
+            this.WriteString(val);
+        }
+    }
 
     GingerPayLoad.prototype.AddListPayLoad = function (PayLoadList) {
         this.CheckBuffer(5);      
@@ -347,6 +357,24 @@ GingerPayLoad.prototype.GetListPayLoad = function()
         return null;
     }
 }
+
+GingerPayLoad.prototype.GetKeyValue = function () {
+
+    var keyValueObject = {};
+    var byteValue = this.ReadValueType();
+
+    if (byteValue === 8) {
+
+        var key = this.GetValueString();
+        var value = this.GetValueString();
+
+        keyValueObject[key] = value;
+    }
+    
+    return keyValueObject;
+  
+}
+
 
 GingerPayLoad.prototype.ReadPayLoad = function ()
 {

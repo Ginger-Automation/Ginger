@@ -28,6 +28,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -339,18 +341,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        //TODO: Make it class.attr
-        static List<string> LazyLoadAttr = new List<string>();
-
-        public static void AddLazyLoadAttr(string name)
-        {
-            LazyLoadAttr.Add(name);
-        }
-
-       
-
-        
-
         private void xmlwriteSingleObjectField(XmlTextWriter xml, string Name, Object obj)
         {
             xml.WriteWhitespace("\n");
@@ -555,9 +545,10 @@ namespace Amdocs.Ginger.Repository
 
                 // After we are done reading the RI header attrs we moved to the main object
                 xdr.Read();
-
-                RootObj = xmlReadObject(null, xdr, targetObj);
+                
+                RootObj = xmlReadObject(null, xdr, targetObj, filePath:filePath);
                 ((RepositoryItemBase)RootObj).RepositoryItemHeader = RIH;
+                
             }
             else
             {
@@ -586,22 +577,7 @@ namespace Amdocs.Ginger.Repository
 
         private static void xmlReadListOfObjects(object ParentObj, XmlReader xdr, IObservableList observableList)
         {
-            // read list of object into the list, add one by one, like activities, actions etc.
-
-            if (ParentObj is RepositoryItemBase && ((RepositoryItemBase)ParentObj).ItemBeenReloaded)
-            {
-                observableList.Clear();//clearing existing list items in case it is been reloaded
-            }
-
-            //TODO: Think/check if we want to make all observe as lazy load
-            if (LazyLoadAttr.Contains(xdr.Name) && observableList.AvoidLazyLoad == false)
-            {
-                // We can save line/col and reload later when needed
-                string s = xdr.ReadOuterXml(); // .ReadInnerXml(); // .Read();
-                observableList.DoLazyLoadItem(s);
-                return;
-            }
-
+            // read list of object into the list, add one by one, like activities, actions etc.                    
             if (observableList.GetType() == typeof(ObservableList<RepositoryItemKey>))
             {
                 xdr.Read();
@@ -619,13 +595,11 @@ namespace Amdocs.Ginger.Repository
                     {
                         return;
                     }
-
                 }
                 xdr.ReadEndElement();
             }
             else
             {
-
                 xdr.Read();
                 while (xdr.NodeType != XmlNodeType.EndElement)
                 {
@@ -638,20 +612,69 @@ namespace Amdocs.Ginger.Repository
                     {
                         return;
                     }
-
                 }
                 xdr.ReadEndElement();
+            }
+        }
+
+        private static void xmlReadListOfObjects_LazyLoad(MemberInfo mi, object parentObj, XmlReader xdr, IObservableList observableList)
+        {            
+            LazyLoadListConfig lazyLoadConfig = new LazyLoadListConfig();
+            lazyLoadConfig.ListName = mi.Name;
+            IsLazyLoadAttribute[] lazyAttr =null;
+            if (mi.MemberType == MemberTypes.Property)
+            {
+                lazyAttr = (IsLazyLoadAttribute[])((PropertyInfo)mi).GetCustomAttributes(typeof(IsLazyLoadAttribute), false);
+            }
+            else
+            {
+                lazyAttr = (IsLazyLoadAttribute[])((FieldInfo)mi).GetCustomAttributes(typeof(IsLazyLoadAttribute), false);
+            }
+            if (lazyAttr != null && lazyAttr.Length > 0)
+            {
+                lazyLoadConfig.LazyLoadType = lazyAttr[0].LazyLoadType;
+            }
+            else
+            {
+                lazyLoadConfig.LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData;//default
+            }
+            if (parentObj is RepositoryItemBase && lazyLoadConfig != null && observableList.AvoidLazyLoad == false)
+            {
+                observableList.LazyLoadDetails = new LazyLoadListDetails();
+                observableList.LazyLoadDetails.Config = lazyLoadConfig;
+                switch (observableList.LazyLoadDetails.Config.LazyLoadType)
+                {
+                    case LazyLoadListConfig.eLazyLoadType.NodePath:
+                        if (string.IsNullOrEmpty(((RepositoryItemBase)parentObj).FilePath) == false
+                                && File.Exists(((RepositoryItemBase)parentObj).FilePath)
+                                    && ((RepositoryItemBase)parentObj).DirtyStatus != Common.Enums.eDirtyStatus.Modified)
+                        {
+                            observableList.LazyLoadDetails.XmlFilePath = ((RepositoryItemBase)parentObj).FilePath;
+                            xdr.ReadOuterXml();//so xdr will progress
+                        }
+                        else //can't go with NodePath approch because no file to refernce or file do not have latest data
+                        {
+                            observableList.LazyLoadDetails.Config.LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData;
+                            observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml();
+                        }
+                        break;
+
+                    case LazyLoadListConfig.eLazyLoadType.StringData:
+                    default:
+                        observableList.LazyLoadDetails.DataAsString = xdr.ReadOuterXml();
+                        break;
+                }                
             }
         }
 
 
         //TODO: remove from here get in init
 
-        //TODO: move to common global for others to use if needed 
-        // public static Assembly GingerCoreNETAssembly = typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryItem).Assembly;
+            //TODO: move to common global for others to use if needed 
+            // public static Assembly GingerCoreNETAssembly = typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryItem).Assembly;
         public static Assembly GingerCoreCommonAssembly = typeof(RepositoryItemBase).Assembly;        
 
-        private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null)
+        private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null, string filePath = "")
         {
             //TODO: check order of creation and remove unused
             string className = xdr.Name;            
@@ -672,7 +695,7 @@ namespace Amdocs.Ginger.Repository
                         }
                         else
                         {
-                            throw new Exception("NewRepositorySerializer: Unable to create class object - " + className);
+                            throw new Exception(string.Format("NewRepositorySerializer: Unable to create object for the class type '{0}'", className));
                         }
                     }
                 }
@@ -681,7 +704,10 @@ namespace Amdocs.Ginger.Repository
                     obj = targetObj;
                 }             
 
-
+                if (string.IsNullOrEmpty(filePath) == false && obj != null && obj.GetType().IsSubclassOf(typeof(RepositoryItemBase)))
+                {
+                    ((RepositoryItemBase)obj).FilePath = filePath;
+                }
 
                 SetObjectSerializedAttrDefaultValue(obj);
                 SetObjectAttributes(xdr, obj);
@@ -700,9 +726,7 @@ namespace Amdocs.Ginger.Repository
                     {                     
                         throw new MissingFieldException("Error: Cannot find attribute. Class: '" + className + "' , Attribute: '" + xdr.Name + "'");
                     }
-
                     
-
                     // We check if it is list by arg count - List<string> will have string etc...
                     // another option is check the name to start with List, Observe...
                     //or find a better way
@@ -749,7 +773,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (obj is RepositoryItemBase)
                 {
-                    ((RepositoryItemBase)obj).PostSerialization();
+                    ((RepositoryItemBase)obj).PostDeserialization();
                 }
 
                 return obj;
@@ -777,7 +801,7 @@ namespace Amdocs.Ginger.Repository
 
                 if (obj is RepositoryItemBase)
                 {
-                    ((RepositoryItemBase)obj).PreSerialization();
+                    ((RepositoryItemBase)obj).PreDeserialization();
                 }
 
                 return obj;
@@ -997,7 +1021,21 @@ namespace Amdocs.Ginger.Repository
                             }
 
                             // Read the list from the xml
-                            xmlReadListOfObjects(obj, xdr, lst);
+                            if (obj is RepositoryItemBase && ((RepositoryItemBase)obj).ItemBeenReloaded)
+                            {
+                                lst.Clear();//clearing existing list items in case it is been reloaded
+                            }
+                            //Check if Lazy Load - //TODO: Think/check if we want to make all observe as lazy load
+                            if ((mi.MemberType == MemberTypes.Property) && (Attribute.IsDefined(((PropertyInfo)mi), typeof(IsLazyLoadAttribute)))
+                                 || (mi.MemberType == MemberTypes.Field) && (Attribute.IsDefined(((FieldInfo)mi), typeof(IsLazyLoadAttribute))))
+                            {
+                                //DO Lazy Load setup
+                                xmlReadListOfObjects_LazyLoad(mi, obj, xdr, lst);
+                            }
+                            else
+                            {
+                                xmlReadListOfObjects(obj, xdr, lst);
+                            }
                         }
                         catch(Exception ex)
                         {

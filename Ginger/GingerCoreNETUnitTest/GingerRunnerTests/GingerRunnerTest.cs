@@ -294,8 +294,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             //Act
             //Changing initial value of 2nd BF from BusinessFlow Config 
-            mGR.BusinessFlows[2].Variables[0].Value = "bbb";
-            mGR.BusinessFlows[2].Variables[0].DiffrentFromOrigin = true;
+            mGR.BusinessFlows[2].Variables[2].Value = "bbb";
+            mGR.BusinessFlows[2].Variables[2].DiffrentFromOrigin = true;
 
             mGR.RunRunner();
 
@@ -305,8 +305,8 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             Assert.AreEqual(bfToAdd.RunStatus, eRunStatus.Passed);
 
-            Assert.AreEqual(mGR.BusinessFlows[1].Variables[0].Value, "aaa");
-            Assert.AreEqual(mGR.BusinessFlows[2].Variables[0].Value, "bbb");
+            Assert.AreEqual(mGR.BusinessFlows[1].Variables[2].Value, "aaa");
+            Assert.AreEqual(mGR.BusinessFlows[2].Variables[2].Value, "bbb");
 
         }
 

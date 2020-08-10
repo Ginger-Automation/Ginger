@@ -1101,7 +1101,7 @@ namespace GingerCore.Actions.Common
         }
 
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
             //Row selection options Row Number, Any Row, By Selected Row and Where
             //Earlier these were stored in fields differently RowSelectorRadioParam and LocateRowType
