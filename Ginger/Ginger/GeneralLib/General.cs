@@ -534,6 +534,11 @@ namespace Ginger
 
         public static bool UndoChangesInRepositoryItem(RepositoryItemBase item, bool isLocalBackup = false, bool clearBackup = true)
         {
+            if ((isLocalBackup && item.IsLocalBackupExist == false) || (isLocalBackup == false && item.IsBackupExist == false))
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, string.Format("Backup not created or still in progress for '{0}'", item.ItemName));
+                return false;
+            }
             if (Reporter.ToUser(eUserMsgKey.AskIfToUndoItemChanges, item.ItemName) == eUserMsgSelection.Yes)
             {
                 try

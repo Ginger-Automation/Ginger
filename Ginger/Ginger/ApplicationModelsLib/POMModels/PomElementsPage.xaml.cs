@@ -29,6 +29,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
+using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -435,18 +436,34 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xMainElementsGrid.Grid.CommitEdit();
 
-            ElementInfo EI = new ElementInfo();
+           var EI = IntializeElement();
+
             mPOM.MappedUIElements.Add(EI);
-            
+
             xMainElementsGrid.Grid.SelectedItem = EI;
             xMainElementsGrid.ScrollToViewCurrentItem();
+        }
+
+        private ElementInfo IntializeElement()
+        {
+            if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey) == ePlatformType.Java)
+            {
+                if (Reporter.ToUser(eUserMsgKey.WarnAddSwingOrWidgetElement, eUserMsgOption.YesNo, eUserMsgSelection.No) == eUserMsgSelection.Yes)
+                {
+                    var htmlElementInfo = new HTMLElementInfo();
+                    htmlElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath });
+                    return htmlElementInfo;
+                }
+            }
+
+            return new ElementInfo();
         }
 
         private void AddUnMappedElementRow(object sender, RoutedEventArgs e)
         {
             xMainElementsGrid.Grid.CommitEdit();
 
-            ElementInfo EI = new ElementInfo();
+            var EI = IntializeElement();
             mPOM.UnMappedUIElements.Add(EI);
 
             xMainElementsGrid.Grid.SelectedItem = EI;
@@ -590,7 +607,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         {
             xPropertiesGrid.Grid.CommitEdit();
 
-            ControlProperty elemProp = new ControlProperty() { Name = parentFramePropertyName };
+            //for java Swing ParentIframe is not required
+            if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java) && !mSelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
+            {
+                return;
+            }
+
+            ControlProperty elemProp = new ControlProperty() { Name = ElementProperty.ParentIFrame };
             mSelectedElement.Properties.Add(elemProp);
             xPropertiesGrid.Grid.SelectedItem = elemProp;
             xPropertiesGrid.ScrollToViewCurrentItem();
@@ -693,7 +716,23 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedLocator != null)
             {
-                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator } });
+                var testElement = new ElementInfo();
+                testElement.Path = CurrentEI.Path;
+                testElement.Locators = new ObservableList<ElementLocator>() { mSelectedLocator };
+
+                //For Java Driver Widgets
+
+                if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Java))
+                {
+                    if(mSelectedElement.GetType().Equals(typeof(GingerCore.Drivers.Common.HTMLElementInfo)))
+                    {
+                        var htmlElementInfo = new GingerCore.Drivers.Common.HTMLElementInfo() { Path=testElement.Path, Locators = testElement.Locators};
+                        testElement = htmlElementInfo;
+                        testElement.Properties = CurrentEI.Properties;
+                    }
+                }
+
+                mWinExplorer.TestElementLocators(testElement);
             }
         }
 

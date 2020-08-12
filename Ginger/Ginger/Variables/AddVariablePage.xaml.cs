@@ -142,7 +142,7 @@ namespace Ginger.Variables
             foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
             {
                 VariableBase addedVar = (VariableBase)varToAdd.CreateCopy();
-                addedVar.Name = string.Format("New {0}", addedVar.VariableUIType);
+                addedVar.SetInitialSetup();
                 AddVarToParent(addedVar);
             }
         }

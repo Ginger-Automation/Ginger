@@ -413,7 +413,7 @@ namespace GingerCoreNET.Application_Models
                             var diffProperties = newElementPropeties.Except(oldElementPropeties);
 
                             // check if Parent iframe changed
-                            var parentIFrame = diffProperties.Where(x => x.Key.Contains("Parent IFrame")).FirstOrDefault();
+                            var parentIFrame = diffProperties.Where(x => x.Key.Contains(ElementProperty.ParentIFrame)).FirstOrDefault();
                             
                             var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
                             if (!string.IsNullOrEmpty(parentIFrame.Value))

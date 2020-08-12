@@ -309,8 +309,11 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             businessFlowWrite.Activities.Add(activity);
 
             //Act                                    
-            string txt = businessFlowWrite.RepositorySerializer.SerializeToString(businessFlowWrite); 
-            BusinessFlow businessFlowRead = (BusinessFlow)NewRepositorySerializer.DeserializeFromText(txt);
+            string tempFile = TestResources.GetTempFile("BF_TestActionLog_CheckActionLogEnableOptionSavedInBFXML.xml");
+            businessFlowWrite.RepositorySerializer.SaveToFile(businessFlowWrite, tempFile);
+            businessFlowWrite.FilePath = tempFile;
+            BusinessFlow businessFlowRead = (BusinessFlow)businessFlowWrite.RepositorySerializer.DeserializeFromFile(businessFlowWrite.FilePath);
+
             ActDummy actDummyRead = (ActDummy)businessFlowRead.Activities[0].Acts[0];
 
             // Assert

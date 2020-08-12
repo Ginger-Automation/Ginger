@@ -1156,7 +1156,7 @@ namespace GingerCore
             }
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
 
             if(DriverType == eDriverType.WindowsAutomation)

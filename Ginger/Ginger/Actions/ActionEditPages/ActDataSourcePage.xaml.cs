@@ -1042,11 +1042,11 @@ namespace Ginger.Actions
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
-                                    TBH.AddText(".update GINGER_KET_VALUE = \"" + mActDSTblElem.Value + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                    TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.ValueUC + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
                                 }
                                 else
                                 {
-                                    TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.Value + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                    TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.ValueUC + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
                                 }
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteRow.ToString())
@@ -1251,12 +1251,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.Value + "\" where GINGER_USED =\"False\"");
+                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.ValueUC + "\" where GINGER_USED =\"False\"");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.Value + "\" where GINGER_USED =\"False\"");
+                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.ValueUC + "\" where GINGER_USED =\"False\"");
                                         }
 
                                     }
@@ -1271,12 +1271,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.Value + "\"");
+                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.ValueUC + "\"");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.Value + "\"");
+                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.ValueUC + "\"");
                                         }
                                     }
                                 }
@@ -1287,12 +1287,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.Value + "\" where");
+                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.ValueUC + "\" where");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.Value + "\" where");
+                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.ValueUC + "\" where");
                                         }
 
                                     }

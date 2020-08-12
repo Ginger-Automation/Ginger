@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Common.GeneralLib;
+using System.Reflection;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -38,7 +39,7 @@ namespace Amdocs.Ginger.Repository
         // It will also cache items list, so if same list is requested again it will be from cache
         // items Added or removed, the corresponding folder will be updated including the folder cache
         // Item can be referenced more than once - as stand alone and in Folder cache
-        
+
         public const string cSolutionRootFolderSign = @"~\"; // + Path.DirectorySeparatorChar;
 
         /// <summary>
@@ -137,6 +138,11 @@ namespace Amdocs.Ginger.Repository
             SRII.ItemRootRepositoryFolder.AddRepositoryItem(repositoryItem);
         }
 
+        public async Task SaveRepositoryItemAsync(RepositoryItemBase repositoryItem)
+        {
+            await Task.Run(() => SaveRepositoryItem(repositoryItem));
+        }
+
         /// <summary>
         /// Save changes of exsiting Repository Item to file system
         /// </summary>
@@ -151,6 +157,7 @@ namespace Amdocs.Ginger.Repository
             repositoryItem.UpdateBeforeSave();
 
             string txt = RepositorySerializer.SerializeToString(repositoryItem);
+
             string filePath = CreateRepositoryItemFileName(repositoryItem);
             RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
             rf.SaveRepositoryItem(filePath, txt);
@@ -160,9 +167,12 @@ namespace Amdocs.Ginger.Repository
             RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
 
             if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
+            {
                 repositoryItem.SetDirtyStatusToNoChange();
+            }
+
             repositoryItem.CreateBackup();
-        }      
+        }
 
         public void Close()
         {
@@ -205,7 +215,7 @@ namespace Amdocs.Ginger.Repository
             if(repositoryFolderBase != null)
             {
                 repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
-            }             
+            }
             repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
             return repoItem;
         }
@@ -221,18 +231,18 @@ namespace Amdocs.Ginger.Repository
             var inputURI = new Uri(folderPath+"\\"); // path must end with slash for isBaseOf to work correctly
             Parallel.ForEach(mSolutionRootFolders, folder =>
             {
-                 if (repoFolder == null)
-                 {
-                     if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
-                     {
-                         repoFolder = folder;
-                     }
-                     else if (new Uri(folder.FolderFullPath+"\\").IsBaseOf(inputURI))
-                     {
-                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
-                         repoFolder = folder.GetSubFolderByName(relPath, true);
-                     }
-                 }
+                if (repoFolder == null)
+                {
+                    if (Path.GetFullPath(folderPath) == Path.GetFullPath(folder.FolderFullPath))
+                    {
+                        repoFolder = folder;
+                    }
+                    else if (new Uri(folder.FolderFullPath+"\\").IsBaseOf(inputURI))
+                    {
+                        string relPath = "~" + folderPath.Replace(SolutionFolder, "");
+                        repoFolder = folder.GetSubFolderByName(relPath, true);
+                    }
+                }
             });
             return repoFolder;
         }
@@ -252,7 +262,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+
 
         /// <summary>
         /// Delete the Repository Item from file system and removing it from cache
@@ -399,7 +409,7 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertFullPathToBeRelative(string fullPath)
         {
-            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);            
+            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);
             return relative;
         }
 
@@ -482,7 +492,7 @@ namespace Amdocs.Ginger.Repository
         // ------------------------------------------------------------------------------------------------
 
         public void AddItemInfo<T>(string pattern, string rootFolder, bool containRepositoryItems, string displayName, string PropertyNameForFileName)
-        {          
+        {
             SolutionRepositoryItemInfo<T> SRII = new SolutionRepositoryItemInfo<T>();
             SRII.ItemFileSystemRootFolder = rootFolder;
             SRII.PropertyForFileName = PropertyNameForFileName;
@@ -495,7 +505,7 @@ namespace Amdocs.Ginger.Repository
 
         private SolutionRepositoryItemInfoBase GetSolutionRepositoryItemInfo(Type type)
         {
-            SolutionRepositoryItemInfoBase SRII;           
+            SolutionRepositoryItemInfoBase SRII;
             mSolutionRepositoryItemInfoDictionary.TryGetValue(type, out SRII);
 
             if (SRII == null)
@@ -572,7 +582,7 @@ namespace Amdocs.Ginger.Repository
                 //probably new item so create new path for it
 
                 //FOLDER             
-                string fileFolderPath = string.Empty; 
+                string fileFolderPath = string.Empty;
                 if (string.IsNullOrEmpty(containingFolder))
                 {
                     fileFolderPath = repositoryItemBase.ContainingFolder;
@@ -581,10 +591,10 @@ namespace Amdocs.Ginger.Repository
                 {
                     fileFolderPath = containingFolder;
                 }
-                    
+
                 if (!fileFolderPath.StartsWith(cSolutionRootFolderSign) || !fileFolderPath.StartsWith(mSolutionFolderPath))
                 {
-                    string solutionPath = mSolutionFolderPath; 
+                    string solutionPath = mSolutionFolderPath;
                     string filefolder = fileFolderPath.Replace(cSolutionRootFolderSign, Path.DirectorySeparatorChar.ToString()).TrimStart(Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
                     if (!solutionPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                     {
@@ -598,7 +608,7 @@ namespace Amdocs.Ginger.Repository
                 }
 
                 string fileName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(name);
-                                
+
                 string fullName = repositoryItemInfoBaseType.Pattern.Replace("*", fileName);
 
 
@@ -619,7 +629,7 @@ namespace Amdocs.Ginger.Repository
                         newFileName = repositoryItemInfoBaseType.Pattern.Replace("*", newFileName);
                         filefullPath = Path.Combine(fileFolderPath, newFileName);
                     }
-                    
+
                     if (filefullPath.Length > 260 && fileName.Length > 3 )
                     {
                         noOfCharToEscape = filefullPath.Length - 257;
@@ -639,7 +649,7 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
 
-                
+
 
                 //validate no other file with same name
 
@@ -741,7 +751,7 @@ namespace Amdocs.Ginger.Repository
             if (repositoryItem.FileName != null && File.Exists(repositoryItem.FileName))
             {
                 RepositoryFolderBase repostitoryRootFolder = GetItemRepositoryRootFolder(repositoryItem);
-                
+
                 string targetPath=Path.Combine(repostitoryRootFolder.FolderFullPath, "PrevVersions");
                 if (!Directory.Exists(targetPath))
                 {
@@ -750,9 +760,9 @@ namespace Amdocs.Ginger.Repository
                     Directory.CreateDirectory(targetPath);
                     repostitoryRootFolder.ResumeFileWatcher();
                 }
-                            
+
                 string dts = DateTime.Now.ToString("yyyyMMddHHmm");
-              
+
                 string targetFileName = repositoryItem.ItemName +"." + dts + "." + repositoryItem.ObjFileExt+".xml";
 
                 targetFileName = General.RemoveInvalidCharsCombinePath(targetPath, targetFileName);
@@ -761,7 +771,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     targetFileName = targetFileName.Substring(0, 250) + new Random().Next(1000).ToString();
                 }
-                
+
                 try
                 {
                     if (File.Exists(targetFileName))
@@ -775,10 +785,10 @@ namespace Amdocs.Ginger.Repository
 
                 }
                 catch (IOException ex)
-                {                    
-                   Reporter.ToLog(eLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Shared Repository moving item to PrevVersion", ex);
                 }
-                
+
             }
         }
 
