@@ -43,16 +43,19 @@ namespace Ginger.Actions
             this.f = Act;
             GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
             GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
-         
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptInterpreterType);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptCommand);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, ActScript.Fields.ScriptName);
-           
+
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
-           
+
             ScriptInterPreter.FileExtensions.Add(".exe");
-            ScriptInterPreter.Init(Act, ActScript.Fields.ScriptInterpreter,true);
+            ScriptInterPreter.Init(Act, ActScript.Fields.ScriptInterpreter, true);
             f.ScriptPath = SHFilesPath;
+
+            var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ActScript.eScriptInterpreterType.JS.ToString()).FirstOrDefault();
+            ScriptInterpreterComboBox.Items.Remove(comboEnumItem);//Removed JS from UI
         }
 
         private void ScriptActComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -137,7 +140,7 @@ namespace Ginger.Actions
             {
                 InterpreterPathPanel.Visibility = Visibility.Visible;
                 fileEntries = Directory.EnumerateFiles(SHFilesPath, "*.*", SearchOption.AllDirectories)
-               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd")).ToArray();
+               .Where(s => s.ToLower().EndsWith(".vbs") || s.ToLower().EndsWith(".js") || s.ToLower().EndsWith(".pl") || s.ToLower().EndsWith(".bat") || s.ToLower().EndsWith(".cmd") || s.ToLower().EndsWith(".py") || s.ToLower().EndsWith(".ps1")).ToArray() ;
             }
             else if (interpreterType == ActScript.eScriptInterpreterType.BAT)
             {

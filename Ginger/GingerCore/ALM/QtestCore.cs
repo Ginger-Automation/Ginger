@@ -425,6 +425,7 @@ namespace GingerCore.ALM
                         testStepLog.Status = statuses.Where(z => z.Name == "Deffered").FirstOrDefault();
                         break;
                     default:
+                        //Not used
                         break;
                 }
             }

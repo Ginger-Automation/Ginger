@@ -73,6 +73,7 @@ namespace Ginger.Variables
             mContext = context;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTypeLbl, Label.ContentProperty, mVariable, nameof(VariableBase.VariableType), BindingMode: BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarNameTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Name));
+            xShowIDUC.Init(mVariable);
             mVariable.NameBeforeEdit = mVariable.Name;            
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
@@ -110,7 +111,8 @@ namespace Ginger.Variables
             if (setGeneralConfigsAsReadOnly)
             {
                 xVarNameTxtBox.IsEnabled = false;
-                xVarDescritpiontxtBox.IsEnabled = false;
+                xVarDescritpiontxtBox.Background = System.Windows.Media.Brushes.Transparent;
+                xVarDescritpiontxtBox.IsReadOnly = true;
                 xTagsViewer.IsEnabled = false;
                 xSharedRepoInstanceUC.IsEnabled = false;
                 xSetAsInputValueCheckBox.IsEnabled = false;

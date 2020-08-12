@@ -96,6 +96,11 @@ namespace Ginger.Run.RunSetActions
         [IsSerializedForLocalRepository]
         public string MailFrom { get { return mMailFrom; } set { if (mMailFrom != value) { mMailFrom = value; OnPropertyChanged(nameof(MailFrom)); } } }
 
+        private string mMailFromDisplayName;
+        [IsSerializedForLocalRepository]
+        [UserConfiguredDefault("_Amdocs Ginger Automation")]
+        public string MailFromDisplayName { get { return mMailFromDisplayName; } set { if (mMailFromDisplayName != value) { mMailFromDisplayName = value; OnPropertyChanged(nameof(MailFromDisplayName)); } } }
+
         private string mMailCC;
         [IsSerializedForLocalRepository]
         public string MailCC { get { return mMailCC; } set { if (mMailCC != value) { mMailCC = value; OnPropertyChanged(nameof(MailCC)); } } }
@@ -311,7 +316,7 @@ namespace Ginger.Run.RunSetActions
                                 reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
                                 if (rReport.IsAlternameFolderUsed)
                                 {
-                                    var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client_" + $"{WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
+                                    var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client_" + $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
                                     if (Directory.Exists(path))
                                         Directory.Delete(path, true);
                                     IoHandler.Instance.CopyFolderRec(reportsResultFolder, path, true);
@@ -462,6 +467,12 @@ namespace Ginger.Run.RunSetActions
                 Email.SMTPUser = mValueExpression.ValueCalculated;
                 Email.Body = emailReadyHtml;
                 emailReadyHtml = string.Empty;
+
+                if(Email.EmailMethod == Email.eEmailMethod.SMTP)
+                {
+                    mValueExpression.Value = MailFromDisplayName;
+                    Email.MailFromDisplayName = mValueExpression.ValueCalculated;
+                }
                 bool isSuccess = false;
                 try
                 {

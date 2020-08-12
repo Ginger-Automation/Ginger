@@ -476,6 +476,29 @@ namespace Ginger.AnalyzerLib
                     IssuesList.Add(AA);
                 }
             }
+
+            //Check for duplicate ActInputValues
+            if (a.InputValues.Count > 0)
+            {
+                foreach (ActInputValue AIV in a.InputValues.ToList())
+                {
+                    if (a.InputValues.Where(aiv => aiv.Param == AIV.Param).ToList().Count > 1)
+                    {
+                        AnalyzeAction AA = CreateNewIssue(BusinessFlow, parentActivity, a);
+                        AA.Description = "The Input Value Parameter " + AIV.Param + " is Duplicate";
+                        AA.Details = "The Input Value Parameter: '" + AIV.Param + "' is duplicate in the ActInputValues";
+                        AA.HowToFix = "Open action Edit page and save it.";
+                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
+                        AA.IssueType = eType.Warning;
+                        AA.Impact = "Duplicate input values will present in the report.";
+                        AA.Severity = eSeverity.Low;
+                        AA.ErrorInfoObject = AIV;
+                        AA.FixItHandler = FixRemoveDuplicateActInputValues;
+                        IssuesList.Add(AA);
+                    }
+                }
+            }
+
             return IssuesList;
         }
 
@@ -553,8 +576,23 @@ namespace Ginger.AnalyzerLib
 
             AA.Status = eStatus.CannotFix;
             return;
-        }             
-
+        }
+        private static void FixRemoveDuplicateActInputValues(object sender, EventArgs e)
+        {
+            AnalyzeAction AA = (AnalyzeAction)sender;
+            if (AA.ErrorInfoObject == null)
+            {
+                AA.Status = eStatus.CannotFix;
+                return;
+            }
+            ActInputValue AIV = (ActInputValue)AA.ErrorInfoObject;
+            while (AA.mAction.InputValues.Where(aiv => aiv.Param == AIV.Param).ToList().Count > 1)
+            {
+                AA.mAction.InputValues.Remove((from aiv in AA.mAction.InputValues where aiv.Param == AIV.Param select aiv).LastOrDefault());
+            }
+            AA.Status = eStatus.Fixed;
+            return;
+        }
         static AnalyzeAction CreateNewIssue(BusinessFlow BusinessFlow, Activity Activity, Act action)
         {
             AnalyzeAction AA = new AnalyzeAction();

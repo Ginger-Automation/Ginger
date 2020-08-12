@@ -78,7 +78,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Proxy Settings, if set, Proxy will be considered otherwise it will go to system proxy e.g 'genproxy.amdocs.com:8080'")]
+        [UserConfiguredDescription("Proxy Settings, if set, Proxy will be considered otherwise it will go to system proxy e.g '[sub-domain.]example.com:8080'")]
         public string ProxySettings { get; set; }
 
         public bool ConnectedToDevice = false;

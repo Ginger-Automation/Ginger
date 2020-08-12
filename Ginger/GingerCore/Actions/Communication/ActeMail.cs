@@ -123,7 +123,16 @@ namespace GingerCore.Actions.Communication
             }
         }
 
-        
+        public string MailFromDisplayName
+        {
+            get { return GetInputParamValue(nameof(MailFromDisplayName)); }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MailFromDisplayName), value);
+                OnPropertyChanged(nameof(MailFromDisplayName));
+            }
+        }
+
         public string Mailto
         {
             get { return GetInputParamValue(nameof(Mailto)); }
@@ -212,6 +221,11 @@ namespace GingerCore.Actions.Communication
             e.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
             e.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
             e.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
+
+            if(e.EmailMethod == Email.eEmailMethod.SMTP)
+            {
+                e.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
+            }
             if (string.IsNullOrEmpty(e.MailTo))
             {
                 Error = "Failed: Please provide TO email address.";
@@ -223,10 +237,13 @@ namespace GingerCore.Actions.Communication
                 return;
             }
             if (this.GetInputParamCalculatedValue(nameof(MailOption)) == Email.eEmailMethod.OUTLOOK.ToString())
+            {
                 e.EmailMethod = Email.eEmailMethod.OUTLOOK;
+            }
             else
             {
                 e.EmailMethod = Email.eEmailMethod.SMTP;
+                e.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
                 if (string.IsNullOrEmpty(e.MailFrom))
                 {
                     Error = "Failed: Please provide FROM email address.";

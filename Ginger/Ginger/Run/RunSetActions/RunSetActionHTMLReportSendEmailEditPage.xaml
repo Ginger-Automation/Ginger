@@ -16,7 +16,12 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Grid.RowSpan="2">
-            <TabItem Header="Message">
+            <TabItem Name="xMessage">
+                <TabItem.Header>
+                    <Label Content="Message" 
+                MouseLeftButtonDown="TabItem_MouseLeftButtonDown" 
+                HorizontalAlignment="Stretch"/>
+                </TabItem.Header>
                 <Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="57*"/>
@@ -31,6 +36,8 @@
                     <StackPanel Grid.ColumnSpan="2">
                         <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From:" />
                         <Actions:UCValueExpression x:Name="MailFromTextBox" ToolTip="From" />
+                        <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelMailFromDisplayName" Content="From Display Name:" />
+                        <Actions:UCValueExpression x:Name="xMailFromDisplayNameTextBox" ToolTip="Provide Display Name to show if it has not configured for sender email." />
 
                         <Label Style="{StaticResource @LabelStyle}" Content="To:" />
                         <Actions:UCValueExpression x:Name="MailToTextBox" ToolTip="To"/>

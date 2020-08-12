@@ -42,8 +42,20 @@ namespace Ginger.Reports
         }
         public enum DataRepositoryMethod
         {
-            TextFile,
-            LiteDB
+            TextFile=1,
+            LiteDB=0
+        }
+               
+        public enum ePublishToCentralDB
+        {
+            Yes,
+            No
+        }
+       
+        public enum eDeleteLocalDataOnPublish
+        {
+            Yes,
+            No
         }
 
         // Why we serialzie!!?
@@ -92,6 +104,54 @@ namespace Ginger.Reports
             }
         }
 
+        private ePublishToCentralDB mPublishLogToCentralDB = ePublishToCentralDB.No;
+
+        [IsSerializedForLocalRepository]
+        public ePublishToCentralDB PublishLogToCentralDB 
+        { 
+            get
+            {
+                return mPublishLogToCentralDB;
+            }
+            set
+            {
+                mPublishLogToCentralDB = value;               
+            }
+        }
+
+        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
+
+        [IsSerializedForLocalRepository]
+        public eDeleteLocalDataOnPublish DeleteLocalDataOnPublish
+        {
+            get
+            {
+                return mDeleteLocalDataOnPublish;
+            }
+            set
+            {
+                mDeleteLocalDataOnPublish = value;
+            }
+        }
+
+
+        private string mCentralLoggerEndPointUrl;
+        [IsSerializedForLocalRepository]
+        public string CentralLoggerEndPointUrl
+        {
+            get
+            {
+                return mCentralLoggerEndPointUrl;
+            }
+            set
+            {
+                mCentralLoggerEndPointUrl = value;
+                OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+            }
+        }
+
+        public bool IsPublishToCentralDBRunning { get; set; }
+
         public string ExecutionLoggerConfigurationHTMLReportsFolder { get; set; }
 
         public bool ExecutionLoggerHTMLReportsAutomaticProdIsEnabled { get; set; }
@@ -110,7 +170,7 @@ namespace Ginger.Reports
             {
                 if (mDataRepositoryMethod != value)
                 {
-                    mDataRepositoryMethod = value;
+                    mDataRepositoryMethod = value;                    
                     OnPropertyChanged(nameof(mDataRepositoryMethod));
                 }
             }

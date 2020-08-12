@@ -76,7 +76,7 @@
       <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -211,6 +211,7 @@
     <Compile Include="APIModelLib\WSDLParserTest.cs" />
     <!--<Compile Include="APIModelLib\WSDLToAPITest.cs" />-->
     <Compile Include="AgentsLib\AgentsTest.cs" />
+    <Compile Include="BusinessFlowLib\BusinessFlowPOMTest.cs" />
     <Compile Include="EnvironemntsLib\EnvsTest.cs" />
     <Compile Include="GeneralLib\CopyDir.cs" />
     <Compile Include="GeneralLib\VisualCompare.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="HTMLReportsLib\HTMLReportTest.cs" />
     <Compile Include="POMs\AdornerLib\HighlightAdorner.cs" />
     <Compile Include="POMs\AgentsPOM.cs" />
+    <Compile Include="POMs\BusinessFlowPOM.cs" />
     <Compile Include="POMs\Common\ButtonPOM.cs" />
     <Compile Include="POMs\Common\ContextMenuItemPOM.cs" />
     <Compile Include="POMs\Common\ContextMenuPOM.cs" />
@@ -264,6 +266,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TestResources\Solutions\POMsTest\RecentlyUsed.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Solutions\TestUndoBusinessFlow\DataSources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestResources\Solutions\TestUndoBusinessFlow\ExecutionResults\GingerExecutionResults.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -369,6 +377,27 @@
     <Content Include="TestResources\Solutions\ReportSR\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Agents\MyWebApp - Agent 1.Ginger.Agent.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 1.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\BusinessFlows\Flow 2.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\DataSources\DefaultDataSource.Ginger.DataSource.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Environments\Default.Ginger.Environment.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\Ginger.Solution.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\Solutions\TestUndoBusinessFlow\HTMLReportConfigurations\Default.Ginger.HTMLReportConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestResources\VisualCompareScreens\AgentEditPage.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -435,6 +464,18 @@
     <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\ActivitiesGroup\" />
     <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Activities\" />
     <Folder Include="TestResources\Solutions\POMsTest\SharedRepository\Variables\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\ALMDefectProfiles\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\API Models\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\Global Models Parameters\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Applications Models\POM Models\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\AutoSave\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\Plugins\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\RemoteServiceGrid\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\RunSetConfigs\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Actions\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\ActivitiesGroup\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Activities\" />
+    <Folder Include="TestResources\Solutions\TestUndoBusinessFlow\SharedRepository\Variables\" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
@@ -449,8 +490,6 @@
     <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.props'))" />
     <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.2.9.4\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.78.0.3904.7000\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.78.0.3904.7000\build\Selenium.WebDriver.ChromeDriver.targets'))" />
   </Target>
   <Import Project="..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets')" />
-  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.78.0.3904.7000\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.78.0.3904.7000\build\Selenium.WebDriver.ChromeDriver.targets')" />
 </Project>

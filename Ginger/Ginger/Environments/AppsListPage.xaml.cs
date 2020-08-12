@@ -44,6 +44,7 @@ namespace Ginger.Environments
             SetGridData();
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
+            xShowIDUC.Init(AppEnvironmnet);
 
             grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));          
             grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));

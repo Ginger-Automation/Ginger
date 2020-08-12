@@ -138,6 +138,21 @@ namespace Ginger.Run
             }
         }
 
+        public bool mStopRunnersOnFailure = false;
+        [IsSerializedForLocalRepository]
+        public bool StopRunnersOnFailure
+        {
+            get
+            {
+                return mStopRunnersOnFailure;
+            }
+            set
+            {
+                mStopRunnersOnFailure = value;
+                OnPropertyChanged(nameof(this.StopRunnersOnFailure));
+            }
+        }
+
         public bool mRunWithAnalyzer = true;
         [IsSerializedForLocalRepository(true)]
         public bool RunWithAnalyzer

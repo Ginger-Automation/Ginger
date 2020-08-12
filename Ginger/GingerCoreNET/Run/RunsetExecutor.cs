@@ -214,11 +214,6 @@ namespace Ginger.Run
                             {
                                 CopyCustomizedVariableConfigurations(customizedVar, originalVar);
                             }
-                            else
-                            {
-                                originalVar.DiffrentFromOrigin = false;
-                                originalVar.MappedOutputVariable = null;
-                            }
                         });
                     }
                     BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
@@ -338,15 +333,15 @@ namespace Ginger.Run
 
         public async Task<int> RunRunsetAsync(bool doContinueRun = false)
         {
-            var result = await Task.Run(() =>
+            var result = await Task.Run(async () =>
             {
-                RunRunset(doContinueRun);
+               await RunRunset(doContinueRun);
                 return 1;
             });
             return result;
         }
 
-        public void RunRunset(bool doContinueRun = false)
+        public async Task RunRunset(bool doContinueRun = false)
         {
             try
             {
@@ -442,15 +437,32 @@ namespace Ginger.Run
                                 GR.RunRunner();
                             }
                             else
+                            {
+                                //continue
                                 if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
-                            {
-                                GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
-                                GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                                {
+                                    GR.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
+                                    GR.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
+                                }
+                                else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
+                                {
+                                    GR.RunRunner();
+                                }
                             }
-                            else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)//continue the runners flow
+
+                            if (GR.Status == eRunStatus.Failed && mRunSetConfig.StopRunnersOnFailure)
                             {
-                                GR.RunRunner();
+                                //marking next Runners as blocked and stopping execution
+                                for (int indx = Runners.IndexOf(GR) + 1; indx < Runners.Count; indx++)
+                                {
+                                    Runners[indx].SetNextBusinessFlowsBlockedStatus();
+                                    Runners[indx].Status = eRunStatus.Blocked;
+                                    Runners[indx].GiveUserFeedback();//for getting update for runner stats on runset page
+                                }
+
+                                break;
                             }
+
                             // Wait one second before starting another runner
                             Thread.Sleep(1000);
                         }
@@ -477,6 +489,9 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+
+                await  Runners[0].ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+               
             }
             finally
             {
