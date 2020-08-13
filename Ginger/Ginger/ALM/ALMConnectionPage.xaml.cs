@@ -190,6 +190,7 @@ namespace Ginger.ALM
         {
             if (string.IsNullOrEmpty(CurrentAlmConfigurations.ALMServerURL))
             {
+                isServerDetailsCorrect = false;
                 return false;
             }
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -221,7 +222,7 @@ namespace Ginger.ALM
             {
                 isProjectMappingCorrect = false;
             }
-            SetControls();
+            //SetControls();
             Mouse.OverrideCursor = null;
             return almConn;
         }
@@ -569,11 +570,15 @@ namespace Ginger.ALM
                 //Bind again as we changed the AlmConfig object
                 Bind();
 
-                StyleRadioButtons();
-
+                //clear items
+                DomainComboBox.Items.Clear();
+                ProjectComboBox.Items.Clear();
                 //Select domain and project based on new AlmConfig
                 LoginServerButton.Content = "Get Projects Details";
                 GetProjectsDetails();
+
+                StyleRadioButtons();
+                SetControls();
             }
         }
 

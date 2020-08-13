@@ -74,7 +74,18 @@ namespace GingerCore.ALM
         public override bool ConnectALMProject()
         {
             ALMCore.DefaultAlmConfig.ALMProjectName = ALMCore.DefaultAlmConfig.ALMProjectKey;
-            return true;
+            if (string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMServerURL) == false &&
+                string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMUserName) == false &&
+                string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMPassword) == false &&
+                string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMProjectKey) == false &&
+                string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMProjectName) == false)
+            {
+                if (ConnectALMServer())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override Boolean IsServerConnected()
