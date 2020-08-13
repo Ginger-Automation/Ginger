@@ -36,31 +36,46 @@
                 <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,20,0,0" >Agent Settings:</Label>
                 <agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="5,0,0,0"></agents:ucAgentControl>
 
-                <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,20,0,0" >Elements Learning Settings:</Label>
-                <CheckBox x:Name="xLearnOnlyMappedElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
-                <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,0">
-                    <Expander.Header>
-                        <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Elements Types to Auto Map"/>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <TabControl>
-                            <TabItem Header="Basic Elements">
-                                <Ginger:ucGrid x:Name="xAutoMapBasicElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
-                            </TabItem>
-                            <TabItem Header="Advanced Elements">
-                                <Ginger:ucGrid x:Name="xAutoMapAdvancedlementTypesGrid" AutomationProperties.AutomationId="AutoMapAdvancedElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
-                            </TabItem>
-                        </TabControl>
-                    </Expander.Content>
-                </Expander>
-                <Expander x:Name="xElementLocatorsSettingsExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,15">
-                    <Expander.Header>
-                        <Label x:Name="xLocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Learned Elements Locators Preferences"/>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <Ginger:ucGrid x:Name="xElementLocatorsSettingsGrid" AutomationProperties.AutomationId="AutoMapElementLocatorsGrid AID" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
-                    </Expander.Content>
-                </Expander>
+                
+                <DockPanel>
+                    <Border BorderBrush="Gainsboro" BorderThickness="2">
+                        <StackPanel Margin="0,0,7,0">
+                            <Label DockPanel.Dock="Top" HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}" Margin="0,5,0,0" >Elements Learning Settings:</Label>
+
+                            <CheckBox x:Name="xLearnSpecificFrameChkBox" Click="xLearnSpecificFrameChkBox_Click"  Content="Learn Specific Frame" DockPanel.Dock="Top"  Style="{StaticResource $CeckBoxStyle}" Margin="7,5,0,10"/>
+                            <DockPanel x:Name="xFrameListDocPanel" DockPanel.Dock="Top" Margin="5,0,0,0" Visibility="Collapsed">
+                                <Label x:Name="xLblFrame" Content="Select Frame :" Style="{StaticResource $LabelStyle}"></Label>
+                                <ComboBox x:Name="xFrameListCmbBox"  Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch"  AutomationProperties.AutomationId="FrameListCombobBox AID" />
+                            </DockPanel>
+
+                            <CheckBox x:Name="xLearnOnlyMappedElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
+                            <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,0">
+                                <Expander.Header>
+                                    <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Elements Types to Auto Map"/>
+                                </Expander.Header>
+                                <Expander.Content>
+                                    <TabControl>
+                                        <TabItem Header="Basic Elements">
+                                            <Ginger:ucGrid x:Name="xAutoMapBasicElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                                        </TabItem>
+                                        <TabItem Header="Advanced Elements">
+                                            <Ginger:ucGrid x:Name="xAutoMapAdvancedlementTypesGrid" AutomationProperties.AutomationId="AutoMapAdvancedElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                                        </TabItem>
+                                    </TabControl>
+                                </Expander.Content>
+                            </Expander>
+                            <Expander x:Name="xElementLocatorsSettingsExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,15">
+                                <Expander.Header>
+                                    <Label x:Name="xLocatorsExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Learned Elements Locators Preferences"/>
+                                </Expander.Header>
+                                <Expander.Content>
+                                    <Ginger:ucGrid x:Name="xElementLocatorsSettingsGrid" AutomationProperties.AutomationId="AutoMapElementLocatorsGrid AID" Title="Locators:" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Collapsed"/>
+                                </Expander.Content>
+                            </Expander>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+               
             </DockPanel>
         </Grid>
     </ScrollViewer>

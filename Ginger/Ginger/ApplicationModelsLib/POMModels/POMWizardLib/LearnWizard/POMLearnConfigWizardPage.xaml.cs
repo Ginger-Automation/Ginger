@@ -288,6 +288,18 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearningConfigsPnl.Visibility = Visibility.Visible;
                 }
             }
-        }        
+        }
+
+        private void xLearnSpecificFrameChkBox_Click(object sender, RoutedEventArgs e)
+        {
+            if(Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
+            {
+                xFrameListDocPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xFrameListDocPanel.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
