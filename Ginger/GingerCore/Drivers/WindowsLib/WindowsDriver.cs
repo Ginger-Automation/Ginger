@@ -991,5 +991,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
+
+        public List<AppWindow> GetWindowAllFrames()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

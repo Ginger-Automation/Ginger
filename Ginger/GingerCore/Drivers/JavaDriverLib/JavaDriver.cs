@@ -132,7 +132,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             GetProperties,
             GetOptionalValuesList,
             LocateElement,
-            UnHighlight
+            UnHighlight,
+            GetWindowAllFrames
         }
         public override void StartDriver()
         {
@@ -1935,6 +1936,43 @@ namespace GingerCore.Drivers.JavaDriverLib
                 }
             }
             return list;
+        }
+
+        List<AppWindow> IWindowExplorer.GetWindowAllFrames()
+        {
+            List<AppWindow> frameList = new List<AppWindow>();
+
+            PayLoad PL = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+            PL.AddEnumValue(WindowExplorerOperationType.GetWindowAllFrames);
+            PL.ClosePackage();
+            PayLoad RC = Send(PL);
+
+            if (RC.IsErrorPayLoad())
+            {
+                string ErrMsg = RC.GetErrorValue();
+                Reporter.ToLog(eLogLevel.ERROR,ErrMsg);
+            }
+            else
+            {
+                List<PayLoad> ControlsPL = RC.GetListPayLoad();
+                foreach (PayLoad pl in ControlsPL)
+                {
+                    JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+
+                    var title = ci.Value;
+                    var windowType = AppWindow.eWindowType.JFrmae;
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        title = ci.ElementTitle;
+                    }
+                    AppWindow AW = new AppWindow() { Title = title, Path = ci.XPath, WindowType = windowType };
+                    frameList.Add(AW);
+                }
+            }
+
+
+            return frameList;
+
         }
 
 

@@ -295,11 +295,25 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             if(Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
             {
                 xFrameListDocPanel.Visibility = Visibility.Visible;
+                BindWindowFrameCombox();
             }
             else
             {
                 xFrameListDocPanel.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void BindWindowFrameCombox()
+        {
+            if(mAppPlatform.Equals(ePlatformType.Java))
+            {
+               var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomLearnUtils.Agent.Driver));
+
+                var list = windowExplorerDriver.GetWindowAllFrames();
+                xFrameListCmbBox.ItemsSource = list;
+                xFrameListCmbBox.DisplayMemberPath = nameof(AppWindow.Title);
+            }
+           
         }
     }
 }

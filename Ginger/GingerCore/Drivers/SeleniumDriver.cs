@@ -7617,5 +7617,10 @@ namespace GingerCore.Drivers
         {
             throw new NotImplementedException();
         }
+
+        public List<AppWindow> GetWindowAllFrames()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

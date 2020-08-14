@@ -1575,5 +1575,10 @@ namespace GingerCore.Drivers.Appium
         {
             throw new NotImplementedException();
         }
+
+        List<AppWindow> IWindowExplorer.GetWindowAllFrames()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

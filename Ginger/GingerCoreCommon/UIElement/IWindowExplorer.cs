@@ -59,5 +59,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         void StartSpying();
         ElementInfo LearnElementInfoDetails(ElementInfo EI);
+        List<AppWindow> GetWindowAllFrames();
     }
 }
