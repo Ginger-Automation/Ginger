@@ -49,8 +49,7 @@ namespace GingerCore.ALM
         {
             try
             {
-                System.Diagnostics.Trace.WriteLine("Initiated Authentication");
-
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to qTest server");
                 connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
@@ -64,8 +63,7 @@ namespace GingerCore.ALM
             }           
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine("Exception in AuthenticateUser(): Authentication Failed: " + ex.Message);
-
+                Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, ex.Message);
                 connObj = null;
                 return false;
             }

@@ -48,7 +48,7 @@ namespace Ginger.ALM.Repository
         {
             try
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to QC server");
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to QTest server");
                 return ALMIntegration.Instance.AlmCore.ConnectALMServer();
             }
             catch (Exception e)
@@ -61,7 +61,7 @@ namespace Ginger.ALM.Repository
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
-                Reporter.ToLog(eLogLevel.WARN, "Error connecting to QC server", e);
+                Reporter.ToLog(eLogLevel.WARN, "Error connecting to QTest server", e);
                 return false;
             }
         }
