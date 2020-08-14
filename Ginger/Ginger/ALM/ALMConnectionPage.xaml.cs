@@ -210,6 +210,11 @@ namespace Ginger.ALM
                     RefreshDomainList(almConectStyle);
                     RefreshProjectsList();
                 }
+                else
+                {
+                    DomainComboBox.Items.Clear();
+                    ProjectComboBox.Items.Clear();
+                }
 
             }
 
@@ -222,7 +227,7 @@ namespace Ginger.ALM
             {
                 isProjectMappingCorrect = false;
             }
-            //SetControls();
+            SetControls();
             Mouse.OverrideCursor = null;
             return almConn;
         }
@@ -571,8 +576,8 @@ namespace Ginger.ALM
                 Bind();
 
                 //clear items
-                DomainComboBox.Items.Clear();
-                ProjectComboBox.Items.Clear();
+                //DomainComboBox.Items.Clear();
+                //ProjectComboBox.Items.Clear();
                 //Select domain and project based on new AlmConfig
                 LoginServerButton.Content = "Get Projects Details";
                 GetProjectsDetails();

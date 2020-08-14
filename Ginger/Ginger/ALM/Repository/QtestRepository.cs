@@ -49,7 +49,15 @@ namespace Ginger.ALM.Repository
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to QTest server");
-                return ALMIntegration.Instance.AlmCore.ConnectALMServer();
+                if (ALMIntegration.Instance.AlmCore.ConnectALMServer())
+                {
+                    return true;
+                }
+                else 
+                {
+                    Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, "Bad credentials");
+                    return false;
+                }
             }
             catch (Exception e)
             {

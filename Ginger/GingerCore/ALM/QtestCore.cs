@@ -63,7 +63,7 @@ namespace GingerCore.ALM
             }           
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, "Connecting to qTest server",ex);
                 connObj = null;
                 return false;
             }
