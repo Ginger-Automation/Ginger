@@ -236,18 +236,19 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]  
+        [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
         {
             WebServiceXML webServiceCall = new WebServiceXML();
-            string URL = "http://ws.cdyne.com/delayedstockquote/delayedstockquote.asmx";
-            string soapAction = "http://ws.cdyne.com/GetQuickQuote";
+            string URL = "http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL";
+            string soapAction = "";
             string xmlRequest= getXML();
             string Status = "test";
             bool failFlag = false;
             string webRespone = webServiceCall.SendXMLRequest(URL, soapAction, xmlRequest,ref Status,ref failFlag, null);
 
-            StringAssert.Contains(webRespone, "<GetQuickQuoteResult>0</GetQuickQuoteResult>");
+            StringAssert.Contains(webRespone, "<m:NumberToWordsResult>ten thousand</m:NumberToWordsResult>");
             
             
         }
@@ -415,7 +416,7 @@ namespace UnitTests.NonUITests
             //  </soap:Body>
             //</soap:Envelope>
             //";
-            string xml = @"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/"" xmlns:ws=""http://ws.cdyne.com/""><soapenv:Header/><soapenv:Body><ws:GetQuickQuote><!--Optional:--><ws:StockSymbol>?</ws:StockSymbol><!--Optional:--><ws:LicenseKey>?</ws:LicenseKey></ws:GetQuickQuote></soapenv:Body></soapenv:Envelope>";
+            string xml = @"<soap:Envelope xmlns:soap=""http://schemas.xmlsoap.org/soap/envelope/""><soap:Body><NumberToWords xmlns = ""http://www.dataaccess.com/webservicesserver/"" ><ubiNum> 10000 </ubiNum></NumberToWords></soap:Body></soap:Envelope> ";
 
             return xml;
 
@@ -499,8 +500,8 @@ namespace UnitTests.NonUITests
 
             ActWebService actLegacyWebService = new ActWebService();
 
-            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://ws.cdyne.com/delayedstockquote/delayedstockquote.asmx");
-            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"http://ws.cdyne.com/GetQuickQuote");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"");
 
             var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML\stock.xml");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.XMLfileName, xmlFileNamePath);
@@ -515,7 +516,7 @@ namespace UnitTests.NonUITests
             mGR.RunRunner();
 
             Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
-            Assert.AreEqual(0,Convert.ToInt32(actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"GetQuickQuoteResult").Actual));
+            Assert.AreEqual("ten thousand", actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"m:NumberToWordsResult").Actual);
 
             //Convert the legacy action
             Activity newActivity = new Activity() { Active = true };
@@ -532,14 +533,14 @@ namespace UnitTests.NonUITests
 
             //Assert converted action
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
-            Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
+            Assert.AreEqual("ten thousand", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:NumberToWordsResult").Actual);
 
             //Run newAction
             mGR.RunRunner();
             
             //assert newaction
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
-            Assert.AreEqual(0, Convert.ToInt32(newAction.ReturnValues.FirstOrDefault(x => x.Param == @"GetQuickQuoteResult").Actual));
+            Assert.AreEqual("ten thousand", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:NumberToWordsResult").Actual);
         }
 
         [TestMethod]
