@@ -960,7 +960,7 @@ namespace Ginger.Run
             {
                 //init
                 act.SolutionFolder = SolutionFolder;
-                act.ExecutionParentGuid = CurrentBusinessFlow.Guid;
+                act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
 
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
@@ -2950,7 +2950,7 @@ namespace Ginger.Run
 
             try
             {
-                activity.ExecutionParentGuid = CurrentBusinessFlow.Guid;
+                activity.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                 if (activity.Active != false)
                 {
                     //check if Activity is allowed to run
@@ -2966,7 +2966,7 @@ namespace Ginger.Run
 
                     // handling ActivityGroup execution
                     currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
-                    currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.Guid;
+                    currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                     if (currentActivityGroup != null)
                     {
                         switch (currentActivityGroup.ExecutionLoggerStatus)
