@@ -1388,5 +1388,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public Guid ExecutionParentGuid { get; set; } = Guid.Empty;
+
     }
 }

@@ -251,7 +251,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         private void SelectEnv()
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected Environment: '" + Env + "'");
+            Reporter.ToLog(eLogLevel.INFO, "Selected Environment: '" + Env + "'");
             if (String.IsNullOrEmpty(Env) == false)
             {
                 ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name.ToLower().Trim() == Env.ToLower().Trim()).FirstOrDefault();
