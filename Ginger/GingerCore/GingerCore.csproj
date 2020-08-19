@@ -841,7 +841,9 @@
     <Content Include="DLLs\QCRestClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\RestSharp.dll" />
+    <Content Include="DLLs\QTestAPI.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="DLLs\RQMExport.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
