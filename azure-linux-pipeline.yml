@@ -28,10 +28,16 @@ jobs:
       version: 3.1.100
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-# ------------------------------------------------------------------------------------------------------
-# restore packages
-# ------------------------------------------------------------------------------------------------------
-  - script: dotnet restore ginger/ginger.sln
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
   
 # ------------------------------------------------------------------------------------------------------
 # start Testing
