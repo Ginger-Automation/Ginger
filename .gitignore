@@ -330,6 +330,4 @@ ASALocalRun/
 .mfractor/
 /Ginger/GingerCore/Plugins/Jenkins/gingerPlugin/work
 /Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/.externalToolBuilders
-/Ginger/GingerCore/DLLs/Newtonsoft.Json.xml
-/Ginger/GingerCore/DLLs/Newtonsoft.Json.dll
 /Ginger/GingerCoreNETUnitTest/TestResources/Solutions/BasicSimple/ExecutionResults/GingerExecutionResults.db
