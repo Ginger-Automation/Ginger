@@ -34,13 +34,13 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
   steps:
 # ------------------------------------------------------------------------------------------------------
-# Install .Net core SDK 2.2
+# Install .Net core SDK 2.2.x
 # ------------------------------------------------------------------------------------------------------
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: 'sdk' # Options: runtime, sdk
       version: '2.2.100' 
-      displayName: Install .Net Core 2.2      
+      displayName: Install .Net Core 2.1      
 
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
@@ -122,5 +122,3 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     condition: succeededOrFailed()
-
-
