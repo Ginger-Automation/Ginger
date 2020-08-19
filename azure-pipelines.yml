@@ -9,6 +9,8 @@ jobs:
 - job: Windows
   pool:
    vmImage: 'windows-2019'  #Visual Studio 2019 Preview on Windows Server 2019
+  workspace:
+    clean: outputs
 
 # ------------------------------------------------------------------------------------------------------
 # Job Variables
@@ -36,6 +38,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 2.2.x
 # ------------------------------------------------------------------------------------------------------
+
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: 'sdk' # Options: runtime, sdk
