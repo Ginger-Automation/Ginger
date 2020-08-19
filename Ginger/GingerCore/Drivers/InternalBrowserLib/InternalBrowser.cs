@@ -1218,7 +1218,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return list;
         }
         
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null,bool isPOMLearn = false, string specificFramePath = null)
         {
             //TODO: impl
             return null;

@@ -133,7 +133,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             GetOptionalValuesList,
             LocateElement,
             UnHighlight,
-            GetWindowAllFrames
+            GetWindowAllFrames,
+            GetFrameControls
         }
         public override void StartDriver()
         {
@@ -1975,7 +1976,6 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         }
 
-
         private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
             var javaElementInfo = new JavaElementInfo()
@@ -2032,16 +2032,30 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             isBrowserElementLearned = false;
 
             List<ElementInfo> list = new List<ElementInfo>();
 
-            PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-            Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
-            Request.ClosePackage();
-            PayLoad Response = Send(Request);
+            PayLoad Request;
+            PayLoad Response;
+            //Get Current window, Specific Frame controls
+            if (!string.IsNullOrEmpty(specificFramePath))
+            {
+                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
+                Request.AddValue(specificFramePath);
+                Request.ClosePackage();
+            }
+            //Get Current window all Controls
+            else
+            {
+                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+                Request.ClosePackage();
+            }
+            Response = Send(Request);
 
             if (Response.IsErrorPayLoad())
             {

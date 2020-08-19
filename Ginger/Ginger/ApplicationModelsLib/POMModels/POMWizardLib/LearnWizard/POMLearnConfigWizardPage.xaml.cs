@@ -71,7 +71,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     SetElementLocatorsSettingsGridView();
                     UpdateConfigsBasedOnAgentStatus();
+                    ShowSpecficFrameLearnConfigPanel();
                     break;
+            }
+        }
+
+        private void ShowSpecficFrameLearnConfigPanel()
+        {
+            if(mAppPlatform.Equals(ePlatformType.Java))
+            {
+                xSpecificFrameConfigPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xSpecificFrameConfigPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -99,6 +112,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAgentControlUC.Init(mWizard.OptionalAgentsList);
             xAgentControlUC.PropertyChanged -= XAgentControlUC_PropertyChanged;
             xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
+
+            ShowSpecficFrameLearnConfigPanel();
         }
 
         private void AddValidations()
@@ -228,6 +243,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
+
+            xSpecificFrameConfigPanel.IsEnabled = xAgentControlUC.AgentIsRunning;
         }
 
         private void ClearAutoMapElementTypesSection()
@@ -294,18 +311,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if(Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
             {
-                xFrameListDocPanel.Visibility = Visibility.Visible;
+                xFrameListGrid.Visibility = Visibility.Visible;
                 BindWindowFrameCombox();
             }
             else
             {
-                xFrameListDocPanel.Visibility = Visibility.Collapsed;
+                xFrameListGrid.Visibility = Visibility.Collapsed;
+                mWizard.mPomLearnUtils.SpecificFramePath = null;
             }
         }
 
         private void BindWindowFrameCombox()
         {
-            if(mAppPlatform.Equals(ePlatformType.Java))
+            mWizard.mPomLearnUtils.SpecificFramePath = null;
+            if (mAppPlatform.Equals(ePlatformType.Java))
             {
                var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomLearnUtils.Agent.Driver));
 
@@ -313,7 +332,20 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 xFrameListCmbBox.ItemsSource = list;
                 xFrameListCmbBox.DisplayMemberPath = nameof(AppWindow.Title);
             }
-           
+        }
+
+        private void xFrameListCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = (AppWindow)xFrameListCmbBox.SelectedItem;
+            if (selectedItem != null)
+            {
+                mWizard.mPomLearnUtils.SpecificFramePath = selectedItem.Path;
+            }
+        }
+
+        private void xFrameRefreshBtn_Click(object sender, RoutedEventArgs e)
+        {
+            BindWindowFrameCombox();
         }
     }
 }
