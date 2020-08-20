@@ -31,7 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using JiraRepository.Settings;
 
 namespace GingerCore.ALM.JIRA.Bll
 {
@@ -47,15 +47,85 @@ namespace GingerCore.ALM.JIRA.Bll
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             List<JiraIssueExport> defectsToExport = new List<JiraIssueExport>();
+            List<string> screenshots = new List<string>();
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
+                string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
+
+                if (!string.IsNullOrEmpty(summaryValue))
+                {
+                    //Search for exist based on summary
+                    WhereDataList filterData = new WhereDataList();
+                    filterData.Add(new WhereData() { Name = "summary", Values = new List<string>() { summaryValue }, Operator = WhereOperator.And });
+
+                    //and based on status, fetch statuses from JiraSettings.json 
+                    DefectStatusColl jiraDefectStatuses = new DefectStatusColl();
+                    JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
+                    if (jiraHelper.TryGetJiraDefectStatuses(out jiraDefectStatuses))
+                    {
+                        foreach (DefectStatus defectStatus in jiraDefectStatuses)
+                        {
+                            ComparisionOperator comparisionOperator = ComparisionOperator.EqualTo;
+                            if (defectStatus.Operator.ToLower().Contains("not"))
+                            {
+                                comparisionOperator = ComparisionOperator.NotEqual;
+                            }
+                            filterData.Add(new WhereData() { Name = "Status", Values = new List<string>() { defectStatus.Status }, Operator = WhereOperator.And, ComparisionOperator = comparisionOperator });
+                        }
+                    }
+
+
+                    var issues = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT, filterData);
+                    if (issues.DataResult.Count > 0)
+                    {
+                        //Add existing defect id
+                        defectsOpeningResults.Add(defectForOpening.Key, issues.DataResult.FirstOrDefault().id.ToString());
+                        continue;
+                    }
+                    else
+                    {
+                        string paths = defectForOpening.Value.ContainsKey("screenshots") ? defectForOpening.Value["screenshots"] : string.Empty;
+                        screenshots.Add(paths);
+                    }
+                }
+
+                //if no then add into list to open new defect
                 defectsToExport.Add(this.CreateDefectData(defectForOpening, defectsFields));
             }
-            var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
-            for (var a = 0; a < exportedDefects.Count; a++)
+
+            if(defectsToExport.Count > 0)
             {
-                if (defectsForOpening.Count > a)
-                    defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
+                //Create new Defect
+                var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
+                if (exportedDefects.Count > 0)
+                {
+                    for (var a = 0; a < exportedDefects.Count; a++)
+                    {
+                        if (exportedDefects[a].DataResult != null)
+                        {
+                            //Add attachments to opened defects
+                            string[] screenshotsPaths = screenshots[a].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (string screenshotsPath in screenshotsPaths)
+                            {
+                                var attachments = jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportedDefects[a].DataResult.key, screenshotsPath);
+                                if (attachments.DataResult != null)
+                                {
+                                    Reporter.ToLog(eLogLevel.DEBUG, "Added Attachment to defect");
+                                }
+                                else
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect -" + attachments.AuthenticationResponseObj.ErrorDesc);
+                                }
+                            }
+                            defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create to defect -" + exportedDefects[a].AuthenticationResponseObj.ErrorDesc);
+                        }
+                    }
+                }
+                
             }
             return defectsOpeningResults;
         }
