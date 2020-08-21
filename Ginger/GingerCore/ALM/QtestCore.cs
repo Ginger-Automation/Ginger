@@ -37,13 +37,15 @@ namespace GingerCore.ALM
 {
     public class QtestCore : ALMCore
     {
+        QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
+        QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
+
+
         QTestApi.LoginApi connObj = new QTestApi.LoginApi();
         QTestApi.TestrunApi testrunApi = new QTestApi.TestrunApi();
         QTestApi.TestcaseApi testcaseApi = new QTestApi.TestcaseApi();
         QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
 
-        QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
-        QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
 
         public override bool ConnectALMServer()
         {
