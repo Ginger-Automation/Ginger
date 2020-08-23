@@ -39,7 +39,7 @@ jobs:
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: 'sdk' # Options: runtime, sdk
-      version: '2.2.x' 
+      version: '2.2.100' 
       displayName: Install .Net Core 2.1      
 
 # ------------------------------------------------------------------------------------------------------
