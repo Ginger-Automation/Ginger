@@ -160,7 +160,15 @@ namespace Ginger.Run
                 if (appagent.AgentName != null)
                 {
                     ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                    appagent.Agent = (from a in agents where a.Name == appagent.AgentName select a).FirstOrDefault();
+
+                    var agent = (from a in agents where a.Name == appagent.AgentName select a).FirstOrDefault();
+            //logic for if need to assign virtual agent 
+                    if(mRunSetConfig.Agents.Where(x=>x.Guid==agent.Guid|| x.ParentGuid == agent.Guid).Count()>0)
+                    {
+                       
+                    }
+                    appagent.Agent = agent;
+                    mRunSetConfig.Agents.Add(agent);
                 }
             }
 

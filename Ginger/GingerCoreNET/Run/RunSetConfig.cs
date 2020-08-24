@@ -22,8 +22,11 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
+using GingerCore;
 using GingerCore.GeneralLib;
+using GingerCore.Platforms;
 using System;
+using System.Collections.Generic;
 
 namespace Ginger.Run
 {
@@ -44,6 +47,7 @@ namespace Ginger.Run
             }
         }
 
+        public List<Agent> Agents = new List<Agent>();
         private bool mIsRunning;
         public bool IsRunning
         {
