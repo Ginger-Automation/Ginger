@@ -76,7 +76,7 @@ namespace GingerCore.Variables
             DataSource
         }
 
-        private bool mSetAsInputValue=true;
+        private bool mSetAsInputValue= false;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsInputValue
         {
@@ -91,7 +91,7 @@ namespace GingerCore.Variables
             }
         }
 
-        private bool mSetAsOutputValue = true;
+        private bool mSetAsOutputValue = false;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsOutputValue
         {
