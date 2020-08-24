@@ -1239,10 +1239,14 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                    if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null && mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+                    if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
                     {
                         General.DoEvents();
-                        App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");
+                        App.MainWindow.AddHelpLayoutToShow("RunsetPage_NewAnalyzerLocationHelp", xRunnersExecutionConfigBtn, "Click here to configure if Analyzer will be used and other Runners execution settings");
+                        if (mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+                        {
+                            App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");
+                        }
                     }
                 });
             }
@@ -1567,7 +1571,7 @@ namespace Ginger.Run
 
             if (mRunSetConfig.GingerRunners.Count == 2)
             {
-                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xRunnersExecutionConfigBtn, "Click here to set if Runners will run in parallel or sequential order plus extra configurations");
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp2", xRunnersExecutionConfigBtn, "Click here to set if Runners will run in parallel or sequential order plus extra configurations");
             }
         }
         

@@ -9,6 +9,8 @@ jobs:
 - job: Windows
   pool:
    vmImage: 'windows-2019'  #Visual Studio 2019 Preview on Windows Server 2019
+  workspace:
+    clean: outputs
 
 # ------------------------------------------------------------------------------------------------------
 # Job Variables
@@ -19,12 +21,12 @@ jobs:
     buildConfiguration: 'Release'	
     solutionDirectory:  'Ginger-Automation/Ginger'    
     testDLLs: |
-      **\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerUtilsTest.dll
-      **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerCoreCommonTest.dll
-      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerCoreNETUnitTest.dll
-      **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerConsoleTest.dll
-      **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp2.2\GingerPluginCoreTest.dll                
+      **\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerUtilsTest.dll
+      **\GingerCoreCommonTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerCoreCommonTest.dll
+      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerCoreNETUnitTest.dll
+      **\GingerConsoleTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerConsoleTest.dll
+      **\GingerAutoPilotTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerAutoPilotTest.dll
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerPluginCoreTest.dll                
      
     artifactsFolder: 'D:\a\1\a'      
      
@@ -36,11 +38,13 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 2.2.x
 # ------------------------------------------------------------------------------------------------------
+
   - task: DotNetCoreInstaller@0
     inputs:
       packageType: 'sdk' # Options: runtime, sdk
-      version: '2.2.100' 
-      displayName: Install .Net Core 2.1      
+
+      version: '3.1.100' 
+      displayName: Install .Net Core 3.1 
 
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
