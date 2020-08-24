@@ -28,17 +28,7 @@ jobs:
       version: 3.1.100
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'restore'
-      projects: '**/*Test.csproj'
-      feedsToUse: 'select'
 
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: 'build'
-      projects: '**/*Test.csproj'
-  
 # ------------------------------------------------------------------------------------------------------
 # start Testing
 # ------------------------------------------------------------------------------------------------------
