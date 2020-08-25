@@ -59,7 +59,7 @@ namespace GingerCore.ALM.JIRA.Bll
                     filterData.Add(new WhereData() { Name = "summary", Values = new List<string>() { summaryValue }, Operator = WhereOperator.And });
 
                     //and based on status, fetch statuses from JiraSettings.json 
-                    DefectStatusColl jiraDefectStatuses = new DefectStatusColl();
+                    DefectStatusColl jiraDefectStatuses = null;
                     JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
                     if (jiraHelper.TryGetJiraDefectStatuses(out jiraDefectStatuses))
                     {
