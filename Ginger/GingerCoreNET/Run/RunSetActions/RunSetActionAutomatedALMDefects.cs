@@ -108,7 +108,7 @@ namespace Ginger.Run.RunSetActions
                             currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
                         }
                         
-                        currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames););
+                        currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
 
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
