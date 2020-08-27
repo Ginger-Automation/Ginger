@@ -1413,7 +1413,7 @@ namespace GingerCore.Drivers.ASCF
 
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             //DOTO add grid view contol lists
             return new List<ElementInfo>();
@@ -1456,6 +1456,11 @@ namespace GingerCore.Drivers.ASCF
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
             throw new NotImplementedException();
         }
