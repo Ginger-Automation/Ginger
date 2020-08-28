@@ -575,9 +575,6 @@ namespace Ginger.ALM
                 //Bind again as we changed the AlmConfig object
                 Bind();
 
-                //clear items
-                //DomainComboBox.Items.Clear();
-                //ProjectComboBox.Items.Clear();
                 //Select domain and project based on new AlmConfig
                 LoginServerButton.Content = "Get Projects Details";
                 GetProjectsDetails();
