@@ -76,7 +76,7 @@ namespace GingerCore.Variables
             DataSource
         }
 
-        private bool mSetAsInputValue=true;
+        private bool mSetAsInputValue= true;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsInputValue
         {

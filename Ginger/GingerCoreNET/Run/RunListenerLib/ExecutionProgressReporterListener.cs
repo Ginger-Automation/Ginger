@@ -46,53 +46,53 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
        
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), null);
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Runner", string.Format("{0} (ID:{1})", gingerRunner.Name, gingerRunner.Guid), null);
         }
 
         public override void RunnerRunEnd(uint eventTime, GingerRunner gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", string.Format("{0} ({1})", gingerRunner.Name, gingerRunner.Guid), new GingerReport());
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Runner", string.Format("{0} (ID:{1})", gingerRunner.Name, gingerRunner.Guid), new GingerReport());
         }
 
         public override void BusinessFlowStart(uint eventTime, BusinessFlow businessFlow, bool ContinueRun = false)
         {
             mBusinessFlow = businessFlow;
-            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), new BusinessFlowReport(businessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} (ID:{1}, ParentID:{2})", businessFlow.Name, businessFlow.InstanceGuid, businessFlow.ExecutionParentGuid), new BusinessFlowReport(businessFlow));
         }
 
         public override void BusinessFlowEnd(uint eventTime, BusinessFlow businessFlow, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} ({1})", businessFlow.Name, businessFlow.InstanceGuid), new BusinessFlowReport(businessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), string.Format("{0} (ID:{1}, ParentID:{2})", businessFlow.Name, businessFlow.InstanceGuid, businessFlow.ExecutionParentGuid), new BusinessFlowReport(businessFlow));
         }
 
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));            
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), new ActivityGroupReport(activityGroup, mBusinessFlow));            
         }
 
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activityGroup.Name, new ActivityGroupReport(activityGroup, mBusinessFlow));
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), new ActivityGroupReport(activityGroup, mBusinessFlow));
         }
 
         public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {                        
-            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
+            AddExecutionDetailsToLog(eExecutionPhase.Start, GingerDicser.GetTermResValue(eTermResKey.Activity), string.Format("{0} (ID:{1}, ParentID:{2})", activity.ActivityName, activity.Guid, activity.ExecutionParentGuid), new ActivityReport(activity));
         }
 
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode= false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), activity.ActivityName, new ActivityReport(activity));
+            AddExecutionDetailsToLog(eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.Activity), string.Format("{0} (ID:{1}, ParentID:{2})", activity.ActivityName, activity.Guid, activity.ExecutionParentGuid), new ActivityReport(activity));
         }
 
         public override void ActionStart(uint eventTime, Act action)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", action.Description, new ActionReport(action, null));
+            AddExecutionDetailsToLog(eExecutionPhase.Start, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), new ActionReport(action, null));
         }
 
         public override void ActionEnd(uint eventTime, Act action, bool offlineMode=false)
         {
-            AddExecutionDetailsToLog(eExecutionPhase.End, "Action", action.Description, new ActionReport(action, null));
+            AddExecutionDetailsToLog(eExecutionPhase.End, "Action", string.Format("{0} (ID:{1}, ParentID:{2})", action.Description, action.Guid, action.ExecutionParentGuid), new ActionReport(action, null));
         }
 
         public static void AddExecutionDetailsToLog(eExecutionPhase objExecutionPhase, string objType, string objName, object obj)
