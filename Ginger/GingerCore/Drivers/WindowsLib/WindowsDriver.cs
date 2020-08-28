@@ -645,7 +645,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -988,6 +988,11 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<AppWindow> GetWindowAllFrames()
         {
             throw new NotImplementedException();
         }
