@@ -960,6 +960,7 @@ namespace Ginger.Run
             {
                 //init
                 act.SolutionFolder = SolutionFolder;
+                act.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
 
                 //resetting the retry mechanism count before calling the function.
                 act.RetryMechanismCount = 0;
@@ -2239,7 +2240,7 @@ namespace Ginger.Run
                                 break;
                             case eFlowControlAction.FailActionAndStopBusinessFlow:
                                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                act.Error = "Failed due to Flow Control rule";
+                                act.Error += " Failed due to Flow Control rule";
                                 act.ExInfo += FC.ConditionCalculated;
                                 mStopBusinessFlow = true;
                                 CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
@@ -2949,6 +2950,7 @@ namespace Ginger.Run
 
             try
             {
+                activity.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                 if (activity.Active != false)
                 {
                     //check if Activity is allowed to run
@@ -2963,9 +2965,10 @@ namespace Ginger.Run
                     }
 
                     // handling ActivityGroup execution
-                    currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    currentActivityGroup = (ActivitiesGroup)CurrentBusinessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();                    
                     if (currentActivityGroup != null)
                     {
+                        currentActivityGroup.ExecutionParentGuid = CurrentBusinessFlow.InstanceGuid;
                         switch (currentActivityGroup.ExecutionLoggerStatus)
                         {
                             case executionLoggerStatus.NotStartedYet:
@@ -3426,6 +3429,7 @@ namespace Ginger.Run
                 }
 
                 //set the BF to execute
+                businessFlow.ExecutionParentGuid = this.Guid;
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow = businessFlow;
@@ -3434,7 +3438,7 @@ namespace Ginger.Run
                     CurrentBusinessFlow.CurrentActivity = bfFirstActivity;
                     CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = bfFirstActivity.Acts.FirstOrDefault();
                 }
-             
+                
 
                 if(doContinueRun)
                 {

@@ -76,7 +76,7 @@ namespace GingerCore.Variables
             DataSource
         }
 
-        private bool mSetAsInputValue=true;
+        private bool mSetAsInputValue= true;
         [IsSerializedForLocalRepository(true)]
         public bool SetAsInputValue
         {
@@ -146,7 +146,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override void PostSerialization()
+        public override void PostDeserialization()
         {
             ResetValue();
         }
@@ -630,6 +630,13 @@ namespace GingerCore.Variables
             {
                 return nameof(this.Name);
             }
+        }
+
+        public virtual void SetInitialSetup()
+        {
+            Name = string.Format("New {0}", VariableUIType);
+            SetAsInputValue = false;
+            SetAsOutputValue = false;
         }
     }
 }

@@ -16,11 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowWindows;
 using Ginger.GeneralWindows;
 using Ginger.TwoLevelMenuLib;
 using Ginger.Variables;
+using GingerCore;
 using GingerTest.POMs;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,10 +41,13 @@ namespace GingerWPFUnitTest.POMs
     {
         // WorkSpaceEventHandler w = (WorkSpaceEventHandler)WorkSpace.Instance.EventHandler;
         Ginger.MainWindow mMainWindow;
+       
         public EnvironmentsPOM Environments;
         public AgentsPOM Agents;
         public POMsPOM POMs;
         public GlobalVariablesPOM GlobalVariables;
+        public BusinessFlowPOM businessFlow;
+        public int ActivityCount;
 
         public MainWindowPOM(Ginger.MainWindow mainWin)
         {
@@ -74,7 +82,7 @@ namespace GingerWPFUnitTest.POMs
         {            
         }
         public void ClickAutomateTab()
-        {         
+        {
         }
 
         public void ClickSolutionTab()
@@ -101,6 +109,17 @@ namespace GingerWPFUnitTest.POMs
                 SleepWithDoEvents(1);                
                 ListView lv = (ListView)mMainWindow.FindName("xSolutionTabsListView");
                 ListViewItem b = (ListViewItem)mMainWindow.FindName("xConfigurationsListItem");
+                lv.SelectedItem = b;
+                WaitForPage(typeof(TwoLevelMenuPage));
+            });
+        }
+
+        internal void ClickBusinessFlowRibbon()
+        {
+            mMainWindow.Dispatcher.Invoke(() => {
+                SleepWithDoEvents(1);
+                ListView lv = (ListView)mMainWindow.FindName("xSolutionTabsListView");
+                ListViewItem b = (ListViewItem)mMainWindow.FindName("xBusinessFlowsListItem");
                 lv.SelectedItem = b;
                 WaitForPage(typeof(TwoLevelMenuPage));
             });
@@ -202,7 +221,120 @@ namespace GingerWPFUnitTest.POMs
         //    });
         //}
 
-        
+        public BusinessFlowPOM SelectBusinessFlow()
+        {
+            businessFlow = null;
+            Execute(() =>
+            {
+                ClickBusinessFlowRibbon();
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage resourcesPage = (BusinessFlowsAutomatePage)f.Content;
+                Frame f2 = (Frame)resourcesPage.FindName("xContentFrame");
+                SingleItemTreeViewExplorerPage singleItemTreePage = (SingleItemTreeViewExplorerPage)f2.Content;
+
+                TreeView1 lv = (TreeView1)singleItemTreePage.FindName("xTreeView");
+
+                while (!singleItemTreePage.IsVisible)
+                {
+                    SleepWithDoEvents(100);
+                }
+
+                businessFlow = new BusinessFlowPOM(singleItemTreePage);
+               
+            });
+
+            return businessFlow;
+        }
+
+        public void AddActivityToLIstView()
+        {
+            Execute(() =>
+            {
+                Frame f1 = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage page1 = (BusinessFlowsAutomatePage)f1.Content;
+                Frame f2 = (Frame)page1.FindName("xContentFrame");
+                NewAutomatePage page2 = (NewAutomatePage)f2.Content;
+                Frame f3 = (Frame)page2.FindName("xActivitiesListFrame");
+                ActivitiesListViewPage activitiesListPage = (ActivitiesListViewPage)f3.Content;
+                Activity activity2 = new Activity();
+                activity2.ActivityName = "Test Activity";
+                Dispatcher.Invoke(() =>
+                {
+                    activitiesListPage.ListView.DataSourceList.Add(activity2);
+                    SleepWithDoEvents(100);
+                });
+
+                ClickOnBackToBFTreeBtn();
+
+            });
+        }
+
+
+        public int ClickOnUndoBtn()
+        {
+            Execute(() =>
+            {
+                Frame f1 = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage page1 = (BusinessFlowsAutomatePage)f1.Content;
+                Frame f2 = (Frame)page1.FindName("xContentFrame");
+                NewAutomatePage page2 = (NewAutomatePage)f2.Content;
+
+                var elByName = FindElementByName(page2, "xUndoChangesBtn");
+
+                if (elByName != null)
+                {
+                    if (elByName is Amdocs.Ginger.UserControls.ucButton)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            (elByName as Amdocs.Ginger.UserControls.ucButton).DoClick();
+                            SleepWithDoEvents(100);
+
+                        });
+                    }
+                }
+
+                Frame f3 = (Frame)page2.FindName("xActivitiesListFrame");
+                ActivitiesListViewPage activitiesListPage = (ActivitiesListViewPage)f3.Content;
+
+              ActivityCount =activitiesListPage.ListView.DataSourceList.Count;
+
+            });
+
+            return ActivityCount;
+
+            }
+
+
+        public void ClickOnBackToBFTreeBtn()
+        {
+            Execute(() =>
+            {
+                Frame f1 = (Frame)mMainWindow.FindName("xMainWindowFrame");
+                BusinessFlowsAutomatePage page1 = (BusinessFlowsAutomatePage)f1.Content;
+                Frame f2 = (Frame)page1.FindName("xContentFrame");
+                NewAutomatePage page2 = (NewAutomatePage)f2.Content;
+
+                var elByName = FindElementByName(page2, "xGoToBFsTreeBtn");
+
+                if (elByName != null)
+                {
+                    if (elByName is Amdocs.Ginger.UserControls.ucButton)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            (elByName as Amdocs.Ginger.UserControls.ucButton).DoClick();
+                            SleepWithDoEvents(100);
+                        });
+                    }
+                }
+
+               
+
+                
+
+            });
+        }
 
         public EnvironmentsPOM GotoEnvironments()
         {

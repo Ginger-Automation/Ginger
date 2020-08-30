@@ -78,6 +78,10 @@ namespace Ginger.ALM
 
         private void SetFieldsGrid()
         {
+            //Remove Rally
+            var comboEnumItem = ALMTypes.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY.ToString()).FirstOrDefault();
+            ALMTypes.Remove(comboEnumItem);
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ALMDefectProfile.Name), WidthWeight = 30, Header = "Name", HorizontalAlignment = System.Windows.HorizontalAlignment.Center });

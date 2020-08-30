@@ -906,7 +906,32 @@ public class SwingHelper implements IXPath {
 	     return "";
 	}	
 	
+	public static List<Component> GetAllFrameComponents(Container mContainer) 
+	{
+	   
+		Component[] comps = mContainer.getComponents();
+	    
+	    
+	    List<Component> componentList = new ArrayList<Component>();
+	    for (Component comp : comps) {
 
+	    	 String type = comp.getClass().toString();
+	    	if(comp instanceof JInternalFrame)
+	        {
+	    		if(comp.isVisible())
+	    		{
+	    			componentList.add(comp);
+	    		}
+	        }
+	    	if (comp instanceof Container)
+	        {
+    			componentList.addAll(GetAllFrameComponents((Container) comp));
+	        }
+   	
+	    }
+	    
+	    return componentList;
+	}	
 	
 	
 }

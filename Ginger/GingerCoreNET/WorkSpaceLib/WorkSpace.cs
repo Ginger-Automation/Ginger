@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
@@ -98,22 +99,10 @@ namespace amdocs.ginger.GingerCoreNET
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
-            }
-            AddLazyLoad();            
+            }           
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
-        }
-
-        private static void AddLazyLoad()
-        {
-            // TODO: add RI type, and use attr on field
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(BusinessFlow.Activities));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(Activity.Acts));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.UnMappedUIElements));
-            NewRepositorySerializer.AddLazyLoadAttr(nameof(ApplicationPOMModel.MappedUIElements));
-        }
-
-      
+        }     
 
         public void StartLocalGrid()
         {
@@ -353,7 +342,7 @@ namespace amdocs.ginger.GingerCoreNET
         public bool OpenSolution(string solutionFolder)
         {                      
             try
-            {               
+            {
                 Reporter.ToLog(eLogLevel.INFO, string.Format("Loading the Solution '{0}'", solutionFolder));
                 LoadingSolution = true;
 
@@ -389,7 +378,7 @@ namespace amdocs.ginger.GingerCoreNET
                     return false;
                 }
 
-                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution.xml into object");
+                Reporter.ToLog(eLogLevel.DEBUG, "Loading Solution- Loading Solution xml into object");
                 Solution solution = Solution.LoadSolution(solutionFile);
                 if (solution == null)
                 {
@@ -413,9 +402,9 @@ namespace amdocs.ginger.GingerCoreNET
                 ValueExpression.SolutionFolder = solutionFolder;
                 BusinessFlow.SolutionVariables = solution.Variables; 
                 solution.SetReportsConfigurations();
-                Solution = solution;                
+                Solution = solution;
                 UserProfile.LoadRecentAppAgentMapping();
-                
+
                 if (!RunningInExecutionMode)
                 {
                     AppSolutionRecover.DoSolutionAutoSaveAndRecover();   
@@ -423,13 +412,12 @@ namespace amdocs.ginger.GingerCoreNET
 
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
-                
+
                 // No need to add solution to recent if running from CLI
                 if (!RunningInExecutionMode)  
                 {
                     UserProfile.AddSolutionToRecent(solution);
                 }
-
                 // PlugInsManager = new PluginsManager();
                 // mPluginsManager.Init(SolutionRepository);
 

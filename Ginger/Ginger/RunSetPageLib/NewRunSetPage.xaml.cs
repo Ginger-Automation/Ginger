@@ -101,12 +101,14 @@ namespace Ginger.Run
         {
             get
             {
-                if (xBusinessflowsRunnerItemsListView != null && xBusinessflowsRunnerItemsListView.Items.Count > 0)
+                if (xBusinessflowsRunnerItemsListView != null && xBusinessflowsRunnerItemsListView.Items.Count > 0
+                        && xBusinessflowsRunnerItemsListView.SelectedItem != null)
                 {
-                    if (xBusinessflowsRunnerItemsListView.SelectedItem == null)
-                    {
-                        xBusinessflowsRunnerItemsListView.SelectedIndex = 0;
-                    }
+                    /// Avoid selecting the first BusinessFlow as default to avoid Activities loading for saving the Runset load time
+                    //if (xBusinessflowsRunnerItemsListView.SelectedItem == null)
+                    //{
+                    //    xBusinessflowsRunnerItemsListView.SelectedIndex = 0;
+                    //}
 
                     return (RunnerItemPage)xBusinessflowsRunnerItemsListView.SelectedItem;
                 }
@@ -265,7 +267,7 @@ namespace Ginger.Run
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
             WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
 
-            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;            
+            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;
             xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
 
             xActivitiesRunnerItemsListView.SelectionChanged -= xActionsListView_SelectionChanged;
@@ -889,10 +891,12 @@ namespace Ginger.Run
             }
 
             xBusinessflowName.Content = string.Format("{0} ({1})", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), mCurrentSelectedRunner.Runner.BusinessFlows.Count);
-            if (xBusinessflowsRunnerItemsListView.Items.Count > 0)
-            {
-                xBusinessflowsRunnerItemsListView.SelectedItem = mCurrentSelectedRunner.BusinessflowRunnerItems[0];
-            }
+
+            /// Avoid selecting the first BusinessFlow as default to avoid Activities loading for saving the Runset load time
+            //if (xBusinessflowsRunnerItemsListView.Items.Count > 0)
+            //{
+            //    xBusinessflowsRunnerItemsListView.SelectedItem = mCurrentSelectedRunner.BusinessflowRunnerItems[0];
+            //}
         }
        
         private void RunnerPageEvent(RunnerPageEventArgs EventArgs)
@@ -1235,10 +1239,14 @@ namespace Ginger.Run
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                    if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null && mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+                    if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
                     {
                         General.DoEvents();
-                        App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");
+                        App.MainWindow.AddHelpLayoutToShow("RunsetPage_NewAnalyzerLocationHelp", xRunnersExecutionConfigBtn, "Click here to configure if Analyzer will be used and other Runners execution settings");
+                        if (mRunSetConfig.GingerRunners.Count == 1 && mCurrentSelectedRunner != null && mCurrentSelectedRunner.Runner.BusinessFlows.Count == 0)
+                        {
+                            App.MainWindow.AddHelpLayoutToShow("RunsetPage_AddRunnerBusinessFlowHelp", xAddBusinessflowBtn, "Click here to add Business Flows to Runner flow");
+                        }
                     }
                 });
             }
@@ -1563,7 +1571,7 @@ namespace Ginger.Run
 
             if (mRunSetConfig.GingerRunners.Count == 2)
             {
-                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp", xRunnersExecutionConfigBtn, "Click here to set if Runners will run in parallel or sequential order plus extra configurations");
+                App.MainWindow.AddHelpLayoutToShow("RunsetPage_RunnersParallelSeqHelp2", xRunnersExecutionConfigBtn, "Click here to set if Runners will run in parallel or sequential order plus extra configurations");
             }
         }
         
@@ -1807,36 +1815,36 @@ namespace Ginger.Run
 
             if (mCurrentBusinessFlowRunnerItem != null)
             {
-                try
-                {
-                    xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Visible;
-                    xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
-                    General.DoEvents();//for seeing the processing icon better to do with Async
+                    try
+                    {
+                        xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Visible;
+                        xActivitiesRunnerItemsListView.Visibility = Visibility.Collapsed;
+                        General.DoEvents();//for seeing the processing icon better to do with Async
 
-                    xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
-                    
-                }
-                finally
-                {
-                    xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Collapsed;
-                    xActivitiesRunnerItemsListView.Visibility = Visibility.Visible;
-                }
-                if (!((BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject).Active)
-                {
-                    mCurrentBusinessFlowRunnerItem.xItemName.Foreground = Brushes.Gray;
-                }
-                else
-                {
-                    mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
-                }
+                        xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
 
-                mContext.BusinessFlow = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
+                    }
+                    finally
+                    {
+                        xActivitiesRunnerItemsLoadingIcon.Visibility = Visibility.Collapsed;
+                        xActivitiesRunnerItemsListView.Visibility = Visibility.Visible;
+                    }
+                    if (!((BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject).Active)
+                    {
+                        mCurrentBusinessFlowRunnerItem.xItemName.Foreground = Brushes.Gray;
+                    }
+                    else
+                    {
+                        mCurrentBusinessFlowRunnerItem.xItemName.Foreground = FindResource("$SelectionColor_Pink") as Brush;
+                    }
+
+                    mContext.BusinessFlow = (BusinessFlow)mCurrentBusinessFlowRunnerItem.ItemObject;
             }
             else
             {
                 xActivitiesRunnerItemsListView.ItemsSource = null;
                 mContext.BusinessFlow = null;
-            }            
+            }
         }
 
         private void xActivitiesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -26,9 +26,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
     public class IsLazyLoadAttribute : Attribute
     {
-        public IsLazyLoadAttribute()
-        {
+        public Repository.LazyLoadListConfig.eLazyLoadType LazyLoadType { get; set; }
 
+        public IsLazyLoadAttribute(Repository.LazyLoadListConfig.eLazyLoadType lazyLoadType)
+        {
+            LazyLoadType = lazyLoadType;
         }        
 
         public override string ToString()

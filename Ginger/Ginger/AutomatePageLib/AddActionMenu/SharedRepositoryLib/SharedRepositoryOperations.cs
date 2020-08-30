@@ -276,21 +276,22 @@ namespace Ginger.Repository
 
         public static bool CheckIfSureDoingChange(RepositoryItemBase item, string changeType)
         {
-            RepositoryItemUsagePage usagePage = null;
-            usagePage = new RepositoryItemUsagePage(item, true);
-            if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
+            //RepositoryItemUsagePage usagePage = null;
+            //usagePage = new RepositoryItemUsagePage(item, true);
+            //if (usagePage.RepoItemUsages.Count > 0)//TODO: check if only one instance exist for showing the pop up for better performance
+            //{
+            //if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+            if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem2, item.GetNameForFileName(), changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
-                if (Reporter.ToUser(eUserMsgKey.AskIfWantsToChangeeRepoItem, item.GetNameForFileName(), usagePage.RepoItemUsages.Count, changeType) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                {
-                    return true;
-                }                    
-                else
-                {
-                    return false;
-                }                    
+                return true;
             }
+            else
+            {
+                return false;
+            }
+            // }
 
-            return true;
+            //return true;
         }
 
     }

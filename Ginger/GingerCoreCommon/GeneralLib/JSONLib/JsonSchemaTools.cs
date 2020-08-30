@@ -186,8 +186,7 @@ namespace Amdocs.Ginger.Common
                                     }
 
                                     object o = GenerateJsonObjectFromJsonSchema4(item.Value, ReferenceStack, UseXMlNames);
-
-                                    jb.Add(key, (JToken)o);
+                                    jb.Add(key, JsonConvert.SerializeObject(o));
                                 }
                             }
                         }

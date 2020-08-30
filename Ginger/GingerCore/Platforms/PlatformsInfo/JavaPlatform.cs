@@ -148,7 +148,15 @@ namespace GingerCore.Platforms.PlatformsInfo
             Act elementAction = null;
             if (elementInfo != null)
             {
-                List<ActUIElement.eElementAction> elementTypeOperations = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
+                List<ActUIElement.eElementAction> elementTypeOperations;
+                if (elementInfo.GetType().Equals(typeof(HTMLElementInfo)))
+                {
+                    elementTypeOperations = GetPlatformWidgetsUIActionsList(elementInfo.ElementTypeEnum);
+                }
+                else
+                {
+                    elementTypeOperations = GetPlatformUIElementActionsList(elementInfo.ElementTypeEnum);
+                }
                 if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
@@ -173,7 +181,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateColTitle, actConfig.LocateColTitle);
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.ControlAction, actConfig.ControlAction);
                     }
-
+                    if (elementInfo.GetType().Equals(typeof(HTMLElementInfo)))
+                    {
+                        elementAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement, "true");
+                    }
                     pomExcutionUtil.SetPOMProperties(elementAction, elementInfo, actConfig);
                 }
             }
@@ -201,6 +212,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.List:
                 case eElementType.RadioButton:                
                 case eElementType.Button:
+                case eElementType.TableItem:
                     return  ActUIElement.eElementAction.Click.ToString();
 
                 case eElementType.CheckBox:
@@ -599,6 +611,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.RadioButton:
                 case eElementType.CheckBox:
                 case eElementType.Span:
+                case eElementType.TableItem:
                     widgetsActionslist.Add(ActUIElement.eElementAction.Click);
                     widgetsActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     widgetsActionslist.Add(ActUIElement.eElementAction.GetValue);
@@ -639,6 +652,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             mWidgetsElementsTypeList.Add(eElementType.Label);
             mWidgetsElementsTypeList.Add(eElementType.Span);
             mWidgetsElementsTypeList.Add(eElementType.Div);
+            mWidgetsElementsTypeList.Add(eElementType.TableItem);
 
             return mWidgetsElementsTypeList;
         }
@@ -781,10 +795,76 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.Dialog,
                     IsCommonElementType = false
                 });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Browser,
+                    IsCommonElementType = false
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Div,
+                    IsCommonElementType = false
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.Span,
+                    IsCommonElementType = false
+                });
+                mPlatformElementTypeOperations.Add(new ElementTypeData()
+                {
+                    ElementType = eElementType.HyperLink,
+                    IsCommonElementType = false
+                });
             }
             return mPlatformElementTypeOperations;
         }
 
+        public Dictionary<string,ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
+            ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
+            foreach (ElementTypeData elementTypeOperation in GetPlatformElementTypesData())
+            {
+                var elementExtInfo = SetElementExtInfo(elementTypeOperation.ElementType);
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    uIBasicElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, true));
+                }
+                else
+                {
+                    var isSelected = elementTypeOperation.IsCommonElementType;
+                    if(elementTypeOperation.ElementType.Equals(eElementType.Browser))
+                    {
+                        isSelected = true;
+                    }
+                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, elementExtInfo, isSelected));
+                }
+            }
+
+            Dictionary<string, ObservableList<UIElementFilter>> elementListDic = new Dictionary<string, ObservableList<UIElementFilter>>();
+            elementListDic.Add("Basic", new ObservableList<UIElementFilter>(uIBasicElementFilters));
+            elementListDic.Add("Advanced", new ObservableList<UIElementFilter>(uIAdvancedElementFilters));
+
+            return elementListDic;
+        }
+
+        private string SetElementExtInfo(eElementType elementType)
+        {
+            var elementExtInfo = string.Empty;
+            switch (elementType)
+            {
+                case eElementType.Browser:
+                case eElementType.Div:
+                case eElementType.Span:
+                case eElementType.HyperLink:
+                    elementExtInfo = "For Embedded Html";
+                    break;
+                default:
+                    elementExtInfo = string.Empty;
+                    break;
+            }
+            return elementExtInfo;
+        }
         public override List<ActUIElement.eSubElementType> GetSubElementType(eElementType elementType)
         {
             List<ActUIElement.eSubElementType> list = new List<ActUIElement.eSubElementType>();
@@ -882,11 +962,10 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();            
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique), Supported for widgets elements only" });
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Recommended (sensitive to page design changes),Supported for widgets elements only" });
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByXPath, Help = "Recommended (sensitive to page design changes)" });
-            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByCSSSelector, Help = "Recommended (sensitive to page design changes)" });
-            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes)" });
-            //learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Recommended (sensitive to page design changes)" });            
-            
+            learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByClassName, Help = "Recommended (sensitive to page design changes),Supported for widgets elements only" });
 
             return learningLocatorsList;
         }

@@ -58,6 +58,8 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
+        public string SpecificFramePath { get; set; }
+
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
             POM = pom;            
@@ -84,11 +86,11 @@ namespace GingerCoreNET.Application_Models
                     uIElementList.AddRange(PomLearnUtils.AutoMapBasicElementTypesList.ToList());
                     uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
-                    mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true);
+                    mIWindowExplorerDriver.GetVisibleControls(uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList(), POMLatestElements,true,SpecificFramePath);
                 }
                 else
                 {
-                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true);
+                    mIWindowExplorerDriver.GetVisibleControls(null, POMLatestElements,true,SpecificFramePath);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -413,7 +415,7 @@ namespace GingerCoreNET.Application_Models
                             var diffProperties = newElementPropeties.Except(oldElementPropeties);
 
                             // check if Parent iframe changed
-                            var parentIFrame = diffProperties.Where(x => x.Key.Contains("Parent IFrame")).FirstOrDefault();
+                            var parentIFrame = diffProperties.Where(x => x.Key.Contains(ElementProperty.ParentIFrame)).FirstOrDefault();
                             
                             var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
                             if (!string.IsNullOrEmpty(parentIFrame.Value))
