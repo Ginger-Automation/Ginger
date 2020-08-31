@@ -24,6 +24,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -60,10 +61,23 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomDeltaUtils.PomLearnUtils, nameof(mWizard.mPomDeltaUtils.PomLearnUtils.LearnOnlyMappedElements));
                     SetElementLocatorsSettingsData();                    
                     SetElementLocatorsSettingsGridView();
+                    ShowSpecficFrameLearnConfigPanel();
 
                     xAvoidPropertiesAllRadioButton.IsChecked = true;
                     xKeepLocatorsOrderCheckBox.IsChecked = true;
                     break;
+            }
+        }
+
+        private void ShowSpecficFrameLearnConfigPanel()
+        {
+            if (mAppPlatform.Equals(ePlatformType.Java))
+            {
+                xSpecificFrameConfigPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xSpecificFrameConfigPanel.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -205,6 +219,47 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             {
                 mWizard.mPomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = xKeepLocatorsOrderCheckBox.IsChecked;
             }
+        }
+
+        private void xLearnSpecificFrameChkBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (Convert.ToBoolean(xLearnSpecificFrameChkBox.IsChecked))
+            {
+                xFrameListGrid.Visibility = Visibility.Visible;
+                BindWindowFrameCombox();
+            }
+            else
+            {
+                xFrameListGrid.Visibility = Visibility.Collapsed;
+                mWizard.mPomDeltaUtils.SpecificFramePath = null;
+            }
+        }
+
+        private void BindWindowFrameCombox()
+        {
+            mWizard.mPomDeltaUtils.SpecificFramePath = null;
+            if (mAppPlatform.Equals(ePlatformType.Java))
+            {
+                var windowExplorerDriver = ((IWindowExplorer)(mWizard.mPomDeltaUtils.Agent.Driver));
+
+                var list = windowExplorerDriver.GetWindowAllFrames();
+                xFrameListCmbBox.ItemsSource = list;
+                xFrameListCmbBox.DisplayMemberPath = nameof(AppWindow.Title);
+            }
+        }
+
+        private void xFrameListCmbBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = (AppWindow)xFrameListCmbBox.SelectedItem;
+            if (selectedItem != null)
+            {
+                mWizard.mPomDeltaUtils.SpecificFramePath = selectedItem.Path;
+            }
+        }
+
+        private void xFrameRefreshBtn_Click(object sender, RoutedEventArgs e)
+        {
+            BindWindowFrameCombox();
         }
     }
 }
