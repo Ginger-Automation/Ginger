@@ -80,8 +80,8 @@
   ],
   "DefectStatuses": [
     {
-      "Status": "New",
-      "Operator": "Equals"
+      "Status": [ "New", "Allocated" ],
+      "Operator": "in"
     }
   ]
 }

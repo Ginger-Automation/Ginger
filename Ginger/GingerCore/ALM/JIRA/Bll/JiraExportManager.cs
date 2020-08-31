@@ -51,35 +51,12 @@ namespace GingerCore.ALM.JIRA.Bll
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
                 string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
-
                 if (!string.IsNullOrEmpty(summaryValue))
                 {
-                    //Search for exist based on summary
-                    WhereDataList filterData = new WhereDataList();
-                    filterData.Add(new WhereData() { Name = "summary", Values = new List<string>() { summaryValue }, Operator = WhereOperator.And });
-
-                    //and based on status, fetch statuses from JiraSettings.json 
-                    DefectStatusColl jiraDefectStatuses = null;
-                    JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
-                    if (jiraHelper.TryGetJiraDefectStatuses(out jiraDefectStatuses))
+                    string defectId = CheckIfDefectExist(summaryValue);
+                    if (!string.IsNullOrEmpty(defectId))
                     {
-                        foreach (DefectStatus defectStatus in jiraDefectStatuses)
-                        {
-                            ComparisionOperator comparisionOperator = ComparisionOperator.EqualTo;
-                            if (defectStatus.Operator.ToLower().Contains("not"))
-                            {
-                                comparisionOperator = ComparisionOperator.NotEqual;
-                            }
-                            filterData.Add(new WhereData() { Name = "Status", Values = new List<string>() { defectStatus.Status }, Operator = WhereOperator.And, ComparisionOperator = comparisionOperator });
-                        }
-                    }
-
-
-                    var issues = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT, filterData);
-                    if (issues.DataResult.Count > 0)
-                    {
-                        //Add existing defect id
-                        defectsOpeningResults.Add(defectForOpening.Key, issues.DataResult.FirstOrDefault().id.ToString());
+                        defectsOpeningResults.Add(defectForOpening.Key, defectId);
                         continue;
                     }
                     else
@@ -88,14 +65,12 @@ namespace GingerCore.ALM.JIRA.Bll
                         screenshots.Add(paths);
                     }
                 }
-
                 //if no then add into list to open new defect
                 defectsToExport.Add(this.CreateDefectData(defectForOpening, defectsFields));
             }
 
             if(defectsToExport.Count > 0)
             {
-                //Create new Defect
                 var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
                 if (exportedDefects.Count > 0)
                 {
@@ -103,20 +78,7 @@ namespace GingerCore.ALM.JIRA.Bll
                     {
                         if (exportedDefects[a].DataResult != null)
                         {
-                            //Add attachments to opened defects
-                            string[] screenshotsPaths = screenshots[a].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                            foreach (string screenshotsPath in screenshotsPaths)
-                            {
-                                var attachments = jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportedDefects[a].DataResult.key, screenshotsPath);
-                                if (attachments.DataResult != null)
-                                {
-                                    Reporter.ToLog(eLogLevel.DEBUG, "Added Attachment to defect");
-                                }
-                                else
-                                {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect -" + attachments.AuthenticationResponseObj.ErrorDesc);
-                                }
-                            }
+                            AttachScreenshotsToDefects(screenshots[a], exportedDefects[a].DataResult.key);
                             defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
                         }
                         else
@@ -125,9 +87,89 @@ namespace GingerCore.ALM.JIRA.Bll
                         }
                     }
                 }
-                
             }
             return defectsOpeningResults;
+        }
+
+        /// <summary>
+        /// Check for if defect is already exist with given summury value
+        /// if exist return id of the first defect
+        /// </summary>
+        /// <param name="summary">string summary value</param>
+        /// <returns></returns>
+        string CheckIfDefectExist(string summary)
+        {
+            //Search for exist based on summary
+            WhereDataList filterData = new WhereDataList();
+            filterData.Add(new WhereData() { Name = "summary", Values = new List<string>() { summary }, Operator = WhereOperator.And });
+
+            //and based on status, fetch statuses from JiraSettings.json 
+            DefectStatusColl jiraDefectStatuses = null;
+            JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
+            if (jiraHelper.TryGetJiraDefectStatuses(out jiraDefectStatuses))
+            {
+                foreach (DefectStatus defectStatus in jiraDefectStatuses)
+                {
+                    ComparisionOperator comparisionOperator = GetComparisionOperator(defectStatus.Operator.ToLower());
+                    filterData.Add(new WhereData() { Name = "Status", Values = defectStatus.Status.ToList(), Operator = WhereOperator.And, ComparisionOperator = comparisionOperator });
+                }
+            }
+
+            var issues = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT, filterData);
+            if (issues.DataResult.Count > 0)
+            {
+                return issues.DataResult.FirstOrDefault().key.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public ComparisionOperator GetComparisionOperator(string compareOperator)
+        {
+            ComparisionOperator comparisionOperator = ComparisionOperator.EqualTo;
+            switch (compareOperator)
+            {
+                case "equal":
+                    comparisionOperator = ComparisionOperator.EqualTo;
+                    break;
+                case "not equal":
+                    comparisionOperator = ComparisionOperator.NotEqual;
+                    break;
+                case "in":
+                    comparisionOperator = ComparisionOperator.In;
+                    break;
+                case "not in":
+                    comparisionOperator = ComparisionOperator.NotIn;
+                    break;
+            }
+            return comparisionOperator;
+        }         
+
+        /// <summary>
+        /// Add attachments to defect id
+        /// </summary>
+        /// <param name="screenshots">string containing path of the screanshots separeted by commas</param>
+        /// <param name="defectId">string defectId</param>
+        void AttachScreenshotsToDefects(string screenshots, string defectId)
+        {
+            string[] screenshotsPaths = screenshots.Split(',');
+            foreach (string screenshotsPath in screenshotsPaths)
+            {
+                if (screenshotsPath.Length > 0)
+                {
+                    var attachments = jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectId, screenshotsPath);
+                    if (attachments.DataResult != null)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Added Attachment to defect");
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect -" + attachments.AuthenticationResponseObj.ErrorDesc);
+                    }
+                }
+            }
         }
 
         private JiraIssueExport CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, List<ExternalItemFieldBase> defectsFields)

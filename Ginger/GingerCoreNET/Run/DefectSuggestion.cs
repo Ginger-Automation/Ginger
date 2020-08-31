@@ -68,7 +68,7 @@ namespace Ginger.Run
             AutomatedOpeningFlag = automatedOpeningFlag;
             IsScreenshotButtonEnabled = isScreenshotButtonEnabled;
 
-            Summary = businessFlowName + "_" + activityName + "_" + actionDescription + "_Failed_" + DateTime.Now.ToString("ddMMyyyy_HHmmss"); // To review DateTime adding!
+            Summary = businessFlowName + "_" + activityName + "_" + actionDescription + "_Failed";
             Description = description;
 
             ToOpenDefectFlag = false;
