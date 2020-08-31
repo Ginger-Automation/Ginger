@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         }
 
         public Bitmap ScreenShot { get; set; }
-       
+        public string SpecificFramePath { get; set; }
 
         public PomLearnUtils(ApplicationPOMModel pom, Agent agent=null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
@@ -173,12 +173,12 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true);
+                    IWindowExplorerDriver.GetVisibleControls(SelectedElementTypesList, mElementsList,true, SpecificFramePath);
                 }
             }
             else
             {
-                IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true);
+                IWindowExplorerDriver.GetVisibleControls(null, mElementsList,true, SpecificFramePath);
             }
         }
 
