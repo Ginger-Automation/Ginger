@@ -128,7 +128,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
         public ComparisionOperator GetComparisionOperator(string compareOperator)
         {
-            ComparisionOperator comparisionOperator = ComparisionOperator.EqualTo;
+            ComparisionOperator comparisionOperator;
             switch (compareOperator)
             {
                 case "equal":
@@ -142,6 +142,9 @@ namespace GingerCore.ALM.JIRA.Bll
                     break;
                 case "not in":
                     comparisionOperator = ComparisionOperator.NotIn;
+                    break;
+                default:
+                    comparisionOperator = ComparisionOperator.EqualTo;
                     break;
             }
             return comparisionOperator;
