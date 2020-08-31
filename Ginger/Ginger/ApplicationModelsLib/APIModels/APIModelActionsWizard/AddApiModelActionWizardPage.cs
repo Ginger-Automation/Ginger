@@ -128,7 +128,9 @@ namespace Ginger.ApiModelsFolder
                 rv.Active = modelRV.Active;
                 rv.Param = modelRV.Param;
                 rv.Path = modelRV.Path;
+                rv.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 rv.Expected = modelRV.Expected;
+                
                 if (!string.IsNullOrEmpty(modelRV.StoreToValue))
                 {
                     rv.StoreTo = ActReturnValue.eStoreTo.ApplicationModelParameter;
