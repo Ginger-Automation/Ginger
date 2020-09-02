@@ -3429,7 +3429,10 @@ namespace Ginger.Run
                 }
 
                 //set the BF to execute
-                businessFlow.ExecutionParentGuid = this.Guid;
+                if (businessFlow != null)
+                {
+                    businessFlow.ExecutionParentGuid = this.Guid;
+                }
                 if (doContinueRun == false)
                 {
                     CurrentBusinessFlow = businessFlow;

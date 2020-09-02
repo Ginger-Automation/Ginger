@@ -278,7 +278,7 @@ namespace GingerCore.Variables
                         {
                             try
                             {
-                                if (PI.CanWrite)
+                                if (PI != null && PI.CanWrite)
                                 {
                                     string stringValue = value.ToString();
                                     string variablePlaceHoler = "{Var Name=xx}";
