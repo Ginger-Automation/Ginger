@@ -3669,7 +3669,18 @@ namespace GingerCore.Drivers
                 //TODO: get current win and keep, later on set in combo
                 foreach (string window in windows)
                 {
-                    Driver.SwitchTo().Window(window);
+                    try
+                    {
+                        if (window != Driver.CurrentWindowHandle)
+                        {
+                            Driver.SwitchTo().Window(window);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
+                    }
+
                     AppWindow AW = new AppWindow();
                     AW.Title = Driver.Title;
                     AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
