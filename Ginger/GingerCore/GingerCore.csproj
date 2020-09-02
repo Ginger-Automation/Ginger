@@ -861,7 +861,9 @@
     <None Include="ALM\JIRA\JiraSettings\Export\test.json" />
     <None Include="ALM\JIRA\JiraSettings\Export\testexecution.json" />
     <None Include="ALM\JIRA\JiraSettings\Export\testset.json" />
-    <None Include="ALM\JIRA\JiraSettings\JiraSettings.json" />
+    <None Include="ALM\JIRA\JiraSettings\JiraSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="GingerCore.ruleset" />
     <None Include="RallyRestAPI.NET.shfbproj" />
     <None Include="Resources\%40EmptyStart_16x16.gif" />

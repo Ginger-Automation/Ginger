@@ -31,7 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common.InterfacesLib;
-
+using JiraRepository.Settings;
 
 namespace GingerCore.ALM.JIRA.Bll
 {
@@ -47,17 +47,132 @@ namespace GingerCore.ALM.JIRA.Bll
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
             List<JiraIssueExport> defectsToExport = new List<JiraIssueExport>();
+            List<string> screenshots = new List<string>();
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
+                string summaryValue = defectForOpening.Value.ContainsKey("Summary") ? defectForOpening.Value["Summary"] : string.Empty;
+                if (!string.IsNullOrEmpty(summaryValue))
+                {
+                    string defectId = CheckIfDefectExist(summaryValue);
+                    if (!string.IsNullOrEmpty(defectId))
+                    {
+                        defectsOpeningResults.Add(defectForOpening.Key, defectId);
+                        continue;
+                    }
+                    else
+                    {
+                        string paths = defectForOpening.Value.ContainsKey("screenshots") ? defectForOpening.Value["screenshots"] : string.Empty;
+                        screenshots.Add(paths);
+                    }
+                }
+                //if no then add into list to open new defect
                 defectsToExport.Add(this.CreateDefectData(defectForOpening, defectsFields));
             }
-            var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
-            for (var a = 0; a < exportedDefects.Count; a++)
+
+            if(defectsToExport.Count > 0)
             {
-                if (defectsForOpening.Count > a)
-                    defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
+                var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
+                if (exportedDefects.Count > 0)
+                {
+                    for (var a = 0; a < exportedDefects.Count; a++)
+                    {
+                        if (exportedDefects[a].DataResult != null)
+                        {
+                            AttachScreenshotsToDefects(screenshots[a], exportedDefects[a].DataResult.key);
+                            defectsOpeningResults.Add(defectsForOpening.ElementAt(a).Key, exportedDefects[a].DataResult.key);
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to create to defect -" + exportedDefects[a].AuthenticationResponseObj.ErrorDesc);
+                        }
+                    }
+                }
             }
             return defectsOpeningResults;
+        }
+
+        /// <summary>
+        /// Check for if defect is already exist with given summury value
+        /// if exist return id of the first defect
+        /// </summary>
+        /// <param name="summary">string summary value</param>
+        /// <returns></returns>
+        string CheckIfDefectExist(string summary)
+        {
+            //Search for exist based on summary
+            WhereDataList filterData = new WhereDataList();
+            filterData.Add(new WhereData() { Name = "summary", Values = new List<string>() { summary }, Operator = WhereOperator.And });
+
+            //and based on status, fetch statuses from JiraSettings.json 
+            DefectStatusColl jiraDefectStatuses = null;
+            JiraRepository.Helpers.JiraHelper jiraHelper = new JiraRepository.Helpers.JiraHelper();
+            if (jiraHelper.TryGetJiraDefectStatuses(out jiraDefectStatuses))
+            {
+                foreach (DefectStatus defectStatus in jiraDefectStatuses)
+                {
+                    ComparisionOperator comparisionOperator = GetComparisionOperator(defectStatus.Operator.ToLower());
+                    filterData.Add(new WhereData() { Name = "Status", Values = defectStatus.Status.ToList(), Operator = WhereOperator.And, ComparisionOperator = comparisionOperator });
+                }
+            }
+
+            var issues = jiraRepObj.GetJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey, ResourceType.DEFECT, filterData);
+            if (issues.DataResult.Count > 0)
+            {
+                return issues.DataResult.FirstOrDefault().key.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        public ComparisionOperator GetComparisionOperator(string compareOperator)
+        {
+            ComparisionOperator comparisionOperator;
+            switch (compareOperator)
+            {
+                case "equal":
+                    comparisionOperator = ComparisionOperator.EqualTo;
+                    break;
+                case "not equal":
+                    comparisionOperator = ComparisionOperator.NotEqual;
+                    break;
+                case "in":
+                    comparisionOperator = ComparisionOperator.In;
+                    break;
+                case "not in":
+                    comparisionOperator = ComparisionOperator.NotIn;
+                    break;
+                default:
+                    comparisionOperator = ComparisionOperator.EqualTo;
+                    break;
+            }
+            return comparisionOperator;
+        }         
+
+        /// <summary>
+        /// Add attachments to defect id
+        /// </summary>
+        /// <param name="screenshots">string containing path of the screanshots separeted by commas</param>
+        /// <param name="defectId">string defectId</param>
+        void AttachScreenshotsToDefects(string screenshots, string defectId)
+        {
+            string[] screenshotsPaths = screenshots.Split(',');
+            foreach (string screenshotsPath in screenshotsPaths)
+            {
+                if (screenshotsPath.Length > 0)
+                {
+                    var attachments = jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectId, screenshotsPath);
+                    if (attachments.DataResult != null)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Added Attachment to defect");
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect -" + attachments.AuthenticationResponseObj.ErrorDesc);
+                    }
+                }
+            }
         }
 
         private JiraIssueExport CreateDefectData(KeyValuePair<Guid, Dictionary<string, string>> defectForOpening, List<ExternalItemFieldBase> defectsFields)
