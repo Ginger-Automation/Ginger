@@ -3671,20 +3671,19 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
-                        if (window != Driver.CurrentWindowHandle)
-                        {
-                            Driver.SwitchTo().Window(window);
-                        }
+                        Driver.SwitchTo().Window(window);
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
                     }
-
-                    AppWindow AW = new AppWindow();
-                    AW.Title = Driver.Title;
-                    AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
-                    list.Add(AW);
+                    finally
+                    {
+                        AppWindow AW = new AppWindow();
+                        AW.Title = Driver.Title;
+                        AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
+                        list.Add(AW);
+                    }
                 }
                 return list;
             }
