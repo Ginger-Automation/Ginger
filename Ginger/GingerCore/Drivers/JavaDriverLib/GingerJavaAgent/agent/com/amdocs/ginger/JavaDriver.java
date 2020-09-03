@@ -164,7 +164,9 @@ public class JavaDriver {
 		LocateElement,
 		GetEditorChildrens,
 		GetComponentFromCursor,
-		UnHighlight
+		UnHighlight,
+		GetWindowAllFrames,
+		GetFrameControls
 	}
 	
 
@@ -861,6 +863,15 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			String containerXPath = PL.GetValueString();
 			return HandleGetContainerControls(containerXPath);
 		}
+		else if(WindowExplorerOperationType.GetFrameControls.toString().equals(operationType))
+		{
+			String containerXPath = PL.GetValueString();
+			return HandleGetFrameControls(containerXPath);
+		}
+		else if(WindowExplorerOperationType.GetWindowAllFrames.toString().equals(operationType))
+		{
+			return HandleGetAllVisibleFrames();
+		}
 		else if (WindowExplorerOperationType.GetEditorChildrens.toString().equals(operationType))
 		{
 			String containerXPath = PL.GetValueString();
@@ -911,6 +922,65 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Invalid Window Explorer Operation Type: "+ operationType);
 		}
 	}
+	
+	private PayLoad HandleGetAllVisibleFrames() 
+	{
+		GingerAgent.WriteLog("HandleGetAllVisibleFrames()");
+		Window CurrentWindow= mSwingHelper.getCurrentWindow();
+		GingerAgent.WriteLog("Current Window Title = " + CurrentWindow.getName());
+		
+		if(CurrentWindow == null)
+		{
+			return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"No current Window");
+		}
+			
+		List<Component> componentsList = SwingHelper.GetAllFrameComponents(CurrentWindow);
+			
+		GingerAgent.WriteLog("Total Frames Found: " + componentsList.size());
+		
+		List<PayLoad> Elements = new ArrayList<PayLoad>(); 
+		for(Component comp : componentsList)
+		{
+			PayLoad PL = GetCompInfo(comp);
+			Elements.add(PL);
+		}
+			
+		GingerAgent.WriteLog("Visible Frames Found: " + Elements.size());
+			
+		PayLoad pl2 = new PayLoad("WindowComponents");
+		pl2.AddListPayLoad(Elements);
+		pl2.ClosePackage();
+		return pl2;
+
+	}
+	
+	private PayLoad HandleGetFrameControls(String frameXpath) 
+	{
+        Container	c=(Container)mSwingHelper.FindElement("ByXPath", frameXpath);	
+		
+        List<Component> componentsList = SwingHelper.getAllComponents(c);
+		
+		GingerAgent.WriteLog("Total Elements Found: " + componentsList.size());
+	
+		List<PayLoad> Elements = new ArrayList<PayLoad>(); 
+		for(Component comp : componentsList)
+		{
+				if (comp.isVisible() && comp.isShowing())
+				{				
+					PayLoad PL = GetCompInfo(comp);
+
+					Elements.add(PL);
+				}	
+		}
+		
+		GingerAgent.WriteLog("Visible Element Found: " + Elements.size());
+		
+		PayLoad pl2 = new PayLoad("WindowComponents");
+		pl2.AddListPayLoad(Elements);
+		pl2.ClosePackage();
+		return pl2;
+		
+	}		
 
 	private String GetCurrentWindowTitle(Window currentWindow) {
 		String winTitle= currentWindow.getName();
