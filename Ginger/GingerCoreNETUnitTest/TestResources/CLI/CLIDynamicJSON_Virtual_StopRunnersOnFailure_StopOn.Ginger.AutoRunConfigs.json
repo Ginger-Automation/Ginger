@@ -38,8 +38,8 @@
           {
             "ApplicationName": "app1",
             "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
-            "AgentName": "Chrome",
-            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
+            "AgentName": "Chrome-2",
+            "AgentID": "d6a12084-2813-40f7-bb84-64af9f756c6e"
           }
         ],
         "BusinessFlows": [
@@ -68,8 +68,8 @@
           {
             "ApplicationName": "app1",
             "ApplicationID": "e514fcc7-9e32-40c4-badf-845930479277",
-            "AgentName": "Chrome",
-            "AgentID": "aa2f27c9-16e5-466e-ad41-ba34841fa72d"
+            "AgentName": "IE",
+            "AgentID": "bdcdb5d7-4166-4cb8-a937-8789d58e8e2f"
           }
         ],
         "BusinessFlows": [

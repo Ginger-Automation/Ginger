@@ -61,7 +61,6 @@
 
   <ItemGroup>
     <Folder Include="TestResources\Conversion\" />
-    <Folder Include="TestResources\Solutions\CLI\" />
     <Folder Include="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\HTMLReportTemplate\" />
     <Folder Include="TestResources\Solutions\EmailWebReport\HTMLReportConfigurations\ReportTemplates\" />
   </ItemGroup>
@@ -85,10 +84,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\CLI\CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff.Ginger.AutoRunConfigs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\CLI\CLIDynamicJSON_Virtual_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\CLI\CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOn.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -442,6 +441,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\BasicSimple\RunSetConfigs\Default Run Set.Ginger.RunSetConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TestResources\Solutions\CLI\Agents\Chrome-2.Ginger.Agent.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestResources\Solutions\CLI\Agents\Chrome.Ginger.Agent.xml">

@@ -518,7 +518,7 @@ namespace Ginger.Run
                 //do Validations
 
                 //Do execution preparations
-                if (doContinueRun == false)
+                if (doContinueRun == false && this.ExecutedFrom==eExecutedFrom.Automation)
                 {
                     UpdateApplicationAgents();
                 }
@@ -586,6 +586,10 @@ namespace Ginger.Run
                     }
 
                 }
+            }
+            catch(Exception ec)
+            {
+
             }
             finally
             {
@@ -4062,7 +4066,10 @@ namespace Ginger.Run
             for (int indx = 0; indx < ApplicationAgents.Count;)
             {
                 if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ((ApplicationAgent)ApplicationAgents[indx]).Agent == null)
+                {
                     ApplicationAgents.RemoveAt(indx);
+                }
+
                 else
                     indx++;
             }

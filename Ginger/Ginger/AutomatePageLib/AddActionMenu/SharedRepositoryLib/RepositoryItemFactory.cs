@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
 using Ginger.GeneralLib;
@@ -222,9 +223,22 @@ namespace Ginger.Repository
                 else
                 {
                     agent.Driver = Driver;
+
+                   
                     Driver.BusinessFlow = agent.BusinessFlow;
                     agent.SetDriverConfiguration();
 
+                    IVirtualDriver VirtualDriver = null;
+                    if (agent.Driver is IVirtualDriver VD)
+                    {
+                        VirtualDriver = VD;
+                        string ErrorMessage;
+                        if (!VirtualDriver.CanStartAnotherInstance(out ErrorMessage))
+                        {
+                            throw new NotSupportedException(ErrorMessage);
+  
+                        }
+                    }
                     //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
                     if (Driver.IsSTAThread())
                     {
@@ -236,6 +250,10 @@ namespace Ginger.Repository
                     else
                     {
                         Driver.StartDriver();
+                    }
+                    if(VirtualDriver!=null)
+                    {
+                        VirtualDriver.DriverStarted(agent.Guid.ToString());
                     }
                 }
             }
