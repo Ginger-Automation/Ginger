@@ -3671,21 +3671,22 @@ namespace GingerCore.Drivers
                 {
                     try
                     {
-                        Driver.SwitchTo().Window(window);
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
-                    }
-                    finally
-                    {
+                        if (!window.Equals(Driver.CurrentWindowHandle))
+                        {
+                            Driver.SwitchTo().Window(window);
+                        }
                         AppWindow AW = new AppWindow();
                         AW.Title = Driver.Title;
                         AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
                         list.Add(AW);
                     }
+                    catch (Exception ex)
+                    {
+                        string wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
+                    }
                 }
-                return list.Distinct().ToList();
+                return list.ToList();
             }
             return null;
         }
@@ -4445,24 +4446,23 @@ namespace GingerCore.Drivers
             {
                 try
                 {
-                    Driver.SwitchTo().Window(winHandle);
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
-                }
-                finally
-                {
+                    if(!winHandle.Equals(currentWindow))
+                    {
+                        Driver.SwitchTo().Window(winHandle);
+                    }
                     string winTitle = Driver.Title;
                     if (winTitle == Title)
                     {
                         windowfound = true;
+                        break;
                     }
                 }
-               if(windowfound)
+                catch (Exception ex)
                 {
-                    break;
+                    var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
                 }
+               
             }
             if (!windowfound)
             {
