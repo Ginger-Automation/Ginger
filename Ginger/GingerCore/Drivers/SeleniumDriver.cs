@@ -3685,7 +3685,7 @@ namespace GingerCore.Drivers
                         list.Add(AW);
                     }
                 }
-                return list;
+                return list.Distinct().ToList();
             }
             return null;
         }
@@ -4443,11 +4443,24 @@ namespace GingerCore.Drivers
             ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
             foreach (String winHandle in openWindows)
             {
-                Driver.SwitchTo().Window(winHandle);
-                string winTitle = Driver.Title;
-                if (winTitle == Title)
+                try
                 {
-                    windowfound = true;
+                    Driver.SwitchTo().Window(winHandle);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
+                }
+                finally
+                {
+                    string winTitle = Driver.Title;
+                    if (winTitle == Title)
+                    {
+                        windowfound = true;
+                    }
+                }
+               if(windowfound)
+                {
                     break;
                 }
             }
