@@ -4063,7 +4063,10 @@ namespace Ginger.Run
             for (int indx = 0; indx < ApplicationAgents.Count;)
             {
                 if (bfsTargetApplications.Where(x => x.Name == ApplicationAgents[indx].AppName).FirstOrDefault() == null || ((ApplicationAgent)ApplicationAgents[indx]).Agent == null)
+                {
                     ApplicationAgents.RemoveAt(indx);
+                }
+
                 else
                     indx++;
             }

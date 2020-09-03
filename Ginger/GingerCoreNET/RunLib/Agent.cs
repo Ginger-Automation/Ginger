@@ -474,15 +474,25 @@ namespace GingerCore
         }
         public bool SupportVirtualAgent()
         {
-            if (DriverClass == null)
+            try
+            {
+
+                if (DriverClass == null)
             {
                 DriverClass = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
             }
-            
 
-            if(DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
+ 
+                if (DriverClass.GetInterfaces().Contains(typeof(IVirtualDriver)))
+                {
+                    return true;
+                }
+            }
+
+            catch(Exception e)
             {
-                return true;
+                
+
             }
             return false;
         }

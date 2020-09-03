@@ -150,8 +150,12 @@ namespace Ginger.Run
 
         public void InitRunner(GingerRunner runner)
         {
+
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
+            Reporter.ToLog(eLogLevel.INFO, string.Format("Configuring {0} elements for execution", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+            ConfigureAllRunnersForExecution();
+            LoadBusinessFlows();
             runner.UpdateApplicationAgents();
             ConfigureRunnerForExecution(runner);
 
@@ -186,68 +190,71 @@ namespace Ginger.Run
                     }
                 }
             }
-            //Load the biz flows     
-            ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
-            foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
+            void LoadBusinessFlows()
             {
-                ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                //Load the biz flows     
+                ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
+                foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
+                {
+                    ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                BusinessFlow businessFlow = (from x in businessFlows where x.Guid == businessFlowRun.BusinessFlowGuid select x).FirstOrDefault();
-                //Fail over to try and find by name
-                if (businessFlow == null)
-                {
-                    businessFlow = (from x in businessFlows where x.Name == businessFlowRun.BusinessFlowName select x).FirstOrDefault();
-                }
-                if (businessFlow == null)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Can not find the '{0}' {1} for the '{2}' {3}", businessFlowRun.BusinessFlowName, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    continue;
-                }
-                else
-                {
-                    // Very slow
-                    BusinessFlow BFCopy = (BusinessFlow)businessFlow.CreateCopy(false);
-
-                    BFCopy.ContainingFolder = businessFlow.ContainingFolder;
-                    BFCopy.Reset();
-                    BFCopy.Active = businessFlowRun.BusinessFlowIsActive;
-                    BFCopy.Mandatory = businessFlowRun.BusinessFlowIsMandatory;
-                    if (businessFlowRun.BusinessFlowInstanceGuid == Guid.Empty)
+                    BusinessFlow businessFlow = (from x in businessFlows where x.Guid == businessFlowRun.BusinessFlowGuid select x).FirstOrDefault();
+                    //Fail over to try and find by name
+                    if (businessFlow == null)
                     {
-                        BFCopy.InstanceGuid = Guid.NewGuid();
+                        businessFlow = (from x in businessFlows where x.Name == businessFlowRun.BusinessFlowName select x).FirstOrDefault();
+                    }
+                    if (businessFlow == null)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Can not find the '{0}' {1} for the '{2}' {3}", businessFlowRun.BusinessFlowName, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                        continue;
                     }
                     else
                     {
-                        BFCopy.InstanceGuid = businessFlowRun.BusinessFlowInstanceGuid;
-                    }
-                    if (businessFlowRun.BusinessFlowCustomizedRunVariables != null && businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
-                    {
-                        ObservableList<VariableBase> allBfVars = BFCopy.GetBFandActivitiesVariabeles(true); 
-                        Parallel.ForEach(businessFlowRun.BusinessFlowCustomizedRunVariables, customizedVar =>
-                        {
-                            VariableBase originalVar = allBfVars.Where(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid).FirstOrDefault();
-                            if (originalVar == null)//for supporting dynamic run set XML in which we do not have GUID
-                            {
-                                originalVar = allBfVars.Where(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name).FirstOrDefault();
-                                if (originalVar == null)
-                                {
-                                    originalVar = allBfVars.Where(v => v.Name == customizedVar.Name).FirstOrDefault();
-                                }
-                            }
-                            if (originalVar != null)
-                            {
-                                CopyCustomizedVariableConfigurations(customizedVar, originalVar);
-                            }
-                        });
-                    }
-                    BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
-                    BFCopy.BFFlowControls = businessFlowRun.BFFlowControls;
-                    runnerFlows.Add(BFCopy);
-                }
-            }
+                        // Very slow
+                        BusinessFlow BFCopy = (BusinessFlow)businessFlow.CreateCopy(false);
 
-            runner.IsUpdateBusinessFlowRunList = true;
-            runner.BusinessFlows = runnerFlows;
+                        BFCopy.ContainingFolder = businessFlow.ContainingFolder;
+                        BFCopy.Reset();
+                        BFCopy.Active = businessFlowRun.BusinessFlowIsActive;
+                        BFCopy.Mandatory = businessFlowRun.BusinessFlowIsMandatory;
+                        if (businessFlowRun.BusinessFlowInstanceGuid == Guid.Empty)
+                        {
+                            BFCopy.InstanceGuid = Guid.NewGuid();
+                        }
+                        else
+                        {
+                            BFCopy.InstanceGuid = businessFlowRun.BusinessFlowInstanceGuid;
+                        }
+                        if (businessFlowRun.BusinessFlowCustomizedRunVariables != null && businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
+                        {
+                            ObservableList<VariableBase> allBfVars = BFCopy.GetBFandActivitiesVariabeles(true);
+                            Parallel.ForEach(businessFlowRun.BusinessFlowCustomizedRunVariables, customizedVar =>
+                            {
+                                VariableBase originalVar = allBfVars.Where(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid).FirstOrDefault();
+                                if (originalVar == null)//for supporting dynamic run set XML in which we do not have GUID
+                            {
+                                    originalVar = allBfVars.Where(v => v.ParentName == customizedVar.ParentName && v.Name == customizedVar.Name).FirstOrDefault();
+                                    if (originalVar == null)
+                                    {
+                                        originalVar = allBfVars.Where(v => v.Name == customizedVar.Name).FirstOrDefault();
+                                    }
+                                }
+                                if (originalVar != null)
+                                {
+                                    CopyCustomizedVariableConfigurations(customizedVar, originalVar);
+                                }
+                            });
+                        }
+                        BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
+                        BFCopy.BFFlowControls = businessFlowRun.BFFlowControls;
+                        runnerFlows.Add(BFCopy);
+                    }
+                }
+
+                runner.IsUpdateBusinessFlowRunList = true;
+                runner.BusinessFlows = runnerFlows;
+            }
         }
 
         private void CopyCustomizedVariableConfigurations(VariableBase customizedVar, VariableBase originalVar)

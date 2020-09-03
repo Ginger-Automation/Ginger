@@ -331,3 +331,4 @@ ASALocalRun/
 /Ginger/GingerCore/Plugins/Jenkins/gingerPlugin/work
 /Ginger/GingerCore/Drivers/JavaDriverLib/GingerJavaAgent/.externalToolBuilders
 /Ginger/GingerCoreNETUnitTest/TestResources/Solutions/BasicSimple/ExecutionResults/GingerExecutionResults.db
+/Ginger/GingerTest/GingerTest.GeneratedMSBuildEditorConfig.editorconfig
