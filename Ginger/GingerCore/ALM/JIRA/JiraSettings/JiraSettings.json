@@ -10,6 +10,10 @@
       "Value": "/rest/api/2/issue"
     },
     {
+      "key": "Attachment",
+      "Value": "/rest/api/2/issue/{defect_id}/attachments"
+    },
+    {
       "key": "Search",
       "Value": "/rest/api/2/search?jql=project ={project_id} and issuetype in (\"{issue_types}\"){additionalData}&startAt={start_at}&maxResults={page_size}"
     },
@@ -72,6 +76,12 @@
     {
       "key": "BLOCKED",
       "Value": "BLOCKED"
+    }
+  ],
+  "DefectStatuses": [
+    {
+      "Status": [ "New", "Allocated" ],
+      "Operator": "in"
     }
   ]
 }
