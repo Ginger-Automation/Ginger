@@ -58,7 +58,7 @@ namespace Ginger.Agents
                     mOriginalDriverType = mAgent.DriverType.ToString();
 
                     xPlatformTxtBox.Text = mOriginalPlatformType.ToString();
-                    SetDriverTypeCombo();
+                    SetDriverInformation();
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDriverTypeComboBox, ComboBox.TextProperty, mAgent, nameof(Agent.DriverType));
                     xDriverTypeComboBox.SelectionChanged += driverTypeComboBox_SelectionChanged;
                 }
@@ -100,7 +100,7 @@ namespace Ginger.Agents
             }
         }
 
-        private void SetDriverTypeCombo()
+        private void SetDriverInformation()
         {            
             List<object> lst = new List<object>();
             foreach (eDriverType item in Enum.GetValues(typeof(eDriverType)))
@@ -112,7 +112,18 @@ namespace Ginger.Agents
                 }
             }
             
-            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);           
+            GingerCore.General.FillComboFromEnumObj(xDriverTypeComboBox, mAgent.DriverType, lst);   
+            if(mAgent.SupportVirtualAgent())
+            {
+                xVirtualAgentsPanel.Visibility = Visibility.Visible;
+                xAgentVirtualSupported.Content = "Yes";
+
+                VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
+            }
+            else
+            {
+                xAgentVirtualSupported.Content = "No";
+            }
         }
 
 
@@ -154,6 +165,10 @@ namespace Ginger.Agents
                 xTestBtn.IsEnabled = true;
             }
         }
-      
+
+        private void RefreshVirtualAgentCount_Click(object sender, RoutedEventArgs e)
+        {
+            VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
+        }
     }
 }
