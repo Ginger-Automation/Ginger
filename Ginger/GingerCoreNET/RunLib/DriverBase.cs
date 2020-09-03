@@ -185,7 +185,7 @@ namespace GingerCore.Drivers
         /// <summary>
         /// WIll give list of active virtual drivers
         /// </summary>
-        public static List<KeyValuePair<string, DriverBase>> VirtualDrivers = new List<KeyValuePair<string, DriverBase>>();
+        public static readonly List<KeyValuePair<string, DriverBase>> VirtualDrivers = new List<KeyValuePair<string, DriverBase>>();
 
     
         public void DriverStarted(string AgentGuid)

@@ -472,6 +472,10 @@ namespace GingerCore
                 OnPropertyChanged(Fields.Status);
             }
         }
+        /// <summary>
+        /// Check if agent support virtual drivers 
+        /// </summary>
+        /// <returns></returns>
         public bool SupportVirtualAgent()
         {
             try
@@ -488,7 +492,7 @@ namespace GingerCore
                     return true;
                 }
             }
-
+            //if the exceptions are throws we consider it to be not supportable for virtual agents
             catch(Exception e)
             {
                 
