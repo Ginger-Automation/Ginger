@@ -518,7 +518,7 @@ namespace Ginger.Run
                 //do Validations
 
                 //Do execution preparations
-                if (doContinueRun == false)
+                if (doContinueRun == false && this.ExecutedFrom==eExecutedFrom.Automation)
                 {
                     UpdateApplicationAgents();
                 }
@@ -586,6 +586,10 @@ namespace Ginger.Run
                     }
 
                 }
+            }
+            catch(Exception ec)
+            {
+
             }
             finally
             {

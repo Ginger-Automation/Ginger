@@ -52,10 +52,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using WindowsInput;
+using Amdocs.Ginger.CoreNET.RunLib;
 
 namespace GingerCore.Drivers
 {
-    public class SeleniumDriver : DriverBase, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
+    public class SeleniumDriver : DriverBase, IVirtualDriver, IWindowExplorer, IVisualTestingDriver, IXPath, IPOM, IRecord
     {
         public enum eBrowserType
         {
@@ -7616,6 +7617,24 @@ namespace GingerCore.Drivers
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
+        }
+
+        public bool CanStartAnotherINstance()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            switch(mBrowserTpe)
+            {
+                case eBrowserType.IE:
+                   errorMessage = "Internet Explorer Doen't Support Virtual Agents";
+                    return false;
+                default:
+                    errorMessage = string.Empty;
+                    return true;
+            }
         }
     }
 }

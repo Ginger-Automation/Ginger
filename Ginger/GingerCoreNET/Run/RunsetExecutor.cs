@@ -152,26 +152,40 @@ namespace Ginger.Run
         {
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
+            runner.UpdateApplicationAgents();
             ConfigureRunnerForExecution(runner);
 
             //Set the Apps agents
+
             foreach (ApplicationAgent appagent in runner.ApplicationAgents.ToList())
             {
+
                 if (appagent.AgentName != null)
                 {
                     ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 
                     var agent = (from a in agents where a.Name == appagent.AgentName select a).FirstOrDefault();
-            //logic for if need to assign virtual agent 
-                    if(mRunSetConfig.Agents.Where(x=>x.Guid==agent.Guid|| x.ParentGuid == agent.Guid).Count()>0)
+                    //logic for if need to assign virtual agent 
+                    if ((mRunSetConfig.Agents.Where(x => x.Guid == agent.Guid || x.ParentGuid == agent.Guid).Count() > 0) && agent.SupportVirtualAgent())
                     {
-                       
+
+                        var virtualagent = agent.CreateCopy(true) as Agent;
+                        virtualagent.ParentGuid = agent.Guid;
+                        virtualagent.DriverClass = agent.DriverClass;
+                        virtualagent.DriverType = agent.DriverType;
+                        appagent.Agent = virtualagent;
+                        virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                        mRunSetConfig.Agents.Add(virtualagent);
+
                     }
-                    appagent.Agent = agent;
-                    mRunSetConfig.Agents.Add(agent);
+                    else
+                    {
+
+                        appagent.Agent = agent;
+                        mRunSetConfig.Agents.Add(agent);
+                    }
                 }
             }
-
             //Load the biz flows     
             ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
             foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
@@ -356,7 +370,8 @@ namespace Ginger.Run
             try
             {
                 mRunSetConfig.IsRunning = true;
-
+                mRunSetConfig.Agents.Clear();
+                InitRunners();
                 //reset run       
                 if (doContinueRun == false)
                 {
