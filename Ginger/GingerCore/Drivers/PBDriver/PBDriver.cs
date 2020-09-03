@@ -32,11 +32,13 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
 using Amdocs.Ginger.Repository;
+using Castle.Components.DictionaryAdapter;
+using Amdocs.Ginger.CoreNET.RunLib;
 
 namespace GingerCore.Drivers.PBDriver
 {
     //This class is for Power Builder UIAutomation
-    public class PBDriver : UIAutomationDriverBase, IWindowExplorer
+    public class PBDriver : UIAutomationDriverBase, IWindowExplorer,IVirtualDriver
     {
         Dictionary<AutomationElement, AutomationElement[,]> gridDictionary;
 
@@ -1112,6 +1114,11 @@ namespace GingerCore.Drivers.PBDriver
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
             throw new NotImplementedException();
+        }
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
         }
     }
 }
