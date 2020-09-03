@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
         AppWindow GetActiveWindow();
-        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false);
+        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false,string specificFramePath=null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
@@ -59,5 +59,6 @@ namespace Amdocs.Ginger.Common.UIElement
 
         void StartSpying();
         ElementInfo LearnElementInfoDetails(ElementInfo EI);
+        List<AppWindow> GetWindowAllFrames();
     }
 }

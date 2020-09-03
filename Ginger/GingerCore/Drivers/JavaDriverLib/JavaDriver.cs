@@ -132,7 +132,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             GetProperties,
             GetOptionalValuesList,
             LocateElement,
-            UnHighlight
+            UnHighlight,
+            GetWindowAllFrames,
+            GetFrameControls
         }
         public override void StartDriver()
         {
@@ -1937,6 +1939,42 @@ namespace GingerCore.Drivers.JavaDriverLib
             return list;
         }
 
+        List<AppWindow> IWindowExplorer.GetWindowAllFrames()
+        {
+            List<AppWindow> frameList = new List<AppWindow>();
+
+            PayLoad PL = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+            PL.AddEnumValue(WindowExplorerOperationType.GetWindowAllFrames);
+            PL.ClosePackage();
+            PayLoad RC = Send(PL);
+
+            if (RC.IsErrorPayLoad())
+            {
+                string ErrMsg = RC.GetErrorValue();
+                Reporter.ToLog(eLogLevel.ERROR,ErrMsg);
+            }
+            else
+            {
+                List<PayLoad> ControlsPL = RC.GetListPayLoad();
+                foreach (PayLoad pl in ControlsPL)
+                {
+                    JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+
+                    var title = ci.Value;
+                    var windowType = AppWindow.eWindowType.JFrmae;
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        title = ci.ElementTitle;
+                    }
+                    AppWindow AW = new AppWindow() { Title = title, Path = ci.XPath, WindowType = windowType };
+                    frameList.Add(AW);
+                }
+            }
+
+
+            return frameList;
+
+        }
 
         private void GetWidgetsElementList(List<eElementType> selectedElementTypesList, ObservableList<ElementInfo> elementInfoList, string currentFramePath)
         {
@@ -1994,16 +2032,30 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             isBrowserElementLearned = false;
 
             List<ElementInfo> list = new List<ElementInfo>();
 
-            PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-            Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
-            Request.ClosePackage();
-            PayLoad Response = Send(Request);
+            PayLoad Request;
+            PayLoad Response;
+            //Get Current window, Specific Frame controls
+            if (!string.IsNullOrEmpty(specificFramePath))
+            {
+                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
+                Request.AddValue(specificFramePath);
+                Request.ClosePackage();
+            }
+            //Get Current window all Controls
+            else
+            {
+                Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+                Request.ClosePackage();
+            }
+            Response = Send(Request);
 
             if (Response.IsErrorPayLoad())
             {
