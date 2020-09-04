@@ -93,8 +93,8 @@ namespace GingerCore.Drivers
         public bool DisableExtension { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("false")]
-        [UserConfiguredDescription("Only for Internet Explorer |  Set \"true\" to clear the Internet Explorer cache before launching the browser")]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Only for Internet Explorer |  Set \"false\" if dont want to clear the Internet Explorer cache before launching the browser")]
         public bool EnsureCleanSession { get; set; }
 
         [UserConfigured]
