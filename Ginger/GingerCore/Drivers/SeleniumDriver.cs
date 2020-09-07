@@ -91,8 +91,14 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
         public bool DisableExtension { get; set; }
+
         [UserConfigured]
-        [UserConfiguredDefault("false")]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Only for Internet Explorer |  Set \"false\" if dont want to clear the Internet Explorer cache before launching the browser")]
+        public bool EnsureCleanSession { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Ignore Internet Explorer protected mode")]
         public bool IgnoreIEProtectedMode { get; set; }
 
@@ -321,7 +327,10 @@ namespace GingerCore.Drivers
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
 
-                        ieoptions.EnsureCleanSession = true;
+                        if (EnsureCleanSession == true)
+                        {
+                            ieoptions.EnsureCleanSession = true;
+                        }
                         ieoptions.IgnoreZoomLevel = true;
                         ieoptions.Proxy = mProxy == null ? null : mProxy;
                         ieoptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
