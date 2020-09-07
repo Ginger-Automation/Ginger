@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.WebAPI;
@@ -35,7 +36,7 @@ using System.Xml;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
 {
-    public class WebServicesDriver : DriverBase
+    public class WebServicesDriver : DriverBase, IVirtualDriver
     {
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -670,6 +671,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string s = txt.Replace("&lt;", "<");
             s = s.Replace("&gt;", ">");
             return s;
+        }
+
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
         }
     }
 }

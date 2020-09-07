@@ -21,6 +21,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace GingerCore.Drivers
@@ -106,6 +108,8 @@ namespace GingerCore.Drivers
 
         protected bool mIsDriverBusy;
 
+     
+
         public bool IsDriverBusy
         {
             get
@@ -173,5 +177,30 @@ namespace GingerCore.Drivers
         {
             BusinessFlow = context.BusinessFlow;
         }
+
+
+        #region VirtualDrivers
+
+        //TODO: .net STandard 2.1 Use C# 8 default interface implmentation  once we upgrade to .net standard2.1
+        /// <summary>
+        /// WIll give list of active virtual drivers
+        /// </summary>
+        public static readonly List<KeyValuePair<string, DriverBase>> VirtualDrivers = new List<KeyValuePair<string, DriverBase>>();
+
+    
+        public void DriverStarted(string AgentGuid)
+        {
+            DriverBase.VirtualDrivers.Add(new KeyValuePair<string, DriverBase>(AgentGuid,this));
+        }
+
+        public void DriverClosed()
+        {
+            foreach (var drvr in  DriverBase.VirtualDrivers.Where(x => x.Value == this))
+            {
+                DriverBase.VirtualDrivers.Remove(drvr);
+            }
+        }
+
+        #endregion
     }
 }

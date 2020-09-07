@@ -107,6 +107,9 @@ namespace Ginger.Run.RunSetActions
                             currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
                             currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
                         }
+                        
+                        currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
+
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }
@@ -128,6 +131,9 @@ namespace Ginger.Run.RunSetActions
                             currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
                             currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails);
                         }
+
+                        currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
+
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }

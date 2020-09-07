@@ -49,8 +49,7 @@ namespace GingerCore.ALM
         {
             try
             {
-                System.Diagnostics.Trace.WriteLine("Initiated Authentication");
-
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to qTest server");
                 connObj = new QTestApi.LoginApi(ALMCore.DefaultAlmConfig.ALMServerURL);
                 string granttype = "password";
                 string authorization = "Basic bWFoZXNoLmthbGUzQHQtbW9iaWxlLmNvbTo=";
@@ -64,8 +63,7 @@ namespace GingerCore.ALM
             }           
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine("Exception in AuthenticateUser(): Authentication Failed: " + ex.Message);
-
+                Reporter.ToLog(eLogLevel.ERROR, "Connecting to qTest server",ex);
                 connObj = null;
                 return false;
             }
@@ -74,7 +72,18 @@ namespace GingerCore.ALM
         public override bool ConnectALMProject()
         {
             ALMCore.DefaultAlmConfig.ALMProjectName = ALMCore.DefaultAlmConfig.ALMProjectKey;
-            return true;
+            if (!string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMServerURL) &&
+                !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMUserName) &&
+                !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMPassword) &&
+                !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMProjectKey) &&
+                !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMProjectName))
+            {
+                if (ConnectALMServer())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override Boolean IsServerConnected()

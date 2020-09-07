@@ -25,6 +25,7 @@ using GingerCore.Environments;
 using GingerCore;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Environments
 {
@@ -45,6 +46,8 @@ namespace Ginger.Environments
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(EnvNameTextBox, TextBox.TextProperty, env, ProjEnvironment.Fields.Name);
             xShowIDUC.Init(AppEnvironmnet);
+            BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironmnet, nameof(RepositoryItemBase.Publish));
+
 
             grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));          
             grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));

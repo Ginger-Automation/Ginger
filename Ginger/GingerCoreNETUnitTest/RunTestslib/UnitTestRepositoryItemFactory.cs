@@ -83,7 +83,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public Type GetDriverType(IAgent agent)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public void HTMLReportAttachment(string report, ref string emailReadyHtml, ref string reportresultfolder, string runsetfolder, object Attachment, object conf)

@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -35,7 +36,7 @@ using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
 {
-    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver
+    public class WindowsDriver : UIAutomationDriverBase, IWindowExplorer, IVisualTestingDriver,IVirtualDriver
     {
         int mActionTimeout = 10;
 
@@ -645,7 +646,7 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false)
+        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
             return list;
@@ -988,6 +989,16 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         ObservableList<OptionalValue> IWindowExplorer.GetOptionalValuesList(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
+        {
+            throw new NotImplementedException();
+        }
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
+        }
+
+        public List<AppWindow> GetWindowAllFrames()
         {
             throw new NotImplementedException();
         }

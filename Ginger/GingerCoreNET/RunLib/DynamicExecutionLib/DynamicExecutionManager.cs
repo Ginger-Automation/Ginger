@@ -761,9 +761,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             else
                             {
                                 appAgent = new ApplicationAgent();
+
+                              
                                 gingerRunner.ApplicationAgents.Add(appAgent);
                             }
-
+                            appAgent.Agent = agent;
                             appAgent.AppName = app.AppName;
                             appAgent.AppID = app.Guid;
                             appAgent.AgentName = agent.Name;

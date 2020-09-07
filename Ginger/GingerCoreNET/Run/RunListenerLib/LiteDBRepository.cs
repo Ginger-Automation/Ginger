@@ -115,6 +115,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     screenShotCountPerAction--;
                 }
             }
+            //change the paths to Defect suggestion list
+            var defectSuggestion = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.FirstOrDefault(z => z.FailedActionGuid == action.Guid);
+            if (defectSuggestion != null)
+            {
+                defectSuggestion.ScreenshotFileNames = action.ScreenShots.ToList();
+            }
+
             liteDbAction.ScreenShots = action.ScreenShots.ToList();
 
             isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
