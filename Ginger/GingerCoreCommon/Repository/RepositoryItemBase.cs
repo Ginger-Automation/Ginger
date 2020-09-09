@@ -670,6 +670,11 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
+        /// <summary>
+        /// Create Repository Item's deep Copy 
+        /// </summary>
+        /// <param name="repoItemToCopy"></param>
+        /// <returns></returns>
         private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy)
         {
             Type objType = repoItemToCopy.GetType();
