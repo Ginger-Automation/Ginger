@@ -170,23 +170,35 @@ namespace Ginger.Run
 
                     var agent = (from a in agents where a.Name == appagent.AgentName select a).FirstOrDefault();
                     //logic for if need to assign virtual agent 
-                    if ((mRunSetConfig.Agents.Where(x => x.Guid == agent.Guid || x.ParentGuid == agent.Guid).Count() > 0) && agent.SupportVirtualAgent())
+
+
+
+                    try
                     {
 
-                        var virtualagent = agent.CreateCopy(true) as Agent;
-                        virtualagent.ParentGuid = agent.Guid;
-                        virtualagent.DriverClass = agent.DriverClass;
-                        virtualagent.DriverType = agent.DriverType;
-                        appagent.Agent = virtualagent;
-                        virtualagent.DriverConfiguration = agent.DriverConfiguration;
-                        mRunSetConfig.Agents.Add(virtualagent);
 
+                        if (agent != null && agent.SupportVirtualAgent() && mRunSetConfig.Agents.Where(y=>y!=null).Where(x => x.Guid == agent.Guid || (x.ParentGuid != null && x.ParentGuid == agent.Guid)).Count() > 0)
+                        {
+
+                            var virtualagent = agent.CreateCopy(true) as Agent;
+                            virtualagent.ParentGuid = agent.Guid;
+                            virtualagent.DriverClass = agent.DriverClass;
+                            virtualagent.DriverType = agent.DriverType;
+                            appagent.Agent = virtualagent;
+                            virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                            mRunSetConfig.Agents.Add(virtualagent);
+
+                        }
+                        else
+                        {
+
+                            appagent.Agent = agent;
+                            mRunSetConfig.Agents.Add(agent);
+                        }
                     }
-                    else
+                    catch(Exception e)
                     {
 
-                        appagent.Agent = agent;
-                        mRunSetConfig.Agents.Add(agent);
                     }
                 }
             }
