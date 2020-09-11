@@ -7658,12 +7658,15 @@ namespace GingerCore.Drivers
         }
 
         public bool CanStartAnotherInstance(out string errorMessage)
+        
         {
+
             switch(mBrowserTpe)
             {
-                case eBrowserType.IE:
-                   errorMessage = "Internet Explorer Doen't Support Virtual Agents";
-                    return false;
+               
+          
+               //TODO: filter on internetexplorer
+                  
                 default:
                     errorMessage = string.Empty;
                     return true;
