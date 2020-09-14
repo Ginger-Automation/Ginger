@@ -487,6 +487,7 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
+                SetupAgents();
                 if (Active == false || BusinessFlows.Count == 0)
                 {
                     runnerExecutionSkipped = true;
@@ -627,7 +628,46 @@ namespace Ginger.Run
             }
         }
 
-        
+        private void SetupAgents()
+        {
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
+            {
+                RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                foreach (ApplicationAgent applicationAgent in this.ApplicationAgents)
+                {
+
+
+                    if (applicationAgent.AgentName != null)
+                    {
+                        ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+
+                        var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
+                        //logic for if need to assign virtual agent 
+
+
+
+
+
+                        if (agent != null && agent.SupportVirtualAgent() && runSetConfig.Agents.Where(y => y != null).Where(x => x.Guid == agent.Guid || (x.ParentGuid != null && x.ParentGuid == agent.Guid)).Count() > 0)
+                        {
+
+                            var virtualagent = agent.CreateCopy(true) as Agent;
+                            virtualagent.ParentGuid = agent.Guid;
+                            virtualagent.DriverClass = agent.DriverClass;
+                            virtualagent.DriverType = agent.DriverType;
+                            applicationAgent.Agent = virtualagent;
+                            virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                            runSetConfig.Agents.Add(virtualagent);
+
+                        }
+
+
+                    }
+                }
+
+            }
+
+        }
 
         //Calculate Next bfIndex for RunRunner Function
         private void CalculateNextBFIndx(ref int? flowControlIndx, ref int bfIndx)
@@ -878,7 +918,7 @@ namespace Ginger.Run
             }
             AgentsRunning = false;
         }
-
+        /*
         public void StartAgents()
         {
             ObservableList<ApplicationAgent> ApplicationAgentsToStartLast = new ObservableList<ApplicationAgent>();
@@ -924,7 +964,7 @@ namespace Ginger.Run
             }
             AgentsRunning = true;
         }
-
+        */
         public string GetAgentsNameToRun()
         {
             string agentsNames = string.Empty;
