@@ -114,10 +114,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             WorkSpace.Instance.Solution = solution;
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationExecResultsFolder;
 
-            RunSetConfig runSetConfig = new RunSetConfig();
-            runSetConfig.GingerRunners.Add(mGR);
-
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
+            
         }
 
         [ClassCleanup]

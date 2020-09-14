@@ -49,10 +49,8 @@ namespace UnitTests.NonUITests
             liteDB.FileFullPath = Connectionstring;
 
 
-            RunSetConfig runSetConfig = new RunSetConfig();
-
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
-
+           
+          
         }
 
         [TestMethod]

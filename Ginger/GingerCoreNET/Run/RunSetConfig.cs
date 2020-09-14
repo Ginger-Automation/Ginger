@@ -46,8 +46,10 @@ namespace Ginger.Run
                 }
             }
         }
-
-        public List<Agent> Agents = new List<Agent>();
+        /// <summary>
+        /// List of all the agents and the Virtual ones mapped during run 
+        /// </summary>
+        public List<Agent> ActiveAgentList = new List<Agent>();
         private bool mIsRunning;
         public bool IsRunning
         {

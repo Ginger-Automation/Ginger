@@ -32,10 +32,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             BF.Activities[0].Acts.Add(act);
 
             mGingerRunner.BusinessFlows.Add(BF);
-            runSetConfig = new RunSetConfig();
-            runSetConfig.GingerRunners.Add(mGingerRunner);
-
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
+          
         }
       
         [TestMethod]

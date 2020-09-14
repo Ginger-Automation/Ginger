@@ -27,11 +27,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner.RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
             mGingerRunner.RunListeners.Add(mExecutionDumperListener);
-
-            runSetConfig.GingerRunners.Add(mGingerRunner);
-
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig; RunListenerBase.Start();
-        }
+ }
 
         [ClassCleanup]
         public static void ClassCleanup()
