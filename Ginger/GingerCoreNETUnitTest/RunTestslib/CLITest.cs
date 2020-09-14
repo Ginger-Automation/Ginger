@@ -38,6 +38,11 @@ namespace WorkspaceHold
 
             // Hook console message
             Reporter.logToConsoleEvent += ConsoleMessageEvent;
+
+            RunSetConfig runSetConfig = new RunSetConfig();
+
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
+
         }
 
         [ClassCleanup]

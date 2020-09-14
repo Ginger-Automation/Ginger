@@ -19,7 +19,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static GingerRunner mGingerRunner;
         static ExecutionDumperListener mExecutionDumperListener;
         static string mDumpFolder = TestResources.GetTempFolder("ExecutionDumperListener");
-
+        static RunSetConfig runSetConfig = new RunSetConfig();
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {            
@@ -27,7 +27,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner.RunListeners.Clear(); // temp as long as GR auto start with some listener, remove when fixed
             mExecutionDumperListener = new ExecutionDumperListener(mDumpFolder);
             mGingerRunner.RunListeners.Add(mExecutionDumperListener);
-            RunListenerBase.Start();
+
+            runSetConfig.GingerRunners.Add(mGingerRunner);
+
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig; RunListenerBase.Start();
         }
 
         [ClassCleanup]

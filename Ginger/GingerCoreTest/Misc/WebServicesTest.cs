@@ -96,7 +96,13 @@ namespace UnitTests.NonUITests
 
             mGR.BusinessFlows.Add(mBF);
 
-                   }
+            RunSetConfig runSetConfig = new RunSetConfig();
+            runSetConfig.GingerRunners.Add(mGR);
+
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
+
+
+        }
 
         [ClassCleanup]
         public static void ClassCleanup()

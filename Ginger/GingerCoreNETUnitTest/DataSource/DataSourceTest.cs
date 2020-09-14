@@ -30,6 +30,7 @@ using GingerCore;
 using Ginger.Run;
 using GingerCore.Actions;
 using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 
 namespace UnitTests.NonUITests
 {
@@ -46,6 +47,12 @@ namespace UnitTests.NonUITests
             excelFilePath = TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "ExportedDS.xlsx");
 
             liteDB.FileFullPath = Connectionstring;
+
+
+            RunSetConfig runSetConfig = new RunSetConfig();
+
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
+
         }
 
         [TestMethod]
