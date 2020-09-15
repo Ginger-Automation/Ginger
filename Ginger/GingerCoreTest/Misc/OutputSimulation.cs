@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
@@ -60,6 +61,8 @@ namespace UnitTests.NonUITests
             mGR.SolutionAgents.Add(wsAgent);
 
             mGR.BusinessFlows.Add(mBF);
+
+          
 
         }
 

@@ -79,7 +79,7 @@ namespace Ginger.Run
 
     public class GingerRunner : RepositoryItemBase
     {
-        
+
 
         public enum eActionExecutorType
         {
@@ -114,7 +114,7 @@ namespace Ginger.Run
 
 
         public PublishToALMConfig PublishToALMConfig = null;
-        
+
         public enum eResetStatus
         {
             All,
@@ -133,7 +133,7 @@ namespace Ginger.Run
         private bool mStopBusinessFlow = false;
 
         private bool mCurrentActivityChanged = false;
-        private bool mErrorHandlerExecuted = false;        
+        private bool mErrorHandlerExecuted = false;
 
         BusinessFlow mExecutedBusinessFlowWhenStopped=null;
         Activity mExecutedActivityWhenStopped=null;
@@ -156,9 +156,9 @@ namespace Ginger.Run
                 mContext.BusinessFlow = mCurrentBusinessFlow;
                 mContext.Runner = this;
             }
-        }        
+        }
         public bool AgentsRunning = false;
-        public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();        
+        public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();
         public eExecutedFrom ExecutedFrom;
         public string CurrentGingerLogFolder = string.Empty;
         public string CurrentHTMLReportFolder = string.Empty;
@@ -222,10 +222,10 @@ namespace Ginger.Run
         }
 
         public ObservableList<Platform> Platforms = new ObservableList<Platform>();//TODO: delete me once projects moved to new Apps/Platform config, meanwhile enable to load old run set config, but ignore the value
-        
+
         [IsSerializedForLocalRepository]
         public ObservableList<IApplicationAgent> ApplicationAgents { get; set; } = new ObservableList<IApplicationAgent>();
-        
+
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> FilterExecutionTags = new ObservableList<Guid>();
 
@@ -324,21 +324,21 @@ namespace Ginger.Run
                 mProjEnvironment = (ProjEnvironment)value;
                 //ExecutionLogger.ExecutionEnvironment = (ProjEnvironment)value;
                 mContext.Environment = mProjEnvironment;
-                NotifyEnvironmentChanged();                
+                NotifyEnvironmentChanged();
             }
         }
 
-        
+
 
         public ObservableList<DataSourceBase> DSList {get; set;}
-             
+
 
         private bool mRunInSimulationMode;
         [IsSerializedForLocalRepository]
         public bool RunInSimulationMode
         {
             get
-            {                
+            {
                 return mRunInSimulationMode;
             }
             set
@@ -363,7 +363,7 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new TelemetryRunListener());
             }
-            
+
         }
 
         public GingerRunner(Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -432,7 +432,7 @@ namespace Ginger.Run
                 {
                     return eRunStatus.Skipped;
                 }
-                else if (((from x in BusinessFlows where (x.RunStatus == eRunStatus.Passed || x.RunStatus == eRunStatus.Skipped) select x).Count() == BusinessFlows.Count)&& BusinessFlows.Count>0)
+                else if (((from x in BusinessFlows where (x.RunStatus == eRunStatus.Passed || x.RunStatus == eRunStatus.Skipped) select x).Count() == BusinessFlows.Count) && BusinessFlows.Count > 0)
                 {
                     return eRunStatus.Passed;
                 }
@@ -463,7 +463,7 @@ namespace Ginger.Run
                     }
                 }
                 BFR.BusinessFlowRunDescription = bf.RunDescription;
-                BFR.BFFlowControls = bf.BFFlowControls ;
+                BFR.BFFlowControls = bf.BFFlowControls;
                 BusinessFlowsRunList.Add(BFR);
             }
         }
@@ -479,7 +479,7 @@ namespace Ginger.Run
             return result;
         }
 
-      
+
 
 
         public void RunRunner(bool doContinueRun = false)
@@ -487,6 +487,7 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;
             try
             {
+
                 if (Active == false || BusinessFlows.Count == 0)
                 {
                     runnerExecutionSkipped = true;
@@ -505,6 +506,7 @@ namespace Ginger.Run
                 Status = eRunStatus.Started;
                 IsRunning = true;
                 mStopRun = false;
+                SetupVirtualAgents();
                 if (doContinueRun == false)
                 {
                     RunnerExecutionWatch.StartRunWatch();
@@ -518,7 +520,7 @@ namespace Ginger.Run
                 //do Validations
 
                 //Do execution preparations
-                if (doContinueRun == false && this.ExecutedFrom==eExecutedFrom.Automation)
+                if (doContinueRun == false && this.ExecutedFrom == eExecutedFrom.Automation)
                 {
                     UpdateApplicationAgents();
                 }
@@ -529,17 +531,17 @@ namespace Ginger.Run
                 int startingBfIndx = 0;
                 if (doContinueRun == false)
                 {
-                    startingBfIndx = 0;                    
+                    startingBfIndx = 0;
                 }
                 else
                 {
                     startingBfIndx = BusinessFlows.IndexOf(CurrentBusinessFlow);//skip BFs which already executed
                 }
 
-                int? flowControlIndx = null;                
+                int? flowControlIndx = null;
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
-                    BusinessFlow executedBusFlow =(BusinessFlow) BusinessFlows[bfIndx];
+                    BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
 
                     //stop if needed before executing next BF
                     if (mStopRun)
@@ -559,7 +561,7 @@ namespace Ginger.Run
                     //Run Bf
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
                     {
-                        RunBusinessFlow(null,false,true);//Continue BF run
+                        RunBusinessFlow(null, false, true);//Continue BF run
                     }
                     else
                     {
@@ -567,12 +569,12 @@ namespace Ginger.Run
                         RunBusinessFlow(executedBusFlow);// full BF run
                     }
                     //Do "During Execution" Run set Operations
-                    if (PublishToALMConfig!=null)
+                    if (PublishToALMConfig != null)
                     {
                         string result = string.Empty;
                         ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
                         bfs.Add(executedBusFlow);
-                        RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);                        
+                        RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
                     }
                     //Call For Business Flow Control
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);
@@ -587,7 +589,7 @@ namespace Ginger.Run
 
                 }
             }
-            catch(Exception ec)
+            catch (Exception ec)
             {
 
             }
@@ -595,7 +597,7 @@ namespace Ginger.Run
             {
                 //Post execution items to do
                 SetPendingBusinessFlowsSkippedStatus();
-                
+
                 if (!runnerExecutionSkipped)
                 {
                     if (!mStopRun)//not on stop run
@@ -614,12 +616,12 @@ namespace Ginger.Run
 
                     NotifyRunnerRunEnd(CurrentBusinessFlow.ExecutionFullLogFolder);
 
-                    if(RunLevel == eRunLevel.Runner)
+                    if (RunLevel == eRunLevel.Runner)
                     {
                         ExecutionLoggerManager.mExecutionLogger.EndRunSet();
                         RunLevel = eRunLevel.NA;
                     }
-                }   
+                }
                 else
                 {
                     Status = RunsetStatus;
@@ -627,6 +629,48 @@ namespace Ginger.Run
             }
         }
 
+        private void SetupVirtualAgents()
+        {
+            if (WorkSpace.Instance != null && WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
+            {
+
+                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
+                {
+                    RunSetConfig runSetConfig = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
+                    foreach (ApplicationAgent applicationAgent in this.ApplicationAgents)
+                    {
+
+
+                        if (applicationAgent.AgentName != null)
+                        {
+                            ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+
+                            var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
+
+                            //logic for if need to assign virtual agent
+                            if (agent != null && agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Where(x => x.Guid == agent.Guid || (x.ParentGuid != null && x.ParentGuid == agent.Guid)).Count() > 0)
+                            {
+
+                                var virtualagent = agent.CreateCopy(true) as Agent;
+                                virtualagent.ParentGuid = agent.Guid;
+                                virtualagent.Name = agent.Name + " Virtual";
+                                virtualagent.IsVirtual = true;
+                                virtualagent.DriverClass = agent.DriverClass;
+                                virtualagent.DriverType = agent.DriverType;
+                                applicationAgent.Agent = virtualagent;
+                                virtualagent.DriverConfiguration = agent.DriverConfiguration;
+
+
+                            }
+
+                            runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+
+                        }
+                    }
+
+                }
+            }
+        } 
         
 
         //Calculate Next bfIndex for RunRunner Function
@@ -878,7 +922,7 @@ namespace Ginger.Run
             }
             AgentsRunning = false;
         }
-
+        /*
         public void StartAgents()
         {
             ObservableList<ApplicationAgent> ApplicationAgentsToStartLast = new ObservableList<ApplicationAgent>();
@@ -924,7 +968,7 @@ namespace Ginger.Run
             }
             AgentsRunning = true;
         }
-
+        */
         public string GetAgentsNameToRun()
         {
             string agentsNames = string.Empty;
