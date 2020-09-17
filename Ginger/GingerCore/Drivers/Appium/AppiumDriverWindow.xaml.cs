@@ -684,7 +684,10 @@ namespace GingerCore.Drivers.Appium
                                         break;
                                     }
                             }
-                            catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                            catch (Exception ex) 
+                            { 
+                                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); 
+                            }
                         }
 
                         if (!skipElement)
@@ -705,16 +708,26 @@ namespace GingerCore.Drivers.Appium
                             case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                 try
                                 {
-                                    string bounds = elementNode.Attributes["bounds"].Value;
-                                    bounds = bounds.Replace("[", ",");
-                                    bounds = bounds.Replace("]", ",");
-                                    string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (boundsXY.Count() == 4)
+                                    if (elementNode.Attributes["bounds"] != null)
                                     {
-                                        element_Start_X = Convert.ToInt64(boundsXY[0]);
-                                        element_Start_Y = Convert.ToInt64(boundsXY[1]);
-                                        element_Max_X = Convert.ToInt64(boundsXY[2]);
-                                        element_Max_Y = Convert.ToInt64(boundsXY[3]);
+                                        string bounds = elementNode.Attributes["bounds"].Value;
+                                        bounds = bounds.Replace("[", ",");
+                                        bounds = bounds.Replace("]", ",");
+                                        string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (boundsXY.Count() == 4)
+                                        {
+                                            element_Start_X = Convert.ToInt64(boundsXY[0]);
+                                            element_Start_Y = Convert.ToInt64(boundsXY[1]);
+                                            element_Max_X = Convert.ToInt64(boundsXY[2]);
+                                            element_Max_Y = Convert.ToInt64(boundsXY[3]);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        element_Start_X = -1;
+                                        element_Start_Y = -1;
+                                        element_Max_X = -1;
+                                        element_Max_Y = -1;
                                     }
                                 }
                                 catch (Exception ex)
@@ -723,7 +736,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                    //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 }
                                 break;
 
@@ -741,7 +754,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Start_Y = -1;
                                     element_Max_X = -1;
                                     element_Max_Y = -1;
-                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                    //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                                 }
                                 break;
                         }
@@ -780,7 +793,7 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return null;
             }
         }
@@ -847,7 +860,14 @@ namespace GingerCore.Drivers.Appium
                                 element_Desc_attrib = "hint";
                                 break;
                         }
-                        element_Desc_value = clickedElementNode.Attributes[element_Desc_attrib].Value;
+                        if (clickedElementNode.Attributes[element_Desc_attrib] != null)
+                        {
+                            element_Desc_value = clickedElementNode.Attributes[element_Desc_attrib].Value;
+                        }
+                        else
+                        {
+                            element_Desc_value = string.Empty;
+                        }
                     }
                     catch { element_Desc_value = string.Empty; }
                     if (!string.IsNullOrEmpty(element_Desc_value))

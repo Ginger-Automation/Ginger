@@ -27,10 +27,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Threading;
+using Amdocs.Ginger.CoreNET.RunLib;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
-    public abstract class ConsoleDriverBase : DriverBase
+    public abstract class ConsoleDriverBase : DriverBase,IVirtualDriver
     {
         [UserConfigured]
         [UserConfiguredDefault("30")]
@@ -261,6 +262,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         {
             taskFinished = true;
         }
-
+        public bool CanStartAnotherInstance(out string errorMessage)
+        {
+            errorMessage = string.Empty;
+            return true;
+        }
     }
 }

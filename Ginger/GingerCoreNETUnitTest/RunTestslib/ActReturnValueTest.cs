@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Repository;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
@@ -13,6 +14,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         static ActReturnValue ARC;
         static GingerRunner mGingerRunner;
         static BusinessFlow BF;
+        static RunSetConfig runSetConfig;
         
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
@@ -28,7 +30,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mGingerRunner = new GingerRunner();
             mGingerRunner.RunInSimulationMode = true;
             BF.Activities[0].Acts.Add(act);
+
             mGingerRunner.BusinessFlows.Add(BF);
+          
         }
       
         [TestMethod]

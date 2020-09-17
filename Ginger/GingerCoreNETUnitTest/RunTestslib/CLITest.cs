@@ -38,6 +38,7 @@ namespace WorkspaceHold
 
             // Hook console message
             Reporter.logToConsoleEvent += ConsoleMessageEvent;
+
         }
 
         [ClassCleanup]
