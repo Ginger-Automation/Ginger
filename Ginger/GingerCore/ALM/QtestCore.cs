@@ -37,13 +37,15 @@ namespace GingerCore.ALM
 {
     public class QtestCore : ALMCore
     {
+        QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
+        QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
+
+
         QTestApi.LoginApi connObj = new QTestApi.LoginApi();
         QTestApi.TestrunApi testrunApi = new QTestApi.TestrunApi();
         QTestApi.TestcaseApi testcaseApi = new QTestApi.TestcaseApi();
         QTestApi.FieldApi fieldApi = new QTestApi.FieldApi();
 
-        QTestApiClient.ApiClient apiClient = new QTestApiClient.ApiClient();
-        QTestApiClient.Configuration configuration = new QTestApiClient.Configuration();
 
         public override bool ConnectALMServer()
         {
@@ -559,10 +561,13 @@ namespace GingerCore.ALM
             }
         }
 
-        public QtestTest GetQtestTest(long? testID)
+        public QtestTest GetQtestTest(long? testID, QTestApiModel.ParameterPostQueryResponse existedParameters = null, QTestApiModel.TestCaseWithCustomFieldResource testCase = null)
         {
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
-            QTestApiModel.TestCaseWithCustomFieldResource testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testID);
+            if (testCase == null)
+            {
+                testCase = testcaseApi.GetTestCase((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testID);
+            }
 
             QtestTest test = new QtestTest();
             test.Description = testCase.Description;
@@ -577,7 +582,23 @@ namespace GingerCore.ALM
                 }
                 else
                 {
-                    test.Steps.Add(new QtestTestStep(testStep.Id.ToString(), testStep.Description, testStep.Expected));
+                    QtestTestStep newStep = new QtestTestStep(testStep.Id.ToString(), testStep.Description, testStep.Expected);
+                    if ((testStep.ParameterValues != null) && (testStep.ParameterValues.Count > 0))
+                    {
+                        if (existedParameters != null)
+                        {
+
+                            if (testStep.RootCalledTestCaseId != null)
+                            {
+                                QTestApiModel.ParameterModel currentParameter = existedParameters.Items.Where(z => z.TcIds.Contains(testStep.RootCalledTestCaseId) && z.Values.Contains(testStep.ParameterValues[0])).FirstOrDefault();
+                                newStep.Params = new QtestTestParameter();
+                                newStep.Params.Value = testStep.ParameterValues[0];
+                                newStep.Params.Values = currentParameter.Values.Split(',').ToList();
+                                newStep.Params.Name = currentParameter.Description;
+                            }
+                        }
+                    }
+                    test.Steps.Add(newStep);
                 }
             }
               
@@ -590,10 +611,14 @@ namespace GingerCore.ALM
             testrunApi = new QTestApi.TestrunApi(connObj.Configuration);
             testcaseApi = new QTestApi.TestcaseApi(connObj.Configuration);
 
-            List<QTestApiModel.TestRunWithCustomFieldResource> testRunList = testrunApi.GetOf((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(TS.ID), "test-suite", "descendents");
+            QTestApi.ParametersApi parametersApi = new QTestApi.ParametersApi(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, connObj.Configuration);
+            QTestApiModel.ParameterPostQueryResponse existedParameters = parametersApi.GetAllParameters((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey));
+
+            List<QTestApiModel.TestRunWithCustomFieldResource> testRunList = testrunApi.GetOf((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), (long)Convert.ToInt32(TS.ID), "test-suite");
             foreach (QTestApiModel.TestRunWithCustomFieldResource testRun in testRunList)
             {
-                QtestTest test = GetQtestTest(testRun.TestCase.Id);
+                QTestApiModel.TestRunWithCustomFieldResource testRunCurrent = testrunApi.Get((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testRun.Id, "testcase.teststep");
+                QtestTest test = GetQtestTest(testRun.TestCase.Id, existedParameters, testRunCurrent.TestCase);
                 test.Runs = new List<QtestTestRun>();
                 test.Runs.Add(new QtestTestRun(testRun.Id.ToString(), testRun.Name, testRun.Properties[0].ToString(), testRun.CreatorId.ToString()));
                 TS.Tests.Add(test);
