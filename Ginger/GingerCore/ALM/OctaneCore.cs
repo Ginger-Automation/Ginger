@@ -38,10 +38,7 @@ namespace GingerCore.ALM
         {
             try
             {
-                string host;
-                string userName;
-                string password;
-                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to qTest server");
+                Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Octane server");
                 mOctaneRestConnector = new RestConnector();
                 entityService = new EntityService(mOctaneRestConnector);
                 if (!mOctaneRestConnector.IsConnected())
@@ -51,53 +48,28 @@ namespace GingerCore.ALM
                     {
                         NetworkSettings.IgnoreServerCertificateValidation();
                     }
-                    NetworkSettings.EnableAllSecurityProtocols();
-
-                    host = ALMCore.DefaultAlmConfig.ALMServerURL;
+                    NetworkSettings.EnableAllSecurityProtocols();                  
 
                     // If webAppUrl is empty we do not try to connect.
-                    if (string.IsNullOrWhiteSpace(host)) return false;
+                    if (string.IsNullOrWhiteSpace(ALMCore.DefaultAlmConfig.ALMServerURL)) return false;
 
                     IConnectionInfo connectionInfo;
-                    //string clientId = ConfigurationManager.AppSettings["clientId"];
-                    //if (clientId != null)
-                    //{
-                    //    userName = clientId;
-                    //    connectionInfo = new APIKeyConnectionInfo(clientId, ConfigurationManager.AppSettings["clientSecret"]);
-                    //}
-                    //else
-                    //{
-                    userName = ALMCore.DefaultAlmConfig.ALMUserName;  // "Jinendrag"; //ConfigurationManager.AppSettings["userName"];
-                    password = ALMCore.DefaultAlmConfig.ALMPassword;  //"Amdocs@123";//ConfigurationManager.AppSettings["password"];
-                        connectionInfo = new UserPassConnectionInfo(userName, password);
-                   // }
-
+     
+                    connectionInfo = new UserPassConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
+                
                     lwssoAuthenticationStrategy = new LwssoAuthenticationStrategy(connectionInfo);
                     var result =  Task.Run(() =>
                     {
-                        return  mOctaneRestConnector.Connect(host, lwssoAuthenticationStrategy);
+                        return  mOctaneRestConnector.Connect(ALMCore.DefaultAlmConfig.ALMServerURL, lwssoAuthenticationStrategy);
                      
                     });
-
-                    return result.Result;
-
-                  //  return mOctaneRestConnector.IsConnected();
-
-
-                  
-
-
-                    //var sharedSpaceId = 1001; // int.Parse(ConfigurationManager.AppSettings["sharedSpaceId"]);
-                    //var workspaceId = 4002; //int.Parse(ConfigurationManager.AppSettings["workspaceId"]);
-
-                    //workspaceContext = new WorkspaceContext(sharedSpaceId, workspaceId);
-                    //sharedSpaceContext = new SharedSpaceContext(sharedSpaceId);
+                    return result.Result;       
 
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Connecting to qTest server", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Connecting to Octane server", ex);
                 mOctaneRestConnector = null;
                 return false;
             }
