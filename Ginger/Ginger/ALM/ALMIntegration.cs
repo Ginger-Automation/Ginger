@@ -79,6 +79,12 @@ namespace Ginger.ALM
                     AlmCore = new QtestCore();
                     AlmRepo = new QtestRepository();
                     break;
+
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
+                    AlmCore = new OctaneCore();
+                    AlmRepo = new OctaneRepository();
+                    break;
+
             }
             AlmCore.GetCurrentAlmConfig();
             SetALMCoreConfigurations(AlmType);

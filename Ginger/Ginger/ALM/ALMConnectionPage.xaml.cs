@@ -73,6 +73,15 @@ namespace Ginger.ALM
                 }
             }
 
+            if (!WorkSpace.Instance.BetaFeatures.Octane)
+            {
+                OctaneRadioButton.Visibility = Visibility.Hidden;
+                xDefualtImageOctane.Visibility = Visibility.Hidden;
+                if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane)
+                {
+                    CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
+                }
+            }
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())
@@ -184,6 +193,11 @@ namespace Ginger.ALM
             {
                 qTestRadioButton.IsChecked = true;
             }
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane && !(bool)qTestRadioButton.IsChecked)
+            {
+                OctaneRadioButton.IsChecked = true;
+            }
+
         }
 
         private bool GetProjectsDetails()
@@ -554,6 +568,11 @@ namespace Ginger.ALM
                     case "qTestRadioButton":
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest;
                         break;
+
+                    case "OctaneRadioButton":
+                        almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane;
+                        break;
+
                     default:
                         //Not used
                         break;

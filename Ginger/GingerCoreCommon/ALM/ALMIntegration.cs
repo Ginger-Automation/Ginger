@@ -28,7 +28,8 @@ namespace GingerCoreNET.ALMLib
             RQM = 2,
             RALLY = 3,
             Jira = 4,
-            Qtest = 5
+            Qtest = 5,
+            Octane=6
         }
 
         public enum eALMConnectType

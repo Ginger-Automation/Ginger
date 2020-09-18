@@ -500,6 +500,7 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\Repository\OctaneRepository.cs" />
     <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
       <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -4671,6 +4672,7 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />
