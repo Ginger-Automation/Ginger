@@ -34,9 +34,13 @@
                             <RadioButton x:Name="qTestRadioButton" Content="QTest" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="3" Margin="15,0,0,0"></RadioButton>
                             <usercontrols:ImageMakerControl x:Name="xDefualtImageQTest" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
-                            <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="4" Margin="15,0,0,0"></RadioButton>
-                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRally" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            <RadioButton x:Name="OctaneRadioButton" Content="Octane" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="4" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageOctane" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
+
+                            <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="5" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageRally" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                           
                         </StackPanel>
                     </Grid>
                 </StackPanel>
