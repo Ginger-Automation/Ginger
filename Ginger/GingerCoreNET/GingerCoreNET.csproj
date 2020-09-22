@@ -295,6 +295,8 @@
 
   <ItemGroup>
   
+    <PackageReference Include="Appium.WebDriver" Version="4.2.1" />
+  
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
   
     <PackageReference Include="AutoMapper" Version="9.0.0" />
@@ -778,6 +780,10 @@
     <None Update="Reports\Ginger-Web-Client\styles.ec0b85177c760405ccbd.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Drivers\CoreDrivers\Web\" />
   </ItemGroup>
 
 </Project>

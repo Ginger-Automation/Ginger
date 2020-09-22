@@ -127,7 +127,7 @@ namespace GingerCore
         /// <param name="comboBox"></param>
         /// <param name="EnumObj"></param>
         /// <param name="values"> leave values empty will take all possible vals, or pass a list to limit selection </param>
-        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null)
+        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null, List<dynamic> excludeList= null)
         {
             comboBox.SelectedValuePath = "Value";
             Type Etype = EnumObj.GetType();
@@ -138,6 +138,10 @@ namespace GingerCore
                 // Get all possible enum vals
                 foreach (object item in Enum.GetValues(Etype))
                 {
+                    if (excludeList != null && excludeList.Contains(item))
+                    {
+                        continue;
+                    }
                     ComboEnumItem CEI = new ComboEnumItem();
                     CEI.text = GetEnumValueDescription(Etype, item);
                     CEI.Value = item;
@@ -156,6 +160,10 @@ namespace GingerCore
                     // get only subset from selected enum vals - used in Edit Action locate by to limit to valid values
                     foreach (object item in values)
                     {
+                        if (excludeList != null && excludeList.Contains(item))
+                        {
+                            continue;
+                        }
                         ComboEnumItem CEI = new ComboEnumItem();
                         CEI.text = GetEnumValueDescription(Etype, item);
                         CEI.Value = item;
@@ -240,7 +248,7 @@ namespace GingerCore
         {
             try
             {
-                    EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
+                EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
                 string s;
                 if (attributes.Length > 0)
                 {

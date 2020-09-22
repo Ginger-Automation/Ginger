@@ -60,7 +60,7 @@ namespace GingerCore.Actions
                     mPlatforms.Add(ePlatformType.Windows);
                     mPlatforms.Add(ePlatformType.Mobile);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
-                    mPlatforms.Add(ePlatformType.AndroidDevice);
+                    //mPlatforms.Add(ePlatformType.AndroidDevice);
                     mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.ASCF);
                 }

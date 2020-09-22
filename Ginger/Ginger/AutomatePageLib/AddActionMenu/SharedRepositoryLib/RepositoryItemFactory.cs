@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.ALM;
@@ -175,6 +176,9 @@ namespace Ginger.Repository
                             case eDriverType.PerfectoMobileIOSWeb:
                                 Driver = new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, BusinessFlow);
                                 break;
+                            case eDriverType.GenericAppium:
+                                Driver = new GenericAppiumDriver(BusinessFlow);
+                                break;
                             case eDriverType.WebServices:
                                 WebServicesDriver WebServicesDriver = new WebServicesDriver(BusinessFlow);
                                 Driver = WebServicesDriver;
@@ -304,10 +308,8 @@ namespace Ginger.Repository
                     return (typeof(DOSConsoleDriver));                    
                 case Agent.eDriverType.UnixShell:
                     return (typeof(UnixShellDriver));                    
-                case Agent.eDriverType.MobileAppiumAndroid:
-                    return (typeof(SeleniumAppiumDriver));                    
-                case Agent.eDriverType.MobileAppiumIOS:
-                    return (typeof(SeleniumAppiumDriver));                    
+                case Agent.eDriverType.MobileAppiumAndroid:                  
+                case Agent.eDriverType.MobileAppiumIOS:                 
                 case Agent.eDriverType.MobileAppiumAndroidBrowser:
                 case Agent.eDriverType.MobileAppiumIOSBrowser:
                     return (typeof(SeleniumAppiumDriver));                    
@@ -328,7 +330,9 @@ namespace Ginger.Repository
                 case Agent.eDriverType.PerfectoMobileIOS:
                 case Agent.eDriverType.PerfectoMobileIOSWeb:
                     return (typeof(PerfectoDriver));
-                    
+                case Agent.eDriverType.GenericAppium:
+                    return (typeof(GenericAppiumDriver));
+
                 default:
                     throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
                     

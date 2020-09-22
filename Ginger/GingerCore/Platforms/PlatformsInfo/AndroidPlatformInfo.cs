@@ -32,7 +32,8 @@ namespace GingerCore.Platforms.PlatformsInfo
     {        
         public override ePlatformType PlatformType()
         {
-            return ePlatformType.AndroidDevice;
+            //return ePlatformType.AndroidDevice;
+            return ePlatformType.Mobile;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()

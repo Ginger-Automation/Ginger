@@ -72,8 +72,8 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             switch (Platform)
             {
-                case ePlatformType.AndroidDevice:
-                    return mAndroidPlatform;
+                //case ePlatformType.AndroidDevice:
+                //    return mAndroidPlatform;
                 case ePlatformType.Java:
                     return mJavaPlatform;
                 case ePlatformType.Web:

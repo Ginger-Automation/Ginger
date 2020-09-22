@@ -122,8 +122,8 @@ namespace GingerCore
             PerfectoMobileIOS,
             [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
-            //[Description("Android ADB")]
-            //AndroidADB,
+            [Description("Generic Appium")]
+            GenericAppium,
 
             //MF
             [Description("MainFrame 3270")]
@@ -938,18 +938,12 @@ namespace GingerCore
             switch (driver)
             {
                 case eDriverType.InternalBrowser:
-                    return ePlatformType.Web;
                 case eDriverType.SeleniumFireFox:
-                    return ePlatformType.Web;
                 case eDriverType.SeleniumChrome:
-                    return ePlatformType.Web;
                 case eDriverType.SeleniumIE:
-                    return ePlatformType.Web;
                 case eDriverType.SeleniumRemoteWebDriver:
-                    return ePlatformType.Web;
                 case eDriverType.SeleniumEdge:
-                    return ePlatformType.Web;
-               
+                    return ePlatformType.Web;               
                 case eDriverType.ASCF:
                     return ePlatformType.ASCF;
                 case eDriverType.DOSConsole:
@@ -962,14 +956,13 @@ namespace GingerCore
                     return ePlatformType.Windows;             
                 case eDriverType.MobileAppiumAndroid:
                 case eDriverType.MobileAppiumIOS:
-                //Add Perfecto Mobile
                 case eDriverType.PerfectoMobileAndroid:
                 case eDriverType.PerfectoMobileAndroidWeb:
                 case eDriverType.PerfectoMobileIOS:
                 case eDriverType.PerfectoMobileIOSWeb:
-                    return ePlatformType.Mobile;
                 case eDriverType.MobileAppiumAndroidBrowser:
                 case eDriverType.MobileAppiumIOSBrowser:
+                case eDriverType.GenericAppium:
                     return ePlatformType.Mobile;
                 case eDriverType.PowerBuilder:
                     return ePlatformType.PowerBuilder;

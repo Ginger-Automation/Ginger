@@ -62,16 +62,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             List<DriverInfo> driverTypes = new List<DriverInfo>();
 
-
-            if (platformType == ePlatformType.Service)
-            {
-
-            }
-
-            else
+            if (platformType != ePlatformType.Service)
             {
                 driverTypes.Add(GetDriver(platformType));
-
                 driverTypes.AddRange(GetServices(platformType));
             }
             return driverTypes;
@@ -84,9 +77,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             string PlatformInterface = string.Empty;
 
-
-          
-   
             switch(platformType)
             {
                 case ePlatformType.Web:
@@ -99,7 +89,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     break;
 
             }
-
 
             if(!string.IsNullOrEmpty(PlatformInterface))
             {
@@ -125,35 +114,30 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             DriverInfo DI = new DriverInfo(platformType + " Driver");
 
-
             if (platformType == ePlatformType.Web)
-            {
-
-                DI.services.Add(Agent.eDriverType.InternalBrowser);
+            {                
                 DI.services.Add(Agent.eDriverType.SeleniumChrome);
                 DI.services.Add(Agent.eDriverType.SeleniumFireFox);
-                DI.services.Add(Agent.eDriverType.SeleniumIE);
-                DI.services.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
                 DI.services.Add(Agent.eDriverType.SeleniumEdge);
-
-
-
+                DI.services.Add(Agent.eDriverType.SeleniumIE);
+                DI.services.Add(Agent.eDriverType.SeleniumRemoteWebDriver);                
+                DI.services.Add(Agent.eDriverType.InternalBrowser);
             }
             else if (platformType == ePlatformType.Java)
             {
                 DI.services.Add(Agent.eDriverType.JavaDriver);
-
             }
             else if (platformType == ePlatformType.Mobile)
             {
-                DI.services.Add(Agent.eDriverType.MobileAppiumAndroid);
+                DI.services.Add(Agent.eDriverType.GenericAppium);
+                DI.services.Add(Agent.eDriverType.MobileAppiumAndroid);                
+                DI.services.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
                 DI.services.Add(Agent.eDriverType.MobileAppiumIOS);
+                DI.services.Add(Agent.eDriverType.MobileAppiumIOSBrowser);
                 DI.services.Add(Agent.eDriverType.PerfectoMobileAndroid);
                 DI.services.Add(Agent.eDriverType.PerfectoMobileAndroidWeb);
                 DI.services.Add(Agent.eDriverType.PerfectoMobileIOS);
-                DI.services.Add(Agent.eDriverType.PerfectoMobileIOSWeb);
-                DI.services.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
-                DI.services.Add(Agent.eDriverType.MobileAppiumIOSBrowser);
+                DI.services.Add(Agent.eDriverType.PerfectoMobileIOSWeb);          
             }
             else if (platformType == ePlatformType.Windows)
             {
@@ -167,18 +151,15 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             else if (platformType == ePlatformType.Unix)
             {
                 DI.services.Add(Agent.eDriverType.UnixShell);
-
             }
             else if (platformType == ePlatformType.DOS)
             {
                 DI.services.Add(Agent.eDriverType.DOSConsole);
             }
-
             else if (platformType == ePlatformType.WebServices)
             {
                 DI.services.Add(Agent.eDriverType.WebServices);
             }
-
             //else if (platformType == ePlatformType.AndroidDevice.ToString())
             //{
             //    DI.services.Add(Agent.eDriverType.AndroidADB);
@@ -187,7 +168,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 DI.services.Add(Agent.eDriverType.ASCF);
             }
-
             else if (platformType == ePlatformType.MainFrame)
             {
                 DI.services.Add(Agent.eDriverType.MainFrame3270);

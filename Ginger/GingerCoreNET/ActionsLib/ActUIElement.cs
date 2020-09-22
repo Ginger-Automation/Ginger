@@ -73,7 +73,7 @@ namespace GingerCore.Actions.Common
             {
                 if (mPlatforms.Count == 0)
                 {
-                    mPlatforms.Add(ePlatformType.AndroidDevice);
+                    //mPlatforms.Add(ePlatformType.AndroidDevice);
                     mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Windows);

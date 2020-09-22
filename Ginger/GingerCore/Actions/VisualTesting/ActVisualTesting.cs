@@ -212,7 +212,7 @@ namespace GingerCore.Actions
                     mPlatforms.Add(ePlatformType.Web);
                     mPlatforms.Add(ePlatformType.Mobile);
                     mPlatforms.Add(ePlatformType.Windows);
-                    mPlatforms.Add(ePlatformType.AndroidDevice);
+                    //mPlatforms.Add(ePlatformType.AndroidDevice);
                 }
                 return mPlatforms;
             }
