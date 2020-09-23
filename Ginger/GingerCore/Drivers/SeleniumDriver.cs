@@ -562,12 +562,15 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                if(RestartRetry && mBrowserTpe==eBrowserType.Chrome && ex.Message.Contains("version"))
+                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && ex.Message.Contains("version"))
                 {
-                    GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater= new Updater.ChromeDriverUpdater();
-                    chromeupdater.UpdateDriver();
+                    GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater = new Updater.ChromeDriverUpdater();
+
                     RestartRetry = false;
-                    StartDriver();
+                    if (chromeupdater.UpdateDriver())
+                    {
+                        StartDriver();
+                    }
                 }
             }
         }
