@@ -237,7 +237,7 @@ namespace GingerCore.Drivers
         public string RemoteBrowserName { get; set; }
         public string RemotePlatform { get; set; }
         public string RemoteVersion { get; set; }
-
+        private bool RestartRetry = true;
         private bool IsRecording = false;
 
         IWebElement LastHighLightedElement;
@@ -561,6 +561,14 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
+
+                if(RestartRetry && mBrowserTpe==eBrowserType.Chrome && ex.Message.Contains("version"))
+                {
+                    GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater= new Updater.ChromeDriverUpdater();
+                    chromeupdater.UpdateDriver();
+                    RestartRetry = false;
+                    StartDriver();
+                }
             }
         }
 

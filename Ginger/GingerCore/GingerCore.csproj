@@ -714,6 +714,7 @@
     <Compile Include="Drivers\Selenium\SeleniumBMP\Server.cs" />
     <Compile Include="Drivers\Selenium\SeleniumBMP\Timings.cs" />
     <Compile Include="Drivers\Mobile\Perfecto\PerfectoDriver.cs" />
+    <Compile Include="Drivers\Updater\ChromeDriverUpdater.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
