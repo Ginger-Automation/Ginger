@@ -484,6 +484,10 @@ namespace GingerCore
                 if (DriverClass == null)
             {
                 DriverClass = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                    if (DriverClass == null)
+                    {
+                        return false;
+                    }
             }
 
  
@@ -1183,7 +1187,9 @@ namespace GingerCore
             }
         }
 
-       public List<DriverBase> VirtualAgentsStarted()
+        public bool IsVirtual { get; internal set; }
+
+        public List<DriverBase> VirtualAgentsStarted()
         {
             List<DriverBase> CurrentDrivers = new List<DriverBase>();
 

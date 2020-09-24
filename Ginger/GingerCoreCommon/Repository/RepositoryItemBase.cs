@@ -699,7 +699,15 @@ namespace Amdocs.Ginger.Repository
                             memberValue = propInfo.GetValue(repoItemToCopy);
                             if (memberValue is IObservableList && typeof(IObservableList).IsAssignableFrom(propInfo.PropertyType))
                             {
-                                IObservableList copiedList = (IObservableList)propInfo.GetValue(targetObj);
+                                var copiedList = (IObservableList)propInfo.GetValue(targetObj);
+
+                                if(copiedList == null)
+                                {
+                                    Type listItemType = memberValue.GetType().GetGenericArguments().SingleOrDefault();
+                                    var listOfType = typeof(ObservableList<>).MakeGenericType(listItemType);
+                                    copiedList = (IObservableList)Activator.CreateInstance(listOfType);
+                                }
+
                                 CopyRIList((IObservableList)memberValue, copiedList);
                                 propInfo.SetValue(targetObj, copiedList);
                             }

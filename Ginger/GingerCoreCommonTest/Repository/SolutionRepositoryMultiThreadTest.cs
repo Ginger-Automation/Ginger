@@ -60,7 +60,10 @@ namespace GingerCoreCommonTest.Repository
 
             NewRepositorySerializer RS = new NewRepositorySerializer();                        
             NewRepositorySerializer.AddClassesFromAssembly(typeof(MyRepositoryItem).Assembly);            
-            mSolutionRepository.Open(TempRepositoryFolder);            
+            mSolutionRepository.Open(TempRepositoryFolder);
+
+          
+
         }
 
         private static void CreateTestSolution()

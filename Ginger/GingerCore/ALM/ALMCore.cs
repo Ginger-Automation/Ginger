@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GingerCore.ALM
 {
@@ -60,6 +61,11 @@ namespace GingerCore.ALM
             {
                 AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest).FirstOrDefault();
             }
+            if (this.GetType() == typeof(GingerCore.ALM.OctaneCore))
+            {
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane).FirstOrDefault();
+            }
+
             if (this.GetType() == typeof(GingerCore.ALM.RallyCore))
             {
                 AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY).FirstOrDefault();
@@ -89,7 +95,7 @@ namespace GingerCore.ALM
         
         public static string SolutionFolder { get; set; }
         public ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
-        public abstract bool ConnectALMServer();
+        public abstract bool ConnectALMServer(); 
         public abstract bool ConnectALMProject();
         public abstract Boolean IsServerConnected();
         public abstract void DisconnectALMServer();

@@ -91,8 +91,14 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
         public bool DisableExtension { get; set; }
+
         [UserConfigured]
-        [UserConfiguredDefault("false")]
+        [UserConfiguredDefault("true")]
+        [UserConfiguredDescription("Only for Internet Explorer |  Set \"false\" if dont want to clear the Internet Explorer cache before launching the browser")]
+        public bool EnsureCleanSession { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Ignore Internet Explorer protected mode")]
         public bool IgnoreIEProtectedMode { get; set; }
 
@@ -321,7 +327,10 @@ namespace GingerCore.Drivers
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
 
-                        ieoptions.EnsureCleanSession = true;
+                        if (EnsureCleanSession == true)
+                        {
+                            ieoptions.EnsureCleanSession = true;
+                        }
                         ieoptions.IgnoreZoomLevel = true;
                         ieoptions.Proxy = mProxy == null ? null : mProxy;
                         ieoptions.IntroduceInstabilityByIgnoringProtectedModeSettings = true;
@@ -3670,13 +3679,24 @@ namespace GingerCore.Drivers
                 //TODO: get current win and keep, later on set in combo
                 foreach (string window in windows)
                 {
-                    Driver.SwitchTo().Window(window);
-                    AppWindow AW = new AppWindow();
-                    AW.Title = Driver.Title;
-                    AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
-                    list.Add(AW);
+                    try
+                    {
+                        if (!window.Equals(Driver.CurrentWindowHandle))
+                        {
+                            Driver.SwitchTo().Window(window);
+                        }
+                        AppWindow AW = new AppWindow();
+                        AW.Title = Driver.Title;
+                        AW.WindowType = AppWindow.eWindowType.SeleniumWebPage;
+                        list.Add(AW);
+                    }
+                    catch (Exception ex)
+                    {
+                        string wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
+                    }
                 }
-                return list;
+                return list.ToList();
             }
             return null;
         }
@@ -4434,13 +4454,25 @@ namespace GingerCore.Drivers
             ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
             foreach (String winHandle in openWindows)
             {
-                Driver.SwitchTo().Window(winHandle);
-                string winTitle = Driver.Title;
-                if (winTitle == Title)
+                try
                 {
-                    windowfound = true;
-                    break;
+                    if(!winHandle.Equals(currentWindow))
+                    {
+                        Driver.SwitchTo().Window(winHandle);
+                    }
+                    string winTitle = Driver.Title;
+                    if (winTitle == Title)
+                    {
+                        windowfound = true;
+                        break;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
+                }
+               
             }
             if (!windowfound)
             {
@@ -7626,12 +7658,15 @@ namespace GingerCore.Drivers
         }
 
         public bool CanStartAnotherInstance(out string errorMessage)
+        
         {
+
             switch(mBrowserTpe)
             {
-                case eBrowserType.IE:
-                   errorMessage = "Internet Explorer Doen't Support Virtual Agents";
-                    return false;
+               
+          
+               //TODO: filter on internetexplorer
+                  
                 default:
                     errorMessage = string.Empty;
                     return true;
