@@ -2832,6 +2832,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
 
         private bool isPOMRecording = false;
+        private string parentBrowserPath = string.Empty;
         private void DoRecordings(bool isPomRecord = false)
         {
             isPOMRecording = isPomRecord;
@@ -2860,6 +2861,11 @@ namespace GingerCore.Drivers.JavaDriverLib
                     Value = ""
                 });
 
+                if(isPOMRecording)
+                {
+                    parentBrowserPath = ci.XPath;
+                }
+                
             }
 
             PayLoad plAC = new PayLoad("StartRecording");
@@ -2965,19 +2971,22 @@ namespace GingerCore.Drivers.JavaDriverLib
             OnRecordingEvent(args);
         }
 
-        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration elementActionCongifuration)
+        private ElementInfo GetElementInfoFromActionConfiguration(ElementActionCongifuration elementActionCongifuration, ElementInfo elementInfo)
         {
-            JavaElementInfo elementInfo = new JavaElementInfo();
             try
             {
-                elementInfo.XPath = Convert.ToString(elementActionCongifuration.LocateValue);
-                elementInfo.ElementType = nameof(JavaElementInfo);
-                elementInfo = (JavaElementInfo)((IWindowExplorer)this).LearnElementInfoDetails(elementInfo);
-
                 elementInfo.ElementName = elementActionCongifuration.Description;
+
+                elementInfo = ((IWindowExplorer)this).LearnElementInfoDetails(elementInfo);
+
                 if (Enum.IsDefined(typeof(eElementType), Convert.ToString(elementActionCongifuration.Type)))
                 {
                     elementInfo.ElementTypeEnum = (eElementType)Enum.Parse(typeof(eElementType), Convert.ToString(elementActionCongifuration.Type));
+                }
+
+                if (isPOMRecording && elementInfo.GetType().Equals(typeof(HTMLElementInfo)))
+                {
+                    elementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath, Value = parentBrowserPath });
                 }
 
                 foreach (var elementLocator in elementInfo.Locators)
@@ -2985,36 +2994,161 @@ namespace GingerCore.Drivers.JavaDriverLib
                     elementLocator.Active = true;
                     elementLocator.IsAutoLearned = true;
                 }
-
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred creating the elementinfo object", ex);
             }
-
             return elementInfo;
         }
         private object GetElementConfigFromPayload(PayLoad payLoad)
         {
             ElementActionCongifuration configArgs = new ElementActionCongifuration();
-            //
-            configArgs.LocateBy = eLocateBy.ByXPath;
-            configArgs.LocateValue = payLoad.GetValueString();
 
-            if (!payLoad.Name.Equals("SwitchWindow"))
+            ElementInfo elementInfo;
+
+            if (payLoad.Name.StartsWith("html", StringComparison.OrdinalIgnoreCase))
             {
+                configArgs.LocateBy = payLoad.GetValueString();
+                configArgs.LocateValue = payLoad.GetValueString();
                 configArgs.ElementValue = payLoad.GetValueString();
+                //read payload to avoid exception
+                var optype = payLoad.GetValueString();
+                var elType = payLoad.GetValueString();
+
+                var xCord = payLoad.GetValueString();
+                var yCord = payLoad.GetValueString();
+
+
+                elementInfo = new HTMLElementInfo();
+                elementInfo.ElementType = nameof(HTMLElementInfo);
+                if (configArgs.LocateBy.Equals(nameof(eLocateBy.ByXPath)))
+                {
+                    elementInfo.XPath = configArgs.LocateValue;
+                }
+                SetHtmlElementSpecificConfiguration(payLoad, configArgs);
+                
+                var elInfo = LearnHtmlElementByXYCord(xCord, yCord);
+
+                if (elInfo != null)
+                {
+                    elInfo.ElementName = elInfo.ElementTitle + elInfo.Value;
+
+                    elementInfo = ((IWindowExplorer)this).LearnElementInfoDetails(elInfo);
+                    elementInfo.Locators.ToList().ForEach(x => x.Active = true);
+                    elInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath, Value = parentBrowserPath });
+                    configArgs.LearnedElementInfo = elInfo;
+                    return configArgs;
+                }
+
+
+            }
+            else
+            {
+                configArgs.LocateBy = eLocateBy.ByXPath;
+                configArgs.LocateValue = payLoad.GetValueString();
+
+                if (!payLoad.Name.Equals("SwitchWindow"))
+                {
+                    configArgs.ElementValue = payLoad.GetValueString();
+                }
+
+                elementInfo = new JavaElementInfo();
+                elementInfo.XPath = configArgs.LocateValue;
+
+                elementInfo.ElementType = nameof(JavaElementInfo);
+                SetElementSpecificConfiguration(payLoad, configArgs);
             }
 
-            SetElementSpecificConfiguration(payLoad, configArgs);
-
             configArgs.Description = string.Concat(configArgs.Operation, " ", configArgs.LocateValue);
-            configArgs.LearnedElementInfo = GetElementInfoFromActionConfiguration(configArgs);
+
+
+            configArgs.LearnedElementInfo = GetElementInfoFromActionConfiguration(configArgs, elementInfo);
 
 
             return configArgs;
         }
 
+        private void SetHtmlElementSpecificConfiguration(PayLoad payLoad, ElementActionCongifuration configArgs)
+        {
+            switch (payLoad.Name)
+            {
+                case "htmlcheckbox":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.CheckBox.ToString();
+                    break;
+                case "htmlbutton":
+                case "htmlsubmit":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Button.ToString();
+                    break;
+                case "htmltext":
+                case "htmltextarea":
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+
+                case "htmlpassword":
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+
+                case "htmlselect-one":
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.ComboBox.ToString();
+                    break;
+
+                case "htmlradio":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.RadioButton.ToString();
+                    break;
+
+                case "htmlfile":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Unknown.ToString();
+                    break;
+
+                case "htmlDIV":
+                case "htmlP":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Div.ToString();
+                    break;
+
+                case "htmlA":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.HyperLink.ToString();
+                    break;
+
+                case "htmlLI":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.ListItem.ToString();
+                    break;
+
+                case "htmlSPAN":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Span.ToString();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private ElementInfo LearnHtmlElementByXYCord(string xCord,string yCord)
+        {
+            PayLoad RequestPL = new PayLoad("GetElementInfoFromXYCoOrdinate");
+            RequestPL.AddValue(xCord);
+            RequestPL.AddValue(yCord);
+            RequestPL.ClosePackage();
+
+            PayLoad RCPL = Send(RequestPL);
+            if (RCPL.IsErrorPayLoad())
+            {
+                return null;
+            }
+            ElementInfo elementInfo = GetHTMLElementInfoFromPL(RCPL);
+            return elementInfo;
+        }
+        
         private static void SetElementSpecificConfiguration(PayLoad payLoad, ElementActionCongifuration configArgs)
         {
             switch (payLoad.Name)
@@ -3084,6 +3218,64 @@ namespace GingerCore.Drivers.JavaDriverLib
                     configArgs.Operation = ActUIElement.eElementAction.Switch.ToString();
                     configArgs.Type = eElementType.Window.ToString();
                     break;
+
+#region Widgets elements
+                case "htmlcheckbox":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.CheckBox.ToString();
+                    break;
+                case "htmlbutton":
+                case "htmlsubmit":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Button.ToString();
+                    break;
+                case "htmltext":
+                case "htmltextarea":
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+
+                case "htmlpassword":
+                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
+                    configArgs.Type = eElementType.TextBox.ToString();
+                    break;
+
+                case "htmlselect-one":
+                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
+                    configArgs.Type = eElementType.ComboBox.ToString();
+                    break;
+
+                case "htmlradio":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.RadioButton.ToString();
+                    break;
+
+                case "htmlfile":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Unknown.ToString();
+                    break;
+
+                case "htmlDIV":
+                case "htmlP":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Div.ToString();
+                    break;
+
+                case "htmlA":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.HyperLink.ToString();
+                    break;
+
+                case "htmlLI":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.ListItem.ToString();
+                    break;
+
+                case "htmlSPAN":
+                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
+                    configArgs.Type = eElementType.Span.ToString();
+                    break;
+#endregion 
                 default:
                     break;
             }
