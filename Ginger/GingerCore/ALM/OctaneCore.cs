@@ -48,7 +48,9 @@ namespace GingerCore.ALM
             try
             {
                 if (octaneRepository == null)
+                {
                     octaneRepository = new OctaneRepository();
+                }
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Octane server");
                 return Task.Run(() =>
                     {
@@ -59,34 +61,7 @@ namespace GingerCore.ALM
                                 Password = ALMCore.DefaultAlmConfig.ALMPassword,
                                 Server = ALMCore.DefaultAlmConfig.ALMServerURL
                             });
-                    }).Result;
-                //mOctaneRestConnector = new RestConnector();
-                //entityService = new EntityService(mOctaneRestConnector);
-                //if (!mOctaneRestConnector.IsConnected())
-                //{
-                //    string ignoreServerCertificateValidation = "false"; //ConfigurationManager.AppSettings["ignoreServerCertificateValidation"];
-                //    if (ignoreServerCertificateValidation != null && ignoreServerCertificateValidation.ToLower().Equals("true"))
-                //    {
-                //        NetworkSettings.IgnoreServerCertificateValidation();
-                //    }
-                //    NetworkSettings.EnableAllSecurityProtocols();                  
-
-                //    // If webAppUrl is empty we do not try to connect.
-                //    if (string.IsNullOrWhiteSpace(ALMCore.DefaultAlmConfig.ALMServerURL)) return false;
-
-                //    IConnectionInfo connectionInfo;
-
-                //    connectionInfo = new UserPassConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
-
-                //    lwssoAuthenticationStrategy = new LwssoAuthenticationStrategy(connectionInfo);
-                //    var result =  Task.Run(() =>
-                //    {
-                //        return  mOctaneRestConnector.Connect(ALMCore.DefaultAlmConfig.ALMServerURL, lwssoAuthenticationStrategy);
-
-                //    });
-                //    return result.Result;       
-
-                //}
+                    }).Result;                
             }
             catch (Exception ex)
             {
@@ -94,7 +69,6 @@ namespace GingerCore.ALM
                 mOctaneRestConnector = null;
                 return false;
             }
-            return false;
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
@@ -231,13 +205,17 @@ namespace GingerCore.ALM
                     itemfield.Type = field.FieldType;
 
                     if (listnodes != null && listnodes.ContainsKey(field.Name) && listnodes[field.Name].Any())
+                    {
                         itemfield.PossibleValues = new ObservableList<string>(listnodes[field.Name]);
-
-                    else if (listnodes != null && listnodes.ContainsKey(entityType.ToLower() + "_" +field.Name) && listnodes[entityType.ToLower() + "_" + field.Name].Any())
+                    }
+                    else if (listnodes != null && listnodes.ContainsKey(entityType.ToLower() + "_" + field.Name) && listnodes[entityType.ToLower() + "_" + field.Name].Any())
+                    {
                         itemfield.PossibleValues = new ObservableList<string>(listnodes[entityType.ToLower() + "_" + field.Name]);
-
+                    }
                     else if (phases != null && phases.ContainsKey(field.Name) && phases[field.Name].Any())
+                    {
                         itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
+                    }
                     fields.Add(itemfield);
                 }
             }
@@ -248,7 +226,5 @@ namespace GingerCore.ALM
         {
             throw new NotImplementedException();
         }
-
-
     }
 }
