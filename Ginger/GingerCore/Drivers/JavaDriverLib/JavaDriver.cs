@@ -3219,63 +3219,6 @@ namespace GingerCore.Drivers.JavaDriverLib
                     configArgs.Type = eElementType.Window.ToString();
                     break;
 
-#region Widgets elements
-                case "htmlcheckbox":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.CheckBox.ToString();
-                    break;
-                case "htmlbutton":
-                case "htmlsubmit":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Button.ToString();
-                    break;
-                case "htmltext":
-                case "htmltextarea":
-                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
-                    configArgs.Type = eElementType.TextBox.ToString();
-                    break;
-
-                case "htmlpassword":
-                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
-                    configArgs.Type = eElementType.TextBox.ToString();
-                    break;
-
-                case "htmlselect-one":
-                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
-                    configArgs.Type = eElementType.ComboBox.ToString();
-                    break;
-
-                case "htmlradio":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.RadioButton.ToString();
-                    break;
-
-                case "htmlfile":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Unknown.ToString();
-                    break;
-
-                case "htmlDIV":
-                case "htmlP":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Div.ToString();
-                    break;
-
-                case "htmlA":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.HyperLink.ToString();
-                    break;
-
-                case "htmlLI":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.ListItem.ToString();
-                    break;
-
-                case "htmlSPAN":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Span.ToString();
-                    break;
-#endregion 
                 default:
                     break;
             }
