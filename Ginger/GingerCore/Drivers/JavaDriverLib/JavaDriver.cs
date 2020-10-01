@@ -2278,80 +2278,11 @@ namespace GingerCore.Drivers.JavaDriverLib
             EI.Value = PL.GetValueString();
             EI.Name = PL.GetValueString();
             EI.ElementType = PL.GetValueString();
-            EI.ElementTypeEnum = GetHTMLElementType(EI.ElementType);
+            EI.ElementTypeEnum = JavaPlatform.GetHTMLElementType(EI.ElementType);
             EI.Path = PL.GetValueString();
             EI.XPath = PL.GetValueString();
             EI.RelXpath = PL.GetValueString();
             return EI;
-        }
-
-
-        private static eElementType GetHTMLElementType(string elementTypeString)
-        {
-            elementTypeString = elementTypeString.ToUpper();
-
-            switch (elementTypeString)
-            {
-                case "INPUT.TEXT":
-                case "TEXTAREA":
-                case "INPUT.UNDEFINED":
-                case "INPUT.PASSWORD":
-                case "INPUT.EMAIL":
-                    return eElementType.TextBox;
-
-                case "INPUT.BUTTON":
-                case "BUTTON":
-                case "INPUT.IMAGE":
-                case "INPUT.SUBMIT":
-                    return eElementType.Button;
-
-
-                case "INPUT.CHECKBOX":
-                    return eElementType.CheckBox;
-
-                case "INPUT.RADIO":
-                    return eElementType.RadioButton;
-
-                case "DIV":
-                    return eElementType.Div;
-
-                case "SPAN":
-                    return eElementType.Span;
-
-                case "IFRAME":
-                    return eElementType.Iframe;
-
-                case "TD":
-                case "TH":
-                    return eElementType.TableItem;
-
-                case "LINK":
-                case "A":
-                    return eElementType.HyperLink;
-
-                case "LABEL":
-                    return eElementType.Label;
-
-                case "SELECT":
-                    return eElementType.ComboBox;
-
-                case "TABLE":
-                    return eElementType.Table;
-
-                case "JEDITOR.TABLE":
-                    return eElementType.EditorTable;
-
-                case "IMG":
-                    return eElementType.Image;
-
-
-                case "CANVAS":
-                    return eElementType.Canvas;
-
-                default:
-                    return eElementType.Unknown;
-            }
-
         }
 
         void IWindowExplorer.SwitchWindow(string Title)
@@ -3026,7 +2957,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     elementInfo.XPath = configArgs.LocateValue;
                 }
-                SetHtmlElementSpecificConfiguration(payLoad, configArgs);
+
+                var elementType = JavaPlatform.GetHTMLElementType(payLoad.Name);
+                configArgs.Type = elementType.ToString();
+
+                var operationType = new JavaPlatform().GetDefaultElementOperation(elementType);
+                if(operationType.Equals(ActUIElement.eElementAction.Unknown.ToString()))
+                {
+                    operationType = ActUIElement.eElementAction.Click.ToString();
+                }
+
+                configArgs.Operation = operationType;
                 
                 var elInfo = LearnHtmlElementByXYCord(xCord, yCord);
 
@@ -3067,70 +3008,6 @@ namespace GingerCore.Drivers.JavaDriverLib
 
 
             return configArgs;
-        }
-
-        private void SetHtmlElementSpecificConfiguration(PayLoad payLoad, ElementActionCongifuration configArgs)
-        {
-            switch (payLoad.Name)
-            {
-                case "htmlcheckbox":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.CheckBox.ToString();
-                    break;
-                case "htmlbutton":
-                case "htmlsubmit":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Button.ToString();
-                    break;
-                case "htmltext":
-                case "htmltextarea":
-                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
-                    configArgs.Type = eElementType.TextBox.ToString();
-                    break;
-
-                case "htmlpassword":
-                    configArgs.Operation = ActUIElement.eElementAction.SetValue.ToString();
-                    configArgs.Type = eElementType.TextBox.ToString();
-                    break;
-
-                case "htmlselect-one":
-                    configArgs.Operation = ActUIElement.eElementAction.Select.ToString();
-                    configArgs.Type = eElementType.ComboBox.ToString();
-                    break;
-
-                case "htmlradio":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.RadioButton.ToString();
-                    break;
-
-                case "htmlfile":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Unknown.ToString();
-                    break;
-
-                case "htmlDIV":
-                case "htmlP":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Div.ToString();
-                    break;
-
-                case "htmlA":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.HyperLink.ToString();
-                    break;
-
-                case "htmlLI":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.ListItem.ToString();
-                    break;
-
-                case "htmlSPAN":
-                    configArgs.Operation = ActUIElement.eElementAction.Click.ToString();
-                    configArgs.Type = eElementType.Span.ToString();
-                    break;
-                default:
-                    break;
-            }
         }
 
         private ElementInfo LearnHtmlElementByXYCord(string xCord,string yCord)
