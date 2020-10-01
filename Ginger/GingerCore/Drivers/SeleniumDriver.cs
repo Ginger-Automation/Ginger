@@ -4598,7 +4598,7 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                 }
-                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });              
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
@@ -4967,9 +4967,18 @@ namespace GingerCore.Drivers
             return null;
         }
 
+        bool isNestedFrame = false;
         private ElementInfo GetElementFromIframe(ElementInfo IframeElementInfo)
         {
-            SwitchFrame(IframeElementInfo.Path, IframeElementInfo.XPath, false);
+            if (isNestedFrame)
+            {
+                SwitchFrame(IframeElementInfo.Path, IframeElementInfo.XPath, false);
+            }
+            else
+            {
+                SwitchFrame(string.Empty, IframeElementInfo.XPath, false);
+            }
+            
             InjectSpyIfNotIngected();
             bool listnerCanBeStarted = true;
             try
@@ -4993,22 +5002,38 @@ namespace GingerCore.Drivers
                 elInsideIframe = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.activeElement;");
 
             }
-            string IframePath;
+
+            string IframePath = string.Empty;
             if (IframeElementInfo.Path != string.Empty)
+            {
                 IframePath = IframeElementInfo.Path + "," + IframeElementInfo.XPath;
+            }
             else
+            {
                 IframePath = IframeElementInfo.XPath;
+            }
 
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
-
+            foundElemntInfo.Path = IframePath;
             foundElemntInfo.ElementObject = elInsideIframe;
+            
             if (elInsideIframe.TagName == "iframe" || elInsideIframe.TagName == "frame")
             {
-                Driver.SwitchTo().DefaultContent();
-                foundElemntInfo.Path = string.Empty;
+                if (!string.IsNullOrEmpty(foundElemntInfo.Path))
+                {
+                    SwitchFrame(foundElemntInfo);
+                }
+                else
+                {
+                    Driver.SwitchTo().DefaultContent();
+                }
+
                 foundElemntInfo.XPath = GenerateXpathForIWebElement(elInsideIframe, "");
                 return GetElementFromIframe(foundElemntInfo);
             }
+            
+            
+
             return foundElemntInfo;
         }
 
@@ -7643,6 +7668,10 @@ namespace GingerCore.Drivers
 
         public string GetElementXpath(ElementInfo EI)
         {
+            if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+            {
+                return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
+            }
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
         }
 
