@@ -94,9 +94,6 @@ namespace Ginger.ALM.JIRA
             }
 
             LoadDataBizFlows();
-
-            // mExecDetailNames = new List<string[]>();
-
             ShowCycleDetailsPanel(false);
         }
 
@@ -236,7 +233,7 @@ namespace Ginger.ALM.JIRA
         {
             if (mCurrentSelectedTreeItem != null)
             {
-                if (ALMIntegration.Instance.ImportZephyrCycle(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedCycles));
+                if (ALMIntegration.Instance.ImportZephyrCycle(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedCycles))
                 {
                     LoadDataBizFlows();
                     ShowCycleDetailsPanel(false);

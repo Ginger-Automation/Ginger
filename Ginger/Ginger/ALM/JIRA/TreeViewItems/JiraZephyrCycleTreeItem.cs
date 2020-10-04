@@ -42,11 +42,6 @@ namespace Ginger.ALM.JIRA.TreeViewItems
             return null;
         }
 
-        public JiraZephyrCycleTreeItem()
-        {
-           
-        }
-
         StackPanel ITreeViewItem.Header()
         {
             return TreeViewUtils.CreateItemHeader(Name, "@WorkFlow_16x16.png");          

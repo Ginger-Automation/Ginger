@@ -223,7 +223,10 @@ namespace GingerCore.ALM.JIRA
         {
             try
             {
-                if (cycle == null) return null;
+                if (cycle == null)
+                {
+                    return null;
+                }
 
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
