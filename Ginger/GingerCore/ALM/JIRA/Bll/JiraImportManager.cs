@@ -48,6 +48,11 @@ namespace GingerCore.ALM.JIRA
             this.jiraRepObj = jiraRepObj;
         }
 
+        public JiraRepository.JiraRepository JiraRepObj()
+        {
+            return this.jiraRepObj;
+        }
+
         public ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public ObservableList<Activity> GingerActivitiesRepo { get; set; }
         internal ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
@@ -147,6 +152,204 @@ namespace GingerCore.ALM.JIRA
                         {
                             //not in group- need to add it
                             busFlow.AddActivity(stepActivity, tcActivsGroup);                            
+                        }
+
+                        //pull TC-Step parameters and add them to the Activity level
+                        List<string> stepParamsList = new List<string>();
+                        GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
+                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        foreach (string param in stepParamsList)
+                        {
+                            ConvertJiraParameters(tc, stepActivity, param);
+                        }
+                    }
+
+                    //order the Activities Group activities according to the order of the matching steps in the TC
+                    try
+                    {
+                        int startGroupActsIndxInBf = 0;// busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        if (tcActivsGroup.ActivitiesIdentifiers.Count > 0)
+                        {
+                            startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        }
+                        foreach (JiraTestStep step in tc.Steps)
+                        {
+                            int stepIndx = tc.Steps.IndexOf(step) + 1;
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                            Activity act = actIdent.IdentifiedActivity;
+                            int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
+                            int bfActIndx = busFlow.Activities.IndexOf(act);
+
+                            //set it in the correct place in the group
+                            int numOfSeenSteps = 0;
+                            int groupIndx = -1;
+                            foreach (ActivityIdentifiers ident in tcActivsGroup.ActivitiesIdentifiers)
+                            {
+                                groupIndx++;
+                                if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
+                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                    continue;//activity which not originaly came from the TC
+                                numOfSeenSteps++;
+
+                                if (numOfSeenSteps >= stepIndx) break;
+                            }
+                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            if (identOnPlace.ActivityGuid != act.Guid)
+                            {
+                                //replace places in group
+                                tcActivsGroup.ActivitiesIdentifiers.Move(groupActIndx, groupIndx);
+                                //replace places in business flow
+                                busFlow.Activities.Move(bfActIndx, startGroupActsIndxInBf + groupIndx);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
+                    }
+                }
+                return busFlow;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                return null;
+            }
+        }
+
+        internal BusinessFlow ConvertJiraZypherCycleToBF(JiraZephyrCycle cycle)
+        {
+            try
+            {
+                if (cycle == null) return null;
+
+                //Create Business Flow
+                BusinessFlow busFlow = new BusinessFlow();
+                busFlow.Name = cycle.name;
+                busFlow.ExternalID = cycle.id.ToString();
+                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
+                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Variables = new ObservableList<VariableBase>();
+                //Create Activities Group + Activities for each TC
+                foreach (JiraZephyrIssue issue in cycle.IssuesList)
+                {
+                    // converting JiraZephyrIssue to JiraTest
+                    // and JiraZephyrTeststep to JiraTestStep - in order to re-use existing code
+                    List<JiraTestStep> steps = new List<JiraTestStep>();
+                    issue.Steps.ForEach(z => steps.Add(new JiraTestStep() { StepID = z.id.ToString(), StepName = z.step, Description = z.data }));
+                    JiraTest tc = new JiraTest(issue.id.ToString(), issue.name, issue.name, steps);
+
+                    ActivitiesGroup tcActivsGroup = ConvertJiraTestToAG(busFlow, tc);
+
+                    //Add the TC steps as Activities if not already on the Activities group
+                    foreach (JiraTestStep step in tc.Steps)
+                    {
+                        Activity stepActivity;
+                        bool toAddStepActivity;
+                        ConvertJiraStepToActivity(busFlow, tc, tcActivsGroup, step, out stepActivity, out toAddStepActivity);
+
+                        if (toAddStepActivity)
+                        {
+                            //not in group- need to add it
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);
+                        }
+
+                        //pull TC-Step parameters and add them to the Activity level
+                        List<string> stepParamsList = new List<string>();
+                        GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
+                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        foreach (string param in stepParamsList)
+                        {
+                            ConvertJiraParameters(tc, stepActivity, param);
+                        }
+                    }
+
+                    //order the Activities Group activities according to the order of the matching steps in the TC
+                    try
+                    {
+                        int startGroupActsIndxInBf = 0;// busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        if (tcActivsGroup.ActivitiesIdentifiers.Count > 0)
+                        {
+                            startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        }
+                        foreach (JiraTestStep step in tc.Steps)
+                        {
+                            int stepIndx = tc.Steps.IndexOf(step) + 1;
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                            Activity act = actIdent.IdentifiedActivity;
+                            int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
+                            int bfActIndx = busFlow.Activities.IndexOf(act);
+
+                            //set it in the correct place in the group
+                            int numOfSeenSteps = 0;
+                            int groupIndx = -1;
+                            foreach (ActivityIdentifiers ident in tcActivsGroup.ActivitiesIdentifiers)
+                            {
+                                groupIndx++;
+                                if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
+                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                    continue;//activity which not originaly came from the TC
+                                numOfSeenSteps++;
+
+                                if (numOfSeenSteps >= stepIndx) break;
+                            }
+                            ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
+                            if (identOnPlace.ActivityGuid != act.Guid)
+                            {
+                                //replace places in group
+                                tcActivsGroup.ActivitiesIdentifiers.Move(groupActIndx, groupIndx);
+                                //replace places in business flow
+                                busFlow.Activities.Move(bfActIndx, startGroupActsIndxInBf + groupIndx);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        //failed to re order the activities to match the tc steps order, not worth breaking the import because of this
+                    }
+                }
+                return busFlow;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                return null;
+            }
+        }
+
+        internal BusinessFlow ConvertJiraZephyrCycleToBF(JiraTestSet testSet)
+        {
+            try
+            {
+                if (testSet == null) return null;
+
+                //Create Business Flow
+                BusinessFlow busFlow = new BusinessFlow();
+                busFlow.Name = testSet.Name;
+                busFlow.ExternalID = testSet.Key;
+                busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
+                busFlow.Activities = new ObservableList<Activity>();
+                busFlow.Variables = new ObservableList<VariableBase>();
+                //Create Activities Group + Activities for each TC
+                foreach (JiraTest tc in testSet.Tests)
+                {
+                    ActivitiesGroup tcActivsGroup = ConvertJiraTestToAG(busFlow, tc);
+
+                    //Add the TC steps as Activities if not already on the Activities group
+                    foreach (JiraTestStep step in tc.Steps)
+                    {
+                        Activity stepActivity;
+                        bool toAddStepActivity;
+                        ConvertJiraStepToActivity(busFlow, tc, tcActivsGroup, step, out stepActivity, out toAddStepActivity);
+
+                        if (toAddStepActivity)
+                        {
+                            //not in group- need to add it
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -643,6 +846,7 @@ namespace GingerCore.ALM.JIRA
             }
             return jiratestset;
         }
+
         private List<string> getSelectedFieldValue(dynamic fields, string fieldName, ResourceType resourceType)
         {
             List<string> valuesList = new List<string>();

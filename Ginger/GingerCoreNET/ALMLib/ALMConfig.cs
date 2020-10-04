@@ -84,6 +84,21 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        private ALMIntegration.eTestingALMType mJiraTestingALM = ALMIntegration.eTestingALMType.None;
+        [IsSerializedForLocalRepository]
+        public ALMIntegration.eTestingALMType JiraTestingALM
+        {
+            get
+            {
+                return mJiraTestingALM;
+            }
+            set
+            {
+                mJiraTestingALM = value;
+            }
+        }
+
+
         private string mALMPassword;
         public string ALMPassword
         {

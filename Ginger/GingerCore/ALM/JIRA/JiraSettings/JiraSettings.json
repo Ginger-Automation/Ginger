@@ -10,8 +10,8 @@
       "Value": "/rest/api/2/issue"
     },
     {
-      "key": "Attachment",
-      "Value": "/rest/api/2/issue/{defect_id}/attachments"
+      "key": "Subtask",
+      "Value": "/rest/api/2/issue/{parent_id}/subtask"
     },
     {
       "key": "Search",
@@ -26,6 +26,62 @@
       "Value": "/rest/raven/1.0/api/testrun/{run_id}/status?status={run_status}"
     },
     {
+      "key": "UpdateCreateCycle_Zephyr",
+      "Value": "/rest/zapi/latest/cycle"
+    },
+    {
+      "key": "DeleteCycle_Zephyr",
+      "Value": "/rest/zapi/latest/cycle/{id}?isFolderCycleDelete={isFolderCycleDelete}"
+    },
+    {
+      "key": "GetCyclesList_Zephyr",
+      "Value": "/rest/zapi/latest/cycle?projectId={projectId}&versionId={versionId}&id={id}&offset={offset}&issueId=&expand="
+    },
+    {
+      "key": "GetCycleFoldersList_Zephyr",
+      "Value": "/rest/zapi/latest/cycle/{cycleId}/folders?projectId={projectId}&versionId={versionId}&limit={limit}&offset={offset}"
+    },
+    {
+      "key": "GetExecutionsList_Zephyr",
+      "Value": "/rest/zapi/latest/execution?issueId={issueId}&projectId={projectId}&versionId={versionId}&cycleId={cycleId}&offset={offset}&action={action}&sorter={sorter}&expand={expand}&limit={limit}&folderId={folderId}"
+    },
+    {
+      "key": "GetExecutionDefectsList_Zephyr",
+      "Value": "/rest/zapi/latest/execution/{id}/defects"
+    },
+    {
+      "key": "CreateNewTestStep_Zephyr",
+      "Value": "/rest/zapi/latest/teststep/{issueId}"
+    },
+    {
+      "key": "CreateCycleFolder_Zephyr",
+      "Value": "/rest/zapi/latest/folder/create"
+    },
+    {
+      "key": "UpdateExecutionWithDefects_Zephyr",
+      "Value": "/rest/zapi/latest/execution/updateWithBulkDefects"
+    },
+    {
+      "key": "CreateExecution_Zephyr",
+      "Value": "/rest/zapi/latest/execution"
+    },
+    {
+      "key": "UpdateExecution_Zephyr",
+      "Value": "/rest/zapi/latest/execution/{id}/execute/"
+    },
+    {
+      "key": "UpdateDeleteTestStep_Zephyr",
+      "Value": "/rest/zapi/latest/teststep/{issueId}/{id}"
+    },
+    {
+      "key": "GetCycle_Zephyr",
+      "Value": "/rest/zapi/latest/cycle/{id}"
+    },
+    {
+      "key": "GetTestStepsList_Zephyr",
+      "Value": "/rest/zapi/latest/teststep/{issueId}?offset=0&limit=50"
+    },
+    {
       "key": "GetRunStatus",
       "Value": "/rest/raven/1.0/api/testrun/{run_id}"
     },
@@ -35,6 +91,35 @@
     }
   ],
   "Resources": [
+    {
+      "key": "Feature",
+      "Value": "Feature"
+    },
+    {
+      "key": "Epic",
+      "Value": "Epic"
+    },
+    {
+      "key": "Story",
+      "Value": "story"
+    },
+    {
+      "key": "User_Story",
+      "Value": "User Story"
+    },
+    {
+      "key": "Subtask",
+      "Value": "Subtask"
+    },
+    {
+      "key": "Bug",
+      "Value": "Bug"
+    },
+
+    {
+      "key": "ALL",
+      "Value": "All"
+    },
     {
       "key": "TEST_CASE",
       "Value": "Test"
@@ -78,10 +163,14 @@
       "Value": "BLOCKED"
     }
   ],
-  "DefectStatuses": [
+  "TestingALMType": [
     {
-      "Status": [ "New", "Allocated" ],
-      "Operator": "in"
+      "key": "Zephyr",
+      "Value": "Zephyr"
+    },
+    {
+      "key": "Xray",
+      "Value": "Xray"
     }
   ]
 }

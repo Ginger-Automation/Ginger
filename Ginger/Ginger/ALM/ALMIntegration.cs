@@ -29,7 +29,6 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
-using GingerCore.ALM.QCRestAPI;
 using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM
@@ -259,6 +258,16 @@ namespace Ginger.ALM
 
             Mouse.OverrideCursor = null;
             return domainList;
+        }
+
+        public List<string> GetJiraTestingALMs()
+        {
+            return ((JiraCore)AlmCore).GetJiraTestingALMs();
+        }
+
+        public object GetZephyrCycles()
+        {
+            return ((JiraCore)AlmCore).GetZephyrCycles();
         }
 
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
@@ -620,7 +629,14 @@ namespace Ginger.ALM
             bool importResult = AlmRepo.ImportSelectedTests(importDestinationPath, selectedTests);
             Mouse.OverrideCursor = null;
             return importResult;
+        }
 
+        public bool ImportZephyrCycle(string importDestinationPath, IEnumerable<Object> selectedCycles)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            bool importResult = ((JIRA_Repository)AlmRepo).ImportSelectedZephyrCycle(importDestinationPath, selectedCycles);
+            Mouse.OverrideCursor = null;
+            return true;
         }
 
         public bool AutoALMProjectConnect(eALMConnectType almConnectStyle = eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
