@@ -187,22 +187,28 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray)
+            if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
             {
-                JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage();
-                win.ShowAsWindow();
-            }
-            if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
-            {
-                JIRA.JiraZephyrCyclesExplorerPage win = new JIRA.JiraZephyrCyclesExplorerPage(importDestinationFolderPath);
-                win.ShowAsWindow();
+                if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray)
+                {
+                    JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage();
+                    win.ShowAsWindow();
+                }
+                if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
+                {
+                    JIRA.JiraZephyrCyclesExplorerPage win = new JIRA.JiraZephyrCyclesExplorerPage(importDestinationFolderPath);
+                    win.ShowAsWindow();
+                }
             }
         }
 
         public override void ImportALMTestsById(string importDestinationFolderPath)
         {
-            JIRA.JiraImportSetByIdPage win = new JIRA.JiraImportSetByIdPage();
-            win.ShowAsWindow();
+            if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+            {
+                JIRA.JiraImportSetByIdPage win = new JIRA.JiraImportSetByIdPage();
+                win.ShowAsWindow();
+            }
         }
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)

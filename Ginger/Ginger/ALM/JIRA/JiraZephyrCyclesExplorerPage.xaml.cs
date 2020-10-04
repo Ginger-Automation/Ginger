@@ -93,11 +93,11 @@ namespace Ginger.ALM.JIRA
                 JiraZephyrCyclesExplorerTreeView.Tree.AddItem(tvv);
             }
 
-            // LoadDataBizFlows();
+            LoadDataBizFlows();
 
             // mExecDetailNames = new List<string[]>();
 
-            ShowTestSetDetailsPanel(false);
+            ShowCycleDetailsPanel(false);
         }
 
         private void GetTreeData()
@@ -186,16 +186,16 @@ namespace Ginger.ALM.JIRA
             }
         }
 
-        private void ShowTestSetDetailsPanel(bool toShow)
+        private void ShowCycleDetailsPanel(bool toShow)
         {
             if (toShow)
             {
-                TestSetDetailsPanel.Visibility = System.Windows.Visibility.Visible;
+                CycleDetailsPanel.Visibility = System.Windows.Visibility.Visible;
                 testSetDetailsColumn.Width = new GridLength(200);
             }
             else
             {
-                TestSetDetailsPanel.Visibility = System.Windows.Visibility.Collapsed;
+                CycleDetailsPanel.Visibility = System.Windows.Visibility.Collapsed;
                 testSetDetailsColumn.Width = new GridLength(0);
             }
         }
@@ -239,7 +239,7 @@ namespace Ginger.ALM.JIRA
                 if (ALMIntegration.Instance.ImportZephyrCycle(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedCycles));
                 {
                     LoadDataBizFlows();
-                    ShowTestSetDetailsPanel(false);
+                    ShowCycleDetailsPanel(false);
                     _GenericWin.Close();
                 }
             }
