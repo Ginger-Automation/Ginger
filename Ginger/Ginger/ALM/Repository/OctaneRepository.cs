@@ -60,7 +60,7 @@ namespace Ginger.ALM.Repository
 
         public override eUserMsgKey GetDownloadPossibleValuesMessage()
         {
-            throw new NotImplementedException();
+            return eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss;
         }
 
         public override List<string> GetTestLabExplorer(string path)
