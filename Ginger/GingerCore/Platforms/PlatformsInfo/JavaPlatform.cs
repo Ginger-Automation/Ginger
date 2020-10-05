@@ -362,6 +362,86 @@ namespace GingerCore.Platforms.PlatformsInfo
             return elementTypeEnum;
         }
 
+        public static eElementType GetHTMLElementType(string elementTypeString)
+        {
+            elementTypeString = elementTypeString.ToUpper();
+
+            switch (elementTypeString)
+            {
+                case "INPUT.TEXT":
+                case "TEXTAREA":
+                case "INPUT.UNDEFINED":
+                case "INPUT.PASSWORD":
+                case "INPUT.EMAIL":
+                case "HTMLTEXT":
+                case "HTMLTEXTAREA":
+                case "HTMLPASSWORD":
+                    return eElementType.TextBox;
+
+                case "INPUT.BUTTON":
+                case "BUTTON":
+                case "INPUT.IMAGE":
+                case "INPUT.SUBMIT":
+                case "HTMLBUTTON":
+                case "HTMLSUBMIT":
+                    return eElementType.Button;
+
+
+                case "INPUT.CHECKBOX":
+                case "HTMLCHECKBOX":
+                    return eElementType.CheckBox;
+
+                case "INPUT.RADIO":
+                case "HTMLRADIO":
+                    return eElementType.RadioButton;
+
+                case "DIV":
+                case "htmlDIV":
+                case "HTMLP":
+                    return eElementType.Div;
+
+                case "SPAN":
+                case "HTMLSPAN":
+                    return eElementType.Span;
+
+                case "IFRAME":
+                    return eElementType.Iframe;
+
+                case "TD":
+                case "TH":
+                    return eElementType.TableItem;
+
+                case "LINK":
+                case "A":
+                case "HTMLA":
+                    return eElementType.HyperLink;
+
+                case "LABEL":
+                    return eElementType.Label;
+
+                case "SELECT":
+                case "HTMLSELECT-ONE":
+                    return eElementType.ComboBox;
+
+                case "TABLE":
+                    return eElementType.Table;
+
+                case "JEDITOR.TABLE":
+                    return eElementType.EditorTable;
+
+                case "IMG":
+                    return eElementType.Image;
+
+
+                case "CANVAS":
+                    return eElementType.Canvas;
+                case "HTMLLI":
+                    return eElementType.ListItem;
+
+                default:
+                    return eElementType.Unknown;
+            }
+        }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> javaPlatformElementActionslist = new List<ActUIElement.eElementAction>();
