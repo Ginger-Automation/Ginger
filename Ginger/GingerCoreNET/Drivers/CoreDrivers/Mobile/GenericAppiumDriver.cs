@@ -737,74 +737,97 @@ namespace Amdocs.Ginger.CoreNET
         }
         //private void GenElementHandler(ActGenElement act)
         //{
-            //try
-            //{
-            //    IWebElement e;
-            //    long x = 0, y = 0;
+        //try
+        //{
+        //    IWebElement e;
+        //    long x = 0, y = 0;
 
-            //    switch (act.GenElementAction)
-            //    {
-            //        //need to override regular selenium driver actions only if needed, 
-            //        //if not then to run the regular selenium driver actions handler for it to avoid duplication
+        //    switch (act.GenElementAction)
+        //    {
+        //        //need to override regular selenium driver actions only if needed, 
+        //        //if not then to run the regular selenium driver actions handler for it to avoid duplication
 
-            //        case ActGenElement.eGenElementAction.Click:                                               
-            //            e = LocateElement(act);
-            //            if (e != null)
-            //            {
-            //                e.Click();
-            //            }
-            //            else if (act.LocateBy == eLocateBy.ByXY)
-            //            {
-            //                try
-            //                {
-            //                    x = Convert.ToInt64(act.LocateValueCalculated.Split(',')[0]);
-            //                    y = Convert.ToInt64(act.LocateValueCalculated.Split(',')[1]);
-            //                }
-            //                catch { x = 0; y = 0; }
-            //                TapXY(x, y);
-            //            }
-            //            else
-            //            {
-            //                act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-            //            }                        
-            //            break;
+        //        case ActGenElement.eGenElementAction.Click:                                               
+        //            e = LocateElement(act);
+        //            if (e != null)
+        //            {
+        //                e.Click();
+        //            }
+        //            else if (act.LocateBy == eLocateBy.ByXY)
+        //            {
+        //                try
+        //                {
+        //                    x = Convert.ToInt64(act.LocateValueCalculated.Split(',')[0]);
+        //                    y = Convert.ToInt64(act.LocateValueCalculated.Split(',')[1]);
+        //                }
+        //                catch { x = 0; y = 0; }
+        //                TapXY(x, y);
+        //            }
+        //            else
+        //            {
+        //                act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+        //            }                        
+        //            break;
 
-            //        case ActGenElement.eGenElementAction.TapElement:
-            //            try
-            //            {
-            //                e = LocateElement(act);
-            //                TouchAction t = new TouchAction(Driver);
-            //                t.Tap(e, 1, 1);
-            //                Driver.PerformTouchAction(t);
-            //            }
-            //            catch (Exception ex)
-            //            {
-            //                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-            //            }
-            //            break;
+        //        case ActGenElement.eGenElementAction.TapElement:
+        //            try
+        //            {
+        //                e = LocateElement(act);
+        //                TouchAction t = new TouchAction(Driver);
+        //                t.Tap(e, 1, 1);
+        //                Driver.PerformTouchAction(t);
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+        //            }
+        //            break;
 
-            //        case ActGenElement.eGenElementAction.SetValue:                       
-            //            e = LocateElement(act);                                                
-            //            if (e != null)
-            //            {                            
-            //                switch (DriverPlatformType)
-            //                {
-            //                    case GenericAppiumDriver.eMobilePlatformType.Android:
-            //                        e.Clear();
-            //                        e.SendKeys(act.GetInputParamCalculatedValue("Value"));                                    
-            //                        break;
-            //                    case GenericAppiumDriver.eMobilePlatformType.iOS:
-            //                        //e.Clear();
-            //                        e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-            //                        //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
-            //                        break;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-            //            }
-            //            break;                    
+        //        case ActGenElement.eGenElementAction.SetValue:                       
+//        e = LocateElement(act);                                                
+//                        if (e != null)
+//                        {
+//                            e.Clear();
+//                            //make sure value was cleared- trying to handle clear issue in WebViews
+//                            try
+//                            {
+//                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
+//                                //Wasting time when not needed
+//                                string elemntContent = e.Text; //.GetAttribute("name");
+//                                if (string.IsNullOrEmpty(elemntContent) == false)
+//                                {
+//                                    for (int indx = 1; indx <= elemntContent.Length; indx++)
+//                                    {
+//                                        //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
+//                                        ((AndroidDriver<AppiumWebElement>) Driver).PressKeyCode(22);
+//        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
+//        ((AndroidDriver<AppiumWebElement>) Driver).PressKeyCode(67);
+//    }
+//}
+//                            }
+//                            catch (Exception ex)
+//                            {
+//                                Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
+//                            }
+//                            switch (DriverPlatformType)
+//                            {
+//                                case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
+//                                    //e.Clear();
+//                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));                                    
+//                                    break;
+//                                case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
+//                                    //e.Clear();
+//                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+//                                    //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
+//                                    break;
+//                            }
+//                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
+//                        }
+//                        else
+//                        {
+//                            act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+//                        }
+//                        break;                   
 
             //        case ActGenElement.eGenElementAction.GetValue:
             //        case ActGenElement.eGenElementAction.GetInnerText:
