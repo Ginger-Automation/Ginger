@@ -19,7 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Repository;
 using ImageMagick;
 using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace GingerCore.Actions.VisualTesting
 {
@@ -37,11 +40,11 @@ namespace GingerCore.Actions.VisualTesting
         }
 
         void IVisualAnalyzer.Compare()
-        {
-            MagickImage magickBaseImg = new MagickImage(mAct.baseImage);
-            MagickImage magickTargetImg = new MagickImage(mAct.targetImage);
+        {            
+            MagickImage magickBaseImg = new MagickImage(BitmapToArray(mAct.baseImage));//Not tested after code change
+            MagickImage magickTargetImg = new MagickImage(BitmapToArray(mAct.targetImage));//Not tested after code change
 
-            var diffImg = new MagickImage();
+            MagickImage diffImg = new MagickImage();
 
             double percentageDifference;
 
@@ -55,12 +58,22 @@ namespace GingerCore.Actions.VisualTesting
              percentageDifference = percentageDifference * 100;
              percentageDifference = Math.Round(percentageDifference, 2);
 
-            Bitmap ImgToSave = diffImg.ToBitmap();
-            mAct.CompareResult = ImgToSave;
+            TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
+            Bitmap ImgToSave = (Bitmap)tc.ConvertFrom(diffImg.ToByteArray());             
+            mAct.CompareResult = ImgToSave;//Not tested after code change
 
             mAct.AddOrUpdateReturnParamActual("Percentage Difference", percentageDifference + "");
 
             mAct.AddScreenShot(ImgToSave, "Compare Result");
+        }
+
+        private byte[] BitmapToArray(Bitmap bitmap)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bitmap.Save(ms, ImageFormat.Bmp);
+                return ms.ToArray();
+            }
         }
 
         public void CreateBaseline()

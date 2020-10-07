@@ -303,8 +303,14 @@
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
+    <PackageReference Include="Eyes.Images" Version="2.16.0" />
+  
+    <PackageReference Include="Eyes.Sdk.Core" Version="2.34.1" />
+  
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.3" />
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
+    <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
 	<PackageReference Include="LiteDB" Version="4.1.4" />
@@ -312,6 +318,8 @@
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
   
     <PackageReference Include="log4net" Version="2.0.8" />
+  
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
@@ -323,6 +331,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Protractor" Version="0.13.0" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
@@ -780,10 +789,6 @@
     <None Update="Reports\Ginger-Web-Client\styles.ec0b85177c760405ccbd.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Drivers\CoreDrivers\Web\" />
   </ItemGroup>
 
 </Project>

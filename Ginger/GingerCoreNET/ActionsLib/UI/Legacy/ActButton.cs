@@ -16,30 +16,31 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-
+// This class is for Button actions
 namespace GingerCore.Actions
 {
-    //This class is for UI checkbox element
-    public class ActCheckbox : Act, IObsoleteAction
+    public class ActButton : Act, IObsoleteAction
     {
-        public override string ActionDescription { get { return "Check Box Action"; } }
-        public override string ActionUserDescription { get { return "Check/Un-Check a checkbox object"; } }
-        
+        public override string ActionDescription { get { return "Button Action"; } }
+        public override string ActionUserDescription { get { return "Click on a button object"; } }
+
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to automate a check/Un-check an object from type Checkbox." + Environment.NewLine + Environment.NewLine + "For Mobile use this action only in case running the flow on the native browser.");
+            TBH.AddText("Use this action in case you need to automate a click on an object from type Button."
+                                        + Environment.NewLine + Environment.NewLine +
+                                           "For Mobile use this action only in case running the flow on the native browser.");
         }        
-
-        public override string ActionEditPage { get { return "ActCheckboxEditPage"; } }
+        
+        public override string ActionEditPage { get { return "ActButtonEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
@@ -50,56 +51,47 @@ namespace GingerCore.Actions
             {
                 if (mPlatforms.Count == 0)
                 {
-                    mPlatforms.Add(ePlatformType.ASCF);
                     mPlatforms.Add(ePlatformType.Web);
-                    // Since, the action isn't supported by Windows Platform hence, it's commented
-                    
                     mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
             }
         }
 
-        public new static partial class Fields
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
+
+        public enum eButtonAction
         {
-            public static string CheckboxAction = "CheckboxAction";         
-        }
-        
-        public enum eCheckboxAction
-        {
-            Check = 0,
-            Uncheck = 2,
-            SetFocus = 3,
-            GetValue=4,
+            Click = 0,
+            GetValue = 2,
+            IsDisabled = 3,
+            GetFont = 4,
             IsDisplayed = 5,
-            Click=6,
-            IsDisabled=7,
+            Back = 6,
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
         }
 
         [IsSerializedForLocalRepository]
-        public eCheckboxAction CheckboxAction { get; set; }
+        public eButtonAction ButtonAction{get;set;}
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
-
-        public override String ActionType
-        {
-            get
+        public override String ActionType { get
             {
-                return "Checkbox:" + CheckboxAction.ToString();
+                return "Button." + ButtonAction;
             }
         }
 
+        public override eImageType Image { get { return eImageType.MousePointer; } }
+
         Type IObsoleteAction.TargetAction()
         {
-            return GetActionTypeByElementActionName(this.CheckboxAction);
+            return GetActionTypeByElementActionName(this.ButtonAction);
         }
 
         String IObsoleteAction.TargetActionTypeName()
         {
-            Type currentType = GetActionTypeByElementActionName(this.CheckboxAction);
+            Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
             if (currentType == typeof(ActUIElement))
             {
                 ActUIElement actUIElement = new ActUIElement();
@@ -134,53 +126,48 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
-            Type currentType = GetActionTypeByElementActionName(this.CheckboxAction);
+            Type currentType = GetActionTypeByElementActionName(this.ButtonAction);
             if (currentType == typeof(ActUIElement))
             {
                 // check special cases, where name should be changed. Than at default case - all names that have no change
-                switch (this.CheckboxAction)
+                switch (this.ButtonAction)
                 {
-                    case eCheckboxAction.Check:
-                    case eCheckboxAction.Uncheck:
-                        newAct.ElementAction = ActUIElement.eElementAction.Click;
-                        break;
-                    case eCheckboxAction.IsDisabled:
+                    case eButtonAction.IsDisplayed:
                         newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
                         break;
                     default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.CheckboxAction.ToString());
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.ButtonAction.ToString());
                         break;
                 }
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            if(!string.IsNullOrEmpty(this.LocateValue))
+            if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
             if (!uIElementTypeAssigned)
-                newAct.ElementType = eElementType.CheckBox;
+                newAct.ElementType = eElementType.Button;
             newAct.Active = true;
 
             return newAct;
         }
 
-        Type GetActionTypeByElementActionName(eCheckboxAction dropDownElementAction)
+        Type GetActionTypeByElementActionName(eButtonAction dropDownElementAction)
         {
             Type currentType = null;
             switch (dropDownElementAction)
             {
-                case eCheckboxAction.Check:
-                case eCheckboxAction.Uncheck:
-                case eCheckboxAction.GetValue:
-                case eCheckboxAction.IsDisplayed:
-                case eCheckboxAction.Click:
-                case eCheckboxAction.IsDisabled:
-                case eCheckboxAction.GetWidth:
-                case eCheckboxAction.GetHeight:
-                case eCheckboxAction.GetStyle:
+                case eButtonAction.Click:
+                case eButtonAction.GetValue:
+                case eButtonAction.IsDisabled:
+                case eButtonAction.GetFont:
+                case eButtonAction.IsDisplayed:
+                case eButtonAction.GetWidth:
+                case eButtonAction.GetHeight:
+                case eButtonAction.GetStyle:
                     currentType = typeof(ActUIElement);
                     break;
-                    //default:
-                    //    throw new Exception("Converter error, missing Action translator for - " + dropDownElementAction);
             }
             return currentType;
         }

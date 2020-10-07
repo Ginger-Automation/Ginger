@@ -16,29 +16,33 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions
 {
-    public class ActHello : Act
+    //This class is for multiselect list element
+    public class ActMultiselectList : Act
     {
-        public override string ActionDescription { get { return "Agent Hello Action"; } }
-        public override string ActionUserDescription { get { return "Agent Hello Action"; } }
+        public override string ActionDescription { get { return "Multi Select Action"; } }
+        public override string ActionUserDescription { get { return "Click on a multi select object"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action to open an alert on web page.To open an alert,select control property type from Locate By drop down and then enter the value of that control and provide value in Value textbox and run the action");            
+            TBH.AddText("Use this action in case you want to perform any multi select actions.");
+            TBH.AddLineBreak();
+            TBH.AddLineBreak();
+            TBH.AddText("To perform a multi select action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property" +
+            " that you set in Locate By type and then enter the page url in value textbox and run the action.");
         }        
 
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
+        public override bool IsSelectableAction { get { return false; } }
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
@@ -47,18 +51,29 @@ namespace GingerCore.Actions
                 if (mPlatforms.Count == 0)
                 {
                     mPlatforms.Add(ePlatformType.Web);
-                    // Since, the action isn't supported by Windows Platform hence, it's commented
-                    mPlatforms.Add(ePlatformType.ASCF);                    
+                    mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
             }
         }
 
+        public enum eActMultiselectListAction
+        {
+            SetSelectedValueByIndex = 1,
+            SetSelectedValueByValue = 2,
+            SetSelectedValueByText = 3,
+            ClearAllSelectedValues = 4,
+            SetFocus = 5,
+        }
+
+        [IsSerializedForLocalRepository]
+        public eActMultiselectListAction ActMultiselectListAction { get; set; }
+
         public override String ActionType
         {
             get
             {
-                return "Hello";
+                return "MultiselectList:" + ActMultiselectListAction.ToString();
             }
         }
     }

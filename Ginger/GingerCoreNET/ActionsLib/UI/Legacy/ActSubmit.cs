@@ -16,33 +16,34 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
-    //This class is for Browser actions
-    //TODO: Replace to ActBrowser !? what if it is not browser? TBD
-
-    public class ActGotoURL : Act, IObsoleteAction
+    //This class is for submit
+    //TODO: do we need a separate class or can combine with ActBrowser ?!
+    public class ActSubmit : Act, IObsoleteAction
     {
-        public override string ActionDescription { get { return "Goto URL Action"; } }
-        public override string ActionUserDescription { get { return "Goto URL Action"; } }
+        public override string ActionDescription { get { return "Submit Action"; } }
+        public override string ActionUserDescription { get { return "Performs Submit Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action to open a url in ginger.To open an url,just put url in value and run the action.");            
+            TBH.AddText("Use this action in case you want to perform any Submit actions.");
+            TBH.AddLineBreak();
+            TBH.AddLineBreak();
+            TBH.AddText("To perform a Submit action, Select Locate By type, e.g- ByID,ByCSS,ByXPath etc.Then enter the value of property " +
+            "that you set in Locate By type.Then select Action Type and then enter the page url in value textbox and run the action.");
         }        
 
         public override string ActionEditPage { get { return null; } }
-        public override bool ObjectLocatorConfigsNeeded { get { return false; } }
+        public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
         // return the list of platforms this action is supported on
@@ -65,10 +66,9 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Goto URL";
+                return "Submit";
             }
         }
-        public override eImageType Image { get { return eImageType.Globe; } }
 
         //
         // IObsoleteAction part
@@ -79,11 +79,11 @@ namespace GingerCore.Actions
 
         String IObsoleteAction.TargetActionTypeName()
         {
-            Type currentType = GetActionTypeByElementActionName(this.ActionType);
-            if (currentType == typeof(ActBrowserElement))
+            Type currentType = GetActionTypeByElementActionName(ActionType);
+            if (currentType == typeof(ActUIElement))
             {
-                ActBrowserElement actBrowserElement = new ActBrowserElement();
-                return actBrowserElement.ActionDescription;
+                ActUIElement actUIElement = new ActUIElement();
+                return actUIElement.ActionDescription;
             }
             else
             {
@@ -98,7 +98,7 @@ namespace GingerCore.Actions
 
         bool IObsoleteAction.IsObsoleteForPlatform(ePlatformType platform)
         {
-            if (platform == ePlatformType.Web || platform == ePlatformType.NA || platform == ePlatformType.Mobile)
+            if (platform == ePlatformType.Web ||  platform == ePlatformType.NA || platform == ePlatformType.Mobile)
             {
                 return true;
             }
@@ -110,25 +110,31 @@ namespace GingerCore.Actions
 
         Act IObsoleteAction.GetNewAction()
         {
-            AutoMapper.MapperConfiguration mapConfigBrowserElementt = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActBrowserElement>(); });
-            ActBrowserElement NewActBrowserElement = mapConfigBrowserElementt.CreateMapper().Map<Act, ActBrowserElement>(this);
+            bool uIElementTypeAssigned = false;
+            AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
+            ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
-            Type currentType = GetActionTypeByElementActionName(this.ActionType);
-            if (currentType == typeof(ActBrowserElement))
+
+            Type currentType = GetActionTypeByElementActionName(ActionType);
+            if (currentType == typeof(ActUIElement))
             {
-                switch (this.ActionType)
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (ActionType)
                 {
-                    case "Goto URL":
-                        NewActBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
+                    case "Submit":
+                        newAct.ElementAction = ActUIElement.eElementAction.Submit;
                         break;
                 }
             }
 
-            if (currentType == typeof(ActBrowserElement))
-            {
-                return NewActBrowserElement;
-            }
-            return null;
+            newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
+            if (!string.IsNullOrEmpty(this.LocateValue))
+                newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            if (!uIElementTypeAssigned)
+                newAct.ElementType = eElementType.Button;
+            newAct.Active = true;
+
+            return newAct;
         }
 
         Type GetActionTypeByElementActionName(string actionType)
@@ -136,8 +142,8 @@ namespace GingerCore.Actions
             Type currentType = null;
             switch (actionType)
             {
-                case "Goto URL":
-                    currentType = typeof(ActBrowserElement);
+                case "Submit":
+                    currentType = typeof(ActUIElement);
                     break;
             }
             return currentType;

@@ -16,34 +16,32 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
-using GingerCore.Properties;
+using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
-    //This class is for UI link element
-    public class ActLink : Act, IObsoleteAction
+    public class ActLabel : Act, IObsoleteAction
     {
-        public override string ActionDescription { get { return "Link Action"; } }
-        public override string ActionUserDescription { get { return "Click on a link object"; } }
+        public override string ActionDescription { get { return "Label Action"; } }
+        public override string ActionUserDescription { get { return "Set a label object"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to automate a click on an object from type Link."
-                                        + Environment.NewLine + Environment.NewLine +
-                                           "For Mobile use this action only in case running the flow on the native browser.");
+            TBH.AddText("Use this action in case you need to automate a set property on an object from type label.");
+            TBH.AddLineBreak();
+            TBH.AddLineBreak();
+            TBH.AddText("To use this action,select property type of label from Locate By drop down and then enter label property value and then the url and run the action.");
         }        
 
-        public override string ActionEditPage { get { return "ActLinkEditPage"; } }
+        public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
@@ -63,43 +61,36 @@ namespace GingerCore.Actions
 
         public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
-        public enum eLinkAction
+        public enum eLabelAction
         {
-            Click = 0,
-            Hover= 2, //This is needed for hovering to expand menus.
-            GetValue=3, //for validation
-            Visible=4, //for validation
+            IsVisible = 0,
+            GetInnerText=2,
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
         }
 
-        [IsSerializedForLocalRepository]        
-        public eLinkAction LinkAction { get; set; }
-
-        public override String ToString()
-        {            
-                return "Link: " + GetInputParamValue("Value");            
-        }
+        [IsSerializedForLocalRepository]
+        public eLabelAction LabelAction{get;set;}
 
         public override String ActionType
         {
             get
             {
-                return "Link: " + LinkAction.ToString();
+                return "LabelName";
             }
         }
 
-        public override eImageType Image { get { return eImageType.Link; } }
+        public override eImageType Image { get { return eImageType.Label; } }
 
         Type IObsoleteAction.TargetAction()
         {
-            return GetActionTypeByElementActionName(this.LinkAction);
+            return GetActionTypeByElementActionName(this.LabelAction);
         }
 
         String IObsoleteAction.TargetActionTypeName()
         {
-            Type currentType = GetActionTypeByElementActionName(this.LinkAction);
+            Type currentType = GetActionTypeByElementActionName(this.LabelAction);
             if (currentType == typeof(ActUIElement))
             {
                 ActUIElement actUIElement = new ActUIElement();
@@ -134,20 +125,15 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
-            Type currentType = GetActionTypeByElementActionName(this.LinkAction);
+
+            Type currentType = GetActionTypeByElementActionName(this.LabelAction);
             if (currentType == typeof(ActUIElement))
             {
-                // check special cases, where name should be changed. Than at default case - all names that have no change
-                switch (this.LinkAction)
+                // check special cases, where neame should be changed. Than at default case - all names that have no change
+                switch (this.LabelAction)
                 {
-                    case eLinkAction.Click:
-                        newAct.ElementAction = ActUIElement.eElementAction.JavaScriptClick;
-                        break;
-                    case eLinkAction.Visible:
-                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
-                        break;
                     default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LinkAction.ToString());
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LabelAction.ToString());
                         break;
                 }
             }
@@ -156,24 +142,18 @@ namespace GingerCore.Actions
             if (!string.IsNullOrEmpty(this.LocateValue))
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
-                newAct.ElementType = eElementType.HyperLink;
+                newAct.ElementType = eElementType.Label;
             newAct.Active = true;
 
             return newAct;
         }
 
-        Type GetActionTypeByElementActionName(eLinkAction dropDownElementAction)
+        Type GetActionTypeByElementActionName(eLabelAction dropDownElementAction)
         {
             Type currentType = null;
             switch (dropDownElementAction)
             {
-                case eLinkAction.Click:
-                case eLinkAction.Hover:
-                case eLinkAction.GetValue:
-                case eLinkAction.Visible:
-                case eLinkAction.GetWidth:
-                case eLinkAction.GetHeight:
-                case eLinkAction.GetStyle:
+                case eLabelAction.IsVisible:
                     currentType = typeof(ActUIElement);
                     break;
                     //default:

@@ -16,34 +16,29 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
-    public class ActLabel : Act, IObsoleteAction
+    //This class is for UI checkbox element
+    public class ActCheckbox : Act, IObsoleteAction
     {
-        public override string ActionDescription { get { return "Label Action"; } }
-        public override string ActionUserDescription { get { return "Set a label object"; } }
-
+        public override string ActionDescription { get { return "Check Box Action"; } }
+        public override string ActionUserDescription { get { return "Check/Un-Check a checkbox object"; } }
+        
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to automate a set property on an object from type label.");
-            TBH.AddLineBreak();
-            TBH.AddLineBreak();
-            TBH.AddText("To use this action,select property type of label from Locate By drop down and then enter label property value and then the url and run the action.");
+            TBH.AddText("Use this action in case you need to automate a check/Un-check an object from type Checkbox." + Environment.NewLine + Environment.NewLine + "For Mobile use this action only in case running the flow on the native browser.");
         }        
 
-        public override string ActionEditPage { get { return null; } }
+        public override string ActionEditPage { get { return "ActCheckboxEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
 
@@ -54,45 +49,56 @@ namespace GingerCore.Actions
             {
                 if (mPlatforms.Count == 0)
                 {
+                    mPlatforms.Add(ePlatformType.ASCF);
                     mPlatforms.Add(ePlatformType.Web);
+                    // Since, the action isn't supported by Windows Platform hence, it's commented
+                    
                     mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
             }
         }
 
-        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
-
-        public enum eLabelAction
+        public new static partial class Fields
         {
-            IsVisible = 0,
-            GetInnerText=2,
+            public static string CheckboxAction = "CheckboxAction";         
+        }
+        
+        public enum eCheckboxAction
+        {
+            Check = 0,
+            Uncheck = 2,
+            SetFocus = 3,
+            GetValue=4,
+            IsDisplayed = 5,
+            Click=6,
+            IsDisabled=7,
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
         }
 
         [IsSerializedForLocalRepository]
-        public eLabelAction LabelAction{get;set;}
+        public eCheckboxAction CheckboxAction { get; set; }
+
+        public override List<ePlatformType> LegacyActionPlatformsList { get { return Platforms; } }
 
         public override String ActionType
         {
             get
             {
-                return "LabelName";
+                return "Checkbox:" + CheckboxAction.ToString();
             }
         }
 
-        public override eImageType Image { get { return eImageType.Label; } }
-
         Type IObsoleteAction.TargetAction()
         {
-            return GetActionTypeByElementActionName(this.LabelAction);
+            return GetActionTypeByElementActionName(this.CheckboxAction);
         }
 
         String IObsoleteAction.TargetActionTypeName()
         {
-            Type currentType = GetActionTypeByElementActionName(this.LabelAction);
+            Type currentType = GetActionTypeByElementActionName(this.CheckboxAction);
             if (currentType == typeof(ActUIElement))
             {
                 ActUIElement actUIElement = new ActUIElement();
@@ -127,35 +133,49 @@ namespace GingerCore.Actions
             AutoMapper.MapperConfiguration mapConfig = new AutoMapper.MapperConfiguration(cfg => { cfg.CreateMap<Act, ActUIElement>(); });
             ActUIElement newAct = mapConfig.CreateMapper().Map<Act, ActUIElement>(this);
 
-
-            Type currentType = GetActionTypeByElementActionName(this.LabelAction);
+            Type currentType = GetActionTypeByElementActionName(this.CheckboxAction);
             if (currentType == typeof(ActUIElement))
             {
-                // check special cases, where neame should be changed. Than at default case - all names that have no change
-                switch (this.LabelAction)
+                // check special cases, where name should be changed. Than at default case - all names that have no change
+                switch (this.CheckboxAction)
                 {
+                    case eCheckboxAction.Check:
+                    case eCheckboxAction.Uncheck:
+                        newAct.ElementAction = ActUIElement.eElementAction.Click;
+                        break;
+                    case eCheckboxAction.IsDisabled:
+                        newAct.ElementAction = ActUIElement.eElementAction.IsVisible;
+                        break;
                     default:
-                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.LabelAction.ToString());
+                        newAct.ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), this.CheckboxAction.ToString());
                         break;
                 }
             }
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
-            if (!string.IsNullOrEmpty(this.LocateValue))
+            if(!string.IsNullOrEmpty(this.LocateValue))
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
             if (!uIElementTypeAssigned)
-                newAct.ElementType = eElementType.Label;
+                newAct.ElementType = eElementType.CheckBox;
             newAct.Active = true;
 
             return newAct;
         }
 
-        Type GetActionTypeByElementActionName(eLabelAction dropDownElementAction)
+        Type GetActionTypeByElementActionName(eCheckboxAction dropDownElementAction)
         {
             Type currentType = null;
             switch (dropDownElementAction)
             {
-                case eLabelAction.IsVisible:
+                case eCheckboxAction.Check:
+                case eCheckboxAction.Uncheck:
+                case eCheckboxAction.GetValue:
+                case eCheckboxAction.IsDisplayed:
+                case eCheckboxAction.Click:
+                case eCheckboxAction.IsDisabled:
+                case eCheckboxAction.GetWidth:
+                case eCheckboxAction.GetHeight:
+                case eCheckboxAction.GetStyle:
                     currentType = typeof(ActUIElement);
                     break;
                     //default:

@@ -16,16 +16,31 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
 
 namespace GingerCore.Actions.VisualTesting
 {
-    public class VisualCompareAnalyzerIntegration
+    public enum eVisualTestingVisibility : byte
     {
+        //
+        // Summary:
+        //     Display the element.
+        Visible = 0,
+        //
+        // Summary:
+        //     Do not display the element, but reserve space for the element in layout.
+        Hidden = 1,
+        //
+        // Summary:
+        //     Do not display the element, and do not reserve space for it in layout.
+        Collapsed = 2
+    }
+
+    public class VisualCompareAnalyzerIntegration
+    {        
         public event VisualTestingEventHandler VisualTestingEvent;
         public delegate void VisualTestingEventHandler(VisualTestingEventArgs EventArgs);
 
-        public void OnVisualTestingEvent(VisualTestingEventArgs.eEventType EvType, Visibility visibility)
+        public void OnVisualTestingEvent(VisualTestingEventArgs.eEventType EvType, eVisualTestingVisibility visibility)
         {
             VisualTestingEventHandler handler = VisualTestingEvent;
             if (handler != null)
@@ -38,7 +53,7 @@ namespace GingerCore.Actions.VisualTesting
     public class VisualTestingEventArgs
     {
         public eEventType EventType;
-        public Visibility visibility;
+        public eVisualTestingVisibility visibility;
         public enum eEventType
         {
             SetTargetSectionVisibility,
@@ -47,7 +62,7 @@ namespace GingerCore.Actions.VisualTesting
             SetScreenSizeSelectionVisibility,
         }
 
-        public VisualTestingEventArgs(eEventType EventType, Visibility visibility)
+        public VisualTestingEventArgs(eEventType EventType, eVisualTestingVisibility visibility)
         {
             this.EventType = EventType;
             this.visibility = visibility;

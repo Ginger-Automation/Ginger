@@ -50,9 +50,11 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
-using WindowsInput;
+//using System.Windows.Media.Imaging;
+//using WindowsInput;
 using Amdocs.Ginger.CoreNET.RunLib;
+using InputSimulatorStandard;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace GingerCore.Drivers
 {
@@ -1658,7 +1660,7 @@ namespace GingerCore.Drivers
                     break;
                 case ActGenElement.eGenElementAction.MouseClick:
                     e = LocateElement(act);
-                    InputSimulator inp = new InputSimulator();
+                    InputSimulator inp = new InputSimulator();//Oct/2020- Nuget was replaced to InputSimulatorStandard so need to test if still working as eexpected
                     inp.Mouse.MoveMouseTo(1.0, 1.0);
                     inp.Mouse.MoveMouseBy((int)((e.Location.X + 5) / 1.33), (int)((e.Location.Y + 5) / 1.33));
                     inp.Mouse.LeftButtonClick();
@@ -2998,7 +3000,7 @@ namespace GingerCore.Drivers
         private void ElementScrollIntoView(IWebElement e)
         {
             ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].scrollIntoView(true);", e);
-            General.DoEvents();
+            //General.DoEvents();
         }
 
         private void SelectDropDownListOptionByValue(Act dd, string s, SelectElement se)

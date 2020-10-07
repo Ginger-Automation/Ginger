@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using Applitools;
 using System;
 using System.Net;

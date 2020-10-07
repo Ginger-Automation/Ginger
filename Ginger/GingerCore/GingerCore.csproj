@@ -108,9 +108,6 @@
     <Reference Include="Couchbase.NetClient, Version=2.7.11.0, Culture=neutral, PublicKeyToken=05e9c6b5a9ec94c2, processorArchitecture=MSIL">
       <HintPath>..\packages\CouchbaseNetClient.2.7.11\lib\net452\Couchbase.NetClient.dll</HintPath>
     </Reference>
-    <Reference Include="CssParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\CssParser.dll</HintPath>
-    </Reference>
     <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
       <HintPath>..\packages\DnsClient.1.2.0\lib\net45\DnsClient.dll</HintPath>
     </Reference>
@@ -119,12 +116,6 @@
     </Reference>
     <Reference Include="EPPlus, Version=4.5.3.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>..\packages\EPPlus.4.5.3.1\lib\net40\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="Eyes.Images.DotNet, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Eyes.Images.2.4.0\lib\net45\Eyes.Images.DotNet.dll</HintPath>
-    </Reference>
-    <Reference Include="Eyes.Sdk.DotNet, Version=2.22.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Eyes.Sdk.2.22.10\lib\net45\Eyes.Sdk.DotNet.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -157,9 +148,6 @@
     </Reference>
     <Reference Include="LZ4, Version=1.0.15.93, Culture=neutral, PublicKeyToken=62e1b5ec1eec9bdd, processorArchitecture=MSIL">
       <HintPath>..\packages\lz4net.1.0.15.93\lib\net4-client\LZ4.dll</HintPath>
-    </Reference>
-    <Reference Include="Magick.NET-Q16-AnyCPU, Version=7.13.1.0, Culture=neutral, PublicKeyToken=2004825badfa91ec, processorArchitecture=MSIL">
-      <HintPath>..\packages\Magick.NET-Q16-AnyCPU.7.13.1\lib\net40\Magick.NET-Q16-AnyCPU.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -249,9 +237,6 @@
     </Reference>
     <Reference Include="PerfectoLab.Extended, Version=18.4.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\PerfectoLab.Extended.18.4.0.1\lib\PerfectoLab.Extended.dll</HintPath>
-    </Reference>
-    <Reference Include="Protractor, Version=0.12.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Protractor.0.12.0\lib\net40\Protractor.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -408,9 +393,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsInput">
-      <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml">
@@ -501,7 +483,6 @@
   <ItemGroup>
     <Compile Include="Actions\RobotFramework\ActRobot.cs" />
     <Compile Include="Actions\RobotFramework\RobotTestCase.cs" />
-    <Compile Include="Actions\VisualTesting\VisualCompareAnalyzerIntegration.cs" />
     <Compile Include="Actions\RobotFramework\GingerParam.cs" />
     <Compile Include="Actions\Common\ActMedia.cs" />
     <Compile Include="Actions\Common\ActBattery.cs" />
@@ -510,10 +491,6 @@
     <Compile Include="Actions\ActDemoPage.cs" />
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
-    <Compile Include="Actions\VisualTesting\ApplitoolsAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\IVisualAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\MagickAnalyzer.cs" />
-    <Compile Include="Actions\VisualTesting\UIElementsAnalyzer.cs" />
     <Compile Include="Actions\WebServices\ActSoapUI.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActReadTextFile.cs" />
@@ -523,42 +500,24 @@
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
-    <Compile Include="Actions\ActButton.cs" />
-    <Compile Include="Actions\ActCheckbox.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActDBValidation.cs" />
-    <Compile Include="Actions\ActDropDownList.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
-    <Compile Include="Actions\ActHandleBrowserAlert.cs" />
     <Compile Include="Actions\ActLaunchJavaWSApplication.cs" />
-    <Compile Include="Actions\ActPWL.cs" />
     <Compile Include="Actions\ActGenerateFileFromTemplate.cs" />
-    <Compile Include="Actions\ActGotoURL.cs" />
-    <Compile Include="Actions\ActHello.cs" />
     <Compile Include="Actions\ActionFlowControl.cs" />
-    <Compile Include="Actions\ActLabel.cs" />
-    <Compile Include="Actions\ActGenElement.cs" />
     <Compile Include="Actions\ActMobileDevice.cs" />
     <Compile Include="Actions\ActPBControl.cs" />
     <Compile Include="Actions\ActCompareImgs.cs" />
     <Compile Include="Actions\ActSendKeys.cs" />
     <Compile Include="Actions\ActSetConfig.cs" />
-    <Compile Include="Actions\ActLink.cs" />
     <Compile Include="Actions\ActMenuItem.cs" />
-    <Compile Include="Actions\ActMultiselectList.cs" />
-    <Compile Include="Actions\ActPassword.cs" />
-    <Compile Include="Actions\ActRadiobutton.cs" />
-    <Compile Include="Actions\ActSubmit.cs" />
-    <Compile Include="Actions\ActSwitchWindow.cs" />
-    <Compile Include="Actions\ActTextBox.cs" />
     <Compile Include="Actions\ActScript.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
-    <Compile Include="Actions\VisualTesting\ActVisualTesting.cs" />
     <Compile Include="Actions\ActWebService.cs" />
-    <Compile Include="Actions\ActWebSitePerformanceTiming.cs" />
     <Compile Include="Actions\ActWindow.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
@@ -668,19 +627,14 @@
     <Compile Include="Drivers\ASCF\ASCFBrowserElementInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFControlInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFElementInfo.cs" />
-    <Compile Include="Drivers\Common\ComboBoxElementItem.cs" />
     <Compile Include="Drivers\Common\DeviceViewPage.xaml.cs">
       <DependentUpon>DeviceViewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\Common\ComboElementInfo.cs" />
-    <Compile Include="Drivers\Common\IPOM.cs" />
     <Compile Include="Drivers\Common\UIAutomationHelperBase.cs" />
     <Compile Include="Drivers\Common\UIAutomationDriverBase.cs" />
     <Compile Include="Drivers\Common\TableElementInfo.cs" />
     <Compile Include="Common\Utility.cs" />
-    <Compile Include="Drivers\Common\HTMLElementInfo.cs" />
-    <Compile Include="Drivers\Common\IXPath.cs" />
-    <Compile Include="Drivers\Common\XPathHelper.cs" />
     <Compile Include="Drivers\DriverWindowDispatcher.cs" />
     <Compile Include="Drivers\InternalBrowserLib\DeviceEmulation.cs" />
     <Compile Include="Drivers\InternalBrowserLib\WebBrowserPage.xaml.cs">
@@ -696,29 +650,7 @@
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Browser.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Cache.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\CacheEntry.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Client.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Content.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Cookie.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Creator.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Entry.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\HarResult.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Header.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\LimitOptions.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Log.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Page.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\PageTimings.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Param.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\PostData.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\QueryStringItem.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Request.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Response.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Server.cs" />
-    <Compile Include="Drivers\Selenium\SeleniumBMP\Timings.cs" />
     <Compile Include="Drivers\Mobile\Perfecto\PerfectoDriver.cs" />
-    <Compile Include="Drivers\Updater\ChromeDriverUpdater.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
@@ -807,7 +739,6 @@
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowserWindow.xaml.cs">
       <DependentUpon>InternalBrowserWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\SeleniumDriver.cs" />
     <Compile Include="Drivers\InternalBrowserLib\InternalBrowser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
