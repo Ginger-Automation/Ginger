@@ -166,6 +166,18 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             LearnScreenShot();
             POM.PageURL = ((DriverBase)Agent.Driver).GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
+            
+            // appending Specific frame title in POM name
+            if (!string.IsNullOrEmpty(SpecificFramePath))
+            {
+                var frame = IWindowExplorerDriver.GetWindowAllFrames().Where(x => x.Path.Equals(SpecificFramePath)).FirstOrDefault();
+                
+                if(frame != null)
+                {
+                    POM.Name = string.Concat(POM.Name, " : ", frame.Title);
+                }
+            }
+
             POM.MappedUIElements.Clear();
             POM.UnMappedUIElements.Clear();
             mElementsList.Clear();
