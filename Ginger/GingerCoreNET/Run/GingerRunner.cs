@@ -1589,7 +1589,7 @@ namespace Ginger.Run
                     SetCurrentActivityAgent();
                     Stopwatch stE = new Stopwatch();
                     stE.Start();                    
-                    Reporter.ToLog(eLogLevel.INFO, "Error Handler Started : '" + errActivity.ActivityName.ToString() + "'");
+                    Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Started");
                     foreach (Act act in errActivity.Acts)
                     {
                         Stopwatch st = new Stopwatch();
@@ -1610,7 +1610,7 @@ namespace Ginger.Run
                     SetBusinessFlowActivitiesAndActionsSkipStatus();
                     CalculateActivityFinalStatus(errActivity);
                     stE.Stop();
-                    Reporter.ToLog(eLogLevel.INFO, "Error Handler Ended : '" + errActivity.ActivityName.ToString() + "'");
+                    Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Ended");
                     errActivity.Elapsed = stE.ElapsedMilliseconds;
                 }
 
