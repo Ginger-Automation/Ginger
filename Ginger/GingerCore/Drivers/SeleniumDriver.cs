@@ -3968,7 +3968,15 @@ namespace GingerCore.Drivers
 
             if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
-                EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+                {
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
+                }
+                else
+                {
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                }
+                    
             }
 
             EI.ElementName = GetElementName(EI as HTMLElementInfo);
@@ -4498,7 +4506,15 @@ namespace GingerCore.Drivers
                 UnhighlightLast();
 
                 Driver.SwitchTo().DefaultContent();
-                SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+                if (!string.IsNullOrEmpty(ElementInfo.Path))
+                {
+                    SwitchFrame(ElementInfo);
+                }
+                else
+                {
+                    SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+                }
+                
 
                 //Find element 
                 if (locateElementByItLocators)
@@ -4967,18 +4983,11 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        bool isNestedFrame = false;
+
         private ElementInfo GetElementFromIframe(ElementInfo IframeElementInfo)
         {
-            if (isNestedFrame)
-            {
-                SwitchFrame(IframeElementInfo.Path, IframeElementInfo.XPath, false);
-            }
-            else
-            {
-                SwitchFrame(string.Empty, IframeElementInfo.XPath, false);
-            }
-            
+            SwitchFrame(string.Empty, IframeElementInfo.XPath, false);
+
             InjectSpyIfNotIngected();
             bool listnerCanBeStarted = true;
             try
@@ -5031,8 +5040,6 @@ namespace GingerCore.Drivers
                 foundElemntInfo.XPath = GenerateXpathForIWebElement(elInsideIframe, "");
                 return GetElementFromIframe(foundElemntInfo);
             }
-            
-            
 
             return foundElemntInfo;
         }
