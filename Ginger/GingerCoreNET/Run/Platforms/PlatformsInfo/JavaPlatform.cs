@@ -16,9 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
@@ -27,6 +24,9 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Drivers.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {

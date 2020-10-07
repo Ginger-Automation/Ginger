@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.Plugin.Core;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions.Common;
-using GingerCore.Actions;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Linq;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Plugin.Core;
-using System.Reflection;
-using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {

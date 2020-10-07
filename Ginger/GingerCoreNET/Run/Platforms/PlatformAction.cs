@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Run;
-using GingerCore.Actions;
 #region License
 /*
 Copyright © 2014-2020 European Support Limited
@@ -36,9 +35,7 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace GingerCore.Platforms
 {

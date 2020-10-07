@@ -672,13 +672,6 @@
     <Compile Include="NoSqlBase\GingerCassandra.cs" />
     <Compile Include="NoSqlBase\MyClassBuilder.cs" />
     <Compile Include="NoSqlBase\NoSqlBase.cs" />
-    <Compile Include="Platforms\PlatformsInfo\AndroidPlatformInfo.cs" />
-    <Compile Include="Platforms\PlatformsInfo\MobilePlatform.cs" />
-    <Compile Include="Platforms\PlatformsInfo\WindowsPlatform.cs" />
-    <Compile Include="Platforms\PlatformsInfo\PowerBuilderPlatform.cs" />
-    <Compile Include="Platforms\PlatformsInfo\JavaPlatform.cs" />
-    <Compile Include="Platforms\PlatformsInfo\PlatformInfoBase.cs" />
-    <Compile Include="Platforms\PlatformsInfo\WebPlatformInfo.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -725,7 +718,6 @@
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Platforms\ApplicationPlatform.cs" />
     <Compile Include="GeneralLib\RegistryFunctions.cs" />
     <Compile Include="GeneralLib\SMS.cs" />
     <Compile Include="GeneralLib\InputBoxWindow.xaml.cs">

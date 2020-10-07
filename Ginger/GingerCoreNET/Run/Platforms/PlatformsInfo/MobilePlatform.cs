@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
