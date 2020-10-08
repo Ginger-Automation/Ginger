@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -46,9 +46,19 @@ namespace GingerCore.Actions
         public override string ActionEditPage { get { return "ActLogActionPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
-
-        [IsSerializedForLocalRepository]
-        public string LogText { get; set;  }
+        
+        public string LogText
+        {
+            get
+            {
+                return GetInputParamValue("LogText");
+            }
+            set
+            {
+                AddOrUpdateInputParamValue("LogText", value);
+                OnPropertyChanged(nameof(LogText));
+            }
+        }
 
         [IsSerializedForLocalRepository]
         public eLogLevel SelectedLogLevel { get; set; }
@@ -79,8 +89,8 @@ namespace GingerCore.Actions
         public override eImageType Image { get { return eImageType.Empty; } }
 
         public override void Execute()
-        {
-            Reporter.ToLog(SelectedLogLevel, LogText);            
+        {            
+            Reporter.ToLog(SelectedLogLevel, GetInputParamCalculatedValue("LogText"));            
         }
     }
 }

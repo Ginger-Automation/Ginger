@@ -29,16 +29,16 @@ namespace Ginger.Actions
     public partial class ActLogActionPage : Page
     {
         private ActLogAction mAct;
-        public ActLogActionPage(ActLogAction Act)
+        public ActLogActionPage(ActLogAction act)
         {
             InitializeComponent();
 
-            this.mAct = Act;
+            mAct = act;
 
             GingerCore.General.FillComboFromEnumObj(LogTypeComboBox, mAct.LogTypes);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LogTypeComboBox, ComboBox.SelectedValueProperty, mAct, nameof(ActLogAction.SelectedLogLevel));
-
-            LogValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActLogAction.Fields.LogText), nameof(ActLogAction.LogText));
+            
+            LogValue.BindControl(Context.GetAsContext(mAct.Context), mAct, ActLogAction.Fields.LogText);            
         }
     }
 }
