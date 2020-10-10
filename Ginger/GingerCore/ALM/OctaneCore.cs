@@ -736,7 +736,7 @@ namespace GingerCore.ALM
                             else
                             {
                                 //#param exist
-                                if (isflowControlParam == true)
+                                if (isflowControlParam.Value)
                                 {
                                     if (!(stepActivityVar is VariableSelectionList))
                                     {
@@ -748,7 +748,7 @@ namespace GingerCore.ALM
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
-                                else if (isflowControlParam == false)
+                                else if (isflowControlParam.Value)
                                 {
                                     if (stepActivityVar is VariableSelectionList)
                                     {
@@ -772,8 +772,10 @@ namespace GingerCore.ALM
                                     //no such variable value option so add it
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    if (isflowControlParam == true)
+                                    if (isflowControlParam.Value)
+                                    {
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                                    }
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
