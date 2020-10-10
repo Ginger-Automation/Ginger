@@ -427,6 +427,9 @@
     <Compile Include="Actions\ActionEditPages\ActClearAllVariablesEditPage.xaml.cs">
       <DependentUpon>ActClearAllVariablesEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\ActLogActionPage.xaml.cs">
+      <DependentUpon>ActLogActionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionEditPages\ActGoToURLEditPage.xaml.cs">
       <DependentUpon>ActGoToURLEditPage.xaml</DependentUpon>
     </Compile>
@@ -2718,6 +2721,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionEditPages\ActLogActionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
