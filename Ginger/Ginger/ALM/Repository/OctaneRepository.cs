@@ -20,7 +20,8 @@ namespace Ginger.ALM.Repository
     class OctaneRepository : ALMRepository
     {
         OctaneCore octaneCore;
-        public OctaneRepository() {
+        public OctaneRepository()
+        {
             octaneCore = new OctaneCore();
         }
         public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
@@ -76,7 +77,7 @@ namespace Ginger.ALM.Repository
 
         public override List<string> GetTestLabExplorer(string path)
         {
-            return octaneCore.GetTestLabExplorer(path);            
+            return octaneCore.GetTestLabExplorer(path);
         }
 
         public override List<string> GetTestPlanExplorer(string path)
@@ -86,7 +87,7 @@ namespace Ginger.ALM.Repository
 
         public override IEnumerable<object> GetTestSetExplorer(string path)
         {
-            return octaneCore.GetTestSetExplorer(path); 
+            return octaneCore.GetTestSetExplorer(path);
         }
 
         public override object GetTSRunStatus(object tsItem)
@@ -99,8 +100,9 @@ namespace Ginger.ALM.Repository
             Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
             //set path to import to               
             if (importDestinationFolderPath == "")
+            {
                 importDestinationFolderPath = WorkSpace.Instance.Solution.BusinessFlowsMainFolder;
-
+            }
             //show Test Lab browser for selecting the Test Set/s to import
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
             win.ShowAsWindow(eWindowShowStyle.Dialog);
@@ -119,7 +121,7 @@ namespace Ginger.ALM.Repository
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
-                    if (testSetItem.AlreadyImported == true)
+                    if (testSetItem.AlreadyImported)
                     {
                         Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.TestSetName);
                         if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
@@ -135,7 +137,7 @@ namespace Ginger.ALM.Repository
                     }
                 }
 
-                if (testSetsItemsToImport.Count == 0) return false; //noting to import
+                if (testSetsItemsToImport.Count == 0) { return false; } //noting to import
 
                 //Refresh Ginger repository and allow GingerQC to use it                
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
@@ -160,24 +162,38 @@ namespace Ginger.ALM.Repository
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                                {
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
                                         ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
+                                        {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                                        }
                                     }
+                                }
+                            }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
+                            {
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                            }
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
+                                {
                                     activ.TargetApplication = tsBusFlow.MainApplication;
+                                }
+                            }
                         }
                         else
                         {
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 activ.TargetApplication = null; // no app configured on solution level
+                            }
                         }
 
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
