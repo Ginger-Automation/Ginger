@@ -748,7 +748,7 @@ namespace GingerCore.ALM
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
-                                else if (isflowControlParam.Value)
+                                else if (!isflowControlParam.Value)
                                 {
                                     if (stepActivityVar is VariableSelectionList)
                                     {
