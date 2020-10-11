@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
-    class WindowsPlatform : PlatformInfoBase
+    public class WindowsPlatform : PlatformInfoBase
     {
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()
         {

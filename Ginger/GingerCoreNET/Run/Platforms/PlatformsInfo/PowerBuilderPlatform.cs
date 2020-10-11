@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Platforms.PlatformsInfo
 {
-    class PowerBuilderPlatform : PlatformInfoBase
+    public class PowerBuilderPlatform : PlatformInfoBase
     {
         public override List<eLocateBy> GetPlatformUIElementLocatorsList()
         {

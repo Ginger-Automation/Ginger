@@ -173,7 +173,7 @@ namespace GingerCore.Actions
 
         }
 
-        internal PayLoad GetPayLoad()
+        public PayLoad GetPayLoad()
         {
             PayLoad PL = new PayLoad("SwitchWindow");
             if(string.IsNullOrEmpty(LocateValueCalculated) == false)

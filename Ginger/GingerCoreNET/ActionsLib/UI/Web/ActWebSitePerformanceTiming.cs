@@ -169,7 +169,7 @@ namespace GingerCore.Actions
             }
         }
 
-        internal void SetInfo()
+        public void SetInfo()
         {
             AddCalculatedTimings();
 
