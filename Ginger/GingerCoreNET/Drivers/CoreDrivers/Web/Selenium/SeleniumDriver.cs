@@ -50,11 +50,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-//using System.Windows.Media.Imaging;
-//using WindowsInput;
 using Amdocs.Ginger.CoreNET.RunLib;
 using InputSimulatorStandard;
 using Amdocs.Ginger.Common.GeneralLib;
+using System.Resources;
+using NUglify;
+using System.ComponentModel;
 
 namespace GingerCore.Drivers
 {
@@ -249,9 +250,11 @@ namespace GingerCore.Drivers
 
         private string CurrentFrame;
 
+        ResourceManager mResourceManager = new ResourceManager("Resources", typeof(SeleniumDriver).Assembly);
+
         public SeleniumDriver()
         {
-
+            
         }
 
         ~SeleniumDriver()
@@ -5093,12 +5096,10 @@ namespace GingerCore.Drivers
         }
 
         public void InjectGingerLiveSpy()
-        {
-            string GingerLiveSpyScript = Properties.Resources.GingerLiveSpy;
-            AddJavaScriptToPage(GingerLiveSpyScript);
-
+        {            
+            AddJavaScriptToPage(mResourceManager.GetString("GingerLiveSpy"));
             ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLibLiveSpy();", null);
-            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", Properties.Resources.jquery_min);
+            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.AddScript(arguments[0]);", mResourceManager.GetString("jquery_min"));
         }
 
         public string XPoint;
@@ -5138,29 +5139,28 @@ namespace GingerCore.Drivers
         public void InjectGingerHTMLHelper()
         {
             //do once
-            string GingerPayLoadJS = Properties.Resources.PayLoad;
+            string GingerPayLoadJS = mResourceManager.GetString("PayLoad");
             AddJavaScriptToPage(GingerPayLoadJS);
-            string GingerHTMLHelperScript = Properties.Resources.GingerHTMLHelper;
+            string GingerHTMLHelperScript = mResourceManager.GetString("GingerHTMLHelper");
             AddJavaScriptToPage(GingerHTMLHelperScript);
             ((IJavaScriptExecutor)Driver).ExecuteScript("define_GingerLib();", null);
 
             //Inject JQuery
-            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", Properties.Resources.jquery_min);
+            string rc = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", mResourceManager.GetString("jquery_min"));
 
             // Inject XPath
-            string rc2 = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", MinifyJS(Properties.Resources.GingerLibXPath));
+            string rc2 = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", MinifyJS(mResourceManager.GetString("GingerLibXPath")));
 
 
             // Inject code which can find element by XPath
-            string rc3 = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", Properties.Resources.wgxpath_install);
+            string rc3 = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLib.AddScript(arguments[0]);", mResourceManager.GetString("wgxpath_install"));
         }
 
 
         public void InjectGingerHTMLRecorder()
         {
             //do once
-            string GingerHTMLRecorderScript = Properties.Resources.GingerHTMLRecorder;
-            AddJavaScriptToPage(GingerHTMLRecorderScript);
+            AddJavaScriptToPage(mResourceManager.GetString("GingerHTMLRecorder"));
         }
 
         void AddJavaScriptToPage(string script)
@@ -5220,22 +5220,32 @@ namespace GingerCore.Drivers
         private string MinifyJS(string script)
         {
             //TODO: cache if possible
-            var minifier = new Microsoft.Ajax.Utilities.Minifier();
-            var minifiedString = minifier.MinifyJavaScript(script);
-            if (minifier.Errors.Count > 0)
+            //var minifier = new Microsoft.Ajax.Utilities.Minifier();
+            //var minifiedString = minifier.MinifyJavaScript(script);
+            //if (minifier.Errors.Count > 0)
+            //{
+            //    //There are ERRORS !!!
+            //    Console.WriteLine(script);
+            //    return null;
+            //}
+            //return minifiedString + ";";
+            var result = Uglify.Js(script);           
+            if (result.Errors.Count > 0)
             {
-                //There are ERRORS !!!
-                Console.WriteLine(script);
+                foreach (UglifyError error in result.Errors)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Minify the JS, ErrorCode:'{0}' | ErrorMessage:'{1}'", error.ErrorCode, error.Message));
+                }
                 return null;
             }
-            return minifiedString + ";";
+            return result.Code + ";";
         }
 
         String GetInjectJSSCript(string script)
         {
             string ScriptMin = MinifyJS(script);
             // Get the Inject code
-            string script2 = Properties.Resources.InjectJavaScript;
+            string script2 = mResourceManager.GetString("InjectJavaScript");
             script2 = MinifyJS(script2);
             //Note minifier change ' to ", so we change it back, so the script can have ", but we wrap it all with '
             string script3 = script2.Replace("\"%SCRIPT%\"", "'" + ScriptMin + "'");
@@ -6875,7 +6885,7 @@ namespace GingerCore.Drivers
                                 dragdrop.Perform();
                                 break;
                             case ActUIElement.eElementDragDropType.DragDropJS:
-                                string script = Properties.Resources.Html5DragAndDrop;
+                                string script = mResourceManager.GetString("draganddrop");//Correct JS?//Properties.Resources.Html5DragAndDrop;
                                 IJavaScriptExecutor executor = (IJavaScriptExecutor)Driver;
                                 executor.ExecuteScript(script, sourceElement, targetElement);
                                 break;
@@ -7016,17 +7026,19 @@ namespace GingerCore.Drivers
             try
             {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-                using (var ms = new MemoryStream(ss.AsByteArray))
-                {
-                    using (MemoryStream outStream = new MemoryStream())
-                    {
-                        BitmapEncoder enc = new BmpBitmapEncoder();
-                        enc.Frames.Add(BitmapFrame.Create(ms));
-                        enc.Save(outStream);
-                        Bitmap bitmap = new Bitmap(outStream);
-                        return new Bitmap(bitmap);
-                    }
-                }
+                //using (var ms = new MemoryStream(ss.AsByteArray))
+                //{
+                //    using (MemoryStream outStream = new MemoryStream())
+                //    {
+                //        BitmapEncoder enc = new BmpBitmapEncoder();
+                //        enc.Frames.Add(BitmapFrame.Create(ms));
+                //        enc.Save(outStream);
+                //        Bitmap bitmap = new Bitmap(outStream);
+                //        return new Bitmap(bitmap);
+                //    }
+                //}
+                TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
+                return (Bitmap)tc.ConvertFrom(ss.AsByteArray);
             }
             catch (Exception ex)
             {
