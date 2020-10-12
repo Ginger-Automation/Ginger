@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License. 
 */
 #endregion
-
+using System.Collections.Generic;
 
 namespace GingerCore.ALM.Qtest
 {
@@ -25,8 +25,7 @@ namespace GingerCore.ALM.Qtest
         public string Name { get; set; }
         //Actual Value or check Default value if Actual is null
         public string Value { get; set; }
-
-        //TODO not sure if this is needed yet will determine during testing. 
+        public List<string> Values { get; set; }
         public string Type { get; set; }
     }
 }

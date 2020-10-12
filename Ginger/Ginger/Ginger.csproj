@@ -221,8 +221,8 @@
       <HintPath>..\GingerCore\DLLs\QTestAPI.dll</HintPath>
     </Reference>
     <Reference Include="ReachFramework" />
-    <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.11.4.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.11.4\lib\net452\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SharpAdbClient, Version=2.2.0.0, Culture=neutral, PublicKeyToken=d728076f5d82a2e8, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpAdbClient.2.2.27\lib\net451\SharpAdbClient.dll</HintPath>
@@ -427,6 +427,9 @@
     <Compile Include="Actions\ActionEditPages\ActClearAllVariablesEditPage.xaml.cs">
       <DependentUpon>ActClearAllVariablesEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\ActLogActionPage.xaml.cs">
+      <DependentUpon>ActLogActionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionEditPages\ActGoToURLEditPage.xaml.cs">
       <DependentUpon>ActGoToURLEditPage.xaml</DependentUpon>
     </Compile>
@@ -500,6 +503,7 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\Repository\OctaneRepository.cs" />
     <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
       <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
     </Compile>
@@ -2720,6 +2724,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionEditPages\ActLogActionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -4671,6 +4679,7 @@
     <Resource Include="SourceControlItemNew.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ALM\Octane\" />
     <Folder Include="AutomatePageLib\AddActionMenu\WindowExplorer\InternalBrowser\" />
     <Folder Include="Dictionaries\Languages\" />
     <Folder Include="Help\Library\" />

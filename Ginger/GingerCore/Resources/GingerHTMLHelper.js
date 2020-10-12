@@ -262,7 +262,14 @@ function define_GingerLib() {
             var Path = PayLoad.GetValueString();
             var XPath = PayLoad.GetValueString();
             return GingerLib.GetElementProperties(XPath,Path);        
-        } else if (Command == "StartRecording") {
+        }
+        else if (Command == "GetElementInfoFromXYCoOrdinate")
+        {
+            var xCord = PayLoad.GetValueString();
+            var yCord = PayLoad.GetValueString();
+            return GingerLib.GetElementInfoFromXYCoOrdinate(xCord, yCord); 
+        }
+        else if (Command == "StartRecording") {
             var PLResp = new GingerPayLoad("Ok");
             PLResp.ClosePackage();
             GingerRecorderLib.StartRecording();
@@ -477,16 +484,20 @@ function define_GingerLib() {
 
         // To support Spy on IFrame 
         // Fix ME
-        
-        var iframeXpath = "";        
-        if ($(el).prop('tagName') == "IFRAME") {            
+
+        return GingerLib.GetElementInfoDetails(el);
+    }
+
+    GingerLib.GetElementInfoDetails = function (el) {
+         var iframeXpath = "";
+        if ($(el).prop('tagName') == "IFRAME") {
             GingerLib.SwitchFrame(el);
             currentframe = el;
             iframeXpath = GingerLib.GetElemXPath(el);
-            var el = currentframe.contentDocument.elementFromPoint(CurrentX , CurrentY);
+            var el = currentframe.contentDocument.elementFromPoint(CurrentX, CurrentY);
         }
         var pl = GingerLib.GetElementInfo(el, iframeXpath);
-        if (pl == null) {            
+        if (pl == null) {
             pl = new GingerPayLoad("HTMLElement");
             pl.AddValueString(GingerLib.GetElemTitle(el));
             pl.AddValueString(GingerLib.GetElemId(el));
@@ -496,14 +507,31 @@ function define_GingerLib() {
 
             if (iframeXpath != "")//Path of Frame
                 pl.AddValueString(iframeXpath);
-            else 
+            else
                 pl.AddValueString("");  // Path                   
 
             pl.AddValueString(GingerLib.GetElemXPath(el));
             pl.AddValueString(GingerLib.getElementTreeRelXPath(el));
             pl.ClosePackage();
         }
+
         return pl;
+    }
+
+     //----------------------------------------------------------------------------------------------------------------------
+    // GetVisibleElements
+    // Return PayLoad with ElementInfo for control under X and Y co-ordinate
+    //----------------------------------------------------------------------------------------------------------------------
+    GingerLib.GetElementInfoFromXYCoOrdinate = function (xCord, yCord) {
+        if (document.addEventListener) {
+            var el = document.elementFromPoint(xCord, yCord);
+        }
+        else if (document.attachEvent)// Add to support earlier Version on IE .
+        {
+            el = document.elementFromPoint(xCord, yCord);
+        }
+
+        return GingerLib.GetElementInfoDetails(el);
     }
 
     //----------------------------------------------------------------------------------------------------------------------

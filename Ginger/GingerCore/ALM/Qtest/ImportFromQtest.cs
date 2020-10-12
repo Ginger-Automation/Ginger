@@ -219,151 +219,21 @@ namespace GingerCore.ALM.Qtest
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
-                        List<string> stepParamsList = new List<string>();
-                        GetStepParameters(StripHTML(step.Description), ref stepParamsList);
-                        GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
-                        foreach (string param in stepParamsList)
+                        if (step.Params != null)
                         {
-                            //get the param value
-                            string paramSelectedValue=string.Empty;
-                            bool? isflowControlParam=null;
-                            QtestTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-
-                            //get the param value
-                            if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+                            VariableSelectionList stepActivityVar = (VariableSelectionList)stepActivity.Variables.Where(x => x.Name.ToUpper() == step.Params.Name.ToUpper()).FirstOrDefault();
+                            if (stepActivityVar != null)
                             {
-                                paramSelectedValue = tcParameter.Value;
+                                stepActivity.Variables.Remove(stepActivityVar);
                             }
-                            else
-                            {
-                                isflowControlParam = null;//empty value
-                                paramSelectedValue = "<Empty>";
-                            }
-
-                            //check if parameter is part of a link
-                            string linkedVariable = null;
-                            if (paramSelectedValue.StartsWith("#$#"))
-                            {
-                                string[] valueParts = paramSelectedValue.Split(new [] {"#$#"}, StringSplitOptions.None);
-                                if (valueParts.Count() == 3)
-                                {
-                                    linkedVariable = valueParts[1];
-                                    paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
-                                    
-                                    if (!busVariables.Keys.Contains(linkedVariable))
-                                    {
-                                        busVariables.Add(linkedVariable, valueParts[2]);
-                                    }
-                                }
-                            }
-
-                            //determine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
-                            if (paramSelectedValue.StartsWith("$$_"))
-                            {
-                                isflowControlParam = false;
-                                if (paramSelectedValue.StartsWith("$$_"))
-                                {
-                                    paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
-                                }
-                            }
-                            else if (paramSelectedValue != "<Empty>")
-                            {
-                                isflowControlParam = true;
-                            }
-
-                            //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-                            if (stepActivityVar == null)
-                            {
-                                //#Param not exist so add it
-                                if ((bool)isflowControlParam)
-                                {
-                                    //add it as selection list param                               
-                                    stepActivityVar = new VariableSelectionList();
-                                    stepActivityVar.Name = param;
-                                    stepActivity.AddVariable(stepActivityVar);
-                                    stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
-                                }
-                                else
-                                {
-                                    //add as String param
-                                    stepActivityVar = new VariableString();
-                                    stepActivityVar.Name = param;
-                                    ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                                    stepActivity.AddVariable(stepActivityVar);
-                                }
-                            }
-                            else
-                            {
-                                //#param exist
-                                if (isflowControlParam == true)
-                                {
-                                    if (!(stepActivityVar is VariableSelectionList))
-                                    {
-                                        //flow control param must be Selection List so transform it
-                                        stepActivity.Variables.Remove(stepActivityVar);
-                                        stepActivityVar = new VariableSelectionList();
-                                        stepActivityVar.Name = param;
-                                        stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
-                                    }
-                                }
-                                else if (isflowControlParam == false)
-                                {
-                                    if (stepActivityVar is VariableSelectionList)
-                                    {
-                                        //change it to be string variable
-                                        stepActivity.Variables.Remove(stepActivityVar);
-                                        stepActivityVar = new VariableString();
-                                        stepActivityVar.Name = param;
-                                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                                        stepActivity.AddVariable(stepActivityVar);
-                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
-                                    }
-                                }
-                            }
-
-                            //add the variable selected value                          
-                            if (stepActivityVar is VariableSelectionList)
-                            {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
-                                if (stepActivityVarOptionalVar == null)
-                                {
-                                    //no such variable value option so add it
-                                    stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                                    ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                                    if (isflowControlParam == true)
-                                    {
-                                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
-                                    }
-                                }
-                                //set the selected value
-                                ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
-                            }
-                            else
-                            {
-                                //try just to set the value
-                                try
-                                {
-                                    stepActivityVar.Value = paramSelectedValue;
-                                    if (stepActivityVar is VariableString)
-                                    {
-                                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                                    }
-                                }
-                                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
-                            }
-
-                            //add linked variable if needed
-                            if (!string.IsNullOrEmpty(linkedVariable))
-                            {
-                                stepActivityVar.LinkedVariableName = linkedVariable;
-                            }
-                            else
-                            {
-                                stepActivityVar.LinkedVariableName = string.Empty; // clear old links
-                            }
-                        }
+                            stepActivityVar = new VariableSelectionList();
+                            stepActivityVar.Name = step.Params.Name;
+                            ObservableList<OptionalValue> optionalValuesList = new ObservableList<OptionalValue>();
+                            step.Params.Values.ForEach(z => optionalValuesList.Add(new OptionalValue(z)));
+                            (stepActivityVar).OptionalValuesList = optionalValuesList;
+                            (stepActivityVar).SetValue(step.Params.Value);
+                            stepActivity.AddVariable(stepActivityVar);
+                        }                                
                     }
 
                     //order the Activities Group activities according to the order of the matching steps in the TC
