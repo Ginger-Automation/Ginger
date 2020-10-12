@@ -423,7 +423,7 @@ namespace Ginger.Repository
 
         private async void RepositoryItemUsagePageLoaded(object sender, RoutedEventArgs e)
         {
-            await FindUsages();
+            await FindUsages().ConfigureAwait(false);
         }     
     }
 }
