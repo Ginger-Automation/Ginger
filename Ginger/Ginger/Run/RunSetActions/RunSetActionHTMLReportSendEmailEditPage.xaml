@@ -6,7 +6,7 @@
       xmlns:Actions="clr-namespace:Ginger.Actions" 
        xmlns:h="clr-namespace:Ginger.Help" 
       mc:Ignorable="d" 
-      d:DesignHeight="400" d:DesignWidth="600"
+      d:DesignHeight="460" d:DesignWidth="600"
 	Title="RunSetActionHTMLReportEmailEditPage">
 
 
@@ -29,7 +29,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="368" />
+                        <RowDefinition Height="368*" />
                         <RowDefinition Height="0*"/>
                     </Grid.RowDefinitions>
 
