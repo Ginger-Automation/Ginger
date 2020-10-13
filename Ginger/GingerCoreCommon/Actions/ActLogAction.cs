@@ -60,10 +60,20 @@ namespace GingerCore.Actions
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public eLogLevel SelectedLogLevel { get; set; }
+        public enum LogLevel
+        {
+            [EnumValueDescription("Information")]
+            INFO,
+            [EnumValueDescription("Warning")]
+            WARN,
+            [EnumValueDescription("Error")]
+            ERROR
+        }
 
-        public eLogLevel LogTypes { get; set; }
+        [IsSerializedForLocalRepository]
+        public LogLevel SelectedLogLevel { get; set; }
+
+        public LogLevel LogTypes { get; set; }
 
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
@@ -88,9 +98,29 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.Empty; } }
 
+        eLogLevel GetLogLevel(LogLevel loglevel)
+        {
+            eLogLevel logLevel;
+            switch(loglevel)
+            {
+                case LogLevel.ERROR:
+                    logLevel = eLogLevel.ERROR;
+                    break;
+                case LogLevel.INFO:
+                    logLevel = eLogLevel.INFO;
+                    break;
+                case LogLevel.WARN:
+                    logLevel = eLogLevel.WARN;
+                    break;
+                default:
+                    throw new KeyNotFoundException();
+            }
+            return logLevel;
+        }
+
         public override void Execute()
-        {            
-            Reporter.ToLog(SelectedLogLevel, GetInputParamCalculatedValue("LogText"));            
+        {         
+            Reporter.ToLog(GetLogLevel(SelectedLogLevel), GetInputParamCalculatedValue("LogText"));            
         }
     }
 }
