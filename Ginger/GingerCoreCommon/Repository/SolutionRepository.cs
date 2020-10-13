@@ -569,16 +569,16 @@ namespace Amdocs.Ginger.Repository
         //TODO: fix this method name or cretae or !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public string CreateRepositoryItemFileName(RepositoryItemBase repositoryItemBase, string containingFolder = "")
         {
-            var repositoryItemInfoBaseType = GetSolutionRepositoryItemInfo(repositoryItemBase.GetType());
-
-            string name = repositoryItemBase.ItemName; // (string)RI.GetType().GetProperty(v.PropertyForFileName).GetValue(RI);
-
             if (repositoryItemBase.FilePath != null && File.Exists(repositoryItemBase.FilePath) && string.IsNullOrEmpty(containingFolder))
             {
                 return repositoryItemBase.FilePath;
             }
             else
             {
+                var repositoryItemInfoBaseType = GetSolutionRepositoryItemInfo(repositoryItemBase.GetType());
+
+                string name = repositoryItemBase.ItemName; // (string)RI.GetType().GetProperty(v.PropertyForFileName).GetValue(RI);
+
                 //probably new item so create new path for it
 
                 //FOLDER             
