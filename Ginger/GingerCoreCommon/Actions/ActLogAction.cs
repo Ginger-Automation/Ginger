@@ -60,7 +60,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public enum LogLevel
+        public enum eActionLogLevels
         {
             [EnumValueDescription("Information")]
             INFO,
@@ -71,10 +71,8 @@ namespace GingerCore.Actions
         }
 
         [IsSerializedForLocalRepository]
-        public LogLevel SelectedLogLevel { get; set; }
-
-        public LogLevel LogTypes { get; set; }
-
+        public eActionLogLevels SelectedLogLevel { get; set; }
+      
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
@@ -98,18 +96,18 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.Empty; } }
 
-        eLogLevel GetLogLevel(LogLevel loglevel)
+        eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {
             eLogLevel logLevel;
             switch(loglevel)
             {
-                case LogLevel.ERROR:
+                case eActionLogLevels.ERROR:
                     logLevel = eLogLevel.ERROR;
                     break;
-                case LogLevel.INFO:
+                case eActionLogLevels.INFO:
                     logLevel = eLogLevel.INFO;
                     break;
-                case LogLevel.WARN:
+                case eActionLogLevels.WARN:
                     logLevel = eLogLevel.WARN;
                     break;
                 default:
