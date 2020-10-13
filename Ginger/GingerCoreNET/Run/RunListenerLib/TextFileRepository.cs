@@ -153,35 +153,49 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportBusinessFlow(Context context, bool offlineMode, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool isConfEnable)
         {
-            BusinessFlowReport BFR = GetBFReportData(context.BusinessFlow, context.Environment);
-            if (isConfEnable)
-            {
-                if (offlineMode)
-                {
-                    // To check whether the execution is from Runset/Automate tab
-                    if ((executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
-                    {
-                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
-                    }
-                    else if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null))
-                    {
-                        context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
-                    }
-                    SaveObjToReporsitory(BFR, Path.Combine(context.BusinessFlow.ExecutionFullLogFolder,"BusinessFlow.txt"));
+            BusinessFlowReport BFR = null;
 
-                }
-                else
+            try
+            {
+                BFR = GetBFReportData(context.BusinessFlow, context.Environment);
+                if (isConfEnable)
                 {
-                    // use Path.cOmbine
-                    SaveObjToReporsitory(BFR, Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder,"BusinessFlow.txt"));
-                    context.BusinessFlow.ExecutionFullLogFolder = Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder);
-                }
-                if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                {
-                    this.ExecutionLogBusinessFlowsCounter = 0;
-                    //this.BFCounter = 0;
+                    if (offlineMode)
+                    {
+                        // To check whether the execution is from Runset/Automate tab
+                        if ((executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation))
+                        {
+                            context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
+                        }
+                        else if ((WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null))
+                        {
+                            context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
+                        }
+                        SaveObjToReporsitory(BFR, Path.Combine(context.BusinessFlow.ExecutionFullLogFolder, "BusinessFlow.txt"));
+                    }
+                    else
+                    {
+                        if(!Directory.Exists(Path.Combine(ExecutionLogfolder, context.BusinessFlow.ExecutionLogFolder)))
+                        {
+                            CreateNewDirectory(Path.Combine(ExecutionLogfolder, context.BusinessFlow.ExecutionLogFolder));
+                        }
+
+                        // use Path.cOmbine
+                        SaveObjToReporsitory(BFR, Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder,"BusinessFlow.txt"));
+                        context.BusinessFlow.ExecutionFullLogFolder = Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder);
+                    }
+                    if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
+                    {
+                        this.ExecutionLogBusinessFlowsCounter = 0;
+                        //this.BFCounter = 0;
+                    }
                 }
             }
+            catch(Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured " + exc.Message, exc);
+            }
+
             return BFR;
         }
 
