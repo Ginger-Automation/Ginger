@@ -172,10 +172,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                             context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                         }
                         SaveObjToReporsitory(BFR, Path.Combine(context.BusinessFlow.ExecutionFullLogFolder, "BusinessFlow.txt"));
-
                     }
                     else
                     {
+                        if(!Directory.Exists(Path.Combine(ExecutionLogfolder, context.BusinessFlow.ExecutionLogFolder)))
+                        {
+                            CreateNewDirectory(Path.Combine(ExecutionLogfolder, context.BusinessFlow.ExecutionLogFolder));
+                        }
+
                         // use Path.cOmbine
                         SaveObjToReporsitory(BFR, Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder,"BusinessFlow.txt"));
                         context.BusinessFlow.ExecutionFullLogFolder = Path.Combine(ExecutionLogfolder,context.BusinessFlow.ExecutionLogFolder);
