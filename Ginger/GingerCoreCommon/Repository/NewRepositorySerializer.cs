@@ -1023,7 +1023,10 @@ namespace Amdocs.Ginger.Repository
                             // Read the list from the xml
                             if (obj is RepositoryItemBase && ((RepositoryItemBase)obj).ItemBeenReloaded)
                             {
-                                lst.Clear();//clearing existing list items in case it is been reloaded
+                                if (lst.Count > 0  && !lst.AvoidLazyLoad)
+                                {
+                                    lst.Clear();//clearing existing list items in case it is been reloaded
+                                }
                             }
                             //Check if Lazy Load - //TODO: Think/check if we want to make all observe as lazy load
                             if ((mi.MemberType == MemberTypes.Property) && (Attribute.IsDefined(((PropertyInfo)mi), typeof(IsLazyLoadAttribute)))
