@@ -39,10 +39,10 @@ namespace Ginger.Run.RunSetActions
 
         public new static class Fields
         {
-            public static string SelectedDefectsProfileID = "SelectedDefectsProfileID";
-            public static string DefectsOpeningModeForAll = "DefectsOpeningModeForAll";
-            public static string DefectsOpeningModeForMarked = "DefectsOpeningModeForMarked";
-            public static string DefectsOpeningModeReviewOnly = "DefectsOpeningModeReviewOnly";
+            public const string SelectedDefectsProfileID = "SelectedDefectsProfileID";
+            public const string DefectsOpeningModeForAll = "DefectsOpeningModeForAll";
+            public const string DefectsOpeningModeForMarked = "DefectsOpeningModeForMarked";
+            public const string DefectsOpeningModeReviewOnly = "DefectsOpeningModeReviewOnly";
         }
 
         private int mSelectedDefectsProfileID;

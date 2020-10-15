@@ -358,7 +358,6 @@ namespace GingerCore.ALM.JIRA.Bll
                                         currentStepResult = ((JiraManagerZephyr)jiraRepObj.TestAlmManager()).UpdateZephyrStepResult(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
                                                                                                                                      ALMCore.DefaultAlmConfig.ALMServerURL, currentStepResult.Id,
                                                                                                                                      ((int)zephyrStepStatus)).DataResult;
-                                        string comment = CreateCommentForRun(act.Acts.ToList());
                                     }
                                     else
                                     {
@@ -368,17 +367,23 @@ namespace GingerCore.ALM.JIRA.Bll
                                                                                                                                                                 currentActivitiesGroupExecution.IssueId.ToString(),
                                                                                                                                                                 currentActivitiesGroupExecution.Id,
                                                                                                                                                                 ((int)zephyrStepStatus).ToString())).DataResult;
-                                        if (currentStepResult == null)
-                                        {
-                                            resultFlag = false;
-                                        }
+                                    }
+                                    if (currentStepResult == null)
+                                    {
+                                        resultFlag = false;
                                     }
                                 }
-
-                                zephyrIssueStatus = ConvertGingerStatusToZephyr(actGroup.RunStatus);
-                                currentActivitiesGroupExecution = ((JiraManagerZephyr)jiraRepObj.TestAlmManager()).UpdateExecution(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
-                                                                                                                                     ALMCore.DefaultAlmConfig.ALMServerURL, currentActivitiesGroupExecution.Id,
-                                                                                                                                     ((int)zephyrIssueStatus)).DataResult;
+                                if (resultFlag)
+                                {
+                                    zephyrIssueStatus = ConvertGingerStatusToZephyr(actGroup.RunStatus);
+                                    currentActivitiesGroupExecution = ((JiraManagerZephyr)jiraRepObj.TestAlmManager()).UpdateExecution(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
+                                                                                                                                         ALMCore.DefaultAlmConfig.ALMServerURL, currentActivitiesGroupExecution.Id,
+                                                                                                                                         ((int)zephyrIssueStatus)).DataResult;
+                                    if (currentActivitiesGroupExecution == null)
+                                    {
+                                        resultFlag = false;
+                                    }
+                                }
                             }
                             else
                             {
@@ -423,9 +428,9 @@ namespace GingerCore.ALM.JIRA.Bll
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, "Error by assigning defects to Zephyr's executions", ex);
             }
         }
 

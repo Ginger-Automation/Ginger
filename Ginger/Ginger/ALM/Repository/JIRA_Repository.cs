@@ -343,7 +343,6 @@ namespace Ginger.ALM.Repository
                             currentCycle.name = obj.Name;
                             currentCycle.description = ((JiraZephyrFolderTreeItem)obj).Description;
                             tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraZypherCycleToBF(currentCycle);
-                            // tsBusFlow.ExternalID = ((JiraZephyrFolderTreeItem)obj).CycleId + "_|_" + obj.Id;
                             tsBusFlow.ExternalID = ((JiraZephyrFolderTreeItem)obj).CycleId;
                             tsBusFlow.ExternalID2 = obj.Id;
                         }
