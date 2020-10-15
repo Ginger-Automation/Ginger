@@ -96,7 +96,10 @@ namespace Ginger.ALM
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CurrentAlmConfigurations != null)
             {
-                AlmCore.SetALMConfigurations(CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName, CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName, CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath);
+                AlmCore.SetALMConfigurations(   CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
+                                                CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
+                                                CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
+                                                CurrentAlmConfigurations.JiraTestingALM);
             }
         }
 
@@ -265,9 +268,9 @@ namespace Ginger.ALM
             return ((JiraCore)AlmCore).GetJiraTestingALMs();
         }
 
-        public object GetZephyrCycles()
+        public object GetZephyrCycles(bool getFolders = false)
         {
-            return ((JiraCore)AlmCore).GetZephyrCycles();
+            return ((JiraCore)AlmCore).GetZephyrCyclesWithFolders(getFolders);
         }
 
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
@@ -631,10 +634,10 @@ namespace Ginger.ALM
             return importResult;
         }
 
-        public bool ImportZephyrCycle(string importDestinationPath, IEnumerable<Object> selectedCycles)
+        public bool ImportZephyrObject(string importDestinationPath, IEnumerable<Object> selectedObject)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            bool importResult = ((JIRA_Repository)AlmRepo).ImportSelectedZephyrCycle(importDestinationPath, selectedCycles);
+            bool importResult = ((JIRA_Repository)AlmRepo).ImportSelectedZephyrCyclesAndFolders(importDestinationPath, selectedObject);
             Mouse.OverrideCursor = null;
             return true;
         }

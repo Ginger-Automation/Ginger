@@ -367,10 +367,10 @@ namespace Ginger.ALM
 
             if (JiraTestingALMComboBox.Items.Count > 0)
             {
-                if (JiraTestingALMComboBox.Items.Contains(currJiraTestingALM))
+                if (JiraTestingALMComboBox.Items.Contains(currJiraTestingALM.ToString()))
                 {
                     CurrentAlmConfigurations.JiraTestingALM = currJiraTestingALM;
-                    JiraTestingALMComboBox.SelectedIndex = JiraTestingALMComboBox.Items.IndexOf(CurrentAlmConfigurations.JiraTestingALM);
+                    JiraTestingALMComboBox.SelectedIndex = JiraTestingALMComboBox.Items.IndexOf(CurrentAlmConfigurations.JiraTestingALM.ToString());
                 }
                 if (JiraTestingALMComboBox.SelectedIndex == -1)
                 {

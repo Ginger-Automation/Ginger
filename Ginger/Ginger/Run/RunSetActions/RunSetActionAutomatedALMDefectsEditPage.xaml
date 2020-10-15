@@ -21,6 +21,7 @@
                 <StackPanel Orientation="Vertical" x:Name="DefectsOpeningMode">
                     <RadioButton x:Name="RadioDefectsOpeningModeForAll" Margin="30,0,0,0" Tag="Open Defects For All Failures"  GroupName="DefectsOpeningModeRadio" Content="Open Defects For All Failures" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
                     <RadioButton x:Name="RadioDefectsOpeningModeForMarked" Margin="30,5,0,0" Tag="Open Defects For All Failures that marked at Action's Flow Control" GroupName="DefectsOpeningModeRadio" Content="Open Defects For All Failures that marked at Action's Flow Control" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
+                    <RadioButton x:Name="RadioDefectsOpeningModeReviewOnly" Margin="30,5,0,0" Tag="Present Defects Suggestions For Review Only" GroupName="DefectsOpeningModeRadio" Content="Present Defects Suggestions For Review Only" VerticalAlignment="Center" Style="{StaticResource @InputRadioButtonStyle}"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

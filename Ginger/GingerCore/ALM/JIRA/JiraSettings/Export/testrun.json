@@ -1,0 +1,16 @@
+﻿{
+  "templates": [
+    {
+      "projects": [ "Default" ],
+      "fields": [
+        {
+          "name": "steps",
+          "key": "steps",
+          "type": "array",
+          "data": "{\"id\": {{run_id}},\"status\":\"{{run_status}}\",\"comment\":\"{{run_Comment}}\"}"
+        }
+      ]
+    }
+  ]
+}
+

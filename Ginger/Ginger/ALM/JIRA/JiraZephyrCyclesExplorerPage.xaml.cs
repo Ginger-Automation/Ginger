@@ -35,42 +35,28 @@ namespace Ginger.ALM.JIRA
 {
     public partial class JiraZephyrCyclesExplorerPage : Page
     {
-        public enum eExplorerTestLabPageUsageType { Import, Select, BrowseFolders }
+        public enum eJiraZephyrCyclesUsageType { Import, Select, BrowseFolders }
 
         ObservableList<BusinessFlow> mBizFlows;
         private List<string[]> mExecDetailNames;
         JiraZephyrCyclesCollection treeData;
 
         private ITreeViewItem mCurrentSelectedTreeItem = null;
-        public string CurrentSelectedPath { get; set; }
-        ObservableList<JiraZephyrVersionTreeItem> mCurrentSelectedVersions = new ObservableList<JiraZephyrVersionTreeItem>();
-        ObservableList<JiraZephyrCycleTreeItem> mCurrentSelectedCycles = new ObservableList<JiraZephyrCycleTreeItem>();
+        ObservableList<JiraZephyrTreeItem> mCurrentSelectedObjects = new ObservableList<JiraZephyrTreeItem>();
         object mCurrentSelectedObject = new object();
         private string mImportDestinationPath = string.Empty;
         private bool mParentSelectionMode = false;
         GenericWindow _GenericWin = null;
 
-        public ObservableList<JiraZephyrVersionTreeItem> CurrentSelectedVersions
+        public ObservableList<JiraZephyrTreeItem> CurrentSelectedObjects
         {
             get
             {
-                return mCurrentSelectedVersions;
+                return mCurrentSelectedObjects;
             }
             set
             {
-                mCurrentSelectedVersions = value;
-            }
-        }
-
-        public ObservableList<JiraZephyrCycleTreeItem> CurrentSelectedCycles
-        {
-            get
-            {
-                return mCurrentSelectedCycles;
-            }
-            set
-            {
-                mCurrentSelectedCycles = value;
+                mCurrentSelectedObjects = value;
             }
         }
 
@@ -89,7 +75,8 @@ namespace Ginger.ALM.JIRA
             foreach (JiraZephyrRelease version in treeData.projectsReleasesList)
             {
                 JiraZephyrVersionTreeItem tvv = new JiraZephyrVersionTreeItem(version.releasesCycles);
-                tvv.Name = version.versionName.ToString();
+                tvv.Name = version.versionName;
+                tvv.VersionId = version.versionId;
                 JiraZephyrCyclesExplorerTreeView.Tree.AddItem(tvv);
             }
 
@@ -100,7 +87,7 @@ namespace Ginger.ALM.JIRA
         private void GetTreeData()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            treeData = (JiraZephyrCyclesCollection)ALMIntegration.Instance.GetZephyrCycles();
+            treeData = (JiraZephyrCyclesCollection)ALMIntegration.Instance.GetZephyrCycles(!mParentSelectionMode);
             Mouse.OverrideCursor = null;
         }
 
@@ -143,8 +130,7 @@ namespace Ginger.ALM.JIRA
 
         private void TestLabExplorerTreeView_ItemSelected(object sender, EventArgs e)
         {
-            mCurrentSelectedVersions.Clear();
-            mCurrentSelectedCycles.Clear();
+            mCurrentSelectedObjects.Clear();
 
             TreeViewItem item = (TreeViewItem)sender;
             mCurrentSelectedTreeItem = (ITreeViewItem)item.Tag;
@@ -157,12 +143,11 @@ namespace Ginger.ALM.JIRA
             {
                 if (mCurrentSelectedTreeItem is JiraZephyrVersionTreeItem)
                 {
-                    mCurrentSelectedVersions.Add((JiraZephyrVersionTreeItem)mCurrentSelectedTreeItem);
-                    ((JiraZephyrVersionTreeItem)mCurrentSelectedTreeItem).CurrentChildrens.ForEach(z => mCurrentSelectedCycles.Add((JiraZephyrCycleTreeItem)z));
+                    // do nothing at this stage                    
                 }
-                if (mCurrentSelectedTreeItem is JiraZephyrCycleTreeItem)
+                if ((mCurrentSelectedTreeItem is JiraZephyrCycleTreeItem) || (mCurrentSelectedTreeItem is JiraZephyrFolderTreeItem))
                 {
-                    mCurrentSelectedCycles.Add((JiraZephyrCycleTreeItem)mCurrentSelectedTreeItem);
+                    CurrentSelectedObjects.Add((JiraZephyrTreeItem)mCurrentSelectedTreeItem);
                 }
             }
         }
@@ -213,7 +198,7 @@ namespace Ginger.ALM.JIRA
                 importBtn.Content = "Import Selected";
                 importBtn.Click += new RoutedEventHandler(ImportSelected);
                 GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse JiraZephyr Cycles", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
-                return CurrentSelectedVersions;
+                return mCurrentSelectedObject;
             }
         }
 
@@ -233,7 +218,7 @@ namespace Ginger.ALM.JIRA
         {
             if (mCurrentSelectedTreeItem != null)
             {
-                if (ALMIntegration.Instance.ImportZephyrCycle(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedCycles))
+                if (ALMIntegration.Instance.ImportZephyrObject(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedObjects))
                 {
                     LoadDataBizFlows();
                     ShowCycleDetailsPanel(false);
@@ -248,8 +233,7 @@ namespace Ginger.ALM.JIRA
 
         private void Cancel_Clicked(object sender, EventArgs e)
         {
-            CurrentSelectedVersions = null;
-            CurrentSelectedPath = null;
+            mCurrentSelectedObjects.Clear();
             _GenericWin.Close();
         }
     }

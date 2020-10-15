@@ -42,6 +42,7 @@ namespace Ginger.Run.RunSetActions
             public static string SelectedDefectsProfileID = "SelectedDefectsProfileID";
             public static string DefectsOpeningModeForAll = "DefectsOpeningModeForAll";
             public static string DefectsOpeningModeForMarked = "DefectsOpeningModeForMarked";
+            public static string DefectsOpeningModeReviewOnly = "DefectsOpeningModeReviewOnly";
         }
 
         private int mSelectedDefectsProfileID;
@@ -55,6 +56,10 @@ namespace Ginger.Run.RunSetActions
         private bool mDefectsOpeningModeForMarked;
         [IsSerializedForLocalRepository]
         public bool DefectsOpeningModeForMarked { get { return mDefectsOpeningModeForMarked; } set { if (mDefectsOpeningModeForMarked != value) { mDefectsOpeningModeForMarked = value; OnPropertyChanged(Fields.DefectsOpeningModeForMarked); } } }
+
+        private bool mDefectsOpeningModeReviewOnly;
+        [IsSerializedForLocalRepository]
+        public bool DefectsOpeningModeReviewOnly { get { return mDefectsOpeningModeReviewOnly; } set { if (mDefectsOpeningModeReviewOnly != value) { mDefectsOpeningModeReviewOnly = value; OnPropertyChanged(Fields.DefectsOpeningModeReviewOnly); } } }
 
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
@@ -109,7 +114,10 @@ namespace Ginger.Run.RunSetActions
                         }
                         
                         currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
-
+                        currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
+                        currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
+                        currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
+                        currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }
@@ -133,7 +141,10 @@ namespace Ginger.Run.RunSetActions
                         }
 
                         currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
-
+                        currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
+                        currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
+                        currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
+                        currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }

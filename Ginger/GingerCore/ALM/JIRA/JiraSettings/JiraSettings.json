@@ -42,6 +42,10 @@
       "Value": "/rest/zapi/latest/cycle/{cycleId}/folders?projectId={projectId}&versionId={versionId}&limit={limit}&offset={offset}"
     },
     {
+      "key": "GetExecutionSearchResults_Zephyr",
+      "Value": "/rest/zapi/latest/zql/executeSearch?zqlQuery={zqlQuery}&filterId={filterId}&offset={offset}&maxRecords={maxRecords}&expand={expand}"
+    },
+    {
       "key": "GetExecutionsList_Zephyr",
       "Value": "/rest/zapi/latest/execution?issueId={issueId}&projectId={projectId}&versionId={versionId}&cycleId={cycleId}&offset={offset}&action={action}&sorter={sorter}&expand={expand}&limit={limit}&folderId={folderId}"
     },
@@ -62,12 +66,24 @@
       "Value": "/rest/zapi/latest/execution/updateWithBulkDefects"
     },
     {
+      "key": "AddTestsToCycle_Zephyr",
+      "Value": "/rest/zapi/latest/execution/addTestsToCycle/"
+    },
+    {
       "key": "CreateExecution_Zephyr",
       "Value": "/rest/zapi/latest/execution"
     },
     {
       "key": "UpdateExecution_Zephyr",
       "Value": "/rest/zapi/latest/execution/{id}/execute/"
+    },
+    {
+      "key": "UpdateStepResult_Zephyr",
+      "Value": "/rest/zapi/latest/stepResult/{id}"
+    },
+    {
+      "key": "CreateStepResult_Zephyr",
+      "Value": "/rest/zapi/latest/stepResult"
     },
     {
       "key": "UpdateDeleteTestStep_Zephyr",
@@ -80,6 +96,10 @@
     {
       "key": "GetTestStepsList_Zephyr",
       "Value": "/rest/zapi/latest/teststep/{issueId}?offset=0&limit=50"
+    },
+    {
+      "key": "GetZephyrStepResultsZephyr",
+      "Value": "/rest/zapi/latest/stepResult?executionId={executionId}&expand={expand}"
     },
     {
       "key": "GetRunStatus",
@@ -171,6 +191,12 @@
     {
       "key": "Xray",
       "Value": "Xray"
+    }
+  ],
+  "DefectStatuses": [
+    {
+      "Status": [ "New", "Allocated" ],
+      "Operator": "in"
     }
   ]
 }

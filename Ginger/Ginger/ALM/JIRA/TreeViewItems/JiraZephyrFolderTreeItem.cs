@@ -22,42 +22,24 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using JiraRepository.Data_Contracts;
+using Amdocs.Ginger.Common;
+using amdocs.ginger.GingerCoreNET;
+using GingerCore.ALM.Qtest;
 
 namespace Ginger.ALM.JIRA.TreeViewItems
 {
-    public class JiraZephyrVersionTreeItem : JiraZephyrTreeItem, ITreeViewItem
+    public class JiraZephyrFolderTreeItem : JiraZephyrTreeItem, ITreeViewItem
     {
-        public bool AlreadyImported { get; set; }
-        public BusinessFlow MappedBusinessFlow { get; set; }
-        public string MappedBusinessFlowPath { get; set; }
-
-        private new ContextMenu mContextMenu = new ContextMenu();
+        public string CycleId { get; set; }
+        public string Description { get; set; }
         Object ITreeViewItem.NodeObject()
         {
             return null;
         }
 
-        public JiraZephyrVersionTreeItem(List<JiraZephyrCycle> childrenCycles = null)
-        {
-            CurrentChildrens = new List<ITreeViewItem>();
-
-            if (childrenCycles != null)
-            {
-                foreach (JiraZephyrCycle cycle in childrenCycles)
-                {
-                    JiraZephyrCycleTreeItem tvi = new JiraZephyrCycleTreeItem(cycle.FoldersList);
-                    tvi.Name = cycle.name.ToString();
-                    tvi.Id = cycle.id.ToString();
-                    tvi.VersionId = cycle.versionId.ToString();
-                    CurrentChildrens.Add(tvi);
-                }
-            }
-        }
-
         StackPanel ITreeViewItem.Header()
         {
-            return TreeViewUtils.CreateItemHeader(Name, "@ExecutionRes_16x16.png");
+            return TreeViewUtils.CreateItemHeader(Name, "@Folder_16x16.png");          
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
@@ -67,7 +49,7 @@ namespace Ginger.ALM.JIRA.TreeViewItems
 
         bool ITreeViewItem.IsExpandable()
         {
-            return true;
+            return false;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)

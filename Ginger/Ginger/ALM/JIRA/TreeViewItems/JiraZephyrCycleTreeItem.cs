@@ -22,24 +22,40 @@ using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM.Qtest;
+using JiraRepository.Data_Contracts;
 
 namespace Ginger.ALM.JIRA.TreeViewItems
 {
-    public class JiraZephyrCycleTreeItem : TreeViewItemBase, ITreeViewItem
+    public class JiraZephyrCycleTreeItem : JiraZephyrTreeItem, ITreeViewItem
     {
-        public BusinessFlow QCExplorer { get; set; }
-        public List<ITreeViewItem> currentChildrens = null;
-
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string VersionId { get; set; }
+        private bool isExpandable = true;
 
         Object ITreeViewItem.NodeObject()
         {
             return null;
+        }
+
+        public JiraZephyrCycleTreeItem(List<JiraZephyrCycleFolder> childrenCycles = null)
+        {
+            CurrentChildrens = new List<ITreeViewItem>();
+
+            if ((childrenCycles != null) && (childrenCycles.Count > 0))
+            {
+                foreach (JiraZephyrCycleFolder folder in childrenCycles)
+                {
+                    JiraZephyrFolderTreeItem tvf = new JiraZephyrFolderTreeItem();
+                    tvf.Name = folder.FolderName.ToString();
+                    tvf.Id = folder.FolderId.ToString();
+                    tvf.CycleId = folder.CycleId.ToString();
+                    tvf.VersionId = folder.VersionId.ToString();
+                    tvf.Description = folder.Description;
+                    CurrentChildrens.Add(tvf);
+                }
+            }
+            else 
+            {
+                isExpandable = false;
+            }
         }
 
         StackPanel ITreeViewItem.Header()
@@ -49,12 +65,12 @@ namespace Ginger.ALM.JIRA.TreeViewItems
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return currentChildrens;
+            return CurrentChildrens;
         }
 
         bool ITreeViewItem.IsExpandable()
         {
-            return false;
+            return isExpandable;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
