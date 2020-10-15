@@ -132,6 +132,9 @@ namespace Ginger.Actions.WebServices
             CertificatePath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseSSLCertificate));
             CertificatePasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePassword), true, false, UCValueExpression.eBrowserType.Folder);
 
+            //KeyFile Certificate
+            KeyFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.KeyFilePath), true, true, UCValueExpression.eBrowserType.File, "*.*");
+
             //Import Certificate
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
 

@@ -228,6 +228,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Ginger\DLLs\Open3270.dll</HintPath>
     </Reference>
+    <Reference Include="OpenSSL.PrivateKeyDecoder, Version=1.3.0.0, Culture=neutral, PublicKeyToken=78f5ba1b024431f9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenSSL.PrivateKeyDecoder.1.3.0\lib\net45\OpenSSL.PrivateKeyDecoder.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenSSL.X509Certificate2.Provider, Version=1.3.0.0, Culture=neutral, PublicKeyToken=78f5ba1b024431f9, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenSSL.X509Certificate2.Provider.1.3.0\lib\net45\OpenSSL.X509Certificate2.Provider.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTracing, Version=0.12.0.0, Culture=neutral, PublicKeyToken=61503406977abdaf, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTracing.0.12.0\lib\net45\OpenTracing.dll</HintPath>
     </Reference>

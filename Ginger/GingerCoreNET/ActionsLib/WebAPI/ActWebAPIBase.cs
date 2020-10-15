@@ -87,6 +87,7 @@ namespace GingerCore.Actions.WebServices
 
             public static string UseLegacyJSONParsing = "UseLegacyJSONParsing";
 
+            public static string KeyFilePath = "KeyFilePath";
         }
 
         [IsSerializedForLocalRepository]

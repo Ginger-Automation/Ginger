@@ -23,6 +23,9 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Actions.WebServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OpenSSL.X509Certificate2Provider;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Utilities.IO.Pem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +34,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Security;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -233,10 +237,22 @@ namespace GingerCore.Actions.WebAPI
                 Handler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 //string path = (mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath).ToString().Replace(@"~\", mAct.SolutionFolder));
                 string path = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePath));
+                string keyFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.KeyFilePath));
 
-                if (!string.IsNullOrEmpty(path))
+                if (!string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(keyFilePath))
+                {
+                    string certificateText = File.ReadAllText(path);
+                    string privateKeyText = File.ReadAllText(keyFilePath);
+
+                    ICertificateProvider provider = new CertificateFromFileProvider(certificateText, privateKeyText);
+                    X509Certificate2 certificate = provider.Certificate;
+                    Handler.ClientCertificates.Add(certificate);
+                }
+
+                else if (!string.IsNullOrEmpty(path))
                 {
                     string CertificateKey = mAct.GetInputParamCalculatedValue(ActWebAPIBase.Fields.CertificatePassword);
+                    
                     if (!string.IsNullOrEmpty(CertificateKey))
                     {
                         X509Certificate2 customCertificate = new X509Certificate2(path, CertificateKey);
@@ -244,8 +260,8 @@ namespace GingerCore.Actions.WebAPI
                         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
                     }
                     else
-                    { 
-                        //Case Certifacte key/password is not required
+                    {
+                        //Case Certifacte key / password is not required
                         X509Certificate2 customCertificate = new X509Certificate2(path);
                         Handler.ClientCertificates.Add(customCertificate);
                     }
@@ -256,10 +272,22 @@ namespace GingerCore.Actions.WebAPI
                     mAct.ExInfo = "Certificate path is missing";
                     return false;
                 }
+
             }
             return true;
         }
 
+        private static byte[] UnPem(string pem)
+        {
+            // This is a shortcut that assumes valid PEM
+            // -----BEGIN words-----\nbase64\n-----END words-----
+            const string Dashes = "-----";
+            int index0 = pem.IndexOf(Dashes);
+            int index1 = pem.IndexOf('\n', index0 + Dashes.Length);
+            int index2 = pem.IndexOf(Dashes, index1 + 1);
+
+            return Convert.FromBase64String(pem.Substring(index1, index2 - index1));
+        }
         private bool SetNetworkCredentials()
         {
             //check if Network Credentials are required:
