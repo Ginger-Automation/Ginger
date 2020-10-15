@@ -142,7 +142,7 @@ namespace GingerCore.ALM
                     WorkSpaceId = project.ProjectId
                 };
             }
-            return this.loginDto; ;
+            return this.loginDto;
         }
 
         public List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
@@ -262,32 +262,32 @@ namespace GingerCore.ALM
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             string resourse = string.Empty;
-            LoginDTO loginDto = GetLoginDTO();
+            LoginDTO _loginDto = GetLoginDTO();
             Dictionary<string, List<string>> listnodes = Task.Run(() =>
             {
-                return octaneRepository.GetListNodes(loginDto);
+                return octaneRepository.GetListNodes(_loginDto);
             }).Result;
 
             if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
             {
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
-                ExtractFields(fields, resourse, "Test Case", loginDto, listnodes);
+                ExtractFields(fields, resourse, "Test Case", _loginDto, listnodes);
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
-                ExtractFields(fields, resourse, "Test Suite", loginDto, listnodes);
+                ExtractFields(fields, resourse, "Test Suite", _loginDto, listnodes);
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
-                ExtractFields(fields, resourse, "Requirement", loginDto, listnodes);
+                ExtractFields(fields, resourse, "Requirement", _loginDto, listnodes);
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
-                ExtractFields(fields, resourse, "Run", loginDto, listnodes);
+                ExtractFields(fields, resourse, "Run", _loginDto, listnodes);
             }
             else
             {
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(resourceType);
 
-                ExtractFields(fields, resourse, resourse, loginDto, listnodes);
+                ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }
             return fields;
         }
@@ -867,8 +867,6 @@ namespace GingerCore.ALM
         public bool ExportBusinessFlow(BusinessFlow businessFlow, QCTestSet mappedTestSet, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
         {
             int testSetId = 0;
-            // ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
-
             try
             {
                 if (mappedTestSet == null) //##create new Test Set in QC
@@ -1027,7 +1025,6 @@ namespace GingerCore.ALM
         {
             try
             {
-                string testId;
                 string step = string.Empty;
                 activitiesGroup.ActivitiesIdentifiers.ToList().ForEach(p =>
                 {
@@ -1049,19 +1046,18 @@ namespace GingerCore.ALM
 
                 if (mappedTest == null) //#Create new test case
                 {
-
-                    testId = CreateNewTestCase(activitiesGroup, fatherId, testCaseFields, step);
+                    CreateNewTestCase(activitiesGroup, fatherId, testCaseFields, step);
                 }
                 else //##update existing test case
                 {
                     //TODO: Maheshk: Update existing testcase
                     if (!string.IsNullOrEmpty(activitiesGroup.ExternalID))
                     {
-                        testId = UpdateTestCase(activitiesGroup, fatherId, testCaseFields, step);
+                        UpdateTestCase(activitiesGroup, fatherId, testCaseFields, step);
                     }
                     else
                     {
-                        testId = CreateNewTestCase(activitiesGroup, fatherId, testCaseFields, step);
+                        CreateNewTestCase(activitiesGroup, fatherId, testCaseFields, step);
                     }
                 }
                 return true;
@@ -1166,7 +1162,7 @@ namespace GingerCore.ALM
         private string CreateTestStep(string tcId, string script)
         {
             TestScript testScript = new TestScript();
-            testScript.Id = new EntityId(tcId.ToString());
+            testScript.Id = new EntityId(tcId);
             testScript.SetValue("script", script);
             Task.Run(() => { return this.octaneRepository.AddStepsToTC<TestScript>(GetLoginDTO(), testScript, null); });
             return "";
@@ -1183,7 +1179,7 @@ namespace GingerCore.ALM
             if (testsuite.Any())
             {
                 EntityList<BaseEntity> father = (EntityList<BaseEntity>)testsuite[0].GetValue("product_areas");
-                if (father != null || father.data.Any())
+                if (father != null && father.data.Any())
                 {
                     return new QCTestSet() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = father.data[0].Id };
                 }

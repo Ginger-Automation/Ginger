@@ -122,9 +122,9 @@ namespace Ginger.ALM.Repository
 
             QCTestSet matchingTS = null;
 
-            Amdocs.Ginger.Common.eUserMsgSelection userSelec = Amdocs.Ginger.Common.eUserMsgSelection.None;
+            Amdocs.Ginger.Common.eUserMsgSelection userSelec;
             //TO DO MaheshK : check if the businessFlow already mapped to Octane Test Suite
-            if (String.IsNullOrEmpty(businessFlow.ExternalID) == false)
+            if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
                 matchingTS = ((OctaneCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
                 if (matchingTS != null)
@@ -174,18 +174,21 @@ namespace Ginger.ALM.Repository
             }
 
             testLabUploadPath = testPlanUploadPath;
+            bool performSave = false;
+
+            //just to check if new TC needs to be created or update has to be done
+            if (matchingTS == null)
+            {
+                matchingTC = null;
+            }
+            else
+            {
+                matchingTC = new QCTestCase();
+            } 
             //check if all of the business flow activities groups already exported to Octane and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
-                if (matchingTS == null)
-                {
-                    matchingTC = null;
-                }
-                else
-                {
-                    matchingTC = new QCTestCase(); 
-                }
-                ExportActivitiesGroupToALM(ag, testPlanUploadPath, false, businessFlow);
+                ExportActivitiesGroupToALM(ag, testPlanUploadPath, performSave, businessFlow);
             }
 
             //upload the business flow
