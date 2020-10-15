@@ -35,7 +35,7 @@ namespace Ginger.Actions
 
             mAct = act;
 
-            GingerCore.General.FillComboFromEnumObj(LogTypeComboBox, mAct.LogTypes);
+            GingerCore.General.FillComboFromEnumObj(LogTypeComboBox, mAct.SelectedLogLevel);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LogTypeComboBox, ComboBox.SelectedValueProperty, mAct, nameof(ActLogAction.SelectedLogLevel));
             
             LogValue.BindControl(Context.GetAsContext(mAct.Context), mAct, ActLogAction.Fields.LogText);            
