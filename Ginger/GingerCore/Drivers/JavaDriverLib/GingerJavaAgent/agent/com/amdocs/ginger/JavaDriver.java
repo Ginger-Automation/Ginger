@@ -469,22 +469,11 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		}
 		
 		
-		else if ("GetElementProperties".equals(PL.Name))
+		else if ("GetElementProperties".equals(PL.Name) || "GetVisibleElements".equals(PL.Name) || "GetElementChildren".equals(PL.Name) || "HighLightElement".equals(PL.Name) || "GetElementInfoFromXYCoOrdinate".equals(PL.Name) )
 		{	
 			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);							
 		}		
-		else if ("GetVisibleElements".equals(PL.Name))
-		{	
-			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
-		}
-		else if("GetElementChildren".equals(PL.Name))
-		{
-				return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
-		}
-		else if("HighLightElement".equals(PL.Name))
-		{
-			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
-		}
+		
 		/////////////////////////////////////////////////////
 		// End of Widgets  Commands
 		/////////////////////////////////////////////////////

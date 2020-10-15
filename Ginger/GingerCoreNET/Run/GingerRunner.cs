@@ -1577,42 +1577,52 @@ namespace Ginger.Run
         private void executeErrorAndPopUpHandler(ObservableList<ErrorHandler> errorHandlerActivity)
         {
             Activity originActivity = CurrentBusinessFlow.CurrentActivity;
-            Act orginAction = (Act) CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-
-            eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
-            foreach (ErrorHandler errActivity in errorHandlerActivity)
+            Reporter.ToLog(eLogLevel.INFO, "--> Error Handlers Execution Started");
+            try
             {
-               CurrentBusinessFlow.CurrentActivity = errActivity;
-                SetCurrentActivityAgent();
-                Stopwatch stE = new Stopwatch();
-                stE.Start();                
-                foreach (Act act in errActivity.Acts)
-                {
-                    Stopwatch st = new Stopwatch();
-                    st.Start();
-                    if (act.Active)
-                    {
-                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
-                        if (errActivity.HandlerType == eHandlerType.Popup_Handler)
-                            act.Timeout = 1;
-                        PrepAction(act, ref ActionExecutorType, st);
-                        RunActionWithTimeOutControl(act, ActionExecutorType);
-                        ProcessStoretoValue(act);
-                        UpdateDSReturnValues(act);
-                        CalculateActionFinalStatus(act);
-                    }
-                    st.Stop();
-                }
-                SetBusinessFlowActivitiesAndActionsSkipStatus();
-                CalculateActivityFinalStatus(errActivity);
-                stE.Stop();
-                errActivity.Elapsed = stE.ElapsedMilliseconds;
-            }
+                Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
 
-            CurrentBusinessFlow.CurrentActivity = originActivity;
-            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
-            mCurrentActivityChanged = false;
-            SetCurrentActivityAgent();
+                eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
+                foreach (ErrorHandler errActivity in errorHandlerActivity)
+                {
+                    CurrentBusinessFlow.CurrentActivity = errActivity;
+                    SetCurrentActivityAgent();
+                    Stopwatch stE = new Stopwatch();
+                    stE.Start();                    
+                    Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Started");
+                    foreach (Act act in errActivity.Acts)
+                    {
+                        Stopwatch st = new Stopwatch();
+                        st.Start();
+                        if (act.Active)
+                        {
+                            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = act;
+                            if (errActivity.HandlerType == eHandlerType.Popup_Handler)
+                                act.Timeout = 1;
+                            PrepAction(act, ref ActionExecutorType, st);
+                            RunActionWithTimeOutControl(act, ActionExecutorType);
+                            ProcessStoretoValue(act);
+                            UpdateDSReturnValues(act);
+                            CalculateActionFinalStatus(act);
+                        }
+                        st.Stop();
+                    }
+                    SetBusinessFlowActivitiesAndActionsSkipStatus();
+                    CalculateActivityFinalStatus(errActivity);
+                    stE.Stop();
+                    Reporter.ToLog(eLogLevel.INFO, "Error Handler '" + errActivity.ActivityName.ToString() + "' Ended");
+                    errActivity.Elapsed = stE.ElapsedMilliseconds;
+                }
+
+                CurrentBusinessFlow.CurrentActivity = originActivity;
+                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = orginAction;
+                mCurrentActivityChanged = false;
+                SetCurrentActivityAgent();
+            } 
+            finally
+            {
+                Reporter.ToLog(eLogLevel.INFO, "<-- Error Handlers Execution Ended"); 
+            }
         }
 
         private void PrepAction(Act action, ref eActionExecutorType ActExecutorType, Stopwatch st)
@@ -4571,7 +4581,7 @@ namespace Ginger.Run
             }
         }
 
-
+        
         private void NotifyBusinessFlowEnd(BusinessFlow businessFlow)
         {
             try
