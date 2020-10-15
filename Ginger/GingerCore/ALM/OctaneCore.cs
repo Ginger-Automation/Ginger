@@ -22,6 +22,7 @@ using OctaneSDK.Entities.Base;
 using OctaneSDK.Entities.WorkItems;
 using OctaneSDK.Entities.Tests;
 using OctaneSDK.Entities.Requirements;
+using Couchbase.Utils;
 
 namespace GingerCore.ALM
 {
@@ -73,7 +74,42 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
-            throw new NotImplementedException();
+            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
+            foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
+            {
+                Dictionary<string, string> filedsToUpdate = new Dictionary<string, string>();
+
+                foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
+                {
+
+                    if(item.Name=="name")
+                    {
+                        item.SelectedValue= defectForOpening.Value.ContainsKey("Name") ? defectForOpening.Value["Name"] : string.Empty;
+                    }
+                    else if (item.Name == "description")
+                    {
+                        item.SelectedValue = defectForOpening.Value.ContainsKey("Description") ? defectForOpening.Value["Description"] : string.Empty;
+                    }
+
+                    if (string.IsNullOrEmpty(item.SelectedValue)|| item.SelectedValue=="Unassigned")
+                    {
+                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.Name) ? defectForOpening.Value[item.Name] : string.Empty;
+                    }
+                    filedsToUpdate.Add(item.Name, item.SelectedValue);
+                }
+
+                filedsToUpdate.Add("description", defectForOpening.Value.ContainsKey("Description") ? defectForOpening.Value["Description"] : string.Empty);
+
+                string newDefectID = Task.Run(() =>
+                {
+                    return octaneRepository.CreateDefect(filedsToUpdate);
+                }).Result;
+                defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
+
+
+            }
+
+            return defectsOpeningResults;
         }
 
         public override bool DisconnectALMProjectStayLoggedIn()
@@ -215,6 +251,10 @@ namespace GingerCore.ALM
                     else if (phases != null && phases.ContainsKey(field.Name) && phases[field.Name].Any())
                     {
                         itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
+                    }
+                    else
+                    {
+                        itemfield.SelectedValue = "Unassigned";
                     }
                     fields.Add(itemfield);
                 }
