@@ -23,11 +23,12 @@ using OctaneSDK.Entities.WorkItems;
 using OctaneSDK.Entities.Tests;
 using OctaneSDK.Entities.Requirements;
 using GingerCore.ALM.QC;
-using QCRestClient;
 using OctaneSDK.Services.Queries;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Web;
+using QCRestClient;
+using QCTestSet = QCRestClient.QCTestSet;
 
 namespace GingerCore.ALM
 {
@@ -43,8 +44,9 @@ namespace GingerCore.ALM
         protected WorkspaceContext workspaceContext;
         protected SharedSpaceContext sharedSpaceContext;
         protected OctaneRepository octaneRepository;
+        private LoginDTO loginDto;
+        private static Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
 
-        private static Dictionary<string, string> ExploredTestLabFolder = new Dictionary<string, string>();
         public OctaneCore()
         {
             octaneRepository = new OctaneRepository();
@@ -61,11 +63,11 @@ namespace GingerCore.ALM
             try
             {
                 string[] separatePath = path.Split('\\');
-                separatePath[0] = ExploredTestLabFolder.ContainsKey("Application Modules") ? ExploredTestLabFolder["Application Modules"] : GetRootFolderId();
+                separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
 
-                if (!ExploredTestLabFolder.ContainsKey("Application Modules"))
+                if (!ExploredApplicationModule.ContainsKey("Application Modules"))
                 {
-                    ExploredTestLabFolder.Add("Application Modules", separatePath[0]);
+                    ExploredApplicationModule.Add("Application Modules", separatePath[0]);
                 }
 
                 for (int i = 1; i < separatePath.Length; i++)
@@ -101,7 +103,7 @@ namespace GingerCore.ALM
 
         private string GetTestLabFolderId(string separateAti, string separateAtIMinusOne)
         {
-            if (!ExploredTestLabFolder.ContainsKey(separateAti))
+            if (!ExploredApplicationModule.ContainsKey(separateAti))
             {
                 LogicalQueryPhrase parent = new LogicalQueryPhrase("id", separateAtIMinusOne, ComparisonOperator.Equal);
                 CrossQueryPhrase qdParent = new CrossQueryPhrase("parent", parent);
@@ -112,32 +114,35 @@ namespace GingerCore.ALM
                     return octaneRepository.GetEntities<ApplicationModule>(GetLoginDTO(), filter);
                 }).Result;
 
-                ExploredTestLabFolder.Add(listnodes.FirstOrDefault().Name, listnodes.FirstOrDefault().Id);
+                ExploredApplicationModule.Add(listnodes.FirstOrDefault().Name, listnodes.FirstOrDefault().Id);
                 return listnodes.FirstOrDefault().Id;
             }
             else
             {
-                return ExploredTestLabFolder[separateAti];
+                return ExploredApplicationModule[separateAti];
             }
         }
 
         private LoginDTO GetLoginDTO()
         {
-            AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
+            if (this.loginDto == null)
             {
-                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-            }).Result;
-            AlmDomain domain = domains.DataResult.Where(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).FirstOrDefault();
-            ProjectArea project = domain.Projects.Where(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-            LoginDTO loginDto = new LoginDTO()
-            {
-                User = ALMCore.DefaultAlmConfig.ALMUserName,
-                Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                Server = ALMCore.DefaultAlmConfig.ALMServerURL,
-                SharedSpaceId = domain.DomainId,
-                WorkSpaceId = project.ProjectId
-            };
-            return loginDto;
+                AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
+                {
+                    return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
+                }).Result;
+                AlmDomain domain = domains.DataResult.Where(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).FirstOrDefault();
+                ProjectArea project = domain.Projects.Where(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
+                this.loginDto = new LoginDTO()
+                {
+                    User = ALMCore.DefaultAlmConfig.ALMUserName,
+                    Password = ALMCore.DefaultAlmConfig.ALMPassword,
+                    Server = ALMCore.DefaultAlmConfig.ALMServerURL,
+                    SharedSpaceId = domain.DomainId,
+                    WorkSpaceId = project.ProjectId
+                };
+            }
+            return this.loginDto; ;
         }
 
         public List<QCTestSetSummary> GetTestSetExplorer(string PathNode)
@@ -146,11 +151,11 @@ namespace GingerCore.ALM
             string[] separatePath = PathNode.Split('\\');
             try
             {
-                separatePath[0] = ExploredTestLabFolder.ContainsKey("Application Modules") ? ExploredTestLabFolder["Application Modules"] : GetRootFolderId();
+                separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
 
-                if (!ExploredTestLabFolder.ContainsKey("Application Modules"))
+                if (!ExploredApplicationModule.ContainsKey("Application Modules"))
                 {
-                    ExploredTestLabFolder.Add("Application Modules", separatePath[0]);
+                    ExploredApplicationModule.Add("Application Modules", separatePath[0]);
                 }
 
                 for (int i = 1; i < separatePath.Length; i++)
@@ -257,20 +262,7 @@ namespace GingerCore.ALM
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             string resourse = string.Empty;
-            AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
-            {
-                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-            }).Result;
-            AlmDomain domain = domains.DataResult.Where(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).FirstOrDefault();
-            ProjectArea project = domain.Projects.Where(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-            LoginDTO loginDto = new LoginDTO()
-            {
-                User = ALMCore.DefaultAlmConfig.ALMUserName,
-                Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                Server = ALMCore.DefaultAlmConfig.ALMServerURL,
-                SharedSpaceId = domain.DomainId,
-                WorkSpaceId = project.ProjectId
-            };
+            LoginDTO loginDto = GetLoginDTO();
             Dictionary<string, List<string>> listnodes = Task.Run(() =>
             {
                 return octaneRepository.GetListNodes(loginDto);
@@ -279,41 +271,36 @@ namespace GingerCore.ALM
             if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
             {
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_CASE);
-                fields.Append(
-                    AddFieldsValues(octaneRepository.GetEntityFields(resourse, loginDto), "Test Case",
-                    listnodes, octaneRepository.GetPhases(loginDto, resourse)));
+                ExtractFields(fields, resourse, "Test Case", loginDto, listnodes);
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_SET);
-                fields.Append(
-                    AddFieldsValues(octaneRepository.GetEntityFields(resourse, loginDto), "Test Suit",
-                    listnodes, octaneRepository.GetPhases(loginDto, resourse)));
+                ExtractFields(fields, resourse, "Test Suite", loginDto, listnodes);
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.REQUIREMENT);
-                fields.Append(
-                    AddFieldsValues(
-                        octaneRepository.GetEntityFields(resourse, loginDto), "Requirement",
-                        listnodes, octaneRepository.GetPhases(loginDto, resourse)));
+                ExtractFields(fields, resourse, "Requirement", loginDto, listnodes);
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(ResourceType.TEST_RUN);
-                fields.Append(
-                    AddFieldsValues(
-                        octaneRepository.GetEntityFields(resourse, loginDto), "Run",
-                        listnodes, octaneRepository.GetPhases(loginDto, resourse)));
+                ExtractFields(fields, resourse, "Run", loginDto, listnodes);
             }
             else
             {
 
                 resourse = Octane_Repository.BLL.Extensions.ConvertResourceType(resourceType);
 
-                fields.Append(AddFieldsValues(Task.Run(() =>
-                {
-                    return octaneRepository.GetEntityFields(resourse, loginDto);
-                }).Result, resourse, listnodes, Task.Run(() =>
-                {
-                    return octaneRepository.GetPhases(loginDto, resourse);
-                }).Result));
+                ExtractFields(fields, resourse, resourse, loginDto, listnodes);
             }
             return fields;
+        }
+
+        private void ExtractFields(ObservableList<ExternalItemFieldBase> fields, string resourse, string resource2, LoginDTO loginDto, Dictionary<string, List<string>> listnodes)
+        {
+            fields.Append(AddFieldsValues(Task.Run(() =>
+            {
+                return octaneRepository.GetEntityFields(resourse, loginDto);
+            }).Result, resource2, listnodes, Task.Run(() =>
+            {
+                return octaneRepository.GetPhases(loginDto, resourse);
+            }).Result));
         }
 
         private static ObservableList<ExternalItemFieldBase> AddFieldsValues(ListResult<FieldMetadata> entityFields, string entityType, Dictionary<string, List<string>> listnodes, Dictionary<string, List<string>> phases)
@@ -324,18 +311,18 @@ namespace GingerCore.ALM
             {
                 foreach (FieldMetadata field in entityFields.data)
                 {
-                    if (string.IsNullOrEmpty(field.Label) || !field.VisibleInUI)
+                    if (string.IsNullOrEmpty(field.Label) || !field.VisibleInUI || !field.IsEditable)
                     {
                         continue;
                     }
 
                     ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
                     itemfield.ID = field.Label;
-                    itemfield.ExternalID = field.Label;
-                    itemfield.Name = field.Name;
+                    itemfield.ExternalID = field.Name;
+                    itemfield.Name = field.Label;
                     itemfield.Mandatory = field.IsRequired;
                     itemfield.SystemFieled = !field.IsUserField;
-
+                    
                     if (itemfield.Mandatory)
                     {
                         itemfield.ToUpdate = true;
@@ -389,7 +376,7 @@ namespace GingerCore.ALM
                 TSLink = octaneRepository.GetEntities<TestSuite_Test_Link>(GetLoginDTO(), filter);
                 foreach (TestSuite_Test_Link item in TSLink)
                 {
-                    testCollection.Add(new QCTestInstance() { Id = item.Test.Id, TestId = item.Test.Id, Name = item.Test.Name , CycleId = testSetID });
+                    testCollection.Add(new QCTestInstance() { Id = item.Test.Id, TestId = item.Test.Id, Name = item.Test.Name, CycleId = testSetID });
                 }
                 return testCollection;
             }
@@ -415,7 +402,7 @@ namespace GingerCore.ALM
 
         public QCTestCaseStepsColl GetListTSTestSteps(QCTestCase testcase)
         {
-            var lineBreaks = new [] { '\n' };
+            var lineBreaks = new[] { '\n' };
             QCTestCaseStepsColl stepsColl = new QCTestCaseStepsColl();
             string steps = Task.Run(() => { return octaneRepository.GetTestCaseStep(GetLoginDTO(), testcase.Id); }).Result;
             int i = 1;
@@ -453,7 +440,7 @@ namespace GingerCore.ALM
                 foreach (Match m in mc)
                 {
                     QC.QCTSTestParameter newtsVar = new QC.QCTSTestParameter();
-                    newtsVar.Name = m.Value.Substring(1, m.Value.Length - 2);         
+                    newtsVar.Name = m.Value.Substring(1, m.Value.Length - 2);
                     newTSTest.Parameters.Add(newtsVar);
                 }
             }
@@ -462,6 +449,10 @@ namespace GingerCore.ALM
         public QC.QCTSTest ImportTSTest(QCTestInstance testInstance)
         {
             QC.QCTSTest newTSTest = new QC.QCTSTest();
+            if (newTSTest.Runs == null)
+            {
+                newTSTest.Runs = new List<QCTSTestRun>();
+            }
             QCTestCase testCase = GetTestCases(testInstance.Id);
             testCase.TestSetId = testInstance.CycleId;
             if (testInstance != null)
@@ -548,7 +539,7 @@ namespace GingerCore.ALM
 
                 TestSuite tsLatest = Task.Run(() =>
                 {
-                    LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", testSet.TestSetID, ComparisonOperator.Equal);                    
+                    LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", testSet.TestSetID, ComparisonOperator.Equal);
                     return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), new List<IQueryPhrase>() { test_Suite });
                 }).Result.FirstOrDefault();
                 //Create Business Flow
@@ -556,7 +547,7 @@ namespace GingerCore.ALM
                 busFlow.Name = testSet.TestSetName;
                 busFlow.ExternalID = testSet.TestSetID;
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
-                busFlow.Description = StripHTML(tsLatest.GetStringValue("description"));                
+                busFlow.Description = StripHTML(tsLatest.GetStringValue("description"));
                 busFlow.Activities = new ObservableList<Activity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
                 Dictionary<string, string> busVariables = new Dictionary<string, string>();//will store linked variables
@@ -684,7 +675,7 @@ namespace GingerCore.ALM
                             string linkedVariable = null;
                             if (paramSelectedValue.StartsWith("#$#"))
                             {
-                                var valueParts = paramSelectedValue.Split(new [] { "#$#" }, StringSplitOptions.None);
+                                var valueParts = paramSelectedValue.Split(new[] { "#$#" }, StringSplitOptions.None);
                                 if (valueParts.Count() == 3)
                                 {
                                     linkedVariable = valueParts[1];
@@ -716,7 +707,7 @@ namespace GingerCore.ALM
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
-                                if (isflowControlParam.Value)
+                                if (isflowControlParam != null && isflowControlParam.Value)
                                 {
                                     //add it as selection list param                               
                                     stepActivityVar = new VariableSelectionList();
@@ -736,7 +727,7 @@ namespace GingerCore.ALM
                             else
                             {
                                 //#param exist
-                                if (isflowControlParam.Value)
+                                if (isflowControlParam != null && isflowControlParam.Value)
                                 {
                                     if (!(stepActivityVar is VariableSelectionList))
                                     {
@@ -748,7 +739,7 @@ namespace GingerCore.ALM
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
                                     }
                                 }
-                                else if (!isflowControlParam.Value)
+                                else if (isflowControlParam != null && !isflowControlParam.Value)
                                 {
                                     if (stepActivityVar is VariableSelectionList)
                                     {
@@ -871,6 +862,339 @@ namespace GingerCore.ALM
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
+        }
+
+        public bool ExportBusinessFlow(BusinessFlow businessFlow, QCTestSet mappedTestSet, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string result)
+        {
+            int testSetId = 0;
+            // ObservableList<ActivitiesGroup> existingActivitiesGroups = new ObservableList<ActivitiesGroup>();
+
+            try
+            {
+                if (mappedTestSet == null) //##create new Test Set in QC
+                {
+                    testSetId = CreateNewTestSet(businessFlow, fatherId, testSetFields);
+                }
+                else //##update existing test set
+                {
+                    testSetId = UpdateExistingTestSet(businessFlow, mappedTestSet, fatherId, testSetFields);
+                }
+
+                businessFlow.ExternalID = testSetId.ToString();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                result = "Unexpected error occurred- " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", ex);
+                return false;
+            }
+        }
+        private int CreateNewTestSet(BusinessFlow businessFlow, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
+        {
+            // foreach (ExternalItemFieldBase field in testSetFields)
+            //{
+            //if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
+            //{
+            //    if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+            //        test.ElementsField.Add(field.ExternalID, field.SelectedValue);
+            //    else
+            //        try { test.ElementsField.Add(field.ExternalID, "NA"); }
+            //        catch { }
+            //}
+            TestSuite testSuite = new TestSuite();
+            testSuite.Name = businessFlow.Name;
+            testSuite.SetValue("description", businessFlow.Description);
+            testSuite.SetValue("product_areas", new EntityList<BaseEntity>()
+            {
+                data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
+            });
+
+            TestSuite created = Task.Run(() =>
+            {
+                return this.octaneRepository.CreateEntity<TestSuite>(GetLoginDTO(), testSuite);
+            }).Result;
+
+            int testSuiteId = Convert.ToInt32(created.Id.ToString());
+
+            LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
+
+            return testSuiteId;
+        }
+        private int UpdateExistingTestSet(BusinessFlow businessFlow, QCTestSet existingTS, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
+        {
+            // foreach (ExternalItemFieldBase field in testSetFields)
+            //{
+            //if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
+            //{
+            //    if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+            //        test.ElementsField.Add(field.ExternalID, field.SelectedValue);
+            //    else
+            //        try { test.ElementsField.Add(field.ExternalID, "NA"); }
+            //        catch { }
+            //}
+            TestSuite testSuite = new TestSuite();
+            testSuite.Id = existingTS.Id;
+            testSuite.Name = businessFlow.Name;
+            testSuite.SetValue("description", businessFlow.Description);
+            testSuite.SetValue("product_areas", new EntityList<BaseEntity>()
+            {
+                data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
+            });
+
+            TestSuite created = Task.Run(() =>
+            {
+                return this.octaneRepository.UpdateEntity<TestSuite>(GetLoginDTO(), testSuite);
+            }).Result;
+
+            int testSuiteId = Convert.ToInt32(created.Id.ToString());
+
+            DeleteLinkTestCasesToTestSuite(testSuiteId);
+            LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
+
+            return testSuiteId;
+        }
+
+
+        private void LinkTestCasesToTestSuite(int testSuiteId, List<int> entityTcIdMapping)
+        {          
+            foreach (int tcId in entityTcIdMapping)
+            {
+                TestSuiteLinkToTests suiteLinkToTests = new TestSuiteLinkToTests();
+
+                suiteLinkToTests.SetValue("subtype", "test_suite_link_to_manual");
+
+                suiteLinkToTests.SetValue("test_suite", new BaseEntity("test") { Id = testSuiteId.ToString(), TypeName = "test" });
+
+                suiteLinkToTests.SetValue("test", new BaseEntity("test") { Id = tcId.ToString(), TypeName = "test" });
+
+                var created = Task.Run(() =>
+                {
+                    return octaneRepository.CreateEntity<TestSuiteLinkToTests>(GetLoginDTO(), suiteLinkToTests);
+                }).Result;
+            }
+        }
+
+
+        private void DeleteLinkTestCasesToTestSuite(int testSuiteId)
+        {
+            CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal));
+            Task.Run(() =>
+            {
+                this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+            });
+        }
+        public string GetLastTestPlanIdFromPath(string path)
+        {
+            string[] separatePath = path.Split('\\');
+
+            separatePath[0] = ExploredApplicationModule.ContainsKey("Application Modules") ? ExploredApplicationModule["Application Modules"] : GetRootFolderId();
+
+            if (!ExploredApplicationModule.ContainsKey("Application Modules"))
+            {
+                ExploredApplicationModule.Add("Application Modules", separatePath[0]);
+            }
+
+            for (int i = 1; i < separatePath.Length; i++)
+            {
+                separatePath[i] = GetTestLabFolderId(separatePath[i], separatePath[i - 1]);
+            }
+
+            return separatePath.Last();
+        }
+
+        public string CreateApplicationModule(string appModuleNameTobeCreated, string desc, string paraentId)
+        {
+            ApplicationModule applicationModule = new ApplicationModule();
+            applicationModule.Name = appModuleNameTobeCreated;
+            applicationModule.SetValue("description", desc);
+
+            applicationModule.SetValue("parent", new BaseEntity("application_module")
+            {
+                Id = paraentId,
+                TypeName = "application_module"
+            });
+
+            ApplicationModule module = Task.Run(() =>
+            {
+                return this.octaneRepository.CreateEntity<ApplicationModule>(GetLoginDTO(), applicationModule, new List<string>() { "path", "id" });
+            }).Result;
+
+            return module.Id.ToString();
+        }
+
+        public bool ExportActivitiesGroupToALM(ActivitiesGroup activitiesGroup, QCTestCase mappedTest, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, ObservableList<ExternalItemFieldBase> designStepsFields, ObservableList<ExternalItemFieldBase> designStepsParamsFields, ref string result)
+        {
+            try
+            {
+                string testId;
+                string step = string.Empty;
+                activitiesGroup.ActivitiesIdentifiers.ToList().ForEach(p =>
+                {
+                    if (!string.IsNullOrEmpty(step))
+                    {
+                        step += "- ";
+                    }
+                    step += p.ActivityName + " ";
+
+                    if (p.IdentifiedActivity.Variables.Any())
+                    {
+                        p.IdentifiedActivity.Variables.ToList().ForEach(f =>
+                        {
+                            step += " <" + f.Name + "> ";
+                        });
+                    }
+                    step += '\n';
+                });
+
+                if (mappedTest == null) //#Create new test case
+                {
+
+                    testId = CreateNewTestCase(activitiesGroup, fatherId, testCaseFields, step);
+                }
+                else //##update existing test case
+                {
+                    //TODO: Maheshk: Update existing testcase
+                    if (!string.IsNullOrEmpty(activitiesGroup.ExternalID))
+                    {
+                        testId = UpdateTestCase(activitiesGroup, fatherId, testCaseFields, step);
+                    }
+                    else
+                    {
+                        testId = CreateNewTestCase(activitiesGroup, fatherId, testCaseFields, step);
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                result = "Unexpected error occurred- " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to QC/ALM", ex);
+                return false;
+            }
+        }
+
+        private string CreateNewTestCase(ActivitiesGroup activitiesGroup, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, string testScript)
+        {
+            //set item fields
+            TestManual test = new TestManual();
+            test.Name = activitiesGroup.Name;
+            test.SetValue("description", activitiesGroup.Description);
+            test.SetValue("automation_status", new BaseEntity()
+            {
+                TypeName = "list_node",
+                Id = "list_node.automation_status.not_automated"
+            });
+
+            test.SetValue("product_areas", new EntityList<BaseEntity>()
+            {
+                data = new List<BaseEntity>()
+                {
+                    new BaseEntity() {Id = fatherId, TypeName = "product_area"}
+                }
+            });
+            test.SetValue("test_type", new EntityList<BaseEntity>()
+            {
+                data = new List<BaseEntity>()
+                {
+                    new BaseEntity()
+                    {
+                        TypeName = "list_node",
+                        Id = "list_node.test_type.regression"
+                    }
+                }
+            });
+
+            //foreach (ExternalItemFieldBase field in testCaseFields)
+            //{
+            //    if ((field.ToUpdate || field.Mandatory) && !test.Contains(field.ExternalID))
+            //    {
+            //        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+            //            test.SetValue(field.ExternalID, field.SelectedValue);                    
+            //    }
+            //}
+
+            test = Task.Run(() => { return this.octaneRepository.CreateEntity(GetLoginDTO(), test, null); }).Result;
+
+            activitiesGroup.ExternalID = test.Id.ToString();
+            activitiesGroup.ExternalID2 = test.Id.ToString();
+            CreateTestStep(test.Id, testScript);
+
+            return test.Id.ToString();
+        }
+
+        private string UpdateTestCase( ActivitiesGroup activitiesGroup, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, string testScript)
+        {
+            TestManual test = new TestManual();
+            test.Id = activitiesGroup.ExternalID;
+            test.Name = activitiesGroup.Name;
+            test.SetValue("description", activitiesGroup.Description);
+            test.SetValue("automation_status", new BaseEntity()
+            {
+                TypeName = "list_node",
+                Id = "list_node.automation_status.not_automated"
+            });
+
+            test.SetValue("product_areas", new EntityList<BaseEntity>()
+            {
+                data = new List<BaseEntity>()
+                {
+                    new BaseEntity() {Id = fatherId, TypeName = "product_area"}
+                }
+            });
+            test.SetValue("test_type", new EntityList<BaseEntity>()
+            {
+                data = new List<BaseEntity>()
+                {
+                    new BaseEntity()
+                    {
+                        TypeName = "list_node",
+                        Id = "list_node.test_type.regression"
+                    }
+                }
+            });
+
+            test = Task.Run(() => { return this.octaneRepository.UpdateEntity(GetLoginDTO(), test, null); }).Result;
+
+            activitiesGroup.ExternalID = test.Id.ToString();
+            activitiesGroup.ExternalID2 = test.Id.ToString();
+            CreateTestStep(test.Id, testScript);
+
+            return test.Id.ToString();
+        }
+
+        private string CreateTestStep(string tcId, string script)
+        {
+            TestScript testScript = new TestScript();
+            testScript.Id = new EntityId(tcId.ToString());
+            testScript.SetValue("script", script);
+            Task.Run(() => { return this.octaneRepository.AddStepsToTC<TestScript>(GetLoginDTO(), testScript, null); });
+            return "";
+        }
+
+        public QCTestSet GetTestSuiteById(string tsId)
+        {
+            List<TestSuite> testsuite = Task.Run(() =>
+            {
+                LogicalQueryPhrase test_Suite = new LogicalQueryPhrase("id", tsId, ComparisonOperator.Equal);
+                return octaneRepository.GetEntities<TestSuite>(GetLoginDTO(), new List<IQueryPhrase>() { test_Suite });
+            }).Result;
+
+            if (testsuite.Any())
+            {
+                EntityList<BaseEntity> father = (EntityList<BaseEntity>)testsuite[0].GetValue("product_areas");
+                if (father != null || father.data.Any())
+                {
+                    return new QCTestSet() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = father.data[0].Id };
+                }
+                return new QCTestSet() { Id = testsuite[0].Id, Name = testsuite[0].Name, ParentId = GetRootFolderId() };
+            }
+            return null;
+        }
+
+        public string ConvertResourceType(ResourceType resourceType)
+        {
+            return resourceType.ToString();
         }
 
         private static string StripHTML(string HTMLText, bool toDecodeHTML = true)
