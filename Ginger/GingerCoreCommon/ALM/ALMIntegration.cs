@@ -29,7 +29,7 @@ namespace GingerCoreNET.ALMLib
             RALLY = 3,
             Jira = 4,
             Qtest = 5,
-            Octane=6
+            Octane = 6
         }
 
         public enum eALMConnectType
@@ -38,6 +38,13 @@ namespace GingerCoreNET.ALMLib
             Manual,
             Auto,
             SettingsPage
+        }
+
+        public enum eTestingALMType
+        {
+            None = 1,
+            Xray = 2,
+            Zephyr = 3
         }
     }
 }

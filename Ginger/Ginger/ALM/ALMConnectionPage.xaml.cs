@@ -50,6 +50,7 @@ namespace Ginger.ALM
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMUserName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(JiraTestingALMComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.JiraTestingALM));
             PasswordTextBox.Password = CurrentAlmUserConfigurations.ALMPassword; //can't do regular binding with PasswordTextBox control for security reasons
         }
         public ALMConnectionPage(ALMIntegration.eALMConnectType almConnectStyle, bool isConnWin = false)
@@ -155,6 +156,7 @@ namespace Ginger.ALM
 
             DomainComboBox.IsEnabled = true;
             ProjectComboBox.IsEnabled = true;
+            JiraTestingALMComboBox.IsEnabled = true;
             if (isConnWin)
             {
                 ConnectProjectButton.Content = "Connect";
@@ -167,6 +169,7 @@ namespace Ginger.ALM
             {
                 DomainComboBox.IsEnabled = false;
                 ProjectComboBox.IsEnabled = false;
+                JiraTestingALMComboBox.IsEnabled = false;
                 ConnectProjectButton.Content = "Change Project Mapping";
             }
         }
@@ -223,13 +226,17 @@ namespace Ginger.ALM
                 {
                     RefreshDomainList(almConectStyle);
                     RefreshProjectsList();
+                    if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+                    {
+                        RefreshJiraTestingALMList();
+                    }
                 }
                 else
                 {
                     DomainComboBox.Items.Clear();
                     ProjectComboBox.Items.Clear();
+                    JiraTestingALMComboBox.Items.Clear();
                 }
-
             }
 
             isServerDetailsCorrect = almConn;
@@ -291,6 +298,14 @@ namespace Ginger.ALM
             RefreshProjectsList();
         }
 
+        private void JiraTestingALMComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (JiraTestingALMComboBox != null && JiraTestingALMComboBox.SelectedItem != null)
+            {
+                CurrentAlmConfigurations.JiraTestingALM = (GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType)Enum.Parse(typeof(GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType), JiraTestingALMComboBox.SelectedItem.ToString());
+            }
+        }
+
         private void RefreshProjectsList()
         {
             if (ALMIntegration.Instance.TestALMServerConn(almConectStyle))
@@ -308,11 +323,11 @@ namespace Ginger.ALM
                         DomainComboBox.SelectedItem = currSelectedDomain;
                     }
                 }
-                Dictionary<string,string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
+                Dictionary<string, string> lstProjects = ALMIntegration.Instance.GetALMDomainProjects(currSelectedDomain, almConectStyle);
 
                 KeyValuePair<string, string> currSavedProj = new KeyValuePair<string, string>(CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.ALMProjectName);
                 ProjectComboBox.Items.Clear();
-                foreach (KeyValuePair<string,string> project in lstProjects)
+                foreach (KeyValuePair<string, string> project in lstProjects)
                 {
                     ProjectComboBox.Items.Add(new KeyValuePair<string, string>(project.Key, project.Value));
                 }
@@ -334,6 +349,32 @@ namespace Ginger.ALM
                         CurrentAlmConfigurations.ALMProjectName = ProjectComboBox.Text;
                         CurrentAlmConfigurations.ALMProjectKey = ProjectComboBox.SelectedValue.ToString();
                     }
+                }
+            }
+        }
+
+        private void RefreshJiraTestingALMList()
+        {
+            List<string> jiraTestingALMs = ALMIntegration.Instance.GetJiraTestingALMs();
+
+            GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType currJiraTestingALM = CurrentAlmConfigurations.JiraTestingALM;
+
+            JiraTestingALMComboBox.Items.Clear();
+            foreach (string jiraTestingALM in jiraTestingALMs)
+            {
+                JiraTestingALMComboBox.Items.Add(jiraTestingALM);
+            }
+
+            if (JiraTestingALMComboBox.Items.Count > 0)
+            {
+                if (JiraTestingALMComboBox.Items.Contains(currJiraTestingALM.ToString()))
+                {
+                    CurrentAlmConfigurations.JiraTestingALM = currJiraTestingALM;
+                    JiraTestingALMComboBox.SelectedIndex = JiraTestingALMComboBox.Items.IndexOf(CurrentAlmConfigurations.JiraTestingALM.ToString());
+                }
+                if (JiraTestingALMComboBox.SelectedIndex == -1)
+                {
+                    JiraTestingALMComboBox.SelectedIndex = 0;
                 }
             }
         }
@@ -426,7 +467,7 @@ namespace Ginger.ALM
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";
-                    
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     ServerURLTextBox.Cursor = null;
                     RQMRadioButton.FontWeight = FontWeights.Regular;
                     RQMRadioButton.Foreground = Brushes.Black;
@@ -450,6 +491,7 @@ namespace Ginger.ALM
                     SetLoadPackageButtonContent();
                     ServerURLTextBox.IsReadOnly = true;
                     ServerURLTextBox.IsEnabled = false;
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     ServerURLTextBox.Cursor = Cursors.Arrow;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
@@ -461,15 +503,16 @@ namespace Ginger.ALM
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
                     break;
+
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
                     xDefualtImageRally.Visibility = Visibility.Visible;
                     RallyRadioButton.FontWeight = FontWeights.ExtraBold;
                     RallyRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Collapsed;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: http://server:8080/almbin";
-                    
+                    ExampleURLHint.Content = "Example: http://server:8080/almbin";                    
                     ServerURLTextBox.Cursor = null;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
@@ -481,15 +524,19 @@ namespace Ginger.ALM
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
                     break;
+
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
                     xDefualtImageJIRA.Visibility = Visibility.Visible;
                     JiraRadioButton.FontWeight = FontWeights.ExtraBold;
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
+                    if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+                    {
+                        JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
+                    }
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    SetLoadPackageButtonContent();
-                    
+                    SetLoadPackageButtonContent();                 
                     ServerURLTextBox.Cursor = null;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
@@ -501,15 +548,16 @@ namespace Ginger.ALM
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
                     break;
+
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
                     xDefualtImageQTest.Visibility = Visibility.Visible;
                     qTestRadioButton.FontWeight = FontWeights.ExtraBold;
                     qTestRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: https://qtest-url.com/ ";
-                    
+                    ExampleURLHint.Content = "Example: https://qtest-url.com/ ";                    
                     ServerURLTextBox.Cursor = null;
                     QCRadioButton.FontWeight = FontWeights.Regular;
                     QCRadioButton.Foreground = Brushes.Black;
@@ -523,6 +571,7 @@ namespace Ginger.ALM
                     JiraRadioButton.FontWeight = FontWeights.Regular;
                     JiraRadioButton.Foreground = Brushes.Black;
                     break;
+
                 default:
                     //Default not used
                     break;
@@ -584,6 +633,7 @@ namespace Ginger.ALM
                 BindingOperations.ClearAllBindings(PasswordTextBox);
                 BindingOperations.ClearAllBindings(DomainComboBox);
                 BindingOperations.ClearAllBindings(ProjectComboBox);
+                BindingOperations.ClearAllBindings(JiraTestingALMComboBox);
 
                 ALMIntegration.Instance.SetDefaultAlmConfig(almType);
                 ALMIntegration.Instance.UpdateALMType(almType);

@@ -28,6 +28,18 @@ namespace GingerCore.ALM.JIRA
             this.Steps = new List<JiraTestStep>();
         }
 
+        public JiraTest(string testKey, string labels, string description, List<JiraTestStep> steps)
+        {
+            this.Parameters = new List<JiraTestParameter>();
+
+            this.TestName = labels;
+            this.Steps = new List<JiraTestStep>();
+            this.TestKey = testKey;
+            this.Labels = labels;
+            this.Description = description;
+            this.Steps = steps;
+        }
+
         public string TestName { get; set; }
         public string TestID { get; set; }
         public string TestKey { get; set; }

@@ -45,12 +45,16 @@ namespace Ginger.Run
         public List<string> ScreenshotFileNames { get; set; }
         public string Summary { get; set; }
         public string Description { get; set; }
+        public string ActivityGroupExternalID { get; set; }
+        public string ActivityExternalID { get; set; }
+        public Tuple<string, string>  BFExternalID { get; set; }
 
         public DefectSuggestion(Guid failedActionGuid, string runnerName, string businessFlowName, string activitiesGroupName, 
                                 int activitySequence, string activityName, int actionSequence,
                                 string actionDescription, int retryIteration, string errorDetails,
                                 string extraDetails, List<string> screenshotFileNames,
-                                bool isScreenshotButtonEnabled, bool automatedOpeningFlag, string description)
+                                bool isScreenshotButtonEnabled, bool automatedOpeningFlag, string description,
+                                string activityGroupExternalID, string activityExternalID, Tuple<string, string> bfExternalID)
         {
             FailedActionGuid = failedActionGuid;
             DefectSuggestionGuid = Guid.NewGuid();
@@ -74,6 +78,10 @@ namespace Ginger.Run
             ToOpenDefectFlag = false;
             IsOpenDefectFlagEnabled = true;
             ALMDefectID = string.Empty;
+
+            ActivityGroupExternalID = activityGroupExternalID;
+            ActivityExternalID = activityExternalID;
+            BFExternalID = bfExternalID;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
