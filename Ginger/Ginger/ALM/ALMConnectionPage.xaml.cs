@@ -73,16 +73,6 @@ namespace Ginger.ALM
                     CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                 }
             }
-
-            //if (!WorkSpace.Instance.BetaFeatures.Octane)
-            //{
-                //OctaneRadioButton.Visibility = Visibility.Hidden;
-                //xDefualtImageOctane.Visibility = Visibility.Hidden;
-                //if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane)
-                //{
-                //    CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
-                //}
-           // }
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())
