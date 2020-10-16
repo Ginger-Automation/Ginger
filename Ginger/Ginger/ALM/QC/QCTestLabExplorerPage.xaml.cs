@@ -65,8 +65,8 @@ namespace Ginger.ALM.QC {
 
             //root item
             QCTestLabFolderTreeItem tvi = new QCTestLabFolderTreeItem();
-            tvi.Folder = "Root";
-            tvi.Path = @"Root";
+            tvi.Folder = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane ? "Application Modules" : "Root";
+            tvi.Path = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane ? @"Application Modules" : @"Root";
             TestLabExplorerTreeView.Tree.AddItem(tvi);
 
             TestLabExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Lab Explorer";

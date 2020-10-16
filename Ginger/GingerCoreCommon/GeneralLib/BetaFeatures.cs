@@ -65,10 +65,8 @@ namespace Amdocs.Ginger.Common
 
         // ALM
         public bool Rally { get { return GetFeature(nameof(Rally)).Selected; } set { UpdateFeature(nameof(Rally), value); } }
-
-
         public bool Octane { get { return GetFeature(nameof(Octane)).Selected; } set { UpdateFeature(nameof(Octane), value); } }
-
+        public bool JiraTestingALM { get { return GetFeature(nameof(JiraTestingALM)).Selected; } set { UpdateFeature(nameof(JiraTestingALM), value); } }
 
         //Gherkin
         public bool ImportGherkinFeatureWizrd { get { return GetFeature(nameof(ImportGherkinFeatureWizrd)).Selected; } set { UpdateFeature(nameof(ImportGherkinFeatureWizrd), value); } }
@@ -96,6 +94,7 @@ namespace Amdocs.Ginger.Common
             //ALM
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Rally", ID = nameof(Rally) });
             mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Octane", ID = nameof(Octane) });
+            mFeatures.Add(new BetaFeature() { Group = "ALM", Description = "Show Jira's Testing ALMs", ID = nameof(JiraTestingALM) });
 
             //Gherkin
             mFeatures.Add(new BetaFeature() { Group = "Gherkin", Description = "Import Gherkin feature wizard", ID = nameof(ImportGherkinFeatureWizrd) });
