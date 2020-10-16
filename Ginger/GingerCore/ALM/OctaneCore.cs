@@ -223,28 +223,22 @@ namespace GingerCore.ALM
 
                 foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
                 {
-
-                    if(item.Name=="name")
-                    {
-                        item.SelectedValue= defectForOpening.Value.ContainsKey("Name") ? defectForOpening.Value["Name"] : string.Empty;
-                    }
-                    else if (item.Name == "description")
-                    {
-                        item.SelectedValue = defectForOpening.Value.ContainsKey("Description") ? defectForOpening.Value["Description"] : string.Empty;
-                    }
-
                     if (string.IsNullOrEmpty(item.SelectedValue)|| item.SelectedValue=="Unassigned")
                     {
-                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.Name) ? defectForOpening.Value[item.Name] : string.Empty;
+                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
                     }
-                    filedsToUpdate.Add(item.Name, item.SelectedValue);
+                    filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
                 }
 
-                filedsToUpdate.Add("description", defectForOpening.Value.ContainsKey("Description") ? defectForOpening.Value["Description"] : string.Empty);
+                //TODO: ToUpdate field is not set to true correctly on fields grid. 
+                // So description is not captured. Setting it explicitly until grid finding is fixed
+                filedsToUpdate.Add("severity", defectForOpening.Value.ContainsKey("severity") ? defectForOpening.Value["severity"] : string.Empty);
+                filedsToUpdate.Add("description", defectForOpening.Value.ContainsKey("description") ? defectForOpening.Value["description"] : string.Empty);
 
                 string newDefectID = Task.Run(() =>
                 {
-                    return octaneRepository.CreateDefect(filedsToUpdate);
+                    return octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
+                    
                 }).Result;
                 defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
 
@@ -378,7 +372,7 @@ namespace GingerCore.ALM
                     {
                         itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
                     }
-                    else
+                    else if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
                     {
                         itemfield.SelectedValue = "Unassigned";
                     }
