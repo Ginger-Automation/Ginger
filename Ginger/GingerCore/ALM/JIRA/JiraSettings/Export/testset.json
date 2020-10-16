@@ -25,13 +25,13 @@
           "name": "Component/s",
           "key": "components",
           "type": "array",
-          "data": "{\"name\": \"{{value}}\",\"id\": \"{{id}}\"}"
+          "data": "{\"name\": \"{{value}}\"}"
         },
         {
           "name": "Fix Version/s",
           "key": "fixVersions",
           "type": "array",
-          "data": "{\"name\": \"{{value}}\",\"id\": \"{{id}}\"}"
+          "data": "{\"name\": \"{{value}}\"}"
         },
         {
           "name": "Test Cases",
@@ -74,6 +74,12 @@
           "key": "assignee",
           "type": "object",
           "data": "{\"name\": \"{{value}}\"}"
+        },
+        {
+          "name": "created",
+          "key": "created",
+          "type": "string",
+          "data": "{{value}}"
         }
       ]
     }

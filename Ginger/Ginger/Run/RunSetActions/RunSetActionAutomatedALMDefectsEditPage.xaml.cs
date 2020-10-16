@@ -39,10 +39,11 @@ namespace Ginger.Run.RunSetActions
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForAll, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeForAll));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeForMarked, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeForMarked));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RadioDefectsOpeningModeReviewOnly, RadioButton.IsCheckedProperty, runSetActionAutomatedALMDefects, nameof(RunSetActionAutomatedALMDefects.DefectsOpeningModeReviewOnly));
 
             if ((!(bool)RadioDefectsOpeningModeForAll.IsChecked) && (!(bool)RadioDefectsOpeningModeForMarked.IsChecked))
             {
-                RadioDefectsOpeningModeForMarked.IsChecked = true;
+                RadioDefectsOpeningModeReviewOnly.IsChecked = true;
             }
 
             CurrentProfilePickerCbx_Binding();
