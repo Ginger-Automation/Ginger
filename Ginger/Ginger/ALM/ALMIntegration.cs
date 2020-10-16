@@ -29,7 +29,6 @@ using System.Linq;
 using System.Reflection;
 using Amdocs.Ginger.Repository;
 using GingerCore.ALM.QC;
-using GingerCore.ALM.QCRestAPI;
 using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM
@@ -97,7 +96,10 @@ namespace Ginger.ALM
             ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             if (CurrentAlmConfigurations != null)
             {
-                AlmCore.SetALMConfigurations(CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName, CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName, CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath);
+                AlmCore.SetALMConfigurations(   CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
+                                                CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
+                                                CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
+                                                CurrentAlmConfigurations.JiraTestingALM);
             }
         }
 
@@ -259,6 +261,16 @@ namespace Ginger.ALM
 
             Mouse.OverrideCursor = null;
             return domainList;
+        }
+
+        public List<string> GetJiraTestingALMs()
+        {
+            return ((JiraCore)AlmCore).GetJiraTestingALMs();
+        }
+
+        public object GetZephyrCycles(bool getFolders = false)
+        {
+            return ((JiraCore)AlmCore).GetZephyrCyclesWithFolders(getFolders);
         }
 
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
@@ -620,7 +632,14 @@ namespace Ginger.ALM
             bool importResult = AlmRepo.ImportSelectedTests(importDestinationPath, selectedTests);
             Mouse.OverrideCursor = null;
             return importResult;
+        }
 
+        public bool ImportZephyrObject(string importDestinationPath, IEnumerable<Object> selectedObject)
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            bool importResult = ((JIRA_Repository)AlmRepo).ImportSelectedZephyrCyclesAndFolders(importDestinationPath, selectedObject);
+            Mouse.OverrideCursor = null;
+            return true;
         }
 
         public bool AutoALMProjectConnect(eALMConnectType almConnectStyle = eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
