@@ -553,7 +553,8 @@ namespace Ginger.Run
                         WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
                                                                                             mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
                                                                                             action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
-                                                                                            isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString()));
+                                                                                            isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
+                                                                                            currrentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, mContext.BusinessFlow.ExternalID2)));
                     }
                     //
                     // Defects Suggestion section - end
