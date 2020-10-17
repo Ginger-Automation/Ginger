@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
+using Ginger.Run;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -94,7 +95,8 @@ namespace GingerCore
         private static Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        
+        private static Regex rxFDPattern = new Regex(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
+
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
         private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
@@ -198,6 +200,7 @@ namespace GingerCore
             ReplaceDataSources();
 
             CalculateFunctions();
+            EvaluateFlowDetails();
             EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
 
@@ -214,6 +217,132 @@ namespace GingerCore
                     }
                 }
 
+        }
+        private string GetValueFromReflection(object obj, string field)
+        {
+            try
+            {                
+                object value = null;              
+                PropertyInfo prop = obj.GetType().GetProperty(field);
+                FieldInfo fieldInfo = null;
+                if (prop != null)
+                {
+                    value = prop.GetValue(obj);                    
+                }
+                else
+                {
+                    fieldInfo = obj.GetType().GetField(field);
+                    if(fieldInfo != null)
+                    {
+                        value = fieldInfo.GetValue(obj);
+                    }
+                }
+                if(prop != null || fieldInfo != null)
+                {
+                    if (value != null)
+                    {
+                        return value.ToString();
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }  
+                else
+                {
+                    return null;
+                }
+            }    
+            finally
+            {
+
+            }
+        }
+        private void ReplaceFlowDetails(string flowDetailsExpression)
+        {
+            string obj = string.Empty;
+            string field = string.Empty;
+            int FieldStartIndex = flowDetailsExpression.IndexOf("Field");
+            int ObjIndex = flowDetailsExpression.IndexOf("Object");
+            int LastIndex = flowDetailsExpression.IndexOf("}");
+            obj = flowDetailsExpression.Substring(11, FieldStartIndex - 12);
+            field = flowDetailsExpression.Substring(FieldStartIndex + 6, flowDetailsExpression.Length - (FieldStartIndex + 7)).Replace("\"", "").Trim();
+            string value = string.Empty; 
+            RunSetConfig runset = null;
+            GingerRunner runner = null;
+            if (WorkSpace.Instance.RunsetExecutor!=null)
+            {
+                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;                
+            }    
+            if(runset!=null)
+            {
+                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Where(bf=> this.BF!=null && bf.Name == this.BF.Name).FirstOrDefault()!=null).FirstOrDefault();
+            }
+            
+            RepositoryItemBase objtoEval = null;
+            switch (obj)
+            {
+                case "Runset":                 
+                        objtoEval = runset;                                   
+                    break;
+                case "Runner":                                                                
+                        objtoEval = runner;                                                             
+                    break;
+                case "BusinessFlow":
+                    objtoEval = this.BF;                                    
+                    break;
+                case "Environment":
+                    objtoEval = this.Env;                    
+                    break;
+                case "Activity":
+                    objtoEval = this.BF.CurrentActivity;                   
+                    break;
+                case "Action":
+                    objtoEval = (RepositoryItemBase)this.BF.CurrentActivity.Acts.CurrentItem;                   
+                    break;
+                case "PreviousBusinessFlow":
+                    objtoEval = runner.PreviousBusinessFlow;                  
+                   break;           
+                case "PreviousActivity":
+                    objtoEval = this.BF.PreviousActivity;                
+                    break;
+                case "PreviousAction":
+                    objtoEval = this.BF.PreviousAction;                    
+                    break;
+                case "LastFailedAction":
+                    objtoEval = this.BF.LastFailedAction;                    
+                    break;
+            }
+            if(objtoEval != null)
+            {
+                value = GetValueFromReflection(objtoEval, field);
+                if (value != null)
+                {
+                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, value);
+                    return;
+                }
+            }
+            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", flowDetailsExpression));
+        }
+        private void EvaluateFlowDetails()
+        {
+            MatchCollection matches = rxFDPattern.Matches(mValueCalculated);
+            if (matches.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Match match in matches)
+            {
+                try
+                {
+                    ReplaceFlowDetails(match.Value);
+                }                
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                }
+            }           
         }
 
         private void EvaluateCSharpFunctions()

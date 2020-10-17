@@ -690,6 +690,9 @@
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml.cs">
+      <DependentUpon>ValueExpressionFlowDetailsEditorPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
     </Compile>
@@ -3033,6 +3036,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

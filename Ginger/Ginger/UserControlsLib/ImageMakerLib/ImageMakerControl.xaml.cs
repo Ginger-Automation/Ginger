@@ -827,6 +827,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.ID:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.IdCardOutline);
                     break;
+                case eImageType.RegularExpression:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Registered);
+                    break;
+                case eImageType.DataManipulation:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
+                    break;
                 #endregion
 
                 #region ElementType Images

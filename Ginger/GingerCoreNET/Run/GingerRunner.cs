@@ -157,6 +157,20 @@ namespace Ginger.Run
                 mContext.Runner = this;
             }
         }
+
+        private BusinessFlow mPreviousBusinessFlow;
+        public BusinessFlow PreviousBusinessFlow
+        {
+            get
+            {
+                return mPreviousBusinessFlow;
+            }
+            set
+            {
+                mPreviousBusinessFlow = value;              
+            }
+        }
+        
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();
         public eExecutedFrom ExecutedFrom;
@@ -538,11 +552,11 @@ namespace Ginger.Run
                     startingBfIndx = BusinessFlows.IndexOf(CurrentBusinessFlow);//skip BFs which already executed
                 }
 
-                int? flowControlIndx = null;
+                int? flowControlIndx = null;                               
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
-                {
+                {                    
                     BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
-
+                  
                     //stop if needed before executing next BF
                     if (mStopRun)
                     {
@@ -558,7 +572,7 @@ namespace Ginger.Run
                         continue;
                     }
 
-                    //Run Bf
+                    //Run Bf                   
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
                     {
                         RunBusinessFlow(null, false, true);//Continue BF run
@@ -567,7 +581,7 @@ namespace Ginger.Run
                     {
                         //Execute the Business Flow
                         RunBusinessFlow(executedBusFlow);// full BF run
-                    }
+                    }                                       
                     //Do "During Execution" Run set Operations
                     if (PublishToALMConfig != null)
                     {
@@ -1188,7 +1202,7 @@ namespace Ginger.Run
                     //since we return and don't do flow control the action is going to run again                
                     //NotifyActionEnd(act); //Needed?
                     return;
-                }
+                }              
                 // we capture current activity and action to use it for execution logger,
                 // because in DoFlowControl(act) it will point to the other action/activity(as flow control will be applied)
                 Activity activity = (Activity)CurrentBusinessFlow.CurrentActivity;
@@ -1199,7 +1213,8 @@ namespace Ginger.Run
             }
             finally
             {
-                NotifyActionEnd(act); 
+                NotifyActionEnd(act);
+                CurrentBusinessFlow.PreviousAction = act;
             }
         }
   
@@ -2467,7 +2482,7 @@ namespace Ginger.Run
             Activity a =(Activity) CurrentBusinessFlow.GetActivity(fc.GetGuidFromValue(), fc.GetNameFromValue());
 
             if (a != null)
-            {
+            {                
                 CurrentBusinessFlow.CurrentActivity = a;
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 a.Acts.CurrentItem = a.Acts.FirstOrDefault();
@@ -2486,7 +2501,7 @@ namespace Ginger.Run
             Act a =(Act)((Activity)CurrentBusinessFlow.CurrentActivity).GetAct(fc.GetGuidFromValue(), fc.GetNameFromValue());
 
             if (a != null)
-            {
+            {                
                 CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = a;
                 a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
                 return true;
@@ -2499,7 +2514,7 @@ namespace Ginger.Run
         }
 
         public bool GotoNextAction()
-        {
+        {            
             return CurrentBusinessFlow.CurrentActivity.Acts.MoveNext();
         }
 
@@ -2519,7 +2534,7 @@ namespace Ginger.Run
 
         private void GotoNextActivity()
         {
-            // to save last executed activity only if its Active
+            // to save last executed activity only if its Active            
             CurrentBusinessFlow.CurrentActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
             CurrentBusinessFlow.Activities.MoveNext();
             CurrentBusinessFlow.CurrentActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
@@ -2584,7 +2599,7 @@ namespace Ginger.Run
 
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
 
-                //set it as next activity to run           
+                //set it as next activity to run                   
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
                 return true;
@@ -3146,8 +3161,8 @@ namespace Ginger.Run
                             Thread.Sleep(1);
                             if (act.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                             {
-                                activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-
+                                activity.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;                                
+                                CurrentBusinessFlow.LastFailedAction = act;
                                 if (activity.ActionRunOption == eActionRunOption.StopActionsRunOnFailure && act.FlowControls.Count == 0)
                                 {
                                     SetNextActionsBlockedStatus();
@@ -3235,6 +3250,7 @@ namespace Ginger.Run
                     NotifyActivityEnd(activity);
 
                     mLastExecutedActivity = activity;
+                    CurrentBusinessFlow.PreviousActivity = activity;
                     GiveUserFeedback();
 
                     // handling ActivityGroup execution 
@@ -3562,7 +3578,7 @@ namespace Ginger.Run
                     if (ExecutingActivity.GetType() == typeof(ErrorHandler))
                     {
                         if (!CurrentBusinessFlow.Activities.IsLastItem())
-                        {
+                        {                            
                             GotoNextActivity();
                             ExecutingActivity = (Activity)CurrentBusinessFlow.Activities.CurrentItem;
                         }
@@ -3649,7 +3665,7 @@ namespace Ginger.Run
                 }
                 st.Stop();
                 CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
-                
+                PreviousBusinessFlow = CurrentBusinessFlow;
                 NotifyBusinessFlowEnd(CurrentBusinessFlow);
                 
                 if (standaloneExecution)

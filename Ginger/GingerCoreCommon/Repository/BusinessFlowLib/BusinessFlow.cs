@@ -325,10 +325,49 @@ namespace GingerCore
             set
             {
                 if (mCurrentActivity != value)
-                {
+                {                    
                     mCurrentActivity = value;
                     OnPropertyChanged("CurrentActivity");
                 }
+            }
+        }
+
+        private Activity mPreviousActivity;
+        public Activity PreviousActivity
+        {
+            get
+            {
+                return mPreviousActivity;
+            }
+            set
+            {
+                mPreviousActivity = value;
+            }
+        }
+
+        private Act mPreviousAction;
+        public Act PreviousAction
+        {
+            get
+            {
+                return mPreviousAction;
+            }
+            set
+            {                
+                mPreviousAction = value;
+            }
+        }
+
+        private Act mLastFailedAction;
+        public Act LastFailedAction
+        {
+            get
+            {
+                return mLastFailedAction;
+            }
+            set
+            {
+                mLastFailedAction = value;
             }
         }
 

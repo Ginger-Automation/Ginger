@@ -172,6 +172,16 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                p= new ActDataSourcePage(SelectedContentArgs);
             }
 
+            if (txt.StartsWith("{FD Object="))
+            {
+                string obj = string.Empty;
+                string field = string.Empty;
+                int FieldStartIndex = txt.IndexOf("Field");              
+                obj = txt.Substring(11, FieldStartIndex - 12).Trim();
+                field = txt.Substring(FieldStartIndex + 6, txt.Length - (FieldStartIndex + 7)).Trim();
+                p = new ValueExpressionFlowDetailsEditorPage(mContext,SelectedContentArgs, obj, field);
+            }
+
             if (txt.StartsWith("{EnvURL App="))
             {
                 //TODO: impl get page for Env
@@ -191,6 +201,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             else if(p.GetType() == typeof(ActDataSourcePage))
             {
                 ((ActDataSourcePage)p).UpdateContent();
+            }
+            else if (p.GetType() == typeof(ValueExpressionFlowDetailsEditorPage))
+            {
+                ((ValueExpressionFlowDetailsEditorPage)p).UpdateContent();
             }
         }
 
