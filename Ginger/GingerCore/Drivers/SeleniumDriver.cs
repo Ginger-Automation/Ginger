@@ -3979,7 +3979,15 @@ namespace GingerCore.Drivers
 
             if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
-                EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+                {
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
+                }
+                else
+                {
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                }
+                    
             }
 
             EI.ElementName = GetElementName(EI as HTMLElementInfo);
@@ -4509,7 +4517,15 @@ namespace GingerCore.Drivers
                 UnhighlightLast();
 
                 Driver.SwitchTo().DefaultContent();
-                SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+                if (!string.IsNullOrEmpty(ElementInfo.Path))
+                {
+                    SwitchFrame(ElementInfo);
+                }
+                else
+                {
+                    SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+                }
+                
 
                 //Find element 
                 if (locateElementByItLocators)
@@ -4609,7 +4625,7 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                 }
-                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
+                list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });              
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
@@ -4978,9 +4994,11 @@ namespace GingerCore.Drivers
             return null;
         }
 
+
         private ElementInfo GetElementFromIframe(ElementInfo IframeElementInfo)
         {
-            SwitchFrame(IframeElementInfo.Path, IframeElementInfo.XPath, false);
+            SwitchFrame(string.Empty, IframeElementInfo.XPath, false);
+
             InjectSpyIfNotIngected();
             bool listnerCanBeStarted = true;
             try
@@ -5004,22 +5022,36 @@ namespace GingerCore.Drivers
                 elInsideIframe = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.activeElement;");
 
             }
-            string IframePath;
+
+            string IframePath = string.Empty;
             if (IframeElementInfo.Path != string.Empty)
+            {
                 IframePath = IframeElementInfo.Path + "," + IframeElementInfo.XPath;
+            }
             else
+            {
                 IframePath = IframeElementInfo.XPath;
+            }
 
             HTMLElementInfo foundElemntInfo = new HTMLElementInfo();
-
+            foundElemntInfo.Path = IframePath;
             foundElemntInfo.ElementObject = elInsideIframe;
+            
             if (elInsideIframe.TagName == "iframe" || elInsideIframe.TagName == "frame")
             {
-                Driver.SwitchTo().DefaultContent();
-                foundElemntInfo.Path = string.Empty;
+                if (!string.IsNullOrEmpty(foundElemntInfo.Path))
+                {
+                    SwitchFrame(foundElemntInfo);
+                }
+                else
+                {
+                    Driver.SwitchTo().DefaultContent();
+                }
+
                 foundElemntInfo.XPath = GenerateXpathForIWebElement(elInsideIframe, "");
                 return GetElementFromIframe(foundElemntInfo);
             }
+
             return foundElemntInfo;
         }
 
@@ -7654,6 +7686,10 @@ namespace GingerCore.Drivers
 
         public string GetElementXpath(ElementInfo EI)
         {
+            if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+            {
+                return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
+            }
             return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
         }
 

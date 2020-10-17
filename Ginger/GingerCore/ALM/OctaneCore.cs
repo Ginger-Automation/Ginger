@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Web;
 using QCRestClient;
 using QCTestSet = QCRestClient.QCTestSet;
+using Couchbase.Utils;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.IO;
 using System.IO.Compression;
@@ -219,7 +220,36 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
-            throw new NotImplementedException();
+            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
+            foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
+            {
+                Dictionary<string, string> filedsToUpdate = new Dictionary<string, string>();
+
+                foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
+                {
+                    if (string.IsNullOrEmpty(item.SelectedValue)|| item.SelectedValue=="Unassigned")
+                    {
+                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
+                    }
+                    filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
+                }
+
+                //TODO: ToUpdate field is not set to true correctly on fields grid. 
+                // So description is not captured. Setting it explicitly until grid finding is fixed
+                filedsToUpdate.Add("severity", defectForOpening.Value.ContainsKey("severity") ? defectForOpening.Value["severity"] : string.Empty);
+                filedsToUpdate.Add("description", defectForOpening.Value.ContainsKey("description") ? defectForOpening.Value["description"] : string.Empty);
+
+                string newDefectID = Task.Run(() =>
+                {
+                    return octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
+                    
+                }).Result;
+                defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
+
+
+            }
+
+            return defectsOpeningResults;
         }
 
         public override bool DisconnectALMProjectStayLoggedIn()
@@ -553,6 +583,22 @@ namespace GingerCore.ALM
                         {
                             itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
                         }
+                    }
+                    if (listnodes != null && listnodes.ContainsKey(field.Name) && listnodes[field.Name].Any())
+                    {
+                        itemfield.PossibleValues = new ObservableList<string>(listnodes[field.Name]);
+                    }
+                    else if (listnodes != null && listnodes.ContainsKey(entityType.ToLower() + "_" + field.Name) && listnodes[entityType.ToLower() + "_" + field.Name].Any())
+                    {
+                        itemfield.PossibleValues = new ObservableList<string>(listnodes[entityType.ToLower() + "_" + field.Name]);
+                    }
+                    else if (phases != null && phases.ContainsKey(field.Name) && phases[field.Name].Any())
+                    {
+                        itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
+                    }
+                    else if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
+                    {
+                        itemfield.SelectedValue = "Unassigned";
                     }
                     fields.Add(itemfield);
                 }
