@@ -482,7 +482,7 @@ namespace Ginger
                     TreeViewItem Parent = AddOrGetCategory(Category.DefaultValue);
                     TreeViewItem child = AddOrGetSubCategory(SubCategory.DefaultValue, Parent);
                     child.Selected += HideHelp;
-                    AddWSSecurityConfig(child, desc.DefaultValue, expr.DefaultValue, SubCategory.DefaultValue); //GetUTCDateTimeStamp());
+                    AddWSSecurityConfig(child, desc.DefaultValue, expr.DefaultValue, SubCategory.DefaultValue);
                 }
             }
             catch (Exception ex)

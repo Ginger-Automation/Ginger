@@ -96,6 +96,8 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 case "LastFailedAction":
                     objtoEval = mContext.BusinessFlow.LastFailedAction;
                     break;
+                default:
+                    throw new KeyNotFoundException();                  
             }
             if (objtoEval != null)
             {
