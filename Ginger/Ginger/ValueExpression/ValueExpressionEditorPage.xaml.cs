@@ -192,16 +192,8 @@ namespace Ginger
 
         private void AddFlowControlConditions()
         {
-
-
-
-
-            TreeViewItem Parent = new TreeViewItem();
-            SetItemView(Parent, "Flow Control Conditions", "", eImageType.MapSigns);
-            xObjectsTreeView.Items.Add(Parent);
-
-
-
+            TreeViewItem Parent = AddOrGetCategory("Data Validation");
+            TreeViewItem child = AddOrGetSubCategory("Flow Control Conditions", Parent);
             ValueExpressionReference VERActionpassd = new ValueExpressionReference
             {
                 Name = "Action is Passed",
@@ -210,7 +202,7 @@ namespace Ginger
             };
             TreeViewItem tvi = new TreeViewItem();
             SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, eImageType.MapSigns);
-            Parent.Items.Add(tvi);
+            child.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi.Selected += UpdateHelpForCSFunction;
             tvi.Tag = VERActionpassd;
@@ -226,7 +218,7 @@ namespace Ginger
             };
             TreeViewItem tvi2 = new TreeViewItem();
             SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, eImageType.MapSigns);
-            Parent.Items.Add(tvi2);
+            child.Items.Add(tvi2);
             tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi2.Selected += UpdateHelpForCSFunction;
             tvi2.Tag = VERACtionFailed;
@@ -242,7 +234,7 @@ namespace Ginger
             };
             TreeViewItem tvi3 = new TreeViewItem();
             SetItemView(tvi3, VERLastActivityPassed.Name, VERLastActivityPassed.Expression, eImageType.MapSigns);
-            Parent.Items.Add(tvi3);
+            child.Items.Add(tvi3);
             tvi3.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi3.Selected += UpdateHelpForCSFunction;
             tvi3.Tag = VERLastActivityPassed;
@@ -256,7 +248,7 @@ namespace Ginger
             };
             TreeViewItem tvi4 = new TreeViewItem();
             SetItemView(tvi4, VERLastActivityFailed.Name, VERLastActivityFailed.Expression, eImageType.MapSigns);
-            Parent.Items.Add(tvi4);
+            child.Items.Add(tvi4);
             tvi4.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi4.Selected += UpdateHelpForCSFunction;
             tvi4.Tag = VERLastActivityFailed;
@@ -268,11 +260,8 @@ namespace Ginger
         //Added for Business Flow Control in RunSet
         private void AddBusinessFlowControlConditions()
         {
-
-
-            TreeViewItem Parent = new TreeViewItem();
-            SetItemView(Parent, "Flow Control Conditions", "", eImageType.MapSigns);
-            xObjectsTreeView.Items.Add(Parent);
+            TreeViewItem Parent = AddOrGetCategory("Data Validation");
+            TreeViewItem child = AddOrGetSubCategory("Flow Control Conditions", Parent);
 
             ValueExpressionReference VERActionpassd = new ValueExpressionReference
             {
@@ -282,7 +271,7 @@ namespace Ginger
             };
             TreeViewItem tvi = new TreeViewItem();
             SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, eImageType.MapSigns);
-            Parent.Items.Add(tvi);
+            child.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi.Selected += UpdateHelpForCSFunction;
             tvi.Tag = VERActionpassd;
@@ -295,7 +284,7 @@ namespace Ginger
             };
             TreeViewItem tvi2 = new TreeViewItem();
             SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, eImageType.MapSigns);
-            Parent.Items.Add(tvi2);
+            child.Items.Add(tvi2);
             tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi2.Selected += UpdateHelpForCSFunction;
             tvi2.Tag = VERACtionFailed;
@@ -368,6 +357,9 @@ namespace Ginger
                     break;
                 case "Functions":
                     eImageType = eImageType.Operations;
+                    break;
+                case "Flow Control Conditions":
+                    eImageType = eImageType.MapSigns;
                     break;
                 default:
                     throw new KeyNotFoundException();
