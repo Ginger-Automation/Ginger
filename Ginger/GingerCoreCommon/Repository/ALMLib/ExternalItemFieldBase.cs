@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -54,6 +54,7 @@ namespace Amdocs.Ginger.Repository
 
         [IsSerializedForLocalRepository]
         public bool SystemFieled { get; set; }
+        public bool IsMultiple { get; set; } = false;
 
         ObservableList<string> mPossibleValues = new ObservableList<string>();
         public ObservableList<string> PossibleValues
@@ -94,7 +95,6 @@ namespace Amdocs.Ginger.Repository
             {
                 this.Name = value;
             }
-        }
-
+        }     
     }
 }
