@@ -34,6 +34,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using System.IO;
 using System.IO.Compression;
 using OctaneSDK.Entities.Releases;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.ALM
 {
@@ -241,7 +242,7 @@ namespace GingerCore.ALM
 
                 string newDefectID = Task.Run(() =>
                 {
-                    return octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
+                    return "";// octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
                     
                 }).Result;
                 defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
@@ -271,7 +272,9 @@ namespace GingerCore.ALM
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
             result = string.Empty;
-            ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            ObservableList<ExternalItemFieldBase> runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            runFields = new ObservableList<ExternalItemFieldBase>(runFields.Where(f => f.ItemType.Equals("Run")).ToList());
+            //GetALMItemFields(null, true, ALM_Common.DataContracts.ResourceType.TEST_RUN);
             if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
             {
                 result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
@@ -401,7 +404,7 @@ namespace GingerCore.ALM
                 FileStream fs = new FileStream(@"C:\Users\mkale\Desktop\ccd.pdf", FileMode.Open, FileAccess.Read);
                 BinaryReader br = new BinaryReader(fs);
                 byte[] fileData = br.ReadBytes((Int32)fs.Length);
-                var tt = entityService.AttachToEntity(new WorkspaceContext(1001, 4002), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
+                var tt = Task.Run(() => { return entityService.AttachToEntity(new WorkspaceContext(1001, 4002), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null); }).Result;
                 fs.Close();
                 return true;
             }
@@ -413,25 +416,34 @@ namespace GingerCore.ALM
 
         private RunSuite CreateRunSuite(PublishToALMConfig publishToALMConfig, BusinessFlow bizFlow, QCTestSet testSet, ObservableList<ExternalItemFieldBase> runFields)
         {
-            RunSuite runSuiteToExport = new RunSuite();
-            runSuiteToExport.SetValue("subtype", "run_manual");
-            runSuiteToExport.Name = testSet.Name;
-            runSuiteToExport.SetValue("test", new BaseEntity()
+            try
             {
-                TypeName = "test_suite",
-                Id = testSet.Id,
-            });
-            runSuiteToExport.SetValue("native_status", new BaseEntity()
+                RunSuite runSuiteToExport = new RunSuite();
+                runSuiteToExport.SetValue("subtype", "run_manual");
+                runSuiteToExport.Name = testSet.Name;
+                runSuiteToExport.SetValue("test", new BaseEntity()
+                {
+                    TypeName = "test_suite",
+                    Id = testSet.Id,
+                });
+                runSuiteToExport.SetValue("native_status", new BaseEntity()
+                {
+                    TypeName = "list_node",
+                    Id = "list_node.run_native_status." + bizFlow.RunStatus,
+                });
+                AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
+                //runSuiteToExport.SetValue("release", new BaseEntity()
+                //{
+                //    TypeName = "release",
+                //    Id = GetReleases().FirstOrDefault().Id
+                //});
+                return Task.Run(() => { return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); }).Result;
+            }
+            catch (Exception ex)
             {
-                TypeName = "list_node",
-                Id = "list_node.run_native_status." + bizFlow.RunStatus,
-            });
-            runSuiteToExport.SetValue("release", new BaseEntity()
-            {
-                TypeName = "release",
-                Id = GetReleases().FirstOrDefault().Id
-            });
-            return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null);
+                Reporter.ToLog(eLogLevel.DEBUG, "In CreateRunSuite/OctaneCore.cs method ", ex);
+                throw ex;
+            }
         }
 
         private Run CrateTestRun(PublishToALMConfig publishToALMConfig, ActivitiesGroup activGroup, QCTestInstance tsTest, EntityId runSuiteId, ObservableList<ExternalItemFieldBase> runFields)
@@ -446,11 +458,12 @@ namespace GingerCore.ALM
                 Id = runSuiteId
             });
             runToExport.SetValue("subtype", "run_manual");
-            runToExport.SetValue("release", new BaseEntity()
-            {
-                TypeName = "release",
-                Id = GetReleases().FirstOrDefault().Id
-            });
+            AddEntityFieldValues(runFields, runToExport, "run_manual");
+            //runToExport.SetValue("release", new BaseEntity()
+            //{
+            //    TypeName = "release",
+            //    Id = GetReleases().FirstOrDefault().Id
+            //});
             runToExport.SetValue("test", new BaseEntity()
             {
                 TypeName = "test_manual",
@@ -462,7 +475,7 @@ namespace GingerCore.ALM
                 Id = "list_node.run_native_status." + activGroup.RunStatus,
             });
 
-            return this.octaneRepository.CreateEntity<Run>(GetLoginDTO(), runToExport, null);
+            return Task.Run(() => { return this.octaneRepository.CreateEntity<Run>(GetLoginDTO(), runToExport, null); }).Result;
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -583,18 +596,6 @@ namespace GingerCore.ALM
                         {
                             itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
                         }
-                    }
-                    if (listnodes != null && listnodes.ContainsKey(field.Name) && listnodes[field.Name].Any())
-                    {
-                        itemfield.PossibleValues = new ObservableList<string>(listnodes[field.Name]);
-                    }
-                    else if (listnodes != null && listnodes.ContainsKey(entityType.ToLower() + "_" + field.Name) && listnodes[entityType.ToLower() + "_" + field.Name].Any())
-                    {
-                        itemfield.PossibleValues = new ObservableList<string>(listnodes[entityType.ToLower() + "_" + field.Name]);
-                    }
-                    else if (phases != null && phases.ContainsKey(field.Name) && phases[field.Name].Any())
-                    {
-                        itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
                     }
                     else if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
                     {
@@ -1344,7 +1345,7 @@ namespace GingerCore.ALM
                 {
                     if ((field.ToUpdate || field.Mandatory) && !test.Contains(field.ExternalID))
                     {
-                        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "Unassigned")
                         {
                             if (field.Type.ToLower() != "reference")
                             {
@@ -1397,9 +1398,9 @@ namespace GingerCore.ALM
                         }
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
-
+                    Reporter.ToLog(eLogLevel.DEBUG, "In AddEntityFieldValues function", ex);
                 }
             }
         }

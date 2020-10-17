@@ -358,11 +358,11 @@ namespace Ginger.ALM.Repository
                     {
                         Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
                         Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
+
                     }
                 }
 
                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
-
                 Reporter.ToLog(eLogLevel.DEBUG, "Imported from QC successfully");
                 return true;
             }
