@@ -242,7 +242,7 @@ namespace GingerCore.ALM
 
                 string newDefectID = Task.Run(() =>
                 {
-                    return "";// octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
+                    return octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
                     
                 }).Result;
                 defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
