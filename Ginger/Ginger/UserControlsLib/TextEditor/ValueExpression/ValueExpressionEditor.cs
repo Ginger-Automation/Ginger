@@ -174,12 +174,11 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
             if (txt.StartsWith("{FD Object="))
             {
-                string obj = string.Empty;
-                string field = string.Empty;
-                int FieldStartIndex = txt.IndexOf("Field");              
-                obj = txt.Substring(11, FieldStartIndex - 12).Trim();
-                field = txt.Substring(FieldStartIndex + 6, txt.Length - (FieldStartIndex + 7)).Trim();
-                p = new ValueExpressionFlowDetailsEditorPage(mContext,SelectedContentArgs, obj, field);
+                Tuple<GingerCore.ValueExpression.eFlowDetailsObjects, string> expParams = GingerCore.ValueExpression.GetFlowDetailsParams(txt);
+                if (expParams != null)
+                {
+                    p = new ValueExpressionFlowDetailsEditorPage(mContext, SelectedContentArgs, expParams.Item1, expParams.Item2);
+                }               
             }
 
             if (txt.StartsWith("{EnvURL App="))

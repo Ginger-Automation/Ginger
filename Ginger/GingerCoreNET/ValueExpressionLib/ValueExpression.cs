@@ -218,112 +218,9 @@ namespace GingerCore
                 }
 
         }
-        private string GetValueFromReflection(object obj, string field)
-        {
-            try
-            {                
-                object value = null;              
-                PropertyInfo prop = obj.GetType().GetProperty(field);
-                FieldInfo fieldInfo = null;
-                if (prop != null)
-                {
-                    value = prop.GetValue(obj);                    
-                }
-                else
-                {
-                    fieldInfo = obj.GetType().GetField(field);
-                    if(fieldInfo != null)
-                    {
-                        value = fieldInfo.GetValue(obj);
-                    }
-                }
-                if(prop != null || fieldInfo != null)
-                {
-                    if (value != null)
-                    {
-                        return value.ToString();
-                    }
-                    else
-                    {
-                        return string.Empty;
-                    }
-                }  
-                else
-                {
-                    return null;
-                }
-            }    
-            finally
-            {
 
-            }
-        }
-        private void ReplaceFlowDetails(string flowDetailsExpression)
-        {
-            string obj = string.Empty;
-            string field = string.Empty;
-            int FieldStartIndex = flowDetailsExpression.IndexOf("Field");
-            int ObjIndex = flowDetailsExpression.IndexOf("Object");
-            int LastIndex = flowDetailsExpression.IndexOf("}");
-            obj = flowDetailsExpression.Substring(11, FieldStartIndex - 12);
-            field = flowDetailsExpression.Substring(FieldStartIndex + 6, flowDetailsExpression.Length - (FieldStartIndex + 7)).Replace("\"", "").Trim();
-            string value = string.Empty; 
-            RunSetConfig runset = null;
-            GingerRunner runner = null;
-            if (WorkSpace.Instance.RunsetExecutor!=null)
-            {
-                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;                
-            }    
-            if(runset!=null)
-            {
-                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Where(bf=> this.BF!=null && bf.Name == this.BF.Name).FirstOrDefault()!=null).FirstOrDefault();
-            }
-            
-            RepositoryItemBase objtoEval = null;
-            switch (obj)
-            {
-                case "Runset":                 
-                        objtoEval = runset;                                   
-                    break;
-                case "Runner":                                                                
-                        objtoEval = runner;                                                             
-                    break;
-                case "BusinessFlow":
-                    objtoEval = this.BF;                                    
-                    break;
-                case "Environment":
-                    objtoEval = this.Env;                    
-                    break;
-                case "Activity":
-                    objtoEval = this.BF.CurrentActivity;                   
-                    break;
-                case "Action":
-                    objtoEval = (RepositoryItemBase)this.BF.CurrentActivity.Acts.CurrentItem;                   
-                    break;
-                case "PreviousBusinessFlow":
-                    objtoEval = runner.PreviousBusinessFlow;                  
-                   break;           
-                case "PreviousActivity":
-                    objtoEval = this.BF.PreviousActivity;                
-                    break;
-                case "PreviousAction":
-                    objtoEval = this.BF.PreviousAction;                    
-                    break;
-                case "LastFailedAction":
-                    objtoEval = this.BF.LastFailedAction;                    
-                    break;
-            }
-            if(objtoEval != null)
-            {
-                value = GetValueFromReflection(objtoEval, field);
-                if (value != null)
-                {
-                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, value);
-                    return;
-                }
-            }
-            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", flowDetailsExpression));
-        }
+#region Flow Details
+
         private void EvaluateFlowDetails()
         {
             MatchCollection matches = rxFDPattern.Matches(mValueCalculated);
@@ -337,19 +234,192 @@ namespace GingerCore
                 try
                 {
                     ReplaceFlowDetails(match.Value);
-                }                
-                catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
+                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
                 }
+            }
+        }
+
+        public enum eFlowDetailsObjects
+        {
+            Environment, Runset, Runner, BusinessFlow, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivity, ErrorHandlerOriginAction
+        }
+
+        public static Tuple<eFlowDetailsObjects, string> GetFlowDetailsParams(string flowDetailsExpression)
+        {
+            try
+            {
+                string objStr = string.Empty;
+                string field = string.Empty;
+                int FieldStartIndex = flowDetailsExpression.IndexOf("Field");
+                int ObjIndex = flowDetailsExpression.IndexOf("Object");
+                int LastIndex = flowDetailsExpression.IndexOf("}");
+                objStr = flowDetailsExpression.Substring(11, FieldStartIndex - 12);
+                field = flowDetailsExpression.Substring(FieldStartIndex + 6, flowDetailsExpression.Length - (FieldStartIndex + 7)).Replace("\"", "").Trim();
+
+                //convert string object to enum
+                if (Enum.TryParse(objStr, out eFlowDetailsObjects objEnum) == false)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to invalid 'Object'", flowDetailsExpression));
+                    return null;
+                }
+                return new Tuple<eFlowDetailsObjects, string>(objEnum, field);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", flowDetailsExpression));
+                return null;
+            }
+        }
+
+        private void ReplaceFlowDetails(string flowDetailsExpression)
+        {
+            eFlowDetailsObjects obj;
+            string field = string.Empty;
+            string value = string.Empty;
+            Tuple<eFlowDetailsObjects, string> expParams = GetFlowDetailsParams(flowDetailsExpression);
+            if (expParams == null)
+            {
+                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Format("['{0}' Expression is not valid]", flowDetailsExpression));
+                return;
+            }
+            obj = expParams.Item1;
+            field = expParams.Item2;
+
+            RunSetConfig runset = null;
+            GingerRunner runner = null;
+            if (WorkSpace.Instance.RunsetExecutor!=null)
+            {
+                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;                
+            }    
+            if(runset!=null)
+            {
+                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Contains(this.BF)).FirstOrDefault();
+            }
+            
+            RepositoryItemBase objtoEval = null;
+            switch (obj)
+            {
+                case eFlowDetailsObjects.Environment:
+                    objtoEval = this.Env;
+                    break;
+                case eFlowDetailsObjects.Runset:
+                    objtoEval = runset;                                   
+                    break;
+                case eFlowDetailsObjects.Runner:
+                    objtoEval = runner;                                                             
+                    break;
+                case eFlowDetailsObjects.BusinessFlow:
+                    objtoEval = this.BF;                                    
+                    break;
+                case eFlowDetailsObjects.Activity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.CurrentActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.Action:
+                    objtoEval = (RepositoryItemBase)this.BF.CurrentActivity.Acts.CurrentItem;                   
+                    break;
+                case eFlowDetailsObjects.PreviousBusinessFlow:
+                    if (runner != null)
+                    {
+                        objtoEval = runner.PreviousBusinessFlow;
+                    }
+                   break;           
+                case eFlowDetailsObjects.PreviousActivity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.PreviousActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.PreviousAction:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.PreviousAction;
+                    }
+                    break;
+                case eFlowDetailsObjects.LastFailedAction:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.LastFailedAction;
+                    }
+                    break;
+                case eFlowDetailsObjects.ErrorHandlerOriginActivity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.ErrorHandlerOriginActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.ErrorHandlerOriginAction:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.ErrorHandlerOriginAction;
+                    }
+                    break;
+            }
+            if(objtoEval != null)
+            {
+                value = GetValueFromReflection(objtoEval, field);
+                if (value != null)
+                {
+                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, value);
+                    return;
+                }
+                else
+                {
+                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Format("['{0}' Expression is not valid]", flowDetailsExpression));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to invalid 'Field'", flowDetailsExpression));
+                    return;
+                }
+            }
+            else
+            {
+                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Empty);//obj is null so representing as empty field
             }           
         }
+
+        private string GetValueFromReflection(object obj, string field)
+        {
+            object value = null;
+            PropertyInfo prop = obj.GetType().GetProperty(field);
+            FieldInfo fieldInfo = null;
+            if (prop != null)
+            {
+                value = prop.GetValue(obj);
+            }
+            else
+            {
+                fieldInfo = obj.GetType().GetField(field);
+                if (fieldInfo != null)
+                {
+                    value = fieldInfo.GetValue(obj);
+                }
+            }
+            if (prop != null || fieldInfo != null)
+            {
+                if (value != null)
+                {
+                    return value.ToString();
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+#endregion Flow Details
 
         private void EvaluateCSharpFunctions()
         {
             mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
-
-
         }
 
         private void ReplaceGlobalParameters()

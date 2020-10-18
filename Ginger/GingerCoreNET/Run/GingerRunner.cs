@@ -1142,7 +1142,7 @@ namespace Ginger.Run
                 {
                     // Add time stamp                     
                     actionStartTimeStr = string.Format("Execution Start Time: {0}", DateTime.Now.ToString());
-                    
+
                     RunActionWithTimeOutControl(act, ActionExecutorType);
                     CalculateActionFinalStatus(act);
                     // fetch all pop-up handlers
@@ -1161,15 +1161,24 @@ namespace Ginger.Run
                         if (lstMappedErrorHandlers.Count <= 0)
                             break;
 
-                    ResetAction(act);
-                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
-                    
-                    NotifyActionStart(act);
-                    executeErrorAndPopUpHandler(lstMappedErrorHandlers);
-                    mErrorHandlerExecuted = true;
-                }
-                else
-                    break;
+                        //for value expression calculations
+                        CurrentBusinessFlow.ErrorHandlerOriginActivity = CurrentBusinessFlow.CurrentActivity;
+                        Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                        CurrentBusinessFlow.ErrorHandlerOriginAction = (Act)orginAction.CreateCopy(false);
+                        CurrentBusinessFlow.ErrorHandlerOriginAction.Status = orginAction.Status;
+                        CurrentBusinessFlow.ErrorHandlerOriginAction.Error = orginAction.Error;
+                        CurrentBusinessFlow.ErrorHandlerOriginAction.ExInfo = orginAction.ExInfo;
+                        CurrentBusinessFlow.ErrorHandlerOriginAction.Elapsed = orginAction.Elapsed;
+
+                        ResetAction(act);
+                        act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running;
+                        NotifyActionStart(act);
+
+                        executeErrorAndPopUpHandler(lstMappedErrorHandlers);
+                        mErrorHandlerExecuted = true;
+                    }
+                    else
+                        break;
 
                 }
                 // Run any code needed after the action executed, used in ACTScreenShot save to file after driver took screen shot
@@ -1592,11 +1601,12 @@ namespace Ginger.Run
         private void executeErrorAndPopUpHandler(ObservableList<ErrorHandler> errorHandlerActivity)
         {
             Activity originActivity = CurrentBusinessFlow.CurrentActivity;
+            
             Reporter.ToLog(eLogLevel.INFO, "--> Error Handlers Execution Started");
             try
             {
-                Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
-
+                Act orginAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;                
+                
                 eActionExecutorType ActionExecutorType = eActionExecutorType.RunWithoutDriver;
                 foreach (ErrorHandler errActivity in errorHandlerActivity)
                 {

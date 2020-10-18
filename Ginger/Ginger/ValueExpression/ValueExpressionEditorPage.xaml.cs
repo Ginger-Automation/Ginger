@@ -143,11 +143,8 @@ namespace Ginger
             AddVariables();
             AddEnvParams();
             AddGlobalParameters();
-            AddCSFunctions();
-           //AddVBSFunctions();
-            //AddRegexFunctions();
-            //AddVBSIfFunctions();
             AddDataSources();
+            AddCSFunctions();           
             AddSecurityConfiguration();
 
             if (mObj != null && mObj.GetType() == typeof(FlowControl))
@@ -171,10 +168,10 @@ namespace Ginger
         private void AddGlobalParameters()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
-            TreeViewItem child = AddOrGetSubCategory("Models Global Parameters", Parent);
+            //TreeViewItem child = AddOrGetSubCategory("Models Global Parameters", Parent);
             TreeViewItem tviGlobalParams = new TreeViewItem();
             SetItemView(tviGlobalParams, "Models Global Parameters", "", eImageType.Parameter);
-            child.Items.Add(tviGlobalParams);
+            Parent.Items.Add(tviGlobalParams);
             ObservableList<GlobalAppModelParameter>  mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             foreach (GlobalAppModelParameter v in mModelsGlobalParamsList)
                 InsertNewGlobalParamTreeItem(tviGlobalParams, v);
@@ -550,11 +547,11 @@ namespace Ginger
         private void AddEnvParams()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
-            TreeViewItem child = AddOrGetSubCategory("Environments", Parent);
+            //TreeViewItem child = AddOrGetSubCategory("Environments", Parent);
             TreeViewItem tviEnvs = new TreeViewItem();
             tviEnvs.Selected += HideHelp;
             SetItemView(tviEnvs, "Environments", "", eImageType.Environment);
-            child.Items.Add(tviEnvs);
+            Parent.Items.Add(tviEnvs);
 
             mEnvs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
@@ -633,7 +630,7 @@ namespace Ginger
                 foreach (VariableBase v in mContext.BusinessFlow.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(tviVars, v);
                 InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
-                tviVars.IsExpanded = true;
+                //tviVars.IsExpanded = true;
 
                 if (mContext.BusinessFlow.CurrentActivity != null)
                 {
@@ -673,10 +670,10 @@ namespace Ginger
         private void AddDataSources()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
-            TreeViewItem child = AddOrGetSubCategory("Data Source", Parent);
+            //TreeViewItem child = AddOrGetSubCategory("Data Source", Parent);
             TreeViewItem tviDataSources = new TreeViewItem();
             SetItemView(tviDataSources, "Data Sources", "", eImageType.DataSource);
-            child.Items.Add(tviDataSources);
+            Parent.Items.Add(tviDataSources);
             tviDataSources.Selected+=HideHelp;
 
 

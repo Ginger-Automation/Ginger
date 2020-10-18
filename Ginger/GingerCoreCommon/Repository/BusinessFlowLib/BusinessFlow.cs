@@ -371,6 +371,32 @@ namespace GingerCore
             }
         }
 
+        private Activity mErrorHandlerOriginActivity;
+        public Activity ErrorHandlerOriginActivity
+        {
+            get
+            {
+                return mErrorHandlerOriginActivity;
+            }
+            set
+            {
+                mErrorHandlerOriginActivity = value;
+            }
+        }
+
+        private Act mErrorHandlerOriginAction;
+        public Act ErrorHandlerOriginAction
+        {
+            get
+            {
+                return mErrorHandlerOriginAction;
+            }
+            set
+            {
+                mErrorHandlerOriginAction = value;
+            }
+        }
+
         private ObservableList<VariableBase> mVariables;
         /// <summary>
         /// Been used to identify if BF Variables were lazy loaded already or not
@@ -1050,12 +1076,17 @@ namespace GingerCore
             foreach (Activity a in Activities)
             {
                 a.Reset();
-            }
+            }            
             foreach (ActivitiesGroup ag in ActivitiesGroups)
             {
                 ag.Reset();
             }
             CleanDynamicAddedItems();
+            PreviousActivity = null;
+            PreviousAction = null;
+            LastFailedAction = null;
+            ErrorHandlerOriginActivity = null;
+            ErrorHandlerOriginAction = null;
         }
 
         public string AutomationPrecentage

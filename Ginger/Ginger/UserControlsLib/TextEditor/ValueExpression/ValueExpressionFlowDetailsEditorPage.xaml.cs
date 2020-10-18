@@ -26,6 +26,9 @@ using System.Reflection;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using System.Linq;
+using System;
+using GingerCore.Environments;
+using GingerCore;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -36,75 +39,54 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
     {
         SelectedContentArgs mSelectedContentArgs;
         Context mContext;
-        string mObj;
+        GingerCore.ValueExpression.eFlowDetailsObjects mObj;
 
-        public ValueExpressionFlowDetailsEditorPage(Context context, SelectedContentArgs SelectedContentArgs, string obj,string field)
+        public ValueExpressionFlowDetailsEditorPage(Context context, SelectedContentArgs SelectedContentArgs, GingerCore.ValueExpression.eFlowDetailsObjects obj, string field)
         {
             InitializeComponent();
 
             mContext = context;
             mSelectedContentArgs = SelectedContentArgs;
             mObj = obj;
-            
+
             List<string> lst = new List<string>();
             PropertyInfo[] properties = null;
             FieldInfo[] fields = null;
-           
-            RunSetConfig runset = null;
-            GingerRunner runner = null;
-            if (WorkSpace.Instance.RunsetExecutor != null)
-            {
-                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;
-            }
-            if (runset != null)
-            {
-                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Where(bf => mContext.BusinessFlow != null && bf.Name == mContext.BusinessFlow.Name).FirstOrDefault() != null).FirstOrDefault();
-            }
-            RepositoryItemBase objtoEval = null;
+            Type objType;
             switch (mObj)
             {
-                case "Runset":
-                    objtoEval = runset;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Environment:
+                    objType = typeof(ProjEnvironment);
                     break;
-                case "Runner":
-                    objtoEval = runner;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Runset:
+                    objType = typeof(RunSetConfig);
                     break;
-                case "BusinessFlow":
-                    objtoEval = mContext.BusinessFlow;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Runner:
+                    objType = typeof(GingerRunner);
                     break;
-                case "Environment":
-                    objtoEval = mContext.Environment;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.BusinessFlow:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow:
+                    objType = typeof(BusinessFlow);
                     break;
-                case "Activity":
-                    objtoEval = mContext.BusinessFlow.CurrentActivity;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Activity:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousActivity:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivity:
+                    objType = typeof(Activity);
                     break;
-                case "Action":
-                    objtoEval = (RepositoryItemBase)mContext.BusinessFlow.CurrentActivity.Acts.CurrentItem;
-                    break;
-                case "PreviousBusinessFlow":
-                    if(runner!=null)
-                    {
-                       objtoEval = runner.PreviousBusinessFlow;
-                    }                    
-                    break;
-                case "PreviousActivity":
-                    objtoEval = mContext.BusinessFlow.PreviousActivity;
-                    break;
-                case "PreviousAction":
-                    objtoEval = mContext.BusinessFlow.PreviousAction;
-                    break;
-                case "LastFailedAction":
-                    objtoEval = mContext.BusinessFlow.LastFailedAction;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Action:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousAction:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedAction:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginAction:
+                    objType = typeof(GingerCore.Actions.Act);
                     break;
                 default:
-                    throw new KeyNotFoundException();                  
+                    throw new KeyNotFoundException();
             }
-            if (objtoEval != null)
-            {
-                properties = objtoEval.GetType().GetProperties();
-                fields = objtoEval.GetType().GetFields();
-            }
-            if(properties!=null)
+
+            properties = objType.GetProperties();
+            fields = objType.GetFields();
+
+            if (properties != null)
             {
                 foreach (PropertyInfo prop in properties)
                 {
@@ -118,7 +100,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     lst.Add(f.Name);
                 }
             }
-            fieldList.ItemsSource = lst;
+            fieldList.ItemsSource = lst.OrderBy(x => x).ToList();
         }
         
         public void UpdateContent()
