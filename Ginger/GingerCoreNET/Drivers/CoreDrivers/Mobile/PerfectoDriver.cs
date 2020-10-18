@@ -16,29 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
-using System.Threading;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Android;
+using OpenQA.Selenium.Appium.iOS;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Safari;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Support.UI;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Firefox;
-using System.Xml;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Android;
-using System.Drawing;
-using System.IO;
-using System.Windows.Media.Imaging;
-using static GingerCore.Actions.ActMobileDevice;
-using OpenQA.Selenium.Appium.iOS;
-using OpenQA.Selenium.Safari;
+using System.Threading;
 
 namespace GingerCore.Drivers.Mobile.Perfecto
 {
@@ -470,7 +463,7 @@ namespace GingerCore.Drivers.Mobile.Perfecto
             mDriver.ExecuteScript("mobile:application:open", params1);
         }
 
-        private void PressBtn(ePressKey PressKey)
+        private void PressBtn(ActMobileDevice.ePressKey PressKey)
         {
             Dictionary<String, Object> params1 = new Dictionary<String, Object>();
             params1.Add("keySequence", PressKey.ToString());

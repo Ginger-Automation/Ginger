@@ -167,7 +167,7 @@ namespace GingerCore.Drivers.Appium
         private SeleniumDriver mSeleniumDriver;//selenium base
         public eSeleniumPlatformType DriverPlatformType;
         public eDeviceType DriverDeviceType;
-        AppiumDriverWindow DriverWindow;
+        //AppiumDriverWindow DriverWindow;
 
         public SeleniumAppiumDriver(eSeleniumPlatformType platformType, BusinessFlow BF)
         {
@@ -193,30 +193,30 @@ namespace GingerCore.Drivers.Appium
         public void ShowDriverWindow()
         {
             //show mobile window
-            DriverWindow = new AppiumDriverWindow();
-            DriverWindow.BF = BusinessFlow;
-            DriverWindow.AppiumDriver = this;
-            DriverWindow.DesignWindowInitialLook();
-            DriverWindow.Show();
+            //DriverWindow = new AppiumDriverWindow();
+            //DriverWindow.BF = BusinessFlow;
+            //DriverWindow.AppiumDriver = this;
+            //DriverWindow.DesignWindowInitialLook();
+            //DriverWindow.Show();
             for (int i = 0; i < 100; i++)
             {
                 Thread.Sleep(100);
             }
       
             ConnectedToDevice = ConnectToAppium();
-            if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
+            if (ConnectedToDevice) //&& DriverWindow.LoadMobileScreenImage(false, 0))
             {               
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
-                System.Windows.Threading.Dispatcher.Run();            
+               // Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
+               // System.Windows.Threading.Dispatcher.Run();            
             }
             else
             {
-                if (DriverWindow != null)
-                {
-                    DriverWindow.Close();
-                    DriverWindow = null;
-                }
+                //if (DriverWindow != null)
+                //{
+                //    DriverWindow.Close();
+                //    DriverWindow = null;
+                //}
             }
         }
 
@@ -605,10 +605,10 @@ namespace GingerCore.Drivers.Appium
             reservedPorts.Remove(bootstrapPort);
 
             try { 
-                if (DriverWindow != null){
-                    DriverWindow.Close();
-                    DriverWindow = null;
-                }
+               // if (//DriverWindow != null){
+                    //DriverWindow.Close();
+                    //DriverWindow = null;
+                //}
             } catch (InvalidOperationException e) {
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             }
@@ -701,9 +701,9 @@ namespace GingerCore.Drivers.Appium
                 if (DriverPlatformType == eSeleniumPlatformType.AndroidBrowser || DriverPlatformType == eSeleniumPlatformType.iOSBrowser)
                 {
                     if (DriverPlatformType == eSeleniumPlatformType.AndroidBrowser)
-                        if (DriverWindow!=null) DriverWindow.ShowActionEfect(false); //ios connection is crashing if to much screen shots taken
+                        //if (DriverWindow!=null) DriverWindow.ShowActionEfect(false); //ios connection is crashing if to much screen shots taken
                     mSeleniumDriver.RunAction(act);
-                    if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1500);
+                    //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1500);
                     return;
                 }
                 //No need to take screen shot before running action
@@ -759,7 +759,7 @@ namespace GingerCore.Drivers.Appium
                         if (e != null)
                         {
                             e.Click();
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         }
                         else if (act.LocateBy == eLocateBy.ByXY)
                         {
@@ -770,7 +770,7 @@ namespace GingerCore.Drivers.Appium
                             }
                             catch { x = 0; y = 0; }
                             TapXY(x, y);
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                           /// if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         }
                         else
                         {
@@ -785,7 +785,7 @@ namespace GingerCore.Drivers.Appium
                             TouchAction t = new TouchAction(Driver);
                             t.Tap(e, 1, 1);
                             Driver.PerformTouchAction(t);
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                           // if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         }
                         catch (Exception ex)
                         {
@@ -831,7 +831,7 @@ namespace GingerCore.Drivers.Appium
                                     //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
                                     break;
                             }
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
                         }
                         else
                         {
@@ -938,7 +938,7 @@ namespace GingerCore.Drivers.Appium
 
                     default:
                         mSeleniumDriver.GenElementHandler(act);
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         break;
                 }
             }
@@ -960,7 +960,7 @@ namespace GingerCore.Drivers.Appium
                         try
                         {
                             tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         }
                         catch (Exception ex)
                         {
@@ -973,7 +973,7 @@ namespace GingerCore.Drivers.Appium
                         try
                         {
                             tc.LongPress(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         }
                         catch (Exception ex)
                         {
@@ -985,7 +985,7 @@ namespace GingerCore.Drivers.Appium
                         try
                         {
                             TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 1000);
                         }
                         catch (Exception ex)
                         {
@@ -995,37 +995,37 @@ namespace GingerCore.Drivers.Appium
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
                         PressBackBtn();
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 200);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 200);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
                         PressHomebtn();
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 200);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 200);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressMenuButton:
                         PressMenubtn();
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 200);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 200);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
                         SwipeScreen(eSwipeSide.Down);
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
                         SwipeScreen(eSwipeSide.Up);
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
                         SwipeScreen(eSwipeSide.Left);
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeRight:
                         SwipeScreen(eSwipeSide.Right);
-                        if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
+                        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.Wait:
@@ -1037,7 +1037,7 @@ namespace GingerCore.Drivers.Appium
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.RefreshDeviceScreenImage:
-                        if (DriverWindow != null) DriverWindow.LoadMobileScreenImage(false);
+                        //if (DriverWindow != null) DriverWindow.LoadMobileScreenImage(false);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.DragXYXY:                                             
@@ -1047,7 +1047,7 @@ namespace GingerCore.Drivers.Appium
                                         Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]),
                                         Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[2]),
                                         Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[3]));
-                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 300);
                         }
                         catch (Exception ex)
                         {
@@ -1124,7 +1124,7 @@ namespace GingerCore.Drivers.Appium
             Bitmap tmp = new System.Drawing.Bitmap(filename);
             try
             {
-                if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
+                //if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
             }
             catch(Exception ex)
             {
@@ -1313,7 +1313,7 @@ namespace GingerCore.Drivers.Appium
         {
             Dispatcher.Invoke(() =>
             {
-                if (DriverWindow != null) DriverWindow.HighLightElement((AppiumElementInfo)ElementInfo);
+                //if (DriverWindow != null) DriverWindow.HighLightElement((AppiumElementInfo)ElementInfo);
             });
         }
 
@@ -1327,16 +1327,16 @@ namespace GingerCore.Drivers.Appium
             AppiumElementInfo AEI = null;
             Dispatcher.Invoke(() =>
             {
-                if (DriverWindow != null)
-                {
-                    XmlNode node = DriverWindow.GetElementXmlNodeFromMouse();
-                    if (node != null)
-                    {
-                        AEI = new AppiumElementInfo();
-                        AEI.XPath = GetXPathToNode(node);
-                        AEI.XmlNode = node;
-                    }
-                }
+                //if (DriverWindow != null)
+                //{
+                //    XmlNode node = DriverWindow.GetElementXmlNodeFromMouse();
+                //    if (node != null)
+                //    {
+                //        AEI = new AppiumElementInfo();
+                //        AEI.XPath = GetXPathToNode(node);
+                //        AEI.XmlNode = node;
+                //    }
+                //}
             });
 
             return AEI;
@@ -1580,7 +1580,7 @@ namespace GingerCore.Drivers.Appium
         {
             Dispatcher.Invoke(() =>
             {
-                if (DriverWindow != null) DriverWindow.StartRecording();
+                //if (DriverWindow != null) DriverWindow.StartRecording();
             });
         }
 
@@ -1588,7 +1588,7 @@ namespace GingerCore.Drivers.Appium
         {
             Dispatcher.Invoke(() =>
             {
-                if (DriverWindow != null) DriverWindow.StopRecording();
+                //if (DriverWindow != null) DriverWindow.StopRecording();
             });
         }
 
@@ -1596,7 +1596,7 @@ namespace GingerCore.Drivers.Appium
         {
             Dispatcher.Invoke(() =>
             {
-                if (DriverWindow != null) DriverWindow.StartRecording();
+               // if (DriverWindow != null) DriverWindow.StartRecording();
             });            
         }
 
@@ -1604,7 +1604,7 @@ namespace GingerCore.Drivers.Appium
         {
             Dispatcher.Invoke(() =>
             {
-                if (DriverWindow != null) DriverWindow.StopRecording();
+               // if (DriverWindow != null) DriverWindow.StopRecording();
             });   
         }
 
