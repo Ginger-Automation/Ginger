@@ -361,6 +361,9 @@ namespace Ginger
                 case "Flow Control Conditions":
                     eImageType = eImageType.MapSigns;
                     break;
+                case "General":
+                    eImageType = eImageType.General;
+                    break;
                 default:
                     throw new KeyNotFoundException();
             }

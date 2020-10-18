@@ -1,6 +1,39 @@
 ﻿{
   "Refrences": [
     {
+      "Category": "Data Validation",
+      "SubCategory": "General",
+      "Name": "AND",
+      "Expression": "{CS Exp=20>10 && 9<10}",
+      "UseCase": "Compare string, number etc",
+      "Samples": [ "{CS Exp=20>10 && 9<10} the '&&' operator computes the logical AND of its operands. if result of both expression is true then it return true otherwise false" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Data Validation",
+      "SubCategory": "General",
+      "Name": "OR",
+      "Expression": "{CS Exp=5>6 || 4<5}",
+      "UseCase": "Compare string, number etc",
+      "Samples": [ "{CS Exp=5>6 || 4<5} the '||' operator computes the logical OR of its operands. if result of any one expression is true then it return true otherwise false" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Data Validation",
+      "SubCategory": "General",
+      "Name": "Comparison",
+      "Expression": "{CS Exp=@\"Hello\".Equals(@\"Hello\")}",
+      "UseCase": "Compare string, number etc",
+      "Samples": [ "{CS Exp=@\"Hello\".Equals(@\"Hello\")} will compare two strings" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
       "Category": "Data",
       "SubCategory": "Flow Details",
       "Name": "Current Runset Name",

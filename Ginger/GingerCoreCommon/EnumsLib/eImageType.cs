@@ -265,6 +265,7 @@ namespace Amdocs.Ginger.Common.Enums
         ID,
         RegularExpression,
         DataManipulation,
+        General,
         #endregion
 
         #region Source control Images     

@@ -833,6 +833,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.DataManipulation:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
                     break;
+                case eImageType.General:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Gg);
+                    break;
                 #endregion
 
                 #region ElementType Images
