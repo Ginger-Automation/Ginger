@@ -754,13 +754,6 @@ namespace GingerCore.Actions
 
                         bFound = CheckWindowTitleByProcessId(mJavaApplicationProcessID);
 
-
-                        // Go out after max seconds
-                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                            break;
-
-                        Thread.Sleep(1000);
-
                     }
                     // If Application is not launched from Ginger then we go over the process to find the target Process ID
                     else
@@ -813,13 +806,12 @@ namespace GingerCore.Actions
                                 }
                             }
                         }
-
-                        // Go out after max seconds
-                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                            break;
-
-                        Thread.Sleep(1000);
                     }
+                    // Go out after max seconds
+                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                        break;
+
+                    Thread.Sleep(1000);
                 }
             }
             catch (OperationCanceledException ex)
