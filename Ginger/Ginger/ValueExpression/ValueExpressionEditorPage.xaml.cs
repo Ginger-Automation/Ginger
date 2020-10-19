@@ -81,21 +81,16 @@ namespace Ginger
                 mContext = new Context();
             }
 
-            ValueUCTextEditor.Bind(obj, AttrName);
-            ValueUCTextEditor.HideToolBar();
-            ValueUCTextEditor.lblTitle.Content = "Value";
-            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
+            xExpressionUCTextEditor.Bind(obj, AttrName);
+            xExpressionUCTextEditor.HideToolBar();
+            xExpressionUCTextEditor.lblTitle.Content = "Expression";
+            xExpressionUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
 
             GetHighlightingRules();
             
             BuildItemsTree();
-
-            infoImage.ToolTip = "The value can be any simple string which include " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from different sources like: " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + ", Environment Parameters, VBS functions and more." 
-                                + Environment.NewLine +
-                                "The value expression can have more than one " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in it and from different types- just add as many as you need!"
-                                + Environment.NewLine +
-                                "Environment Parameters enable to use the same solution on multiple environments easily.";
-            ValueUCTextEditor_LostFocus(ValueUCTextEditor, null);
+            
+            ValueUCTextEditor_LostFocus(xExpressionUCTextEditor, null);
         }
 
         class RedBrush : HighlightingBrush
@@ -134,7 +129,7 @@ namespace Ginger
             
             foreach (HighlightingRule HR in mHighlightingRules)
             {
-                ValueUCTextEditor.textEditor.SyntaxHighlighting.MainRuleSet.Rules.Add(HR);
+                xExpressionUCTextEditor.textEditor.SyntaxHighlighting.MainRuleSet.Rules.Add(HR);
             }
         }
 
@@ -620,8 +615,14 @@ namespace Ginger
         }
 
         private void HideHelp(object sender, RoutedEventArgs e)
-        {
-            xHelpPanel.Visibility = Visibility.Collapsed;
+        {           
+            xHelpTitle.Content = "The expression can be any string which includes expression components from diffrent types like " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from different levels, Environment Parameters, functions and more."
+                                + Environment.NewLine +
+                                "The expression can have more than one expression component in it and from different types- just add as many as you need!"; ;
+            XHelpCategory.Visibility = Visibility.Collapsed;
+            XHelpContentName.Visibility = Visibility.Collapsed;
+            XHelpContent.Visibility = Visibility.Collapsed;
+            XHelpExtra.Visibility = Visibility.Collapsed;
         }
 
         private void AddVariables()
@@ -831,7 +832,7 @@ namespace Ginger
 
         private void AddExpToValue(string exp)
         {            
-            ValueUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(exp);            
+            xExpressionUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(exp);            
         }
 
         private void SetItemView(TreeViewItem item, string HeaderText, object value, eImageType imageType)
@@ -860,7 +861,7 @@ namespace Ginger
             item.Header = stack;         
         }
 
-        private void AddToValueButton_Click(object sender, RoutedEventArgs e)
+        private void xAddExpressionButton_Click(object sender, RoutedEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)xObjectsTreeView.SelectedItem;
             if (tvi != null)
@@ -875,7 +876,7 @@ namespace Ginger
             }
         }
 
-        private void TestButton_Click(object sender, RoutedEventArgs e)
+        private void xTestButton_Click(object sender, RoutedEventArgs e)
         {
             if (mVE == null)
             {
@@ -886,13 +887,13 @@ namespace Ginger
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 
             }
-            mVE.Value = this.ValueUCTextEditor.textEditor.Text;
-            ValueCalculatedTextBox.Text = mVE.ValueCalculated;
+            mVE.Value = this.xExpressionUCTextEditor.textEditor.Text;
+            xCalculatedTextBox.Text = mVE.ValueCalculated;
         }
                 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            string value = ValueUCTextEditor.textEditor.Text;
+            string value = xExpressionUCTextEditor.textEditor.Text;
             if (mVE == null)
             {
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
@@ -918,10 +919,10 @@ namespace Ginger
             mWin.Close();
         }
 
-        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        private void xClearButton_Click(object sender, RoutedEventArgs e)
         {            
-            this.ValueUCTextEditor.textEditor.Text = "";
-            ValueCalculatedTextBox.Text = "";
+            this.xExpressionUCTextEditor.textEditor.Text = "";
+            xCalculatedTextBox.Text = "";
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, Window ownerWindow = null)
@@ -938,9 +939,9 @@ namespace Ginger
             GingerCore.General.LoadGenericWindow(ref mWin, ownerWindow, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, true,"Cancel");
         }
 
-        private void ClearCalculatedButton_Click(object sender, RoutedEventArgs e)
+        private void xClearCalculatedButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueCalculatedTextBox.Text = "";
+            xCalculatedTextBox.Text = "";
         }
 
         private void UpdateHelpForVariables(object sender, RoutedEventArgs e)
@@ -977,7 +978,7 @@ namespace Ginger
         {
            
             xWarningPanel.Visibility = Visibility.Collapsed;
-            xHelpPanel.Visibility = Visibility.Visible;
+            //xHelpPanel.Visibility = Visibility.Visible;
 
             if (ShowHelpCategory)
             {
@@ -1001,7 +1002,7 @@ namespace Ginger
         private async void ValueUCTextEditor_LostFocus(object sender, RoutedEventArgs e)
         {
             string warningExpression = string.Empty;
-            string VEText = ValueUCTextEditor.Text;
+            string VEText = xExpressionUCTextEditor.Text;
             await Task.Run(() =>
             {
                 foreach (Match m in VBSReg.Matches(VEText))
@@ -1020,13 +1021,13 @@ namespace Ginger
             if (!string.IsNullOrEmpty(warningExpression))
             {
                 xWarningPanel.Visibility = Visibility.Visible;
-                xHelpPanel.Visibility = Visibility.Collapsed;
+               // xHelpPanel.Visibility = Visibility.Collapsed;
                 XWarningValueExpression.Text = warningExpression;
             }
             else
             {
                 xWarningPanel.Visibility = Visibility.Collapsed;
-                xHelpPanel.Visibility = Visibility.Collapsed;
+                //xHelpPanel.Visibility = Visibility.Collapsed;
                 XWarningValueExpression.Text = string.Empty;
             }
         }
@@ -1036,7 +1037,7 @@ namespace Ginger
             if(!string.IsNullOrEmpty(XWarningValueExpression.Text))
             {
                 xWarningPanel.Visibility = Visibility.Visible;
-                xHelpPanel.Visibility = Visibility.Collapsed;
+                //xHelpPanel.Visibility = Visibility.Collapsed;
             
             }
         }
