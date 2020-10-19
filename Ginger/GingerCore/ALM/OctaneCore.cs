@@ -230,7 +230,7 @@ namespace GingerCore.ALM
                 {
                     if (string.IsNullOrEmpty(item.SelectedValue)|| item.SelectedValue=="Unassigned")
                     {
-                        //item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
+                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
                     }
                     filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
                 }
@@ -274,7 +274,6 @@ namespace GingerCore.ALM
             result = string.Empty;
             ObservableList<ExternalItemFieldBase> runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
             runFields = new ObservableList<ExternalItemFieldBase>(runFields.Where(f => f.ItemType.Equals("Run")).ToList());
-            //GetALMItemFields(null, true, ALM_Common.DataContracts.ResourceType.TEST_RUN);
             if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
             {
                 result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
@@ -282,6 +281,11 @@ namespace GingerCore.ALM
             }
             try
             {
+                if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
+                {
+                    String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                    publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                }
                 //get the BF matching test set
                 QCTestSet testSet = this.GetTestSuiteById(bizFlow.ExternalID);//bf.externalID holds the TestSet TSTests collection id
                 if (testSet != null)
@@ -317,16 +321,10 @@ namespace GingerCore.ALM
                                 if (tsTest != null)
                                 {
                                     //get activities in group
-                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
-                                    //Changed this because tsTest.Name is null. string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.Name);
+                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();                                    
 
-                                    if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
-                                    {
-                                        String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
-                                        publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
-                                    }
-
-                                    CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
+                                    //Commented below create test run as Above create test suite function creates test runs by default.
+                                    //CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
 
                                     // Attach ActivityGroup Report if needed
                                     if (publishToALMConfig.ToAttachActivitiesGroupReport)
@@ -367,7 +365,9 @@ namespace GingerCore.ALM
                                 }
                             }
                             if (result != string.Empty)
+                            {
                                 return false;
+                            }
                         }
                     }
                     else
@@ -432,17 +432,13 @@ namespace GingerCore.ALM
                     Id = "list_node.run_native_status." + bizFlow.RunStatus,
                 });
                 AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
-                //runSuiteToExport.SetValue("release", new BaseEntity()
-                //{
-                //    TypeName = "release",
-                //    Id = GetReleases().FirstOrDefault().Id
-                //});
+                runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
                 return Task.Run(() => { return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); }).Result;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "In CreateRunSuite/OctaneCore.cs method ", ex);
-                throw ex;
+                throw;
             }
         }
 
@@ -475,7 +471,8 @@ namespace GingerCore.ALM
                 Id = "list_node.run_native_status." + activGroup.RunStatus,
             });
 
-            return Task.Run(() => { return this.octaneRepository.CreateEntity<Run>(GetLoginDTO(), runToExport, null); }).Result;
+            return Task.Run(() => {
+                return this.octaneRepository.CreateEntity<Run>(GetLoginDTO(), runToExport, null); }).Result;
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -545,7 +542,7 @@ namespace GingerCore.ALM
         private ObservableList<ExternalItemFieldBase> AddFieldsValues(ListResult<FieldMetadata> entityFields, string entityType, Dictionary<string, List<string>> listnodes, Dictionary<string, List<string>> phases)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
-            List<Release> releases = GetReleases();
+            List<Release> _releases = GetReleases();
 
             if ((entityFields != null) && (entityFields.total_count.Value > 0))
             {
@@ -577,12 +574,13 @@ namespace GingerCore.ALM
                             BaseEntity temp = (BaseEntity)field.GetValue("field_type_data");
                             itemfield.IsMultiple = temp.GetBooleanValue("multiple").Value;
                         }
-                        catch { }
+                        catch (Exception ex) {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Not able to get Multiple value flag", ex);
+                        }
 
                         if (field.Name.ToLower() == "release")
                         {
-                            itemfield.PossibleValues = new ObservableList<string>(releases.Select(g => g.Name).ToList());
-
+                            itemfield.PossibleValues = new ObservableList<string>(_releases.Select(g => g.Name).ToList());
                         }
                         else if (listnodes != null && listnodes.ContainsKey(field.Name) && listnodes[field.Name].Any())
                         {
@@ -1347,7 +1345,7 @@ namespace GingerCore.ALM
                 {
                     if ((field.ToUpdate || field.Mandatory) && !test.Contains(field.ExternalID))
                     {
-                        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "Unassigned")
+                        if (!string.IsNullOrEmpty(field.SelectedValue)&& field.SelectedValue != "Unassigned")
                         {
                             if (field.Type.ToLower() != "reference")
                             {
