@@ -30,6 +30,11 @@ using System.Web;
 using QCRestClient;
 using QCTestSet = QCRestClient.QCTestSet;
 using Couchbase.Utils;
+using Amdocs.Ginger.Common.InterfacesLib;
+using System.IO;
+using System.IO.Compression;
+using OctaneSDK.Entities.Releases;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.ALM
 {
@@ -38,7 +43,7 @@ namespace GingerCore.ALM
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public ProjectArea ProjectArea { get; private set; }
-
+        List<Release> releases;
         public RestConnector mOctaneRestConnector;
         public EntityService entityService;
         protected LwssoAuthenticationStrategy lwssoAuthenticationStrategy;
@@ -225,7 +230,7 @@ namespace GingerCore.ALM
                 {
                     if (string.IsNullOrEmpty(item.SelectedValue)|| item.SelectedValue=="Unassigned")
                     {
-                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
+                        //item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
                     }
                     filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
                 }
@@ -266,7 +271,211 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            throw new NotImplementedException();
+            result = string.Empty;
+            ObservableList<ExternalItemFieldBase> runFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
+            runFields = new ObservableList<ExternalItemFieldBase>(runFields.Where(f => f.ItemType.Equals("Run")).ToList());
+            //GetALMItemFields(null, true, ALM_Common.DataContracts.ResourceType.TEST_RUN);
+            if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
+            {
+                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
+                return false;
+            }
+            try
+            {
+                //get the BF matching test set
+                QCTestSet testSet = this.GetTestSuiteById(bizFlow.ExternalID);//bf.externalID holds the TestSet TSTests collection id
+                if (testSet != null)
+                {
+                    //get the Test set TC's
+                    QCTestInstanceColl qcTSTests = this.GetTestsFromTSId(testSet.Id); //list of TSTest's on main TestSet in TestLab 
+
+                    //get all BF Activities groups
+                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    if (activGroups.Count > 0)
+                    {
+                        RunSuite runSuite = CreateRunSuite(publishToALMConfig, bizFlow, testSet, runFields);
+                        foreach (ActivitiesGroup activGroup in activGroups)
+                        {
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                            || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            {
+                                QCTestInstance tsTest = null;
+                                //go by TC ID = TC Instances ID
+                                tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID && x.Id == activGroup.ExternalID2);
+
+                                if (tsTest == null)
+                                {
+                                    //go by Linked TC ID + TC Instances ID
+                                    tsTest = qcTSTests.Find(x => x.Id == activGroup.ExternalID && x.TestId == activGroup.ExternalID2);
+                                }
+                                if (tsTest == null)
+                                {
+                                    //go by TC ID 
+                                    tsTest = qcTSTests.Find(x => x.TestId == activGroup.ExternalID);
+                                }
+                                if (tsTest != null)
+                                {
+                                    //get activities in group
+                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
+                                    //Changed this because tsTest.Name is null. string TestCaseName = PathHelper.CleanInValidPathChars(tsTest.Name);
+
+                                    if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
+                                    {
+                                        String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                                        publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                                    }
+
+                                    CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
+
+                                    // Attach ActivityGroup Report if needed
+                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                                    {
+                                        if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
+                                            (System.IO.Directory.Exists(activGroup.TempReportFolder)))
+                                        {
+                                            //Creating the Zip file - start
+                                            string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
+                                            string zipFileName = targetZipPath + "\\" + activGroup.Name.ToString() + "_GingerHTMLReport.zip";
+
+                                            if (!System.IO.File.Exists(zipFileName))
+                                            {
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            else
+                                            {
+                                                System.IO.File.Delete(zipFileName);
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            System.IO.Directory.Delete(activGroup.TempReportFolder, true);
+                                            //Creating the Zip file - finish
+
+                                            if (!this.AddAttachment(testSet.Id, zipFileName))
+                                            {
+                                                result = "Failed to create attachment";
+                                                return false;
+                                            }
+
+                                            System.IO.File.Delete(zipFileName);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //No matching TC was found for the ActivitiesGroup in QC
+                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                }
+                            }
+                            if (result != string.Empty)
+                                return false;
+                        }
+                    }
+                    else
+                    {
+                        //No matching Test Set was found for the BF in QC
+                        result = "No matching Test Set was found in QC/ALM.";
+                    }
+
+                    if (result == string.Empty)
+                    {
+                        result = "Export performed successfully.";
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Unexpected error occurred- " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                return false;
+            }
+
+            return false;
+        }
+
+        private bool AddAttachment(string testSuiteId, string zipFileName)
+        {
+            try
+            {
+                FileStream fs = new FileStream(@"C:\Users\mkale\Desktop\ccd.pdf", FileMode.Open, FileAccess.Read);
+                BinaryReader br = new BinaryReader(fs);
+                byte[] fileData = br.ReadBytes((Int32)fs.Length);
+                var tt = Task.Run(() => { return entityService.AttachToEntity(new WorkspaceContext(1001, 4002), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null); }).Result;
+                fs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private RunSuite CreateRunSuite(PublishToALMConfig publishToALMConfig, BusinessFlow bizFlow, QCTestSet testSet, ObservableList<ExternalItemFieldBase> runFields)
+        {
+            try
+            {
+                RunSuite runSuiteToExport = new RunSuite();
+                runSuiteToExport.SetValue("subtype", "run_manual");
+                runSuiteToExport.Name = testSet.Name;
+                runSuiteToExport.SetValue("test", new BaseEntity()
+                {
+                    TypeName = "test_suite",
+                    Id = testSet.Id,
+                });
+                runSuiteToExport.SetValue("native_status", new BaseEntity()
+                {
+                    TypeName = "list_node",
+                    Id = "list_node.run_native_status." + bizFlow.RunStatus,
+                });
+                AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
+                //runSuiteToExport.SetValue("release", new BaseEntity()
+                //{
+                //    TypeName = "release",
+                //    Id = GetReleases().FirstOrDefault().Id
+                //});
+                return Task.Run(() => { return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); }).Result;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "In CreateRunSuite/OctaneCore.cs method ", ex);
+                throw ex;
+            }
+        }
+
+        private Run CrateTestRun(PublishToALMConfig publishToALMConfig, ActivitiesGroup activGroup, QCTestInstance tsTest, EntityId runSuiteId, ObservableList<ExternalItemFieldBase> runFields)
+        {
+            Run runToExport = new Run();
+
+            runToExport.Name = publishToALMConfig.VariableForTCRunNameCalculated;
+            runToExport.SetValue("subtype", "run_manual");
+            runToExport.SetValue("parent_suite", new BaseEntity()
+            {
+                TypeName = "run_suite",
+                Id = runSuiteId
+            });
+            runToExport.SetValue("subtype", "run_manual");
+            AddEntityFieldValues(runFields, runToExport, "run_manual");
+            //runToExport.SetValue("release", new BaseEntity()
+            //{
+            //    TypeName = "release",
+            //    Id = GetReleases().FirstOrDefault().Id
+            //});
+            runToExport.SetValue("test", new BaseEntity()
+            {
+                TypeName = "test_manual",
+                Id = tsTest.Id
+            });
+            runToExport.SetValue("native_status", new BaseEntity()
+            {
+                TypeName = "list_node",
+                Id = "list_node.run_native_status." + activGroup.RunStatus,
+            });
+
+            return Task.Run(() => { return this.octaneRepository.CreateEntity<Run>(GetLoginDTO(), runToExport, null); }).Result;
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -333,15 +542,17 @@ namespace GingerCore.ALM
             }).Result));
         }
 
-        private static ObservableList<ExternalItemFieldBase> AddFieldsValues(ListResult<FieldMetadata> entityFields, string entityType, Dictionary<string, List<string>> listnodes, Dictionary<string, List<string>> phases)
+        private ObservableList<ExternalItemFieldBase> AddFieldsValues(ListResult<FieldMetadata> entityFields, string entityType, Dictionary<string, List<string>> listnodes, Dictionary<string, List<string>> phases)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+            List<Release> releases = GetReleases();
 
             if ((entityFields != null) && (entityFields.total_count.Value > 0))
             {
                 foreach (FieldMetadata field in entityFields.data)
                 {
-                    if (string.IsNullOrEmpty(field.Label) || !field.VisibleInUI || !field.IsEditable)
+                    if (string.IsNullOrEmpty(field.Label) || !field.VisibleInUI || !field.IsEditable 
+                        || field.Name.ToLower() == "parent" || field.GetValue("access_level").Equals("PRIVATE"))
                     {
                         continue;
                     }
@@ -352,27 +563,42 @@ namespace GingerCore.ALM
                     itemfield.Name = field.Label;
                     itemfield.Mandatory = field.IsRequired;
                     itemfield.SystemFieled = !field.IsUserField;
-                    
+
                     if (itemfield.Mandatory)
                     {
                         itemfield.ToUpdate = true;
                     }
                     itemfield.ItemType = entityType;
                     itemfield.Type = field.FieldType;
+                    if (field.FieldType.ToLower() == "reference")
+                    {
+                        try
+                        {
+                            BaseEntity temp = (BaseEntity)field.GetValue("field_type_data");
+                            itemfield.IsMultiple = temp.GetBooleanValue("multiple").Value;
+                        }
+                        catch { }
 
-                    if (listnodes != null && listnodes.ContainsKey(field.Name) && listnodes[field.Name].Any())
-                    {
-                        itemfield.PossibleValues = new ObservableList<string>(listnodes[field.Name]);
+                        if (field.Name.ToLower() == "release")
+                        {
+                            itemfield.PossibleValues = new ObservableList<string>(releases.Select(g => g.Name).ToList());
+
+                        }
+                        else if (listnodes != null && listnodes.ContainsKey(field.Name) && listnodes[field.Name].Any())
+                        {
+                            itemfield.PossibleValues = new ObservableList<string>(listnodes[field.Name]);
+                        }
+                        else if (listnodes != null && listnodes.ContainsKey(entityType.ToLower() + "_" + field.Name) && listnodes[entityType.ToLower() + "_" + field.Name].Any())
+                        {
+                            itemfield.PossibleValues = new ObservableList<string>(listnodes[entityType.ToLower() + "_" + field.Name]);
+                        }
+                        else if (phases != null && phases.ContainsKey(field.Name) && phases[field.Name].Any())
+                        {
+                            itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
+                        }
                     }
-                    else if (listnodes != null && listnodes.ContainsKey(entityType.ToLower() + "_" + field.Name) && listnodes[entityType.ToLower() + "_" + field.Name].Any())
-                    {
-                        itemfield.PossibleValues = new ObservableList<string>(listnodes[entityType.ToLower() + "_" + field.Name]);
-                    }
-                    else if (phases != null && phases.ContainsKey(field.Name) && phases[field.Name].Any())
-                    {
-                        itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
-                    }
-                    else if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
+                    
+                    if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
                     {
                         itemfield.SelectedValue = "Unassigned";
                     }
@@ -406,7 +632,8 @@ namespace GingerCore.ALM
                 List<TestSuite_Test_Link> TSLink;
                 QCTestInstanceColl testCollection = new QCTestInstanceColl();
                 CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSetID, ComparisonOperator.Equal));
-                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
+                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd,new LogicalQueryPhrase("subtype", "test_suite_link_to_manual", ComparisonOperator.Equal) };
+            
                 TSLink = octaneRepository.GetEntities<TestSuite_Test_Link>(GetLoginDTO(), filter);
                 foreach (TestSuite_Test_Link item in TSLink)
                 {
@@ -438,13 +665,16 @@ namespace GingerCore.ALM
         {
             var lineBreaks = new[] { '\n' };
             QCTestCaseStepsColl stepsColl = new QCTestCaseStepsColl();
-            string steps = Task.Run(() => { return octaneRepository.GetTestCaseStep(GetLoginDTO(), testcase.Id); }).Result;
+            string steps = Task.Run(() =>
+            {
+                return octaneRepository.GetTestCaseStep(GetLoginDTO(), testcase.Id);
+            }).Result;
             int i = 1;
             if (!string.IsNullOrEmpty(steps))
             {
                 foreach (string step in steps.Split(lineBreaks))
                 {
-                    stepsColl.Add(new QCTestCaseStep() { Id = Convert.ToString(i), TestId = testcase.Id, Description = step, Name = step, StepOrder = Convert.ToString(i++) });
+                    stepsColl.Add(new QCTestCaseStep() { Id = testcase.Id + "_" + Convert.ToString(i), TestId = testcase.Id, Description = step, Name = step, StepOrder = Convert.ToString(i++) });
                 }
             }
             return stepsColl;
@@ -839,7 +1069,7 @@ namespace GingerCore.ALM
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
                             ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (actIdent == null || actIdent.IdentifiedActivity == null) { break; }//something wrong- shouldn't be null
+                            if (actIdent == null || actIdent.IdentifiedActivity == null) { break; }
                             Activity act = (Activity)actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -923,17 +1153,7 @@ namespace GingerCore.ALM
             }
         }
         private int CreateNewTestSet(BusinessFlow businessFlow, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
-        {
-            // foreach (ExternalItemFieldBase field in testSetFields)
-            //{
-            //if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
-            //{
-            //    if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
-            //        test.ElementsField.Add(field.ExternalID, field.SelectedValue);
-            //    else
-            //        try { test.ElementsField.Add(field.ExternalID, "NA"); }
-            //        catch { }
-            //}
+        {            
             TestSuite testSuite = new TestSuite();
             testSuite.Name = businessFlow.Name;
             testSuite.SetValue("description", businessFlow.Description);
@@ -941,7 +1161,7 @@ namespace GingerCore.ALM
             {
                 data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
             });
-
+            AddEntityFieldValues(testSetFields, testSuite, "test_suite");
             TestSuite created = Task.Run(() =>
             {
                 return this.octaneRepository.CreateEntity<TestSuite>(GetLoginDTO(), testSuite);
@@ -955,16 +1175,6 @@ namespace GingerCore.ALM
         }
         private int UpdateExistingTestSet(BusinessFlow businessFlow, QCTestSet existingTS, string fatherId, ObservableList<ExternalItemFieldBase> testSetFields)
         {
-            // foreach (ExternalItemFieldBase field in testSetFields)
-            //{
-            //if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
-            //{
-            //    if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
-            //        test.ElementsField.Add(field.ExternalID, field.SelectedValue);
-            //    else
-            //        try { test.ElementsField.Add(field.ExternalID, "NA"); }
-            //        catch { }
-            //}
             TestSuite testSuite = new TestSuite();
             testSuite.Id = existingTS.Id;
             testSuite.Name = businessFlow.Name;
@@ -973,7 +1183,7 @@ namespace GingerCore.ALM
             {
                 data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
             });
-
+            AddEntityFieldValues(testSetFields, testSuite, "test_suite");
             TestSuite created = Task.Run(() =>
             {
                 return this.octaneRepository.UpdateEntity<TestSuite>(GetLoginDTO(), testSuite);
@@ -989,7 +1199,7 @@ namespace GingerCore.ALM
 
 
         private void LinkTestCasesToTestSuite(int testSuiteId, List<int> entityTcIdMapping)
-        {          
+        {
             foreach (int tcId in entityTcIdMapping)
             {
                 TestSuiteLinkToTests suiteLinkToTests = new TestSuiteLinkToTests();
@@ -1110,12 +1320,6 @@ namespace GingerCore.ALM
             TestManual test = new TestManual();
             test.Name = activitiesGroup.Name;
             test.SetValue("description", activitiesGroup.Description);
-            test.SetValue("automation_status", new BaseEntity()
-            {
-                TypeName = "list_node",
-                Id = "list_node.automation_status.not_automated"
-            });
-
             test.SetValue("product_areas", new EntityList<BaseEntity>()
             {
                 data = new List<BaseEntity>()
@@ -1123,26 +1327,8 @@ namespace GingerCore.ALM
                     new BaseEntity() {Id = fatherId, TypeName = "product_area"}
                 }
             });
-            test.SetValue("test_type", new EntityList<BaseEntity>()
-            {
-                data = new List<BaseEntity>()
-                {
-                    new BaseEntity()
-                    {
-                        TypeName = "list_node",
-                        Id = "list_node.test_type.regression"
-                    }
-                }
-            });
 
-            //foreach (ExternalItemFieldBase field in testCaseFields)
-            //{
-            //    if ((field.ToUpdate || field.Mandatory) && !test.Contains(field.ExternalID))
-            //    {
-            //        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
-            //            test.SetValue(field.ExternalID, field.SelectedValue);                    
-            //    }
-            //}
+            AddEntityFieldValues(testCaseFields, test, "test_manual");
 
             test = Task.Run(() => { return this.octaneRepository.CreateEntity(GetLoginDTO(), test, null); }).Result;
 
@@ -1153,17 +1339,92 @@ namespace GingerCore.ALM
             return test.Id.ToString();
         }
 
-        private string UpdateTestCase( ActivitiesGroup activitiesGroup, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, string testScript)
+        private void AddEntityFieldValues(ObservableList<ExternalItemFieldBase> fields, BaseEntity test, string entityType)
+        {
+            foreach (ExternalItemFieldBase field in fields)
+            {
+                try
+                {
+                    if ((field.ToUpdate || field.Mandatory) && !test.Contains(field.ExternalID))
+                    {
+                        if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "Unassigned")
+                        {
+                            if (field.Type.ToLower() != "reference")
+                            {
+                                test.SetValue(field.ExternalID, field.SelectedValue);
+                            }
+                            else
+                            {
+                                if (field.ExternalID == "phase")
+                                {
+                                    test.SetValue(field.ExternalID, new BaseEntity()
+                                    {
+                                        TypeName = "phase",
+                                        Id = "phase." + entityType + "." + field.SelectedValue.ToLower()
+                                    });
+                                }
+                                else if (field.ExternalID == "release")
+                                {
+                                    List<Release> releases = GetReleases();
+                                    test.SetValue(field.ExternalID, new BaseEntity()
+                                    {
+                                        TypeName = "release",
+                                        Id = releases.Where(r => r.Name.Equals(field.SelectedValue)).FirstOrDefault().Id
+                                    });
+                                }
+                                else
+                                {
+                                    if (field.IsMultiple)
+                                    {
+                                        test.SetValue(field.ExternalID, new EntityList<BaseEntity>()
+                                        {
+                                            data = new List<BaseEntity>() {
+                                                new BaseEntity()
+                                                {
+                                                    TypeName = "list_node",
+                                                    Id = "list_node."+field.ExternalID +"."+field.SelectedValue.ToLower()
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else
+                                    {
+                                        test.SetValue(field.ExternalID, new BaseEntity()
+                                        {
+                                            TypeName = "list_node",
+                                            Id = "list_node." + field.ExternalID + "." + field.SelectedValue
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "In AddEntityFieldValues function", ex);
+                }
+            }
+        }
+
+        private List<Release> GetReleases()
+        {
+            if (this.releases == null)
+            {
+                this.releases = Task.Run(() =>
+                  {
+                      return octaneRepository.GetEntities<Release>(GetLoginDTO(), null);
+                  }).Result;
+            }
+            return this.releases;
+        }
+
+        private string UpdateTestCase(ActivitiesGroup activitiesGroup, string fatherId, ObservableList<ExternalItemFieldBase> testCaseFields, string testScript)
         {
             TestManual test = new TestManual();
             test.Id = activitiesGroup.ExternalID;
             test.Name = activitiesGroup.Name;
             test.SetValue("description", activitiesGroup.Description);
-            test.SetValue("automation_status", new BaseEntity()
-            {
-                TypeName = "list_node",
-                Id = "list_node.automation_status.not_automated"
-            });
 
             test.SetValue("product_areas", new EntityList<BaseEntity>()
             {
@@ -1171,18 +1432,9 @@ namespace GingerCore.ALM
                 {
                     new BaseEntity() {Id = fatherId, TypeName = "product_area"}
                 }
-            });
-            test.SetValue("test_type", new EntityList<BaseEntity>()
-            {
-                data = new List<BaseEntity>()
-                {
-                    new BaseEntity()
-                    {
-                        TypeName = "list_node",
-                        Id = "list_node.test_type.regression"
-                    }
-                }
-            });
+            }); 
+
+            AddEntityFieldValues(testCaseFields, test, "test_manual");
 
             test = Task.Run(() => { return this.octaneRepository.UpdateEntity(GetLoginDTO(), test, null); }).Result;
 
