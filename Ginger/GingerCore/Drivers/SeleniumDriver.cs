@@ -1353,8 +1353,69 @@ namespace GingerCore.Drivers
 
         public void SmartSyncHandler(ActSmartSync act)
         {
-            IWebElement e = LocateElement(act, true);
-            Stopwatch st = new Stopwatch();
+            int MaxTimeout = SetMaxTimeout(act);
+
+            try
+            {
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, MaxTimeout);
+                IWebElement e = LocateElement(act, true);
+                Stopwatch st = new Stopwatch();
+                switch (act.SmartSyncAction)
+                {
+                    case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
+
+
+                        st.Reset();
+                        st.Start();
+
+                        while (!(e != null && (e.Displayed || e.Enabled)))
+                        {
+                            Thread.Sleep(100);
+                            e = LocateElement(act, true);
+                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                            {
+                                act.Error = "Smart Sync of WaitUntilDisplay is timeout";
+                                break;
+                            }
+                        }
+
+
+                        break;
+                    case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                        st.Reset();
+
+                        if (e == null)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            st.Start();
+
+                            while (e != null && e.Displayed)
+                            {
+                                Thread.Sleep(100);
+                                e = LocateElement(act, true);
+                                if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                                {
+                                    act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                                    break;
+                                }
+                            }
+
+                        }
+                        break;
+                }
+            }
+            finally
+            {
+                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+            }
+
+        }
+
+        private int SetMaxTimeout(ActSmartSync act)
+        {
             int MaxTimeout = 0;
             try
             {
@@ -1375,53 +1436,8 @@ namespace GingerCore.Drivers
             {
                 MaxTimeout = 5;
             }
-            switch (act.SmartSyncAction)
-            {
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
 
-
-                    st.Reset();
-                    st.Start();
-
-                    while (!(e != null && (e.Displayed || e.Enabled)))
-                    {
-                        Thread.Sleep(100);
-                        e = LocateElement(act, true);
-                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                        {
-                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
-                            break;
-                        }
-                    }
-
-
-                    break;
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-
-                    if (e == null)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        st.Start();
-
-                        while (e != null && e.Displayed)
-                        {
-                            Thread.Sleep(100);
-                            e = LocateElement(act, true);
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
-                        }
-
-                    }
-                    break;
-            }
-            return;
+            return MaxTimeout;
         }
 
         public void PWLElementHandler(ActPWL act)
