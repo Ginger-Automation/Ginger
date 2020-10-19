@@ -24,8 +24,6 @@ using GingerCore.Actions.WebServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenSSL.X509Certificate2Provider;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Utilities.IO.Pem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -277,17 +275,6 @@ namespace GingerCore.Actions.WebAPI
             return true;
         }
 
-        private static byte[] UnPem(string pem)
-        {
-            // This is a shortcut that assumes valid PEM
-            // -----BEGIN words-----\nbase64\n-----END words-----
-            const string Dashes = "-----";
-            int index0 = pem.IndexOf(Dashes);
-            int index1 = pem.IndexOf('\n', index0 + Dashes.Length);
-            int index2 = pem.IndexOf(Dashes, index1 + 1);
-
-            return Convert.FromBase64String(pem.Substring(index1, index2 - index1));
-        }
         private bool SetNetworkCredentials()
         {
             //check if Network Credentials are required:

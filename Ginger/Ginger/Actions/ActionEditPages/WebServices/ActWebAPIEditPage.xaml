@@ -176,12 +176,12 @@
                         <StackPanel x:Name="CertificateStackPanel" Visibility="Collapsed" Orientation="Vertical" Margin="20,0,0,0" >
                             <Label Style="{StaticResource @InputFieldLabelStyle}">Certificate Path:</Label>
                             <StackPanel Orientation="Vertical">
-                                <Actions:UCValueExpression x:Name="CertificatePath" Margin="0,0,0,0"/>
-                                <CheckBox x:Name="DoNotCertificateImportFile" Content="Import Certificate file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
+                                <Actions:UCValueExpression x:Name="xCertificatePathTextBox" Margin="0,0,0,0"/>
+                                <CheckBox x:Name="xCertificateImportFileCheckbox" Content="Import Certificate file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
                             </StackPanel>
                             <StackPanel Orientation="Vertical">
-                                <Actions:UCValueExpression x:Name="KeyFilePathTextBox" Margin="0,0,0,0"/>
-                                <CheckBox x:Name="DoNotImportKeyFile" Content="Import key file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
+                                <Actions:UCValueExpression x:Name="xKeyFilePathTextBox" Margin="0,0,0,0"/>
+                                <CheckBox x:Name="xImportKeyFileCheckBox" Content="Import key file to Solution folder" ToolTip="If checked the selected certificate file will be imported to ~Documents\Certificates\" HorizontalAlignment="Left" Margin="0,1,0,0" Style="{StaticResource @InputCheckBoxStyle}"/>
                             </StackPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,5,0,0">Certificate Password:</Label>
                             <Actions:UCValueExpression x:Name="CertificatePasswordUCValueExpression" Margin="0,0,0,0"/>

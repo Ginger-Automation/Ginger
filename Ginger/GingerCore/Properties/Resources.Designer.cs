@@ -8,10 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GingerCore.Properties {
+namespace GingerCore.Properties
+{
     using System;
-    
-    
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -19,107 +20,127 @@ namespace GingerCore.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
-        
+    internal class Resources
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resources()
+        {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        internal static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GingerCore.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
-            get {
+        internal static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Act {
-            get {
+        internal static System.Drawing.Bitmap Act
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Act", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ActButton {
-            get {
+        internal static System.Drawing.Bitmap ActButton
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ActButton", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ActGotoURL {
-            get {
+        internal static System.Drawing.Bitmap ActGotoURL
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ActGotoURL", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Activity_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Activity_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Activity_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ActLink {
-            get {
+        internal static System.Drawing.Bitmap ActLink
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ActLink", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ActTextBox {
-            get {
+        internal static System.Drawing.Bitmap ActTextBox
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ActTextBox", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to /*
         /// Copyright (c) 2010, Linden Research, Inc.
@@ -131,239 +152,283 @@ namespace GingerCore.Properties {
         /// copies of the Software, and to permit persons to whom the Software is
         /// furnished to do so, subject to the followin [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ArrayBuffer {
-            get {
+        internal static string ArrayBuffer
+        {
+            get
+            {
                 return ResourceManager.GetString("ArrayBuffer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ASCF16x16 {
-            get {
+        internal static System.Drawing.Bitmap ASCF16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ASCF16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
+        ///   Looks up a localized string similar to var runningAjaxCount = 0;
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
+        ///var oldSend = XMLHttpRequest.prototype.send;
+        ///XMLHttpRequest.prototype.send = function() {
+        ///    oldOnReady = this.onreadystatechange;
+        ///    this.onreadystatechange = function() {
+        ///        oldOnReady.call(this);
+        ///        if(this.readyState == XMLHttpRequest.DONE) {
+        ///            ajaxStopped();
+        ///        }
+        ///    }
+        ///    ajaxStarted();
+        ///    oldSend.apply(this, arguments);
+        ///}
         ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
+        ///function ajaxStarted() {
+        ///    runningAjaxCount++;
+        ///}
         ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
+        ///function ajaxStopped() {
+        ///    runningAjaxCount--;
+        ///}
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string BrowserWaitForIdle {
-            get {
+        internal static string BrowserWaitForIdle
+        {
+            get
+            {
                 return ResourceManager.GetString("BrowserWaitForIdle", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Camera32x32 {
-            get {
+        internal static System.Drawing.Bitmap Camera32x32
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Camera32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap CheckBox_16x16 {
-            get {
+        internal static System.Drawing.Bitmap CheckBox_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CheckBox_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap console16x16 {
-            get {
+        internal static System.Drawing.Bitmap console16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("console16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Const {
-            get {
+        internal static System.Drawing.Bitmap Const
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Const", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap DataBase {
-            get {
+        internal static System.Drawing.Bitmap DataBase
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DataBase", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to &lt;devices&gt;
         ///&lt;Device name=&quot;ipad&quot; height=&quot;1024&quot; width=&quot;768&quot; useragent=&quot;Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53&quot;&gt;&lt;/Device&gt;
         ///&lt;Device name=&quot;iphone 6&quot; height=&quot;627&quot; width=&quot;375&quot; useragent=&quot;Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4&quot;&gt;&lt;/Device&gt;
         ///&lt;Device name=&quot;Nexus 6&quot; height=&quot;659&quot; width=&quot;412&quot; useragent=&quot;Mozilla/5.0 (Linux; Android 5.1.1; Ne [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string DevicesList {
-            get {
+        internal static string DevicesList
+        {
+            get
+            {
                 return ResourceManager.GetString("DevicesList", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap DropDownList_16x16 {
-            get {
+        internal static System.Drawing.Bitmap DropDownList_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DropDownList_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap eMenu32x32 {
-            get {
+        internal static System.Drawing.Bitmap eMenu32x32
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("eMenu32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Excel16x16 {
-            get {
+        internal static System.Drawing.Bitmap Excel16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Excel16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
+        ///   Looks up a localized string similar to // This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets 
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
+        ///GingerLib = {};
         ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
         ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
+        ///// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
+        ///
+        ///// strict mode = must define variables which is good programming :)
+        ///&apos;use strict&apos;;
+        ///function define_GingerLib() {
+        ///    GingerLib = {};
+        ///
+        ///    //------------------------------------------------------------------------------------------- [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string GingerHTMLHelper {
-            get {
+        internal static string GingerHTMLHelper
+        {
+            get
+            {
                 return ResourceManager.GetString("GingerHTMLHelper", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright Â© 2014-2020 European Support Limited
+        ///   Looks up a localized string similar to // This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets Recording
+        ///	
+        ///GingerRecorderLib = {};
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
+        ///// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
         ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the  [rest of string was truncated]&quot;;.
+        ///// strict mode = must define variables which is good programming :)
+        ///&apos;use strict&apos;;
+        ///function define_GingerRecorderLib() {
+        ///    GingerRecorderLib = {};
+        ///	
+        ///	var actions =	[];
+        ///	var count	=	0;
+        ///    var recordingStarted =  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string GingerHTMLRecorder {
-            get {
+        internal static string GingerHTMLRecorder
+        {
+            get
+            {
                 return ResourceManager.GetString("GingerHTMLRecorder", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
+        ///   Looks up a localized string similar to // TODO: use this one make me work
+        ///GingerLib.GetElemXPath = function (el) {
+        ///    // Another impl for XPath
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
+        ///    // #1            
+        ///    //if (typeof el == &quot;string&quot;) return document.evaluate(el, document, null, 0, null);
+        ///    //if (!el || el.nodeType != 1) return &quot;&quot;;
+        ///    //if (el.id) return &quot;//*[@id=\&quot;&quot; + el.id + &quot;\&quot;]&quot;;
+        ///    //var sames = [].filter.call(el.parentNode.children, function (x) { return x.tagName == el.tagName });
+        ///    //return GingerLib.GetElemXPath(el.parentNode) + &quot;/&quot; + el.tagName.toLowerCa [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string GingerLibXPath {
-            get {
+        internal static string GingerLibXPath
+        {
+            get
+            {
                 return ResourceManager.GetString("GingerLibXPath", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
+        ///   Looks up a localized string similar to // This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets 
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
+        ///GingerLibLiveSpy = {};
         ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
         ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
+        ///// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
+        ///
+        ///// strict mode = must define variables which is good programming :)
+        ///&apos;use strict&apos;;
+        ///function define_GingerLibLiveSpy() {
+        ///    GingerLibLiveSpy = {};
+        ///
+        ///    //---------------------------------------------------------------------- [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string GingerLiveSpy {
-            get {
+        internal static string GingerLiveSpy
+        {
+            get
+            {
                 return ResourceManager.GetString("GingerLiveSpy", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Group_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Group_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Group_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Handler_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Handler_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Handler_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to /*
         ///  html2canvas 0.4.1 &lt;http://html2canvas.hertzen.com&gt;
@@ -392,64 +457,58 @@ namespace GingerCore.Properties {
         ///_html2canvas.Util.trimText = (function(isNative){
         ///  return functio [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string html2canvas {
-            get {
+        internal static string html2canvas
+        {
+            get
+            {
                 return ResourceManager.GetString("html2canvas", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string Html5DragAndDrop {
-            get {
+
+
+
+        internal static string Html5DragAndDrop
+        {
+            get
+            {
                 return ResourceManager.GetString("Html5DragAndDrop", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
+
+
+        ///   Looks up a localized string similar to var r = 0;
+        ///var XpathTextBox;
+        ///var ValueTextBox;
+        ///var innerHTMLTextBox;
+        ///var currElem;
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
+        ///function xpath(el) {
+        ///	if (typeof el == &quot;string&quot;) return document.evaluate(el, document, null, 0, null)
+        ///	if (!el || el.nodeType != 1) return &apos;&apos;
+        ///	if (el.id) return &quot;//*[@id=&apos;&quot; + el.id + &quot;&apos;]&quot;
+        ///	var sames = [].filter.call(el.parentNode.children, function (x) { return x.tagName == el.tagName })
+        ///	return xpath(el.parentNode) + &apos;/&apos; + el.tagName.toLowerCase() + (sames.length &gt; 1 ? &apos;[&apos; + ([].indexOf.call(sames, el) + 1) + &apos;] [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string HTMLSpy {
-            get {
+        internal static string HTMLSpy
+        {
+            get
+            {
                 return ResourceManager.GetString("HTMLSpy", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Image_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Image_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Image_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to // Ginger will replace with the code to inject
         ///
@@ -471,270 +530,329 @@ namespace GingerCore.Properties {
         ///el.style.top = &apos;0&apos;;
         ///el.styl [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string InjectJavaScript {
-            get {
+        internal static string InjectJavaScript
+        {
+            get
+            {
                 return ResourceManager.GetString("InjectJavaScript", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Java16x16 {
-            get {
+        internal static System.Drawing.Bitmap Java16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Java16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to /*! jQuery v1.11.1 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
         ///!function (a, b) { &quot;object&quot; == typeof module &amp;&amp; &quot;object&quot; == typeof module.exports ? module.exports = a.document ? b(a, !0) : function (a) { if (!a.document) throw new Error(&quot;jQuery requires a window with a document&quot;); return b(a) } : b(a) }(&quot;undefined&quot; != typeof window ? window : this, function (a, b) {
         ///    var c = [], d = c.slice, e = c.concat, f = c.push, g = c.indexOf, h = {}, i = h.toString, j = h.hasOwnProperty, k = { [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string jquery_min {
-            get {
+        internal static string jquery_min
+        {
+            get
+            {
                 return ResourceManager.GetString("jquery_min", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Label_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Label_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Label_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap List {
-            get {
+        internal static System.Drawing.Bitmap List
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("List", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap List_16x16 {
-            get {
+        internal static System.Drawing.Bitmap List_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("List_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MenuBar_16x16 {
-            get {
+        internal static System.Drawing.Bitmap MenuBar_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("MenuBar_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MenuItem_16x16 {
-            get {
+        internal static System.Drawing.Bitmap MenuItem_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("MenuItem_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MobileDevice_16x16 {
-            get {
+        internal static System.Drawing.Bitmap MobileDevice_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("MobileDevice_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MobileDevice_32x32 {
-            get {
+        internal static System.Drawing.Bitmap MobileDevice_32x32
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("MobileDevice_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
+        ///   Looks up a localized string similar to // Payload for communication - JavaScript to C# or Java
         ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
+        ///GingerPayLoadObj = null;
         ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
+        ///// strict mode = must define variables which is good programming :)
+        /////&apos;use strict&apos;;
         ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
+        ///
+        ///function GingerPayLoad(Name) {
+        ///    const LastByteMarker = 255;
+        ///    const cNULLStringLen = -1;
+        ///
+        ///    // all this. = public
+        ///    // all var = is private
+        ///
+        ///    this.Name = Name;
+        ///    this.mBufferIndex = 4;// We start to write data at position 4, the first 4 bytes will be the data length
+        ///
+        ///   
+        ///    this.mBuffer = new ArrayBuffer(102 [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string PayLoad {
-            get {
+        internal static string PayLoad
+        {
+            get
+            {
                 return ResourceManager.GetString("PayLoad", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Pin32x32 {
-            get {
+        internal static System.Drawing.Bitmap Pin32x32
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Pin32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap PopUpHandler_16x16 {
-            get {
+        internal static System.Drawing.Bitmap PopUpHandler_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PopUpHandler_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap RadioButton_16x16 {
-            get {
+        internal static System.Drawing.Bitmap RadioButton_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("RadioButton_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Random {
-            get {
+        internal static System.Drawing.Bitmap Random
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Random", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Record32x32 {
-            get {
+        internal static System.Drawing.Bitmap Record32x32
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Record32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SoapUI16x16 {
-            get {
+        internal static System.Drawing.Bitmap SoapUI16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SoapUI16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Star_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Star_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Star_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap StarGray_16x16 {
-            get {
+        internal static System.Drawing.Bitmap StarGray_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("StarGray_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Table {
-            get {
+        internal static System.Drawing.Bitmap Table
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Table", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TextBox_16x16 {
-            get {
+        internal static System.Drawing.Bitmap TextBox_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TextBox_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap TreeView_16x16 {
-            get {
+        internal static System.Drawing.Bitmap TreeView_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TreeView_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Vbs16x16 {
-            get {
+        internal static System.Drawing.Bitmap Vbs16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Vbs16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap VisualTesting_16x16 {
-            get {
+        internal static System.Drawing.Bitmap VisualTesting_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("VisualTesting_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to (function () {
         ///    function h(a) { return function () { return this[a] } } function l(a) { return function () { return a } } var m = this;
         ///function aa(a){var b=typeof a;if(&quot;object&quot;==b)if(a){if(a instanceof Array)return&quot;array&quot;;if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if(&quot;[object Window]&quot;==c)return&quot;object&quot;;if(&quot;[object Array]&quot;==c||&quot;number&quot;==typeof a.length&amp;&amp;&quot;undefined&quot;!=typeof a.splice&amp;&amp;&quot;undefined&quot;!=typeof a.propertyIsEnumerable&amp;&amp;!a.propertyIsEnumerable(&quot;splice&quot;))return&quot;array&quot;; [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string wgxpath_install {
-            get {
+        internal static string wgxpath_install
+        {
+            get
+            {
                 return ResourceManager.GetString("wgxpath_install", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Window_16x16 {
-            get {
+        internal static System.Drawing.Bitmap Window_16x16
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Window_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }

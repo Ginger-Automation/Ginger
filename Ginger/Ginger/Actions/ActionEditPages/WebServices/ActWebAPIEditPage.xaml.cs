@@ -129,14 +129,17 @@ namespace Ginger.Actions.WebServices
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotImportRequestFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportRequestFile, "False"));
 
             //SSL Certificates:
-            CertificatePath.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseSSLCertificate));
+            xCertificatePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseSSLCertificate));
             CertificatePasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.CertificatePassword), true, false, UCValueExpression.eBrowserType.Folder);
 
             //KeyFile Certificate
-            KeyFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.KeyFilePath), true, true, UCValueExpression.eBrowserType.File, "*.*");
+            xKeyFilePathTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.KeyFilePath), true, true, UCValueExpression.eBrowserType.File, "*.*", new RoutedEventHandler(BrowseKeyFile));
 
             //Import Certificate
-            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(DoNotCertificateImportFile, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xCertificateImportFileCheckbox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportCetificateFile, "False"));
+
+            //Import KeyFile
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xImportKeyFileCheckBox, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.ImportKeyFile, "False"));
 
             //Security:
             SecurityTypeComboBox.Init(mAct.GetOrCreateInputParam(ActWebAPIBase.Fields.SecurityType, ApplicationAPIUtils.eSercurityType.None.ToString()), typeof(ApplicationAPIUtils.eSercurityType), false, null);
@@ -332,7 +335,7 @@ namespace Ginger.Actions.WebServices
 
         private void SecExpanded(object sender, RoutedEventArgs e)
         {
-            if ((!string.IsNullOrEmpty(CertificatePath.ValueTextBox.Text)) || (!string.IsNullOrEmpty(CertificatePasswordUCValueExpression.ValueTextBox.Text)))
+            if ((!string.IsNullOrEmpty(xCertificatePathTextBox.ValueTextBox.Text)) || (!string.IsNullOrEmpty(CertificatePasswordUCValueExpression.ValueTextBox.Text)))
             {
                 SecurityExpander.IsExpanded = true;
             }
@@ -346,48 +349,98 @@ namespace Ginger.Actions.WebServices
         private void BrowseSSLCertificate(object sender, RoutedEventArgs e)
         {
             string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            if (CertificatePath.ValueTextBox.Text != null)
+            if (xCertificatePathTextBox.ValueTextBox.Text != null)
             {
                 // replace Absolute file name with relative to solution
-                string FileName = CertificatePath.ValueTextBox.Text.ToUpper();
+                string FileName = xCertificatePathTextBox.ValueTextBox.Text.ToUpper();
                 if (FileName.Contains(SolutionFolder))
                 {
                     FileName = FileName.Replace(SolutionFolder, @"~\");
                 }
 
-                CertificatePath.ValueTextBox.Text = FileName;
+                xCertificatePathTextBox.ValueTextBox.Text = FileName;
 
                 bool ImportFileFlag = false;
                 Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportCetificateFile), out ImportFileFlag);
                 if (ImportFileFlag)
                 {
-                    //TODO import Certificate File to solution folder
-                    string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\Certificates");
-                    if (!System.IO.Directory.Exists(targetPath))
-                    {
-                        System.IO.Directory.CreateDirectory(targetPath);
-                    }
+                    ////TODO import Certificate File to solution folder
+                    //string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\Certificates");
+                    //if (!System.IO.Directory.Exists(targetPath))
+                    //{
+                    //    System.IO.Directory.CreateDirectory(targetPath);
+                    //}
                     
-                    string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
+                    //string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(FileName));
 
-                    int fileNum = 1;
-                    string copySufix = "_Copy";
-                    while (System.IO.File.Exists(destFile))
-                    {
-                        fileNum++;
-                        string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
-                        if (newFileName.IndexOf(copySufix) != -1)
-                            newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
-                        newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
-                        destFile = System.IO.Path.Combine(targetPath, newFileName);
-                    }
+                    //int fileNum = 1;
+                    //string copySufix = "_Copy";
+                    //while (System.IO.File.Exists(destFile))
+                    //{
+                    //    fileNum++;
+                    //    string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
+                    //    if (newFileName.IndexOf(copySufix) != -1)
+                    //        newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                    //    newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
+                    //    destFile = System.IO.Path.Combine(targetPath, newFileName);
+                    //}
                     
-                    System.IO.File.Copy(FileName, destFile, true);
-                    CertificatePath.ValueTextBox.Text = @"~\Documents\WebServices\Certificates\" + System.IO.Path.GetFileName(destFile);
+                    //System.IO.File.Copy(FileName, destFile, true);
+                    //xCertificatePathTextBox.ValueTextBox.Text = @"~\Documents\WebServices\Certificates\" + System.IO.Path.GetFileName(destFile);
+                    xCertificatePathTextBox.ValueTextBox.Text = ImportFileToDocuments(FileName);
+                }
+            }
+        }
+        private void BrowseKeyFile(object sender, RoutedEventArgs e)
+        {
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+            if (xKeyFilePathTextBox.ValueTextBox.Text != null)
+            {
+                // replace Absolute file name with relative to solution
+                string FileName = xKeyFilePathTextBox.ValueTextBox.Text.ToUpper();
+                if (FileName.Contains(SolutionFolder))
+                {
+                    FileName = FileName.Replace(SolutionFolder, @"~\");
+                }
+
+                xKeyFilePathTextBox.ValueTextBox.Text = FileName;
+
+                bool ImportFileFlag = false;
+                Boolean.TryParse(mAct.GetInputParamValue(ActWebAPIBase.Fields.ImportKeyFile), out ImportFileFlag);
+                if (ImportFileFlag)
+                {
+                    xKeyFilePathTextBox.ValueTextBox.Text = ImportFileToDocuments(FileName);
                 }
             }
         }
 
+        string ImportFileToDocuments(string fileName)
+        {
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
+
+            string targetPath = System.IO.Path.Combine(SolutionFolder, @"Documents\WebServices\Certificates");
+            if (!System.IO.Directory.Exists(targetPath))
+            {
+                System.IO.Directory.CreateDirectory(targetPath);
+            }
+
+            string destFile = System.IO.Path.Combine(targetPath, System.IO.Path.GetFileName(fileName));
+
+            int fileNum = 1;
+            string copySufix = "_Copy";
+            while (System.IO.File.Exists(destFile))
+            {
+                fileNum++;
+                string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
+                if (newFileName.IndexOf(copySufix) != -1)
+                    newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
+                destFile = System.IO.Path.Combine(targetPath, newFileName);
+            }
+
+            System.IO.File.Copy(fileName, destFile, true);
+            return System.IO.Path.Combine(@"~\Documents\WebServices\Certificates\" , System.IO.Path.GetFileName(destFile));
+        }
         private void CertificateSelection_Changed(object sender, RoutedEventArgs e)
         {
             mAct.AddOrUpdateInputParamValue(ActWebAPIBase.Fields.CertificateTypeRadioButton, (((RadioButton)sender).Tag).ToString());
