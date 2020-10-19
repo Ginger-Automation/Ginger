@@ -3628,10 +3628,12 @@ namespace Ginger.Run
                         }
                             //TODO: Why this is here? do we need to rehook
                             CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
-
-                        if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                        if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                         {
                             CurrentBusinessFlow.LastFailedActivity = ExecutingActivity;
+                        }
+                        if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                        {                            
                             //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
                             CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             if (!(CurrentBusinessFlow.Activities.IsLastItem()))
