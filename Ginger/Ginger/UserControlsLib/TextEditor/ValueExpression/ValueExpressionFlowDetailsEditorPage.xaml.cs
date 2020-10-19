@@ -66,11 +66,13 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.BusinessFlow:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedBusinessFlow:
                     objType = typeof(BusinessFlow);
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Activity:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousActivity:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivity:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedActivity:
                     objType = typeof(Activity);
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Action:

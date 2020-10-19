@@ -80,6 +80,29 @@
     {
       "Category": "Data",
       "SubCategory": "Flow Details",
+      "Name": "Last Failed Business Flow Name",
+      "Expression": "{FD Object=LastFailedBusinessFlow Field=Name}",
+      "UseCase": "Get Last Failed Business Flow Name",
+      "Samples": [ "{FD Object=LastFailedBusinessFlow Field=Name} will give you Last Failed Business Flow name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Data",
+      "SubCategory": "Flow Details",
+      "Name": "Last Failed Activity Name",
+      "Expression": "{FD Object=LastFailedActivity Field=ActivityName}",
+      "UseCase": "Get Last Failed Activity Name",
+      "Samples": [ "{FD Object=LastFailedActivity Field=ActivityName} will give you Last Failed Activity name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+
+    {
+      "Category": "Data",
+      "SubCategory": "Flow Details",
       "Name": "Activity Name",
       "Expression": "{FD Object=Activity Field=ActivityName}",
       "UseCase": "Get Current Activity Name",
@@ -215,7 +238,7 @@
       "Name": "Last Failed Action Name",
       "Expression": "{FD Object=LastFailedAction Field=Name}",
       "UseCase": "Get Last Failed Action Name",
-      "Samples": [ "{FD Object=LastFailedAction Field=Name} will give you Last Failed Action Name" ],
+      "Samples": [ "{FD Object=LastFailedAction Field=Description} will give you Last Failed Action Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
       "IconImageName": null
@@ -257,9 +280,9 @@
       "Category": "Data",
       "SubCategory": "Flow Details",
       "Name": "Error Handler Origin Action Name",
-      "Expression": "{FD Object=ErrorHandlerOriginAction Field=Name}",
+      "Expression": "{FD Object=ErrorHandlerOriginAction Field=Description}",
       "UseCase": "Get Error Handler Origin Name",
-      "Samples": [ "{FD Object=ErrorHandlerOriginAction Field=Name} will give you Error Handler Origin Action Name" ],
+      "Samples": [ "{FD Object=ErrorHandlerOriginAction Field=Description} will give you Error Handler Origin Action Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
       "IconImageName": null

@@ -245,7 +245,7 @@ namespace GingerCore
 
         public enum eFlowDetailsObjects
         {
-            Environment, Runset, Runner, BusinessFlow, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivity, ErrorHandlerOriginAction
+            Environment, Runset, Runner, BusinessFlow, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity
         }
 
         public static Tuple<eFlowDetailsObjects, string> GetFlowDetailsParams(string flowDetailsExpression)
@@ -310,7 +310,13 @@ namespace GingerCore
                     objtoEval = runset;                                   
                     break;
                 case eFlowDetailsObjects.Runner:
-                    objtoEval = runner;                                                             
+                    objtoEval = runner;
+                    break;
+                case eFlowDetailsObjects.LastFailedBusinessFlow:
+                    if (runner != null)
+                    {
+                        objtoEval = runner.LastFailedBusinessFlow;
+                    }
                     break;
                 case eFlowDetailsObjects.BusinessFlow:
                     objtoEval = this.BF;                                    
@@ -358,6 +364,12 @@ namespace GingerCore
                     if (this.BF != null)
                     {
                         objtoEval = this.BF.ErrorHandlerOriginAction;
+                    }
+                    break;
+                case eFlowDetailsObjects.LastFailedActivity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.LastFailedActivity;
                     }
                     break;
             }

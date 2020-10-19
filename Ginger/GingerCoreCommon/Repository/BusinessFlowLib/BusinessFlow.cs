@@ -384,6 +384,19 @@ namespace GingerCore
             }
         }
 
+        private Activity mLastFailedActivity;
+        public Activity LastFailedActivity
+        {
+            get
+            {
+                return mLastFailedActivity;
+            }
+            set
+            {
+                mLastFailedActivity = value;
+            }
+        }
+
         private Act mErrorHandlerOriginAction;
         public Act ErrorHandlerOriginAction
         {
@@ -1087,6 +1100,7 @@ namespace GingerCore
             LastFailedAction = null;
             ErrorHandlerOriginActivity = null;
             ErrorHandlerOriginAction = null;
+            LastFailedActivity = null;
         }
 
         public string AutomationPrecentage

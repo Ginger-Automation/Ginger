@@ -170,7 +170,21 @@ namespace Ginger.Run
                 mPreviousBusinessFlow = value;              
             }
         }
-        
+
+
+        private BusinessFlow mLastFailedBusinessFlow;
+        public BusinessFlow LastFailedBusinessFlow
+        {
+            get
+            {
+                return mLastFailedBusinessFlow;
+            }
+            set
+            {
+                mLastFailedBusinessFlow = value;
+            }
+        }
+
         public bool AgentsRunning = false;
         public ExecutionWatch RunnerExecutionWatch = new ExecutionWatch();
         public eExecutedFrom ExecutedFrom;
@@ -594,6 +608,7 @@ namespace Ginger.Run
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);
                     if (flowControlIndx == null && executedBusFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed) //stop if needed based on current BF failure
                     {
+                        LastFailedBusinessFlow = executedBusFlow;
                         if ((executedBusFlow.Mandatory == true) || (executedBusFlow.Mandatory == false & RunOption == eRunOptions.StopAllBusinessFlows))
                         {
                             SetNextBusinessFlowsBlockedStatus();
@@ -3616,6 +3631,7 @@ namespace Ginger.Run
 
                         if (ExecutingActivity.Mandatory && ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                         {
+                            CurrentBusinessFlow.LastFailedActivity = ExecutingActivity;
                             //CurrentBusinessFlow.Elapsed = st.ElapsedMilliseconds;
                             CurrentBusinessFlow.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                             if (!(CurrentBusinessFlow.Activities.IsLastItem()))
@@ -4046,6 +4062,7 @@ namespace Ginger.Run
                     NotifyBusinessflowWasReset(businessFlow);
                 }
             }
+            LastFailedBusinessFlow = null;
         }
 
        
