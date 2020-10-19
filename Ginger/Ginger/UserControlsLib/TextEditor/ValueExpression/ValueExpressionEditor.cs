@@ -161,7 +161,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         private Page GetPageFor(SelectedContentArgs SelectedContentArgs)
         {            
             string txt = SelectedContentArgs.TextEditor.Text.Substring(SelectedContentArgs.StartPos, SelectedContentArgs.Length);
-
+            p = null;
             if (txt.StartsWith("{Var Name="))
             {
                 p= new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs);
