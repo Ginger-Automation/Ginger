@@ -283,8 +283,7 @@ namespace GingerCore.ALM
             {
                 if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
                 {
-                    String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
-                    publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                    publishToALMConfig.VariableForTCRunName = "GingerRun_" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
                 }
                 //get the BF matching test set
                 QCTestSet testSet = this.GetTestSuiteById(bizFlow.ExternalID);//bf.externalID holds the TestSet TSTests collection id
