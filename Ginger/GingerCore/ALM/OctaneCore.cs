@@ -230,7 +230,7 @@ namespace GingerCore.ALM
                 {
                     if (string.IsNullOrEmpty(item.SelectedValue)|| item.SelectedValue=="Unassigned")
                     {
-                        item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
+                        //item.SelectedValue= defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID]!= "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
                     }
                     filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
                 }
@@ -552,7 +552,7 @@ namespace GingerCore.ALM
                 foreach (FieldMetadata field in entityFields.data)
                 {
                     if (string.IsNullOrEmpty(field.Label) || !field.VisibleInUI || !field.IsEditable 
-                        || field.Name.ToLower() == "name" || field.Name.ToLower() == "parent" || field.GetValue("access_level").Equals("PRIVATE"))
+                        || field.Name.ToLower() == "parent" || field.GetValue("access_level").Equals("PRIVATE"))
                     {
                         continue;
                     }
@@ -597,7 +597,8 @@ namespace GingerCore.ALM
                             itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
                         }
                     }
-                    else if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
+                    
+                    if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
                     {
                         itemfield.SelectedValue = "Unassigned";
                     }
@@ -631,7 +632,8 @@ namespace GingerCore.ALM
                 List<TestSuite_Test_Link> TSLink;
                 QCTestInstanceColl testCollection = new QCTestInstanceColl();
                 CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSetID, ComparisonOperator.Equal));
-                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
+                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd,new LogicalQueryPhrase("subtype", "test_suite_link_to_manual", ComparisonOperator.Equal) };
+            
                 TSLink = octaneRepository.GetEntities<TestSuite_Test_Link>(GetLoginDTO(), filter);
                 foreach (TestSuite_Test_Link item in TSLink)
                 {
