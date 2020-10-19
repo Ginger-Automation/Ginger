@@ -263,6 +263,9 @@ namespace Amdocs.Ginger.Common.Enums
         CSV,
         Clipboard,
         ID,
+        RegularExpression,
+        DataManipulation,
+        General,
         #endregion
 
         #region Source control Images     
