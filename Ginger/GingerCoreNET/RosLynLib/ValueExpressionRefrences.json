@@ -2,7 +2,18 @@
   "Refrences": [
     {
       "Category": "Data Validation",
-      "SubCategory": "General",
+      "SubCategory": "Math",
+      "Name": "Comparison",
+      "Expression": "{CS Exp=20==10}",
+      "UseCase": "Compare numbers equal/bigger/smaller",
+      "Samples": [ "{CS Exp=20==10}" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Data Validation",
+      "SubCategory": "Math",
       "Name": "AND",
       "Expression": "{CS Exp=20>10 && 9<10}",
       "UseCase": "Compare string, number etc",
@@ -13,7 +24,7 @@
     },
     {
       "Category": "Data Validation",
-      "SubCategory": "General",
+      "SubCategory": "Math",
       "Name": "OR",
       "Expression": "{CS Exp=5>6 || 4<5}",
       "UseCase": "Compare string, number etc",
@@ -24,18 +35,18 @@
     },
     {
       "Category": "Data Validation",
-      "SubCategory": "General",
+      "SubCategory": "String",
       "Name": "Comparison",
-      "Expression": "{CS Exp=@\"Hello\".Equals(@\"Hello\")}",
+      "Expression": "{CS Exp=@\"Hello\" == @\"Hello\"}",
       "UseCase": "Compare string, number etc",
-      "Samples": [ "{CS Exp=@\"Hello\".Equals(@\"Hello\")} will compare two strings" ],
+      "Samples": [ "{CS Exp=@\"Hello\" == @\"Hello\"} will compare two strings" ],
       "ReturnType": null,
       "ExpressionResult": null,
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Environment",
       "Name": "Environment Name",
       "Expression": "{FD Object=Environment Field=Name}",
       "UseCase": "Get Current Environment Name",
@@ -45,8 +56,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Runset",
       "Name": "Runset Name",
       "Expression": "{FD Object=Runset Field=Name}",
       "UseCase": "Get Current Runset Name",
@@ -56,8 +67,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Runner",
       "Name": "Runner Name",
       "Expression": "{FD Object=Runner Field=Name}",
       "UseCase": "Get Current Runner Name",
@@ -67,8 +78,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Business Flow",
       "Name": "Business Flow Name",
       "Expression": "{FD Object=BusinessFlow Field=Name}",
       "UseCase": "Get Current Business Flow Name",
@@ -78,8 +89,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Business Flow",
       "Name": "Last Failed Business Flow Name",
       "Expression": "{FD Object=LastFailedBusinessFlow Field=Name}",
       "UseCase": "Get Last Failed Business Flow Name",
@@ -89,8 +100,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Activity",
       "Name": "Last Failed Activity Name",
       "Expression": "{FD Object=LastFailedActivity Field=ActivityName}",
       "UseCase": "Get Last Failed Activity Name",
@@ -101,8 +112,8 @@
     },
 
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Activity",
       "Name": "Activity Name",
       "Expression": "{FD Object=Activity Field=ActivityName}",
       "UseCase": "Get Current Activity Name",
@@ -112,8 +123,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Action Name",
       "Expression": "{FD Object=Action Field=Description}",
       "UseCase": "Get Current Action Name",
@@ -123,8 +134,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Business Flow",
       "Name": "Previous Business Flow Name",
       "Expression": "{FD Object=PreviousBusinessFlow Field=Name}",
       "UseCase": "Get Previous Business Flow Name",
@@ -134,8 +145,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Business Flow",
       "Name": "Previous Business Flow Status",
       "Expression": "{FD Object=PreviousBusinessFlow Field=RunStatus}",
       "UseCase": "Get Previous Business Flow Status",
@@ -145,8 +156,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Business Flow",
       "Name": "Previous Business Flow Duration",
       "Expression": "{FD Object=PreviousBusinessFlow Field=ElapsedSecs}",
       "UseCase": "Get Previous Business Flow Duration",
@@ -156,8 +167,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Activity",
       "Name": "Previous Activity Name",
       "Expression": "{FD Object=PreviousActivity Field=ActivityName}",
       "UseCase": "Get Previous Activity Name",
@@ -167,8 +178,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Activity",
       "Name": "Previous Activity Status",
       "Expression": "{FD Object=PreviousActivity Field=Status}",
       "UseCase": "Get Previous Activity Status",
@@ -178,8 +189,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Activity",
       "Name": "Previous Activity Duration",
       "Expression": "{FD Object=PreviousActivity Field=ElapsedSecs}",
       "UseCase": "Get Previous Activity Duration",
@@ -189,8 +200,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Previous Action Name",
       "Expression": "{FD Object=PreviousAction Field=Description}",
       "UseCase": "Get Previous Action Name",
@@ -200,8 +211,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Previous Action Status",
       "Expression": "{FD Object=PreviousAction Field=Status}",
       "UseCase": "Get Previous Action Name",
@@ -211,8 +222,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Previous Action Duration",
       "Expression": "{FD Object=PreviousAction Field=ElapsedSecs}",
       "UseCase": "Get Previous Action Duration",
@@ -222,8 +233,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Previous Action Extra Info",
       "Expression": "{FD Object=PreviousAction Field=ExInfo}",
       "UseCase": "Get Previous Action Details",
@@ -233,8 +244,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Last Failed Action Name",
       "Expression": "{FD Object=LastFailedAction Field=Name}",
       "UseCase": "Get Last Failed Action Name",
@@ -244,8 +255,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Last Failed Action Error",
       "Expression": "{FD Object=LastFailedAction Field=Error}",
       "UseCase": "Get Last Failed Action Error",
@@ -255,8 +266,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Last Failed Action Extra Info",
       "Expression": "{FD Object=LastFailedAction Field=ExInfo}",
       "UseCase": "Get Last Failed Action Extra Info",
@@ -266,8 +277,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Activity",
       "Name": "Error Handler Origin Activity Name",
       "Expression": "{FD Object=ErrorHandlerOriginActivity Field=ActivityName}",
       "UseCase": "Get Error Handler Origin Activity Name",
@@ -277,8 +288,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Error Handler Origin Action Name",
       "Expression": "{FD Object=ErrorHandlerOriginAction Field=Description}",
       "UseCase": "Get Error Handler Origin Name",
@@ -288,8 +299,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Error Handler Origin Action Error",
       "Expression": "{FD Object=ErrorHandlerOriginAction Field=Error}",
       "UseCase": "Get Last Failed Action Error",
@@ -299,8 +310,8 @@
       "IconImageName": null
     },
     {
-      "Category": "Data",
-      "SubCategory": "Flow Details",
+      "Category": "Flow Details",
+      "SubCategory": "Action",
       "Name": "Error Handler Origin Action Extra Info",
       "Expression": "{FD Object=ErrorHandlerOriginAction Field=ExInfo}",
       "UseCase": "Get Error Handler Origin Extra Info",
@@ -332,7 +343,7 @@
       "IconImageName": null
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "List",
       "Name": "Choose a val from list",
       "Expression": "{CS Exp=new object[] {5,6,7,8}[0]}",
@@ -343,7 +354,7 @@
       "IconImageName": null
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "List",
       "Name": "Concatenate list w delimiter",
       "Expression": "{CS Exp=String.Join(@\"|\", new string[] { @\"A\", @\"B\", @\"C\", @\"D\" })}",
@@ -541,7 +552,7 @@
       "IconImageName": "@Clock_16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "Regular Expressions",
       "Name": "Extract Initial Digits",
       "Expression": "{RegEx Fun= 1 Pat=([\\d\\D]{2}).*$ P1=12345}",
@@ -552,7 +563,7 @@
       "IconImageName": "@Regex16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "Regular Expressions",
       "Name": "Extract Last Digits",
       "Expression": "{RegEx Fun=  1 Pat=.+([\\d\\D]{2})$ P1=12345}",
@@ -563,7 +574,7 @@
       "IconImageName": "@Regex16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "Regular Expressions",
       "Name": "Extract Number From Text",
       "Expression": "{RegEx Fun= matchValue Pat=\\d+ P1= aaa 123 bbb }",
@@ -574,7 +585,7 @@
       "IconImageName": "@Regex16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "Regular Expressions",
       "Name": "Remove Characters From Numbers",
       "Expression": "{RegEx Fun= Replace Pat=\\D+ P1=(404) 200-0352}",
@@ -641,7 +652,7 @@
 
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "String",
       "Name": "Replace Text",
       "Expression": "{CS Exp=@\"abc\".Replace(@\"b\",@\"d\")}",
@@ -656,7 +667,7 @@
       "Expression": "{CS Exp=@\"abc\".Contains(\"b\")}",
       "ExpressionResult": "true",
       "IconImageName": "@A_16x16.png",
-      "Name": "Text Contains",
+      "Name": "Contains",
       "Samples": [ "{CS Exp=@\"abc\".Contains(\"b\")} will return true if b is present in abc" ],
       "UseCase": "Check if provided text is present in string"
     },
@@ -683,6 +694,26 @@
     {
       "Category": "Data Validation",
       "SubCategory": "String",
+      "Expression": "{CS Exp=@\"abc\".Contains(\"b\") && 7<10}",
+      "ExpressionResult": "true",
+      "IconImageName": "@A_16x16.png",
+      "Name": "AND",
+      "Samples": [ "{CS Exp=@\"abc\".Contains(\"b\") && 7<10} will return true if b is present in abc AND if 7 smaller than 10" ],
+      "UseCase": "Check 2 conditions one is text based and other numbers based with AND relation"
+    },
+    {
+      "Category": "Data Validation",
+      "SubCategory": "String",
+      "Expression": "{CS Exp=@\"abc\".Contains(\"b\") || 7<10}",
+      "ExpressionResult": "true",
+      "IconImageName": "@A_16x16.png",
+      "Name": "OR",
+      "Samples": [ "{CS Exp=@\"abc\".Contains(\"b\") || 7<10} will return true if b is present in abc OR if 7 smaller than 10" ],
+      "UseCase": "Check 2 conditions one is text based and other numbers based with OR relation"
+    },
+    {
+      "Category": "Data Operations",
+      "SubCategory": "String",
       "Name": "Get String Length",
       "Expression": "{CS Exp=@\"Abc\".Length}",
       "UseCase": "Calculates length of string",
@@ -691,7 +722,7 @@
       "ExpressionResult": "3"
     },
     {
-      "Category": "Data Validation",
+      "Category": "Data Operations",
       "SubCategory": "String",
       "Name": "Get Substring",
       "Expression": "{CS Exp=@\"Abcdefgh\".Substring(1,3)}",
@@ -701,7 +732,7 @@
       "ExpressionResult": "bcd"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "String",
       "Name": "Trim whitespace",
       "Expression": "{CS Exp=@\"hel lo\".Replace(@\" \",@\"\")}",
@@ -712,7 +743,7 @@
       "IconImageName": "@A_16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "String",
       "Name": "Trim whitespace & line breaks",
       "Expression": "{CS Exp={Actual}.Replace(System.Environment.NewLine,@\"\").Replace(@\" \",@\"\")}",
@@ -723,7 +754,7 @@
       "IconImageName": "@A_16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "String",
       "Name": "Get Inner String Index",
       "Expression": "{CS Exp=@\"Hello World\".IndexOf(@\"World\")}",
@@ -734,7 +765,7 @@
       "IconImageName": "@Clock_16x16.png"
     },
     {
-      "Category": "Data Manipulation",
+      "Category": "Data Operations",
       "SubCategory": "Math",
       "Name": "Add",
       "Expression": "{CS Exp=5+3}",

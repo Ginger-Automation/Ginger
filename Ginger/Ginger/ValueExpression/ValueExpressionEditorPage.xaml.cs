@@ -160,7 +160,8 @@ namespace Ginger
                 }                
             }
 
-
+            TreeViewItem dataRoot = AddOrGetCategory("Data");
+            dataRoot.IsExpanded = true;
         }
 
     
@@ -325,13 +326,31 @@ namespace Ginger
                 case "Data":
                     eImageType = eImageType.Table;
                     break;
-                case "Data Manipulation":
+                case "Data Operations":
                     eImageType = eImageType.DataManipulation;
                     break;
                 case "Data Validation":
                     eImageType = eImageType.CheckBox;
                     break;
                 case "Flow Details":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Environment":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Runset":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Runner":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Business Flow":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Activity":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Action":
                     eImageType = eImageType.BusinessFlow;
                     break;
                 case "Machine Details":
