@@ -536,7 +536,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 // Need to expand to get all lazy loading
                 tvi.IsExpanded = true;
 
-                ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
+                //ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
 
                 // Find the label in the header, this is label child of the Header Stack Panel
                 StackPanel SP = (StackPanel)tvi.Header;
