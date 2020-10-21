@@ -29,6 +29,7 @@ using System.Linq;
 using System;
 using GingerCore.Environments;
 using GingerCore;
+using System.Collections;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -92,14 +93,20 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             {
                 foreach (PropertyInfo prop in properties)
                 {
-                    lst.Add(prop.Name);
+                    if (!typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                    {
+                        lst.Add(prop.Name);
+                    }                  
                 }
             }
             if (fields != null)
             {
                 foreach (FieldInfo f in fields)
                 {
-                    lst.Add(f.Name);
+                    if (!typeof(IEnumerable).IsAssignableFrom(f.FieldType))
+                    {
+                        lst.Add(f.Name);
+                    }
                 }
             }
             fieldList.ItemsSource = lst.OrderBy(x => x).ToList();
