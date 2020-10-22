@@ -163,69 +163,65 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             //Assert
             Assert.AreEqual(10, rc);
         }
-
-        [Ignore]
+        
         [TestMethod]
         [Timeout(60000)]
         public void Comparison()
         {
-            //Arrange            
-            string s = "{CS Exp=20==10}";
+            //Arrange                      
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{CS Exp=20==10}";
 
             //Act
-            CodeProcessor SCT = new CodeProcessor();
-            bool rc = (bool)SCT.EvalExpression(s);
+            bool v = Convert.ToBoolean(VE.ValueCalculated);
 
             //Assert
-            Assert.AreEqual(false, rc);
+            Assert.AreEqual(false, v);
         }
-
-        [Ignore]
+        
         [TestMethod]
         [Timeout(60000)]
         public void LogicalOperationAND()
         {
-            //Arrange            
-            string s = "{CS Exp=20>10 && 9<10}";
+            //Arrange                      
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{CS Exp=20>10 && 9<10}";
 
             //Act
-            CodeProcessor SCT = new CodeProcessor();
-            bool rc = (bool)SCT.EvalExpression(s);
+            bool v = Convert.ToBoolean(VE.ValueCalculated);
 
             //Assert
-            Assert.AreEqual(true, rc);
+            Assert.AreEqual(true, v);
         }
-
-        [Ignore]
+        
         [TestMethod]
         [Timeout(60000)]
         public void LogicalOperationOR()
         {
-            //Arrange            
-            string s = "{CS Exp=5>6 || 4<5}";
+            //Arrange                        
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{CS Exp=5>6 || 4<5}";
 
             //Act
-            CodeProcessor SCT = new CodeProcessor();
-            bool rc = (bool)SCT.EvalExpression(s);
+            bool v = Convert.ToBoolean(VE.ValueCalculated);
 
             //Assert
-            Assert.AreEqual(true, rc);
+            Assert.AreEqual(true, v);
         }
-
-        [Ignore]
+        
         [TestMethod]
         [Timeout(60000)]
         public void MachineName()
         {
-            //Arrange            
-            string s = "{CS Exp=System.Environment.MachineName}";
+            //Arrange    
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{CS Exp=System.Environment.MachineName}";
 
             //Act
-            CodeProcessor SCT = new CodeProcessor();
-            string rc = (string)SCT.EvalExpression(s);
+            string v = VE.ValueCalculated;
 
             //Assert
-            Assert.AreEqual("testMachineName", rc);
+            Assert.AreEqual(System.Environment.MachineName, v);
         }
 
 
