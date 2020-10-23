@@ -4830,7 +4830,7 @@
     <Error Condition="!Exists('..\packages\Selenium.WebDriver.IEDriver.3.150.1\build\Selenium.WebDriver.IEDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.IEDriver.3.150.1\build\Selenium.WebDriver.IEDriver.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.0\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.0\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.0\build\Microsoft.CodeAnalysis.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.0\build\Microsoft.CodeAnalysis.Analyzers.targets'))" />
-    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.85.0.4183.8700\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.85.0.4183.8700\build\Selenium.WebDriver.ChromeDriver.targets'))" />
+    <Error Condition="!Exists('..\packages\Selenium.WebDriver.ChromeDriver.86.0.4240.2200\build\Selenium.WebDriver.ChromeDriver.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Selenium.WebDriver.ChromeDriver.86.0.4240.2200\build\Selenium.WebDriver.ChromeDriver.targets'))" />
   </Target>
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
   <PropertyGroup>
@@ -4841,7 +4841,7 @@
   <Import Project="..\packages\Selenium.Firefox.WebDriver.0.26.0\build\Selenium.Firefox.WebDriver.targets" Condition="Exists('..\packages\Selenium.Firefox.WebDriver.0.26.0\build\Selenium.Firefox.WebDriver.targets')" />
   <Import Project="..\packages\Selenium.WebDriver.IEDriver.3.150.1\build\Selenium.WebDriver.IEDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.IEDriver.3.150.1\build\Selenium.WebDriver.IEDriver.targets')" />
   <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.0\build\Microsoft.CodeAnalysis.Analyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.0\build\Microsoft.CodeAnalysis.Analyzers.targets')" />
-  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.85.0.4183.8700\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.85.0.4183.8700\build\Selenium.WebDriver.ChromeDriver.targets')" />
+  <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.86.0.4240.2200\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.86.0.4240.2200\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
