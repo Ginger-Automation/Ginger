@@ -172,12 +172,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
         
-        public void SetTitleSection(double margin, double GridLength, double TitleFontSize, FontWeight TitleFontWeight)
+        public void SetTitleSection(double margin, double GridLength, double TitleFontSize, FontWeight TitleFontWeight, Visibility titleSectionVisibility = Visibility.Visible)
         {
             xTreeItemHeaderPnl.Margin = new Thickness(margin);
             xTreeTitle.FontSize = TitleFontSize;
             xTreeTitle.FontWeight = TitleFontWeight;
             xTitleSection.HorizontalAlignment = HorizontalAlignment.Center;
+            xTitleSection.Visibility = titleSectionVisibility;
             TreeGrid.RowDefinitions[0].Height = new GridLength(GridLength);
             xTreeActionsIconsPnl.Visibility = Visibility.Collapsed;
         }

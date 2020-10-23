@@ -68,6 +68,28 @@ namespace Ginger
         static List<HighlightingRule> mHighlightingRules = null;
         private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();       
         ObservableList<ProjEnvironment> mEnvs;
+        public TreeViewItem rootTreeItem 
+        {
+            get
+            {
+                if(VETree.Items.Count==0)
+                {
+                    TreeViewItem root = new TreeViewItem();
+                    root.IsExpanded = true;
+                    SetItemView(root, "Value Expression", "", eImageType.Folder);
+                    VETree.Items.Add(root);
+                }
+                return (TreeViewItem)VETree.Items[0];
+            }
+        }
+
+        public TreeView VETree
+        {
+            get
+            {
+                return  xObjectsTreeView.Tree.Tree;
+            }
+        }
 
         public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
@@ -96,6 +118,7 @@ namespace Ginger
                                 + Environment.NewLine +
                                 "Environment Parameters enable to use the same solution on multiple environments easily.";
             ValueUCTextEditor_LostFocus(ValueUCTextEditor, null);
+            xObjectsTreeView.SetTitleSection(2, 1, 15, FontWeights.Bold,Visibility.Collapsed);            
         }
 
         class RedBrush : HighlightingBrush
@@ -293,7 +316,7 @@ namespace Ginger
         {
             TreeViewItem tviVars = new TreeViewItem();
             SetItemView(tviVars, "VBS IF Functions", "", eImageType.Null);
-            xObjectsTreeView.Items.Add(tviVars);
+            rootTreeItem.Items.Add(tviVars);
 
             AddVBSIfEval(tviVars, "Actual > 0", "{Actual} > 0");
             AddVBSIfEval(tviVars, "Actual Contains String 'ABC'", "InStr({Actual},\"ABC\")>0");
@@ -393,7 +416,7 @@ namespace Ginger
             {
                 Parent = new TreeViewItem();
                 SetItemView(Parent, Category, "", GetCategoryImageType(Category));
-                xObjectsTreeView.Items.Add(Parent);
+                rootTreeItem.Items.Add(Parent);
                 Categories.Add(Category, Parent);
             }
             return Parent;
@@ -449,7 +472,7 @@ namespace Ginger
         {
             TreeViewItem tviVars = new TreeViewItem();
             SetItemView(tviVars, "VBS Functions", "", eImageType.Null);
-            xObjectsTreeView.Items.Add(tviVars);
+            rootTreeItem.Items.Add(tviVars);
             
             AddVBSEval(tviVars, "Trim whitespace", "Trim(\"  Hello  \")");
             AddVBSEval(tviVars, "Trim whitespace & line breaks", "Trim(Replace(\"{Actual}\",\"vbCrLf\",\"\"))");
@@ -515,7 +538,7 @@ namespace Ginger
         {
             TreeViewItem tviVars = new TreeViewItem();
             SetItemView(tviVars, "RegEx Functions", "", eImageType.RegularExpression);
-            xObjectsTreeView.Items.Add(tviVars);
+            rootTreeItem.Items.Add(tviVars);
             AddRegexEval(tviVars, "Extract Initial Digits", "1 Pat=([\\d\\D]{2}).*$ P1=12345");
             AddRegexEval(tviVars, "Extract Last Digits", "1 Pat=.+([\\d\\D]{2})$ P1=12345");
             AddRegexEval(tviVars, "Extract Number From Text", "matchValue Pat=\\d+ P1= aaa 123 bbb");
@@ -819,7 +842,7 @@ namespace Ginger
                 TreeViewItem newTvi = new TreeViewItem();
                 string VarExpression = "{Var Name=" + newStringVar.Name + "}";
                 SetItemView(newTvi, newStringVar.Name, VarExpression, eImageType.Variable);
-                TreeViewItem parentTvi = (TreeViewItem)((TreeViewItem)xObjectsTreeView.SelectedItem).Parent;
+                TreeViewItem parentTvi = (TreeViewItem)((TreeViewItem)VETree.SelectedItem).Parent;
                 parentTvi.Items.Insert(parentTvi.Items.Count - 1, newTvi);
 
                 //TODO: make added variable as selected item
@@ -862,7 +885,7 @@ namespace Ginger
 
         private void AddToValueButton_Click(object sender, RoutedEventArgs e)
         {
-            TreeViewItem tvi = (TreeViewItem)xObjectsTreeView.SelectedItem;
+            TreeViewItem tvi = (TreeViewItem)VETree.SelectedItem;
             if (tvi != null)
             {
                 //Using double click event to trigger any operation configured on the tree double click
