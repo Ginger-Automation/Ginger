@@ -34,7 +34,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
         public ObservableList<dynamic> Items { get; set; }
 
-        List<string> mListProperties;
+        List<string> mListProperties = new List<string>();
 
         public DynamicListWrapper(string listType, bool AddDummyItem = false)
         {
@@ -63,7 +63,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             string props = GetStringBetween(mListType, "{Properties=", "}");
             string[] arr = props.Split(',');
             foreach (string prop in arr)
-            {  
+            {
                 if (String.IsNullOrEmpty(prop))
                 {
                     continue;
