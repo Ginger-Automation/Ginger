@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:TextEditor="clr-namespace:Ginger.UserControlsLib.TextEditor"
       xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Value Expression"
+      xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       Title="Value Expression Editor" Height="600" Width="700">
     <Grid>
         <Grid.RowDefinitions>
@@ -24,7 +25,7 @@
                 <Image Source="{StaticResource @Add_16x16}" Height="16" Width="16"/>
             </Button>
         </DockPanel>
-        <TreeView x:Name="xObjectsTreeView" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,10,0" LostFocus="XObjectsTreeView_LostFocus"/>
+        <UCTreeView:TreeView1 Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,10,0" x:Name="xObjectsTreeView" TreeTitle="Title"  LostFocus="XObjectsTreeView_LostFocus"/>
         <StackPanel Grid.Row="4" Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,10,0" Visibility="Collapsed" x:Name="xHelpPanel">
             <Label  Content="Help"  Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
             <Label x:Name="xHelpTitle" Content="Title" HorizontalContentAlignment="Left"    HorizontalAlignment="Left" FontWeight="SemiBold"/>

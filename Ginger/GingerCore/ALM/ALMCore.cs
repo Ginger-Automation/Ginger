@@ -106,7 +106,9 @@ namespace GingerCore.ALM
         public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType = ALM_Common.DataContracts.ResourceType.ALL);
         public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false);
 
-        public virtual void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType, string ALMConfigPackageFolderPath)
+        public virtual void SetALMConfigurations(   string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
+                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
+                                                    string ALMConfigPackageFolderPath, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmConfig == null)
@@ -136,6 +138,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
+            AlmConfig.JiraTestingALM = jiraTestingALM;
 
             if (!String.IsNullOrEmpty(ALMConfigPackageFolderPath))
             {

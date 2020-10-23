@@ -400,6 +400,17 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			
 													
 		}
+		else if ("IsValidBrowser".equals(PL.Name))
+		{					
+			GingerAgent.WriteLog("Is Valid Browser");
+			
+			String LocateBy = PL.GetValueString();
+			String LocateValue = PL.GetValueString();
+	
+			return IsValidBrowser(LocateBy,LocateValue);
+			
+													
+		}
 		else if ("GetPageSource".equals(PL.Name))
 		{	
 				return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);	
@@ -469,22 +480,11 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		}
 		
 		
-		else if ("GetElementProperties".equals(PL.Name))
+		else if ("GetElementProperties".equals(PL.Name) || "GetVisibleElements".equals(PL.Name) || "GetElementChildren".equals(PL.Name) || "HighLightElement".equals(PL.Name) || "GetElementInfoFromXYCoOrdinate".equals(PL.Name) )
 		{	
 			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);							
 		}		
-		else if ("GetVisibleElements".equals(PL.Name))
-		{	
-			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
-		}
-		else if("GetElementChildren".equals(PL.Name))
-		{
-				return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
-		}
-		else if("HighLightElement".equals(PL.Name))
-		{
-			return mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
-		}
+		
 		/////////////////////////////////////////////////////
 		// End of Widgets  Commands
 		/////////////////////////////////////////////////////
@@ -713,6 +713,24 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Unknown Package Type - " + PL.Name);
 	}
 	
+	private PayLoad IsValidBrowser(String locateBy, String locateValue) {
+		
+		Component browser = mSwingHelper.FindElement(locateBy, locateValue);
+		
+		if (browser != null)
+		{
+			mBrowserHelper = new BrowserHelper(browser);
+					
+			Boolean isValid = mBrowserHelper.isBrowserValid();
+					
+			if(isValid)
+			{
+				return PayLoad.OK("Valid Browser");
+			}
+		}
+		return PayLoad.Error(PayLoad.ErrorCode.BadRequest.GetErrorCode(),"Invalid browser.");
+	}
+
 	private PayLoad HandleAgentOperation(PayLoad PL)
 	{
 		String agentOperationType= PL.GetValueEnum();			

@@ -48,15 +48,15 @@ namespace GingerCore.ALM.JIRA
         {
             GetJiraDomainProjects();
             List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
-            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.Prefix.Equals(ALMCore.DefaultAlmConfig.ALMProjectKey)).FirstOrDefault();
+            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.ProjectId.ToString() == ALMCore.DefaultAlmConfig.ALMProjectKey.ToString()).FirstOrDefault();
             if (selectedProj != null)
             {
                 //Save selected project details
                 connectedProjectDefenition = selectedProj;
                 ALMCore.DefaultAlmConfig.ALMProjectName = selectedProj.ProjectName;
-                ALMCore.DefaultAlmConfig.ALMProjectKey = selectedProj.Prefix;
+                ALMCore.DefaultAlmConfig.ALMProjectKey = selectedProj.ProjectId.ToString();
                 JiraCore.ALMProjectGuid = selectedProj.Guid;
-                JiraCore.ALMProjectGroupName = selectedProj.Prefix;
+                JiraCore.ALMProjectGroupName = selectedProj.ProjectId.ToString();
                 return true;
             }
             return false;
@@ -96,7 +96,7 @@ namespace GingerCore.ALM.JIRA
             if (jiraDomainsProjectsDataList.Count > 0)
             {
                 currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
-                jiraProjects = currentDomainProject.ToDictionary(x => x.Prefix, x => x.ProjectName);
+                jiraProjects = currentDomainProject.ToDictionary(x => x.ProjectId.ToString(), x => x.ProjectName);          
             }
             return jiraProjects;
         }
@@ -114,6 +114,11 @@ namespace GingerCore.ALM.JIRA
                 }
             }
             return jiraDomains;
+        }
+
+        internal List<string> GetJiraTestingALMs()
+        {
+            return jiraRepositoryObj.GetJiraTestALM();
         }
 
         public void DisconnectJiraServer()

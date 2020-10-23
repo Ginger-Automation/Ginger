@@ -116,7 +116,9 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
-        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType, string ALMConfigPackageFolderPath)
+        public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
+                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
+                                                    string ALMConfigPackageFolderPath, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType testingALMType = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
 
@@ -137,6 +139,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
             AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+            AlmConfig.JiraTestingALM = testingALMType;
         }
         
         #region RQM Configurations Package
