@@ -153,7 +153,7 @@ namespace GingerCore.Actions
                     }
                     catch (System.Exception ex)
                     {
-                        Error= $"Error occured during SetValue for Variable number type..:- {ex.Message}";
+                        Error= $"Error occurred during SetValue for Variable number type..:- {ex.Message}";
                         return;
                     }
 
