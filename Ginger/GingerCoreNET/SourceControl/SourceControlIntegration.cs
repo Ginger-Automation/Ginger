@@ -209,7 +209,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during resolving conflicts..",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during resolving conflicts..",ex);
                 return false;
             }
 
