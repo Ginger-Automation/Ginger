@@ -30,6 +30,7 @@ using System;
 using GingerCore.Environments;
 using GingerCore;
 using System.Collections;
+using GingerCore.Activities;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -69,6 +70,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedBusinessFlow:
                     objType = typeof(BusinessFlow);
+                    break;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.ActivitiesGroup:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivitiesGroup:
+                    objType = typeof(ActivitiesGroup);
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Activity:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousActivity:

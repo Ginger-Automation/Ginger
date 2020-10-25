@@ -31,6 +31,7 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
+using GingerCore.Helpers;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -76,7 +77,7 @@ namespace Ginger
                 {
                     TreeViewItem root = new TreeViewItem();
                     root.IsExpanded = true;
-                    SetItemView(root, "Value Expression", "", eImageType.Folder);
+                    SetItemView(root, "Expressions", "", eImageType.Variable);
                     VETree.Items.Add(root);
                 }
                 return (TreeViewItem)VETree.Items[0];
@@ -103,9 +104,10 @@ namespace Ginger
                 mContext = new Context();
             }
 
+            xObjectsTreeView.SetTopToolBarTools(addHandler: xAddExpressionButton_Click);
             xExpressionUCTextEditor.Bind(obj, AttrName);
             xExpressionUCTextEditor.HideToolBar();
-            xExpressionUCTextEditor.lblTitle.Content = "Expression";
+            xExpressionUCTextEditor.lblTitle.Content = "Value Expression:";
             xExpressionUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
 
             GetHighlightingRules();
@@ -113,7 +115,8 @@ namespace Ginger
             BuildItemsTree();
             
             ValueUCTextEditor_LostFocus(xExpressionUCTextEditor, null);
-            xObjectsTreeView.SetTitleSection(2, 1, 15, FontWeights.Bold, Visibility.Collapsed);
+
+            ShowDefaultHelp();
         }
 
         class RedBrush : HighlightingBrush
@@ -203,7 +206,7 @@ namespace Ginger
             SetItemView(tvi, vb.PlaceHolder, GlobalParam, eImageType.Variable);
             parentTvi.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
-            tvi.Selected += HideHelp;
+            tvi.Selected += CleanHelpText;
         }
 
         private void AddFlowControlConditions()
@@ -365,6 +368,9 @@ namespace Ginger
                 case "Business Flow":
                     eImageType = eImageType.BusinessFlow;
                     break;
+                case "Activities Group":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
                 case "Activity":
                     eImageType = eImageType.BusinessFlow;
                     break;
@@ -518,7 +524,7 @@ namespace Ginger
                         continue;
                     TreeViewItem Parent = AddOrGetCategory(Category.DefaultValue);
                     TreeViewItem child = AddOrGetSubCategory(SubCategory.DefaultValue, Parent);
-                    child.Selected += HideHelp;
+                    child.Selected += CleanHelpText;
                     AddWSSecurityConfig(child, desc.DefaultValue, expr.DefaultValue, SubCategory.DefaultValue);
                 }
             }
@@ -567,7 +573,7 @@ namespace Ginger
             SetItemView(tviSecuritySettings, Desc, VarExpression, GetCategoryImageType(subcategory));
             tviSecSets.Items.Add(tviSecuritySettings);
             tviSecuritySettings.MouseDoubleClick += tvi_MouseDoubleClick;
-            tviSecuritySettings.Selected += HideHelp;
+            tviSecuritySettings.Selected += CleanHelpText;
         }
 
         private void AddVBSIfEval(TreeViewItem tviVars, string Desc, string Eval)
@@ -586,7 +592,7 @@ namespace Ginger
             TreeViewItem Parent = AddOrGetCategory("Data");
             //TreeViewItem child = AddOrGetSubCategory("Environments", Parent);
             TreeViewItem tviEnvs = new TreeViewItem();
-            tviEnvs.Selected += HideHelp;
+            tviEnvs.Selected += CleanHelpText;
             SetItemView(tviEnvs, "Environments", "", eImageType.Environment);
             Parent.Items.Add(tviEnvs);
 
@@ -596,7 +602,7 @@ namespace Ginger
             {                
                 TreeViewItem tviEnv = new TreeViewItem();
                 SetItemView(tviEnv, env.Name, "", eImageType.Environment);
-                tviEnv.Selected += HideHelp;
+                tviEnv.Selected += CleanHelpText;
                 tviEnvs.Items.Add(tviEnv);
 
                 TreeViewItem tviEnvApps = new TreeViewItem();
@@ -608,7 +614,7 @@ namespace Ginger
                     TreeViewItem tviEnvApp = new TreeViewItem();
                     SetItemView(tviEnvApp, a.Name, "", eImageType.Window);
                     tviEnvApps.Items.Add(tviEnvApp);
-                    tviEnvApp.Selected += HideHelp;
+                    tviEnvApp.Selected += CleanHelpText;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();
                     string URLval = "{EnvURL App=" + a.Name + "}";
@@ -631,21 +637,10 @@ namespace Ginger
                         SetItemView(tviEnvAppParam, gp.Name + " =" + gp.Value, Paramval, eImageType.Parameter);
                         tviEnvAppGlobalParam.Items.Add(tviEnvAppParam);
                         tviEnvAppParam.MouseDoubleClick += tvi_MouseDoubleClick;
-                        tviEnvAppParam.Selected += HideHelp;
+                        tviEnvAppParam.Selected += CleanHelpText;
                     }
                 }
             }
-        }
-
-        private void HideHelp(object sender, RoutedEventArgs e)
-        {           
-            xHelpTitle.Content = "The expression can be any string which includes expression components from diffrent types like " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from different levels, Environment Parameters, functions and more."
-                                + Environment.NewLine +
-                                "The expression can have more than one expression component in it and from different types- just add as many as you need!"; ;
-            XHelpCategory.Visibility = Visibility.Collapsed;
-            XHelpContentName.Visibility = Visibility.Collapsed;
-            XHelpContent.Visibility = Visibility.Collapsed;
-            XHelpExtra.Visibility = Visibility.Collapsed;
         }
 
         private void AddVariables()
@@ -717,8 +712,7 @@ namespace Ginger
             TreeViewItem tviDataSources = new TreeViewItem();
             SetItemView(tviDataSources, "Data Sources", "", eImageType.DataSource);
             Parent.Items.Add(tviDataSources);
-            tviDataSources.Selected+=HideHelp;
-
+            tviDataSources.Selected+= CleanHelpText;
 
             ObservableList<DataSourceBase> DataSources = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
@@ -746,7 +740,7 @@ namespace Ginger
                         TreeViewItem tviDSTable = new TreeViewItem();
                         SetItemView(tviDSTable, dsTable.Name, dsTable.DSTableType.ToString(), eImageType.DataTable);
                         tviDataSource.Items.Add(tviDSTable);
-                        tviDataSource.Selected += HideHelp;
+                        tviDataSource.Selected += CleanHelpText;
                         tviDSTable.DataContext = dsTable;
                         tviDSTable.MouseDoubleClick += tviDSTable_MouseDoubleClick;
                     }
@@ -973,7 +967,7 @@ namespace Ginger
             TreeViewItem TVI = sender as TreeViewItem;
             VariableBase Var = TVI.Tag as VariableBase;
 
-            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", Var.Value);
+            ShowSpecificHelp(GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", "'" + Var.Value + "'");
         }
 
         private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)
@@ -994,33 +988,72 @@ namespace Ginger
                 }
 
             }
-            UpdateHelp(false, VER.Name, VER.Category, "Samples", samples, "Expression:" + System.Environment.NewLine + VER.Expression);
+            ShowSpecificHelp(VER.Name, VER.Category, "Samples", samples, "Expression:" + System.Environment.NewLine + VER.Expression);
         }
 
-        private void UpdateHelp(bool ShowHelpCategory, string Title, string Category, string HelpContentName, string HelpContent, string HelpExtraInfo = null)
+        private void ShowDefaultHelp()
         {
-           
-            xWarningPanel.Visibility = Visibility.Collapsed;
-            //xHelpPanel.Visibility = Visibility.Visible;
+            xHelpPanelText.Text = string.Empty;
+            TextBlockHelper TBH = new TextBlockHelper(xHelpPanelText);
 
-            if (ShowHelpCategory)
-            {
-                xHelpCategoryPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
+            TBH.AddUnderLineText("Help:");
+            TBH.AddLineBreak();
 
-                xHelpCategoryPanel.Visibility = Visibility.Collapsed;
-            }
-
-            xHelpTitle.Content = Title;
-            XHelpCategory.Content = Category;
-            XHelpContentName.Text = HelpContentName + ": ";
-            XHelpContent.Text = HelpContent;
-            XHelpExtra.Text = HelpExtraInfo == null ? string.Empty : HelpExtraInfo;
+            string msg = "Enter expression like " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " from different levels, Environment Parameter or function which will be calculated in run time into dynamic value."
+                           + Environment.NewLine + Environment.NewLine +
+                           "Multiple expressions can be added together."; ;
+            TBH.AddText(msg);
         }
 
-    
+        private void ShowSpecificHelp(string title, string category, string helpContentName, string helpContent, string helpExtraInfo = null)
+        {
+            xHelpPanelText.Text = string.Empty;
+            TextBlockHelper TBH = new TextBlockHelper(xHelpPanelText);
+
+            TBH.AddUnderLineText("Help:");
+            TBH.AddLineBreak();
+
+            TBH.AddBoldText(title);
+            if (!String.IsNullOrEmpty(category))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(category);
+            }
+            if (!String.IsNullOrEmpty(helpContentName))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(helpContentName + ":");
+            }
+            if (!String.IsNullOrEmpty(helpContent))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(helpContent);
+            }
+            if (!String.IsNullOrEmpty(helpExtraInfo))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(helpExtraInfo);
+            }
+        }
+
+        private void ShowVBSWarnHelp()
+        {
+            xHelpPanelText.Text = string.Empty;
+            TextBlockHelper TBH = new TextBlockHelper(xHelpPanelText);
+
+            TBH.AddUnderLineText("Help:");
+            TBH.AddLineBreak();
+
+            string msg = "Value Expression Contains VBS Operation."
+                           + Environment.NewLine +
+                           "VBS operations are slow and works only on Windows OS, please consider changing it to CS expression."; ;
+            TBH.AddFormattedText(msg, Brushes.OrangeRed);
+        }
+
+        private void CleanHelpText(object sender, RoutedEventArgs e)
+        {
+            xHelpPanelText.Text = string.Empty;
+        }
 
         private async void ValueUCTextEditor_LostFocus(object sender, RoutedEventArgs e)
         {
@@ -1043,26 +1076,18 @@ namespace Ginger
 
             if (!string.IsNullOrEmpty(warningExpression))
             {
-                xWarningPanel.Visibility = Visibility.Visible;
-               // xHelpPanel.Visibility = Visibility.Collapsed;
-                XWarningValueExpression.Text = warningExpression;
-            }
-            else
-            {
-                xWarningPanel.Visibility = Visibility.Collapsed;
-                //xHelpPanel.Visibility = Visibility.Collapsed;
-                XWarningValueExpression.Text = string.Empty;
+                ShowVBSWarnHelp();
             }
         }
 
         private void XObjectsTreeView_LostFocus(object sender, RoutedEventArgs e)
         {
-            if(!string.IsNullOrEmpty(XWarningValueExpression.Text))
-            {
-                xWarningPanel.Visibility = Visibility.Visible;
-                //xHelpPanel.Visibility = Visibility.Collapsed;
+            //if(!string.IsNullOrEmpty(XWarningValueExpression.Text))
+            //{
+            //    xWarningPanel.Visibility = Visibility.Visible;
+            //    //xHelpPanel.Visibility = Visibility.Collapsed;
             
-            }
+            //}
         }
     }
 }
