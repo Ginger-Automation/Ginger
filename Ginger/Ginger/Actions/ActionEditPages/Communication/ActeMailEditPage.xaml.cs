@@ -49,7 +49,7 @@ namespace Ginger.Actions.Communication
             SubjectTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Subject));
             
             BodyTextBox.Init(Context.GetAsContext(mAct.Context), mAct, nameof(ActeMail.Body));
-            BodyTextBox.ValueTextBox.Height = 100;
+            BodyTextBox.AdjustHight(100);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPortTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Port));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSMTPPassTextBox, TextBox.TextProperty, mAct, nameof(ActeMail.Pass));       

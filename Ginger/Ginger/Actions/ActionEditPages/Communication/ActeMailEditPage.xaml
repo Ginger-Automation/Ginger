@@ -17,43 +17,35 @@
                 HorizontalAlignment="Stretch"/>
                 </TabItem.Header>
                 <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="57*"/>
-                        <ColumnDefinition Width="238*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="368" />
-                        <RowDefinition Height="0*"/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel Grid.ColumnSpan="2">
-                        <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From:" />
+                    <StackPanel>
+                        <Label Style="{StaticResource  $LabelStyle}" x:Name="LabelFrom" Content="From:" />
                         <Actions:UCValueExpression x:Name="MailFromTextBox" ToolTip="From" />
-                        <Label Style="{StaticResource @LabelStyle}" x:Name="xLabelMailFromDisplayName" Content="From Display Name:" />
+                        
+                        <Label Style="{StaticResource $LabelStyle}" x:Name="xLabelMailFromDisplayName" Content="From Display Name:" />
                         <Actions:UCValueExpression x:Name="xMailFromDisplayNameTextBox" ToolTip="From Display Name" />
 
-                        <Label Style="{StaticResource @LabelStyle}" Content="To:" />
+                        <Label Style="{StaticResource $LabelStyle}" Content="To:" />
                         <Actions:UCValueExpression x:Name="MailToTextBox" ToolTip="To"/>
 
-                        <Label Style="{StaticResource @LabelStyle}" Content="CC:" />
+                        <Label Style="{StaticResource $LabelStyle}" Content="CC:" />
                         <Actions:UCValueExpression x:Name="MailCCTextBox" ToolTip="CC" />
 
-                        <Label Style="{StaticResource @LabelStyle}" Content="Subject:" Margin="0,6,0,0"  />
+                        <Label Style="{StaticResource $LabelStyle}" Content="Subject:" Margin="-5,5,0,0"  />
                         <Actions:UCValueExpression x:Name="SubjectTextBox" ToolTip="Subject"/>
 
-                        <Label Style="{StaticResource @LabelStyle}" Content="Body Text:" Margin="0,6,0,0"  />
-                        <Actions:UCValueExpression x:Name="BodyTextBox"  ToolTip="Body Text" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        <Label Style="{StaticResource $LabelStyle}" Content="Body Text:" Margin="-5,5,0,0"  />
+                        <Actions:UCValueExpression x:Name="BodyTextBox" ToolTip="Body Text" ScrollViewer.VerticalScrollBarVisibility="Auto" />
 
-                        <Label Style="{StaticResource @InputFieldLabelStyle}">Attachment File Name:</Label>
+                        <Label Style="{StaticResource $LabelStyle}" Margin="-5,5,0,0">Attachment Files Path:</Label>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="17*"/>
-                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="53"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="AttachmentFilename" Margin="0,0,0,2"/>
-                            <Button x:Name="BrowseButton" Click="BrowseButton_Click" Content="Browse" Style="{StaticResource @InputButtonStyle}" Grid.Column="1" Height="Auto"  />
+                            <TextBox x:Name="AttachmentFilename" Style="{StaticResource $TextBoxStyle}" Height="25" Margin="0,0,0,2"/>
+                            <Button x:Name="BrowseButton" Click="BrowseButton_Click" Content="Browse" Style="{StaticResource  $InputButtonStyle}" Grid.Column="1" Height="Auto"  />
                         </Grid>
+                        <Label Style="{StaticResource $LabelStyle}" FontSize="10">(use ';' to separate between files path)</Label>
                     </StackPanel>
                 </Grid>
             </TabItem>
