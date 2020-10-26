@@ -163,9 +163,9 @@ namespace Ginger
         {
             AddVariables();
             AddEnvParams();
-            AddGlobalParameters();
+            AddGlobalModelParameters();
             AddDataSources();
-            AddCSFunctions();           
+            AddJSONExpressions();           
             AddSecurityConfiguration();
 
             if (mObj != null && mObj.GetType() == typeof(FlowControl))
@@ -181,13 +181,21 @@ namespace Ginger
                 }                
             }
 
-            TreeViewItem dataRoot = AddOrGetCategory("Data");
-            dataRoot.IsExpanded = true;
+            if (mObj != null && mObj.GetType() == typeof(FlowControl))
+            {
+                TreeViewItem validRoot = AddOrGetCategory("Data Validation");
+                validRoot.IsExpanded = true;
+            }
+            else
+            {
+                TreeViewItem dataRoot = AddOrGetCategory("Data");
+                dataRoot.IsExpanded = true;
+            }
         }
 
     
 
-        private void AddGlobalParameters()
+        private void AddGlobalModelParameters()
         {
             TreeViewItem Parent = AddOrGetCategory("Data");
             //TreeViewItem child = AddOrGetSubCategory("Models Global Parameters", Parent);
@@ -444,13 +452,17 @@ namespace Ginger
             return mchild;
         }
 
-        private void AddCSFunctions()
+        private void AddJSONExpressions()
         {
             WorkSpace.Instance.VERefrences= VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
 
-
             foreach (ValueExpressionReference VER in WorkSpace.Instance.VERefrences.Refrences)
             {
+                if (VER.RequiresSpecificFlowDetails && (mContext == null || mContext.BusinessFlow == null))
+                {
+                    continue;//skipping because specific flow details is required
+                }
+
                 TreeViewItem Parent = AddOrGetCategory(VER.Category);
                 TreeViewItem child = AddOrGetSubCategory(VER.SubCategory, Parent);
                
@@ -462,8 +474,6 @@ namespace Ginger
                 tvi.Selected += UpdateHelpForCSFunction;
                 tvi.Tag = VER;
             }
-
-
         }
 
    
