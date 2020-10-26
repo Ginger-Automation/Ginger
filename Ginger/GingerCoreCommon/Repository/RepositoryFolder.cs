@@ -399,10 +399,15 @@ namespace Amdocs.Ginger.Repository
                 if (Directory.Exists(PathHelper.GetLongPath(e.FullPath)))
                 {
                     string fn = Path.GetFileName(PathHelper.GetLongPath(e.OldFullPath));
-                    RepositoryFolder<T> sf = GetSubFolder(fn);
-                    sf.DisplayName = e.Name;
-                    sf.FolderRelativePath = ReplaceLastOccurrence(sf.FolderRelativePath, fn, e.Name);
-                    sf.RefreshFolderSourceControlStatus();
+                    RepositoryFolder<T> repositoryFolder = GetSubFolder(fn);
+
+                    if (repositoryFolder != null)
+                    {
+                        repositoryFolder.DisplayName = e.Name;
+                        repositoryFolder.FolderRelativePath = ReplaceLastOccurrence(repositoryFolder.FolderRelativePath, fn, e.Name);
+                        repositoryFolder.RefreshFolderSourceControlStatus();
+                    }
+
                     return;
                 }
 
@@ -556,23 +561,31 @@ namespace Amdocs.Ginger.Repository
 
                     //if the folder is deleted(shift + del) by the user from the file system and not from Ginger
                     //it comes as changed first then goes to deledted so need to stop/pause file watcher so that the folder should get deleted from the file system
-                    RepositoryFolder<T> rf = GetSubFolder(fn);
-                    rf.PauseFileWatcher();
-                    if (Directory.Exists(e.FullPath))
+                    RepositoryFolder<T> repositoryFolder = GetSubFolder(fn);
+
+                    if (repositoryFolder != null)
                     {
-                        rf.ResumeFileWatcher();
+                        repositoryFolder.PauseFileWatcher();
+                        if (Directory.Exists(e.FullPath))
+                        {
+                            repositoryFolder.ResumeFileWatcher();
+                        }
                     }
+                    
                     break;
                 case WatcherChangeTypes.Deleted:
-                    RepositoryFolder<T> sf2 = GetSubFolder(fn);
-                    sf2.DeleteFolderCacheItemsRecursive();
-
-                    //delete the folder from folders cache  
-                    if (mSubFoldersCache != null)
+                    RepositoryFolder<T> repositoryFolder1 = GetSubFolder(fn);
+                    if (repositoryFolder1 != null)
                     {
-                        mSubFoldersCache.Remove(sf2);
-                    }
+                        repositoryFolder1.DeleteFolderCacheItemsRecursive();
 
+                        //delete the folder from folders cache  
+                        if (mSubFoldersCache != null)
+                        {
+                            mSubFoldersCache.Remove(repositoryFolder1);
+                        }
+                    }
+                    
                     break;
             }
             SolutionRepository.RefreshParentFoldersSoucerControlStatus(e.FullPath);
