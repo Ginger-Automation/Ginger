@@ -643,10 +643,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         void ToggleActivityPageUIButtons(bool IsEnabled)
         {
-            if (mActivityPage != null)
-            {
-                mActivityPage.SetUIElementsBehaverBasedOnRunnerStatus(IsEnabled);
-            }
+            mActivityPage.SetUIElementsBehaverBasedOnRunnerStatus(IsEnabled);
         }
 
         private void SetUIElementsBehaverDuringExecution()
