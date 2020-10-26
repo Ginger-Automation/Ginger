@@ -203,20 +203,27 @@ namespace GingerCore
             EvaluateFlowDetails();
             EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
-
-            if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
             {
-                mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
-            }
-            else if (!string.IsNullOrWhiteSpace(SolutionFolder))
+
+                if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
+                {
+                    mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
+                }
+                else if (!string.IsNullOrWhiteSpace(SolutionFolder))
                 {
                     if (mValueCalculated.StartsWith("~"))
                     {
                         mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
                         mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
                     }
+             
                 }
+            }
+            if (mValueCalculated.StartsWith(@"\~"))
+            {
+                mValueCalculated = "~" + mValueCalculated.Substring(2);
 
+            }
         }
 
 #region Flow Details
