@@ -332,6 +332,21 @@ namespace GingerCore
             }
         }
 
+        public ActivitiesGroup CurrentActivitiesGroup
+        {
+            get 
+            { 
+                if (CurrentActivity != null && string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
+                {
+                    return this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }                    
+            }
+        }
+
         private Activity mPreviousActivity;
         public Activity PreviousActivity
         {
@@ -381,6 +396,21 @@ namespace GingerCore
             set
             {
                 mErrorHandlerOriginActivity = value;
+            }
+        }
+
+        public ActivitiesGroup ErrorHandlerOriginActivitiesGroup
+        {
+            get
+            {
+                if (ErrorHandlerOriginActivity != null && string.IsNullOrEmpty(ErrorHandlerOriginActivity.ActivitiesGroupID) == false)
+                {
+                    return this.ActivitiesGroups.Where(x => x.Name == ErrorHandlerOriginActivity.ActivitiesGroupID).FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
