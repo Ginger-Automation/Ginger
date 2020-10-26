@@ -90,12 +90,29 @@ namespace Ginger.Run
             SetContentAndEventsListeners();
         }
 
+        RunSetActionEditPage runSetActionEditPage;
         private void RunSetActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
             RunSetActionEditFrame.Content = null;
             if (RunSetActionsGrid.CurrentItem != null)
             {
-                RunSetActionEditPage RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
+                RunSetActionEditPage RSAEP = null;
+                if (((Amdocs.Ginger.Repository.RepositoryItemBase)RunSetActionsGrid.CurrentItem).ItemName == "Open ALM Defects")
+                {
+                    if (runSetActionEditPage == null)
+                    {
+                        runSetActionEditPage = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
+                        RSAEP = runSetActionEditPage;
+                    }
+                    else
+                    {
+                        RSAEP = runSetActionEditPage;
+                    }
+                }
+                else
+                {
+                    RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
+                }
                 RunSetActionEditFrame.Content = RSAEP;
             }
         }
