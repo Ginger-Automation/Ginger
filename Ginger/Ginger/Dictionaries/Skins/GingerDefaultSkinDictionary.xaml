@@ -138,6 +138,19 @@
         <Setter Property="IsEnabled" Value="True" />
     </Style>
 
+    <Style TargetType="TextBox" x:Key="$MultiRowsTextBoxStyle_ReadOnly" >
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="IsEnabled" Value="True" />
+        <Setter Property="IsReadOnly" Value="True" />
+    </Style>
+
     <Style TargetType="TextBlock" x:Key="$TextBlockTitle">
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -491,6 +504,38 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$RoundTextButtonStyle_Generic">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="20,3,20,3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{DynamicResource $BackgroundColor_DarkBlue}" BorderThickness="1" CornerRadius="15">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
                             <Setter Property="Foreground" Value="White" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
