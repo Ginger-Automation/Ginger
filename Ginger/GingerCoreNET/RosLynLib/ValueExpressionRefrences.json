@@ -57,6 +57,28 @@
     },
     {
       "Category": "Flow Details",
+      "SubCategory": "Solution",
+      "Name": "Name",
+      "Expression": "{FD Object=Solution Field=Name}",
+      "UseCase": "Get Solution Name",
+      "Samples": [ "{FD Object=Solution Field=Name} will give you Solution name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Flow Details",
+      "SubCategory": "Solution",
+      "Name": "Local Path",
+      "Expression": "{FD Object=Solution Field=Folder}",
+      "UseCase": "Get Solution Path",
+      "Samples": [ "{FD Object=Solution Field=Path} will give you Solution Path" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Flow Details",
       "SubCategory": "Runset",
       "Name": "Runset Name",
       "Expression": "{FD Object=Runset Field=Name}",
