@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-             xmlns:Ginger="clr-namespace:Ginger"
+             xmlns:Ginger="clr-namespace:Ginger" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600" PreviewKeyDown="UCTextEditor_PreviewKeyDown" >
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -63,7 +63,7 @@
 
         </avalonEdit:TextEditor>
 
-        <GridSplitter x:Name="SelectionEditorFrameSplitter" Grid.Row="3"  ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Top"  Style="{StaticResource @HorizontalGridSplitterStyle}" Height="5" Width="Auto"/>
+        <GridSplitter x:Name="SelectionEditorFrameSplitter" Grid.Row="3"  ResizeDirection="Rows" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_DarkGray}" Height="1" Width="Auto"/>
 
         <Grid Grid.Row="3">
             <Grid.RowDefinitions>
