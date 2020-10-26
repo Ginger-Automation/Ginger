@@ -1,4 +1,22 @@
-﻿using ALM_Common.DataContracts;
+#region License
+/*
+Copyright © 2014-2020 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.DataContracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -252,7 +270,7 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
+            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from Octane");
             //set path to import to               
             if (importDestinationFolderPath == "")
             {
@@ -357,16 +375,16 @@ namespace Ginger.ALM.Repository
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
-                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from Octane", ex);
 
                     }
                 }
 
                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
-                Reporter.ToLog(eLogLevel.DEBUG, "Imported from QC successfully");
+                Reporter.ToLog(eLogLevel.DEBUG, "Imported from Octane successfully");
                 return true;
             }
-            Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");
+            Reporter.ToLog(eLogLevel.ERROR, "Error importing from Octane");
             return false;
         }
 

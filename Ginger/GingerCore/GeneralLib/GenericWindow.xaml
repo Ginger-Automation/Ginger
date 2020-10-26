@@ -44,8 +44,8 @@
             <Frame x:Name="PageFrame" AutomationProperties.AutomationId="PageFrame AID"  Background="white" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" ></Frame>
         </ScrollViewer>
 
-        <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource $BackgroundColor_LightGray}">            
-            <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $WindowButtonStyle}" />
+        <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="{DynamicResource $BackgroundColor_LightGray}">
+            <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" />
         </DockPanel>
     </Grid>
 </Window>

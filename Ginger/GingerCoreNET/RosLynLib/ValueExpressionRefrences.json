@@ -75,7 +75,8 @@
       "Samples": [ "{FD Object=Runner Field=Name} will give you Current Runner name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -86,7 +87,8 @@
       "Samples": [ "{FD Object=BusinessFlow Field=Name} will give you Current Business Flow name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -97,7 +99,20 @@
       "Samples": [ "{FD Object=LastFailedBusinessFlow Field=Name} will give you Last Failed Business Flow name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
+    },
+    {
+      "Category": "Flow Details",
+      "SubCategory": "Activities Group",
+      "Name": "Activities Group Name",
+      "Expression": "{FD Object=ActivitiesGroup Field=Name}",
+      "UseCase": "Get Current Activities Group Name",
+      "Samples": [ "{FD Object=ActivitiesGroup Field=Name} will give you Activities Group Name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -108,7 +123,8 @@
       "Samples": [ "{FD Object=LastFailedActivity Field=ActivityName} will give you Last Failed Activity name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
 
     {
@@ -120,7 +136,8 @@
       "Samples": [ "{FD Object=Activity Field=ActivityName} will give you Activity Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -131,7 +148,8 @@
       "Samples": [ "{FD Object=Action Field=Description} will give you Action Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -142,7 +160,8 @@
       "Samples": [ "{FD Object=PreviousBusinessFlow Field=Name} will give you Previous Business Flow name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -153,7 +172,8 @@
       "Samples": [ "{FD Object=PreviousBusinessFlow Field=RunStatus} will give you Previous Business Flow Status" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -164,7 +184,8 @@
       "Samples": [ "{FD Object=PreviousBusinessFlow Field=ElapsedSecs} will give you Previous Business Flow Duration" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -175,7 +196,8 @@
       "Samples": [ "{FD Object=PreviousActivity Field=ActivityName} will give you Previous Activity Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -186,7 +208,8 @@
       "Samples": [ "{FD Object=PreviousActivity Field=Status} will give you Previous Activity Status" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -197,7 +220,8 @@
       "Samples": [ "{FD Object=PreviousActivity Field=ElapsedSecs} will give you Previous Activity Duration" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -208,7 +232,8 @@
       "Samples": [ "{FD Object=PreviousAction Field=Description} will give you Previous Action Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -219,7 +244,8 @@
       "Samples": [ "{FD Object=PreviousAction Field=Status} will give you Previous Action Status" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -230,7 +256,8 @@
       "Samples": [ "{FD Object=PreviousAction Field=ElapsedSecs} will give you Previous Action Duration" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -241,7 +268,8 @@
       "Samples": [ "{FD Object=PreviousAction Field=ExInfo} will give you Previous Action Details" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -252,7 +280,8 @@
       "Samples": [ "{FD Object=LastFailedAction Field=Description} will give you Last Failed Action Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -263,7 +292,8 @@
       "Samples": [ "{FD Object=LastFailedAction Field=Error} will give you Last Failed Action Error" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -274,7 +304,20 @@
       "Samples": [ "{FD Object=LastFailedAction Field=ExInfo} will give you Last Failed Action Extra Info" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
+    },
+    {
+      "Category": "Flow Details",
+      "SubCategory": "Activities Group",
+      "Name": "Error Handler Origin Activities Group Name",
+      "Expression": "{FD Object=ErrorHandlerOriginActivitiesGroup Field=Name}",
+      "UseCase": "Get Error Handler Origin Activities Group Name",
+      "Samples": [ "{FD Object=ErrorHandlerOriginActivitiesGroup Field=Name} will give you Error Handler Origin Activities Group Name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -285,7 +328,8 @@
       "Samples": [ "{FD Object=ErrorHandlerOriginActivity Field=ActivityName} will give you Error Handler Origin Activity Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -296,7 +340,8 @@
       "Samples": [ "{FD Object=ErrorHandlerOriginAction Field=Description} will give you Error Handler Origin Action Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -307,7 +352,8 @@
       "Samples": [ "{FD Object=ErrorHandlerOriginAction Field=Error} will give you Error Handler Origin Action Error" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Flow Details",
@@ -318,7 +364,8 @@
       "Samples": [ "{FD Object=ErrorHandlerOriginAction Field=ExInfo} will give you Error Handler Origin Action Extra Info" ],
       "ReturnType": null,
       "ExpressionResult": null,
-      "IconImageName": null
+      "IconImageName": null,
+      "RequiresSpecificFlowDetails": true
     },
     {
       "Category": "Data",

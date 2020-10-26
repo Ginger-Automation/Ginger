@@ -204,7 +204,7 @@ namespace Ginger
                     if (margin.Right < 10)
                         margin.Right = 10;
                     btn.Margin = margin;
-                    btn.Style = this.FindResource("$WindowButtonStyle") as Style;
+                    btn.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }
