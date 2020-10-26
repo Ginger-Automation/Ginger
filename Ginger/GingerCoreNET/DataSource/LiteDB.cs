@@ -530,38 +530,38 @@ namespace GingerCoreNET.DataSource
                             }
                             // JSON to Datatable
                             dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
-                            DataTable dt = dataTable;
-                            bool dosort = true;
-                            DataTable dt2 = dataTable.Clone();
-                            dt2.Columns["GINGER_ID"].DataType = Type.GetType("System.Int32");
-
-                            foreach (DataRow dr in dataTable.Rows)
+                            if (dataTable != null && dataTable.Columns.Count > 0)
                             {
-                                if (Convert.ToString(dr["GINGER_ID"]) == "")
+                                DataTable dt = dataTable;
+                                bool dosort = true;
+                                DataTable dt2 = dataTable.Clone();
+                                foreach (DataRow dr in dataTable.Rows)
                                 {
-                                    dosort = false;
+                                    if (Convert.ToString(dr["GINGER_ID"]) == "")
+                                    {
+                                        dosort = false;
+                                    }
+                                    else
+                                    {
+                                        dt2.ImportRow(dr);
+                                    }
+                                }
+                                if (dosort)
+                                {
+                                    dt2.AcceptChanges();
+                                    DataView dv = dt2.DefaultView;
+                                    dv.Sort = "GINGER_ID ASC";
+
+                                    dt = dv.ToTable();
                                 }
                                 else
                                 {
-                                    dt2.ImportRow(dr);
+                                    dt.Rows.RemoveAt(0);
                                 }
+                                dt.TableName = query;
+                                dataTable = dt;
+                                var json = JsonConvert.SerializeObject(array);
                             }
-                            if (dosort)
-                            {
-                                dt2.AcceptChanges();
-                                DataView dv = dt2.DefaultView;
-                                dv.Sort = "GINGER_ID ASC";
-
-                                dt = dv.ToTable();
-                            }
-                            else
-                            {
-                                dt.Rows.RemoveAt(0);
-                            }
-
-                            dt.TableName = query;
-                            dataTable = dt;
-                            var json = JsonConvert.SerializeObject(array);
                         }
                         catch (Exception ex)
                         {
@@ -720,16 +720,19 @@ namespace GingerCoreNET.DataSource
             else if (NextAvai)
             {
                 DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
-                row = datatble.Rows[LocateRowValue];
-                string rowID = Convert.ToString(row["GINGER_ID"]);
-
-                string[] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
-                query = Stringsplit[0] + " where GINGER_ID = " + rowID;
-                GetQueryOutput(query);
-
-                if (MarkUpdate)
+                if (datatble != null && datatble.Columns.Count > 0)
                 {
-                    GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_USED =\"False\" and GINGER_ID= " + rowID);
+                    row = datatble.Rows[LocateRowValue];
+                    string rowID = Convert.ToString(row["GINGER_ID"]);
+
+                    string[] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
+                    query = Stringsplit[0] + " where GINGER_ID = " + rowID;
+                    GetQueryOutput(query);
+
+                    if (MarkUpdate)
+                    {
+                        GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_USED =\"False\" and GINGER_ID= " + rowID);
+                    }
                 }
                 return;
             }
@@ -738,7 +741,7 @@ namespace GingerCoreNET.DataSource
             {
                 if (query.Contains("where") && query.Contains("GINGER_ID ="))
                 {
-                     RunQuery(query);
+                    RunQuery(query);
                     string[] querysplit = query.Split(new[] { "GINGER_ID =" }, StringSplitOptions.None);
 
                     dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1]);
@@ -1262,7 +1265,7 @@ namespace GingerCoreNET.DataSource
                     }
                 }
             }
-            query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName 
+            query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName
                                  + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + "}";
 
             return query;

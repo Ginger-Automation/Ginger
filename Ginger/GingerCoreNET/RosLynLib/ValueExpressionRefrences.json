@@ -101,6 +101,17 @@
     },
     {
       "Category": "Flow Details",
+      "SubCategory": "Activities Group",
+      "Name": "Activities Group Name",
+      "Expression": "{FD Object=ActivitiesGroup Field=Name}",
+      "UseCase": "Get Current Activities Group Name",
+      "Samples": [ "{FD Object=ActivitiesGroup Field=Name} will give you Activities Group Name" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Flow Details",
       "SubCategory": "Activity",
       "Name": "Last Failed Activity Name",
       "Expression": "{FD Object=LastFailedActivity Field=ActivityName}",
@@ -272,6 +283,17 @@
       "Expression": "{FD Object=LastFailedAction Field=ExInfo}",
       "UseCase": "Get Last Failed Action Extra Info",
       "Samples": [ "{FD Object=LastFailedAction Field=ExInfo} will give you Last Failed Action Extra Info" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": null
+    },
+    {
+      "Category": "Flow Details",
+      "SubCategory": "Activities Group",
+      "Name": "Error Handler Origin Activities Group Name",
+      "Expression": "{FD Object=ErrorHandlerOriginActivitiesGroup Field=Name}",
+      "UseCase": "Get Error Handler Origin Activities Group Name",
+      "Samples": [ "{FD Object=ErrorHandlerOriginActivitiesGroup Field=Name} will give you Error Handler Origin Activities Group Name" ],
       "ReturnType": null,
       "ExpressionResult": null,
       "IconImageName": null

@@ -473,7 +473,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("Mailbox Unavailabel"))
+                if (ex.Message.Contains("Mailbox Unavailable"))
                 {
                     Event = "Failed: Please provide correct sender email address";
                 }
