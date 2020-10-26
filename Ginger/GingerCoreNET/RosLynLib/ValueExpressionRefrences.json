@@ -58,7 +58,7 @@
     {
       "Category": "Flow Details",
       "SubCategory": "Solution",
-      "Name": "Name",
+      "Name": "Solution Name",
       "Expression": "{FD Object=Solution Field=Name}",
       "UseCase": "Get Solution Name",
       "Samples": [ "{FD Object=Solution Field=Name} will give you Solution name" ],
@@ -69,7 +69,7 @@
     {
       "Category": "Flow Details",
       "SubCategory": "Solution",
-      "Name": "Local Path",
+      "Name": "Solution Local Path",
       "Expression": "{FD Object=Solution Field=Folder}",
       "UseCase": "Get Solution Path",
       "Samples": [ "{FD Object=Solution Field=Path} will give you Solution Path" ],
