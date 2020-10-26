@@ -203,6 +203,7 @@ namespace GingerCore
             EvaluateFlowDetails();
             EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
+            {
 
                 if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
                 {
@@ -215,8 +216,14 @@ namespace GingerCore
                         mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
                         mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
                     }
+             
                 }
+            }
+            if (mValueCalculated.StartsWith(@"\~"))
+            {
+                mValueCalculated = "~" + mValueCalculated.Substring(2);
 
+            }
         }
 
 #region Flow Details
