@@ -369,7 +369,7 @@ namespace Ginger.ALM.Repository
                             }
                         }
 
-                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)

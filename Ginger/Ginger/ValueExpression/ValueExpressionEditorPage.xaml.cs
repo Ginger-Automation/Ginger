@@ -105,6 +105,7 @@ namespace Ginger
             }
 
             xObjectsTreeView.SetTopToolBarTools(addHandler: xAddExpressionButton_Click);
+            xObjectsTreeView.AddButtonIcon = eImageType.ArrowRight;            
             xExpressionUCTextEditor.Bind(obj, AttrName);
             xExpressionUCTextEditor.HideToolBar();
             xExpressionUCTextEditor.lblTitle.Content = "Value Expression:";
@@ -411,6 +412,9 @@ namespace Ginger
                     break;
                 case "General":
                     eImageType = eImageType.General;
+                    break;
+                case "Solution":
+                    eImageType = eImageType.Solution;
                     break;
                 default:
                     throw new KeyNotFoundException();
@@ -893,9 +897,16 @@ namespace Ginger
             TreeViewItem tvi = (TreeViewItem)VETree.SelectedItem;
             if (tvi != null)
             {
-                //Using double click event to trigger any operation configured on the tree double click
-                var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left){ RoutedEvent = Control.MouseDoubleClickEvent};
-                tvi.RaiseEvent(args);
+                if(!tvi.HasItems)
+                {
+                    //Using double click event to trigger any operation configured on the tree double click
+                    var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = Control.MouseDoubleClickEvent };
+                    tvi.RaiseEvent(args);
+                }                
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectValidItem);
+                }
             }
             else
             {

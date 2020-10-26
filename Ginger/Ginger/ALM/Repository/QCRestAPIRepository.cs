@@ -197,8 +197,9 @@ namespace Ginger.ALM.Repository
                             foreach (Activity activ in tsBusFlow.Activities)
                                 activ.TargetApplication = null; // no app configured on solution level
                         }
-                        
-                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
+
+                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
+                                             
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using GingerCore.ALM.QC;
 using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.ALM.Repository
 {
@@ -64,6 +65,25 @@ namespace Ginger.ALM.Repository
                 mALMDefectsProfilesPage = new ALMDefectsProfilesPage();
 
             mALMDefectsProfilesPage.ShowAsWindow();
+        }
+
+
+        public void AddTestSetFlowToFolder(BusinessFlow businessFlow, string folderPath)
+        {
+            bool addItemToRootFolder = true;
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(folderPath);
+                if (repositoryFolder != null)
+                {
+                    repositoryFolder.AddRepositoryItem(businessFlow);
+                    addItemToRootFolder = false;
+                }
+            }
+            if (addItemToRootFolder)
+            {
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(businessFlow);
+            }
         }
 
     }
