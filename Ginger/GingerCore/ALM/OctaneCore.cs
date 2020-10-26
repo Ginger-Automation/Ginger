@@ -450,7 +450,10 @@ namespace GingerCore.ALM
                 });
                 AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
-                return Task.Run(() => { return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); }).Result;
+                return Task.Run(() => 
+                { 
+                    return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); 
+                }).Result;
             }
             catch (Exception ex)
             {
