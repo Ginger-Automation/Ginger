@@ -4713,6 +4713,12 @@ namespace Ginger.Run
         public bool SetBFOfflineData(BusinessFlow BF, ExecutionLoggerManager executionLoggerManager, string logFolderPath)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+
+            if(Context.BusinessFlow==null)
+            {
+                Context.BusinessFlow = BF;
+            }
+
             Context.BusinessFlow.ExecutionLogActivityCounter = 1;
             try
             {
