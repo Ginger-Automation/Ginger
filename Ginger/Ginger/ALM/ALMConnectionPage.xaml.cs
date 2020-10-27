@@ -629,8 +629,7 @@ namespace Ginger.ALM
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                         break;
                     case "RQMRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
-                            ALMIntegration.Instance.SetALMCoreConfigurations(almType); //Because RQM need to update the server field from existing package
+                            almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;                           
                             SetLoadPackageButtonContent();
                         break;
                     case "RallyRadioButton":
