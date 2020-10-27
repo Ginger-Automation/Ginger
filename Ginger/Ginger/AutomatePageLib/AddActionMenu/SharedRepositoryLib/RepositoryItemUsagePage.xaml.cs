@@ -357,7 +357,7 @@ namespace Ginger.Repository
             {
                  StartProcessingIcon();
          
-                Parallel.ForEach(RepoItemUsages, usage =>
+                foreach(var usage in RepoItemUsages)
                 {
                     try
                     {
@@ -382,7 +382,7 @@ namespace Ginger.Repository
                         Reporter.ToLog(eLogLevel.ERROR, "Failed to update the repository item usage", ex);
                         usage.Status = RepositoryItemUsage.eStatus.UpdateFailed;
                     }
-                });
+                }
                 StopProcessingIcon();
                 SetStatus("");
                 Reporter.ToUser(eUserMsgKey.UpdateRepositoryItemUsagesSuccess);
@@ -394,7 +394,7 @@ namespace Ginger.Repository
             
             await Task.Run(() =>
             {            
-                Parallel.ForEach(RepoItemUsages, usage =>
+                foreach(var usage in RepoItemUsages)
                 {
                     StartProcessingIcon();
                     if (usage.Status == RepositoryItemUsage.eStatus.Updated ||
@@ -414,7 +414,7 @@ namespace Ginger.Repository
                             Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                         }
                     }
-                });
+                }
             }
              );
             StopProcessingIcon();

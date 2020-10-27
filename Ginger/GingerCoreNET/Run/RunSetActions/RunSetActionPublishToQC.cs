@@ -103,7 +103,7 @@ namespace Ginger.Run.RunSetActions
                 bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
             }
             
-            if (!RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, result, PublishToALMConfig))
+            if (!RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs,ref result, PublishToALMConfig))
             {
                 Errors= result;
                 Status = eRunSetActionStatus.Failed;

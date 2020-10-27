@@ -1096,7 +1096,8 @@ namespace Ginger
                     xHelpLayoutRectangleLeft.Height = xMainWindowPnl.ActualHeight;
 
                     xHelpLayoutRectangleRight.SetValue(Canvas.LeftProperty, controlToFocusLocation.X + controlToFocusWidth - gapSize);
-                    xHelpLayoutRectangleRight.Width = xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth);
+                    var calcWidth = xMainWindowPnl.ActualWidth - (controlToFocusLocation.X + controlToFocusWidth);
+                    xHelpLayoutRectangleRight.Width = (calcWidth > 0) ? calcWidth : xMainWindowPnl.ActualWidth;
                     xHelpLayoutRectangleRight.Height = xMainWindowPnl.ActualHeight;
 
                     xHelpLayoutRectangleTop.SetValue(Canvas.LeftProperty, controlToFocusLocation.X);
