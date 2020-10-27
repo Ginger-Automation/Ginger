@@ -527,10 +527,7 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
-                    if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
-                    {
-                        JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
-                    }
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();                 
                     ServerURLTextBox.Cursor = null;
