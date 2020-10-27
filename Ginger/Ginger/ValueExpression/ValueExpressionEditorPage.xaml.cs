@@ -366,25 +366,25 @@ namespace Ginger
                     eImageType = eImageType.BusinessFlow;
                     break;
                 case "Environment":
-                    eImageType = eImageType.BusinessFlow;
+                    eImageType = eImageType.Environment;
                     break;
                 case "Runset":
-                    eImageType = eImageType.BusinessFlow;
+                    eImageType = eImageType.RunSet;
                     break;
                 case "Runner":
-                    eImageType = eImageType.BusinessFlow;
+                    eImageType = eImageType.Runner;
                     break;
                 case "Business Flow":
                     eImageType = eImageType.BusinessFlow;
                     break;
                 case "Activities Group":
-                    eImageType = eImageType.BusinessFlow;
+                    eImageType = eImageType.ActivitiesGroup;
                     break;
                 case "Activity":
-                    eImageType = eImageType.BusinessFlow;
+                    eImageType = eImageType.Activity;
                     break;
                 case "Action":
-                    eImageType = eImageType.BusinessFlow;
+                    eImageType = eImageType.Action;
                     break;
                 case "Machine Details":
                     eImageType = eImageType.Screen;

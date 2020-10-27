@@ -412,7 +412,7 @@ namespace GingerCore
             }
             else
             {
-                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Empty);//obj is null so representing as empty field
+                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, "N/A");//obj is null so representing as empty field
             }           
         }
 
@@ -441,7 +441,7 @@ namespace GingerCore
                 }
                 else
                 {
-                    return string.Empty;
+                    return "N/A";
                 }
             }
             else
