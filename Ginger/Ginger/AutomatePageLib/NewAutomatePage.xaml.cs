@@ -134,7 +134,8 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner, offlineMode:true);
-                        mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(mRunSetReport, "");                       
+                        mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(mRunSetReport, "");
+                        SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
                         return;
                     }
                     SetOrClearPreviousAutoRunSetDocumentLiteDB(true);                  
@@ -796,7 +797,13 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
                 case AutomateEventArgs.eEventType.GenerateLastExecutedItemReport:
                     GenerateLastExecutedItemReport();
-                    break;               
+                    break;
+                case AutomateEventArgs.eEventType.UpdateAutomatePage:
+                    mRunSetReport = null;
+                    mRunSetLiteDbId = null;
+                    mRunnerLiteDbId = null;
+                    InitAutomatePageRunner();                  
+                    break;
                 default:
                     //Avoid other operations
                     break;
