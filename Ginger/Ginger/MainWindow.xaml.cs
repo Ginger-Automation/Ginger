@@ -454,9 +454,9 @@ namespace Ginger
             }
         }
 
-        private void ResetRunset()
+        private void ResetAutomatePage()
         {
-               App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAutomatePage,null);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAutomatePage,null);
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
         }
 
@@ -469,7 +469,7 @@ namespace Ginger
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
                     WorkSpace.Instance.OpenSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
-                    ResetRunset();
+                    ResetAutomatePage();
                 }
                 else
                 {
@@ -483,7 +483,7 @@ namespace Ginger
             Solution s1 = new Solution();
             AddSolutionPage addSol = new AddSolutionPage(s1);
             addSol.ShowAsWindow();
-            ResetRunset();
+            ResetAutomatePage();
         }
 
         public void SetSolutionDependedUIElements()
@@ -820,7 +820,7 @@ namespace Ginger
             if (selectedSol != null && Directory.Exists(selectedSol.Folder))
             {
                 WorkSpace.Instance.OpenSolution(selectedSol.Folder);
-                ResetRunset();
+                ResetAutomatePage();
             }
             else
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");
