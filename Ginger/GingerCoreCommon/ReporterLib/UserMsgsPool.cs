@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.Common
         POMWizardFailedToLearnElement, POMWizardReLearnWillDeleteAllElements, WizardCantMoveWhileInProcess, POMDriverIsBusy, FindAndReplaceViewRunSetNotSupported, WizardSureWantToCancel,
         POMSearchByGUIDFailed, POMElementSearchByGUIDFailed, NoRelevantAgentInRunningStatus, SolutionSaveWarning,
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
-        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, ValueIssue, MissingTargetApplication,
+        ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
@@ -587,6 +587,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToInitiate, new UserMsg(eUserMsgType.ERROR, "Failed to initiate", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToCreateRequestResponse, new UserMsg(eUserMsgType.ERROR, "Failed to create Request / Response", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActionNotImplemented, new UserMsg(eUserMsgType.ERROR, "Action is not implemented yet for control type ", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.OperationNotSupported, new UserMsg(eUserMsgType.INFO, "Operation not supported ", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ValueIssue, new UserMsg(eUserMsgType.ERROR, "Value Issue", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.JSExecutionFailed, new UserMsg(eUserMsgType.ERROR, "Error Executing JS", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingTargetApplication, new UserMsg(eUserMsgType.ERROR, "Missing target application", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
