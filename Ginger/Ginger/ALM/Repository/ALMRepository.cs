@@ -40,7 +40,10 @@ namespace Ginger.ALM.Repository
         public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups);
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null);
         public abstract void ImportALMTests(string importDestinationFolderPath);
-        public abstract void ImportALMTestsById(string importDestinationFolderPath);
+        public virtual void ImportALMTestsById(string importDestinationFolderPath)
+        {
+            Reporter.ToUser(eUserMsgKey.OperationNotSupported, "Import by Id is not supported for configured ALM Type");
+        }
         public abstract eUserMsgKey GetDownloadPossibleValuesMessage();
         public abstract IEnumerable<Object> SelectALMTestSets();
         public abstract bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTests);

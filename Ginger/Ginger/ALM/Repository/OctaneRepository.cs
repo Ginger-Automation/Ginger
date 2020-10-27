@@ -280,11 +280,7 @@ namespace Ginger.ALM.Repository
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
             win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            throw new NotImplementedException();
-        }
+          
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
