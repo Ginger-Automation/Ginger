@@ -261,8 +261,10 @@ namespace GingerCore.ALM.JIRA
 
                         //pull TC-Step parameters and add them to the Activity level
                         List<string> stepParamsList = new List<string>();
-                        GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
-                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        if ((step.Expected != null) && ((step.Expected == string.Empty)))
+                        {
+                            GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        }
                         foreach (string param in stepParamsList)
                         {
                             ConvertJiraParameters(tc, stepActivity, param);

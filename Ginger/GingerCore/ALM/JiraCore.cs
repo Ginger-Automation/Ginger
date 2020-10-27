@@ -75,25 +75,17 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
-            if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+            switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {
-                switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
-                {
-                    case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
-                        return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
-                    case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
-                        Dictionary<Guid, string> defectsOpeningResults = exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
-                        exportMananger.AssignDefectsToZephyrExecutions(defectsForOpening, defectsOpeningResults);
-                        return defectsOpeningResults;
-                    default:
-                        return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
-                }
+                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                    return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
+                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                    Dictionary<Guid, string> defectsOpeningResults = exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
+                    exportMananger.AssignDefectsToZephyrExecutions(defectsForOpening, defectsOpeningResults);
+                    return defectsOpeningResults;
+                default:
+                    return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
             }
-            else
-            {
-                return exportMananger.CreateNewALMDefects(defectsForOpening, defectsFields);
-            }
-
         }
 
         public override bool DisconnectALMProjectStayLoggedIn()
@@ -108,21 +100,14 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+            switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {
-                switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
-                {
-                    case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
-                        return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
-                    case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
-                        return exportMananger.ExportExecutionDetailsToJiraZephyr(bizFlow, publishToALMConfig, ref result);
-                    default:
-                        return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
-                }
-            }
-            else
-            {
-                return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
+                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                    return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
+                case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                    return exportMananger.ExportExecutionDetailsToJiraZephyr(bizFlow, publishToALMConfig, ref result);
+                default:
+                    return exportMananger.ExecuteDataToJira(bizFlow, publishToALMConfig, ref result);
             }
         }
 
