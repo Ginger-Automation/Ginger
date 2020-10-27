@@ -663,15 +663,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
-            if (!useREST)
-            {
-                // do nothing
-                return new Dictionary<Guid, string>();
-            }
-            else
-            {
-                return ImportFromQC.CreateNewDefectQCREST(defectsForOpening);
-            }
+            return new Dictionary<Guid, string>();     
         }
 
         public static string StripHTML(string HTMLText, bool toDecodeHTML = true)
