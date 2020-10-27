@@ -57,6 +57,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             Type objType;
             switch (mObj)
             {
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Solution:
+                    objType = typeof(Ginger.SolutionGeneral.Solution);
+                    break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Environment:
                     objType = typeof(ProjEnvironment);
                     break;
@@ -97,18 +100,18 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             if (properties != null)
             {
                 foreach (PropertyInfo prop in properties)
-                {
-                    if (!typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                {         
+                    if (!typeof(IObservableList).IsAssignableFrom(prop.PropertyType))
                     {
                         lst.Add(prop.Name);
-                    }                  
+                    }
                 }
             }
             if (fields != null)
             {
                 foreach (FieldInfo f in fields)
                 {
-                    if (!typeof(IEnumerable).IsAssignableFrom(f.FieldType))
+                    if (!typeof(IObservableList).IsAssignableFrom(f.FieldType))
                     {
                         lst.Add(f.Name);
                     }
