@@ -456,8 +456,7 @@ namespace Ginger
 
         private void ResetAutomatePage()
         {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAutomatePage,null);
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.SetupRunnerForExecution, null);
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.UpdateAutomatePage, null);            
         }
 
         private void xOpenSolutionMenuItem_Click(object sender, RoutedEventArgs e)
@@ -650,7 +649,7 @@ namespace Ginger
         {            
             if ( WorkSpace.Instance.Solution != null)
             {
-                WorkSpace.Instance. AppSolutionRecover.SolutionRecoverStart(true);
+                WorkSpace.Instance.AppSolutionRecover.SolutionRecoverStart(true);
             }
         }
 

@@ -186,6 +186,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void SetUIControls()
         {
+            xBusinessFlowItemComboBox.Items.Clear();
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Details");
@@ -414,7 +415,7 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         UpdateApplicationsAgentsMapping();
 
-                        SetBusinessFlowTargetAppIfNeeded();
+                        SetBusinessFlowTargetAppIfNeeded();                        
                         mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
                         UpdateRunnerAgentsUsedBusinessFlow();
 
@@ -802,7 +803,9 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunSetReport = null;
                     mRunSetLiteDbId = null;
                     mRunnerLiteDbId = null;
-                    InitAutomatePageRunner();                  
+                    InitAutomatePageRunner();
+                    UpdateAutomatePageRunner();
+                    SetUIControls();
                     break;
                 default:
                     //Avoid other operations
