@@ -186,8 +186,7 @@ namespace GingerWPF.BusinessFlowsLib
         #endregion LiteDB
 
         private void SetUIControls()
-        {
-            xBusinessFlowItemComboBox.Items.Clear();
+        {            
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Details");
