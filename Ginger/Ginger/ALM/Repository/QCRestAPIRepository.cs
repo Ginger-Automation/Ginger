@@ -227,11 +227,7 @@ namespace Ginger.ALM.Repository
         {
             throw new NotImplementedException();
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            throw new NotImplementedException();
-        }
+            
         #endregion Import From QC
 
         #region Export To QC

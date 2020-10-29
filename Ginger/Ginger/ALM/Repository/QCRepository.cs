@@ -431,10 +431,6 @@ namespace Ginger.ALM.Repository
         {
             return eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss;
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            return;
-        }
+             
     }
 }
