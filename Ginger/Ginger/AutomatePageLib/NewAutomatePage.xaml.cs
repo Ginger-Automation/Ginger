@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger;
@@ -185,7 +186,7 @@ namespace GingerWPF.BusinessFlowsLib
         #endregion LiteDB
 
         private void SetUIControls()
-        {
+        {            
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Details");
@@ -348,7 +349,7 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.Context = mContext;
             mContext.Runner = mRunner;
         }
-
+      
         private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
@@ -414,7 +415,7 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         UpdateApplicationsAgentsMapping();
 
-                        SetBusinessFlowTargetAppIfNeeded();
+                        SetBusinessFlowTargetAppIfNeeded();                        
                         mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
                         UpdateRunnerAgentsUsedBusinessFlow();
 
@@ -797,17 +798,28 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
                 case AutomateEventArgs.eEventType.GenerateLastExecutedItemReport:
                     GenerateLastExecutedItemReport();
-                    break;
-                case AutomateEventArgs.eEventType.UpdateAutomatePage:
-                    mRunSetReport = null;
-                    mRunSetLiteDbId = null;
-                    mRunnerLiteDbId = null;
-                    InitAutomatePageRunner();                  
-                    break;
+                    break;               
                 default:
                     //Avoid other operations
                     break;
             }
+        }
+        private void InitLiteDBItems()
+        {
+            mRunSetReport = null;
+            mRunSetLiteDbId = null;
+            mRunnerLiteDbId = null;
+            ExecutionLoggerConfiguration.DataRepositoryMethod dataRepositoryMethod = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList[0].SelectedDataRepositoryMethod;
+            if (dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                mRunner.ExecutionLoggerManager.mExecutionLogger = new LiteDBRepository();
+            }
+            else if(dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            {
+                mRunner.ExecutionLoggerManager.mExecutionLogger = new TextFileRepository();
+            }
+            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
         }
 
         private void UpdateAutomatePageRunner()
@@ -817,9 +829,7 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-
-            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
+            InitLiteDBItems();
         }
 
 
@@ -1044,7 +1054,7 @@ namespace GingerWPF.BusinessFlowsLib
                     return;
                 }
 
-                UpdateToNewSolution();
+                UpdateToNewSolution();                
             }
         }
 
@@ -1056,7 +1066,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void UpdateToNewSolution()
         {
             SetEnvsCombo();
-            UpdateAutomatePageRunner();
+            UpdateAutomatePageRunner();            
         }
 
         private void SetEnvsCombo()
