@@ -218,10 +218,13 @@ namespace GingerCore.Actions.Communication
             e.MailCC = this.GetInputParamCalculatedValue(nameof(Mailcc));
 
             //add multi attachment files
-            String[] fileslist = this.GetInputParamCalculatedValue(nameof(AttachmentFileName)).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (String filePath in fileslist)
+            if (!string.IsNullOrEmpty(this.GetInputParamCalculatedValue(nameof(AttachmentFileName))))
             {
-                e.Attachments.Add(filePath);
+                String[] fileslist = this.GetInputParamCalculatedValue(nameof(AttachmentFileName)).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String filePath in fileslist)
+                {
+                    e.Attachments.Add(filePath);
+                }
             }
 
             e.EnableSSL = (bool)this.GetInputParamValue<bool>(Fields.EnableSSL);
