@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
@@ -276,7 +277,10 @@ namespace Ginger.Actions
                         {                         
                             RowNum.IsChecked = true;
                             p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
-                            rowNum = p.Substring(p.IndexOf("ROWNUM=") + 7, p.LastIndexOf("}") - 7);
+                            int startIndex = p.IndexOf("ROWNUM=") + 7;
+                            int endIndex = p.IndexOf(" ");
+                            int charCount = endIndex > startIndex ? endIndex - startIndex : startIndex - endIndex;
+                            rowNum = p.Substring(startIndex, charCount);
                             RowSelectorValue.Text = rowNum;
                         }
                         else if (IRow == "Where")
@@ -984,7 +988,9 @@ namespace Ginger.Actions
                 {
                     if (ValueUC != null)
                     {
-                        mActDSTblElem.ValueUC = mActDSTblElem.GetInputParamCalculatedValue("Value");
+                        ValueExpression mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mActDSTblElem.RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+                        mValueExpression.Value = mActDSTblElem.GetInputParamValue("Value");
+                        mActDSTblElem.ValueUC = mValueExpression.ValueCalculated;
                     }
                     ErrorLabel.Content = "";
                     txtValueExpression.Text = string.Empty;
