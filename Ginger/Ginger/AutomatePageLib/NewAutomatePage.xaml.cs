@@ -809,10 +809,17 @@ namespace GingerWPF.BusinessFlowsLib
             mRunSetReport = null;
             mRunSetLiteDbId = null;
             mRunnerLiteDbId = null;
-            if(mRunner.ExecutionLoggerManager.mExecutionLogger is LiteDBRepository)
-            {                
+            ExecutionLoggerConfiguration.DataRepositoryMethod dataRepositoryMethod = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList[0].SelectedDataRepositoryMethod;
+            if (dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
                 mRunner.ExecutionLoggerManager.mExecutionLogger = new LiteDBRepository();
-            }                        
+            }
+            else if(dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            {
+                mRunner.ExecutionLoggerManager.mExecutionLogger = new TextFileRepository();
+            }
+            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
         }
 
         private void UpdateAutomatePageRunner()
@@ -822,9 +829,7 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-
-            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
+            InitLiteDBItems();
         }
 
 
@@ -1061,8 +1066,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void UpdateToNewSolution()
         {
             SetEnvsCombo();
-            UpdateAutomatePageRunner();
-            InitLiteDBItems();
+            UpdateAutomatePageRunner();            
         }
 
         private void SetEnvsCombo()
