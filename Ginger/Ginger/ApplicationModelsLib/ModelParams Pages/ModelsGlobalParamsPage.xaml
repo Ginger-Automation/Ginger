@@ -5,19 +5,29 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:UserControlsLib="clr-namespace:GingerWPF.UserControlsLib"
       xmlns:ginger="clr-namespace:Ginger"
-      xmlns:h="clr-namespace:Ginger.Help" h:GingerHelpProvider.HelpString="Model Parameters"
+      xmlns:h="clr-namespace:Ginger.Help" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" h:GingerHelpProvider.HelpString="Model Parameters"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ModelsGlobalParamsPage">
 
-    <Grid x:Name="xPageGrid">
-        <ginger:ucGrid x:Name="xModelsGlobalParamsGrid" Margin="2,0,0,0"></ginger:ucGrid>
+    <Grid>
+        <Grid x:Name="xPageGrid">
+            <ginger:ucGrid x:Name="xModelsGlobalParamsGrid" Margin="2,0,0,0"></ginger:ucGrid>
 
+            <Grid.Resources>
+                <DataTemplate x:Key="OpenEditPossibleValuesPage">
+                    <Button x:Name="OpenEditPossibleValuesPageButton" Content="..." Click="OpenEditPossibleValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
+                </DataTemplate>
+            </Grid.Resources>
+        </Grid>
 
-        <Grid.Resources>
-            <DataTemplate x:Key="OpenEditPossibleValuesPage">
-                <Button x:Name="OpenEditPossibleValuesPageButton" Content="..." Click="OpenEditPossibleValuesPageButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-            </DataTemplate>
-        </Grid.Resources>
+        <StackPanel x:Name="xUpdatingItemsPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
+            <UserControls:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+                <Label.Content>
+                    <GingerCore:ucTextDicResource x:Name="xLoadWindowText" Text="Updating Value Expression instances with the Model Global Parameters name change. Please Wait..."/>
+                </Label.Content>
+            </Label>
+        </StackPanel>
     </Grid>
 </Page>
