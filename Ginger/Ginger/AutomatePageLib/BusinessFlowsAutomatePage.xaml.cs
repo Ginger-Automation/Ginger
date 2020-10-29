@@ -41,8 +41,9 @@ namespace Ginger.BusinessFlowWindows
         public BusinessFlowsAutomatePage()
         {
             InitializeComponent();
-
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEvent;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEvent;
+            WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
             Reset();

@@ -407,6 +407,10 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
+                if (ex.InnerException != null && ex.InnerException.InnerException != null)
+                {
+                    result += ex.InnerException.InnerException.Message;
+                }
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 return false;
             }
@@ -417,11 +421,11 @@ namespace GingerCore.ALM
         private bool AddAttachment(string testSuiteId, string zipFileName)
         {
             try
-            {
-                FileStream fs = new FileStream(@"C:\Users\mkale\Desktop\ccd.pdf", FileMode.Open, FileAccess.Read);
+            {                
+                FileStream fs = new FileStream(zipFileName, FileMode.Open, FileAccess.Read);
                 BinaryReader br = new BinaryReader(fs);
                 byte[] fileData = br.ReadBytes((Int32)fs.Length);
-                var tt = Task.Run(() => { return entityService.AttachToEntity(new WorkspaceContext(1001, 4002), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null); }).Result;
+                var tt = Task.Run(() => { return entityService.AttachToEntity(new WorkspaceContext(this.loginDto.SharedSpaceId, this.loginDto.WorkSpaceId), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null); }).Result;
                 fs.Close();
                 return true;
             }
@@ -450,7 +454,10 @@ namespace GingerCore.ALM
                 });
                 AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
-                return Task.Run(() => { return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); }).Result;
+                return Task.Run(() => 
+                { 
+                    return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); 
+                }).Result;
             }
             catch (Exception ex)
             {

@@ -527,10 +527,7 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
-                    if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
-                    {
-                        JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
-                    }
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();                 
                     ServerURLTextBox.Cursor = null;
@@ -629,8 +626,7 @@ namespace Ginger.ALM
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                         break;
                     case "RQMRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
-                            ALMIntegration.Instance.SetALMCoreConfigurations(almType); //Because RQM need to update the server field from existing package
+                            almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;                           
                             SetLoadPackageButtonContent();
                         break;
                     case "RallyRadioButton":

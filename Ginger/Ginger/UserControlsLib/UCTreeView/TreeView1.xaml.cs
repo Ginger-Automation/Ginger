@@ -95,6 +95,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             set { xTreeTitle.Style = value; }
         }
 
+        public eImageType AddButtonIcon
+        {            
+            get { return xAddButton.ButtonImageType; }
+            set { xAddButton.ButtonImageType = value; }          
+        }
+      
         bool mAllowTreeTools = true;
         public bool AllowTreeTools { get { return mAllowTreeTools; } set { mAllowTreeTools = value; } }
 

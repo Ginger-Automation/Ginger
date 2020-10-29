@@ -270,7 +270,7 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from QC");
+            Reporter.ToLog(eLogLevel.DEBUG, "Start importing from Octane");
             //set path to import to               
             if (importDestinationFolderPath == "")
             {
@@ -280,11 +280,7 @@ namespace Ginger.ALM.Repository
             QCTestLabExplorerPage win = new QCTestLabExplorerPage(QCTestLabExplorerPage.eExplorerTestLabPageUsageType.Import, importDestinationFolderPath);
             win.ShowAsWindow(eWindowShowStyle.Dialog);
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            throw new NotImplementedException();
-        }
+          
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
@@ -369,22 +365,22 @@ namespace Ginger.ALM.Repository
                             }
                         }
 
-                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testSetItemtoImport.TestSetName, ex.Message);
-                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from Octane", ex);
 
                     }
                 }
 
                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
-                Reporter.ToLog(eLogLevel.DEBUG, "Imported from QC successfully");
+                Reporter.ToLog(eLogLevel.DEBUG, "Imported from Octane successfully");
                 return true;
             }
-            Reporter.ToLog(eLogLevel.ERROR, "Error importing from QC");
+            Reporter.ToLog(eLogLevel.ERROR, "Error importing from Octane");
             return false;
         }
 

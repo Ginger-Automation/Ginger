@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using GingerCore.ALM.QC;
 using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.ALM.Repository
 {
@@ -39,7 +40,10 @@ namespace Ginger.ALM.Repository
         public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups);
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null);
         public abstract void ImportALMTests(string importDestinationFolderPath);
-        public abstract void ImportALMTestsById(string importDestinationFolderPath);
+        public virtual void ImportALMTestsById(string importDestinationFolderPath)
+        {
+            Reporter.ToUser(eUserMsgKey.OperationNotSupported, "Import by Id is not supported for configured ALM Type");
+        }
         public abstract eUserMsgKey GetDownloadPossibleValuesMessage();
         public abstract IEnumerable<Object> SelectALMTestSets();
         public abstract bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTests);
@@ -64,6 +68,25 @@ namespace Ginger.ALM.Repository
                 mALMDefectsProfilesPage = new ALMDefectsProfilesPage();
 
             mALMDefectsProfilesPage.ShowAsWindow();
+        }
+
+
+        public void AddTestSetFlowToFolder(BusinessFlow businessFlow, string folderPath)
+        {
+            bool addItemToRootFolder = true;
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(folderPath);
+                if (repositoryFolder != null)
+                {
+                    repositoryFolder.AddRepositoryItem(businessFlow);
+                    addItemToRootFolder = false;
+                }
+            }
+            if (addItemToRootFolder)
+            {
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(businessFlow);
+            }
         }
 
     }

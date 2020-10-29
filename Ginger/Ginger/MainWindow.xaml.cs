@@ -454,6 +454,7 @@ namespace Ginger
             }
         }
 
+       
         private void xOpenSolutionMenuItem_Click(object sender, RoutedEventArgs e)
         {
             string solutionFolder = General.OpenSelectFolderDialog("Select Ginger Solution Folder");
@@ -462,7 +463,7 @@ namespace Ginger
                 string solutionFileName = System.IO.Path.Combine(solutionFolder, @"Ginger.Solution.xml");
                 if (System.IO.File.Exists(PathHelper.GetLongPath(solutionFileName)))
                 {
-                    WorkSpace.Instance.OpenSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));
+                    WorkSpace.Instance.OpenSolution(Path.GetDirectoryName(PathHelper.GetLongPath(solutionFolder)));                  
                 }
                 else
                 {
@@ -475,7 +476,7 @@ namespace Ginger
         {
             Solution s1 = new Solution();
             AddSolutionPage addSol = new AddSolutionPage(s1);
-            addSol.ShowAsWindow();
+            addSol.ShowAsWindow();        
         }
 
         public void SetSolutionDependedUIElements()
@@ -642,7 +643,7 @@ namespace Ginger
         {            
             if ( WorkSpace.Instance.Solution != null)
             {
-                WorkSpace.Instance. AppSolutionRecover.SolutionRecoverStart(true);
+                WorkSpace.Instance.AppSolutionRecover.SolutionRecoverStart(true);
             }
         }
 
@@ -811,7 +812,7 @@ namespace Ginger
 
             if (selectedSol != null && Directory.Exists(selectedSol.Folder))
             {
-                WorkSpace.Instance.OpenSolution(selectedSol.Folder);
+                WorkSpace.Instance.OpenSolution(selectedSol.Folder);                
             }
             else
                 Reporter.ToUser(eUserMsgKey.SolutionLoadError, "Selected Solution was not found");

@@ -2621,12 +2621,12 @@ namespace Ginger.Run
                 int index= CurrentBusinessFlow.Activities.IndexOf(CurrentBusinessFlow.CurrentActivity) + 1;
                 ActivitiesGroup activitiesGroup = CurrentBusinessFlow.ActivitiesGroups.Where(x => x.Name == CurrentBusinessFlow.CurrentActivity.ActivitiesGroupID).FirstOrDefault();
                 CurrentBusinessFlow.AddActivity(sharedActivityInstance, activitiesGroup, index);
-
+                    
                 NotifyDynamicActivityWasAddedToBusinessflow(CurrentBusinessFlow);
 
-                //set it as next activity to run                   
-                CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-                sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
+                //set it as next activity to run                                  
+                //CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
+                //sharedActivityInstance.Acts.CurrentItem = sharedActivityInstance.Acts.FirstOrDefault();
                 return true;
             }
             else
@@ -4713,6 +4713,12 @@ namespace Ginger.Run
         public bool SetBFOfflineData(BusinessFlow BF, ExecutionLoggerManager executionLoggerManager, string logFolderPath)
         {
             uint eventTime = RunListenerBase.GetEventTime();
+
+            if(Context.BusinessFlow==null)
+            {
+                Context.BusinessFlow = BF;
+            }
+
             Context.BusinessFlow.ExecutionLogActivityCounter = 1;
             try
             {
