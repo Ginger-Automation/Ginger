@@ -28,6 +28,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
     {
 
         public string Category { get; set; }
+        public string SubCategory { get; set; }
         public string Name { get; set; }
         public string Expression { get; set; }
         public string UseCase { get; set; }

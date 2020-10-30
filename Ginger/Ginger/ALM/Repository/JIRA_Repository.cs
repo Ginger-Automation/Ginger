@@ -34,7 +34,9 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCore.Platforms;
 using System.IO;
 using System.IO.Compression;
-
+using Ginger.ALM.JIRA.TreeViewItems;
+using JiraRepository.Data_Contracts;
+using Ginger.ALM.JIRA;
 
 namespace Ginger.ALM.Repository
 {
@@ -138,7 +140,45 @@ namespace Ginger.ALM.Repository
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString())&&(a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
                     var testExecutionFields = allFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
-                    var exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+
+                    bool exportRes = false;
+                    if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+                    {
+                        switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
+                        {
+                            case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray:
+                                exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+                                break;
+                            case GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr:
+                                JiraZephyrTreeItem zephyrExportPath = SelectZephyrExportPath();
+                                if (zephyrExportPath == null)
+                                {
+                                    return true;
+                                }
+                                if (zephyrExportPath is JiraZephyrVersionTreeItem)
+                                {
+                                    exportRes = ((JiraCore)this.AlmCore).ExportBfToZephyr(  businessFlow, testCaseFields, testSetFields,
+                                                                                            testExecutionFields, ref responseStr,
+                                                                                            ((JiraZephyrVersionTreeItem)zephyrExportPath).VersionId.ToString(), string.Empty);
+                                }
+                                else if (zephyrExportPath is JiraZephyrCycleTreeItem)
+                                {
+                                    exportRes = ((JiraCore)this.AlmCore).ExportBfToZephyr(businessFlow, testCaseFields, testSetFields,
+                                                                                            testExecutionFields, ref responseStr,
+                                                                                            ((JiraZephyrCycleTreeItem)zephyrExportPath).VersionId.ToString(),
+                                                                                            ((JiraZephyrCycleTreeItem)zephyrExportPath).Id.ToString());
+                                }
+                                break;
+                            default:
+                                exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        exportRes = ((JiraCore)this.AlmCore).ExportBfToAlm(businessFlow, testCaseFields, testSetFields, testExecutionFields, ref responseStr);
+                    }
+
                     if (exportRes)
                     {
                         if (performSaveAfterExport)
@@ -157,6 +197,21 @@ namespace Ginger.ALM.Repository
                 }
             }
             return result;
+        }
+
+        public JiraZephyrTreeItem SelectZephyrExportPath()
+        {
+            //show Test Cycles browser for selecting the Path
+            JiraZephyrCyclesExplorerPage win = new JiraZephyrCyclesExplorerPage(string.Empty, true);
+            object selectedPathObject = win.ShowAsWindow(eWindowShowStyle.Dialog);
+            if (selectedPathObject is JiraZephyrTreeItem)
+            {
+                return (JiraZephyrTreeItem)selectedPathObject;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public override eUserMsgKey GetDownloadPossibleValuesMessage()
@@ -186,14 +241,28 @@ namespace Ginger.ALM.Repository
 
         public override void ImportALMTests(string importDestinationFolderPath)
         {
-            JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage();
-            win.ShowAsWindow();
+            if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+            {
+                if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray)
+                {
+                    JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage();
+                    win.ShowAsWindow();
+                }
+                if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
+                {
+                    JIRA.JiraZephyrCyclesExplorerPage win = new JIRA.JiraZephyrCyclesExplorerPage(importDestinationFolderPath);
+                    win.ShowAsWindow();
+                }
+            }
         }
 
         public override void ImportALMTestsById(string importDestinationFolderPath)
         {
-            JIRA.JiraImportSetByIdPage win = new JIRA.JiraImportSetByIdPage();
-            win.ShowAsWindow();
+            if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
+            {
+                JIRA.JiraImportSetByIdPage win = new JIRA.JiraImportSetByIdPage();
+                win.ShowAsWindow();
+            }
         }
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTests)
@@ -227,6 +296,118 @@ namespace Ginger.ALM.Repository
                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
                 return true;
             }
+            return false;
+        }
+
+        public bool ImportSelectedZephyrCyclesAndFolders(string importDestinationPath, IEnumerable<object> selectedObjects)
+        {
+            if (selectedObjects != null && selectedObjects.Count() > 0)
+            {
+                foreach (JiraZephyrTreeItem obj in selectedObjects)
+                {
+                    BusinessFlow existedBF;
+                    if (obj is JiraZephyrFolderTreeItem)
+                    {
+                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == ((JiraZephyrFolderTreeItem)obj).CycleId  && x.ExternalID2 == obj.Id).FirstOrDefault();
+                    }
+                    else
+                    {
+                        existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == obj.Id && x.ExternalID2 == null).FirstOrDefault();
+                    }
+
+                    if (existedBF != null)
+                    {
+                        Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, obj.Name);
+                        if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                        {
+                            File.Delete(existedBF.FileName);
+                        }
+                    }
+                    Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, obj.Name);
+                }
+
+                //Refresh Ginger repository and allow GingerQC to use it
+                ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+                ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+
+                foreach (JiraZephyrTreeItem obj in selectedObjects)
+                {
+                    try
+                    {
+                        Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, obj.Name);
+                        JiraZephyrCycle currentCycle;
+                        BusinessFlow tsBusFlow;
+                        if (obj is JiraZephyrFolderTreeItem)
+                        {
+                            currentCycle = ((JiraCore)ALMIntegration.Instance.AlmCore).GetZephyrCycleOrFolderWithIssuesAndStepsAsCycle(obj.VersionId, ((JiraZephyrFolderTreeItem)obj).CycleId, ((JiraZephyrFolderTreeItem)obj).Id);
+                            currentCycle.name = obj.Name;
+                            currentCycle.description = ((JiraZephyrFolderTreeItem)obj).Description;
+                            tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraZypherCycleToBF(currentCycle);
+                            tsBusFlow.ExternalID = ((JiraZephyrFolderTreeItem)obj).CycleId;
+                            tsBusFlow.ExternalID2 = obj.Id;
+                        }
+                        else
+                        {
+                            currentCycle = ((JiraCore)ALMIntegration.Instance.AlmCore).GetZephyrCycleOrFolderWithIssuesAndStepsAsCycle(obj.VersionId, obj.Id);
+                            tsBusFlow = ((JiraCore)ALMIntegration.Instance.AlmCore).ConvertJiraZypherCycleToBF(currentCycle);
+                        }
+
+                        if (WorkSpace.Instance.Solution.MainApplication != null)
+                        {
+                            //add the applications mapped to the Activities
+                            foreach (Activity activ in tsBusFlow.Activities)
+                            {
+                                if (!string.IsNullOrEmpty(activ.TargetApplication))
+                                {
+                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    {
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        if (appAgent != null)
+                                        {
+                                            tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                                        }
+                                    }
+                                }
+                            }
+                            //handle non mapped Activities
+                            if (tsBusFlow.TargetApplications.Count == 0)
+                            {
+                                tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                            }
+                            foreach (Activity activ in tsBusFlow.Activities)
+                            {
+                                if (string.IsNullOrEmpty(activ.TargetApplication))
+                                {
+                                    activ.TargetApplication = tsBusFlow.MainApplication;
+                                }
+                                activ.Active = true;
+                            }
+                        }
+                        else
+                        {
+                            foreach (Activity activ in tsBusFlow.Activities)
+                            {
+                                activ.TargetApplication = null; // no app configured on solution level
+                            }
+                        }
+
+                        //save bf
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        Reporter.HideStatusMessage();
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, obj.Name, ex.Message);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error importing from Jira-Zephyr", ex);
+                    }
+                }
+
+                Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
+
+                Reporter.ToLog(eLogLevel.DEBUG, "Imported from Jira-Zephyr successfully");
+                return true;
+            }
+            Reporter.ToLog(eLogLevel.ERROR, "Error importing from Jira-Zephyr");
             return false;
         }
 

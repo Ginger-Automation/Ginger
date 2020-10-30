@@ -139,27 +139,35 @@ namespace amdocs.ginger.GingerCoreNET
 
         public void Close()
         {
-            AppSolutionAutoSave.StopSolutionAutoSave();
-            if (SolutionRepository != null)
+            try
             {
-                CloseAllRunningAgents();
-                PlugInsManager.CloseAllRunningPluginProcesses();
-                SolutionRepository.StopAllRepositoryFolderWatchers();
-            }
-            
-            if (!RunningInExecutionMode)
-            {
-                UserProfile.GingerStatus = eGingerStatus.Closed;
-                UserProfile.SaveUserProfile();
-                AppSolutionAutoSave.CleanAutoSaveFolders();
-            }
+                AppSolutionAutoSave.StopSolutionAutoSave();
+                if (SolutionRepository != null)
+                {
+                    CloseAllRunningAgents();
+                    PlugInsManager.CloseAllRunningPluginProcesses();
+                    SolutionRepository.StopAllRepositoryFolderWatchers();
+                }
 
-            if (WorkSpace.Instance.LocalGingerGrid != null)
-            {
-                WorkSpace.Instance.LocalGingerGrid.Stop();
+                if (!RunningInExecutionMode)
+                {
+                    UserProfile.GingerStatus = eGingerStatus.Closed;
+                    UserProfile.SaveUserProfile();
+                    AppSolutionAutoSave.CleanAutoSaveFolders();
+                }
+
+                if (WorkSpace.Instance.LocalGingerGrid != null)
+                {
+                    WorkSpace.Instance.LocalGingerGrid.Stop();
+                }
+                WorkSpace.Instance.Telemetry.SessionEnd();
+                mWorkSpace = null;
             }
-            WorkSpace.Instance.Telemetry.SessionEnd();
-            mWorkSpace = null;            
+            catch (Exception ex)            
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Exception during close workspace",ex);
+
+            }       
         }
 
         private void InitLocalGrid()
