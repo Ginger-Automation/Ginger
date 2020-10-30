@@ -1505,18 +1505,25 @@ namespace GingerCore.ALM
         {
             try
             {
-                HTMLText = HTMLText.Replace("<br />", Environment.NewLine);
-                Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
-                var stripped = reg.Replace(HTMLText, "");
-                if (toDecodeHTML)
+                if (!string.IsNullOrEmpty(HTMLText))
                 {
-                    stripped = HttpUtility.HtmlDecode(stripped);
-                }
-                stripped = stripped.Trim();
-                stripped = stripped.TrimStart('\n', '\r');
-                stripped = stripped.TrimEnd('\n', '\r');
+                    HTMLText = HTMLText.Replace("<br />", Environment.NewLine);
+                    Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
+                    var stripped = reg.Replace(HTMLText, "");
+                    if (toDecodeHTML)
+                    {
+                        stripped = HttpUtility.HtmlDecode(stripped);
+                    }
+                    stripped = stripped.Trim();
+                    stripped = stripped.TrimStart('\n', '\r');
+                    stripped = stripped.TrimEnd('\n', '\r');
 
-                return stripped;
+                    return stripped; 
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
             catch (Exception ex)
             {
