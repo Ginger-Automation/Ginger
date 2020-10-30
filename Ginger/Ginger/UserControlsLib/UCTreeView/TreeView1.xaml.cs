@@ -70,6 +70,29 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             get { return xGrid; }
         }
+        public string EnableRightClick
+        {
+            get
+            {
+                return Tree.EnableRightClick.ToString();
+            }
+            set
+            {
+                Tree.EnableRightClick = Convert.ToBoolean(value);
+            }
+        }
+
+        public string EnableDragDrop
+        {
+            get
+            {
+                return Tree.EnableDragDrop.ToString();
+            }
+            set
+            {
+                Tree.EnableDragDrop = Convert.ToBoolean(value);
+            }
+        }
 
         public string TreeTitle
         {
@@ -167,7 +190,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 xRefreshButton.Visibility = Visibility.Collapsed;
-            }
+            }         
         }
 
         private void xTreeViewTree_ItemSelected(object sender, EventArgs e)
