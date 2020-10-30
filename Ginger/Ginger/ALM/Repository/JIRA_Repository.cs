@@ -237,7 +237,7 @@ namespace Ginger.ALM.Repository
         {
             if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Xray)
             {
-                JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage();
+                JIRA.JiraImportReviewPage win = new JIRA.JiraImportReviewPage(importDestinationPath:importDestinationFolderPath);
                 win.ShowAsWindow();
             }
             if (ALMCore.DefaultAlmConfig.JiraTestingALM == GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.Zephyr)
@@ -274,7 +274,7 @@ namespace Ginger.ALM.Repository
                         Reporter.ToStatus(eStatusMsgKey.ALMTestSetImport, null, selectedTS.Name);
                         JiraTestSet jiraImportedTSData = ((JiraCore)this.AlmCore).GetJiraTestSetData(selectedTS);
                         
-                        SetImportedTS(jiraImportedTSData);
+                        SetImportedTS(jiraImportedTSData, importDestinationPath);
                     }
                     catch (Exception ex)
                     {
@@ -399,7 +399,7 @@ namespace Ginger.ALM.Repository
             return false;
         }
 
-        private void SetImportedTS(JiraTestSet importedTS)
+        private void SetImportedTS(JiraTestSet importedTS, string importDestinationPath)
         {
             ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
@@ -411,7 +411,7 @@ namespace Ginger.ALM.Repository
                 SetBFPropertiesAfterImport(tsBusFlow);
 
                 //save bf
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                 Reporter.HideStatusMessage();
             }
             catch { }
