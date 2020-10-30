@@ -20,7 +20,7 @@
                 <RowDefinition Height="30*"/>
             </Grid.RowDefinitions>
 
-            <UCTreeView:TreeView1 x:Name="xObjectsTreeView" Grid.Row="0"  Margin="0,-15,1,0"  TreeTitle="Expressions" TreeIcon="Variable" LostFocus="XObjectsTreeView_LostFocus"/>
+            <UCTreeView:TreeView1 x:Name="xObjectsTreeView" Grid.Row="0"  EnableRightClick="false" EnableDragDrop="false"  Margin="0,-15,1,0"  TreeTitle="Expressions" TreeIcon="Variable" LostFocus="XObjectsTreeView_LostFocus"/>
            
             <DockPanel x:Name="xHelpPanel"  Grid.Row="1" Margin="0,0,1,0">
                 <GridSplitter  Height="1" Background="{StaticResource $BackgroundColor_DarkGray}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" IsEnabled="False" Margin="0,-1,3,0"/>
