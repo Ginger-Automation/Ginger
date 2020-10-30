@@ -36,6 +36,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
         public string ReturnType { get; set; }
         public string ExpressionResult { get; set; }
         public string IconImageName { get; set; }
+        public bool RequiresSpecificFlowDetails { get; set; }
 
         public ValueExpressionReference()
         {

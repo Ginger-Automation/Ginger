@@ -203,7 +203,7 @@ namespace Ginger.ALM.Repository
                         }
 
                         //save bf
-                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);                        
+                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
@@ -431,10 +431,6 @@ namespace Ginger.ALM.Repository
         {
             return eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss;
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            return;
-        }
+             
     }
 }

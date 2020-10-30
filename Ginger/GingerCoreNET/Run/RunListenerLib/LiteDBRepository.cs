@@ -39,7 +39,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
-    class LiteDBRepository : ExecutionLogger
+    public class LiteDBRepository : ExecutionLogger
     {
         public LiteDbManager liteDbManager;
 

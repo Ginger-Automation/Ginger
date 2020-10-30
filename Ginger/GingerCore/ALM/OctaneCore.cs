@@ -1,4 +1,22 @@
-﻿using ALM_Common.DataContracts;
+#region License
+/*
+Copyright © 2014-2020 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
@@ -389,6 +407,10 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
+                if (ex.InnerException != null && ex.InnerException.InnerException != null)
+                {
+                    result += ex.InnerException.InnerException.Message;
+                }
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
                 return false;
             }
@@ -399,11 +421,11 @@ namespace GingerCore.ALM
         private bool AddAttachment(string testSuiteId, string zipFileName)
         {
             try
-            {
-                FileStream fs = new FileStream(@"C:\Users\mkale\Desktop\ccd.pdf", FileMode.Open, FileAccess.Read);
+            {                
+                FileStream fs = new FileStream(zipFileName, FileMode.Open, FileAccess.Read);
                 BinaryReader br = new BinaryReader(fs);
                 byte[] fileData = br.ReadBytes((Int32)fs.Length);
-                var tt = Task.Run(() => { return entityService.AttachToEntity(new WorkspaceContext(1001, 4002), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null); }).Result;
+                var tt = Task.Run(() => { return entityService.AttachToEntity(new WorkspaceContext(this.loginDto.SharedSpaceId, this.loginDto.WorkSpaceId), new TestSuite() { Id = new EntityId(testSuiteId) }, zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null); }).Result;
                 fs.Close();
                 return true;
             }
@@ -432,7 +454,10 @@ namespace GingerCore.ALM
                 });
                 AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
-                return Task.Run(() => { return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); }).Result;
+                return Task.Run(() => 
+                { 
+                    return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null); 
+                }).Result;
             }
             catch (Exception ex)
             {
@@ -1480,18 +1505,25 @@ namespace GingerCore.ALM
         {
             try
             {
-                HTMLText = HTMLText.Replace("<br />", Environment.NewLine);
-                Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
-                var stripped = reg.Replace(HTMLText, "");
-                if (toDecodeHTML)
+                if (!string.IsNullOrEmpty(HTMLText))
                 {
-                    stripped = HttpUtility.HtmlDecode(stripped);
-                }
-                stripped = stripped.Trim();
-                stripped = stripped.TrimStart('\n', '\r');
-                stripped = stripped.TrimEnd('\n', '\r');
+                    HTMLText = HTMLText.Replace("<br />", Environment.NewLine);
+                    Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
+                    var stripped = reg.Replace(HTMLText, "");
+                    if (toDecodeHTML)
+                    {
+                        stripped = HttpUtility.HtmlDecode(stripped);
+                    }
+                    stripped = stripped.Trim();
+                    stripped = stripped.TrimStart('\n', '\r');
+                    stripped = stripped.TrimEnd('\n', '\r');
 
-                return stripped;
+                    return stripped; 
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
             catch (Exception ex)
             {

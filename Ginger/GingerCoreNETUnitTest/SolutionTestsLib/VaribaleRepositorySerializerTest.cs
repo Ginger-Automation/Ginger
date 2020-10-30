@@ -102,7 +102,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Act
             Var = BusinessFlow.GetVariable("TestRandomNumVar");
             //Assert
-            Assert.AreNotEqual(Var.Formula, Var.Value, "var Ramndom number");
+            Assert.AreNotEqual(Var.Formula, Var.Value, "var Random number");
         }
 
         [TestMethod]
@@ -111,7 +111,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Act
             Var = BusinessFlow.GetVariable("TestRandomStrVar");
             //Assert
-            Assert.AreNotEqual(Var.Formula, Var.Value, "var Ramndom number");
+            Assert.AreNotEqual(Var.Formula, Var.Value, "var Random number");
         }
 
         [TestMethod]

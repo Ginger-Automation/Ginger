@@ -395,14 +395,14 @@ namespace Ginger.Actions.WebServices
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestSuite, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            TestSuiteComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
+            TestSuiteComboBox.Text = w.xExpressionUCTextEditor.textEditor.Text;
         }
 
         private void TestCaseVEButton_Click(object sender, RoutedEventArgs e)
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestCase, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            TestCaseComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
+            TestCaseComboBox.Text = w.xExpressionUCTextEditor.textEditor.Text;
         }
 
 
