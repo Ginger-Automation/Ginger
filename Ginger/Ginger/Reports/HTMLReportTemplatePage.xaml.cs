@@ -118,6 +118,12 @@ namespace Ginger.Reports
             grdSummaryViewFields.SetAllColumnsDefaultView(viewSummaryView);
             grdSummaryViewFields.InitViewItems();
 
+            //Remove collapsed column for source field
+            viewSummaryView.GridColsView.Remove(viewSummaryView.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
+            grdRensetViewSourceFields.SetAllColumnsDefaultView(viewSummaryView);
+            grdRensetViewSourceFields.InitViewItems();
+
+
             GridViewDef viewGingers = new GridViewDef(GridViewDef.DefaultViewName);
             viewGingers.GridColsView = new ObservableList<GridColView>();
             viewGingers.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
@@ -126,6 +132,10 @@ namespace Ginger.Reports
             viewGingers.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdGingersField.Resources["SectionCollapsedGingers"] });
             grdGingersFields.SetAllColumnsDefaultView(viewGingers);
             grdGingersFields.InitViewItems();
+
+            viewGingers.GridColsView.Remove(viewGingers.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
+            grdRunnerViewSourceFields.SetAllColumnsDefaultView(viewGingers);
+            grdRunnerViewSourceFields.InitViewItems();
 
             GridViewDef viewBusinessFlow = new GridViewDef(GridViewDef.DefaultViewName);
             viewBusinessFlow.GridColsView = new ObservableList<GridColView>();
@@ -136,6 +146,10 @@ namespace Ginger.Reports
             grdBusinessFlowFields.SetAllColumnsDefaultView(viewBusinessFlow);
             grdBusinessFlowFields.InitViewItems();
 
+            viewBusinessFlow.GridColsView.Remove(viewBusinessFlow.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
+            grdBusinessFlowViewSourceFields.SetAllColumnsDefaultView(viewBusinessFlow);
+            grdBusinessFlowViewSourceFields.InitViewItems();
+
             GridViewDef viewActivities = new GridViewDef(GridViewDef.DefaultViewName);
             viewActivities.GridColsView = new ObservableList<GridColView>();
             viewActivities.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
@@ -144,6 +158,10 @@ namespace Ginger.Reports
             viewActivities.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActivitiesField.Resources["SectionCollapsedActivities"] });
             grdActivitiesFields.SetAllColumnsDefaultView(viewActivities);
             grdActivitiesFields.InitViewItems();
+
+            viewActivities.GridColsView.Remove(viewActivities.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
+            grdActivityViewSourceFields.SetAllColumnsDefaultView(viewActivities);
+            grdActivityViewSourceFields.InitViewItems();
 
             GridViewDef viewActivityGroups = new GridViewDef(GridViewDef.DefaultViewName);
             viewActivityGroups.GridColsView = new ObservableList<GridColView>();
@@ -154,6 +172,10 @@ namespace Ginger.Reports
             grdActivityGroupsFields.SetAllColumnsDefaultView(viewActivityGroups);
             grdActivityGroupsFields.InitViewItems();
 
+            viewActivityGroups.GridColsView.Remove(viewActivityGroups.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
+            grdActivityGroupsViewSourceFields.SetAllColumnsDefaultView(viewActivityGroups);
+            grdActivityGroupsViewSourceFields.InitViewItems();
+
             GridViewDef viewActions = new GridViewDef(GridViewDef.DefaultViewName);
             viewActions.GridColsView = new ObservableList<GridColView>();
             viewActions.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.FieldName, WidthWeight = 65, ReadOnly = true, Header = "Field Name" });
@@ -162,6 +184,10 @@ namespace Ginger.Reports
             viewActions.GridColsView.Add(new GridColView() { Field = HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed, WidthWeight = 20, Header = "Collapsed", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.grdActionsField.Resources["SectionCollapsedActions"] });
             grdActionsFields.SetAllColumnsDefaultView(viewActions);
             grdActionsFields.InitViewItems();
+
+            viewActions.GridColsView.Remove(viewActions.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
+            grdActionViewSourceFields.SetAllColumnsDefaultView(viewActions);
+            grdActionViewSourceFields.InitViewItems();
 
             GridViewDef viewEmailSummaryView = new GridViewDef(GridViewDef.DefaultViewName);
             viewEmailSummaryView.GridColsView = new ObservableList<GridColView>();
@@ -182,6 +208,14 @@ namespace Ginger.Reports
             grdActivityGroupsFields.DataSourceList = HTMLReportConfiguration.ActivityGroupFieldsToSelect;
             grdActivitiesFields.DataSourceList = HTMLReportConfiguration.ActivityFieldsToSelect;
             grdActionsFields.DataSourceList = HTMLReportConfiguration.ActionFieldsToSelect;
+
+
+            grdRensetViewSourceFields.DataSourceList = HTMLReportConfiguration.RunSetSourceFieldsToSelect;
+            grdRunnerViewSourceFields.DataSourceList = HTMLReportConfiguration.GingerRunnerSourceFieldsToSelect;
+            grdBusinessFlowViewSourceFields.DataSourceList = HTMLReportConfiguration.BusinessFlowSourceFieldsToSelect;
+            grdActivityGroupsViewSourceFields.DataSourceList = HTMLReportConfiguration.ActivityGroupSourceFieldsToSelect;
+            grdActivityViewSourceFields.DataSourceList = HTMLReportConfiguration.ActivitySourceFieldsToSelect;
+            grdActionViewSourceFields.DataSourceList = HTMLReportConfiguration.ActionSourceFieldsToSelect;
         }
 
         private static ObservableList<HTMLReportConfigFieldToSelect> GetReportLevelMembers(Type reportLevelType)
@@ -325,6 +359,25 @@ namespace Ginger.Reports
                 case "grdActions_FieldSelection":
                     _HTMLReportConfiguration.ActionFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActionsFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
                     break;
+
+                case "grdActionViewSourceFields_FieldSelection":
+                    _HTMLReportConfiguration.ActionSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActionsFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdActivityViewSourceFields_FieldSelection":
+                    _HTMLReportConfiguration.ActivitySourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActivitiesFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdActivityGroupsViewSourceFields_FieldSelection":
+                    _HTMLReportConfiguration.ActivityGroupSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActivityGroupsFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdBusinessFlowViewSourceFields_FieldSelection":
+                    _HTMLReportConfiguration.BusinessFlowSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdBusinessFlowFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdRunnerViewSourceFields_FieldSelection":
+                    _HTMLReportConfiguration.GingerRunnerSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdGingersFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdRensetViewSourceFields_FieldSelection":
+                    _HTMLReportConfiguration.RunSetSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdSummaryViewFields.CurrentItem).FieldKey)).FirstOrDefault().IsSelected = (bool)(sender as CheckBox).IsChecked;
+                    break;
             }
         }
 
@@ -349,6 +402,25 @@ namespace Ginger.Reports
                     break;
                 case "grdActions_SectionCollapsed":
                     _HTMLReportConfiguration.ActionFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActionsFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
+                    break;
+
+                case "grdActionViewSourceFields_SectionCollapsed":
+                    _HTMLReportConfiguration.ActionSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActionsFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdActivityViewSourceFields_SectionCollapsed":
+                    _HTMLReportConfiguration.ActivitySourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActivitiesFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdActivityGroupsViewSourceFields_SectionCollapsed":
+                    _HTMLReportConfiguration.ActivityGroupSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdActivitiesFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdBusinessFlowViewSourceFields_SectionCollapsed":
+                    _HTMLReportConfiguration.BusinessFlowSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdBusinessFlowFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdRunnerViewSourceFields_SectionCollapsed":
+                    _HTMLReportConfiguration.GingerRunnerSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdGingersFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
+                    break;
+                case "grdRensetViewSourceFields_SectionCollapsed":
+                    _HTMLReportConfiguration.RunSetSourceFieldsToSelect.Where(x => (x.FieldKey == ((HTMLReportConfigFieldToSelect)grdSummaryViewFields.CurrentItem).FieldKey)).FirstOrDefault().IsSectionCollapsed = (bool)(sender as CheckBox).IsChecked;
                     break;
             }
         }

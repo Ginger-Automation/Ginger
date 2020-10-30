@@ -33,21 +33,109 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
     public class LiteDbReportBase
     {
+        [FieldParams]
+        [FieldParamsNameCaption("Seq")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int Seq { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Guid")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Guid GUID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Name")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string Name { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Description")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string Description { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("RunDescription")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string RunDescription { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Environment")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string Environment { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("StartTimeStamp")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public DateTime StartTimeStamp { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("EndTimeStamp")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public DateTime EndTimeStamp { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Elapsed")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public double? Elapsed { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("RunStatus")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string RunStatus { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("VariablesBeforeExec")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> VariablesBeforeExec { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("VariablesAfterExec")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> VariablesAfterExec { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ExecutionId")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public LiteDB.ObjectId _id { get; set; }
 
+        [FieldParams]
+        [FieldParamsNameCaption("ExecutionRate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string ExecutionRate { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("PassRate")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string PassRate { get; set; }
 
         public LiteDbReportBase()
@@ -93,12 +181,53 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     }
     public class LiteDbRunSet : LiteDbReportBase
     {
+        [FieldParams]
+        [FieldParamsNameCaption("GingerVersion")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string GingerVersion { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("MachineName")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string MachineName { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ExecutedbyUser")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string ExecutedbyUser { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Runners")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<LiteDbRunner> RunnersColl { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutableItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildPassedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunSet()
         {
@@ -126,10 +255,40 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     }
     public class LiteDbRunner : LiteDbReportBase
     {
+
+        [FieldParams]
+        [FieldParamsNameCaption("ApplicationAgentsMappingList")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> ApplicationAgentsMappingList { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("BusinessFlows")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<LiteDbBusinessFlow> BusinessFlowsColl { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutableItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildPassedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunner()
         {
@@ -155,16 +314,67 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     }
     public class LiteDbBusinessFlow : LiteDbReportBase
     {
+        [FieldParams]
+        [FieldParamsNameCaption("InstanceGUID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Guid InstanceGUID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("SolutionVariablesBeforeExec")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> SolutionVariablesBeforeExec { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("SolutionVariablesAfterExec")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> SolutionVariablesAfterExec { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Activities")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<LiteDbActivity> ActivitiesColl { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ActivitiesGroups")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<LiteDbActivityGroup> ActivitiesGroupsColl { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("BFFlowControlDT")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> BFFlowControlDT { get; set; }
 
-
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutableItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildExecutableItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildExecutedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildPassedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbBusinessFlow()
         {
@@ -197,9 +407,27 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 
     public class LiteDbActivityGroup : LiteDbReportBase
     {
+        [FieldParams]
+        [FieldParamsNameCaption("ExecutedActivitiesGUID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<Guid> ExecutedActivitiesGUID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("AutomationPrecentage")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string AutomationPrecentage { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Activities")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<LiteDbActivity> ActivitiesColl { get; set; }
+
         public LiteDbActivityGroup()
         {
             ActivitiesColl = new List<LiteDbActivity>();
@@ -223,11 +451,47 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     }
     public class LiteDbActivity : LiteDbReportBase
     {
+        [FieldParams]
+        [FieldParamsNameCaption("ActivityGroupName")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string ActivityGroupName { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Actions")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<LiteDbAction> ActionsColl { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutableItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int ChildExecutableItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildExecutedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int ChildExecutedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ChildPassedItemsCount")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int ChildPassedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ErrorDetails")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ErrorDetails { get; set; }
 
         public LiteDbActivity()
         {
@@ -252,15 +516,74 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     
     public class LiteDbAction : LiteDbReportBase
     {
+        [FieldParams]
+        [FieldParamsNameCaption("ActionType")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string ActionType { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("CurrentRetryIteration")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int CurrentRetryIteration { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Error")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string Error { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ExInfo")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public string ExInfo { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("InputValues")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> InputValues { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("OutputValues")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> OutputValues { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("FlowControls")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> FlowControls { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("ScreenShots")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public List<string> ScreenShots { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Wait")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int Wait { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("TimeOut")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
         public int? TimeOut { get; set; }
 
         public LiteDbAction()

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Drawing;
@@ -118,7 +119,14 @@ namespace Ginger.Reports
             ActivityGroupFieldsToSelect,
             GingerRunnerFieldsToSelect,
             RunSetFieldsToSelect,
-            EmailSummaryViewFieldsToSelect
+            EmailSummaryViewFieldsToSelect,
+
+            ActionSourceFieldsToSelect,
+            ActivitySourceFieldsToSelect,
+            BusinessFlowSourceFieldsToSelect,
+            ActivityGroupSourceFieldsToSelect,
+            GingerRunnerSourceFieldsToSelect,
+            RunSetSourceFieldsToSelect
         }
 
         public enum eExecutionStatisticsCountBy
@@ -147,6 +155,26 @@ namespace Ginger.Reports
 
         [IsSerializedForLocalRepository]
         public ObservableList<HTMLReportConfigFieldToSelect> EmailSummaryViewFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
+        //Source Feilds Config
+        [IsSerializedForLocalRepository]
+        public ObservableList<HTMLReportConfigFieldToSelect> ActionSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<HTMLReportConfigFieldToSelect> ActivitySourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<HTMLReportConfigFieldToSelect> ActivityGroupSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<HTMLReportConfigFieldToSelect> BusinessFlowSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<HTMLReportConfigFieldToSelect> GingerRunnerSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<HTMLReportConfigFieldToSelect> RunSetSourceFieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
+
 
         public override string GetNameForFileName()
         {
@@ -236,6 +264,14 @@ namespace Ginger.Reports
             reportConfiguraion.ActivityGroupFieldsToSelect = GetReportLevelMembers(typeof(ActivityGroupReport));
             reportConfiguraion.ActivityFieldsToSelect = GetReportLevelMembers(typeof(ActivityReport));
             reportConfiguraion.ActionFieldsToSelect = GetReportLevelMembers(typeof(ActionReport));
+
+            reportConfiguraion.RunSetSourceFieldsToSelect = GetReportLevelMembers(typeof(LiteDbRunSet), true);
+            reportConfiguraion.GingerRunnerSourceFieldsToSelect = GetReportLevelMembers(typeof(LiteDbRunner), true);
+            reportConfiguraion.BusinessFlowSourceFieldsToSelect = GetReportLevelMembers(typeof(LiteDbBusinessFlow), true);
+            reportConfiguraion.ActivityGroupSourceFieldsToSelect = GetReportLevelMembers(typeof(LiteDbActivityGroup), true);
+            reportConfiguraion.ActivitySourceFieldsToSelect = GetReportLevelMembers(typeof(LiteDbActivity), true);
+            reportConfiguraion.ActionSourceFieldsToSelect = GetReportLevelMembers(typeof(LiteDbAction), true);
+
             reportConfiguraion.Description = string.Empty;
             using (var ms = new MemoryStream())
             {
@@ -271,6 +307,20 @@ namespace Ginger.Reports
                 EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivityFieldsToSelect, typeof(ActivityReport), HTMLReportConfiguration);
             HTMLReportConfiguration.ActionFieldsToSelect =
                 EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActionFieldsToSelect, typeof(ActionReport), HTMLReportConfiguration);
+            //
+            HTMLReportConfiguration.RunSetSourceFieldsToSelect =
+                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.RunSetSourceFieldsToSelect, typeof(LiteDbRunSet), HTMLReportConfiguration, true);
+            HTMLReportConfiguration.GingerRunnerSourceFieldsToSelect =
+                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.GingerRunnerSourceFieldsToSelect, typeof(LiteDbRunner), HTMLReportConfiguration, true);
+            HTMLReportConfiguration.BusinessFlowSourceFieldsToSelect =
+                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.BusinessFlowSourceFieldsToSelect, typeof(LiteDbBusinessFlow), HTMLReportConfiguration, true);
+            HTMLReportConfiguration.ActivityGroupSourceFieldsToSelect =
+                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivityGroupSourceFieldsToSelect, typeof(LiteDbActivityGroup), HTMLReportConfiguration, true);
+            HTMLReportConfiguration.ActivitySourceFieldsToSelect =
+                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActivitySourceFieldsToSelect, typeof(LiteDbActivity), HTMLReportConfiguration, true);
+            HTMLReportConfiguration.ActionSourceFieldsToSelect =
+                EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames.ActionSourceFieldsToSelect, typeof(LiteDbAction), HTMLReportConfiguration, true);
+
 
             if (HTMLReportConfiguration.ReportLowerLevelToShow == null)
             {
@@ -280,13 +330,10 @@ namespace Ginger.Reports
             return HTMLReportConfiguration;
         }
 
-
-
-
-        public static ObservableList<HTMLReportConfigFieldToSelect> EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames fieldsToSelectListName, Type reportType, HTMLReportConfiguration HTMLReportConfiguration)
+        public static ObservableList<HTMLReportConfigFieldToSelect> EnchancingLoadedFieldsWithDataAndValidatingPerLevel(HTMLReportConfiguration.FieldsToSelectListsNames fieldsToSelectListName, Type reportType, HTMLReportConfiguration HTMLReportConfiguration, bool isSourceFeild = false)
         {
             ObservableList<HTMLReportConfigFieldToSelect> savedFieldSelections = (ObservableList<HTMLReportConfigFieldToSelect>)HTMLReportConfiguration.GetType().GetField(fieldsToSelectListName.ToString()).GetValue(HTMLReportConfiguration);
-            ObservableList<HTMLReportConfigFieldToSelect> referenceFieldSelections = GetReportLevelMembers(reportType);
+            ObservableList<HTMLReportConfigFieldToSelect> referenceFieldSelections = GetReportLevelMembers(reportType, isSourceFeild);
             // swap should be done between two below lists. Previose saved selection should be performed on the referenceFieldSelections
             foreach (var saved_item in savedFieldSelections)
             {
@@ -313,7 +360,8 @@ namespace Ginger.Reports
             }
             return savedFieldSelections;
         }
-        public static ObservableList<HTMLReportConfigFieldToSelect> GetReportLevelMembers(Type reportLevelType)
+
+        public static ObservableList<HTMLReportConfigFieldToSelect> GetReportLevelMembers(Type reportLevelType, bool isSourceFeild = false)
         {
             ObservableList<HTMLReportConfigFieldToSelect> fieldsToSelect = new ObservableList<HTMLReportConfigFieldToSelect>();
             MemberInfo[] members = reportLevelType.GetMembers();
@@ -325,13 +373,19 @@ namespace Ginger.Reports
 
                 if (token == null)
                     continue;
-
-                fieldsToSelect.Add(new HTMLReportConfigFieldToSelect(mi.Name.ToString(),
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsNameCaption), false) as FieldParamsNameCaption).NameCaption,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsSelected), false) as FieldParamsIsSelected).IsSelected,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsNotMandatory), false) as FieldParamsIsNotMandatory).IsNotMandatory,
-                                                                     (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString(),
-                                                                     false));
+                if (isSourceFeild == true && (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString() == FieldsType.Section.ToString())
+                {
+                    continue;
+                }
+                else
+                {
+                    fieldsToSelect.Add(new HTMLReportConfigFieldToSelect(mi.Name.ToString(),
+                                                                         (Attribute.GetCustomAttribute(mi, typeof(FieldParamsNameCaption), false) as FieldParamsNameCaption).NameCaption,
+                                                                         (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsSelected), false) as FieldParamsIsSelected).IsSelected,
+                                                                         (Attribute.GetCustomAttribute(mi, typeof(FieldParamsIsNotMandatory), false) as FieldParamsIsNotMandatory).IsNotMandatory,
+                                                                         (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString(),
+                                                                         false));
+                }
             }
             return fieldsToSelect;
         }

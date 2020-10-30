@@ -204,6 +204,19 @@ namespace Amdocs.Ginger.CoreNET.Logger
                                 }
                             }
                             liteDbAction.ScreenShots = newScreenShotsList;
+
+                            //Error details on activity level
+                            if (liteDbAction.RunStatus == eRunStatus.Failed.ToString())
+                            {
+                                if (string.IsNullOrEmpty(liteDbActivity.ErrorDetails))
+                                {
+                                    liteDbActivity.ErrorDetails = liteDbAction.Description + " : " + liteDbAction.Error;
+                                }
+                                else
+                                {
+                                    liteDbActivity.ErrorDetails += liteDbActivity.ErrorDetails + "," + liteDbAction.Description + " : " + liteDbAction.Error;
+                                }
+                            }
                         }
                     }
                 }
