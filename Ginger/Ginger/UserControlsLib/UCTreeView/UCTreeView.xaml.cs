@@ -82,7 +82,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     return null;
             }
         }
-
+        
         public void ClearTreeItems()
         {
             Tree.Items.Clear();
@@ -93,14 +93,56 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             InitializeComponent();
 
             Tree.SelectedItemChanged += Tree_SelectedItemChanged;
-            Tree.PreviewMouseRightButtonDown += Tree_PreviewMouseRightButtonDown;
+          
             Tree.MouseDoubleClick += Tree_MouseDoubleClick;
 
             //Hook Drag Drop handler
-            //TODO: add flag to decide if Drag and drop is needed
-            DragDrop2.HookEventHandlers(this);
+            //TODO: add flag to decide if Drag and drop is needed          
+            
         }
 
+        bool mEnableRightClick = true;
+        public bool EnableRightClick
+        {
+            get
+            {
+                return mEnableRightClick;
+            }
+            set
+            {
+                if(value)
+                {
+                    Tree.PreviewMouseRightButtonDown += Tree_PreviewMouseRightButtonDown;
+                }
+                else
+                {
+                    Tree.PreviewMouseRightButtonDown -= Tree_PreviewMouseRightButtonDown;
+                }
+                mEnableRightClick = value;
+            }
+        }
+
+        bool mEnableDragDrop = true;
+        public bool EnableDragDrop
+        {
+            get
+            {
+                return mEnableDragDrop;
+            }
+            set
+            {
+                if (value)
+                {
+                    DragDrop2.HookEventHandlers(this);
+                }
+                else
+                {
+                    DragDrop2.UnHookEventHandlers(this);
+                }
+                mEnableDragDrop = value;
+            }
+        }
+       
         private void Tree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             TreeItemDoubleClicked = true;
