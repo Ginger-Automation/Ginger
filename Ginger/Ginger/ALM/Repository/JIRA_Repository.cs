@@ -140,7 +140,7 @@ namespace Ginger.ALM.Repository
                     var testCaseFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_CASE.ToString()) && (a.ToUpdate || a.Mandatory));
                     var testSetFields = allFields.Where(a => a.ItemType == (ResourceType.TEST_SET.ToString()) && (a.ToUpdate || a.Mandatory));
                     var testExecutionFields = allFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
-
+                    Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
                     bool exportRes = false;
                     switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
                     {
@@ -188,6 +188,7 @@ namespace Ginger.ALM.Repository
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
                         Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, responseStr);
                 }
+                Reporter.HideStatusMessage();
             }
             return result;
         }

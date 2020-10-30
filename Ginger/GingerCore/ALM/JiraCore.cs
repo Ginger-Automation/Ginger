@@ -58,7 +58,7 @@ namespace GingerCore.ALM
         }
         public JiraCore()
         {
-            string settingsPath = string.IsNullOrEmpty(DefaultAlmConfig.ALMConfigPackageFolderPath) ? "ALM\\JIRA" : DefaultAlmConfig.ALMConfigPackageFolderPath;
+            string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPath;
             jiraRepObj = new JiraRepository.JiraRepository(settingsPath, (TestingALMType)Enum.Parse(typeof(TestingALMType), ALMCore.DefaultAlmConfig.JiraTestingALM.ToString()));
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
@@ -236,12 +236,14 @@ namespace GingerCore.ALM
         public bool ValidateConfigurationFile(string PackageFileName)
         {
             bool containJiraSettingsFile = false;
+
+           
             using (FileStream configPackageZipFile = new FileStream(PackageFileName, FileMode.Open))
             {
                 using (ZipArchive zipArchive = new ZipArchive(configPackageZipFile))
                 {
                     foreach (ZipArchiveEntry entry in zipArchive.Entries)
-                        if (entry.FullName == @"JiraSettings/")
+                        if (entry.FullName == @"JiraSettings/JiraSettings.json")
                         {
                             containJiraSettingsFile = true;
                             break;

@@ -155,31 +155,7 @@ namespace Ginger.ALM.Repository
                     }
                     else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
                     {
-                        matchingTS = null;
-                        testPlanUploadPath = SelectALMTestPlanPath();
-                        if (String.IsNullOrEmpty(testPlanUploadPath))
-                        {
-                            //no path to upload to
-                            return false;
-                        }
-                        //create upload path if checked to create separete folder
-                        if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
-                        {
-                            try
-                            {
-                                string folderId = octaneCore.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
-                                folderId = octaneCore.CreateApplicationModule(businessFlow.Name, businessFlow.Description, folderId);
-                                testPlanUploadPath = folderId;
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to get create folder for Test Plan with Octane REST API", ex);
-                            }
-                        }
-                        else
-                        {
-                            testPlanUploadPath = octaneCore.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
-                        }
+                        matchingTS = null;                 
                     }
                     else
                     {
@@ -191,13 +167,36 @@ namespace Ginger.ALM.Repository
                 }
             }
 
-            testLabUploadPath = testPlanUploadPath;
+            
             bool performSave = false;
 
             //just to check if new TC needs to be created or update has to be done
             if (matchingTS == null)
             {
-                matchingTC = null;
+                testPlanUploadPath = SelectALMTestPlanPath();
+                if (String.IsNullOrEmpty(testPlanUploadPath))
+                {
+                    //no path to upload to
+                    return false;
+                }
+                //create upload path if checked to create separete folder
+                if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
+                {
+                    try
+                    {
+                        string folderId = octaneCore.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
+                        folderId = octaneCore.CreateApplicationModule(businessFlow.Name, businessFlow.Description, folderId);
+                        testPlanUploadPath = folderId;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to get create folder for Test Plan with Octane REST API", ex);
+                    }
+                }
+                else
+                {
+                    testPlanUploadPath = octaneCore.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
+                }
             }
             else
             {
@@ -208,6 +207,7 @@ namespace Ginger.ALM.Repository
             {
                 ExportActivitiesGroupToALM(ag, testPlanUploadPath, performSave, businessFlow);
             }
+            testLabUploadPath = testPlanUploadPath;
 
             //upload the business flow
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, businessFlow.Name);
