@@ -97,7 +97,7 @@ namespace GingerCore.ALM.QCRestAPI
                 {
                     //Regular TC
                     newTSTest.TestID = testInstance.Id;
-                    newTSTest.TestName = testInstance.Name;
+                    newTSTest.TestName = testInstance.Name ?? testCase.Name;
                     newTSTest.LinkedTestID = testInstance.TestId;
                 }
             }
