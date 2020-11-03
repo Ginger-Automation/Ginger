@@ -663,6 +663,11 @@ function define_GingerLib() {
 			if (in_viewport && on_top(r)) return true;
 	    }
 
+        var rect = element.getBoundingClientRect();
+        var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+        if (!(rect.bottom < 0 || rect.top - viewHeight >= 0)) {
+            return true;
+        }
 		return false;
 	}
 
