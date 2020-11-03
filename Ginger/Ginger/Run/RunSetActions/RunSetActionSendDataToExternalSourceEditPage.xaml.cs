@@ -141,9 +141,16 @@ namespace Ginger.Run.RunSetActions
 
         private void tabRequestBody_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (tabDesignView.IsSelected)
+            if (((System.Windows.FrameworkElement)e.Source).Name != "tabRequestBody")
             {
-                runSetActionSendData.RefreshBodyParamsPreview();
+                return;
+            }
+            if (tabListView.IsSelected)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    runSetActionSendData.RefreshBodyParamsPreview();
+                });
             }
             else if(tabJsonView.IsSelected)
             {

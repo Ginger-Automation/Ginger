@@ -40,9 +40,9 @@
             <StackPanel Orientation="Vertical">
                 <Label Style="{StaticResource @LabelStyle}" x:Name="LabelBody" Content="Request Body:" />
                 <TabControl x:Name="tabRequestBody" SelectionChanged="tabRequestBody_SelectionChanged">
-                    <TabItem x:Name="tabDesignView">
+                    <TabItem x:Name="tabListView">
                         <TabItem.Header>
-                            <Label Content="Design View" HorizontalAlignment="Stretch"/>
+                            <Label Content="List View" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
                         <Grid  x:Name="RequestBodyGrid">
                             <Ginger:ucGrid x:Name="grdRequestBody" DockPanel.Dock="Top" Title="Request Body" ShowEdit="Collapsed" ShowSearch="Visible" ShowAdd="Visible" ShowClearAll="Visible" ShowDelete="Visible" ShowRefresh="Collapsed" ShowUpDown="Visible" />

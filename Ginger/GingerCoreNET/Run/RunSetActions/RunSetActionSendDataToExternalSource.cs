@@ -87,23 +87,9 @@ namespace Ginger.Run.RunSetActions
         public override void Execute(ReportInfo RI)
         {
             JsonOutput = CreateJsonFromReportSourceConfig();
-            SendData(JsonOutput);
-        }
 
-        public void SendData(string requestJsonBody)
-        {
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to " + EndPointUrl);
             string message = string.Format(" execution data to {0}", EndPointUrl);
-
-            //string Host = new Uri(EndPoint).Host;
-            //if (EndPoint.Contains("://"))
-            //{
-            //    string protocol = EndPoint.Split(new string[] { "://" }, 2, StringSplitOptions.None)[0];
-            //    Host = protocol + "://" + Host;
-            //}
-            //RestClient restClient = new RestClient(Host);
-            //RestRequest restRequest = (RestRequest)new RestRequest(new Uri(EndPoint).PathAndQuery, Method.POST);
-
 
             RestClient restClient = new RestClient(EndPointUrl);
             RestRequest restRequest = new RestRequest();
@@ -114,18 +100,18 @@ namespace Ginger.Run.RunSetActions
                 mValueExpression.Value = actInputValue.Value;
                 restRequest.AddHeader(actInputValue.Param, mValueExpression.ValueCalculated);
             }
-            restRequest.AddJsonBody(requestJsonBody);
+            restRequest.AddJsonBody(JsonOutput);
             try
             {
                 IRestResponse response = restClient.Execute(restRequest);
                 if (response.IsSuccessful)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent"+ message);
+                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent" + message);
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Failed to send"+ message + " Response: " + response.Content);
-                    Errors = "Failed to send"+ message + " Response: " + response.Content;
+                    Reporter.ToLog(eLogLevel.WARN, "Failed to send" + message + " Response: " + response.Content);
+                    Errors = "Failed to send" + message + " Response: " + response.Content;
                     Status = Ginger.Run.RunSetActions.RunSetActionBase.eRunSetActionStatus.Failed;
                     return;
                 }
@@ -139,6 +125,7 @@ namespace Ginger.Run.RunSetActions
                 Reporter.HideStatusMessage();
             }
         }
+
         public string CreateJsonFromReportSourceConfig()
         {
             //Latest Execution Details
@@ -349,7 +336,7 @@ namespace Ginger.Run.RunSetActions
         {
             if (!string.IsNullOrEmpty(RequestBodyJson))
             {
-                RequestBodyParams.Clear();
+                RequestBodyParams.ClearAll();
                 Dictionary<string, string> keyValuePairs = JsonConvert.DeserializeObject<Dictionary<string, string>>(RequestBodyJson);
                 foreach (KeyValuePair<string, string> actInput in keyValuePairs)
                 {
@@ -361,6 +348,6 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public override string Type { get { return "Send Data To External Source"; } }
+        public override string Type { get { return "Send Execution JSON Data To External Source"; } }
     }
 }
