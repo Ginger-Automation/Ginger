@@ -38,7 +38,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
-    class TextFileRepository: ExecutionLogger
+    public class TextFileRepository: ExecutionLogger
     {
         static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public TextFileRepository()

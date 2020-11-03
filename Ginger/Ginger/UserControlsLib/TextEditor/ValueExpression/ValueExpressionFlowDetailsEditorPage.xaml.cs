@@ -29,6 +29,8 @@ using System.Linq;
 using System;
 using GingerCore.Environments;
 using GingerCore;
+using System.Collections;
+using GingerCore.Activities;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -55,6 +57,9 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             Type objType;
             switch (mObj)
             {
+                case GingerCore.ValueExpression.eFlowDetailsObjects.Solution:
+                    objType = typeof(Ginger.SolutionGeneral.Solution);
+                    break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Environment:
                     objType = typeof(ProjEnvironment);
                     break;
@@ -68,6 +73,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousBusinessFlow:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.LastFailedBusinessFlow:
                     objType = typeof(BusinessFlow);
+                    break;
+                case GingerCore.ValueExpression.eFlowDetailsObjects.ActivitiesGroup:
+                case GingerCore.ValueExpression.eFlowDetailsObjects.ErrorHandlerOriginActivitiesGroup:
+                    objType = typeof(ActivitiesGroup);
                     break;
                 case GingerCore.ValueExpression.eFlowDetailsObjects.Activity:
                 case GingerCore.ValueExpression.eFlowDetailsObjects.PreviousActivity:
@@ -91,15 +100,21 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             if (properties != null)
             {
                 foreach (PropertyInfo prop in properties)
-                {
-                    lst.Add(prop.Name);
+                {         
+                    if (!typeof(IObservableList).IsAssignableFrom(prop.PropertyType))
+                    {
+                        lst.Add(prop.Name);
+                    }
                 }
             }
             if (fields != null)
             {
                 foreach (FieldInfo f in fields)
                 {
-                    lst.Add(f.Name);
+                    if (!typeof(IObservableList).IsAssignableFrom(f.FieldType))
+                    {
+                        lst.Add(f.Name);
+                    }
                 }
             }
             fieldList.ItemsSource = lst.OrderBy(x => x).ToList();

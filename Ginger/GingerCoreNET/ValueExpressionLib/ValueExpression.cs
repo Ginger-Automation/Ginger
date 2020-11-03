@@ -203,20 +203,27 @@ namespace GingerCore
             EvaluateFlowDetails();
             EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
-
-            if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
             {
-                mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
-            }
-            else if (!string.IsNullOrWhiteSpace(SolutionFolder))
+
+                if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
+                {
+                    mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
+                }
+                else if (!string.IsNullOrWhiteSpace(SolutionFolder))
                 {
                     if (mValueCalculated.StartsWith("~"))
                     {
                         mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
                         mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
                     }
+             
                 }
+            }
+            if (mValueCalculated.StartsWith(@"\~"))
+            {
+                mValueCalculated = "~" + mValueCalculated.Substring(2);
 
+            }
         }
 
 #region Flow Details
@@ -245,7 +252,7 @@ namespace GingerCore
 
         public enum eFlowDetailsObjects
         {
-            Environment, Runset, Runner, BusinessFlow, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity
+            Environment, Runset, Runner, BusinessFlow, ActivitiesGroup, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivitiesGroup, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity, Solution
         }
 
         public static Tuple<eFlowDetailsObjects, string> GetFlowDetailsParams(string flowDetailsExpression)
@@ -321,6 +328,9 @@ namespace GingerCore
                 case eFlowDetailsObjects.BusinessFlow:
                     objtoEval = this.BF;                                    
                     break;
+                case eFlowDetailsObjects.ActivitiesGroup:
+                    objtoEval = this.BF.CurrentActivitiesGroup;
+                    break;
                 case eFlowDetailsObjects.Activity:
                     if (this.BF != null)
                     {
@@ -354,6 +364,12 @@ namespace GingerCore
                         objtoEval = this.BF.LastFailedAction;
                     }
                     break;
+                case eFlowDetailsObjects.ErrorHandlerOriginActivitiesGroup:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.ErrorHandlerOriginActivitiesGroup;
+                    }
+                    break;
                 case eFlowDetailsObjects.ErrorHandlerOriginActivity:
                     if (this.BF != null)
                     {
@@ -370,6 +386,12 @@ namespace GingerCore
                     if (this.BF != null)
                     {
                         objtoEval = this.BF.LastFailedActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.Solution:
+                    if (WorkSpace.Instance != null)
+                    {
+                        objtoEval = WorkSpace.Instance.Solution;
                     }
                     break;
             }
@@ -390,7 +412,7 @@ namespace GingerCore
             }
             else
             {
-                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Empty);//obj is null so representing as empty field
+                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, "N/A");//obj is null so representing as empty field
             }           
         }
 
@@ -419,7 +441,7 @@ namespace GingerCore
                 }
                 else
                 {
-                    return string.Empty;
+                    return "N/A";
                 }
             }
             else

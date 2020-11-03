@@ -52,7 +52,7 @@ namespace GingerWPF.UserControlsLib
 
             itemTypeRootNode.SetTools(xTreeView);
             xTreeView.SetTopToolBarTools(saveAllHandler, addHandler);
-
+            xTreeView.Tree.ItemSelected -= MainTreeView_ItemSelected;
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
             if(treeItemDoubleClickHandler != null)

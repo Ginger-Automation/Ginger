@@ -118,7 +118,7 @@ namespace Ginger.Agents
                 xVirtualAgentsPanel.Visibility = Visibility.Visible;
                 xAgentVirtualSupported.Content = "Yes";
 
-                VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
+                //VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
             }
             else
             {
@@ -166,9 +166,9 @@ namespace Ginger.Agents
             }
         }
 
-        private void RefreshVirtualAgentCount_Click(object sender, RoutedEventArgs e)
-        {
-            VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
-        }
+        //private void RefreshVirtualAgentCount_Click(object sender, RoutedEventArgs e)
+        //{
+        //    VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
+        //}
     }
 }

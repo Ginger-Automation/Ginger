@@ -1421,32 +1421,6 @@ namespace GingerCore.ALM.QC
             return fields;
         }
 
-        public static Dictionary<Guid, string> CreateNewDefectQCREST(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
-        {
-            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
-            string qcbin = "qcbin";
-            QCRestClient.QCClient qcClientREST = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 12);
-
-            if (qcClientREST.Login())
-            {
-                foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
-                {
-                    // set Summary and Defect Description
-                    string newDefectID = qcClientREST.CreateNewDefectQCTest(defectForOpening.Value);
-                    if (newDefectID == "0")
-                    {
-                        Reporter.ToUser(eUserMsgKey.IssuesInSelectedDefectProfile);
-                        break;
-                    }
-                    defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
-                }
-            }
-            else
-            {
-                Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
-            }
-
-            return defectsOpeningResults;
-        }
+      
     }
 }

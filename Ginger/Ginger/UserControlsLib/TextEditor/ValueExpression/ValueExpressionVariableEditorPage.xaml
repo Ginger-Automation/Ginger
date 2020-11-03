@@ -15,10 +15,11 @@
             <RowDefinition Height="15*"/>
         </Grid.RowDefinitions>
         
-        <Label x:Name="lbl" Grid.Row="0">
-            <GingerCore:ucTextDicResource Text="Select [Variable]"/>
+        
+        <Label x:Name="lbl" Grid.Row="0" Style="{StaticResource $LabelStyle}">
+            <GingerCore:ucTextDicResource Text="Select Alternative [Variable]:"/>
         </Label>
-        <ListView x:Name="VarsList" Grid.Row="1">
+        <ListView x:Name="VarsList" Grid.Row="1" Style="{StaticResource $ListBoxStyle}" Foreground="{StaticResource $SelectionColor_Pink}" BorderThickness="0">
             
         </ListView>
     </Grid>

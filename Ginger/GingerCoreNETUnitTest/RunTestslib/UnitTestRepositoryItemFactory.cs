@@ -66,7 +66,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs,ref string refe, PublishToALMConfig PublishToALMConfig)
         {
             throw new NotImplementedException();
         }
