@@ -78,11 +78,8 @@ namespace Ginger.Run.RunSetActions
         private string mRequestBodyJson;
         [IsSerializedForLocalRepository]
         public string RequestBodyJson { get { return mRequestBodyJson; } set { if (mRequestBodyJson != value) { mRequestBodyJson = value; OnPropertyChanged(nameof(RequestBodyJson)); } } }
-        
-        //private string mJsonOutput;
-        //public string JsonOutput { get { return mJsonOutput; } set { if (mJsonOutput != value) { mJsonOutput = value; OnPropertyChanged(nameof(JsonOutput)); } } }
 
-        ValueExpression mValueExpression = null;
+        private ValueExpression mValueExpression = null;
 
         public override void Execute(ReportInfo RI)
         {
@@ -141,17 +138,6 @@ namespace Ginger.Run.RunSetActions
             }
         }
 
-        public HTMLReportConfiguration GetSelectedTemplate()
-        {
-            HTMLReportConfiguration currentTemplate = new HTMLReportConfiguration();
-            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            currentTemplate = HTMLReportConfigurations.Where(x => (x.ID == selectedHTMLReportTemplateID)).FirstOrDefault();
-            if (currentTemplate == null && selectedHTMLReportTemplateID == 100)
-            {
-                currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
-            }
-            return currentTemplate;
-        }
         private string RequestBodyWithParametersToJson()
         {
             Dictionary<string, string> requestBodyParams = new Dictionary<string, string>();

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -144,11 +145,10 @@ namespace Ginger.Run.RunSetActions
             }
             if (tabListView.IsSelected)
             {
-                runSetActionSendData.RefreshBodyParamsPreview();
-                //Dispatcher.Invoke(() =>
-                //{
-                //    runSetActionSendData.RefreshBodyParamsPreview();
-                //});
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    runSetActionSendData.RefreshBodyParamsPreview();
+                }));
             }
             else if(tabJsonView.IsSelected)
             {

@@ -60,7 +60,6 @@
                         <TextBox x:Name="xJsonBodyTextBox" Style="{StaticResource @TextBoxStyle}" Height="100" AcceptsReturn="True" TextWrapping="NoWrap"  VerticalScrollBarVisibility="Visible" Margin="0,0,0,10"></TextBox>
                     </TabItem>
                 </TabControl>
-                <Button x:Name="xGetJsonOutputButton" Click="GetJsonOutput_Clicked" Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Json Output</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

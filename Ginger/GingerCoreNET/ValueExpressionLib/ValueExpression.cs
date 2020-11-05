@@ -353,38 +353,6 @@ namespace GingerCore
                                     {
                                         jBFObject.Property(bfFieldToRemove.FieldKey).Remove();
                                     }
-                                    ////ActivitiesCollection
-                                    //HTMLReportConfigFieldToSelect activityField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
-                                    //if (activityField != null)
-                                    //{
-                                    //    if (defaultTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                                    //    {
-                                    //        JArray activityArray = (JArray)jBFObject[activityField.FieldKey];
-                                    //        foreach (JObject jActivityObject in activityArray)
-                                    //        {
-                                    //            foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
-                                    //            {
-                                    //                jActivityObject.Property(activityFieldToRemove.FieldKey).Remove();
-                                    //            }
-                                    //            //ActionsColl
-                                    //            HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionColl").FirstOrDefault();
-                                    //            if (actionField != null)
-                                    //            {
-                                    //                if (defaultTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                                    //                {
-                                    //                    JArray actionArray = (JArray)jActivityObject[actionField.FieldKey];
-                                    //                    foreach (JObject jActionObject in actionArray)
-                                    //                    {
-                                    //                        foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in defaultTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
-                                    //                        {
-                                    //                            jActionObject.Property(actionFieldToRemove.FieldKey).Remove();
-                                    //                        }
-                                    //                    }
-                                    //                }
-                                    //            }
-                                    //        }
-                                    //    }
-                                    //}
                                     //ActivityGroupsCollection
                                     HTMLReportConfigFieldToSelect activityGroupField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
                                     if (activityGroupField != null)
@@ -407,12 +375,28 @@ namespace GingerCore
                                                         JArray activityArray = (JArray)jActivityGroupObject[activityFieldCheck.FieldKey];
                                                         foreach (JObject jActivityObject in activityArray)
                                                         {
+                                                            //Calculate ErrorDetails And add it to Activity Level
+                                                            string errorDetails = null;
+                                                            JArray actionsArray = (JArray)jActivityObject["ActionsColl"];
+                                                            foreach (JObject jActionObject in actionsArray)
+                                                            {
+                                                                if (!string.IsNullOrEmpty(jActionObject.Property("Error").Value.ToString()) && !string.IsNullOrEmpty(errorDetails))
+                                                                {
+                                                                    errorDetails = errorDetails + "," + jActionObject.Property("Error").Value.ToString();
+                                                                }
+                                                                else
+                                                                {
+                                                                    errorDetails = errorDetails + jActionObject.Property("Error").Value.ToString();
+                                                                }
+                                                            }
+                                                            jActivityObject.Add("ErrorDetails", errorDetails);
+
                                                             foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                             {
                                                                 jActivityObject.Property(activityFieldToRemove.FieldKey).Remove();
                                                             }
                                                             //ActionsColl
-                                                            HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionColl").FirstOrDefault();
+                                                            HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionsColl").FirstOrDefault();
                                                             if (actionField != null)
                                                             {
                                                                 if (defaultTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
