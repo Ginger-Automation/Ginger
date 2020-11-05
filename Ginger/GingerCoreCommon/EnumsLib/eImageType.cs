@@ -147,6 +147,7 @@ namespace Amdocs.Ginger.Common.Enums
         Invisible,
         View,
         GetLatest,
+        Upload,
         CheckIn,
         Download,
         Fix,
@@ -266,6 +267,8 @@ namespace Amdocs.Ginger.Common.Enums
         RegularExpression,
         DataManipulation,
         General,
+        SignIn,
+        SignOut,
         #endregion
 
         #region Source control Images     

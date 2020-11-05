@@ -16,16 +16,24 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.CentralExecutionLogger;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -96,6 +104,7 @@ namespace GingerCore
         public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxFDPattern = new Regex(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        private static Regex rxExecutionJsonDataPattern = new Regex(@"{ExecutionJsonData}", RegexOptions.Compiled);
 
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
@@ -113,7 +122,7 @@ namespace GingerCore
         }
 
         ObservableList<DataSourceBase> DSList;
-
+        Context mContext;
         BusinessFlow BF;
         ProjEnvironment Env;
         bool bUpdate;
@@ -158,7 +167,16 @@ namespace GingerCore
             this.bDone = bDone;
             
         }
-
+        public ValueExpression(ProjEnvironment Env, Context ObjContext, ObservableList<DataSourceBase> DSList)
+        {
+            this.Env = Env;
+            this.mContext = ObjContext;
+            if (ObjContext != null)
+            {
+                this.BF = ObjContext.BusinessFlow;
+            }
+            this.DSList = DSList;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -231,7 +249,8 @@ namespace GingerCore
         private void EvaluateFlowDetails()
         {
             MatchCollection matches = rxFDPattern.Matches(mValueCalculated);
-            if (matches.Count == 0)
+            MatchCollection matchesExecutionJsonData = rxExecutionJsonDataPattern.Matches(mValueCalculated);
+            if (matches.Count == 0 && matchesExecutionJsonData.Count == 0)
             {
                 return;
             }
@@ -248,8 +267,182 @@ namespace GingerCore
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
                 }
             }
-        }
 
+            foreach (Match match in matchesExecutionJsonData)
+            {
+                try
+                {
+                    ReplaceExecutionJsonDataDetails(match.Value);
+                }
+                catch (Exception ex)
+                {
+                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                }
+            }
+        }
+        private void ReplaceExecutionJsonDataDetails(string josnExpression)
+        {
+            //Select fields from selected template configuration
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            HTMLReportConfiguration defaultTemplate = null;
+
+            if (mContext.RunsetAction != null)
+            {
+                RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
+                defaultTemplate = HTMLReportConfigurations.Where(x => (x.ID == runSetAction.selectedHTMLReportTemplateID)).FirstOrDefault();
+                if (defaultTemplate == null && runSetAction.selectedHTMLReportTemplateID == 100)
+                {
+                    defaultTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                }
+            }
+            else 
+            {
+                defaultTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+            }
+
+            //Last Execution details
+            LiteDbRunSet liteDbRunSet = null;
+            var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
+            if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                WebReportGenerator webReporterRunner = new WebReportGenerator();
+                liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
+            }
+
+            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
+            string json = JsonConvert.SerializeObject(accountReportRunSet, Formatting.Indented);
+
+
+            //Conevrt to json
+            //string json = JsonConvert.SerializeObject(liteDbRunSet, Formatting.Indented);
+            JObject runSetObject = JObject.Parse(json);
+
+            #region Generate JSON
+
+            //Remove Fields from json which are not selected
+            foreach (HTMLReportConfigFieldToSelect runsetFieldToRemove in defaultTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected != true))
+            {
+                runSetObject.Property(runsetFieldToRemove.FieldKey).Remove();
+            }
+
+            //RunnersCollection
+            HTMLReportConfigFieldToSelect runnerField = defaultTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "RunnersColl").FirstOrDefault();
+            if (runnerField != null)
+            {
+                if (defaultTemplate.GingerRunnerSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                {
+                    JArray runnerArray = (JArray)runSetObject[runnerField.FieldKey];
+                    foreach (JObject jRunnerObject in runnerArray)
+                    {
+                        foreach (HTMLReportConfigFieldToSelect runnerFieldToRemove in defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                        {
+                            jRunnerObject.Property(runnerFieldToRemove.FieldKey).Remove();
+                        }
+                        //BusinessFlowsCollection
+                        HTMLReportConfigFieldToSelect bfField = defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
+                        if (bfField != null)
+                        {
+                            if (defaultTemplate.BusinessFlowSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                            {
+                                JArray bfArray = (JArray)jRunnerObject[bfField.FieldKey];
+                                foreach (JObject jBFObject in bfArray)
+                                {
+                                    foreach (HTMLReportConfigFieldToSelect bfFieldToRemove in defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                    {
+                                        jBFObject.Property(bfFieldToRemove.FieldKey).Remove();
+                                    }
+                                    ////ActivitiesCollection
+                                    //HTMLReportConfigFieldToSelect activityField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
+                                    //if (activityField != null)
+                                    //{
+                                    //    if (defaultTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                    //    {
+                                    //        JArray activityArray = (JArray)jBFObject[activityField.FieldKey];
+                                    //        foreach (JObject jActivityObject in activityArray)
+                                    //        {
+                                    //            foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                    //            {
+                                    //                jActivityObject.Property(activityFieldToRemove.FieldKey).Remove();
+                                    //            }
+                                    //            //ActionsColl
+                                    //            HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionColl").FirstOrDefault();
+                                    //            if (actionField != null)
+                                    //            {
+                                    //                if (defaultTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                    //                {
+                                    //                    JArray actionArray = (JArray)jActivityObject[actionField.FieldKey];
+                                    //                    foreach (JObject jActionObject in actionArray)
+                                    //                    {
+                                    //                        foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in defaultTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                    //                        {
+                                    //                            jActionObject.Property(actionFieldToRemove.FieldKey).Remove();
+                                    //                        }
+                                    //                    }
+                                    //                }
+                                    //            }
+                                    //        }
+                                    //    }
+                                    //}
+                                    //ActivityGroupsCollection
+                                    HTMLReportConfigFieldToSelect activityGroupField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
+                                    if (activityGroupField != null)
+                                    {
+                                        if (defaultTemplate.ActivityGroupSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                        {
+                                            JArray activityGroupArray = (JArray)jBFObject[activityGroupField.FieldKey];
+                                            foreach (JObject jActivityGroupObject in activityGroupArray)
+                                            {
+                                                foreach (HTMLReportConfigFieldToSelect activityGroupFieldToRemove in defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                                {
+                                                    jActivityGroupObject.Property(activityGroupFieldToRemove.FieldKey).Remove();
+                                                }
+                                                //ActivitiesCollection
+                                                HTMLReportConfigFieldToSelect activityFieldCheck = defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
+                                                if (activityFieldCheck != null)
+                                                {
+                                                    if (defaultTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                                    {
+                                                        JArray activityArray = (JArray)jActivityGroupObject[activityFieldCheck.FieldKey];
+                                                        foreach (JObject jActivityObject in activityArray)
+                                                        {
+                                                            foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                                            {
+                                                                jActivityObject.Property(activityFieldToRemove.FieldKey).Remove();
+                                                            }
+                                                            //ActionsColl
+                                                            HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionColl").FirstOrDefault();
+                                                            if (actionField != null)
+                                                            {
+                                                                if (defaultTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                                                {
+                                                                    JArray actionArray = (JArray)jActivityObject[actionField.FieldKey];
+                                                                    foreach (JObject jActionObject in actionArray)
+                                                                    {
+                                                                        foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in defaultTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                                                        {
+                                                                            jActionObject.Property(actionFieldToRemove.FieldKey).Remove();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            #endregion
+            json = runSetObject.ToString(Formatting.Indented);
+            mValueCalculated = mValueCalculated.Replace(josnExpression, json);
+        }
         public enum eFlowDetailsObjects
         {
             Environment, Runset, Runner, BusinessFlow, ActivitiesGroup, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivitiesGroup, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity, Solution

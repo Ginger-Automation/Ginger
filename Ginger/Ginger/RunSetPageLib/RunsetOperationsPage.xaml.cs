@@ -64,10 +64,11 @@ namespace Ginger.Run
             RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
 
             RunSetActionsGrid.AddSeparator();
-            RunSetActionsGrid.AddToolbarTool("@AddSendExecutionData_16x16.png", "Add Send Execution Data To External Source Operation", AddSendExecutionDataToExternalSourceAction);
+            RunSetActionsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.SignOut, "Add Send Execution JSON Data To External Source Operation", AddSendExecutionDataToExternalSourceAction);
 
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@Run_16x16.png", "Run Selected", RunSelected);
+            RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@RunAll_16x16.png", "Run All", RunAll);
             RunSetActionsGrid.AddSeparator();
             SetContentAndEventsListeners();

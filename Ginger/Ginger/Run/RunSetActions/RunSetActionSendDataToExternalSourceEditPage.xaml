@@ -62,10 +62,6 @@
                 </TabControl>
                 <Button x:Name="xGetJsonOutputButton" Click="GetJsonOutput_Clicked" Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Json Output</Button>
             </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <Label Style="{StaticResource @LabelStyle}" x:Name="LabelSampleOutput" Content="JSON Output Schema:" />
-                <TextBox x:Name="xSampleOutputTextBox" Style="{StaticResource @TextBoxStyle}" Height="200" Margin="0,0,0,10" Background="Transparent" IsReadOnly="True" VerticalScrollBarVisibility="Visible"></TextBox>
-            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

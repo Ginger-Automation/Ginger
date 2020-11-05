@@ -34,14 +34,16 @@ namespace Ginger.Run.RunSetActions
     public partial class RunSetActionSendDataToExternalSourceEditPage : Page
     {
         private RunSetActionSendDataToExternalSource runSetActionSendData;
+        private Context mContext = new Context();
 
         public RunSetActionSendDataToExternalSourceEditPage(RunSetActionSendDataToExternalSource RunSetActionSendData)
         {
             InitializeComponent();
             this.runSetActionSendData = RunSetActionSendData;
+            mContext.RunsetAction = runSetActionSendData;
+
             Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
             xEndPointURLTextBox.Init(context, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.EndPointUrl));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSampleOutputTextBox, TextBox.TextProperty, runSetActionSendData, nameof(runSetActionSendData.JsonOutput));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xJsonBodyTextBox, TextBox.TextProperty, runSetActionSendData, nameof(runSetActionSendData.RequestBodyJson));
             
             CurrentTemplatePickerCbx_Binding(); 
@@ -124,19 +126,14 @@ namespace Ginger.Run.RunSetActions
         private void HeaderGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)grdRequestHeaders.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mContext);
             VEEW.ShowAsWindow();
         }
         private void BodyGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)grdRequestBody.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), null);
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mContext);
             VEEW.ShowAsWindow();
-        }
-
-        private void GetJsonOutput_Clicked(object sender, RoutedEventArgs e)
-        {
-            xSampleOutputTextBox.Text = runSetActionSendData.CreateJsonFromReportSourceConfig();
         }
 
         private void tabRequestBody_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -147,10 +144,11 @@ namespace Ginger.Run.RunSetActions
             }
             if (tabListView.IsSelected)
             {
-                Dispatcher.Invoke(() =>
-                {
-                    runSetActionSendData.RefreshBodyParamsPreview();
-                });
+                runSetActionSendData.RefreshBodyParamsPreview();
+                //Dispatcher.Invoke(() =>
+                //{
+                //    runSetActionSendData.RefreshBodyParamsPreview();
+                //});
             }
             else if(tabJsonView.IsSelected)
             {
