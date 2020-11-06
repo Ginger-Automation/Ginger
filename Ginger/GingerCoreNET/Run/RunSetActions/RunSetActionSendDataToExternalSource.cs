@@ -93,8 +93,7 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
-                string jsonBody = RequestBodyWithParametersToJson();
-                mValueExpression.Value = jsonBody.Replace("\"{ExecutionJsonData}\"", "{ExecutionJsonData}");
+                mValueExpression.Value = RequestBodyWithParametersToJson();
             }
             string JsonOutput = mValueExpression.ValueCalculated;
 
@@ -141,11 +140,9 @@ namespace Ginger.Run.RunSetActions
         private string RequestBodyWithParametersToJson()
         {
             Dictionary<string, string> requestBodyParams = new Dictionary<string, string>();
-
             foreach (ActInputValue AIV in RequestBodyParams)
             {
-                mValueExpression.Value = AIV.Value;
-                requestBodyParams.Add(AIV.Param, mValueExpression.ValueCalculated);
+                requestBodyParams.Add(AIV.Param, AIV.Value);
             }
             return JsonConvert.SerializeObject(requestBodyParams,Formatting.Indented);
         }
