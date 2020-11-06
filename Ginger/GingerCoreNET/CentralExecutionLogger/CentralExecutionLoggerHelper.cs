@@ -47,7 +47,10 @@ namespace Amdocs.Ginger.CoreNET.CentralExecutionLogger
             restClient = new RestClient(apiUrl);
             restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
         }
-
+        public CentralExecutionLoggerHelper()
+        {
+            //created deafult constructor to access only MapDataToAccountReportObject
+        }
         public AccountReportRunSet MapDataToAccountReportObject(LiteDbRunSet runSet)
         {
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();

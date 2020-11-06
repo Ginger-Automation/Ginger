@@ -45,8 +45,8 @@ namespace Ginger.Run.RunSetActions
 
             Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
             xEndPointURLTextBox.Init(context, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.EndPointUrl));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xJsonBodyTextBox, TextBox.TextProperty, runSetActionSendData, nameof(runSetActionSendData.RequestBodyJson));
-            
+            xJsonBodyTextBox.Init(context, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.RequestBodyJson));
+            xJsonBodyTextBox.AdjustHight(100);
             CurrentTemplatePickerCbx_Binding(); 
 
             SetHeadersGridView();

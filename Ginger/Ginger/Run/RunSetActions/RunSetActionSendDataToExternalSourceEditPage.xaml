@@ -57,7 +57,7 @@
                         <TabItem.Header>
                             <Label Content="JSON View" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
-                        <TextBox x:Name="xJsonBodyTextBox" Style="{StaticResource @TextBoxStyle}" Height="100" AcceptsReturn="True" TextWrapping="NoWrap"  VerticalScrollBarVisibility="Visible" Margin="0,0,0,10"></TextBox>
+                        <Actions:UCValueExpression x:Name="xJsonBodyTextBox" ToolTip="EndPoint" ScrollViewer.VerticalScrollBarVisibility="Auto" />
                     </TabItem>
                 </TabControl>
             </StackPanel>

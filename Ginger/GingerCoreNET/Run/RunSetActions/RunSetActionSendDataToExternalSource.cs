@@ -98,6 +98,10 @@ namespace Ginger.Run.RunSetActions
             }
             string JsonOutput = mValueExpression.ValueCalculated;
 
+            //Remove This-Added to check output
+            string path = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+            File.WriteAllText(Path.Combine(path, "JsonOutput.json"),JsonOutput);
+            
             Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to " + EndPointUrl);
             string message = string.Format(" execution data to {0}", EndPointUrl);
 

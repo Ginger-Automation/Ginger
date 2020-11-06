@@ -286,7 +286,6 @@ namespace GingerCore
             //Select fields from selected template configuration
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
             HTMLReportConfiguration defaultTemplate = null;
-
             if (mContext.RunsetAction != null)
             {
                 RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
@@ -310,13 +309,11 @@ namespace GingerCore
                 liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
             }
 
-            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper();
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
             string json = JsonConvert.SerializeObject(accountReportRunSet, Formatting.Indented);
 
 
-            //Conevrt to json
-            //string json = JsonConvert.SerializeObject(liteDbRunSet, Formatting.Indented);
             JObject runSetObject = JObject.Parse(json);
 
             #region Generate JSON
@@ -324,6 +321,14 @@ namespace GingerCore
             //Remove Fields from json which are not selected
             foreach (HTMLReportConfigFieldToSelect runsetFieldToRemove in defaultTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected != true))
             {
+                if (runsetFieldToRemove.FieldKey.ToLower() == "executedbyuser")
+                {
+                    runsetFieldToRemove.FieldKey = "ExecutedByUser";
+                }
+                else if (runsetFieldToRemove.FieldKey.ToLower() == "elapsed")
+                {
+                    runsetFieldToRemove.FieldKey = "ElapsedEndTimeStamp";
+                }
                 runSetObject.Property(runsetFieldToRemove.FieldKey).Remove();
             }
 
@@ -338,7 +343,7 @@ namespace GingerCore
                     {
                         foreach (HTMLReportConfigFieldToSelect runnerFieldToRemove in defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected != true))
                         {
-                            jRunnerObject.Property(runnerFieldToRemove.FieldKey).Remove();
+                            jRunnerObject.Property(runnerFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : runnerFieldToRemove.FieldKey).Remove();
                         }
                         //BusinessFlowsCollection
                         HTMLReportConfigFieldToSelect bfField = defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
@@ -351,7 +356,7 @@ namespace GingerCore
                                 {
                                     foreach (HTMLReportConfigFieldToSelect bfFieldToRemove in defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected != true))
                                     {
-                                        jBFObject.Property(bfFieldToRemove.FieldKey).Remove();
+                                        jBFObject.Property(bfFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : bfFieldToRemove.FieldKey).Remove();
                                     }
                                     //ActivityGroupsCollection
                                     HTMLReportConfigFieldToSelect activityGroupField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
@@ -364,7 +369,7 @@ namespace GingerCore
                                             {
                                                 foreach (HTMLReportConfigFieldToSelect activityGroupFieldToRemove in defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                 {
-                                                    jActivityGroupObject.Property(activityGroupFieldToRemove.FieldKey).Remove();
+                                                    jActivityGroupObject.Property(activityGroupFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : activityGroupFieldToRemove.FieldKey).Remove();
                                                 }
                                                 //ActivitiesCollection
                                                 HTMLReportConfigFieldToSelect activityFieldCheck = defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
@@ -393,7 +398,7 @@ namespace GingerCore
 
                                                             foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                             {
-                                                                jActivityObject.Property(activityFieldToRemove.FieldKey).Remove();
+                                                                jActivityObject.Property(activityFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : activityFieldToRemove.FieldKey).Remove();
                                                             }
                                                             //ActionsColl
                                                             HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionsColl").FirstOrDefault();
@@ -406,7 +411,7 @@ namespace GingerCore
                                                                     {
                                                                         foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in defaultTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                                         {
-                                                                            jActionObject.Property(actionFieldToRemove.FieldKey).Remove();
+                                                                            jActionObject.Property(actionFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : actionFieldToRemove.FieldKey).Remove();
                                                                         }
                                                                     }
                                                                 }
