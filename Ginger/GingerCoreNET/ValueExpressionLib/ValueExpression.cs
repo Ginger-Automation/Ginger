@@ -281,6 +281,23 @@ namespace GingerCore
                 }
             }
         }
+        private string GetFieldToRemove(string fieldName)
+        {
+            string fieldToReturn = fieldName;
+            if (fieldName.ToLower() == "executedbyuser")
+            {
+                fieldToReturn = "ExecutedByUser";
+            }
+            else if (fieldName.ToLower() == "elapsed")
+            {
+                fieldToReturn = "ElapsedEndTimeStamp";
+            }
+            else if (fieldName.ToLower() == "_id")
+            {
+                fieldToReturn = "ExecutionId";
+            }
+            return fieldToReturn;
+        }
         private void ReplaceExecutionJsonDataDetails(string josnExpression)
         {
             //Select fields from selected template configuration
@@ -321,15 +338,7 @@ namespace GingerCore
             //Remove Fields from json which are not selected
             foreach (HTMLReportConfigFieldToSelect runsetFieldToRemove in defaultTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected != true))
             {
-                if (runsetFieldToRemove.FieldKey.ToLower() == "executedbyuser")
-                {
-                    runsetFieldToRemove.FieldKey = "ExecutedByUser";
-                }
-                else if (runsetFieldToRemove.FieldKey.ToLower() == "elapsed")
-                {
-                    runsetFieldToRemove.FieldKey = "ElapsedEndTimeStamp";
-                }
-                runSetObject.Property(runsetFieldToRemove.FieldKey).Remove();
+                runSetObject.Property(GetFieldToRemove(runsetFieldToRemove.FieldKey)).Remove();
             }
 
             //RunnersCollection
@@ -343,7 +352,7 @@ namespace GingerCore
                     {
                         foreach (HTMLReportConfigFieldToSelect runnerFieldToRemove in defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected != true))
                         {
-                            jRunnerObject.Property(runnerFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : runnerFieldToRemove.FieldKey).Remove();
+                            jRunnerObject.Property(GetFieldToRemove(runnerFieldToRemove.FieldKey)).Remove();
                         }
                         //BusinessFlowsCollection
                         HTMLReportConfigFieldToSelect bfField = defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
@@ -356,7 +365,7 @@ namespace GingerCore
                                 {
                                     foreach (HTMLReportConfigFieldToSelect bfFieldToRemove in defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected != true))
                                     {
-                                        jBFObject.Property(bfFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : bfFieldToRemove.FieldKey).Remove();
+                                        jBFObject.Property(GetFieldToRemove(bfFieldToRemove.FieldKey)).Remove();
                                     }
                                     //ActivityGroupsCollection
                                     HTMLReportConfigFieldToSelect activityGroupField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
@@ -369,7 +378,7 @@ namespace GingerCore
                                             {
                                                 foreach (HTMLReportConfigFieldToSelect activityGroupFieldToRemove in defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                 {
-                                                    jActivityGroupObject.Property(activityGroupFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : activityGroupFieldToRemove.FieldKey).Remove();
+                                                    jActivityGroupObject.Property(GetFieldToRemove(activityGroupFieldToRemove.FieldKey)).Remove();
                                                 }
                                                 //ActivitiesCollection
                                                 HTMLReportConfigFieldToSelect activityFieldCheck = defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
@@ -398,7 +407,7 @@ namespace GingerCore
 
                                                             foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                             {
-                                                                jActivityObject.Property(activityFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : activityFieldToRemove.FieldKey).Remove();
+                                                                jActivityObject.Property(GetFieldToRemove(activityFieldToRemove.FieldKey)).Remove();
                                                             }
                                                             //ActionsColl
                                                             HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionsColl").FirstOrDefault();
@@ -411,7 +420,7 @@ namespace GingerCore
                                                                     {
                                                                         foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in defaultTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
                                                                         {
-                                                                            jActionObject.Property(actionFieldToRemove.FieldKey.ToLower() == "elapsed" ? "ElapsedEndTimeStamp" : actionFieldToRemove.FieldKey).Remove();
+                                                                            jActionObject.Property(GetFieldToRemove(actionFieldToRemove.FieldKey)).Remove();
                                                                         }
                                                                     }
                                                                 }
