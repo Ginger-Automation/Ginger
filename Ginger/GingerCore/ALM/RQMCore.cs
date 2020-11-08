@@ -116,9 +116,12 @@ namespace GingerCore.ALM
             set { ImportFromRQM.GingerActivitiesRepo = value; }
         }
 
-        public override void SetALMConfigurations(string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword, string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType, string ALMConfigPackageFolderPath)
+        public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
+                                                    string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
+                                                    string ALMConfigPackageFolderPath, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType testingALMType = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
         {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almType);
+            GingerCoreNET.ALMLib.ALMConfig AlmCoreConfig = AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
 
             GingerCoreNET.ALMLib.ALMUserConfig CurrentAlmUserConfigurations = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almType);
 
@@ -128,7 +131,7 @@ namespace GingerCore.ALM
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
                 AlmConfigs.Add(AlmConfig);
             }
-            AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());
+            AlmConfig.ALMServerURL = GetServerValueFromDict(GetDynamicServerConfigAndSetPaths());       
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
             AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
@@ -137,6 +140,9 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
             AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+            AlmConfig.JiraTestingALM = testingALMType;
+
+            AlmCoreConfig = AlmConfig;
         }
         
         #region RQM Configurations Package

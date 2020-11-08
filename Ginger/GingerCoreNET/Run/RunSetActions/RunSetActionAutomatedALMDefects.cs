@@ -39,9 +39,10 @@ namespace Ginger.Run.RunSetActions
 
         public new static class Fields
         {
-            public static string SelectedDefectsProfileID = "SelectedDefectsProfileID";
-            public static string DefectsOpeningModeForAll = "DefectsOpeningModeForAll";
-            public static string DefectsOpeningModeForMarked = "DefectsOpeningModeForMarked";
+            public const string SelectedDefectsProfileID = "SelectedDefectsProfileID";
+            public const string DefectsOpeningModeForAll = "DefectsOpeningModeForAll";
+            public const string DefectsOpeningModeForMarked = "DefectsOpeningModeForMarked";
+            public const string DefectsOpeningModeReviewOnly = "DefectsOpeningModeReviewOnly";
         }
 
         private int mSelectedDefectsProfileID;
@@ -55,6 +56,10 @@ namespace Ginger.Run.RunSetActions
         private bool mDefectsOpeningModeForMarked;
         [IsSerializedForLocalRepository]
         public bool DefectsOpeningModeForMarked { get { return mDefectsOpeningModeForMarked; } set { if (mDefectsOpeningModeForMarked != value) { mDefectsOpeningModeForMarked = value; OnPropertyChanged(Fields.DefectsOpeningModeForMarked); } } }
+
+        private bool mDefectsOpeningModeReviewOnly;
+        [IsSerializedForLocalRepository]
+        public bool DefectsOpeningModeReviewOnly { get { return mDefectsOpeningModeReviewOnly; } set { if (mDefectsOpeningModeReviewOnly != value) { mDefectsOpeningModeReviewOnly = value; OnPropertyChanged(Fields.DefectsOpeningModeReviewOnly); } } }
 
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
@@ -98,7 +103,7 @@ namespace Ginger.Run.RunSetActions
                         {
                             currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
                                                                                                                                                  z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.ErrorDetails : w.Value)
                                                                                                              .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
                                                                                                              .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
                         }
@@ -109,7 +114,10 @@ namespace Ginger.Run.RunSetActions
                         }
                         
                         currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
-
+                        currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
+                        currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
+                        currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
+                        currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }
@@ -122,7 +130,7 @@ namespace Ginger.Run.RunSetActions
                         {
                             currentALMDefectFieldsValues = defaultALMDefectProfile.ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
                                                                                                                                                  z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
+                                                                                                             .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.ErrorDetails : w.Value)
                                                                                                              .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
                                                                                                              .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
                         }
@@ -133,7 +141,10 @@ namespace Ginger.Run.RunSetActions
                         }
 
                         currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
-
+                        currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
+                        currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
+                        currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
+                        currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                 }

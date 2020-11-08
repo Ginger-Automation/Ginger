@@ -147,6 +147,10 @@
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="JiraRepository, Version=8.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\JiraRepository.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="System.Web.Services" />
@@ -182,6 +186,9 @@
     </Compile>
     <Compile Include="Actions\ActionEditPages\ActClearAllVariablesEditPage.xaml.cs">
       <DependentUpon>ActClearAllVariablesEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionEditPages\ActLogActionPage.xaml.cs">
+      <DependentUpon>ActLogActionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionEditPages\ActGoToURLEditPage.xaml.cs">
       <DependentUpon>ActGoToURLEditPage.xaml</DependentUpon>
@@ -256,6 +263,13 @@
     <Compile Include="Actions\ActionEditPages\PlugIns\ActPlugInEditPage.xaml.cs">
       <DependentUpon>ActPlugInEditPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml.cs">
+      <DependentUpon>JiraZephyrCyclesExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrTreeItem.cs" />
+    <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrFolderTreeItem.cs" />
+    <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrCycleTreeItem.cs" />
+    <Compile Include="ALM\JIRA\TreeViewItems\JiraZephyrVersionTreeItem.cs" />
     <Compile Include="ALM\Repository\OctaneRepository.cs" />
     <Compile Include="ALM\Qtest\QtestCyclesExplorerPage.xaml.cs">
       <DependentUpon>QtestCyclesExplorerPage.xaml</DependentUpon>
@@ -442,6 +456,9 @@
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
       <DependentUpon>RunsetRunnersConfigPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml.cs">
+      <DependentUpon>ValueExpressionFlowDetailsEditorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
@@ -1910,7 +1927,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Ginger.ruleset" />
-    <EmbeddedResource Include="Resources\LiteDB.db" />
+    <EmbeddedResource Include="Resources\LiteDB.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="Resources\VBSTemplate.bmp" />
     <None Include="Resources\VBSTemplate.vbs" />
     <Resource Include="Images\%40A_16x16.png" />
@@ -2477,6 +2496,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionEditPages\ActLogActionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2782,6 +2809,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

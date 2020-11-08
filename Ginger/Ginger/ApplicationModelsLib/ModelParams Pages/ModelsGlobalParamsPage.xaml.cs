@@ -280,21 +280,38 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
                     if (Reporter.ToUser(eUserMsgKey.ParameterUpdate, "The Global Parameter name may be used in Solution items Value Expression, Do you want to automatically update all those Value Expression instances with the parameter name change?") == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
                     {
-                        await Task.Run(() =>
+                        this.Dispatcher.Invoke(() =>
                         {
-                            List<string> ListObj = new List<string>() { PlaceholderBeforeEdit, NameAfterEdit };
-                            UpdateModelGlobalParamVeWithNameChange(ListObj);
-                        });                        
+                            xPageGrid.Visibility = Visibility.Collapsed;
+                            xUpdatingItemsPnl.Visibility = Visibility.Visible;
+                        });
+
+                        await this.Dispatcher.Invoke(async () =>
+                        {
+                            await Task.Run(() =>
+                            {
+                                UpdateModelGlobalParamVeWithNameChange(PlaceholderBeforeEdit, NameAfterEdit);
+                            });
+                        });
+
+
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            xUpdatingItemsPnl.Visibility = Visibility.Collapsed;
+                            xPageGrid.Visibility = Visibility.Visible;
+                        });
+
                         Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Update finished successfully." + Environment.NewLine + "Please do not forget to save all modified " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
                     }
                 }
             }
         }
 
-        public static void UpdateModelGlobalParamVeWithNameChange(List<string> ListObj)
+        public void UpdateModelGlobalParamVeWithNameChange(string oldName, string updatedName)
         {
             ObservableList<RepositoryItemBase> allVESupportingItems = GetSolutionVEsupportedItems();
-            Parallel.ForEach(allVESupportingItems, item =>
+
+            foreach(var item in allVESupportingItems)
             {
                 if (item is BusinessFlow)
                 {
@@ -302,16 +319,14 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     foreach (Activity activity in bf.Activities)
                         foreach (Act action in activity.Acts)
                         {
-                            bool changedwasDone = false;
-                            UpdateItemModelGlobalParamVeWithNameChange(action, ListObj[0], ListObj[1], ref changedwasDone);
+                            UpdateItemModelGlobalParamVeWithNameChange(action, oldName, updatedName);
                         }
                 }
                 else
                 {
-                    bool changedwasDone2 = false;
-                    UpdateItemModelGlobalParamVeWithNameChange(item, ListObj[0], ListObj[1], ref changedwasDone2);
+                    UpdateItemModelGlobalParamVeWithNameChange(item, oldName, updatedName);
                 }
-            });
+            }
         }
 
         static ObservableList<RepositoryItemBase> GetSolutionVEsupportedItems()
@@ -336,7 +351,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             return supportedItems;
         }
 
-        public static void UpdateItemModelGlobalParamVeWithNameChange(object item, string prevParamName, string newParamName, ref bool changedWasDone)
+        public void UpdateItemModelGlobalParamVeWithNameChange(object item, string prevParamName, string newParamName)
         {
             if (item == null) return;
 
@@ -358,7 +373,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                     dynamic value = null;
                     if (mi.MemberType == MemberTypes.Property)
-                        value = PI.GetValue(item);
+                    {
+                        value = PI.GetValue(item, null);
+                    }
                     else if (mi.MemberType == MemberTypes.Field)
                         value = item.GetType().GetField(mi.Name).GetValue(item);
 
@@ -366,7 +383,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     {
                         List<dynamic> list = new List<dynamic>();
                         foreach (object o in value)
-                            UpdateItemModelGlobalParamVeWithNameChange(o, prevParamName, newParamName, ref changedWasDone);
+                            UpdateItemModelGlobalParamVeWithNameChange(o, prevParamName, newParamName);
                     }
                     else
                     {

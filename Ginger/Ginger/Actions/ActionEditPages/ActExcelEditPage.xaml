@@ -57,7 +57,7 @@
 
             <StackPanel x:Name="ColMappingRulesSection" Visibility="Collapsed">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Data To Write:</Label>
-                <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... values to write, like: FirstName='John', [Last Name]='Smit'"/>
+                <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... values to write, like: FirstName='John', [Last Name]='Smith'"/>
             </StackPanel>                       
         </StackPanel>
 

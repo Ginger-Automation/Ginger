@@ -477,7 +477,7 @@ namespace Ginger.Repository
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("Mailbox Unavailabel"))
+                if (ex.Message.Contains("Mailbox Unavailable"))
                 {
                     Event = "Failed: Please provide correct sender email address";
                 }
@@ -726,7 +726,7 @@ namespace Ginger.Repository
             //this.Errors = act.Error;
         }
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string result, PublishToALMConfig PublishToALMConfig)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig PublishToALMConfig)
         {
             return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, ALMIntegration.eALMConnectType.Auto, false);
         }

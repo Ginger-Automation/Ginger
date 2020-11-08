@@ -1,0 +1,48 @@
+<Page
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+    xmlns:UCTreeView1="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    x:Class="Ginger.ALM.JIRA.JiraZephyrCyclesExplorerPage" 
+      mc:Ignorable="d" 
+      Height="600" Width="700"
+	Title="">
+
+    <Grid x:Name="ExplorerTreeGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400*"/>
+            <ColumnDefinition Width="200*" x:Name="testSetDetailsColumn"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <UCTreeView1:TreeView2 x:Name="JiraZephyrCyclesExplorerTreeView" Grid.Column="0" TreeTitle="Jira's addon Zephyr Cycles Explorer" Margin="0,0.5,10,0"/>
+
+        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="10" HorizontalAlignment="Right" Grid.Row="0" VerticalAlignment="Stretch" Style="{StaticResource @VerticalGridSplitterStyle}" />
+
+        <ScrollViewer x:Name="CycleDetailsPanel" Grid.Column="1" Margin="0,57,0,0">
+            <StackPanel>
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,0,0,0" FontWeight="Bold">Cycle Execution Details:</Label>
+                <StackPanel Name="TSExecDetails" Margin="0,0,0,0"></StackPanel>
+
+                <Label Style="{StaticResource @InputFieldLabelStyle}" Margin="0,30,0,0" FontWeight="Bold">Cycle Import Details:</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource @SmallerInputFieldLabelStyle}">Already Imported:</Label>
+                    <Label x:Name="lblTSAlreadyImported" Style="{StaticResource @SmallerInputFieldLabelStyle}">No</Label>
+                </StackPanel>
+                <DockPanel>
+                    <Label DockPanel.Dock="Top"  HorizontalAlignment="Left" Style="{StaticResource @SmallerInputFieldLabelStyle}" FontSize="12" >
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="Mapped [BusinessFlow]:"/>
+                        </Label.Content>
+                    </Label>
+                    <TextBlock TextWrapping="WrapWithOverflow" x:Name="txtBoxTSMappedBF" DockPanel.Dock="Top"  HorizontalAlignment="Left" FontSize="12" Width="200" Foreground="{StaticResource $Color_DarkBlue}" Margin="2,0,0,0" >'BusinessFlow\aaa\ccc\vvv'</TextBlock>
+                </DockPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+</Page>

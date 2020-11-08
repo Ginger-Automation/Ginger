@@ -18,9 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.RosLynLib.Refrences;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib.TextEditor.ValueExpression;
@@ -29,6 +31,7 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.FlowControlLib;
+using GingerCore.Helpers;
 using GingerCore.Variables;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -64,8 +67,30 @@ namespace Ginger
         ValueExpression mVE = null;
         GingerCore.Actions.ActDSTableElement actDStable = null;
         static List<HighlightingRule> mHighlightingRules = null;
-        private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();
+        private Dictionary<string, TreeViewItem> Categories = new Dictionary<string, TreeViewItem>();       
         ObservableList<ProjEnvironment> mEnvs;
+        public TreeViewItem rootTreeItem 
+        {
+            get
+            {
+                if(VETree.Items.Count==0)
+                {
+                    TreeViewItem root = new TreeViewItem();
+                    root.IsExpanded = true;
+                    SetItemView(root, "Expressions", "", eImageType.Variable);
+                    VETree.Items.Add(root);
+                }
+                return (TreeViewItem)VETree.Items[0];
+            }
+        }
+
+        public TreeView VETree
+        {
+            get
+            {
+                return  xObjectsTreeView.Tree.Tree;
+            }
+        }
 
         public ValueExpressionEditorPage(object obj, string AttrName, Context context)
         {
@@ -79,21 +104,20 @@ namespace Ginger
                 mContext = new Context();
             }
 
-            ValueUCTextEditor.Bind(obj, AttrName);
-            ValueUCTextEditor.HideToolBar();
-            ValueUCTextEditor.lblTitle.Content = "Value";
-            ValueUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
+            xObjectsTreeView.SetTopToolBarTools(addHandler: xAddExpressionButton_Click);
+            xObjectsTreeView.AddButtonIcon = eImageType.ArrowRight;            
+            xExpressionUCTextEditor.Bind(obj, AttrName);
+            xExpressionUCTextEditor.HideToolBar();
+            xExpressionUCTextEditor.lblTitle.Content = "Value Expression:";
+            xExpressionUCTextEditor.SetDocumentEditor(new ValueExpressionEditor(mContext));
 
             GetHighlightingRules();
             
             BuildItemsTree();
+            
+            ValueUCTextEditor_LostFocus(xExpressionUCTextEditor, null);
 
-            infoImage.ToolTip = "The value can be any simple string which include " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from different sources like: " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables) + ", Environment Parameters, VBS functions and more." 
-                                + Environment.NewLine +
-                                "The value expression can have more than one " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in it and from different types- just add as many as you need!"
-                                + Environment.NewLine +
-                                "Environment Parameters enable to use the same solution on multiple environments easily.";
-            ValueUCTextEditor_LostFocus(ValueUCTextEditor, null);
+            ShowDefaultHelp();
         }
 
         class RedBrush : HighlightingBrush
@@ -132,7 +156,7 @@ namespace Ginger
             
             foreach (HighlightingRule HR in mHighlightingRules)
             {
-                ValueUCTextEditor.textEditor.SyntaxHighlighting.MainRuleSet.Rules.Add(HR);
+                xExpressionUCTextEditor.textEditor.SyntaxHighlighting.MainRuleSet.Rules.Add(HR);
             }
         }
 
@@ -140,12 +164,9 @@ namespace Ginger
         {
             AddVariables();
             AddEnvParams();
-            AddGlobalParameters();
-            AddCSFunctions();
-           //AddVBSFunctions();
-            //AddRegexFunctions();
-            //AddVBSIfFunctions();
+            AddGlobalModelParameters();
             AddDataSources();
+            AddJSONExpressions();           
             AddSecurityConfiguration();
 
             if (mObj != null && mObj.GetType() == typeof(FlowControl))
@@ -161,16 +182,27 @@ namespace Ginger
                 }                
             }
 
-
+            if (mObj != null && mObj.GetType() == typeof(FlowControl))
+            {
+                TreeViewItem validRoot = AddOrGetCategory("Data Validation");
+                validRoot.IsExpanded = true;
+            }
+            else
+            {
+                TreeViewItem dataRoot = AddOrGetCategory("Data");
+                dataRoot.IsExpanded = true;
+            }
         }
 
     
 
-        private void AddGlobalParameters()
+        private void AddGlobalModelParameters()
         {
+            TreeViewItem Parent = AddOrGetCategory("Data");
+            //TreeViewItem child = AddOrGetSubCategory("Models Global Parameters", Parent);
             TreeViewItem tviGlobalParams = new TreeViewItem();
-            SetItemView(tviGlobalParams, "Models Global Parameters", "", "@Grid_16x16.png");
-            xObjectsTreeView.Items.Add(tviGlobalParams);
+            SetItemView(tviGlobalParams, "Models Global Parameters", "", eImageType.Parameter);
+            Parent.Items.Add(tviGlobalParams);
             ObservableList<GlobalAppModelParameter>  mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             foreach (GlobalAppModelParameter v in mModelsGlobalParamsList)
                 InsertNewGlobalParamTreeItem(tviGlobalParams, v);
@@ -180,24 +212,16 @@ namespace Ginger
         {
             TreeViewItem tvi = new TreeViewItem();
             string GlobalParam = "{GlobalAppsModelsParam Name=" + vb.PlaceHolder + "}";
-            SetItemView(tvi, vb.PlaceHolder, GlobalParam, "@Variable_16x16.png");
+            SetItemView(tvi, vb.PlaceHolder, GlobalParam, eImageType.Variable);
             parentTvi.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
-            tvi.Selected += HideHelp;
+            tvi.Selected += CleanHelpText;
         }
 
         private void AddFlowControlConditions()
         {
-
-
-
-
-            TreeViewItem Parent = new TreeViewItem();
-            SetItemView(Parent, "Flow Control Conditions", "", "@Config3_16x16.png");
-            xObjectsTreeView.Items.Add(Parent);
-
-
-
+            TreeViewItem Parent = AddOrGetCategory("Data Validation");
+            TreeViewItem child = AddOrGetSubCategory("Flow Control Conditions", Parent);
             ValueExpressionReference VERActionpassd = new ValueExpressionReference
             {
                 Name = "Action is Passed",
@@ -205,8 +229,8 @@ namespace Ginger
                 UseCase = "Flowcontrol Condition will execute if the action is Passed",
             };
             TreeViewItem tvi = new TreeViewItem();
-            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, VERActionpassd.IconImageName == null ? "@Config3_16x16.png" : VERActionpassd.IconImageName);
-            Parent.Items.Add(tvi);
+            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, eImageType.MapSigns);
+            child.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi.Selected += UpdateHelpForCSFunction;
             tvi.Tag = VERActionpassd;
@@ -221,8 +245,8 @@ namespace Ginger
                 UseCase = "Flowcontrol Condition will execute if the action is Failed",
             };
             TreeViewItem tvi2 = new TreeViewItem();
-            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, VERACtionFailed.IconImageName == null ? "@Config3_16x16.png" : VERACtionFailed.IconImageName);
-            Parent.Items.Add(tvi2);
+            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, eImageType.MapSigns);
+            child.Items.Add(tvi2);
             tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi2.Selected += UpdateHelpForCSFunction;
             tvi2.Tag = VERACtionFailed;
@@ -237,8 +261,8 @@ namespace Ginger
                 UseCase = "Flowcontrol Condition will execute if the Last Activity is Passed",
             };
             TreeViewItem tvi3 = new TreeViewItem();
-            SetItemView(tvi3, VERLastActivityPassed.Name, VERLastActivityPassed.Expression, VERLastActivityPassed.IconImageName == null ? "@Config3_16x16.png" : VERLastActivityPassed.IconImageName);
-            Parent.Items.Add(tvi3);
+            SetItemView(tvi3, VERLastActivityPassed.Name, VERLastActivityPassed.Expression, eImageType.MapSigns);
+            child.Items.Add(tvi3);
             tvi3.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi3.Selected += UpdateHelpForCSFunction;
             tvi3.Tag = VERLastActivityPassed;
@@ -251,8 +275,8 @@ namespace Ginger
                 UseCase = "Flowcontrol Condition will execute if the Last Activity is Failed",
             };
             TreeViewItem tvi4 = new TreeViewItem();
-            SetItemView(tvi4, VERLastActivityFailed.Name, VERLastActivityFailed.Expression, VERLastActivityFailed.IconImageName == null ? "@Config3_16x16.png" : VERLastActivityFailed.IconImageName);
-            Parent.Items.Add(tvi4);
+            SetItemView(tvi4, VERLastActivityFailed.Name, VERLastActivityFailed.Expression, eImageType.MapSigns);
+            child.Items.Add(tvi4);
             tvi4.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi4.Selected += UpdateHelpForCSFunction;
             tvi4.Tag = VERLastActivityFailed;
@@ -264,11 +288,8 @@ namespace Ginger
         //Added for Business Flow Control in RunSet
         private void AddBusinessFlowControlConditions()
         {
-
-
-            TreeViewItem Parent = new TreeViewItem();
-            SetItemView(Parent, "Flow Control Conditions", "", "@Config3_16x16.png");
-            xObjectsTreeView.Items.Add(Parent);
+            TreeViewItem Parent = AddOrGetCategory("Data Validation");
+            TreeViewItem child = AddOrGetSubCategory("Flow Control Conditions", Parent);
 
             ValueExpressionReference VERActionpassd = new ValueExpressionReference
             {
@@ -277,8 +298,8 @@ namespace Ginger
                 UseCase = "BusinessFlowStatus Condition will execute if the action is Passed",
             };
             TreeViewItem tvi = new TreeViewItem();
-            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, VERActionpassd.IconImageName == null ? "@Config3_16x16.png" : VERActionpassd.IconImageName);
-            Parent.Items.Add(tvi);
+            SetItemView(tvi, VERActionpassd.Name, VERActionpassd.Expression, eImageType.MapSigns);
+            child.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi.Selected += UpdateHelpForCSFunction;
             tvi.Tag = VERActionpassd;
@@ -290,8 +311,8 @@ namespace Ginger
                 UseCase = "Flowcontrol Condition will execute if the action is Failed",
             };
             TreeViewItem tvi2 = new TreeViewItem();
-            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, VERACtionFailed.IconImageName == null ? "@Config3_16x16.png" : VERACtionFailed.IconImageName);
-            Parent.Items.Add(tvi2);
+            SetItemView(tvi2, VERACtionFailed.Name, VERACtionFailed.Expression, eImageType.MapSigns);
+            child.Items.Add(tvi2);
             tvi2.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi2.Selected += UpdateHelpForCSFunction;
             tvi2.Tag = VERACtionFailed;
@@ -301,8 +322,8 @@ namespace Ginger
         private void AddVBSIfFunctions()
         {
             TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "VBS IF Functions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars);
+            SetItemView(tviVars, "VBS IF Functions", "", eImageType.Null);
+            rootTreeItem.Items.Add(tviVars);
 
             AddVBSIfEval(tviVars, "Actual > 0", "{Actual} > 0");
             AddVBSIfEval(tviVars, "Actual Contains String 'ABC'", "InStr({Actual},\"ABC\")>0");
@@ -312,32 +333,151 @@ namespace Ginger
             AddVBSIfEval(tviVars, "Actual to Upper Case = 'ABC'", "UCase({Actual})=\"ABC\"");
         }
 
-        private void AddCSFunctions()
+        eImageType GetCategoryImageType(string category)
+        {
+            eImageType eImageType;
+            switch(category)
+            {
+                case "Regular Expressions":
+                    eImageType = eImageType.RegularExpression;
+                    break;
+                case "String":
+                    eImageType = eImageType.Text;
+                    break;
+                case "Date Time":
+                    eImageType = eImageType.Timer;
+                    break;
+                case "Output Value":
+                    eImageType = eImageType.Output;
+                    break;
+                case "Math":
+                    eImageType = eImageType.Config;
+                    break;              
+                case "Data":
+                    eImageType = eImageType.Table;
+                    break;
+                case "Data Operations":
+                    eImageType = eImageType.DataManipulation;
+                    break;
+                case "Data Validation":
+                    eImageType = eImageType.CheckBox;
+                    break;
+                case "Flow Details":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Environment":
+                    eImageType = eImageType.Environment;
+                    break;
+                case "Runset":
+                    eImageType = eImageType.RunSet;
+                    break;
+                case "Runner":
+                    eImageType = eImageType.Runner;
+                    break;
+                case "Business Flow":
+                    eImageType = eImageType.BusinessFlow;
+                    break;
+                case "Activities Group":
+                    eImageType = eImageType.ActivitiesGroup;
+                    break;
+                case "Activity":
+                    eImageType = eImageType.Activity;
+                    break;
+                case "Action":
+                    eImageType = eImageType.Action;
+                    break;
+                case "Machine Details":
+                    eImageType = eImageType.Screen;
+                    break;
+                case "List":
+                    eImageType = eImageType.List;
+                    break;
+                case "Variables":
+                    eImageType = eImageType.Variable;
+                    break;
+                case "Environments":
+                    eImageType = eImageType.Environment;
+                    break;
+                case "Models Global Parameters":
+                    eImageType = eImageType.Parameter;
+                    break;
+                case "Data Source":
+                    eImageType = eImageType.DataSource;
+                    break;
+                case "Functions":
+                    eImageType = eImageType.Operations;
+                    break;
+                case "Flow Control Conditions":
+                    eImageType = eImageType.MapSigns;
+                    break;
+                case "General":
+                    eImageType = eImageType.General;
+                    break;
+                case "Solution":
+                    eImageType = eImageType.Solution;
+                    break;
+                default:
+                    throw new KeyNotFoundException();
+            }
+            return eImageType;
+        }    
+
+        private TreeViewItem AddOrGetCategory(string Category)
+        {
+            TreeViewItem Parent;
+            if (!Categories.TryGetValue(Category, out Parent))
+            {
+                Parent = new TreeViewItem();
+                SetItemView(Parent, Category, "", GetCategoryImageType(Category));
+                rootTreeItem.Items.Add(Parent);
+                Categories.Add(Category, Parent);
+            }
+            return Parent;
+        }
+        private TreeViewItem AddOrGetSubCategory(string SubCategory, TreeViewItem Parent)
+        {
+            TreeViewItem mchild = null;           
+            foreach(TreeViewItem child in Parent.Items)
+            {                
+                foreach (object l in ((StackPanel)child.Header).Children)
+                {
+                    if (l.GetType() == typeof(Label) && ((Label)l).Content.ToString() == SubCategory)
+                    {
+                        mchild = child;
+                    }
+                }                         
+            }
+            if(mchild == null)
+            {
+                mchild = new TreeViewItem();
+                SetItemView(mchild, SubCategory, "", GetCategoryImageType(SubCategory));
+                Parent.Items.Add(mchild);
+            }
+            return mchild;
+        }
+
+        private void AddJSONExpressions()
         {
             WorkSpace.Instance.VERefrences= VEReferenceList.LoadFromJson(Path.Combine(new string[] { Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "RosLynLib", "ValueExpressionRefrences.json" }));
 
-
             foreach (ValueExpressionReference VER in WorkSpace.Instance.VERefrences.Refrences)
             {
-                TreeViewItem Parent;
-                if (!Categories.TryGetValue(VER.Category, out Parent))
+                if (VER.RequiresSpecificFlowDetails && (mContext == null || mContext.BusinessFlow == null))
                 {
-                    Parent = new TreeViewItem();
-                    SetItemView(Parent, VER.Category, "",VER.IconImageName==null? "@Config3_16x16.png":VER.IconImageName);
-                    xObjectsTreeView.Items.Add(Parent);
-                    Categories.Add(VER.Category, Parent);
+                    continue;//skipping because specific flow details is required
                 }
 
+                TreeViewItem Parent = AddOrGetCategory(VER.Category);
+                TreeViewItem child = AddOrGetSubCategory(VER.SubCategory, Parent);
+               
                 TreeViewItem tvi = new TreeViewItem();
 
-                SetItemView(tvi, VER.Name, VER.Expression, VER.IconImageName == null ? "@Config3_16x16.png" : VER.IconImageName);
-                Parent.Items.Add(tvi);
+                SetItemView(tvi, VER.Name, VER.Expression, GetCategoryImageType(VER.SubCategory));
+                child.Items.Add(tvi);
                 tvi.MouseDoubleClick += tvi_MouseDoubleClick;
                 tvi.Selected += UpdateHelpForCSFunction;
                 tvi.Tag = VER;
             }
-
-
         }
 
    
@@ -346,8 +486,8 @@ namespace Ginger
         private void AddVBSFunctions()
         {
             TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "VBS Functions", "", "VBS16x16.png");
-            xObjectsTreeView.Items.Add(tviVars);
+            SetItemView(tviVars, "VBS Functions", "", eImageType.Null);
+            rootTreeItem.Items.Add(tviVars);
             
             AddVBSEval(tviVars, "Trim whitespace", "Trim(\"  Hello  \")");
             AddVBSEval(tviVars, "Trim whitespace & line breaks", "Trim(Replace(\"{Actual}\",\"vbCrLf\",\"\"))");
@@ -380,11 +520,7 @@ namespace Ginger
         }
 
         private void AddSecurityConfiguration()
-        {
-            TreeViewItem tviSecuritySettings = new TreeViewItem();
-            SetItemView(tviSecuritySettings, "General Functions", "", "@Config_16x16.png");
-            tviSecuritySettings.Selected += HideHelp;
-            xObjectsTreeView.Items.Add(tviSecuritySettings);
+        {           
             try
             {
                 Type t = typeof(Amdocs.Ginger.CoreNET.ValueExpression.ValueExpessionGeneralFunctions);
@@ -396,10 +532,14 @@ namespace Ginger
                     token = Attribute.GetCustomAttribute(mi, typeof(ValueExpressionFunctionAttribute), false) as ValueExpressionFunctionAttribute;
                     ValueExpressionFunctionDescription desc = Attribute.GetCustomAttribute(mi, typeof(ValueExpressionFunctionDescription), false) as ValueExpressionFunctionDescription;
                     ValueExpressionFunctionExpression expr = Attribute.GetCustomAttribute(mi, typeof(ValueExpressionFunctionExpression), false) as ValueExpressionFunctionExpression;
+                    ValueExpressionFunctionCategory Category = Attribute.GetCustomAttribute(mi, typeof(ValueExpressionFunctionCategory), false) as ValueExpressionFunctionCategory;
+                    ValueExpressionFunctionSubCategory SubCategory = Attribute.GetCustomAttribute(mi, typeof(ValueExpressionFunctionSubCategory), false) as ValueExpressionFunctionSubCategory;                    
                     if (token == null)
                         continue;
-
-                    AddWSSecurityConfig(tviSecuritySettings, desc.DefaultValue, expr.DefaultValue); //GetUTCDateTimeStamp());
+                    TreeViewItem Parent = AddOrGetCategory(Category.DefaultValue);
+                    TreeViewItem child = AddOrGetSubCategory(SubCategory.DefaultValue, Parent);
+                    child.Selected += CleanHelpText;
+                    AddWSSecurityConfig(child, desc.DefaultValue, expr.DefaultValue, SubCategory.DefaultValue);
                 }
             }
             catch (Exception ex)
@@ -412,8 +552,8 @@ namespace Ginger
         private void AddRegexFunctions()
         {
             TreeViewItem tviVars = new TreeViewItem();
-            SetItemView(tviVars, "RegEx Functions", "", "@Regex16x16.png");
-            xObjectsTreeView.Items.Add(tviVars);
+            SetItemView(tviVars, "RegEx Functions", "", eImageType.RegularExpression);
+            rootTreeItem.Items.Add(tviVars);
             AddRegexEval(tviVars, "Extract Initial Digits", "1 Pat=([\\d\\D]{2}).*$ P1=12345");
             AddRegexEval(tviVars, "Extract Last Digits", "1 Pat=.+([\\d\\D]{2})$ P1=12345");
             AddRegexEval(tviVars, "Extract Number From Text", "matchValue Pat=\\d+ P1= aaa 123 bbb");
@@ -424,7 +564,7 @@ namespace Ginger
         {
             TreeViewItem tvi = new TreeViewItem();
             string VarExpression = "{RegEx Fun=" + Eval + "}";
-            SetItemView(tvi, Desc, VarExpression, "@Regex16x16.png");
+            SetItemView(tvi, Desc, VarExpression, eImageType.RegularExpression);
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             Tvel.Refrences.Add(new ValueExpressionReference() { Category = "Regular Expressions", Name = Desc, Expression = Eval,IconImageName= "@Regex16x16.png"});
@@ -434,27 +574,27 @@ namespace Ginger
         {
             TreeViewItem tvi = new TreeViewItem();
             string VarExpression = "{VBS Eval=" + Eval + "}";
-            SetItemView(tvi, Desc, VarExpression, "VBS16x16.png");
+            SetItemView(tvi, Desc, VarExpression, eImageType.Null);
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             Tvel.Refrences.Add(new ValueExpressionReference() { Category = "Date Time Functions", Name = Desc, Expression = Eval });
         }
 
-        private void AddWSSecurityConfig(TreeViewItem tviSecSets, string Desc, string Eval)
+        private void AddWSSecurityConfig(TreeViewItem tviSecSets, string Desc, string Eval, string subcategory)
         {
             TreeViewItem tviSecuritySettings = new TreeViewItem();
             string VarExpression = Eval ;
-            SetItemView(tviSecuritySettings, Desc, VarExpression, "@Config_16x16.png");
+            SetItemView(tviSecuritySettings, Desc, VarExpression, GetCategoryImageType(subcategory));
             tviSecSets.Items.Add(tviSecuritySettings);
             tviSecuritySettings.MouseDoubleClick += tvi_MouseDoubleClick;
-            tviSecuritySettings.Selected += HideHelp;
+            tviSecuritySettings.Selected += CleanHelpText;
         }
 
         private void AddVBSIfEval(TreeViewItem tviVars, string Desc, string Eval)
         {           
             TreeViewItem tvi = new TreeViewItem();
             string VarExpression = Eval;
-            SetItemView(tvi, Desc, VarExpression, "VBS16x16.png");
+            SetItemView(tvi, Desc, VarExpression, eImageType.Null);
             tviVars.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
 
@@ -463,40 +603,42 @@ namespace Ginger
 
         private void AddEnvParams()
         {
+            TreeViewItem Parent = AddOrGetCategory("Data");
+            //TreeViewItem child = AddOrGetSubCategory("Environments", Parent);
             TreeViewItem tviEnvs = new TreeViewItem();
-            tviEnvs.Selected += HideHelp;
-            SetItemView(tviEnvs, "Environments", "", "@Environment_16x16.png");
-            xObjectsTreeView.Items.Add(tviEnvs);
+            tviEnvs.Selected += CleanHelpText;
+            SetItemView(tviEnvs, "Environments", "", eImageType.Environment);
+            Parent.Items.Add(tviEnvs);
 
             mEnvs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
             foreach (ProjEnvironment env in mEnvs)
             {                
                 TreeViewItem tviEnv = new TreeViewItem();
-                SetItemView(tviEnv, env.Name, "", "@Environment_16x16.png");
-                tviEnv.Selected += HideHelp;
+                SetItemView(tviEnv, env.Name, "", eImageType.Environment);
+                tviEnv.Selected += CleanHelpText;
                 tviEnvs.Items.Add(tviEnv);
 
                 TreeViewItem tviEnvApps = new TreeViewItem();
-                SetItemView(tviEnvApps, "Applications", "", "@Window_16x16.png");
+                SetItemView(tviEnvApps, "Applications", "", eImageType.Application);
                 tviEnv.Items.Add(tviEnvApps);
 
                 foreach (EnvApplication a in env.Applications)
                 {
                     TreeViewItem tviEnvApp = new TreeViewItem();
-                    SetItemView(tviEnvApp, a.Name, "", "@Window_16x16.png");
+                    SetItemView(tviEnvApp, a.Name, "", eImageType.Window);
                     tviEnvApps.Items.Add(tviEnvApp);
-                    tviEnvApp.Selected += HideHelp;
+                    tviEnvApp.Selected += CleanHelpText;
                     //Add Env URL
                     TreeViewItem tviEnvAppURL = new TreeViewItem();
                     string URLval = "{EnvURL App=" + a.Name + "}";
-                    SetItemView(tviEnvAppURL, a.Name + " URL =" + a.Url, URLval, "URL16x16.png");
+                    SetItemView(tviEnvAppURL, a.Name + " URL =" + a.Url, URLval, eImageType.Browser);
                     tviEnvApp.Items.Add(tviEnvAppURL);
                     tviEnvAppURL.MouseDoubleClick += tvi_MouseDoubleClick;
 
                     //Add App Global Params
                     TreeViewItem tviEnvAppGlobalParam = new TreeViewItem();
-                    SetItemView(tviEnvAppGlobalParam, "Global Params", "", "GlobalParam16x16.png");
+                    SetItemView(tviEnvAppGlobalParam, "Global Params", "", eImageType.Parameter);
                     tviEnvApp.Items.Add(tviEnvAppGlobalParam);
                     tviEnvAppGlobalParam.MouseDoubleClick += tvi_MouseDoubleClick;
 
@@ -506,28 +648,25 @@ namespace Ginger
                      
                         TreeViewItem tviEnvAppParam = new TreeViewItem();
                         string Paramval = "{EnvParam App=" + a.Name + " Param=" + gp.Name + "}";
-                        SetItemView(tviEnvAppParam, gp.Name + " =" + gp.Value, Paramval, "GlobalParam16x16.png");
+                        SetItemView(tviEnvAppParam, gp.Name + " =" + gp.Value, Paramval, eImageType.Parameter);
                         tviEnvAppGlobalParam.Items.Add(tviEnvAppParam);
                         tviEnvAppParam.MouseDoubleClick += tvi_MouseDoubleClick;
-                        tviEnvAppParam.Selected += HideHelp;
+                        tviEnvAppParam.Selected += CleanHelpText;
                     }
                 }
             }
         }
 
-        private void HideHelp(object sender, RoutedEventArgs e)
-        {
-            xHelpPanel.Visibility = Visibility.Collapsed;
-        }
-
         private void AddVariables()
         {
+            TreeViewItem Parent = AddOrGetCategory("Data");
+            TreeViewItem child = AddOrGetSubCategory("Variables", Parent);
             if (WorkSpace.Instance.Solution != null)
             {
                 TreeViewItem solutionVars = new TreeViewItem();
                 solutionVars.Items.IsLiveSorting = true;
-                SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
-                xObjectsTreeView.Items.Add(solutionVars);
+                SetItemView(solutionVars, "Global " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", eImageType.Variable);
+                child.Items.Add(solutionVars);
 
                 foreach (VariableBase v in WorkSpace.Instance.Solution.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(solutionVars, v);
@@ -537,20 +676,20 @@ namespace Ginger
             {
                 TreeViewItem tviVars = new TreeViewItem();
                 tviVars.Items.IsLiveSorting = true;
-                SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
-                xObjectsTreeView.Items.Add(tviVars);
+                SetItemView(tviVars, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", eImageType.Variable);
+                child.Items.Add(tviVars);
 
                 foreach (VariableBase v in mContext.BusinessFlow.Variables.OrderBy("Name"))
                     InsertNewVarTreeItem(tviVars, v);
                 InsertAddNewVarTreeItem(tviVars, eVariablesLevel.BusinessFlow);
-                tviVars.IsExpanded = true;
+                //tviVars.IsExpanded = true;
 
                 if (mContext.BusinessFlow.CurrentActivity != null)
                 {
                     TreeViewItem activityVars = new TreeViewItem();
                     activityVars.Items.IsLiveSorting = true;
-                    SetItemView(activityVars, GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", "@Variable_16x16.png");
-                    xObjectsTreeView.Items.Add(activityVars);
+                    SetItemView(activityVars, GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.Variables), "", eImageType.Variable);
+                    child.Items.Add(activityVars);
 
                     foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables.OrderBy("Name"))
                         InsertNewVarTreeItem(activityVars, v);
@@ -563,7 +702,7 @@ namespace Ginger
         {
             TreeViewItem tvi = new TreeViewItem();
             string VarExpression = "{Var Name=" + vb.Name + "}";
-            SetItemView(tvi, vb.Name, VarExpression, "@Variable_16x16.png");
+            SetItemView(tvi, vb.Name, VarExpression, eImageType.Variable);
             parentTvi.Items.Add(tvi);
             tvi.MouseDoubleClick += tvi_MouseDoubleClick;
             tvi.Selected += UpdateHelpForVariables;
@@ -575,18 +714,19 @@ namespace Ginger
         private void InsertAddNewVarTreeItem(TreeViewItem parentTvi, eVariablesLevel varLevel)
         {
             TreeViewItem newVarTvi = new TreeViewItem();
-            SetItemView(newVarTvi, "Add New String " + GingerDicser.GetTermResValue(eTermResKey.Variable) , varLevel, "@Add_16x16.png");
+            SetItemView(newVarTvi, "Add New String " + GingerDicser.GetTermResValue(eTermResKey.Variable) , varLevel, eImageType.Add);
             parentTvi.Items.Add(newVarTvi);
             newVarTvi.MouseDoubleClick += tviAddNewVarTreeItem_MouseDoubleClick;
         }
 
         private void AddDataSources()
         {
+            TreeViewItem Parent = AddOrGetCategory("Data");
+            //TreeViewItem child = AddOrGetSubCategory("Data Source", Parent);
             TreeViewItem tviDataSources = new TreeViewItem();
-            SetItemView(tviDataSources, "Data Sources", "", "@DataSource_16x16.png");
-            xObjectsTreeView.Items.Add(tviDataSources);
-            tviDataSources.Selected+=HideHelp;
-
+            SetItemView(tviDataSources, "Data Sources", "", eImageType.DataSource);
+            Parent.Items.Add(tviDataSources);
+            tviDataSources.Selected+= CleanHelpText;
 
             ObservableList<DataSourceBase> DataSources = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
 
@@ -601,9 +741,9 @@ namespace Ginger
 
                 TreeViewItem tviDataSource = new TreeViewItem();
                 if (ds.DSType == DataSourceBase.eDSType.MSAccess)
-                    SetItemView(tviDataSource, ds.Name, ds.Name, "@AccessDataSource_16x16.png");                
+                    SetItemView(tviDataSource, ds.Name, ds.Name, eImageType.Database);                
                 else
-                    SetItemView(tviDataSource, ds.Name, ds.Name, "@DataSource_16x16.png");
+                    SetItemView(tviDataSource, ds.Name, ds.Name, eImageType.DataSource);
                 tviDataSources.Items.Add(tviDataSource);
                
                 ObservableList<DataSourceTable> dsList = ds.GetTablesList();
@@ -612,9 +752,9 @@ namespace Ginger
                     foreach (DataSourceTable dsTable in dsList)
                     {
                         TreeViewItem tviDSTable = new TreeViewItem();
-                        SetItemView(tviDSTable, dsTable.Name, dsTable.DSTableType.ToString(), "@DataTable_16x16.png");
+                        SetItemView(tviDSTable, dsTable.Name, dsTable.DSTableType.ToString(), eImageType.DataTable);
                         tviDataSource.Items.Add(tviDSTable);
-                        tviDataSource.Selected += HideHelp;
+                        tviDataSource.Selected += CleanHelpText;
                         tviDSTable.DataContext = dsTable;
                         tviDSTable.MouseDoubleClick += tviDSTable_MouseDoubleClick;
                     }
@@ -710,8 +850,8 @@ namespace Ginger
             {
                 TreeViewItem newTvi = new TreeViewItem();
                 string VarExpression = "{Var Name=" + newStringVar.Name + "}";
-                SetItemView(newTvi, newStringVar.Name, VarExpression, "@Variable_16x16.png");
-                TreeViewItem parentTvi = (TreeViewItem)((TreeViewItem)xObjectsTreeView.SelectedItem).Parent;
+                SetItemView(newTvi, newStringVar.Name, VarExpression, eImageType.Variable);
+                TreeViewItem parentTvi = (TreeViewItem)((TreeViewItem)VETree.SelectedItem).Parent;
                 parentTvi.Items.Insert(parentTvi.Items.Count - 1, newTvi);
 
                 //TODO: make added variable as selected item
@@ -723,40 +863,50 @@ namespace Ginger
 
         private void AddExpToValue(string exp)
         {            
-            ValueUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(exp);            
+            xExpressionUCTextEditor.textEditor.TextArea.Selection.ReplaceSelectionWithText(exp);            
         }
 
-        private void SetItemView(TreeViewItem item, string HeaderText, object value,  string ImageFile)
+        private void SetItemView(TreeViewItem item, string HeaderText, object value, eImageType imageType)
         {
             item.Tag = value;
 
             StackPanel stack = new StackPanel();
             stack.Orientation = Orientation.Horizontal;
 
-            // create Image
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + ImageFile));
+            // create Image           
+            ImageMakerControl treeIcon = new ImageMakerControl();
+            treeIcon.ImageType = imageType;
+            treeIcon.Height = 16;
+            treeIcon.Width = 16;
+
 
             // Label
             Label lbl = new Label();
             lbl.Content = HeaderText;
 
             // Add into stack
-            stack.Children.Add(image);            
+            stack.Children.Add(treeIcon);            
             stack.Children.Add(lbl);
 
             // assign stack to header
             item.Header = stack;         
         }
 
-        private void AddToValueButton_Click(object sender, RoutedEventArgs e)
+        private void xAddExpressionButton_Click(object sender, RoutedEventArgs e)
         {
-            TreeViewItem tvi = (TreeViewItem)xObjectsTreeView.SelectedItem;
+            TreeViewItem tvi = (TreeViewItem)VETree.SelectedItem;
             if (tvi != null)
             {
-                //Using double click event to trigger any operation configured on the tree double click
-                var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left){ RoutedEvent = Control.MouseDoubleClickEvent};
-                tvi.RaiseEvent(args);
+                if(!tvi.HasItems)
+                {
+                    //Using double click event to trigger any operation configured on the tree double click
+                    var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = Control.MouseDoubleClickEvent };
+                    tvi.RaiseEvent(args);
+                }                
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.AskToSelectValidItem);
+                }
             }
             else
             {
@@ -764,7 +914,7 @@ namespace Ginger
             }
         }
 
-        private void TestButton_Click(object sender, RoutedEventArgs e)
+        private void xTestButton_Click(object sender, RoutedEventArgs e)
         {
             if (mVE == null)
             {
@@ -775,13 +925,13 @@ namespace Ginger
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 
             }
-            mVE.Value = this.ValueUCTextEditor.textEditor.Text;
-            ValueCalculatedTextBox.Text = mVE.ValueCalculated;
+            mVE.Value = this.xExpressionUCTextEditor.textEditor.Text;
+            xCalculatedTextBox.Text = mVE.ValueCalculated;
         }
                 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            string value = ValueUCTextEditor.textEditor.Text;
+            string value = xExpressionUCTextEditor.textEditor.Text;
             if (mVE == null)
             {
                 mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
@@ -807,10 +957,10 @@ namespace Ginger
             mWin.Close();
         }
 
-        private void ClearButton_Click(object sender, RoutedEventArgs e)
+        private void xClearButton_Click(object sender, RoutedEventArgs e)
         {            
-            this.ValueUCTextEditor.textEditor.Text = "";
-            ValueCalculatedTextBox.Text = "";
+            this.xExpressionUCTextEditor.textEditor.Text = "";
+            xCalculatedTextBox.Text = "";
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, Window ownerWindow = null)
@@ -827,9 +977,9 @@ namespace Ginger
             GingerCore.General.LoadGenericWindow(ref mWin, ownerWindow, windowStyle, this.Title, this, new ObservableList<Button> { OKButton }, true,"Cancel");
         }
 
-        private void ClearCalculatedButton_Click(object sender, RoutedEventArgs e)
+        private void xClearCalculatedButton_Click(object sender, RoutedEventArgs e)
         {
-            ValueCalculatedTextBox.Text = "";
+            xCalculatedTextBox.Text = "";
         }
 
         private void UpdateHelpForVariables(object sender, RoutedEventArgs e)
@@ -838,7 +988,7 @@ namespace Ginger
             TreeViewItem TVI = sender as TreeViewItem;
             VariableBase Var = TVI.Tag as VariableBase;
 
-            UpdateHelp(true, GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", Var.Value);
+            ShowSpecificHelp(GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + Var.Name, GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + Var.VariableType, "Current Value", "'" + Var.Value + "'");
         }
 
         private void UpdateHelpForCSFunction(object sender, RoutedEventArgs e)
@@ -859,38 +1009,77 @@ namespace Ginger
                 }
 
             }
-            UpdateHelp(false, VER.Name, VER.Category, "Samples", samples, "Expression:" + System.Environment.NewLine + VER.Expression);
+            ShowSpecificHelp(VER.Name, VER.Category, "Samples", samples, "Expression:" + System.Environment.NewLine + VER.Expression);
         }
 
-        private void UpdateHelp(bool ShowHelpCategory, string Title, string Category, string HelpContentName, string HelpContent, string HelpExtraInfo = null)
+        private void ShowDefaultHelp()
         {
-           
-            xWarningPanel.Visibility = Visibility.Collapsed;
-            xHelpPanel.Visibility = Visibility.Visible;
+            xHelpPanelText.Text = string.Empty;
+            TextBlockHelper TBH = new TextBlockHelper(xHelpPanelText);
 
-            if (ShowHelpCategory)
-            {
-                xHelpCategoryPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
+            TBH.AddUnderLineText("Help:");
+            TBH.AddLineBreak();
 
-                xHelpCategoryPanel.Visibility = Visibility.Collapsed;
-            }
-
-            xHelpTitle.Content = Title;
-            XHelpCategory.Content = Category;
-            XHelpContentName.Text = HelpContentName + ": ";
-            XHelpContent.Text = HelpContent;
-            XHelpExtra.Text = HelpExtraInfo == null ? string.Empty : HelpExtraInfo;
+            string msg = "Enter expression like " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " from different levels, Environment Parameter or function which will be calculated in run time into dynamic value."
+                           + Environment.NewLine + Environment.NewLine +
+                           "Multiple expressions can be added together."; ;
+            TBH.AddText(msg);
         }
 
-    
+        private void ShowSpecificHelp(string title, string category, string helpContentName, string helpContent, string helpExtraInfo = null)
+        {
+            xHelpPanelText.Text = string.Empty;
+            TextBlockHelper TBH = new TextBlockHelper(xHelpPanelText);
+
+            TBH.AddUnderLineText("Help:");
+            TBH.AddLineBreak();
+
+            TBH.AddBoldText(title);
+            if (!String.IsNullOrEmpty(category))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(category);
+            }
+            if (!String.IsNullOrEmpty(helpContentName))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(helpContentName + ":");
+            }
+            if (!String.IsNullOrEmpty(helpContent))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(helpContent);
+            }
+            if (!String.IsNullOrEmpty(helpExtraInfo))
+            {
+                TBH.AddLineBreak();
+                TBH.AddText(helpExtraInfo);
+            }
+        }
+
+        private void ShowVBSWarnHelp()
+        {
+            xHelpPanelText.Text = string.Empty;
+            TextBlockHelper TBH = new TextBlockHelper(xHelpPanelText);
+
+            TBH.AddUnderLineText("Help:");
+            TBH.AddLineBreak();
+
+            string msg = "Value Expression Contains VBS Operation."
+                           + Environment.NewLine +
+                           "VBS operations are slow and works only on Windows OS, please consider changing it to CS expression."; ;
+            TBH.AddFormattedText(msg, Brushes.OrangeRed);
+        }
+
+        private void CleanHelpText(object sender, RoutedEventArgs e)
+        {
+            xHelpPanelText.Text = string.Empty;
+        }
 
         private async void ValueUCTextEditor_LostFocus(object sender, RoutedEventArgs e)
         {
             string warningExpression = string.Empty;
-            string VEText = ValueUCTextEditor.Text;
+            string VEText = xExpressionUCTextEditor.Text;
             await Task.Run(() =>
             {
                 foreach (Match m in VBSReg.Matches(VEText))
@@ -908,26 +1097,18 @@ namespace Ginger
 
             if (!string.IsNullOrEmpty(warningExpression))
             {
-                xWarningPanel.Visibility = Visibility.Visible;
-                xHelpPanel.Visibility = Visibility.Collapsed;
-                XWarningValueExpression.Text = warningExpression;
-            }
-            else
-            {
-                xWarningPanel.Visibility = Visibility.Collapsed;
-                xHelpPanel.Visibility = Visibility.Collapsed;
-                XWarningValueExpression.Text = string.Empty;
+                ShowVBSWarnHelp();
             }
         }
 
         private void XObjectsTreeView_LostFocus(object sender, RoutedEventArgs e)
         {
-            if(!string.IsNullOrEmpty(XWarningValueExpression.Text))
-            {
-                xWarningPanel.Visibility = Visibility.Visible;
-                xHelpPanel.Visibility = Visibility.Collapsed;
+            //if(!string.IsNullOrEmpty(XWarningValueExpression.Text))
+            //{
+            //    xWarningPanel.Visibility = Visibility.Visible;
+            //    //xHelpPanel.Visibility = Visibility.Collapsed;
             
-            }
+            //}
         }
     }
 }

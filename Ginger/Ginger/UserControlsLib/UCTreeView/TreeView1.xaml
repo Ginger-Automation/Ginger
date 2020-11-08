@@ -61,7 +61,7 @@
         </Grid>
 
         <!-- Tree Section-->
-        <local:UCTreeView x:Name="xTreeViewTree" Grid.Row="2" Background="Transparent" BorderThickness="0" />
+        <local:UCTreeView x:Name="xTreeViewTree" Grid.Row="2" Background="Transparent" EnableRightClick="True" EnableDragDrop="True"  BorderThickness="0" />
 
     </Grid>
 </UserControl>
