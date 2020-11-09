@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.CentralExecutionLogger;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -32,8 +30,6 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -281,23 +277,7 @@ namespace GingerCore
                 }
             }
         }
-        private string GetFieldToRemove(string fieldName)
-        {
-            string fieldToReturn = fieldName;
-            if (fieldName.ToLower() == "executedbyuser")
-            {
-                fieldToReturn = "ExecutedByUser";
-            }
-            else if (fieldName.ToLower() == "elapsed")
-            {
-                fieldToReturn = "ElapsedEndTimeStamp";
-            }
-            else if (fieldName.ToLower() == "_id")
-            {
-                fieldToReturn = "ExecutionId";
-            }
-            return fieldToReturn;
-        }
+        
         private void ReplaceExecutionJsonDataDetails(string josnExpression)
         {
             //Select fields from selected template configuration
@@ -317,128 +297,23 @@ namespace GingerCore
                 defaultTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
 
-            //Last Execution details
+            //Get Last Execution details
             LiteDbRunSet liteDbRunSet = null;
             var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
             if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
-                WebReportGenerator webReporterRunner = new WebReportGenerator();
-                liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
+                liteDbRunSet = dbManager.GetLatestExecutionRunsetData("");
             }
-
-            CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper();
-            AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
-            string json = JsonConvert.SerializeObject(accountReportRunSet, Formatting.Indented);
-
-
-            JObject runSetObject = JObject.Parse(json);
-
-            #region Generate JSON
-
-            //Remove Fields from json which are not selected
-            foreach (HTMLReportConfigFieldToSelect runsetFieldToRemove in defaultTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected != true))
+            else
             {
-                runSetObject.Property(GetFieldToRemove(runsetFieldToRemove.FieldKey)).Remove();
+                mValueCalculated = mValueCalculated.Replace(josnExpression, string.Format("['{0}' Expression Supported only in case the selected Execution Logger type is DB.]", josnExpression));
+                return;
             }
 
-            //RunnersCollection
-            HTMLReportConfigFieldToSelect runnerField = defaultTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "RunnersColl").FirstOrDefault();
-            if (runnerField != null)
-            {
-                if (defaultTemplate.GingerRunnerSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                {
-                    JArray runnerArray = (JArray)runSetObject[runnerField.FieldKey];
-                    foreach (JObject jRunnerObject in runnerArray)
-                    {
-                        foreach (HTMLReportConfigFieldToSelect runnerFieldToRemove in defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected != true))
-                        {
-                            jRunnerObject.Property(GetFieldToRemove(runnerFieldToRemove.FieldKey)).Remove();
-                        }
-                        //BusinessFlowsCollection
-                        HTMLReportConfigFieldToSelect bfField = defaultTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
-                        if (bfField != null)
-                        {
-                            if (defaultTemplate.BusinessFlowSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                            {
-                                JArray bfArray = (JArray)jRunnerObject[bfField.FieldKey];
-                                foreach (JObject jBFObject in bfArray)
-                                {
-                                    foreach (HTMLReportConfigFieldToSelect bfFieldToRemove in defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected != true))
-                                    {
-                                        jBFObject.Property(GetFieldToRemove(bfFieldToRemove.FieldKey)).Remove();
-                                    }
-                                    //ActivityGroupsCollection
-                                    HTMLReportConfigFieldToSelect activityGroupField = defaultTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
-                                    if (activityGroupField != null)
-                                    {
-                                        if (defaultTemplate.ActivityGroupSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                                        {
-                                            JArray activityGroupArray = (JArray)jBFObject[activityGroupField.FieldKey];
-                                            foreach (JObject jActivityGroupObject in activityGroupArray)
-                                            {
-                                                foreach (HTMLReportConfigFieldToSelect activityGroupFieldToRemove in defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected != true))
-                                                {
-                                                    jActivityGroupObject.Property(GetFieldToRemove(activityGroupFieldToRemove.FieldKey)).Remove();
-                                                }
-                                                //ActivitiesCollection
-                                                HTMLReportConfigFieldToSelect activityFieldCheck = defaultTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
-                                                if (activityFieldCheck != null)
-                                                {
-                                                    if (defaultTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                                                    {
-                                                        JArray activityArray = (JArray)jActivityGroupObject[activityFieldCheck.FieldKey];
-                                                        foreach (JObject jActivityObject in activityArray)
-                                                        {
-                                                            //Calculate ErrorDetails And add it to Activity Level
-                                                            string errorDetails = null;
-                                                            JArray actionsArray = (JArray)jActivityObject["ActionsColl"];
-                                                            foreach (JObject jActionObject in actionsArray)
-                                                            {
-                                                                if (!string.IsNullOrEmpty(jActionObject.Property("Error").Value.ToString()) && !string.IsNullOrEmpty(errorDetails))
-                                                                {
-                                                                    errorDetails = errorDetails + "," + jActionObject.Property("Error").Value.ToString();
-                                                                }
-                                                                else
-                                                                {
-                                                                    errorDetails = errorDetails + jActionObject.Property("Error").Value.ToString();
-                                                                }
-                                                            }
-                                                            jActivityObject.Add("ErrorDetails", errorDetails);
+            LiteDBRepository liteDBRepository = new LiteDBRepository();
+            string json = liteDBRepository.CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
 
-                                                            foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
-                                                            {
-                                                                jActivityObject.Property(GetFieldToRemove(activityFieldToRemove.FieldKey)).Remove();
-                                                            }
-                                                            //ActionsColl
-                                                            HTMLReportConfigFieldToSelect actionField = defaultTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionsColl").FirstOrDefault();
-                                                            if (actionField != null)
-                                                            {
-                                                                if (defaultTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
-                                                                {
-                                                                    JArray actionArray = (JArray)jActivityObject[actionField.FieldKey];
-                                                                    foreach (JObject jActionObject in actionArray)
-                                                                    {
-                                                                        foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in defaultTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
-                                                                        {
-                                                                            jActionObject.Property(GetFieldToRemove(actionFieldToRemove.FieldKey)).Remove();
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            #endregion
-            json = runSetObject.ToString(Formatting.Indented);
             mValueCalculated = mValueCalculated.Replace(josnExpression, json);
         }
         public enum eFlowDetailsObjects

@@ -42,10 +42,10 @@ namespace Ginger.Run.RunSetActions
             InitializeComponent();
             this.runSetActionSendData = RunSetActionSendData;
             mContext.RunsetAction = runSetActionSendData;
-
-            Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
-            xEndPointURLTextBox.Init(context, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.EndPointUrl));
-            xJsonBodyTextBox.Init(context, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.RequestBodyJson));
+            mContext.Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
+            
+            xEndPointURLTextBox.Init(mContext, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.EndPointUrl));
+            xJsonBodyTextBox.Init(mContext, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.RequestBodyJson));
             xJsonBodyTextBox.AdjustHight(100);
             CurrentTemplatePickerCbx_Binding(); 
 

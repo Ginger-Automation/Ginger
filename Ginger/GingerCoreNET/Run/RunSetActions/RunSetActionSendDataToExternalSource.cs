@@ -97,8 +97,7 @@ namespace Ginger.Run.RunSetActions
             }
             string JsonOutput = mValueExpression.ValueCalculated;
 
-            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to " + EndPointUrl);
-            string message = string.Format(" execution data to {0}", EndPointUrl);
+            Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, null, "Sending Execution data to External Source");
 
             RestClient restClient = new RestClient(EndPointUrl);
             restClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
@@ -117,12 +116,12 @@ namespace Ginger.Run.RunSetActions
                 IRestResponse response = restClient.Execute(restRequest);
                 if (response.IsSuccessful)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent" + message);
+                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent data to External Source");
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send" + message + " Response: " + response.ErrorMessage);
-                    Errors = "Failed to send" + message + " Response: " + response.ErrorMessage;
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send execution data to External Source Response: " + response.Content);
+                    Errors = "Failed to send execution data to External Source Response: " + response.Content;
                     Status = eRunSetActionStatus.Failed;
                     return;
                 }
