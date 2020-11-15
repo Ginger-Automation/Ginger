@@ -23,6 +23,15 @@
     <CodeAnalysisRuleSet>GingerCoreNET.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <WebDriverPlatform>win32</WebDriverPlatform> 
+    <GeckoDriverPlatform>win32</GeckoDriverPlatform>
+    <PublishChromeDriver>true</PublishChromeDriver>
+    <PublishGeckoDriver>true</PublishGeckoDriver>
+    <PublishIEDriver>true</PublishIEDriver>
+    <PublishMSWebDriver>true</PublishMSWebDriver>  
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="DataBaseAbstarct\**" />
     <Compile Remove="GeneralLib\JSON\**" />
@@ -336,12 +345,12 @@
     <PackageReference Include="PerfectoLab.Extended" Version="18.4.0.1" />
     <PackageReference Include="Protractor" Version="0.13.0" />
     <PackageReference Include="RestSharp" Version="106.6.10" />
-    <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="85.0.4183.8700" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="86.0.4240.2200" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="3.3.0" />
-    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.28.0" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1.2" />
     <PackageReference Include="Selenium.WebDriver.MicrosoftWebDriver" Version="10.0.17134" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
@@ -354,6 +363,8 @@
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
+    <ProjectReference Include="..\LinuxOsUtils\LinuxOsUtils.csproj" />
+    <ProjectReference Include="..\MacOsUtils\MacOsUtils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

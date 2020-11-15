@@ -327,7 +327,6 @@ namespace GingerCore.Drivers
                 switch (mBrowserTpe)
                 {
                     //TODO: refactor closing the extra tabs
-
                     #region Internet Explorer
                     case eBrowserType.IE:
                         InternetExplorerOptions ieoptions = new InternetExplorerOptions();
@@ -477,8 +476,6 @@ namespace GingerCore.Drivers
 
                         break;
                     #endregion
-
-
 
                     #region Safari - To be Added
                     //TODO: add Safari
