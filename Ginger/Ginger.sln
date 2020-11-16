@@ -65,9 +65,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "Gi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerCoreTest", "GingerCoreTest\GingerCoreTest.csproj", "{755ED4B6-2CA1-46B0-A8FC-8B4771982023}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxOsUtils", "LinuxOsUtils\LinuxOsUtils.csproj", "{A0B25CAB-7A62-44BB-A932-1C1E981B05A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinuxOsUtils", "LinuxOsUtils\LinuxOsUtils.csproj", "{A0B25CAB-7A62-44BB-A932-1C1E981B05A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacOsUtils", "MacOsUtils\MacOsUtils.csproj", "{8968DFBA-EE3F-4028-8812-A5A9919B396C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MacOsUtils", "MacOsUtils\MacOsUtils.csproj", "{8968DFBA-EE3F-4028-8812-A5A9919B396C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "64BitSupport", "64BitSupport\64BitSupport.csproj", "{F232645B-6472-4ABA-8316-CBE49F42F5D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -232,6 +234,12 @@ Global
 		{8968DFBA-EE3F-4028-8812-A5A9919B396C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8968DFBA-EE3F-4028-8812-A5A9919B396C}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8968DFBA-EE3F-4028-8812-A5A9919B396C}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
+		{F232645B-6472-4ABA-8316-CBE49F42F5D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F232645B-6472-4ABA-8316-CBE49F42F5D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F232645B-6472-4ABA-8316-CBE49F42F5D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F232645B-6472-4ABA-8316-CBE49F42F5D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F232645B-6472-4ABA-8316-CBE49F42F5D2}.RemoteDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F232645B-6472-4ABA-8316-CBE49F42F5D2}.RemoteDebug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

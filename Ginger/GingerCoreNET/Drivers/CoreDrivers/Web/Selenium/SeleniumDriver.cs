@@ -56,6 +56,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using System.Resources;
 using NUglify;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace GingerCore.Drivers
 {
@@ -401,12 +402,11 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
+                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService(GetDriverPath());
+                        FFService = FirefoxDriverService.CreateDefaultService();
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
-
                     #endregion
 
                     #region Chrome
@@ -455,7 +455,7 @@ namespace GingerCore.Drivers
                             options.EnableMobileEmulation(chromeMobileEmulationDevice);
                         }
 
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriverPath());
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
@@ -574,6 +574,27 @@ namespace GingerCore.Drivers
                         StartDriver();
                     }
                 }
+            }
+        }
+
+        public static string GetDriverPath()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mac");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Linux");
+            }
+            else
+            {
+                string error = string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription);
+                return null;
             }
         }
 
