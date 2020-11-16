@@ -359,7 +359,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\64BitSupport\64BitSupport.csproj" />
+    <ProjectReference Include="..\64BitSupport\Win64OsUtils.csproj" />
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />

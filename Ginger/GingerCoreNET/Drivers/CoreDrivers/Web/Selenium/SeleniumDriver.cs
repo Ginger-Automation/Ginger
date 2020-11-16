@@ -356,21 +356,9 @@ namespace GingerCore.Drivers
                         if (!(String.IsNullOrEmpty(SeleniumUserArguments) && String.IsNullOrWhiteSpace(SeleniumUserArguments)))
                             ieoptions.BrowserCommandLineArguments += "," + SeleniumUserArguments;
 
-                        InternetExplorerDriverService IEService = null;
-
-                        if (Use64Bitbrowser)
-                        {
-                            string IEdriver64bitpath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on) + @"\StaticDrivers\IE64BitDriver");
-                            IEService = InternetExplorerDriverService.CreateDefaultService(IEdriver64bitpath);
-                        }
-                        else
-                        {
-                            IEService = InternetExplorerDriverService.CreateDefaultService();
-                        }
-
+                        InternetExplorerDriverService IEService  = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                         IEService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-
                         break;
                     #endregion
 
@@ -402,8 +390,7 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService(GetDriverPath());
-                        FFService = FirefoxDriverService.CreateDefaultService();
+                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService(GetDriversPathPerOS());
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
@@ -455,7 +442,7 @@ namespace GingerCore.Drivers
                             options.EnableMobileEmulation(chromeMobileEmulationDevice);
                         }
 
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriverPath());
+                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
@@ -577,11 +564,18 @@ namespace GingerCore.Drivers
             }
         }
 
-        public static string GetDriverPath()
+        public string GetDriversPathPerOS()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                if (Use64Bitbrowser)
+                {
+                    return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Win64");
+                }
+                else
+                {
+                    return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                }
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {

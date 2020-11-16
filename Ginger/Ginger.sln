@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinuxOsUtils", "LinuxOsUtil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MacOsUtils", "MacOsUtils\MacOsUtils.csproj", "{8968DFBA-EE3F-4028-8812-A5A9919B396C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "64BitSupport", "64BitSupport\64BitSupport.csproj", "{F232645B-6472-4ABA-8316-CBE49F42F5D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Win64OsUtils", "64BitSupport\Win64OsUtils.csproj", "{F232645B-6472-4ABA-8316-CBE49F42F5D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
