@@ -359,13 +359,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\64BitSupport\Win64OsUtils.csproj" />
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
     <ProjectReference Include="..\GingerCoreCommon\GingerCoreCommon.csproj" />
+    <ProjectReference Include="..\GingerLinuxOsSupport\GingerLinuxOsSupport.csproj" />
+    <ProjectReference Include="..\GingerMacOsSupport\GingerMacOsSupport.csproj" />
     <ProjectReference Include="..\GingerPluginCore\GingerPluginCore.csproj" />
     <ProjectReference Include="..\GingerUtils\GingerUtils.csproj" />
-    <ProjectReference Include="..\LinuxOsUtils\LinuxOsUtils.csproj" />
-    <ProjectReference Include="..\MacOsUtils\MacOsUtils.csproj" />
+    <ProjectReference Include="..\GingerWin64OsSupport\GingerWin64OsSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>
