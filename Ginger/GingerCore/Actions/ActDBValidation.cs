@@ -413,7 +413,14 @@ namespace GingerCore.Actions
 
                 updateQueryParams();
                 foreach (ActInputValue param in QueryParams)
+                {
+                    if (string.IsNullOrEmpty(param.ValueForDriver))
+                    {
+                        param.ValueForDriver = " ";
+                    }
                     SQL = SQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
+                }
+                    
 
                 List<object> DBResponse = DB.FreeSQL(SQL, queryTimeout); 
                 
@@ -447,7 +454,7 @@ namespace GingerCore.Actions
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(ErrorString))
-                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e.Message;  
+                    this.Error = "Fail to run Free SQL: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + e;  
                 else
                     this.Error = "Fail to execute query: " + Environment.NewLine + SQL + Environment.NewLine + "Error= " + ErrorString;
 

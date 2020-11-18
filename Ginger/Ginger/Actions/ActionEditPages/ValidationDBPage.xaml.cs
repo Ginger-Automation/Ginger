@@ -137,7 +137,7 @@ namespace Ginger.Actions
 
                         AIV.Param = match.Groups[1].Value;
                         mAct.QueryParams.Add(AIV);
-                        AIV.Value = "";                        
+                        AIV.Value = string.Empty;                        
                     }                    
                 }
             }
