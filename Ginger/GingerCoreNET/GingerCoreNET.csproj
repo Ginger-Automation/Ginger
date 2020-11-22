@@ -112,6 +112,15 @@
     <None Remove="Reports\GingerExecutionReport\Images\GingerLogo.png" />
     <None Remove="Reports\HTMLTemplates\SkeletonHTMLReport.html" />
     <None Remove="Reports\HTMLTemplates\SummaryHTMLReport.html" />
+    <None Remove="Resources\draganddrop.js" />
+    <None Remove="Resources\GingerHTMLHelper.js" />
+    <None Remove="Resources\GingerHTMLRecorder.js" />
+    <None Remove="Resources\GingerLibXPath.js" />
+    <None Remove="Resources\GingerLiveSpy.js" />
+    <None Remove="Resources\InjectJavaScript.js" />
+    <None Remove="Resources\jquery_min.js" />
+    <None Remove="Resources\PayLoad.js" />
+    <None Remove="Resources\wgxpath_install.js" />
     <None Remove="RosLynLib\ValueExpressionRefrences.json" />
   </ItemGroup>
 
@@ -300,6 +309,15 @@
     <EmbeddedResource Include="Reports\HTMLTemplates\SummaryHTMLReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\draganddrop.js" />
+    <EmbeddedResource Include="Resources\GingerHTMLHelper.js" />
+    <EmbeddedResource Include="Resources\GingerHTMLRecorder.js" />
+    <EmbeddedResource Include="Resources\GingerLibXPath.js" />
+    <EmbeddedResource Include="Resources\GingerLiveSpy.js" />
+    <EmbeddedResource Include="Resources\InjectJavaScript.js" />
+    <EmbeddedResource Include="Resources\jquery_min.js" />
+    <EmbeddedResource Include="Resources\PayLoad.js" />
+    <EmbeddedResource Include="Resources\wgxpath_install.js" />
   </ItemGroup>
 
   <ItemGroup>

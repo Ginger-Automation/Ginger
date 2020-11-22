@@ -214,12 +214,6 @@
   <data name="GingerLibXPath" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GingerLibXPath.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="GingerLiveSpy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\GingerLiveSpy.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="Html5DragAndDrop" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\draganddrop.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="ArrayBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ArrayBuffer.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

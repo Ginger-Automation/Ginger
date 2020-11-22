@@ -755,12 +755,10 @@
     <None Include="Resources\%40visualtesting_16x16.png" />
     <Content Include="Drivers\JavaDriverLib\GingerJavaAgent\test\com\amdocs\ginger\JEditorPaneExample.java" />
     <Content Include="Drivers\JavaDriverLib\GingerJavaAgent\xsoup.jar" />
-    <Content Include="Resources\draganddrop.js" />
     <Content Include="Resources\GingerHTMLHelper.js" />
     <Content Include="Resources\BrowserWaitForIdle.js" />
     <None Include="Resources\GingerLibXPath.js" />
     <None Include="Resources\GingerHTMLRecorder.js" />
-    <Content Include="Resources\GingerLiveSpy.js" />
     <Content Include="Resources\html2canvas.js" />
     <Content Include="Resources\HTMLSpy.js" />
     <None Include="Resources\ArrayBuffer.js" />
@@ -846,7 +844,7 @@
       <Version>3.8.0</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.5</Version>
+      <Version>1.11.21</Version>
     </PackageReference>
     <PackageReference Include="LibGit2Sharp.NativeBinaries">
       <Version>2.0.278</Version>

@@ -19,7 +19,7 @@ namespace GingerCore.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -148,29 +148,19 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to var runningAjaxCount = 0;
+        ///   Looks up a localized string similar to /*
+        ///Copyright © 2014-2020 European Support Limited
         ///
-        ///var oldSend = XMLHttpRequest.prototype.send;
-        ///XMLHttpRequest.prototype.send = function() {
-        ///    oldOnReady = this.onreadystatechange;
-        ///    this.onreadystatechange = function() {
-        ///        oldOnReady.call(this);
-        ///        if(this.readyState == XMLHttpRequest.DONE) {
-        ///            ajaxStopped();
-        ///        }
-        ///    }
-        ///    ajaxStarted();
-        ///    oldSend.apply(this, arguments);
-        ///}
+        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
+        ///you may not use this file except in compliance with the License.
+        ///You may obtain a copy of the License at 
         ///
-        ///function ajaxStarted() {
-        ///    runningAjaxCount++;
-        ///}
+        ///http://www.apache.org/licenses/LICENSE-2.0 
         ///
-        ///function ajaxStopped() {
-        ///    runningAjaxCount--;
-        ///}
-        /// [rest of string was truncated]&quot;;.
+        ///Unless required by applicable law or agreed to in writing, software
+        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+        ///See the License for the s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BrowserWaitForIdle {
             get {
@@ -271,19 +261,19 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets 
+        ///   Looks up a localized string similar to /*
+        ///Copyright © 2014-2020 European Support Limited
         ///
-        ///GingerLib = {};
+        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
+        ///you may not use this file except in compliance with the License.
+        ///You may obtain a copy of the License at 
         ///
+        ///http://www.apache.org/licenses/LICENSE-2.0 
         ///
-        ///// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
-        ///
-        ///// strict mode = must define variables which is good programming :)
-        ///&apos;use strict&apos;;
-        ///function define_GingerLib() {
-        ///    GingerLib = {};
-        ///
-        ///    //------------------------------------------------------------------------------------------- [rest of string was truncated]&quot;;.
+        ///Unless required by applicable law or agreed to in writing, software
+        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+        ///See the License for the s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GingerHTMLHelper {
             get {
@@ -292,20 +282,19 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets Recording
-        ///	
-        ///GingerRecorderLib = {};
+        ///   Looks up a localized string similar to /*
+        ///Copyright Â© 2014-2020 European Support Limited
         ///
-        ///// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
+        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
+        ///you may not use this file except in compliance with the License.
+        ///You may obtain a copy of the License at 
         ///
-        ///// strict mode = must define variables which is good programming :)
-        ///&apos;use strict&apos;;
-        ///function define_GingerRecorderLib() {
-        ///    GingerRecorderLib = {};
-        ///	
-        ///	var actions =	[];
-        ///	var count	=	0;
-        ///    var recordingStarted =  [rest of string was truncated]&quot;;.
+        ///http://www.apache.org/licenses/LICENSE-2.0 
+        ///
+        ///Unless required by applicable law or agreed to in writing, software
+        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+        ///See the License for the  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GingerHTMLRecorder {
             get {
@@ -314,41 +303,23 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // TODO: use this one make me work
-        ///GingerLib.GetElemXPath = function (el) {
-        ///    // Another impl for XPath
+        ///   Looks up a localized string similar to /*
+        ///Copyright © 2014-2020 European Support Limited
         ///
-        ///    // #1            
-        ///    //if (typeof el == &quot;string&quot;) return document.evaluate(el, document, null, 0, null);
-        ///    //if (!el || el.nodeType != 1) return &quot;&quot;;
-        ///    //if (el.id) return &quot;//*[@id=\&quot;&quot; + el.id + &quot;\&quot;]&quot;;
-        ///    //var sames = [].filter.call(el.parentNode.children, function (x) { return x.tagName == el.tagName });
-        ///    //return GingerLib.GetElemXPath(el.parentNode) + &quot;/&quot; + el.tagName.toLowerCa [rest of string was truncated]&quot;;.
+        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
+        ///you may not use this file except in compliance with the License.
+        ///You may obtain a copy of the License at 
+        ///
+        ///http://www.apache.org/licenses/LICENSE-2.0 
+        ///
+        ///Unless required by applicable law or agreed to in writing, software
+        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+        ///See the License for the s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GingerLibXPath {
             get {
                 return ResourceManager.GetString("GingerLibXPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to // This JS will be injected into Browser active page, for use in Selenium driver and Java driver for Widgets 
-        ///
-        ///GingerLibLiveSpy = {};
-        ///
-        ///
-        ///// Define the GingerLib of function we can use, in this way it is kind of JS OO, will not overlap with other JS scripts running on the page
-        ///
-        ///// strict mode = must define variables which is good programming :)
-        ///&apos;use strict&apos;;
-        ///function define_GingerLibLiveSpy() {
-        ///    GingerLibLiveSpy = {};
-        ///
-        ///    //---------------------------------------------------------------------- [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GingerLiveSpy {
-            get {
-                return ResourceManager.GetString("GingerLiveSpy", resourceCulture);
             }
         }
         
@@ -406,27 +377,20 @@ namespace GingerCore.Properties {
             }
         }
         
-      
-
-        internal static string Html5DragAndDrop {
-            get {
-                return ResourceManager.GetString("Html5DragAndDrop", resourceCulture);
-            }
-        }
-        
-     
-        ///   Looks up a localized string similar to var r = 0;
-        ///var XpathTextBox;
-        ///var ValueTextBox;
-        ///var innerHTMLTextBox;
-        ///var currElem;
+        /// <summary>
+        ///   Looks up a localized string similar to /*
+        ///Copyright © 2014-2020 European Support Limited
         ///
-        ///function xpath(el) {
-        ///	if (typeof el == &quot;string&quot;) return document.evaluate(el, document, null, 0, null)
-        ///	if (!el || el.nodeType != 1) return &apos;&apos;
-        ///	if (el.id) return &quot;//*[@id=&apos;&quot; + el.id + &quot;&apos;]&quot;
-        ///	var sames = [].filter.call(el.parentNode.children, function (x) { return x.tagName == el.tagName })
-        ///	return xpath(el.parentNode) + &apos;/&apos; + el.tagName.toLowerCase() + (sames.length &gt; 1 ? &apos;[&apos; + ([].indexOf.call(sames, el) + 1) + &apos;] [rest of string was truncated]&quot;;.
+        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
+        ///you may not use this file except in compliance with the License.
+        ///You may obtain a copy of the License at 
+        ///
+        ///http://www.apache.org/licenses/LICENSE-2.0 
+        ///
+        ///Unless required by applicable law or agreed to in writing, software
+        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+        ///See the License for the s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HTMLSpy {
             get {
@@ -563,26 +527,19 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // Payload for communication - JavaScript to C# or Java
+        ///   Looks up a localized string similar to /*
+        ///Copyright © 2014-2020 European Support Limited
         ///
-        ///GingerPayLoadObj = null;
+        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
+        ///you may not use this file except in compliance with the License.
+        ///You may obtain a copy of the License at 
         ///
-        ///// strict mode = must define variables which is good programming :)
-        /////&apos;use strict&apos;;
+        ///http://www.apache.org/licenses/LICENSE-2.0 
         ///
-        ///
-        ///function GingerPayLoad(Name) {
-        ///    const LastByteMarker = 255;
-        ///    const cNULLStringLen = -1;
-        ///
-        ///    // all this. = public
-        ///    // all var = is private
-        ///
-        ///    this.Name = Name;
-        ///    this.mBufferIndex = 4;// We start to write data at position 4, the first 4 bytes will be the data length
-        ///
-        ///   
-        ///    this.mBuffer = new ArrayBuffer(102 [rest of string was truncated]&quot;;.
+        ///Unless required by applicable law or agreed to in writing, software
+        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
+        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+        ///See the License for the s [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PayLoad {
             get {
