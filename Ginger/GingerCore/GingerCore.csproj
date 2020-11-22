@@ -691,9 +691,6 @@
     <None Include="Resources\Excel16x16.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\wgxpath.install.js" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\%40MobileDevice_32x32.png" />
   </ItemGroup>
   <ItemGroup>
@@ -755,17 +752,8 @@
     <None Include="Resources\%40visualtesting_16x16.png" />
     <Content Include="Drivers\JavaDriverLib\GingerJavaAgent\test\com\amdocs\ginger\JEditorPaneExample.java" />
     <Content Include="Drivers\JavaDriverLib\GingerJavaAgent\xsoup.jar" />
-    <Content Include="Resources\GingerHTMLHelper.js" />
-    <Content Include="Resources\BrowserWaitForIdle.js" />
-    <None Include="Resources\GingerLibXPath.js" />
-    <None Include="Resources\GingerHTMLRecorder.js" />
-    <Content Include="Resources\html2canvas.js" />
-    <Content Include="Resources\HTMLSpy.js" />
-    <None Include="Resources\ArrayBuffer.js" />
     <None Include="Resources\Image1.bmp" />
-    <Content Include="Resources\PayLoad.js" />
     <None Include="Resources\java16x16.png" />
-    <Content Include="Resources\jquery.min.js" />
     <None Include="Resources\%40PopUpHandler_16x16.png" />
     <None Include="Resources\%40Handler_16x16.png" />
     <None Include="Resources\%40Activities_16x16.png" />

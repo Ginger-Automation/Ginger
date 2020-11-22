@@ -121,50 +121,12 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        /// Copyright (c) 2010, Linden Research, Inc.
-        /// Copyright (c) 2014, Joshua Bell
-        /// Permission is hereby granted, free of charge, to any person obtaining a copy
-        /// of this software and associated documentation files (the &quot;Software&quot;), to deal
-        /// in the Software without restriction, including without limitation the rights
-        /// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        /// copies of the Software, and to permit persons to whom the Software is
-        /// furnished to do so, subject to the followin [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ArrayBuffer {
-            get {
-                return ResourceManager.GetString("ArrayBuffer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap ASCF16x16 {
             get {
                 object obj = ResourceManager.GetObject("ASCF16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string BrowserWaitForIdle {
-            get {
-                return ResourceManager.GetString("BrowserWaitForIdle", resourceCulture);
             }
         }
         
@@ -261,69 +223,6 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GingerHTMLHelper {
-            get {
-                return ResourceManager.GetString("GingerHTMLHelper", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright Â© 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the  [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GingerHTMLRecorder {
-            get {
-                return ResourceManager.GetString("GingerHTMLRecorder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GingerLibXPath {
-            get {
-                return ResourceManager.GetString("GingerLibXPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Group_16x16 {
@@ -344,61 +243,6 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///  html2canvas 0.4.1 &lt;http://html2canvas.hertzen.com&gt;
-        ///  Copyright (c) 2013 Niklas von Hertzen
-        ///
-        ///  Released under MIT License
-        ///*/
-        ///
-        ///(function(window, document, undefined){
-        ///
-        ///&quot;use strict&quot;;
-        ///
-        ///var _html2canvas = {},
-        ///previousElement,
-        ///computedCSS,
-        ///html2canvas;
-        ///
-        ///_html2canvas.Util = {};
-        ///
-        ///_html2canvas.Util.log = function(a) {
-        ///  if (_html2canvas.logging &amp;&amp; window.console &amp;&amp; window.console.log) {
-        ///    window.console.log(a);
-        ///  }
-        ///};
-        ///
-        ///_html2canvas.Util.trimText = (function(isNative){
-        ///  return functio [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string html2canvas {
-            get {
-                return ResourceManager.GetString("html2canvas", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string HTMLSpy {
-            get {
-                return ResourceManager.GetString("HTMLSpy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Image_16x16 {
@@ -409,50 +253,12 @@ namespace GingerCore.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // Ginger will replace with the code to inject
-        ///
-        ///// Enable to Inject/Add Java script to page
-        ///
-        ///// Ginger will replace with the code to inject
-        ///
-        ///var s = &quot;%SCRIPT%&quot; 
-        ///
-        ///// Something to show that we injected the script, will highligh then go down 
-        ///var el = document.createElement(&apos;div&apos;),
-        ///b = document.getElementsByTagName(&apos;body&apos;)[0];
-        ///otherlib = false,
-        ///msg = &apos;&apos;;
-        ///el.style.position = &apos;fixed&apos;;
-        ///el.style.height = &apos;32px&apos;;
-        ///el.style.width = &apos;220px&apos;;
-        ///el.style.marginLeft = &apos;-110px&apos;;
-        ///el.style.top = &apos;0&apos;;
-        ///el.styl [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string InjectJavaScript {
-            get {
-                return ResourceManager.GetString("InjectJavaScript", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Java16x16 {
             get {
                 object obj = ResourceManager.GetObject("Java16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*! jQuery v1.11.1 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
-        ///!function (a, b) { &quot;object&quot; == typeof module &amp;&amp; &quot;object&quot; == typeof module.exports ? module.exports = a.document ? b(a, !0) : function (a) { if (!a.document) throw new Error(&quot;jQuery requires a window with a document&quot;); return b(a) } : b(a) }(&quot;undefined&quot; != typeof window ? window : this, function (a, b) {
-        ///    var c = [], d = c.slice, e = c.concat, f = c.push, g = c.indexOf, h = {}, i = h.toString, j = h.hasOwnProperty, k = { [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string jquery_min {
-            get {
-                return ResourceManager.GetString("jquery_min", resourceCulture);
             }
         }
         
@@ -523,27 +329,6 @@ namespace GingerCore.Properties {
             get {
                 object obj = ResourceManager.GetObject("MobileDevice_32x32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /*
-        ///Copyright © 2014-2020 European Support Limited
-        ///
-        ///Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
-        ///you may not use this file except in compliance with the License.
-        ///You may obtain a copy of the License at 
-        ///
-        ///http://www.apache.org/licenses/LICENSE-2.0 
-        ///
-        ///Unless required by applicable law or agreed to in writing, software
-        ///distributed under the License is distributed on an &quot;AS IS&quot; BASIS, 
-        ///WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-        ///See the License for the s [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PayLoad {
-            get {
-                return ResourceManager.GetString("PayLoad", resourceCulture);
             }
         }
         
@@ -674,17 +459,6 @@ namespace GingerCore.Properties {
             get {
                 object obj = ResourceManager.GetObject("VisualTesting_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (function () {
-        ///    function h(a) { return function () { return this[a] } } function l(a) { return function () { return a } } var m = this;
-        ///function aa(a){var b=typeof a;if(&quot;object&quot;==b)if(a){if(a instanceof Array)return&quot;array&quot;;if(a instanceof Object)return b;var c=Object.prototype.toString.call(a);if(&quot;[object Window]&quot;==c)return&quot;object&quot;;if(&quot;[object Array]&quot;==c||&quot;number&quot;==typeof a.length&amp;&amp;&quot;undefined&quot;!=typeof a.splice&amp;&amp;&quot;undefined&quot;!=typeof a.propertyIsEnumerable&amp;&amp;!a.propertyIsEnumerable(&quot;splice&quot;))return&quot;array&quot;; [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string wgxpath_install {
-            get {
-                return ResourceManager.GetString("wgxpath_install", resourceCulture);
             }
         }
         
