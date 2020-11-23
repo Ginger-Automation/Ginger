@@ -727,7 +727,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
 
-        public string CalculateExecutionJsonData(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
+        public override string CalculateExecutionJsonData(LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
         {
             CentralExecutionLoggerHelper centralExecutionLogger = new CentralExecutionLoggerHelper();
             AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);

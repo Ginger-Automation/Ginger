@@ -311,8 +311,7 @@ namespace GingerCore
                 return;
             }
 
-            LiteDBRepository liteDBRepository = new LiteDBRepository();
-            string json = liteDBRepository.CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
+            string json = WorkSpace.Instance.RunsetExecutor.Runners[0].ExecutionLoggerManager.mExecutionLogger.CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
 
             mValueCalculated = mValueCalculated.Replace(josnExpression, json);
         }
