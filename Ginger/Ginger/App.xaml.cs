@@ -92,7 +92,7 @@ namespace Ginger
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
             // Add all RI classes from GingerCore
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActButton).Assembly); // GingerCore.dll
+            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActASCFControl).Assembly); // GingerCore.dll
 
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
