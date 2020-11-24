@@ -805,6 +805,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                                                     errorDetails = errorDetails + jActionObject.Property("Error").Value.ToString();
                                                                 }
                                                             }
+                                                            if (string.IsNullOrEmpty(errorDetails))
+                                                            {
+                                                                errorDetails = "NA";
+                                                            }
                                                             jActivityObject.Add("ErrorDetails", errorDetails);
 
                                                             foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in reportTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
