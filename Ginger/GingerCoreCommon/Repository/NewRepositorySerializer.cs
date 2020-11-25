@@ -885,22 +885,47 @@ namespace Amdocs.Ginger.Repository
         {
             lock (mAssemblies) // Avoid reentry to add assembly - can happen in unit tests
             {
+               
                 if (mAssemblies.Contains(assembly))
                 {
                     return;
                 }
-                var RepositoryItemTypes =
-                  from type in assembly.GetTypes()
+                try
+                {
+                     var RepositoryItemTypes =
+                      from type in assembly.GetTypes()
                       //where type.IsSubclassOf(typeof(RepositoryItemBase))              
-                    where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
-                    select type;
+                  where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
+                  select type;
 
-                foreach (Type t in RepositoryItemTypes)
-                {                    
-                    mClassDictionary.Add(t.Name, t);
-                    mClassDictionary.Add(t.FullName, t);
+                    foreach (Type t in RepositoryItemTypes)
+                    {
+                        mClassDictionary.Add(t.Name, t);
+                        mClassDictionary.Add(t.FullName, t);
+                    }
+                    mAssemblies.Add(assembly);
                 }
-                mAssemblies.Add(assembly);
+                catch (ReflectionTypeLoadException ex)
+                {
+                    //get exactly what is missing/failling to be loaded
+                    StringBuilder sb = new StringBuilder();
+                    foreach (Exception exSub in ex.LoaderExceptions)
+                    {
+                        sb.AppendLine(exSub.Message);
+                        FileNotFoundException exFileNotFound = exSub as FileNotFoundException;
+                        if (exFileNotFound != null)
+                        {
+                            if (!string.IsNullOrEmpty(exFileNotFound.FusionLog))
+                            {
+                                sb.AppendLine("Fusion Log:");
+                                sb.AppendLine(exFileNotFound.FusionLog);
+                            }
+                        }
+                        sb.AppendLine();
+                    }
+                    string errorMessage = sb.ToString();
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load Assembly Classes for '{0}', Error:'{1}'", assembly.ToString(), errorMessage), ex);
+                }
             }
         }
 
