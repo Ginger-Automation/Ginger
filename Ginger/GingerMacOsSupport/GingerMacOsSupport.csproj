@@ -20,6 +20,6 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(OutDir)chromedriver.*&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Mac&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)chromedriver.*&quot; &quot;$(SolutionDir)GingerConsole\bin\$(Configuration)\netcoreapp3.1\Mac&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.*&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Mac&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.*&quot; &quot;$(SolutionDir)GingerConsole\bin\$(Configuration)\netcoreapp3.1\Mac&quot; /Y /I" />
+    <Exec Command="xcopy &quot;$(OutDir)chromedriver.*&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Mac&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.*&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Mac&quot; /Y /I" />
   </Target>
 </Project>
