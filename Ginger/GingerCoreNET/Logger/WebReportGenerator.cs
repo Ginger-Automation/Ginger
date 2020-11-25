@@ -142,7 +142,6 @@ namespace Amdocs.Ginger.CoreNET.Logger
             {
                 liteDbRunSet.Elapsed = Math.Round(liteDbRunSet.Elapsed.Value, 2);
             }
-            else { liteDbRunSet.Elapsed = 0.0; }
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
                 if (!runSetEnv.Contains(liteDbRunner.Environment))
@@ -158,7 +157,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 {
                     liteDbRunner.Elapsed = Math.Round(liteDbRunner.Elapsed.Value, 2);
                 }
-                else { liteDbRunner.Elapsed = 0.0; }
+                else { liteDbRunner.Elapsed = 0; }
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
                    
@@ -170,7 +169,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                     {
                         liteDbBusinessFlow.Elapsed = Math.Round(liteDbBusinessFlow.Elapsed.Value, 2);
                     }
-                    else { liteDbBusinessFlow.Elapsed = 0.0; }
+                    else { liteDbBusinessFlow.Elapsed = 0; }
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
                         
@@ -178,12 +177,12 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
                         liteDbActivity.PassRate = string.Format("{0:F1}", CalculateExecutionOrPassRate(liteDbActivity.ChildPassedItemsCount, liteDbActivity.ChildExecutedItemsCount));
 
-
+                        
                         if (liteDbActivity.Elapsed.HasValue)
                         {
                             liteDbActivity.Elapsed = Math.Round(liteDbActivity.Elapsed.Value / 1000, 4);
                         }
-                        else { liteDbActivity.Elapsed = 0.0; }
+                        else { liteDbActivity.Elapsed = 0; }
                         foreach (LiteDbAction liteDbAction in liteDbActivity.ActionsColl)
                         {
                             List<string> newScreenShotsList = new List<string>();
@@ -191,7 +190,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                             {
                                 liteDbAction.Elapsed = Math.Round(liteDbAction.Elapsed.Value / 1000, 4);
                             }
-                            else { liteDbAction.Elapsed = 0.0; }
+                            else { liteDbAction.Elapsed = 0; }
                             if ((!string.IsNullOrEmpty(liteDbAction.ExInfo)) && liteDbAction.ExInfo[liteDbAction.ExInfo.Length - 1] == '-')
                                 liteDbAction.ExInfo = liteDbAction.ExInfo.Remove(liteDbAction.ExInfo.Length - 1);
                             foreach (string screenshot in liteDbAction.ScreenShots)

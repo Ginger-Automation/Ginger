@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public double? Elapsed { get; set; }
+        public double? Elapsed { get; set; } = 0.0;
 
         [FieldParams]
         [FieldParamsNameCaption("RunStatus")]
