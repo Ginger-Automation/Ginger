@@ -4809,12 +4809,6 @@
     <PackageReference Include="UIAComWrapper">
       <Version>1.1.0.14</Version>
     </PackageReference>
-    <PackageReference Include="YamlDotNet">
-      <Version>5.2.1</Version>
-    </PackageReference>
-    <PackageReference Include="YamlDotNet.Signed">
-      <Version>5.2.1</Version>
-    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
