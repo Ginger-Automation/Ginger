@@ -4819,8 +4819,12 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*" "$(TargetDir)Linux" /Y /I
+xcopy "$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Linux" /Y /I
+xcopy "$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*" "$(TargetDir)Mac" /Y /I
+xcopy "$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Mac" /Y /I
+xcopy "$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\IEDriverServer.*" "$(TargetDir)Win64" /Y /I
+xcopy "$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" "$(TargetDir)Win64" /Y /I</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
