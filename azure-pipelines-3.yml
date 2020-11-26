@@ -1,6 +1,6 @@
 
 pool:
-  vmImage: 'macOS-10.14'
+  vmImage: 'macOS-latest'
 
 variables:
   solution: '**/*.sln'
@@ -9,7 +9,8 @@ variables:
 
 steps:
 
-
+- script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx
+  displayName: 'Testing GingerUtilsTest'
 
 - script: dotnet test  Ginger/GingerCoreCommonTest --configuration $(buildConfiguration) --logger trx
   displayName: 'Testing GingerCoreCommonTest'
