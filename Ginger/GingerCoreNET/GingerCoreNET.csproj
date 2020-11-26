@@ -313,19 +313,19 @@
     <EmbeddedResource Include="Reports\HTMLTemplates\SummaryHTMLReport.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\ArrayBuffer.js" />
-    <EmbeddedResource Include="Resources\BrowserWaitForIdle.js" />
-    <EmbeddedResource Include="Resources\draganddrop.js" />
-    <EmbeddedResource Include="Resources\GingerHTMLHelper.js" />
-    <EmbeddedResource Include="Resources\GingerHTMLRecorder.js" />
-    <EmbeddedResource Include="Resources\GingerLibXPath.js" />
-    <EmbeddedResource Include="Resources\GingerLiveSpy.js" />
-    <EmbeddedResource Include="Resources\html2canvas.js" />
-    <EmbeddedResource Include="Resources\HTMLSpy.js" />
-    <EmbeddedResource Include="Resources\InjectJavaScript.js" />
-    <EmbeddedResource Include="Resources\jquery_min.js" />
-    <EmbeddedResource Include="Resources\PayLoad.js" />
-    <EmbeddedResource Include="Resources\wgxpath_install.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\ArrayBuffer.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\BrowserWaitForIdle.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\draganddrop.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\GingerHTMLHelper.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\GingerHTMLRecorder.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\GingerLibXPath.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\GingerLiveSpy.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\html2canvas.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\HTMLSpy.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\InjectJavaScript.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\jquery_min.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\PayLoad.js" />
+    <EmbeddedResource Include="Resources\JavaScripts\wgxpath_install.js" />
   </ItemGroup>
 
   <ItemGroup>
