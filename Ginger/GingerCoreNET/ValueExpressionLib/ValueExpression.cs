@@ -289,12 +289,12 @@ namespace GingerCore
                 defaultTemplate = HTMLReportConfigurations.Where(x => (x.ID == runSetAction.selectedHTMLReportTemplateID)).FirstOrDefault();
                 if (defaultTemplate == null && runSetAction.selectedHTMLReportTemplateID == 100)
                 {
-                    defaultTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                    defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
                 }
             }
             else 
             {
-                defaultTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
             }
 
             //Get Last Execution details

@@ -373,7 +373,7 @@ namespace Ginger.Reports
 
                 if (token == null)
                     continue;
-                if (isSourceFeild == true && (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString() == FieldsType.Section.ToString())
+                if (isSourceFeild && (Attribute.GetCustomAttribute(mi, typeof(FieldParamsFieldType), false) as FieldParamsFieldType).FieldType.ToString() == FieldsType.Section.ToString())
                 {
                     continue;
                 }

@@ -738,55 +738,55 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             #region Generate JSON
 
             //Remove Fields from json which are not selected
-            foreach (HTMLReportConfigFieldToSelect runsetFieldToRemove in reportTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected != true))
+            foreach (HTMLReportConfigFieldToSelect runsetFieldToRemove in reportTemplate.RunSetSourceFieldsToSelect.Where(x => !x.IsSelected))
             {
                 runSetObject.Property(GetFieldToRemove(runsetFieldToRemove.FieldKey)).Remove();
             }
 
             //RunnersCollection
-            HTMLReportConfigFieldToSelect runnerField = reportTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "RunnersColl").FirstOrDefault();
+            HTMLReportConfigFieldToSelect runnerField = reportTemplate.RunSetSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "RunnersColl").FirstOrDefault();
             if (runnerField != null)
             {
-                if (reportTemplate.GingerRunnerSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                if (reportTemplate.GingerRunnerSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
                 {
                     JArray runnerArray = (JArray)runSetObject[runnerField.FieldKey];
                     foreach (JObject jRunnerObject in runnerArray)
                     {
-                        foreach (HTMLReportConfigFieldToSelect runnerFieldToRemove in reportTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                        foreach (HTMLReportConfigFieldToSelect runnerFieldToRemove in reportTemplate.GingerRunnerSourceFieldsToSelect.Where(x => !x.IsSelected))
                         {
                             jRunnerObject.Property(GetFieldToRemove(runnerFieldToRemove.FieldKey)).Remove();
                         }
                         //BusinessFlowsCollection
-                        HTMLReportConfigFieldToSelect bfField = reportTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
+                        HTMLReportConfigFieldToSelect bfField = reportTemplate.GingerRunnerSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "BusinessFlowsColl").FirstOrDefault();
                         if (bfField != null)
                         {
-                            if (reportTemplate.BusinessFlowSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                            if (reportTemplate.BusinessFlowSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
                             {
                                 JArray bfArray = (JArray)jRunnerObject[bfField.FieldKey];
                                 foreach (JObject jBFObject in bfArray)
                                 {
-                                    foreach (HTMLReportConfigFieldToSelect bfFieldToRemove in reportTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                    foreach (HTMLReportConfigFieldToSelect bfFieldToRemove in reportTemplate.BusinessFlowSourceFieldsToSelect.Where(x => !x.IsSelected))
                                     {
                                         jBFObject.Property(GetFieldToRemove(bfFieldToRemove.FieldKey)).Remove();
                                     }
                                     //ActivityGroupsCollection
-                                    HTMLReportConfigFieldToSelect activityGroupField = reportTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
+                                    HTMLReportConfigFieldToSelect activityGroupField = reportTemplate.BusinessFlowSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "ActivitiesGroupsColl").FirstOrDefault();
                                     if (activityGroupField != null)
                                     {
-                                        if (reportTemplate.ActivityGroupSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                        if (reportTemplate.ActivityGroupSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
                                         {
                                             JArray activityGroupArray = (JArray)jBFObject[activityGroupField.FieldKey];
                                             foreach (JObject jActivityGroupObject in activityGroupArray)
                                             {
-                                                foreach (HTMLReportConfigFieldToSelect activityGroupFieldToRemove in reportTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                                foreach (HTMLReportConfigFieldToSelect activityGroupFieldToRemove in reportTemplate.ActivityGroupSourceFieldsToSelect.Where(x => !x.IsSelected))
                                                 {
                                                     jActivityGroupObject.Property(GetFieldToRemove(activityGroupFieldToRemove.FieldKey)).Remove();
                                                 }
                                                 //ActivitiesCollection
-                                                HTMLReportConfigFieldToSelect activityFieldCheck = reportTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActivitiesColl").FirstOrDefault();
+                                                HTMLReportConfigFieldToSelect activityFieldCheck = reportTemplate.ActivityGroupSourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "ActivitiesColl").FirstOrDefault();
                                                 if (activityFieldCheck != null)
                                                 {
-                                                    if (reportTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                                    if (reportTemplate.ActivitySourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
                                                     {
                                                         JArray activityArray = (JArray)jActivityGroupObject[activityFieldCheck.FieldKey];
                                                         foreach (JObject jActivityObject in activityArray)
@@ -811,20 +811,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                                             }
                                                             jActivityObject.Add("ErrorDetails", errorDetails);
 
-                                                            foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in reportTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                                            foreach (HTMLReportConfigFieldToSelect activityFieldToRemove in reportTemplate.ActivitySourceFieldsToSelect.Where(x => !x.IsSelected))
                                                             {
                                                                 jActivityObject.Property(GetFieldToRemove(activityFieldToRemove.FieldKey)).Remove();
                                                             }
                                                             //ActionsColl
-                                                            HTMLReportConfigFieldToSelect actionField = reportTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected == true && x.FieldKey == "ActionsColl").FirstOrDefault();
+                                                            HTMLReportConfigFieldToSelect actionField = reportTemplate.ActivitySourceFieldsToSelect.Where(x => x.IsSelected && x.FieldKey == "ActionsColl").FirstOrDefault();
                                                             if (actionField != null)
                                                             {
-                                                                if (reportTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected == true).ToList().Count > 0)
+                                                                if (reportTemplate.ActionSourceFieldsToSelect.Select(x => x.IsSelected).ToList().Count > 0)
                                                                 {
                                                                     JArray actionArray = (JArray)jActivityObject[actionField.FieldKey];
                                                                     foreach (JObject jActionObject in actionArray)
                                                                     {
-                                                                        foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in reportTemplate.ActionSourceFieldsToSelect.Where(x => x.IsSelected != true))
+                                                                        foreach (HTMLReportConfigFieldToSelect actionFieldToRemove in reportTemplate.ActionSourceFieldsToSelect.Where(x => !x.IsSelected))
                                                                         {
                                                                             jActionObject.Property(GetFieldToRemove(actionFieldToRemove.FieldKey)).Remove();
                                                                         }
