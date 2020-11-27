@@ -792,22 +792,28 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                                                         foreach (JObject jActivityObject in activityArray)
                                                         {
                                                             //Calculate ErrorDetails And add it to Activity Level
+                                                            StringBuilder errorDetailsNew = new StringBuilder();
                                                             string errorDetails = null;
                                                             JArray actionsArray = (JArray)jActivityObject["ActionsColl"];
                                                             foreach (JObject jActionObject in actionsArray)
                                                             {
-                                                                if (!string.IsNullOrEmpty(jActionObject.Property("Error").Value.ToString()) && !string.IsNullOrEmpty(errorDetails))
+                                                                if (!string.IsNullOrEmpty(jActionObject.Property("Error").Value.ToString()) && !string.IsNullOrEmpty(errorDetailsNew.ToString()))
                                                                 {
-                                                                    errorDetails = errorDetails + "," + jActionObject.Property("Error").Value.ToString();
+                                                                    errorDetailsNew.Append(",");
+                                                                    errorDetailsNew.Append(jActionObject.Property("Error").Value.ToString());
                                                                 }
                                                                 else
                                                                 {
-                                                                    errorDetails = errorDetails + jActionObject.Property("Error").Value.ToString();
+                                                                    errorDetailsNew.Append(jActionObject.Property("Error").Value.ToString());
                                                                 }
                                                             }
-                                                            if (string.IsNullOrEmpty(errorDetails))
+                                                            if (string.IsNullOrEmpty(errorDetailsNew.ToString()))
                                                             {
                                                                 errorDetails = "NA";
+                                                            }
+                                                            else
+                                                            {
+                                                                errorDetails = errorDetailsNew.ToString();
                                                             }
                                                             jActivityObject.Add("ErrorDetails", errorDetails);
 

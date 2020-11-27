@@ -20,36 +20,18 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Ginger.Reports;
-using Amdocs.Ginger;
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore;
 using GingerCore.DataSource;
-using Ginger.Reports.GingerExecutionReport;
-using Amdocs.Ginger.CoreNET.Logger;
-using System.IO;
-using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Newtonsoft.Json;
-using System.Text;
-using System.Reflection;
 using Newtonsoft.Json.Linq;
-using System.ComponentModel;
-using System.Dynamic;
 using RestSharp;
 
 namespace Ginger.Run.RunSetActions
 {
     public class RunSetActionSendDataToExternalSource : RunSetActionBase
     {
-        public new static class Fields
-        {
-            public static string EndPoint = "EndPoint";
-            public static string selectedHTMLReportTemplateID = "selectedHTMLReportTemplateID";
-        }
-
         public override List<RunSetActionBase.eRunAt> GetRunOptions()
         {
             List<RunSetActionBase.eRunAt> list = new List<RunSetActionBase.eRunAt>();
