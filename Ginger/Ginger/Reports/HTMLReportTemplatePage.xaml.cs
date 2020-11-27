@@ -120,8 +120,8 @@ namespace Ginger.Reports
 
             //Remove collapsed column for source field
             viewSummaryView.GridColsView.Remove(viewSummaryView.GridColsView.Where(x => x.Field == HTMLReportConfigFieldToSelect.Fields.IsSectionCollapsed.ToString()).FirstOrDefault());
-            grdRensetViewSourceFields.SetAllColumnsDefaultView(viewSummaryView);
-            grdRensetViewSourceFields.InitViewItems();
+            grdRunsetViewSourceFields.SetAllColumnsDefaultView(viewSummaryView);
+            grdRunsetViewSourceFields.InitViewItems();
 
 
             GridViewDef viewGingers = new GridViewDef(GridViewDef.DefaultViewName);
@@ -210,7 +210,7 @@ namespace Ginger.Reports
             grdActionsFields.DataSourceList = HTMLReportConfiguration.ActionFieldsToSelect;
 
 
-            grdRensetViewSourceFields.DataSourceList = HTMLReportConfiguration.RunSetSourceFieldsToSelect;
+            grdRunsetViewSourceFields.DataSourceList = HTMLReportConfiguration.RunSetSourceFieldsToSelect;
             grdRunnerViewSourceFields.DataSourceList = HTMLReportConfiguration.GingerRunnerSourceFieldsToSelect;
             grdBusinessFlowViewSourceFields.DataSourceList = HTMLReportConfiguration.BusinessFlowSourceFieldsToSelect;
             grdActivityGroupsViewSourceFields.DataSourceList = HTMLReportConfiguration.ActivityGroupSourceFieldsToSelect;

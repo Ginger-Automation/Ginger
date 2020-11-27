@@ -361,25 +361,25 @@
                                         <Label Content="Source Fields Configuration By Levels:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                                         <StackPanel x:Name="FieldsConfigPnl"  Orientation="Horizontal">
                                             <TabControl x:Name="tabReportLevelFeilds" DockPanel.Dock="Top" Width="494" VerticalAlignment="Stretch" >
-                                                <TabItem x:Name="tbiRensetViewSourceFields">
+                                                <TabItem x:Name="tbiRunsetViewSourceFields">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
-                                                            <CheckBox x:Name="RensetViewSourceFields_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False" IsChecked="True"/>
-                                                            <TextBlock Text="Renset"/>
+                                                            <CheckBox x:Name="RunsetViewSourceFields_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False" IsChecked="True"/>
+                                                            <TextBlock Text="Runset"/>
                                                         </StackPanel>
                                                     </TabItem.Header>
 
-                                                    <Grid Name="grdRensetViewSourceField">
+                                                    <Grid Name="grdRunsetViewSourceField">
                                                         <Grid.Resources>
                                                             <DataTemplate x:Key="FieldIsAddedToRensetViewSourceFields">
-                                                                <CheckBox x:Name="grdRensetViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                <CheckBox x:Name="grdRunsetViewSourceFields_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                                                             </DataTemplate>
                                                             <DataTemplate x:Key="SectionCollapsedRensetViewSourceFields">
-                                                                <CheckBox x:Name="grdRensetViewSourceFields_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                                                <CheckBox x:Name="grdRunsetViewSourceFields_SectionCollapsed"  Unchecked="SectionCollapsed_Checked" Style="{StaticResource @GridCellCheckBoxStyle}" Checked="SectionCollapsed_Checked" IsEnabled="{Binding IsSection, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSectionCollapsed,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                                                             </DataTemplate>
                                                         </Grid.Resources>
 
-                                                        <Ginger:ucGrid x:Name="grdRensetViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
+                                                        <Ginger:ucGrid x:Name="grdRunsetViewSourceFields" ShowTitle="Collapsed" ShowCopyCutPast="Hidden" ShowEdit="Hidden" ShowSearch="Hidden" ShowRefresh="Hidden" ShowDuplicate="Hidden" ShowAdd="Hidden" ShowClearAll="Hidden" ShowDelete="Hidden" ShowUpDown="Hidden" ShowUndo="Hidden" ShowViewCombo="Hidden" ShowToolsBar="Collapsed">
                                                             <Ginger:ucGrid.Title>
                                                                 <GingerCore:ucTextDicResource Text="[Renset View]"/>
                                                             </Ginger:ucGrid.Title>
