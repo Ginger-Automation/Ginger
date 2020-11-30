@@ -463,6 +463,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.CheckIn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CloudUpload);
                     break;
+                case eImageType.Upload:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
+                    break;
                 case eImageType.Expand:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronDown);
                     break;
@@ -835,6 +838,12 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.General:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Gg);
+                    break;
+                case eImageType.SignIn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignIn);
+                    break;
+                case eImageType.SignOut:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
                     break;
                 #endregion
 
