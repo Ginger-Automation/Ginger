@@ -45,4 +45,24 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
             this.DefaultValue = DefaultValue;
         }
     }
+
+    public class ValueExpressionFunctionCategory : Attribute
+    {
+        public string DefaultValue { get; set; }
+
+        public ValueExpressionFunctionCategory(string DefaultValue)
+        {
+            this.DefaultValue = DefaultValue;
+        }
+    }
+
+    public class ValueExpressionFunctionSubCategory : Attribute
+    {
+        public string DefaultValue { get; set; }
+
+        public ValueExpressionFunctionSubCategory(string DefaultValue)
+        {
+            this.DefaultValue = DefaultValue;
+        }
+    }
 }

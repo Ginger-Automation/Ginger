@@ -448,7 +448,7 @@ namespace Amdocs.Ginger.Repository
                         if (typeof(IObservableList).IsAssignableFrom(PI.PropertyType))
                         {
                             IObservableList list = (IObservableList)PI.GetValue(this);
-                            if (list != null)
+                            if (list != null && list.Count > 0)
                             {
                                 RestoreList(mi.Name, list, isLocalBackup);
                             }
@@ -478,7 +478,7 @@ namespace Amdocs.Ginger.Repository
                     if (typeof(IObservableList).IsAssignableFrom(fi.FieldType))
                     {
                         IObservableList list = (IObservableList)fi.GetValue(this);
-                        if (list != null)
+                        if (list != null && list.Count > 0)
                         {
                             RestoreList(mi.Name, list, isLocalBackup);
                         }

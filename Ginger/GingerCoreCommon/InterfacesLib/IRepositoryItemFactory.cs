@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.Common
         object CreateNewReportTemplate();
 
         void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder);
-        bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, string refe, PublishToALMConfig PublishToALMConfig);
+        bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string refe, PublishToALMConfig PublishToALMConfig);
 
 
 

@@ -137,7 +137,7 @@ namespace Ginger.ALM.Repository
                         }
 
                         //save bf
-                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
@@ -258,11 +258,7 @@ namespace Ginger.ALM.Repository
         {
             throw new NotImplementedException();
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            throw new NotImplementedException();
-        }
+         
 
         public override List<string> GetTestLabExplorer(string path)
         {

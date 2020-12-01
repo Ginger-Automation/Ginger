@@ -245,7 +245,7 @@ namespace GingerCore.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetValidInteger..", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetValidInteger..", ex);
                 return mInitialNumberValue;
             }
 
