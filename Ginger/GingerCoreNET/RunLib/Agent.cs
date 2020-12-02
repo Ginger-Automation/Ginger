@@ -377,14 +377,89 @@ namespace GingerCore
                 OnPropertyChanged(Fields.Status);
             }
             else
-            {                
-                RepositoryItemHelper.RepositoryItemFactory.StartAgentDriver(this);
+            {
+                try
+                {
+                    mIsStarting = true;
+                    OnPropertyChanged(nameof(Agent.Status));
+                    try
+                    {
+                        if (Remote)
+                        {
+                            throw new Exception("Remote is Obsolete, use GingerGrid");
+                        }
+                        else
+                        {
+                            Driver = (DriverBase)RepositoryItemHelper.RepositoryItemFactory.GetDriverObject(this);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
+                        return;
+                    }
+
+                    if (AgentType == Agent.eAgentType.Service)
+                    {
+                        throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
+                    }
+                    else
+                    {
+                        Driver.InitDriver(this);
+                        Driver.BusinessFlow = BusinessFlow;
+                        SetDriverConfiguration();
+
+                        IVirtualDriver VirtualDriver = null;
+                        if (Driver is IVirtualDriver VD)
+                        {
+                            VirtualDriver = VD;
+                            string ErrorMessage;
+                            if (!VirtualDriver.CanStartAnotherInstance(out ErrorMessage))
+                            {
+                                throw new NotSupportedException(ErrorMessage);
+
+                            }
+                        }
+                        //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
+                        if (Driver.IsSTAThread())
+                        {
+                            CTS = new CancellationTokenSource();
+                            MSTATask = new Task(() => { Driver.StartDriver(); }, CTS.Token, TaskCreationOptions.LongRunning);
+                            MSTATask.Start();
+                        }
+                        else
+                        {
+                            Driver.StartDriver();
+                        }
+                        if (VirtualDriver != null)
+                        {
+                            VirtualDriver.DriverStarted(this.Guid.ToString());
+                        }
+                    }
+                }
+                finally
+                {
+                    if (AgentType == Agent.eAgentType.Service)
+                    {
+                        mIsStarting = false;
+                    }
+                    else
+                    {
+                        if (Driver != null)
+                        {
+                            // Give the driver time to start            
+                            Thread.Sleep(500);
+                            Driver.IsDriverRunning = true;
+                            Driver.driverMessageEventHandler += driverMessageEventHandler;
+                        }
+
+                        mIsStarting = false;
+                        OnPropertyChanged(nameof(Agent.Status));
+                        OnPropertyChanged(nameof(Agent.IsWindowExplorerSupportReady));
+                    }
+                }
             }
         }
-
-
-
-
 
         System.Diagnostics.Process mProcess;
         Mutex mutex = new Mutex();

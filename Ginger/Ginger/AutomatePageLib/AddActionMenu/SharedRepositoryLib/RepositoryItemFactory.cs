@@ -94,193 +94,63 @@ namespace Ginger.Repository
             return new ValueExpression(obj, attr);
         }
 
-
-        public void StartAgentDriver(IAgent IAgent)
+        public object GetDriverObject(IAgent agent)
         {
-            Agent agent = (Agent)IAgent;
-            BusinessFlow BusinessFlow = agent.BusinessFlow;
-            ProjEnvironment ProjEnvironment = agent.ProjEnvironment;
-            bool Remote = agent.Remote;
+            Agent zAgent = (Agent)agent;
 
-            DriverBase Driver = null;
-            try
+            switch (zAgent.DriverType)
             {
-                agent.mIsStarting = true;
-                agent.OnPropertyChanged(Fields.Status);
-
-                try
-                {
-                    if (Remote)
+                case Agent.eDriverType.SeleniumFireFox:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
+                case Agent.eDriverType.SeleniumChrome:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
+                case Agent.eDriverType.SeleniumIE:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
+                case Agent.eDriverType.SeleniumRemoteWebDriver:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
+                case Agent.eDriverType.SeleniumEdge:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+                case Agent.eDriverType.MobileAppiumAndroid:
+                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.Android, zAgent.BusinessFlow);
+                case Agent.eDriverType.MobileAppiumIOS:
+                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOS, zAgent.BusinessFlow);
+                case Agent.eDriverType.MobileAppiumAndroidBrowser:
+                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser, zAgent.BusinessFlow);
+                case Agent.eDriverType.MobileAppiumIOSBrowser:
+                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser, zAgent.BusinessFlow);
+                case Agent.eDriverType.PerfectoMobileAndroid:
+                    return new PerfectoDriver(PerfectoDriver.eContextType.NativeAndroid, zAgent.BusinessFlow);
+                case Agent.eDriverType.PerfectoMobileAndroidWeb:
+                    return new PerfectoDriver(PerfectoDriver.eContextType.WebAndroid, zAgent.BusinessFlow);
+                case Agent.eDriverType.PerfectoMobileIOS:
+                    return new PerfectoDriver(PerfectoDriver.eContextType.NativeIOS, zAgent.BusinessFlow);
+                case Agent.eDriverType.PerfectoMobileIOSWeb:
+                    return new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, zAgent.BusinessFlow);
+                case Agent.eDriverType.GenericAppium:
+                    return new GenericAppiumDriver(zAgent.BusinessFlow);
+                case eDriverType.InternalBrowser:
+                    return new InternalBrowser(zAgent.BusinessFlow);
+                case eDriverType.ASCF:
+                    return new ASCFDriver(zAgent.BusinessFlow, agent.Name);
+                case eDriverType.DOSConsole:
+                    return new DOSConsoleDriver(zAgent.BusinessFlow);
+                case eDriverType.UnixShell:
+                    return new UnixShellDriver(zAgent.BusinessFlow, zAgent.ProjEnvironment);
+                case eDriverType.WebServices:
+                    return new WebServicesDriver(zAgent.BusinessFlow);
+                case eDriverType.WindowsAutomation:
+                    return new WindowsDriver(zAgent.BusinessFlow);
+                case eDriverType.PowerBuilder:
+                    return new PBDriver(zAgent.BusinessFlow);
+                case eDriverType.JavaDriver:
+                    return new JavaDriver(zAgent.BusinessFlow);
+                case eDriverType.MainFrame3270:
+                    return new MainFrameDriver(zAgent.BusinessFlow);  
+                    
+                default:
                     {
-                        throw new Exception("Remote is Obsolete, use GingerGrid");
+                        throw new Exception("Matching Driver was not found.");
                     }
-                    else
-                    {
-                        switch (agent.DriverType)
-                        {
-                            case eDriverType.InternalBrowser:
-                                Driver = new InternalBrowser(BusinessFlow);
-                                break;
-                            case eDriverType.SeleniumFireFox:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.FireFox);
-                                break;
-                            case eDriverType.SeleniumChrome:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
-                                break;
-                            case eDriverType.SeleniumIE:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.IE);
-                                break;
-                            case eDriverType.SeleniumRemoteWebDriver:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.RemoteWebDriver);
-                                // set capabilities
-                                if (agent.DriverConfiguration == null) agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-                                ((SeleniumDriver)Driver).RemoteGridHub = agent.GetParamValue(SeleniumDriver.RemoteGridHubParam);
-                                ((SeleniumDriver)Driver).RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
-                                ((SeleniumDriver)Driver).RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
-                                ((SeleniumDriver)Driver).RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
-                                break;
-                            case eDriverType.SeleniumEdge:
-                                Driver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Edge);
-                                break;
-                            case eDriverType.ASCF:
-                                Driver = new ASCFDriver(BusinessFlow, agent.Name);
-                                break;
-                            case eDriverType.DOSConsole:
-                                Driver = new DOSConsoleDriver(BusinessFlow);
-                                break;
-                            case eDriverType.UnixShell:
-                                Driver = new UnixShellDriver(BusinessFlow, ProjEnvironment);
-                                ((UnixShellDriver)Driver).SetScriptsFolder(System.IO.Path.Combine(agent.SolutionFolder, @"Documents\sh\"));
-                                break;
-                            case eDriverType.MobileAppiumAndroid:
-                                Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.Android, BusinessFlow);
-                                break;
-                            case eDriverType.MobileAppiumIOS:
-                                Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOS, BusinessFlow);
-                                break;
-                            case eDriverType.MobileAppiumAndroidBrowser:
-                                Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser, BusinessFlow);
-                                break;
-                            case eDriverType.MobileAppiumIOSBrowser:
-                                Driver = new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser, BusinessFlow);
-                                break;
-                            case eDriverType.PerfectoMobileAndroid:
-                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.NativeAndroid, BusinessFlow);
-                                break;
-                            case eDriverType.PerfectoMobileAndroidWeb:
-                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.WebAndroid, BusinessFlow);
-                                break;
-                            case eDriverType.PerfectoMobileIOS:
-                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.NativeIOS, BusinessFlow);
-                                break;
-                            case eDriverType.PerfectoMobileIOSWeb:
-                                Driver = new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, BusinessFlow);
-                                break;
-                            case eDriverType.GenericAppium:
-                                Driver = new GenericAppiumDriver(BusinessFlow);
-                                break;
-                            case eDriverType.WebServices:
-                                WebServicesDriver WebServicesDriver = new WebServicesDriver(BusinessFlow);
-                                Driver = WebServicesDriver;
-                                break;
-                            case eDriverType.WindowsAutomation:
-                                Driver = new WindowsDriver(BusinessFlow);
-                                break;                          
-                            case eDriverType.PowerBuilder:
-                                Driver = new PBDriver(BusinessFlow);
-                                break;
-                            case eDriverType.JavaDriver:
-                                Driver = new JavaDriver(BusinessFlow);
-                                break;
-                            case eDriverType.MainFrame3270:
-                                Driver = new MainFrameDriver(BusinessFlow);
-                                break;
-                            //case eDriverType.AndroidADB:
-                            //    string DeviceConfigFolder = agent.GetOrCreateParam("DeviceConfigFolder").Value;
-                            //    if (!string.IsNullOrEmpty(DeviceConfigFolder))
-                            //    {
-                            //        Driver = new AndroidADBDriver(BusinessFlow, System.IO.Path.Combine(agent.SolutionFolder, @"Documents\Devices", DeviceConfigFolder, @"\"));
-                            //    }
-                            //    else
-                            //    {
-                            //        //TODO: Load create sample folder/device, or start the wizard
-                            //        throw new Exception("Please set device config folder");
-                            //    }
-                            //    break;
-                            default:
-                                {
-                                    throw new Exception("Matching Driver was not found.");
-                                }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to set Agent Driver", e);
-                    return;
-                }
-
-                if (agent.AgentType == eAgentType.Service)
-                {
-                    throw new Exception("Error - Agent type is service and trying to launch from Ginger.exe"); // we should never get here with service
-                }
-                else
-                {
-                    agent.Driver = Driver;
-
-                   
-                    Driver.BusinessFlow = agent.BusinessFlow;
-                    agent.SetDriverConfiguration();
-
-                    IVirtualDriver VirtualDriver = null;
-                    if (agent.Driver is IVirtualDriver VD)
-                    {
-                        VirtualDriver = VD;
-                        string ErrorMessage;
-                        if (!VirtualDriver.CanStartAnotherInstance(out ErrorMessage))
-                        {
-                            throw new NotSupportedException(ErrorMessage);
-  
-                        }
-                    }
-                    //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
-                    if (Driver.IsSTAThread())
-                    {
-                        agent.CTS = new CancellationTokenSource();
-
-                        agent.MSTATask = new Task(() => { Driver.StartDriver(); }, agent.CTS.Token, TaskCreationOptions.LongRunning);
-                        agent.MSTATask.Start();
-                    }
-                    else
-                    {
-                        Driver.StartDriver();
-                    }
-                    if(VirtualDriver!=null)
-                    {
-                        VirtualDriver.DriverStarted(agent.Guid.ToString());
-                    }
-                }
-            }
-            finally
-            {
-                if (agent.AgentType == eAgentType.Service)
-                {
-                    agent.mIsStarting = false;
-                }
-                else
-                {
-                    if (Driver != null)
-                    {
-                        // Give the driver time to start            
-                        Thread.Sleep(500);
-                        Driver.IsDriverRunning = true;
-                        Driver.driverMessageEventHandler += agent.driverMessageEventHandler;
-                    }
-
-                    agent.mIsStarting = false;
-                    agent.OnPropertyChanged(Fields.Status);
-                    agent.OnPropertyChanged(Fields.IsWindowExplorerSupportReady);
-                }
             }
         }
 
@@ -292,14 +162,10 @@ namespace Ginger.Repository
             {
                 case Agent.eDriverType.InternalBrowser:
                     return(typeof(InternalBrowser));                    
-                case Agent.eDriverType.SeleniumFireFox:
-                    return (typeof(SeleniumDriver));                    
-                case Agent.eDriverType.SeleniumChrome:
-                    return (typeof(SeleniumDriver));                    
-                case Agent.eDriverType.SeleniumIE:
-                    return (typeof(SeleniumDriver));                    
-                case Agent.eDriverType.SeleniumRemoteWebDriver:
-                    return (typeof(SeleniumDriver));                    
+                case Agent.eDriverType.SeleniumFireFox:                 
+                case Agent.eDriverType.SeleniumChrome:            
+                case Agent.eDriverType.SeleniumIE:               
+                case Agent.eDriverType.SeleniumRemoteWebDriver:         
                 case Agent.eDriverType.SeleniumEdge:
                     return (typeof(SeleniumDriver));                                     
                 case Agent.eDriverType.ASCF:

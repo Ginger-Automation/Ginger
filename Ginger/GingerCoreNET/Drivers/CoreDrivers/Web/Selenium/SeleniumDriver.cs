@@ -275,6 +275,21 @@ namespace GingerCore.Drivers
             this.Driver = (IWebDriver)driver;
         }
 
+        public override void InitDriver(Agent agent)
+        {
+            if (agent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
+            {
+                if (agent.DriverConfiguration == null)
+                {
+                    agent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+                }
+                RemoteGridHub = agent.GetParamValue(SeleniumDriver.RemoteGridHubParam);
+                RemoteBrowserName = agent.GetParamValue(SeleniumDriver.RemoteBrowserNameParam);
+                RemotePlatform = agent.GetParamValue(SeleniumDriver.RemotePlatformParam);
+                RemoteVersion = agent.GetParamValue(SeleniumDriver.RemoteVersionParam);
+            }
+        }
+
         public override void StartDriver()
         {
             if (StartBMP)
@@ -3598,8 +3613,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     int count = 0;
-                    IAsyncResult result;
-                    Action action = () =>
+                    ///IAsyncResult result;
+                    //Action action = () =>
+                    var action = Task.Run(() =>
                     {
                         try
                         {
@@ -3624,10 +3640,12 @@ namespace GingerCore.Drivers
                             throw;
                         }
 
-                    };
-                    result = action.BeginInvoke(null, null);
+                    });
 
-                    if (result.AsyncWaitHandle.WaitOne(10000, true))
+                    //result = action.BeginInvoke(null, null);
+                    //if (result.AsyncWaitHandle.WaitOne(10000, true))
+
+                    if (action.Wait(10000))
                     {
                         if (count == 0)
                             return false;

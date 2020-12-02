@@ -106,11 +106,6 @@ namespace GingerCoreNETUnitTest.RunTestslib
             return true;
         }
 
-        public void StartAgentDriver(IAgent agent)
-        {
-            throw new NotImplementedException();
-        }
-
         public Dictionary<string, string> TakeDesktopScreenShot(bool v)
         {
             throw new NotImplementedException();
@@ -152,6 +147,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object GetDriverObject(IAgent agent)
         {
             throw new NotImplementedException();
         }
