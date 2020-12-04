@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
@@ -165,7 +166,24 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-               
+
+        private RunSetActionBase mRunsetAction;
+        public RunSetActionBase RunsetAction
+        {
+            get
+            {
+                return mRunsetAction;
+            }
+            set
+            {
+                if (mRunsetAction != value)
+                {
+                    mRunsetAction = value;
+                    OnPropertyChanged(nameof(RunsetAction));
+                }
+            }
+        }
+
         public static Context GetAsContext(object contextObj)
         {
             if (contextObj != null && contextObj is Context)

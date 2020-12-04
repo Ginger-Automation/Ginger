@@ -65,8 +65,8 @@ namespace Ginger.ALM.QC {
 
             //root item
             QCTestLabFolderTreeItem tvi = new QCTestLabFolderTreeItem();
-            tvi.Folder = "Root";
-            tvi.Path = @"Root";
+            tvi.Folder = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane ? "Application Modules" : "Root";
+            tvi.Path = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane ? @"Application Modules" : @"Root";
             TestLabExplorerTreeView.Tree.AddItem(tvi);
 
             TestLabExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Lab Explorer";
@@ -197,21 +197,21 @@ namespace Ginger.ALM.QC {
                     Button importBtn = new Button();
                     importBtn.Content = "Import Selected";
                     importBtn.Click += new RoutedEventHandler(ImportSelected);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse QC/ALM Test Lab", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { importBtn }, true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestLabPageUsageType.Select):
                     Button selectBtn = new Button();
                     selectBtn.Content = "Select";
                     selectBtn.Click += new RoutedEventHandler(Select);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse QC/ALM Test Lab", this, new ObservableList<Button> { selectBtn }, true,"Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { selectBtn }, true,"Cancel", Cancel_Clicked);
                     return CurrentSelectedTestSets;
 
                 case (eExplorerTestLabPageUsageType.BrowseFolders):
                     Button selectFolderBtn = new Button();
                     selectFolderBtn.Content = "Select Folder";
                     selectFolderBtn.Click += new RoutedEventHandler(SelectFolder);
-                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse QC/ALM Test Lab", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
+                    GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Lab", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedPath;
             }
 

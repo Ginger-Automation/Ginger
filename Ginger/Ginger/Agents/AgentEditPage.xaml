@@ -57,17 +57,16 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0" x:Name="xVirtualAgentsPanel" Visibility="Visible">
                         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center">
-                            <Label Style="{StaticResource $LabelStyle}" Content="Virutalisation :" Margin="0,0,0,0" VerticalAlignment="Center"/>
-                            <Label Style="{StaticResource $HeaderStyle}"  Width="250" x:Name="xAgentVirtualSupported" Content="No" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                            <Label Style="{StaticResource $LabelStyle}" Content="Support Virtualization:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                            <Label Style="{StaticResource $LabelStyle}" FontWeight="SemiBold"  Width="250" x:Name="xAgentVirtualSupported" Content="No" Margin="0,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <StackPanel  Orientation="Horizontal" VerticalAlignment="Center" >
+                        <!--<StackPanel  Orientation="Horizontal" VerticalAlignment="Center" >
                             <Label Style="{StaticResource $LabelStyle}" Content="Active Virtual Agents" Margin="50,0,0,0" VerticalAlignment="Center"/>
                             <Label Style="{StaticResource $HeaderStyle}" x:Name="VirtualAgentCount" Content="0" Margin="10,0,0,0" VerticalAlignment="Center"/>
                             <Button x:Name="RefreshVirtualAgentCount" Click="RefreshVirtualAgentCount_Click">
                                 <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18"/>
                             </Button>
-                            
-                        </StackPanel>
+                        </StackPanel>-->
                     </StackPanel>
                 </StackPanel>
 

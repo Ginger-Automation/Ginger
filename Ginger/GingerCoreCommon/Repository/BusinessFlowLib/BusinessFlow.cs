@@ -325,10 +325,118 @@ namespace GingerCore
             set
             {
                 if (mCurrentActivity != value)
-                {
+                {                    
                     mCurrentActivity = value;
                     OnPropertyChanged("CurrentActivity");
                 }
+            }
+        }
+
+        public ActivitiesGroup CurrentActivitiesGroup
+        {
+            get 
+            { 
+                if (CurrentActivity != null && string.IsNullOrEmpty(CurrentActivity.ActivitiesGroupID) == false)
+                {
+                    return this.ActivitiesGroups.Where(x => x.Name == CurrentActivity.ActivitiesGroupID).FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }                    
+            }
+        }
+
+        private Activity mPreviousActivity;
+        public Activity PreviousActivity
+        {
+            get
+            {
+                return mPreviousActivity;
+            }
+            set
+            {
+                mPreviousActivity = value;
+            }
+        }
+
+        private Act mPreviousAction;
+        public Act PreviousAction
+        {
+            get
+            {
+                return mPreviousAction;
+            }
+            set
+            {                
+                mPreviousAction = value;
+            }
+        }
+
+        private Act mLastFailedAction;
+        public Act LastFailedAction
+        {
+            get
+            {
+                return mLastFailedAction;
+            }
+            set
+            {
+                mLastFailedAction = value;
+            }
+        }
+
+        private Activity mErrorHandlerOriginActivity;
+        public Activity ErrorHandlerOriginActivity
+        {
+            get
+            {
+                return mErrorHandlerOriginActivity;
+            }
+            set
+            {
+                mErrorHandlerOriginActivity = value;
+            }
+        }
+
+        public ActivitiesGroup ErrorHandlerOriginActivitiesGroup
+        {
+            get
+            {
+                if (ErrorHandlerOriginActivity != null && string.IsNullOrEmpty(ErrorHandlerOriginActivity.ActivitiesGroupID) == false)
+                {
+                    return this.ActivitiesGroups.Where(x => x.Name == ErrorHandlerOriginActivity.ActivitiesGroupID).FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        private Activity mLastFailedActivity;
+        public Activity LastFailedActivity
+        {
+            get
+            {
+                return mLastFailedActivity;
+            }
+            set
+            {
+                mLastFailedActivity = value;
+            }
+        }
+
+        private Act mErrorHandlerOriginAction;
+        public Act ErrorHandlerOriginAction
+        {
+            get
+            {
+                return mErrorHandlerOriginAction;
+            }
+            set
+            {
+                mErrorHandlerOriginAction = value;
             }
         }
 
@@ -1011,12 +1119,18 @@ namespace GingerCore
             foreach (Activity a in Activities)
             {
                 a.Reset();
-            }
+            }            
             foreach (ActivitiesGroup ag in ActivitiesGroups)
             {
                 ag.Reset();
             }
             CleanDynamicAddedItems();
+            PreviousActivity = null;
+            PreviousAction = null;
+            LastFailedAction = null;
+            ErrorHandlerOriginActivity = null;
+            ErrorHandlerOriginAction = null;
+            LastFailedActivity = null;
         }
 
         public string AutomationPrecentage

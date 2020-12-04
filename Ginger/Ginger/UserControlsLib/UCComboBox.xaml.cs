@@ -202,7 +202,7 @@ namespace Ginger.UserControlsLib
             }
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(obj, AttrName, mContext);
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            ComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
+            ComboBox.Text = w.xExpressionUCTextEditor.textEditor.Text;
         }
 
         public void UpdateComboItems(List<ComboItem> comboBoxItemsList)

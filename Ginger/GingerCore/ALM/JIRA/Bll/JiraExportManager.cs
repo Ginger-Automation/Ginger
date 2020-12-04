@@ -241,6 +241,7 @@ namespace GingerCore.ALM.JIRA.Bll
             var bftestCases = businessFlow.ActivitiesGroups.ToList();
             foreach (var tc in bftestCases)
             {
+                tc.ExternalID = null;
                 this.ExportActivitesGrToJira(tc, testCaseFields, ref responseStr);
                 CreateZyphyrTestSteps(tc, tc.ExternalID, businessFlow);
             }

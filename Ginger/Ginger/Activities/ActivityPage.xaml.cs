@@ -85,6 +85,8 @@ namespace GingerWPF.BusinessFlowsLib
                 xRunSelectedActionBtn.IsEnabled = IsRunning;
                 xResetBtn.IsEnabled = IsRunning;
             });
+
+            mActionsPage.SetUIElementsBehaverBasedOnRunnerStatus(IsRunning);
         }
 
         private void SetUIView()

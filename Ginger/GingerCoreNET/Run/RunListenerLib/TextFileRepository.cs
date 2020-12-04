@@ -38,7 +38,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
-    class TextFileRepository: ExecutionLogger
+    public class TextFileRepository: ExecutionLogger
     {
         static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public TextFileRepository()
@@ -255,6 +255,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        {
+            throw new NotImplementedException();
+        }
+        public override string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
         {
             throw new NotImplementedException();
         }

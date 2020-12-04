@@ -342,6 +342,15 @@ namespace GingerWPF.BusinessFlowsLib
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, mActionBeenEdit));
         }
 
+        public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xUndoBtn.IsEnabled = IsRunning;
+                xRunActionBtn.IsEnabled = IsRunning;
+            });
+        }
+
         private void xDeleteBtn_Click(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(eUserMsgKey.SureWantToDelete, mActionBeenEdit.Description) == eUserMsgSelection.Yes)

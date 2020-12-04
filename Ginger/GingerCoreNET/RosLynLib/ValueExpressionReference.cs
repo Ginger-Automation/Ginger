@@ -28,6 +28,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
     {
 
         public string Category { get; set; }
+        public string SubCategory { get; set; }
         public string Name { get; set; }
         public string Expression { get; set; }
         public string UseCase { get; set; }
@@ -35,6 +36,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib.Refrences
         public string ReturnType { get; set; }
         public string ExpressionResult { get; set; }
         public string IconImageName { get; set; }
+        public bool RequiresSpecificFlowDetails { get; set; }
+        public bool RequiresRunsetOperation { get; set; }
 
         public ValueExpressionReference()
         {

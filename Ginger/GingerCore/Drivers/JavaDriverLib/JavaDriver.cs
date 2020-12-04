@@ -86,8 +86,6 @@ namespace GingerCore.Drivers.JavaDriverLib
         public bool LogCommunication { get; set; }
         private DispatcherTimer mGetRecordingTimer;
 
-        //For POM widgets Element
-        private bool isBrowserElementLearned = false;
 
         public override bool IsWindowExplorerSupportReady()
         {
@@ -537,6 +535,17 @@ namespace GingerCore.Drivers.JavaDriverLib
                 if (path != null && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
+
+                    if (!string.IsNullOrEmpty(currentPOMElementInfo.Path))
+                    {
+                        PayLoad PLSwitchFrame = new PayLoad("HTMLElementAction", "SwitchFrame", eLocateBy.ByXPath.ToString(), currentPOMElementInfo.XPath, string.Empty);
+                        PayLoad ResponseSwitchFrame = Send(PLSwitchFrame);
+
+                        if(ResponseSwitchFrame.IsErrorPayLoad())
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG,   string.Concat("Error occured during switch frame :",ResponseSwitchFrame.GetErrorValue()));
+                        }
+                    }
                 }
             }
         }
@@ -1983,48 +1992,40 @@ namespace GingerCore.Drivers.JavaDriverLib
                 XPath = currentFramePath
             };
 
-            if (!isBrowserElementLearned)
-            {
-                InitializeBrowser(javaElementInfo);
-            }
-            else
+            if (!IsValidBrowser(currentFramePath))
             {
                 return;
             }
-            
+            else
+            {
+                InitializeBrowser(javaElementInfo);
+            }
+
 
             var hTMLControlsPayLoad = GetBrowserVisibleControls();
 
-            if(hTMLControlsPayLoad !=null && hTMLControlsPayLoad.Count > 0)
-            {
-                isBrowserElementLearned = true;
-            }
-            else
-            {
-                isBrowserElementLearned = false;
-            }
             try
             {
-                foreach(var htmlElement in hTMLControlsPayLoad)
+                foreach (var htmlElement in hTMLControlsPayLoad)
                 {
-                     if (mStopProcess)
-                     {
+                    if (mStopProcess)
+                    {
                         break;
-                     }
-                     if (selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
-                     {
+                    }
+                    if (selectedElementTypesList.Contains(htmlElement.ElementTypeEnum))
+                    {
                         htmlElement.IsAutoLearned = true;
                         htmlElement.Active = true;
-                        
+
                         ((IWindowExplorer)this).LearnElementInfoDetails(htmlElement);
-                        
+
                         htmlElement.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentBrowserPath, Value = currentFramePath });
-                        
+
                         elementInfoList.Add(htmlElement);
 
-                     }
+                    }
 
-                 }
+                }
             }
             catch (Exception ex)
             {
@@ -2032,9 +2033,24 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
         }
 
+        private bool IsValidBrowser(string currentFramePath)
+        {
+            PayLoad PL = new PayLoad("IsValidBrowser");
+            PL.AddValue("ByXPath");
+            PL.AddValue(currentFramePath);
+            PL.ClosePackage();
+            var response = Send(PL);
+
+            if (response.IsErrorPayLoad())
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during Valid Browser Element");
+                return false;
+            }
+            return true;
+        }
+
         List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            isBrowserElementLearned = false;
 
             List<ElementInfo> list = new List<ElementInfo>();
 

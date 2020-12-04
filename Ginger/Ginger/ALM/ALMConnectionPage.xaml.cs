@@ -73,16 +73,6 @@ namespace Ginger.ALM
                     CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                 }
             }
-
-            if (!WorkSpace.Instance.BetaFeatures.Octane)
-            {
-                OctaneRadioButton.Visibility = Visibility.Hidden;
-                xDefualtImageOctane.Visibility = Visibility.Hidden;
-                if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane)
-                {
-                    CurrentAlmConfigurations.AlmType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
-                }
-            }
             if (almConnectStyle != ALMIntegration.eALMConnectType.Silence)
             {
                 if (GetProjectsDetails())
@@ -445,7 +435,7 @@ namespace Ginger.ALM
             xDefualtImageRally.Visibility = Visibility.Collapsed;
             xDefualtImageJIRA.Visibility = Visibility.Collapsed;
             xDefualtImageQTest.Visibility = Visibility.Collapsed;
-
+            xDefualtImageOctane.Visibility = Visibility.Collapsed;
             if (!isServerDetailsCorrect)
             {
                 ServerURLTextBox.IsEnabled = true;
@@ -479,6 +469,8 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = Brushes.Black;
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
+                    OctaneRadioButton.FontWeight = FontWeights.Regular;
+                    OctaneRadioButton.Foreground = Brushes.Black;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM:
@@ -502,6 +494,8 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = Brushes.Black;
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
+                    OctaneRadioButton.FontWeight = FontWeights.Regular;
+                    OctaneRadioButton.Foreground = Brushes.Black;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
@@ -523,6 +517,8 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = Brushes.Black;
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
+                    OctaneRadioButton.FontWeight = FontWeights.Regular;
+                    OctaneRadioButton.Foreground = Brushes.Black;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
@@ -531,10 +527,7 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
                     RQMLoadConfigPackageButton.Visibility = Visibility.Visible;
                     DownloadPackageLink.Visibility = Visibility.Visible;
-                    if (WorkSpace.Instance.BetaFeatures.JiraTestingALM)
-                    {
-                        JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
-                    }
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Visible;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();                 
                     ServerURLTextBox.Cursor = null;
@@ -547,6 +540,8 @@ namespace Ginger.ALM
                     RallyRadioButton.Foreground = Brushes.Black;
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
+                    OctaneRadioButton.FontWeight = FontWeights.Regular;
+                    OctaneRadioButton.Foreground = Brushes.Black;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
@@ -570,6 +565,33 @@ namespace Ginger.ALM
                     RallyRadioButton.Foreground = Brushes.Black;
                     JiraRadioButton.FontWeight = FontWeights.Regular;
                     JiraRadioButton.Foreground = Brushes.Black;
+                    OctaneRadioButton.FontWeight = FontWeights.Regular;
+                    OctaneRadioButton.Foreground = Brushes.Black;
+                    break;
+
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
+                    xDefualtImageOctane.Visibility = Visibility.Visible;
+                    OctaneRadioButton.FontWeight = FontWeights.ExtraBold;
+                    OctaneRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
+                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    Grid.SetColumnSpan(ServerURLTextBox, 2);
+                    ExampleURLHint.Content = "Example: http://server:port ";
+                    ServerURLTextBox.Cursor = null;
+                    QCRadioButton.FontWeight = FontWeights.Regular;
+                    QCRadioButton.Foreground = Brushes.Black;
+                    RQMRadioButton.FontWeight = FontWeights.Regular;
+                    RQMRadioButton.Foreground = Brushes.Black;
+                    RestAPICheckBox.Visibility = Visibility.Collapsed;
+                    RestAPICheckBox.IsChecked = true;
+                    RestAPICheckBox.IsEnabled = false;
+                    RallyRadioButton.FontWeight = FontWeights.Regular;
+                    RallyRadioButton.Foreground = Brushes.Black;
+                    JiraRadioButton.FontWeight = FontWeights.Regular;
+                    JiraRadioButton.Foreground = Brushes.Black;
+                    qTestRadioButton.FontWeight = FontWeights.Regular;
+                    qTestRadioButton.Foreground = Brushes.Black;
                     break;
 
                 default:
@@ -604,8 +626,7 @@ namespace Ginger.ALM
                             almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
                         break;
                     case "RQMRadioButton":
-                            almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;
-                            ALMIntegration.Instance.SetALMCoreConfigurations(almType); //Because RQM need to update the server field from existing package
+                            almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM;                           
                             SetLoadPackageButtonContent();
                         break;
                     case "RallyRadioButton":

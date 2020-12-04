@@ -23,13 +23,15 @@ using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.ValueExpression
 {
-  public  class ValueExpessionGeneralFunctions
+    public  class ValueExpessionGeneralFunctions
     {
         #region PlaceHolders
-    
+
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Current Unix time stamp")]
         [ValueExpressionFunctionExpression("{Function Fun=GetUnixTimeStamp()}")]
+        [ValueExpressionFunctionCategory("Data")]
+        [ValueExpressionFunctionSubCategory("Date Time")]
         public string GetUnixTimeStamp()
         {
             DateTimeOffset dtoffset = new DateTimeOffset(DateTime.Now);
@@ -41,6 +43,8 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Get GUID")]
         [ValueExpressionFunctionExpression("{Function Fun=GetGUID()}")]
+        [ValueExpressionFunctionCategory("Data")]
+        [ValueExpressionFunctionSubCategory("Functions")]
         public string GetGUID()
         {
             return Guid.NewGuid().ToString();
@@ -49,6 +53,8 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Generate HashCode")]
         [ValueExpressionFunctionExpression("{Function Fun=GenerateHashCode(\"Hello\")}")]
+        [ValueExpressionFunctionCategory("Data Operations")]
+        [ValueExpressionFunctionSubCategory("Functions")]
         public string GenerateHashCode(object[] obj)
         {
             SHA1CryptoServiceProvider sha1Hasher = new SHA1CryptoServiceProvider();
@@ -59,6 +65,8 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Current UTC time stamp")]
         [ValueExpressionFunctionExpression("{Function Fun=GetUTCTimeStamp()}")]
+        [ValueExpressionFunctionCategory("Data")]
+        [ValueExpressionFunctionSubCategory("Date Time")]
 
         public string GetUTCTimeStamp()
         {
@@ -69,6 +77,8 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Get Hashed Data Byte string")]
         [ValueExpressionFunctionExpression("{Function Fun=GetHashedDataByteString(\"Hello\")}")]
+        [ValueExpressionFunctionCategory("Data Operations")]
+        [ValueExpressionFunctionSubCategory("Functions")]
         public string GetHashedDataByteString(object[] obj)
         {
             SHA1CryptoServiceProvider sha1Hasher = new SHA1CryptoServiceProvider();
@@ -79,15 +89,19 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Encrypt  to Base 64")]
         [ValueExpressionFunctionExpression("{Function Fun=GetEncryptedBase64String(\"Hello\")}")]
+        [ValueExpressionFunctionCategory("Data Operations")]
+        [ValueExpressionFunctionSubCategory("Functions")]
         public string GetEncryptedBase64String(object[] obj)
         {
-            byte[] hashedDataBytes = Encoding.ASCII.GetBytes((obj[0].ToString()).ToCharArray()); 
+            byte[] hashedDataBytes = Encoding.ASCII.GetBytes((obj[0].ToString()).ToCharArray());
             return Convert.ToBase64String(hashedDataBytes);
         }
 
         [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Decrypt to Base 64")]
         [ValueExpressionFunctionExpression("{Function Fun=GetDecryptedBase64String(\"SGVsbG8=\")}")]
+        [ValueExpressionFunctionCategory("Data Operations")]
+        [ValueExpressionFunctionSubCategory("Functions")]
         public string GetDecryptedBase64String(object[] obj)
         {
             try
