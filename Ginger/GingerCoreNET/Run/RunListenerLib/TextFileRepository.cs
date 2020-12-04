@@ -258,5 +258,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             throw new NotImplementedException();
         }
+        public override string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
