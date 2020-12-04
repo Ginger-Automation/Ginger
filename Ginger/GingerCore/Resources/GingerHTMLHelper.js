@@ -654,20 +654,28 @@ function define_GingerLib() {
 
 	    on_top = function(r) {
             var x = (r.left + r.right) / 2, y = (r.top + r.bottom) / 2;
-                return element.contains(document.elementFromPoint(x, y));          
+            if (element.contains(document.elementFromPoint(x, y))) {
+                return true;
+            }
+            else {
+                var rect = element.getBoundingClientRect();
+                var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+                if (!(rect.bottom < 0 || rect.top - viewHeight >= 0)) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
 		};
 		
 		for (var i = 0, l = rects.length; i < l; i++) {
 			 var r = rects[i],
                 in_viewport = r.top > 0 ? r.top <= height : (r.bottom > 0 && r.bottom <= height);
-			if (in_viewport && on_top(r)) return true;
+            if (in_viewport && on_top(r)) return true;
 	    }
 
-        var rect = element.getBoundingClientRect();
-        var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-        if (!(rect.bottom < 0 || rect.top - viewHeight >= 0)) {
-            return true;
-        }
+        
 		return false;
 	}
 
