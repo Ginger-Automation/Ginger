@@ -316,7 +316,9 @@ namespace Ginger.Run.RunSetActions
                                 reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
                                 if (rReport.IsAlternameFolderUsed)
                                 {
-                                    var path = Path.Combine(rReport.ExtraInformation, "Ginger-Web-Client_" + $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
+                                    mValueExpression.Value = rReport.ExtraInformation;
+                                    extraInformationCalculated = mValueExpression.ValueCalculated;
+                                    var path = Path.Combine(extraInformationCalculated, "Ginger-Web-Client_" + $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
                                     if (Directory.Exists(path))
                                         Directory.Delete(path, true);
                                     IoHandler.Instance.CopyFolderRec(reportsResultFolder, path, true);
