@@ -543,6 +543,18 @@
     },
     {
       "Category": "Flow Details",
+      "SubCategory": "Runset",
+      "Name": "ExecutionJsonData",
+      "Expression": "{ExecutionJsonData}",
+      "UseCase": "Get Last Executed Runset Execution Json Data",
+      "Samples": [ "{ExecutionJsonData} will give you Last Executed Runset Execution Json Data" ],
+      "ReturnType": null,
+      "ExpressionResult": null,
+      "IconImageName": "RunSet",
+      "RequiresRunsetOperation": true
+    },
+    {
+      "Category": "Flow Details",
       "SubCategory": "Runner",
       "Name": "Runner Name",
       "Expression": "{FD Object=Runner Field=Name}",
