@@ -958,7 +958,7 @@ namespace GingerCore.ALM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to import Octane test suit and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
                 return null;
             }
         }
@@ -1291,7 +1291,7 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to Octane ALM", ex);
                 return false;
             }
         }
