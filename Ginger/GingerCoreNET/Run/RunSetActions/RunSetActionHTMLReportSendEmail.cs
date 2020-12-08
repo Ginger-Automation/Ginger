@@ -318,6 +318,7 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     mValueExpression.Value = rReport.ExtraInformation;
                                     extraInformationCalculated = mValueExpression.ValueCalculated;
+
                                     var path = Path.Combine(extraInformationCalculated, "Ginger-Web-Client_" + $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
                                     if (Directory.Exists(path))
                                         Directory.Delete(path, true);
