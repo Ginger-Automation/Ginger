@@ -1,9 +1,13 @@
-Linux: [![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Linux%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=7?branchName=master) Windows: [![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Windows%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=6?branchName=master) Mac: [![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Mac%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=11&branchName=master)
-
-
 Ginger is an Automation IDE, Drag & Drop automation, Can be used by users with or without coding skills, open platform with plugin capabilities.
+
+
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/Ginger-Automation/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+Linux: [![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Linux%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=7?branchName=master) 
+Windows: [![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Windows%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=6?branchName=master) 
+Mac: [![Build Status](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_apis/build/status/Ginger%20Mac%20Build?branchName=master)](https://dev.azure.com/GingerByAmdocs/GingerByAmdocs/_build/latest?definitionId=11&branchName=master)
+
 
 
 
