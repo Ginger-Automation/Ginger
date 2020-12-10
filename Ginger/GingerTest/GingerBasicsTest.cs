@@ -70,6 +70,8 @@ namespace GingerWPFUnitTest
         public void TestCleanUp()
         {
             mutex.ReleaseMutex();
+            
+            
         }
 
 
