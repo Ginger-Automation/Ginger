@@ -357,6 +357,19 @@ public class EditorHelper {
 			
 			Element elementTag = CellComponent.getAllElements().first().child(0);
 			
+			
+			if(!elementTag.tagName().contains("input") && !elementTag.tagName().contains("a"))
+			{
+				for(Element e: CellComponent.getAllElements())
+				{
+					if(e.tagName().contains("input") || e.tagName().contains("a"))
+					{
+						elementTag = e;
+						break;
+					}
+				}
+			}
+			
 			if (elementTag.tagName().contains("input"))
 			{
 				Element inputElement = CellComponent.select("input").first();
@@ -477,37 +490,29 @@ public class EditorHelper {
 		}
 		
 		private int GetRowCount(Element table)
-		{			
-			return table.getElementsByTag("tr").size()-1;
+		{
+			return table.getElementsByTag("tr").size();
 		}
+		
 		private int GetColumnCount(Element table)
 		{
-			List<String> ColomumnNames = new ArrayList<String>();
-			Elements cells=table.getElementsByTag("td");
-
-
-			for(Element e: cells)
+			int colCount=table.getElementsByTag("tr").first().getElementsByTag("td").size();
+			
+			if(colCount < table.getElementsByTag("tr").get(1).getElementsByTag("td").size())
 			{
-				if(e.className().equals("header"))
-				{
-
-					ColomumnNames.add(e.text());
-				}
+				return table.getElementsByTag("tr").get(1).getElementsByTag("td").size();
 			}
-			return ColomumnNames.size();
+			
+			return colCount;
 		}
 		
 		private List<String> GetColumnNames(Element table)
 		{
 			List<String> ColomumnNames= new ArrayList<String>();
-			Elements cells=table.getElementsByTag("td");
+			Elements cells=table.getElementsByTag("tr").first().getElementsByTag("td");
 			for(Element e: cells)
 			{
-				if(e.className().equals("header"))
-				{
-
-					ColomumnNames.add(e.text());
-				}
+				ColomumnNames.add(e.text());
 			}
 			return ColomumnNames;
 		}
@@ -517,7 +522,7 @@ public class EditorHelper {
 		{
 			Elements rowElements=table.getElementsByTag("tr");
 			
-			Element targetRow= rowElements.get(row+1);
+			Element targetRow= rowElements.get(row);
 			
 			Elements columns= targetRow.getElementsByTag("td");
 			
