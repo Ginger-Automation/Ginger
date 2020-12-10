@@ -18,9 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -96,6 +100,7 @@ namespace GingerCore
         public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         private static Regex rxFDPattern = new Regex(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        private static Regex rxExecutionJsonDataPattern = new Regex(@"{ExecutionJsonData}", RegexOptions.Compiled);
 
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
@@ -113,7 +118,7 @@ namespace GingerCore
         }
 
         ObservableList<DataSourceBase> DSList;
-
+        Context mContext;
         BusinessFlow BF;
         ProjEnvironment Env;
         bool bUpdate;
@@ -158,7 +163,16 @@ namespace GingerCore
             this.bDone = bDone;
             
         }
-
+        public ValueExpression(ProjEnvironment Env, Context ObjContext, ObservableList<DataSourceBase> DSList)
+        {
+            this.Env = Env;
+            this.mContext = ObjContext;
+            if (ObjContext != null)
+            {
+                this.BF = ObjContext.BusinessFlow;
+            }
+            this.DSList = DSList;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -231,7 +245,8 @@ namespace GingerCore
         private void EvaluateFlowDetails()
         {
             MatchCollection matches = rxFDPattern.Matches(mValueCalculated);
-            if (matches.Count == 0)
+            MatchCollection matchesExecutionJsonData = rxExecutionJsonDataPattern.Matches(mValueCalculated);
+            if (matches.Count == 0 && matchesExecutionJsonData.Count == 0)
             {
                 return;
             }
@@ -248,8 +263,58 @@ namespace GingerCore
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
                 }
             }
-        }
 
+            foreach (Match match in matchesExecutionJsonData)
+            {
+                try
+                {
+                    ReplaceExecutionJsonDataDetails(match.Value);
+                }
+                catch (Exception ex)
+                {
+                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                }
+            }
+        }
+        
+        private void ReplaceExecutionJsonDataDetails(string josnExpression)
+        {
+            //Select fields from selected template configuration
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            HTMLReportConfiguration defaultTemplate = null;
+            if (mContext.RunsetAction != null)
+            {
+                RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
+                defaultTemplate = HTMLReportConfigurations.Where(x => (x.ID == runSetAction.selectedHTMLReportTemplateID)).FirstOrDefault();
+                if (defaultTemplate == null && runSetAction.selectedHTMLReportTemplateID == 100)
+                {
+                    defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+                }
+            }
+            else 
+            {
+                defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+            }
+
+            //Get Last Execution details
+            LiteDbRunSet liteDbRunSet = null;
+            var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
+            if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
+                liteDbRunSet = dbManager.GetLatestExecutionRunsetData("");
+            }
+            else
+            {
+                mValueCalculated = mValueCalculated.Replace(josnExpression, string.Format("['{0}' Expression Supported only in case the selected Execution Logger type is DB.]", josnExpression));
+                return;
+            }
+
+            string json = WorkSpace.Instance.RunsetExecutor.Runners[0].ExecutionLoggerManager.mExecutionLogger.CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
+
+            mValueCalculated = mValueCalculated.Replace(josnExpression, json);
+        }
         public enum eFlowDetailsObjects
         {
             Environment, Runset, Runner, BusinessFlow, ActivitiesGroup, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivitiesGroup, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity, Solution
