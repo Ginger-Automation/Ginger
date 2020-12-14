@@ -117,12 +117,21 @@ namespace Ginger.Agents
             // Need to make it OO style - 
 
             //Selenium Remote Web Driver Edit Page
+
             if (mAgent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
             {
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
                 DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
 
                 Page p = new SeleniumRemoteWebDriverEditPage(mAgent);
+                DriverConfigurationFrame.Content = p;
+            }
+            else if (mAgent.DriverType == Agent.eDriverType.Appium)
+            {
+                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
+                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
+
+                Page p = new AppiumDriverEditPage(mAgent);
                 DriverConfigurationFrame.Content = p;
             }
             // Android Edit Page

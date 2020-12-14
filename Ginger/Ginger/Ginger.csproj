@@ -452,6 +452,9 @@
     <Compile Include="Activities\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Drivers\AppiumDriverEditPage.xaml.cs">
+      <DependentUpon>AppiumDriverEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
     <Compile Include="RunSetPageLib\RunsetRunnersConfigPage.xaml.cs">
@@ -2811,6 +2814,10 @@
     <Page Include="BusinessFlowWindows\BusinessFlowViewPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Drivers\AppiumDriverEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RunSetPageLib\RunsetRunnersConfigPage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else if (platformType == ePlatformType.Mobile)
             {
-                DI.services.Add(Agent.eDriverType.GenericAppium);
+                DI.services.Add(Agent.eDriverType.Appium);
                 DI.services.Add(Agent.eDriverType.MobileAppiumAndroid);                
                 DI.services.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
                 DI.services.Add(Agent.eDriverType.MobileAppiumIOS);

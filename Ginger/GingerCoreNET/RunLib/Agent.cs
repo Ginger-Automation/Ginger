@@ -123,7 +123,7 @@ namespace GingerCore
             [Description("Mobile Perfecto IOS Browser")]
             PerfectoMobileIOSWeb,
             [Description("Generic Appium")]
-            GenericAppium,
+            Appium,
 
             //MF
             [Description("MainFrame 3270")]
@@ -1037,7 +1037,7 @@ namespace GingerCore
                 case eDriverType.PerfectoMobileIOSWeb:
                 case eDriverType.MobileAppiumAndroidBrowser:
                 case eDriverType.MobileAppiumIOSBrowser:
-                case eDriverType.GenericAppium:
+                case eDriverType.Appium:
                     return ePlatformType.Mobile;
                 case eDriverType.PowerBuilder:
                     return ePlatformType.PowerBuilder;

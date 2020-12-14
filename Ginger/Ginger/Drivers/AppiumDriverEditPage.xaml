@@ -1,0 +1,62 @@
+﻿<Page x:Class="Ginger.Drivers.AppiumDriverEditPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Ginger.Drivers" 
+      xmlns:ginger="clr-namespace:Ginger"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AppiumDriverEditPage">
+
+    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid.Resources>
+            <DataTemplate x:Key="ParamValueExpressionButton">
+                <Button x:Name="ParamsGridVEButton" Content="..." Click="CapabilitiesGridVEButton_Click"  Style="{StaticResource DataGridCellButtonStyle}"/>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <DockPanel >
+            <Label Content="Appium Server:" Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top"/>
+            <TextBox x:Name="xServerURLTextBox" Style="{StaticResource $TextBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Top"  DockPanel.Dock="Top" Height="20"  />
+
+            <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down"  IsExpanded="False"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top">
+                <Expander.Header>
+                    <Label  Content="Advanced Connection Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel>
+                        <CheckBox x:Name="xSSLChkBox" Content="Use SSL" Style="{StaticResource $CeckBoxStyle}"/>
+                        <CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow Unauthorized Certificates" Style="{StaticResource $CeckBoxStyle}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="xUseProxyChkBox" Content="Use Proxy" Style="{StaticResource $CeckBoxStyle}"/>
+                            <TextBox x:Name="xUseProxyTextBox" Style="{StaticResource $TextBoxStyle}" Width="200" Margin="10,0,0,0" IsEnabled="False"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xDesiredCapabilitiesExpander" ExpandDirection="Down"  IsExpanded="True"  Style="{StaticResource $ExpanderStyle}"  DockPanel.Dock="Top">
+                <Expander.Header>
+                    <Label  Content="Desired Capabilities" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label  Content="Platform:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="Platform" VerticalAlignment="Center"/>
+                            <RadioButton x:Name="xIOSRdBtn" Content="iOS" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="Platform" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label  Content="Application Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xNativeHybRdBtn" Content="Native/Hybrid" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AppType" VerticalAlignment="Center"/>
+                            <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <DockPanel Margin="0,10,0,0">
+                            <ginger:ucGrid x:Name="xCapabilitiesGrid" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Title="Capabilities" ShowEdit="Collapsed" ShowUpDown="Collapsed"/>
+                        </DockPanel>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+        </DockPanel>
+    </Grid>
+</Page>
