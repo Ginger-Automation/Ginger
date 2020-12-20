@@ -582,6 +582,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                     }                   
                     mailReportConfig.MailSettings.MailFrom = runsetMailReport.MailFrom;
+                    mailReportConfig.MailSettings.MailFromDisplayName = runsetMailReport.MailFromDisplayName;
                     mailReportConfig.MailSettings.MailTo = runsetMailReport.MailTo;
                     mailReportConfig.MailSettings.MailCC = runsetMailReport.MailCC;
                     mailReportConfig.MailSettings.Subject = runsetMailReport.Subject;
@@ -1003,6 +1004,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             mailOperation.MailFrom = runsetOperationConfigMail.MailSettings.MailFrom;
                             mailOperation.Email.MailFrom = runsetOperationConfigMail.MailSettings.MailFrom;
+                        }
+                        if (runsetOperationConfigMail.MailSettings.MailFromDisplayName != null)
+                        {
+                            mailOperation.MailFromDisplayName = runsetOperationConfigMail.MailSettings.MailFromDisplayName;
+                            mailOperation.Email.MailFromDisplayName = runsetOperationConfigMail.MailSettings.MailFromDisplayName;
                         }
                         if (runsetOperationConfigMail.MailSettings.MailTo != null)
                         {

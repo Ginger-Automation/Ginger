@@ -81,14 +81,8 @@ namespace GingerCore.ALM
                     AlmUserConfig.AlmType = AlmConfig.AlmType;
                     WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
                 }
-                if (string.IsNullOrEmpty(AlmConfig.ALMUserName))//to allow ovverride the value when running from CLI
-                {
-                    AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
-                }
-                if (string.IsNullOrEmpty(AlmConfig.ALMPassword))//to allow ovverride the value when running from CLI
-                {
-                    AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
-                }
+                AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
+                AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
             }
             else
             {
@@ -138,22 +132,8 @@ namespace GingerCore.ALM
             }
             AlmConfig.ALMServerURL = ALMServerUrl;
             AlmConfig.UseRest = UseRest;
-            if (string.IsNullOrEmpty(ALMUserName))//to allow ovverride from CLI
-            {
-                AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
-            }
-            else
-            {
-                AlmConfig.ALMUserName = ALMUserName;
-            }
-            if (string.IsNullOrEmpty(ALMPassword))//to allow ovverride from CLI
-            {
-                AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
-            }
-            else
-            {
-                AlmConfig.ALMPassword = ALMPassword;
-            }
+            AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
+            AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;           
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;

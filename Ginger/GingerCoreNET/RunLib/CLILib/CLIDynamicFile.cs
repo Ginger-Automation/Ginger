@@ -214,55 +214,66 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     try
                     {
-                        ALMConfig almConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == almTypeToConfigure).FirstOrDefault();
-                        if (almConfig == null)
+                        ALMConfig solutionAlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almTypeToConfigure);
+                        if (solutionAlmConfig == null)
                         {
                             //ADD
-                            almConfig = new ALMConfig() { AlmType = almTypeToConfigure };
-                            WorkSpace.Instance.Solution.ALMConfigs.Add(almConfig);
+                            solutionAlmConfig = new ALMConfig() { AlmType = almTypeToConfigure };
+                            WorkSpace.Instance.Solution.ALMConfigs.Add(solutionAlmConfig);
                         }
-                        if (!string.IsNullOrEmpty(almDetails.ALMSubType))
+                        ALMUserConfig userProfileAlmConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almTypeToConfigure);
+                        if (userProfileAlmConfig == null)
                         {
-                            almConfig.JiraTestingALM = (ALMIntegration.eTestingALMType)Enum.Parse(typeof(ALMIntegration.eTestingALMType), almDetails.ALMSubType);
+                            //ADD
+                            userProfileAlmConfig = new ALMUserConfig() { AlmType = almTypeToConfigure };                           
+                            WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(userProfileAlmConfig);
                         }
-                        if (!string.IsNullOrEmpty(almDetails.ServerURL))
+                        if (almDetails.ALMSubType != null)
                         {
-                            almConfig.ALMServerURL = almDetails.ServerURL;
+                            solutionAlmConfig.JiraTestingALM = (ALMIntegration.eTestingALMType)Enum.Parse(typeof(ALMIntegration.eTestingALMType), almDetails.ALMSubType);
                         }
-                        if (!string.IsNullOrEmpty(almDetails.User))
+                        if (almDetails.ServerURL != null)
                         {
-                            almConfig.ALMUserName = almDetails.User;
+                            solutionAlmConfig.ALMServerURL = almDetails.ServerURL;
+                        }
+                        if (almDetails.User != null)
+                        {
+                            solutionAlmConfig.ALMUserName = almDetails.User;
+                            userProfileAlmConfig.ALMUserName = almDetails.User;
                         }
                         if (almDetails.Password != null)
                         {
                             if (almDetails.PasswordEncrypted)
                             {
-                                almConfig.ALMPassword = EncryptionHandler.DecryptwithKey(almDetails.Password);
+                                string pass = EncryptionHandler.DecryptwithKey(almDetails.Password);
+                                solutionAlmConfig.ALMPassword = pass;
+                                userProfileAlmConfig.ALMPassword = pass;
                             }
                             else
                             {
-                                almConfig.ALMPassword = almDetails.Password;
+                                solutionAlmConfig.ALMPassword = almDetails.Password;
+                                userProfileAlmConfig.ALMPassword = almDetails.Password;
                             }
                         }
-                        if (!string.IsNullOrEmpty(almDetails.Domain))
+                        if (almDetails.Domain != null)
                         {
-                            almConfig.ALMDomain = almDetails.Domain;
+                            solutionAlmConfig.ALMDomain = almDetails.Domain;
                         }
-                        if (!string.IsNullOrEmpty(almDetails.Project))
+                        if (almDetails.Project != null)
                         {
-                            almConfig.ALMProjectName = almDetails.Project;
+                            solutionAlmConfig.ALMProjectName = almDetails.Project;
                         }
-                        if (!string.IsNullOrEmpty(almDetails.ProjectKey))
+                        if (almDetails.ProjectKey != null)
                         {
-                            almConfig.ALMProjectKey = almDetails.ProjectKey;
+                            solutionAlmConfig.ALMProjectKey = almDetails.ProjectKey;
                         }
-                        if (!string.IsNullOrEmpty(almDetails.ConfigPackageFolderPath))
+                        if (almDetails.ConfigPackageFolderPath != null)
                         {
-                            almConfig.ALMConfigPackageFolderPath = almDetails.ConfigPackageFolderPath;
+                            solutionAlmConfig.ALMConfigPackageFolderPath = almDetails.ConfigPackageFolderPath;
                         }
                         if (almDetails.UseRest != null)
                         {
-                            almConfig.UseRest = (bool)almDetails.UseRest;
+                            solutionAlmConfig.UseRest = (bool)almDetails.UseRest;
                         }
                         if (almDetails.IsDefault != null)
                         {
@@ -272,7 +283,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                                 ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
                                 currentDefAlm.DefaultAlm = false;
                             }
-                            almConfig.DefaultAlm = (bool)almDetails.IsDefault;
+                            solutionAlmConfig.DefaultAlm = (bool)almDetails.IsDefault;
                         }
                     }
                     catch (Exception ex)
