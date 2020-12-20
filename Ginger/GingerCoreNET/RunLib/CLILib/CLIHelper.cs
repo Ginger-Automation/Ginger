@@ -72,7 +72,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mDownloadUpgradeSolutionFromSourceControl = value;
                 OnPropertyChanged(nameof(DownloadUpgradeSolutionFromSourceControl));
             }
+        }
 
+        bool mSetAlmConnectionDetails;
+        public bool SetAlmConnectionDetails
+        {
+            get
+            {
+                return mSetAlmConnectionDetails;
+            }
+            set
+            {
+                mSetAlmConnectionDetails = value;
+                OnPropertyChanged(nameof(SetAlmConnectionDetails));
+            }
         }
 
         bool mRunAnalyzer;

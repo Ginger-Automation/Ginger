@@ -31,6 +31,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
 using RunsetOperations;
@@ -415,6 +416,64 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     executionConfig.SolutionScmDetails.ProxyPort = solution.SourceControl.SourceControlProxyPort.ToString();
                 }
                 executionConfig.SolutionScmDetails.UndoSolutionLocalChanges = false;
+            }
+            if (cliHelper.SetAlmConnectionDetails == true)
+            {
+                if (WorkSpace.Instance.Solution.ALMConfigs != null && WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
+                {
+                    executionConfig.AlmsDetails = new List<AlmDetails>();
+                    foreach (ALMConfig solutionAlmConfig in WorkSpace.Instance.Solution.ALMConfigs)
+                    {
+                        ALMUserConfig userProfileAlmConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == solutionAlmConfig.AlmType);
+                        AlmDetails almDetails = new AlmDetails();
+                        almDetails.ALMType = solutionAlmConfig.AlmType.ToString();
+                        if (solutionAlmConfig.JiraTestingALM != ALMIntegration.eTestingALMType.None)
+                        {
+                            almDetails.ALMSubType = solutionAlmConfig.JiraTestingALM.ToString();
+                        }
+                        if (!string.IsNullOrEmpty(solutionAlmConfig.ALMServerURL))
+                        {
+                            almDetails.ServerURL = solutionAlmConfig.ALMServerURL;
+                        }
+                        if (userProfileAlmConfig != null)
+                        {
+                            almDetails.User = userProfileAlmConfig.ALMUserName;
+                            almDetails.Password = EncryptionHandler.EncryptwithKey(userProfileAlmConfig.ALMPassword);
+                            almDetails.PasswordEncrypted = true;
+                        }
+                        else
+                        {
+                            almDetails.User = solutionAlmConfig.ALMUserName;
+                            almDetails.Password = EncryptionHandler.EncryptwithKey(solutionAlmConfig.ALMPassword);
+                            almDetails.PasswordEncrypted = true;
+                        }
+                        if (!string.IsNullOrEmpty(solutionAlmConfig.ALMDomain))
+                        {
+                            almDetails.Domain = solutionAlmConfig.ALMDomain;
+                        }
+                        if (!string.IsNullOrEmpty(solutionAlmConfig.ALMProjectName))
+                        {
+                            almDetails.Project = solutionAlmConfig.ALMProjectName;
+                        }
+                        if (!string.IsNullOrEmpty(solutionAlmConfig.ALMProjectKey))
+                        {
+                            almDetails.ProjectKey = solutionAlmConfig.ALMProjectKey;
+                        }
+                        if (!string.IsNullOrEmpty(solutionAlmConfig.ALMConfigPackageFolderPath))
+                        {
+                            almDetails.ConfigPackageFolderPath = solutionAlmConfig.ALMConfigPackageFolderPath;
+                        }
+                        if (solutionAlmConfig.UseRest)
+                        {
+                            almDetails.UseRest = true;
+                        }
+                        if (solutionAlmConfig.DefaultAlm)
+                        {
+                            almDetails.IsDefault = true;
+                        }
+                        executionConfig.AlmsDetails.Add(almDetails);
+                    }
+                }
             }
             executionConfig.SolutionLocalPath = solution.Folder;
 
