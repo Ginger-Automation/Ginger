@@ -564,6 +564,14 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public string CommonApplicationDataFolderPath
+        {
+            get
+            {
+                return General.CommonApplicationDataFolderPath;
+            }
+        }
+
         public string LocalUserApplicationDataFolderPath
         {
             get

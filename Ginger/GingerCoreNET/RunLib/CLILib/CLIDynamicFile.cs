@@ -235,6 +235,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         if (almDetails.ServerURL != null)
                         {
                             solutionAlmConfig.ALMServerURL = almDetails.ServerURL;
+                            userProfileAlmConfig.ALMServerURL = almDetails.ServerURL;
                         }
                         if (almDetails.User != null)
                         {
