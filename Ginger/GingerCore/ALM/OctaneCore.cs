@@ -21,11 +21,11 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
-using OctaneSDK.Connector;
-using OctaneSDK.Connector.Authentication;
-using OctaneSDK.Connector.Credentials;
-using OctaneSDK.Services;
-using OctaneSDK.Services.RequestContext;
+using OctaneSdkStandard.Connector;
+using OctaneSdkStandard.Connector.Authentication;
+using OctaneSdkStandard.Connector.Credentials;
+using OctaneSdkStandard.Services;
+using OctaneSdkStandard.Services.RequestContext;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,12 +36,12 @@ using System.Threading.Tasks;
 using Octane_Repository;
 using ALM_Common.Data_Contracts;
 using Octane_Repository.BLL;
-using OctaneSDK.Entities.Base;
-using OctaneSDK.Entities.WorkItems;
-using OctaneSDK.Entities.Tests;
-using OctaneSDK.Entities.Requirements;
+using OctaneSdkStandard.Entities.Base;
+using OctaneSdkStandard.Entities.WorkItems;
+using OctaneSdkStandard.Entities.Tests;
+using OctaneSdkStandard.Entities.Requirements;
 using GingerCore.ALM.QC;
-using OctaneSDK.Services.Queries;
+using OctaneSdkStandard.Services.Queries;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Web;
@@ -51,7 +51,7 @@ using Couchbase.Utils;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.IO;
 using System.IO.Compression;
-using OctaneSDK.Entities.Releases;
+using OctaneSdkStandard.Entities.Releases;
 using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.ALM
@@ -240,7 +240,7 @@ namespace GingerCore.ALM
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
-            Dictionary<string, string> defectsBFs = new Dictionary<string, string>();
+            Dictionary<string, List<string>> defectsBFs = new Dictionary<string, List<string>>();
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
                 Dictionary<string, string> filedsToUpdate = new Dictionary<string, string>();
@@ -274,17 +274,25 @@ namespace GingerCore.ALM
 
                 if (defectForOpening.Value.ContainsKey("BFExternalID1") && !string.IsNullOrEmpty(defectForOpening.Value["BFExternalID1"]))
                 {
-                    defectsBFs.Add(defectForOpening.Value["BFExternalID1"], newDefectID);
+                    if (defectsBFs.ContainsKey(defectForOpening.Value["BFExternalID1"]))
+                    {
+                        var tempList = defectsBFs[defectForOpening.Value["BFExternalID1"]];
+                        tempList.Add(newDefectID);
+                        defectsBFs[defectForOpening.Value["BFExternalID1"]] = tempList;
+                    }
+                    else
+                    {
+                        defectsBFs.Add(defectForOpening.Value["BFExternalID1"], new List<string>() { newDefectID });
+                    }
                 }
             }
 
             // link defect to test suite
             if (defectsBFs.Any())
             {
-                var defectsGroupByBF = defectsBFs.GroupBy(f => f.Key);
-                foreach (var item in defectsGroupByBF)
+                foreach (var item in defectsBFs)
                 {
-                    AttachDefectToTS(item.Key, item.Select(f => f.Value).ToList());
+                    AttachDefectToTS(item.Key, item.Value);
                 }
             }
 
@@ -313,7 +321,7 @@ namespace GingerCore.ALM
 
                 TestSuite created = Task.Run(() =>
                 {
-                    return this.octaneRepository.UpdateEntity<TestSuite>(GetLoginDTO(), testSuite);
+                    return this.octaneRepository.UpdateTestSuite(GetLoginDTO(), testSuite);
                 }).Result;
 
                 int ts = Convert.ToInt32(created.Id.ToString());
@@ -502,8 +510,8 @@ namespace GingerCore.ALM
                 byte[] fileData = br.ReadBytes((Int32)fs.Length);
                 var tt = Task.Run(() =>
                 {
-                   return this.octaneRepository.AttachEntity(GetLoginDTO(), new TestSuite() { Id = new EntityId(testSuiteId) }, 
-                        zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
+                    return this.octaneRepository.AttachEntity(GetLoginDTO(), new TestSuite() { Id = new EntityId(testSuiteId) },
+                         zipFileName.Split(Path.DirectorySeparatorChar).Last(), fileData, "text/zip", null);
                 }).Result;
                 fs.Close();
                 return true;
@@ -808,7 +816,7 @@ namespace GingerCore.ALM
             {
                 foreach (Match m in mc)
                 {
-                    callingTCs.Add(m.Value.Replace('@',' ').Trim());
+                    callingTCs.Add(m.Value.Replace('@', ' ').Trim());
                 }
             }
             return callingTCs;
@@ -938,7 +946,7 @@ namespace GingerCore.ALM
                 //Create Activities Group + Activities for each TC
                 foreach (QC.QCTSTest tc in testSet.Tests)
                 {
-                    AddTCtoFlow(busFlow, busVariables, tc);                  
+                    AddTCtoFlow(busFlow, busVariables, tc);
                 }
 
                 //Add the BF variables (linked variables)
@@ -1262,7 +1270,7 @@ namespace GingerCore.ALM
             {
                 foreach (var item in CallingTCs)
                 {
-                    var temp = ImportTSTest(new QCTestInstance() { Id = item , CycleId = busFlow.ExternalID });
+                    var temp = ImportTSTest(new QCTestInstance() { Id = item, CycleId = busFlow.ExternalID });
                     if (temp != null)
                     {
                         AddTCtoFlow(busFlow, busVariables, temp);
@@ -1327,9 +1335,9 @@ namespace GingerCore.ALM
                 data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
             });
             AddEntityFieldValues(testSetFields, testSuite, "test_suite");
-            TestSuite created = Task.Run(() =>
+            TestSuite created = (TestSuite)Task.Run(() =>
             {
-                return this.octaneRepository.UpdateEntity<TestSuite>(GetLoginDTO(), testSuite);
+                return this.octaneRepository.UpdateTestSuite(GetLoginDTO(), testSuite);
             }).Result;
 
             int testSuiteId = Convert.ToInt32(created.Id.ToString());
@@ -1579,7 +1587,10 @@ namespace GingerCore.ALM
 
             AddEntityFieldValues(testCaseFields, test, "test_manual");
 
-            test = Task.Run(() => { return this.octaneRepository.UpdateEntity(GetLoginDTO(), test, null); }).Result;
+            test = (TestManual)Task.Run(() =>
+            {
+                return this.octaneRepository.UpdateTestCase(GetLoginDTO(), test, null);
+            }).Result;
 
             activitiesGroup.ExternalID = test.Id.ToString();
             activitiesGroup.ExternalID2 = test.Id.ToString();
