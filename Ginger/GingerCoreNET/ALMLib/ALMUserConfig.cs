@@ -26,6 +26,20 @@ namespace GingerCoreNET.ALMLib
 {
     public class ALMUserConfig : RepositoryItemBase
     {
+        private string mALMServerURL;
+        public string ALMServerURL
+        {
+            get { return mALMServerURL; }
+            set
+            {
+                if (mALMServerURL != value)
+                {
+                    mALMServerURL = value;
+                    OnPropertyChanged(nameof(ALMServerURL));
+                }
+            }
+        }
+
         private string mALMUserName;
         [IsSerializedForLocalRepository]
         public string ALMUserName

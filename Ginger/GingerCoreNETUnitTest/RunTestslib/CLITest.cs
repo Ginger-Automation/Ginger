@@ -19,6 +19,7 @@ using Ginger.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using System.Threading.Tasks;
+using GingerCoreNET.ALMLib;
 
 namespace WorkspaceHold
 {
@@ -764,6 +765,60 @@ namespace WorkspaceHold
             //Runner 3
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Name, "Virtual Runner 3", "Validating correct Runner Name");
             Assert.AreEqual(WorkSpace.Instance.RunsetExecutor.Runners[2].Status.ToString(), "Blocked", "Validating correct Runner Status");
+        }
+
+        /// <summary>
+        /// Testing JSON virtual Runset with ALM Configurations
+        /// </summary>   
+        [TestMethod]
+        public void CLIDynamicJSON_ALM_Details_Test()
+        {
+            // Arrange
+            string jsonConfigFilePath = CreateTempJSONConfigFile(Path.Combine(TestResources.GetTestResourcesFolder("CLI"), "CLIDynamicJSON_Existing_ALM_Details.Ginger.AutoRunConfigs.json"), mSolutionFolder);
+
+            // Act            
+            CLIProcessor CLI = new CLIProcessor();
+            WorkSpace.Instance.DoNotResetWorkspaceArgsOnClose = true;
+            CLI.ExecuteArgs(new string[] { "dynamic", "-f", jsonConfigFilePath });
+
+            ALMConfig octaneSolConfig= WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            ALMUserConfig octaneUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.Octane).FirstOrDefault();
+            ALMConfig qcSolConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.QC).FirstOrDefault();
+            ALMUserConfig qcUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.QC).FirstOrDefault();
+            ALMConfig jiraSolConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.Jira).FirstOrDefault();
+            ALMUserConfig jiraUsrConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.Where(x => x.AlmType == ALMIntegration.eALMType.Jira).FirstOrDefault();
+
+            // Assert      
+            //Validate Octane ALM details on Solution and User profile ALM details which been used for actual ALM connection
+            Assert.AreEqual(octaneSolConfig.ALMServerURL, @"https://Octane.com:47168", "Validating correct ALMServerURL");
+            Assert.AreEqual(octaneUsrConfig.ALMServerURL, @"https://Octane.com:47168", "Validating correct ALMServerURL");
+            Assert.AreEqual(octaneSolConfig.ALMUserName, "AAA_j06lwznjzw8ny", "Validating correct ALMUserName");
+            Assert.AreEqual(octaneUsrConfig.ALMUserName, "AAA_j06lwznjzw8ny", "Validating correct ALMUserName");
+            Assert.AreEqual(octaneSolConfig.ALMPassword, "@205372322126A", "Validating correct ALMPassword");
+            Assert.AreEqual(octaneUsrConfig.ALMPassword, "@205372322126A", "Validating correct ALMPassword");
+            Assert.AreEqual(octaneSolConfig.ALMDomain, "domainCLI", "Validating correct ALMDomain");
+            Assert.AreEqual(octaneSolConfig.ALMProjectName, "projectCLI", "Validating correct ALMProjectName");            
+
+            //Validate QC ALM details on Solution and User profile ALM details which been used for actual ALM connection
+            Assert.AreEqual(qcSolConfig.ALMServerURL, @"http:/QC.CLI", "Validating correct ALMServerURL");
+            Assert.AreEqual(qcUsrConfig.ALMServerURL, @"http:/QC.CLI", "Validating correct ALMServerURL");
+            Assert.AreEqual(qcSolConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
+            Assert.AreEqual(qcUsrConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
+            Assert.AreEqual(qcSolConfig.ALMPassword, "CLIUPass", "Validating correct ALMPassword");
+            Assert.AreEqual(qcUsrConfig.ALMPassword, "CLIUPass", "Validating correct ALMPassword");
+            Assert.AreEqual(qcSolConfig.ALMDomain, "domainCLI", "Validating correct ALMDomain");
+            Assert.AreEqual(qcSolConfig.ALMProjectName, "projectCLI", "Validating correct ALMProjectName");
+            Assert.AreEqual(qcSolConfig.ALMProjectKey, "projectKeyCLI", "Validating correct ALMProjectKey");
+            Assert.AreEqual(qcSolConfig.UseRest, true, "Validating correct UseRest");
+
+            //Validate Jira ALM details on Solution and User profile ALM details which been used for actual ALM connection
+            Assert.AreEqual(jiraSolConfig.ALMServerURL, @"http:/Jira.CLI", "Validating correct ALMServerURL");
+            Assert.AreEqual(jiraUsrConfig.ALMServerURL, @"http:/Jira.CLI", "Validating correct ALMServerURL");
+            Assert.AreEqual(jiraSolConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
+            Assert.AreEqual(jiraUsrConfig.ALMUserName, "CLIUser", "Validating correct ALMUserName");
+            Assert.AreEqual(jiraSolConfig.ALMPassword, "53d7ccd462fbfbc43c6dc9f3f638747582df333b", "Validating correct ALMPassword");
+            Assert.AreEqual(jiraUsrConfig.ALMPassword, "53d7ccd462fbfbc43c6dc9f3f638747582df333b", "Validating correct ALMPassword");
+            Assert.AreEqual(jiraSolConfig.JiraTestingALM, ALMIntegration.eTestingALMType.Xray, "Validating correct JiraTestingALM");
         }
 
         /// <summary>

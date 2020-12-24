@@ -29,6 +29,27 @@ namespace Amdocs.Ginger.Common.GeneralLib
 {
     public static class General
     {
+        static string mCommonApplicationDataFolderPath = null;
+        public static string CommonApplicationDataFolderPath
+        {
+            get
+            {
+                if (mCommonApplicationDataFolderPath == null)
+                {
+                    // DoNotVerify so on Linux it will not return empty
+                    string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
+
+                    folderPath = Path.Combine(folderPath, "amdocs", "Ginger");
+
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    mCommonApplicationDataFolderPath = folderPath;
+                }
+                return mCommonApplicationDataFolderPath;
+            }
+        }
 
         static string mAppDataFolder = null;
         public static string LocalUserApplicationDataFolderPath
