@@ -412,7 +412,7 @@ namespace Ginger
                     string userProfileFileName = "Ginger.UserProfile.xml";
                     string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, userProfileFileName);
                     string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, userProfileFileName);
-                    if (File.Exists(sharedUserProfilePath))
+                    if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
                     {
                         mUserProfileFilePath = sharedUserProfilePath;
                         Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile is been used, path:'{0}'", sharedUserProfilePath));

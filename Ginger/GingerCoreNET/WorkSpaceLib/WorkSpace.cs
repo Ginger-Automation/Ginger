@@ -523,7 +523,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
+        public bool DoNotResetWorkspaceArgsOnClose { get; set; }
         public void CloseSolution()
         {
             //Do cleanup
@@ -540,10 +540,13 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             //Reset values
-            mPluginsManager = new PluginsManager();
-            SolutionRepository = null;
-            SourceControl = null;            
-            Solution = null;
+            if (!DoNotResetWorkspaceArgsOnClose)
+            {
+                mPluginsManager = new PluginsManager();
+                SolutionRepository = null;
+                SourceControl = null;
+                Solution = null;
+            }
 
             EventHandler.SolutionClosed();
         }
