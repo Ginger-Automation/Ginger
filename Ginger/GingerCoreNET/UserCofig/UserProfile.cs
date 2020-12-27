@@ -401,20 +401,43 @@ namespace Ginger
 
         public UserTypeHelper UserTypeHelper { get; set; }
 
+        static private bool mSharedUserProfileBeenUsed;
+        static string mUserProfileFilePath;
         public static string UserProfileFilePath
         {
             get
             {
-                return Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                if (mUserProfileFilePath == null)
+                {
+                    string userProfileFileName = "Ginger.UserProfile.xml";
+                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, userProfileFileName);
+                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, userProfileFileName);
+                    if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
+                    {
+                        mUserProfileFilePath = sharedUserProfilePath;
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile is been used, path:'{0}'", sharedUserProfilePath));
+                        mSharedUserProfileBeenUsed = true;
+                    }
+                    else
+                    {
+                        mUserProfileFilePath = specificUserProfilePath;
+                    }
+                }
+                return mUserProfileFilePath;
             }
         }
 
         public void SaveUserProfile()
-        {
+        {            
+            if (mSharedUserProfileBeenUsed)
+            {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Not performing User Profile Save because Shared User Profile is been used"));
+                return;
+            }
+
             try
             {
                 SaveRecentAppAgentsMapping();
-
             }
             catch (Exception ex)
             {

@@ -644,6 +644,11 @@ namespace Ginger.ALM
 
         public bool AutoALMProjectConnect(eALMConnectType almConnectStyle = eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
         {
+            if (AlmCore == null)//added because when running from CLI the AlmCore is Null on connection
+            {
+                UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+            }
+
             int retryConnect = 0;
             bool isConnected = false;
             while (!isConnected && retryConnect < 2)

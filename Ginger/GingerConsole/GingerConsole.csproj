@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.3" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.6" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
   </ItemGroup>

@@ -138,7 +138,9 @@ namespace Amdocs.Ginger.GingerConsole
 
         private async static void ProcessArgs(string[] args)
         {
-            InitWorkSpace(false);                 
+            InitWorkSpace(false);
+            WorkSpace.Instance.RunningInExecutionMode = true;
+            Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console   
             WorkSpace.Instance.InitWorkspace(new GingerConsoleWorkspaceReporter(), new RepoCoreItem());
             CLIProcessor CLI = new CLIProcessor();
            await CLI.ExecuteArgs(args);            
