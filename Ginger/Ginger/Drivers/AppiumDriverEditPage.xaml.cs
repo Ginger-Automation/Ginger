@@ -53,7 +53,7 @@ namespace Ginger.Drivers
 
             view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header="Capability", BindingMode = BindingMode.OneWay, WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ParamValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 });
 
             xCapabilitiesGrid.SetAllColumnsDefaultView(view);
