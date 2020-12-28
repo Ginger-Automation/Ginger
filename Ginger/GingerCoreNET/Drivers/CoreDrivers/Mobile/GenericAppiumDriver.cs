@@ -59,11 +59,11 @@ namespace Amdocs.Ginger.CoreNET
         //    }
         //}
 
-        public enum eMobileDeviceType
-        {
-            Phone = 0,
-            Tablet = 1
-        }
+        //public enum eMobileDeviceType
+        //{
+        //    Phone = 0,
+        //    Tablet = 1
+        //}
 
         public enum eMobilePlatformType
         {
@@ -166,7 +166,7 @@ namespace Amdocs.Ginger.CoreNET
         private AppiumDriver<AppiumWebElement> Driver;//appium on top selenium
         //private SeleniumDriver mSeleniumDriver;//selenium base
         public eMobilePlatformType DriverPlatformType;
-        public eMobileDeviceType DriverDeviceType;
+        //public eMobileDeviceType DriverDeviceType;
 
         //public GenericAppiumDriver(eMobilePlatformType platformType, BusinessFlow BF)
         public GenericAppiumDriver(BusinessFlow BF)
@@ -265,14 +265,14 @@ namespace Amdocs.Ginger.CoreNET
                     serverUri = new Uri("http://" + AppiumServerIP + ":" + AppiumServerPort + "/wd/hub");
                 }
 
-                if (DeviceType != null && DeviceType.Trim().ToUpper() == "TABLET")
-                {
-                    DriverDeviceType = eMobileDeviceType.Tablet;
-                }
-                else
-                {
-                    DriverDeviceType = eMobileDeviceType.Phone;
-                }
+                //if (DeviceType != null && DeviceType.Trim().ToUpper() == "TABLET")
+                //{
+                //    DriverDeviceType = eMobileDeviceType.Tablet;
+                //}
+                //else
+                //{
+                //    DriverDeviceType = eMobileDeviceType.Phone;
+                //}
 
                 //set timeout
                 if (NewCommandTimeout < 0)

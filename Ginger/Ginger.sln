@@ -65,11 +65,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerPluginPlatforms", "Gi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerCoreTest", "GingerCoreTest\GingerCoreTest.csproj", "{755ED4B6-2CA1-46B0-A8FC-8B4771982023}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerMacOsSupport", "GingerMacOsSupport\GingerMacOsSupport.csproj", "{050486CB-217B-4EC8-8210-2284A6A7CAE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerMacOsSupport", "GingerMacOsSupport\GingerMacOsSupport.csproj", "{050486CB-217B-4EC8-8210-2284A6A7CAE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerLinuxOsSupport", "GingerLinuxOsSupport\GingerLinuxOsSupport.csproj", "{488BFB56-6092-4FFD-BB91-B14F1760B837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerLinuxOsSupport", "GingerLinuxOsSupport\GingerLinuxOsSupport.csproj", "{488BFB56-6092-4FFD-BB91-B14F1760B837}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GingerWin64OsSupport", "GingerWin64OsSupport\GingerWin64OsSupport.csproj", "{76149BD0-05B7-4190-A2C2-5EF0284D5587}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GingerWin64OsSupport", "GingerWin64OsSupport\GingerWin64OsSupport.csproj", "{76149BD0-05B7-4190-A2C2-5EF0284D5587}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -129,7 +129,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case Agent.eDriverType.PerfectoMobileIOS:
                 case Agent.eDriverType.PerfectoMobileIOSWeb:
                     return (typeof(PerfectoDriver));
-                case Agent.eDriverType.GenericAppium:
+                case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
 
                 default:
@@ -169,7 +169,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                     return new PerfectoDriver(PerfectoDriver.eContextType.NativeIOS, zAgent.BusinessFlow);
                 case Agent.eDriverType.PerfectoMobileIOSWeb:
                     return new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, zAgent.BusinessFlow);
-                case Agent.eDriverType.GenericAppium:
+                case Agent.eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);                           
                 default:
                     {
