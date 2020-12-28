@@ -136,19 +136,35 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent.Driver is IWindowExplorer)
                     {
-                        xWindowExplorerItemBtn.Visibility = Visibility.Visible;
-                        xLiveSpyItemBtn.Visibility = Visibility.Visible;
+                        xWindowExplorerItemBtn.xButton.IsEnabled = true;
+                        xLiveSpyItemBtn.xButton.IsEnabled = true;
+
+                        xWindowExplorerItemBtn.IsEnabled = true;
+                        xLiveSpyItemBtn.IsEnabled = true;
+
+                        //xWindowExplorerItemBtn.Visibility = Visibility.Visible;
+                        //xLiveSpyItemBtn.Visibility = Visibility.Visible;
                     }
                     if (mContext.Agent.Driver is IRecord)
                     {
-                        xRecordItemBtn.Visibility = Visibility.Visible;
+                        xRecordItemBtn.xButton.IsEnabled = true;
+                        xRecordItemBtn.IsEnabled = true;
+                        //xRecordItemBtn.Visibility = Visibility.Visible;
                     }
                 }
                 else
                 {
-                    xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
-                    xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
-                    xRecordItemBtn.Visibility = Visibility.Collapsed;
+                    xWindowExplorerItemBtn.xButton.IsEnabled = false;
+                    xLiveSpyItemBtn.xButton.IsEnabled = false;
+                    xRecordItemBtn.xButton.IsEnabled = false;
+
+                    xWindowExplorerItemBtn.IsEnabled = false;
+                    xLiveSpyItemBtn.IsEnabled = false;
+                    xRecordItemBtn.IsEnabled = false;
+
+                    //xWindowExplorerItemBtn.Visibility = Visibility.Collapsed;
+                    //xLiveSpyItemBtn.Visibility = Visibility.Collapsed;
+                    //xRecordItemBtn.Visibility = Visibility.Collapsed;
                 }
             });
         }

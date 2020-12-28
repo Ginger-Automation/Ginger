@@ -463,6 +463,12 @@
     <Compile Include="UserControlsLib\TextEditor\ValueExpression\ValueExpressionFlowDetailsEditorPage.xaml.cs">
       <DependentUpon>ValueExpressionFlowDetailsEditorPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControlsLib\UCElementDetails.xaml.cs">
+      <DependentUpon>UCElementDetails.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControlsLib\UCExplorerWindowSelection.xaml.cs">
+      <DependentUpon>UCExplorerWindowSelection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControlsLib\ucShowItemID.xaml.cs">
       <DependentUpon>ucShowItemID.xaml</DependentUpon>
     </Compile>
@@ -2823,6 +2829,14 @@
     <Page Include="Run\RunSetActions\RunSetActionSendDataToExternalSourceEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControlsLib\UCElementDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControlsLib\UCExplorerWindowSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControlsLib\ucShowItemID.xaml">
       <SubType>Designer</SubType>
