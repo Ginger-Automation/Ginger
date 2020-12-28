@@ -36,16 +36,24 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (mCommonApplicationDataFolderPath == null)
                 {
-                    // DoNotVerify so on Linux it will not return empty
-                    string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
-
-                    folderPath = Path.Combine(folderPath, "amdocs", "Ginger");
-
-                    if (!Directory.Exists(folderPath))
+                    try
                     {
-                        Directory.CreateDirectory(folderPath);
+                        // DoNotVerify so on Linux it will not return empty
+                        string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData, Environment.SpecialFolderOption.Create);
+
+                        folderPath = Path.Combine(folderPath, "amdocs", "Ginger");
+
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+                        mCommonApplicationDataFolderPath = folderPath;
                     }
-                    mCommonApplicationDataFolderPath = folderPath;
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "Failed to get/create the Common users Ginger workspace folder path", ex);
+                        mCommonApplicationDataFolderPath = string.Empty;
+                    }
                 }
                 return mCommonApplicationDataFolderPath;
             }
@@ -58,21 +66,29 @@ namespace Amdocs.Ginger.Common.GeneralLib
             {
                 if (mAppDataFolder == null)
                 {
-                    // DoNotVerify so on Linux it will not return empty
-                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
-
-                    if (!Directory.Exists(appDataFolder))  // on Linux it sometimes not exist like on Azure build
+                    try
                     {
-                        Directory.CreateDirectory(appDataFolder);
+                        // DoNotVerify so on Linux it will not return empty
+                        string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.DoNotVerify);
+
+                        if (!Directory.Exists(appDataFolder))  // on Linux it sometimes not exist like on Azure build
+                        {
+                            Directory.CreateDirectory(appDataFolder);
+                        }
+
+                        appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
+
+                        if (!Directory.Exists(appDataFolder))
+                        {
+                            Directory.CreateDirectory(appDataFolder);
+                        }
+                        mAppDataFolder = appDataFolder;
                     }
-
-                    appDataFolder = Path.Combine(appDataFolder, "amdocs", "Ginger");
-
-                    if (!Directory.Exists(appDataFolder))
+                    catch (Exception ex)
                     {
-                        Directory.CreateDirectory(appDataFolder);
+                        Reporter.ToLog(eLogLevel.WARN, "Failed to get/create the user Ginger workspace folder path", ex);
+                        mAppDataFolder = string.Empty;
                     }
-                    mAppDataFolder = appDataFolder;
                 }
                 return mAppDataFolder;
             }
