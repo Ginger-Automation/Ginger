@@ -81,6 +81,10 @@ namespace GingerCore.ALM
                     AlmUserConfig.AlmType = AlmConfig.AlmType;
                     WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
                 }
+                if (AlmUserConfig.ALMServerURL != null)
+                {
+                    AlmConfig.ALMServerURL = AlmUserConfig.ALMServerURL;
+                }
                 AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
                 AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
             }
@@ -130,10 +134,17 @@ namespace GingerCore.ALM
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
                 AlmConfigs.Add(AlmConfig);
             }
-            AlmConfig.ALMServerURL = ALMServerUrl;
+            if (CurrentAlmUserConfigurations.ALMServerURL != null)
+            {
+                AlmConfig.ALMServerURL = CurrentAlmUserConfigurations.ALMServerURL;
+            }
+            else
+            {
+                AlmConfig.ALMServerURL = ALMServerUrl;
+            }
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
-            AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
+            AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;           
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
             AlmConfig.ALMProjectKey = ALMProjectKey;

@@ -357,6 +357,19 @@ public class EditorHelper {
 			
 			Element elementTag = CellComponent.getAllElements().first().child(0);
 			
+			
+			if(!elementTag.tagName().contains("input") && !elementTag.tagName().contains("a"))
+			{
+				for(Element e: CellComponent.getAllElements())
+				{
+					if(e.tagName().contains("input") || e.tagName().contains("a"))
+					{
+						elementTag = e;
+						break;
+					}
+				}
+			}
+			
 			if (elementTag.tagName().contains("input"))
 			{
 				Element inputElement = CellComponent.select("input").first();
@@ -449,11 +462,35 @@ public class EditorHelper {
 							try {
 								int position = d.createPosition(el.getStartOffset()).getOffset();
 								Rectangle r = ((JEditorPane) mEditor).modelToView(position);
-								MouseEvent me = new MouseEvent(((JEditorPane) mEditor), MouseEvent.MOUSE_CLICKED,
+							final MouseEvent me = new MouseEvent(((JEditorPane) mEditor), MouseEvent.MOUSE_CLICKED,
 										System.currentTimeMillis(), InputEvent.BUTTON1_MASK, r.x, r.y, 1, false);
 
-								((JEditorPane) mEditor).dispatchEvent(me);
-								response[0] = true;
+								
+							Runnable rr = new Runnable() {
+									public void run() {
+										response[0] = true;
+										((JEditorPane) mEditor).dispatchEvent(me);
+									}
+								};
+								
+								if (controlAction.equals("AsyncClick")) 
+								{
+									Thread t1 = new Thread(rr);
+									t1.start();
+																		
+									try {
+										while (response[0] != true) {
+											Thread.sleep(1);
+										}
+									} catch (Exception e) {
+										return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"PayLoad ClickComponent Error: " + e.getMessage());
+									}
+								}
+								else
+								{
+									rr.run();
+								}
+								
 
 							} catch (BadLocationException e) {
 								e.printStackTrace();
@@ -477,38 +514,53 @@ public class EditorHelper {
 		}
 		
 		private int GetRowCount(Element table)
-		{			
-			return table.getElementsByTag("tr").size()-1;
+		{
+			return table.getElementsByTag("tr").size();
 		}
+		
 		private int GetColumnCount(Element table)
 		{
-			List<String> ColomumnNames = new ArrayList<String>();
-			Elements cells=table.getElementsByTag("td");
-
-
-			for(Element e: cells)
+			int colCount =0;
+			Elements columns=table.getElementsByTag("tr").first().getElementsByTag("td");
+			
+			for(Element e:columns)
 			{
-				if(e.className().equals("header"))
+				if(e.className().equals("header") || (e.className().equals("title")))
 				{
-
-					ColomumnNames.add(e.text());
+					colCount++;
 				}
 			}
-			return ColomumnNames.size();
+			int rowOneColumnCount = table.getElementsByTag("tr").get(1).getElementsByTag("td").size();
+			if(colCount < rowOneColumnCount)
+			{
+				return rowOneColumnCount;
+			}
+			
+			return colCount;
 		}
 		
 		private List<String> GetColumnNames(Element table)
 		{
 			List<String> ColomumnNames= new ArrayList<String>();
+				
 			Elements cells=table.getElementsByTag("td");
 			for(Element e: cells)
 			{
 				if(e.className().equals("header"))
 				{
-
+					ColomumnNames.add(e.text());
+				}
+				
+			}
+			
+			for(Element e: cells)
+			{
+				if(e.className().equals("title"))
+				{
 					ColomumnNames.add(e.text());
 				}
 			}
+
 			return ColomumnNames;
 		}
 		
@@ -517,7 +569,7 @@ public class EditorHelper {
 		{
 			Elements rowElements=table.getElementsByTag("tr");
 			
-			Element targetRow= rowElements.get(row+1);
+			Element targetRow= rowElements.get(row);
 			
 			Elements columns= targetRow.getElementsByTag("td");
 			
