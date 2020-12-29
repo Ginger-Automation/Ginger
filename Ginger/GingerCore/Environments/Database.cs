@@ -766,19 +766,21 @@ namespace GingerCore.Environments
                             Headers.Add(reader.GetName(i));
                         }
 
-                        while (reader.Read())
-                        {
 
-                            List<string> record = new List<string>();
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            while (reader.IsClosed || reader.Read())
                             {
-                                record.Add(reader[i].ToString());
-                            }
-                            Records.Add(record);
-                        }
 
-                        ReturnList.Add(Headers);
-                        ReturnList.Add(Records);
+                                List<string> record = new List<string>();
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    record.Add(reader[i].ToString());
+                                }
+                                Records.Add(record);
+                            }
+
+                            ReturnList.Add(Headers);
+                            ReturnList.Add(Records);
+                        
                     }                
             }
             catch (Exception e)
@@ -788,8 +790,11 @@ namespace GingerCore.Environments
             }
             finally
             {
-                if(reader!=null)
+                if(reader!=null && !reader.IsClosed)
+                {
                     reader.Close();
+                }
+                   
             }
                 return ReturnList;            
         }
