@@ -746,42 +746,44 @@ namespace GingerCore.Environments
             DbDataReader reader = null;
             try
             {
-                if (oConn == null)
+                if (oConn == null || oConn.State.Equals(ConnectionState.Closed))
+                {
                     IsConnected = Connect();
-                    if (IsConnected || oConn!=null)
+                }
+                    
+                if (IsConnected || oConn!=null)
+                {
+                    DbCommand command = oConn.CreateCommand();
+                    command.CommandText = SQL;
+                    command.CommandType = CommandType.Text;
+                    if ((timeout != null) && (timeout > 0))
+                        command.CommandTimeout = (int)timeout;
+
+
+                    // Retrieve the data.
+                    reader = command.ExecuteReader();
+
+                    // Create columns headers
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        DbCommand command = oConn.CreateCommand();
-                        command.CommandText = SQL;
-                        command.CommandType = CommandType.Text;
-                        if ((timeout != null) && (timeout > 0))
-                            command.CommandTimeout = (int)timeout;
+                        Headers.Add(reader.GetName(i));
+                    }
 
 
-                        // Retrieve the data.
-                        reader = command.ExecuteReader();
-
-                        // Create columns headers
+                    while (reader.IsClosed || reader.Read())
+                    {
+                        List<string> record = new List<string>();
                         for (int i = 0; i < reader.FieldCount; i++)
                         {
-                            Headers.Add(reader.GetName(i));
+                            record.Add(reader[i].ToString());
                         }
+                        Records.Add(record);
+                    }
 
-
-                            while (reader.IsClosed || reader.Read())
-                            {
-
-                                List<string> record = new List<string>();
-                                for (int i = 0; i < reader.FieldCount; i++)
-                                {
-                                    record.Add(reader[i].ToString());
-                                }
-                                Records.Add(record);
-                            }
-
-                            ReturnList.Add(Headers);
-                            ReturnList.Add(Records);
+                    ReturnList.Add(Headers);
+                    ReturnList.Add(Records);
                         
-                    }                
+                }                
             }
             catch (Exception e)
             {
