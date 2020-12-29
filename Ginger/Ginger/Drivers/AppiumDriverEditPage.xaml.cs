@@ -27,21 +27,31 @@ namespace Ginger.Drivers
     public partial class AppiumDriverEditPage : Page
     {
         Agent mAgent = null;
+        DriverConfigParam mAppiumServer;
+        DriverConfigParam mAppiumCapabilities;
 
         public AppiumDriverEditPage(Agent appiumAgent)
         {
-            mAgent = appiumAgent;
             InitializeComponent();
+            
+            mAgent = appiumAgent;
 
+            //mAgent.InitDriverConfigs();
             BindConfigurationsFields();
         }
 
         private void BindConfigurationsFields()
         {
-            if (mAgent.DriverConfiguration == null) mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+            if (mAgent.DriverConfiguration == null)
+            {
+                mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+            }
 
-            DriverConfigParam appiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer), "http://127.0.0.1:4444");
-            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, appiumServer, "Value");
+            mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer), "http://127.0.0.1:4444");
+            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, "Value");
+
+            mAppiumCapabilities = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumCapabilities));
+            SetCapabilitiesGridView();
         }
 
         private void SetCapabilitiesGridView()
@@ -61,27 +71,34 @@ namespace Ginger.Drivers
 
             xCapabilitiesGrid.AddToolbarTool(eImageType.Reset, "Reset Capabilities", new RoutedEventHandler(ResetCapabilities));
             xCapabilitiesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddCapability));
+
+            if (mAppiumCapabilities.MultiValues == null)//not need to be here- need more generic
+            {
+                mAppiumCapabilities.MultiValues = new ObservableList<DriverConfigParam>(); 
+            }
+            xCapabilitiesGrid.DataSourceList = mAppiumCapabilities.MultiValues;
         }
 
         private void ResetCapabilities(object sender, RoutedEventArgs e)
         {
-            mAgent.InitDriverConfigs();
-            InitConfigGrid();
+            //mAgent.InitDriverConfigs();
+            InitCapabilities();
         }
 
         private void AddCapability(object sender, RoutedEventArgs e)
         {
-            mAgent.AdvanceAgentConfigurations.Add(new DriverConfigParam());
+            mAppiumCapabilities.MultiValues.Add(new DriverConfigParam());
         }
 
-        private void InitConfigGrid()
+        private void InitCapabilities()
         {
-            if (mAgent.DriverConfiguration == null)
-            {
-                mAgent.InitDriverConfigs();
-                if (mAgent.DriverConfiguration == null)
-                    Reporter.ToUser(eUserMsgKey.DriverConfigUnknownDriverType, mAgent.DriverType);
-            }
+            //if (mAgent.DriverConfiguration == null)
+            //{
+            //    mAgent.InitDriverConfigs();
+            //    if (mAgent.DriverConfiguration == null)
+            //        Reporter.ToUser(eUserMsgKey.DriverConfigUnknownDriverType, mAgent.DriverType);
+            //}
+
             xCapabilitiesGrid.DataSourceList = mAgent.DriverConfiguration;
         }
 

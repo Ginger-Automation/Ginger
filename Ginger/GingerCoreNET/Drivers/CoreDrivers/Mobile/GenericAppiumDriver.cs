@@ -163,6 +163,11 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session")]
         public int NewCommandTimeout { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredMultiValues]
+        [UserConfiguredDescription("Appium capabilities")]
+        public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
+
         private AppiumDriver<AppiumWebElement> Driver;//appium on top selenium
         //private SeleniumDriver mSeleniumDriver;//selenium base
         public eMobilePlatformType DriverPlatformType;

@@ -598,51 +598,71 @@ namespace GingerCore
 
                 SetDriverMissingParams(DriverClass);
 
+                ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
                 foreach (DriverConfigParam DCP in DriverConfiguration)
                 {
-                    //process Value expression in case used
-                    ValueExpression VE = new ValueExpression(ProjEnvironment, BusinessFlow, DSList);
-                    VE.Value = DCP.Value;
-                    string value = VE.ValueCalculated;
+                    string value = null;
+                    ObservableList<DriverConfigParam> multiValues = null;
 
+                    //process Value expression in case used                    
+                    if (DCP.MultiValues != null)
+                    {
+                        multiValues = new ObservableList<DriverConfigParam>();
+                        foreach (DriverConfigParam subValue in DCP.MultiValues)
+                        {
+                            VE.Value = subValue.Value;
+                            multiValues.Add(new DriverConfigParam() { Parameter = subValue.Parameter, Value = VE.ValueCalculated });
+                        }
+                    }
+                    else
+                    {
+                        VE.Value = DCP.Value;
+                        value = VE.ValueCalculated;
+                    }
                     //TODO: check if Convert.To is better option
                     //TODO: hanlde other feilds type
                     PropertyInfo tp = Driver.GetType().GetProperty(DCP.Parameter);
                     if (tp != null)
                     {
-                        string tpName = tp.PropertyType.Name;
-                        switch (tpName)
+                        if (DCP.MultiValues != null)
                         {
-
-                            case "String":
-                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, value);
-                                break;
-                            case "Boolean":
-                                try
-                                {
-                                    bValue = Convert.ToBoolean(value);
-                                }
-                                catch (Exception)
-                                {
-                                    bValue = true;
-                                }
-                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, bValue);
-                                break;
-                            case "Int32":
-                                int i = int.Parse(value);
-                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, i);
-                                break;
-                            case "eType":
-                                //TODO: Handle enums later...
-                                throw new Exception("Driver Config - Enum not supported yet");
-                            default:
-                                Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
-                                break;
+                            Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, multiValues);
+                        }
+                        else
+                        {
+                            string tpName = tp.PropertyType.Name;
+                            switch (tpName)
+                            {
+                                case "String":
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, value);
+                                    break;
+                                case "Boolean":
+                                    try
+                                    {
+                                        bValue = Convert.ToBoolean(value);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        bValue = true;
+                                    }
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, bValue);
+                                    break;
+                                case "Int32":
+                                    int i = int.Parse(value);
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, i);
+                                    break;
+                                case "eType":
+                                    //TODO: Handle enums later...
+                                    throw new Exception("Driver Config - Enum not supported yet");
+                                default:
+                                    Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
+                                    break;
+                            }
                         }
                     }
                     else
                     {
-                        // TODO: show message to user to remove param - old
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("The driver configuration '{0}' was not found on the driver class", DCP.Parameter));
                     }
                 }
 
@@ -826,11 +846,22 @@ namespace GingerCore
         {
             UserConfiguredDefaultAttribute defaultVal = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredDefaultAttribute), false) as UserConfiguredDefaultAttribute;
             UserConfiguredDescriptionAttribute desc = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredDescriptionAttribute), false) as UserConfiguredDescriptionAttribute;
+            UserConfiguredMultiValuesAttribute muliValues = Attribute.GetCustomAttribute(mi, typeof(UserConfiguredMultiValuesAttribute), false) as UserConfiguredMultiValuesAttribute;
 
             DriverConfigParam DCP = new DriverConfigParam();
             DCP.Parameter = mi.Name;
-            if (defaultVal != null) DCP.Value = defaultVal.DefaultValue;
-            if (desc != null) DCP.Description = desc.Description;
+            if (defaultVal != null)
+            {
+                DCP.Value = defaultVal.DefaultValue;
+            }
+            if (desc != null)
+            {
+                DCP.Description = desc.Description;
+            }
+            if (muliValues != null)
+            {
+                DCP.MultiValues = new ObservableList<DriverConfigParam>();
+            }
 
             return DCP;
         }
@@ -1141,19 +1172,19 @@ namespace GingerCore
             }
         }
         
-        public DriverConfigParam GetOrCreateParam(string Parameter, string DefaultValue = null)
+        public DriverConfigParam GetOrCreateParam(string parameter, string defaultValue = null)
         {
-            foreach(DriverConfigParam DCP1 in DriverConfiguration)
+            DriverConfigParam configParam = DriverConfiguration.Where(x => x.Parameter == parameter).FirstOrDefault();
+            if (configParam != null)
             {
-                if (DCP1.Parameter == Parameter)
-                {
-                    return DCP1;
-                }
+                return configParam;
             }
-
-            DriverConfigParam DCP = new DriverConfigParam() { Parameter = Parameter, Value = DefaultValue };            
-            DriverConfiguration.Add(DCP);                            
-            return DCP;
+            else
+            {
+                configParam = new DriverConfigParam() { Parameter = parameter, Value = defaultValue };
+                DriverConfiguration.Add(configParam);
+                return configParam;
+            }
         }
 
         public string GetParamValue(string Parameter)
