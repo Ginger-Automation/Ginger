@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.Rally;
 using GingerCore.ALM.RQM;
+using OctaneSdkStandard.Connector.Credentials;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -109,6 +110,23 @@ namespace GingerCore.ALM
         public abstract bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null);
         public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType = ALM_Common.DataContracts.ResourceType.ALL);
         public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false);
+
+
+        public virtual Dictionary<string, string> GetSSOTokens()
+        {
+            return null;
+        }
+
+        public virtual Dictionary<string, string> GetTokenInfo()
+        {
+            return null;
+        }
+
+        public virtual Dictionary<string, string> GetConnectionInfo()
+        {
+            return null;
+        }
+
 
         public virtual void SetALMConfigurations(   string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
                                                     string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
