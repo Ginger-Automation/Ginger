@@ -80,8 +80,14 @@ namespace Ginger.ALM
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
-                    AlmCore = new OctaneCore();
-                    AlmRepo = new OctaneRepository();
+
+                    if(!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
+                    {
+                        AlmCore = new OctaneCore();
+                        AlmRepo = new OctaneRepository(AlmCore);
+                    }
+                 
+                  
                     break;
 
             }
@@ -197,6 +203,23 @@ namespace Ginger.ALM
 
             Mouse.OverrideCursor = null;
             return connResult;
+        }
+
+
+        public Dictionary<string, string> GetSSOTokens()
+        {
+            return AlmCore.GetSSOTokens();
+        }
+
+
+        public Dictionary<string, string> GetConnectionInfo()
+        {
+            return AlmCore.GetConnectionInfo();
+        }
+
+        public bool IsServerConnected()
+        {
+            return AlmCore.IsServerConnected();
         }
 
         public bool TestALMProjectConn(eALMConnectType almConectStyle)
