@@ -177,7 +177,7 @@ namespace Ginger.WindowExplorer
 
             if (mAction == null)
             {
-                StepstoUpdateActionRow.Height = new GridLength(0);
+                //StepstoUpdateActionRow.Height = new GridLength(0);
             }
 
             //((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
@@ -261,7 +261,7 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                StepstoUpdateActionRow.Height = new GridLength(0);
+                //StepstoUpdateActionRow.Height = new GridLength(0);
             }
             GingerCore.General.LoadGenericWindow(ref _GenWin, null, windowStyle, Title, this, closeEventHandler: CloseWindow);
         }
@@ -496,13 +496,13 @@ namespace Ginger.WindowExplorer
             // Get control info only if control key is pressed
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                StatusTextBlock.Text = "Spying Element, Please Wait...";
+                //StatusTextBlock.Text = "Spying Element, Please Wait...";
                 GingerCore.General.DoEvents();
                 mSpyElement = mWindowExplorerDriver.GetControlFromMousePosition();
                 if (mSpyElement != null)
                 {
                     mWindowExplorerDriver.LearnElementInfoDetails(mSpyElement);
-                    StatusTextBlock.Text = mSpyElement.XPath;
+                    //StatusTextBlock.Text = mSpyElement.XPath;
                     if (mSyncControlsViewWithLiveSpy)
                     {
                         //TODO: Check Why its here
@@ -516,7 +516,7 @@ namespace Ginger.WindowExplorer
                 }
                 else
                 {
-                    StatusTextBlock.Text = "Failed to spy element.";
+                    //StatusTextBlock.Text = "Failed to spy element.";
                     GingerCore.General.DoEvents();
                 }
             }
@@ -527,7 +527,7 @@ namespace Ginger.WindowExplorer
             //TODO: run the search on background worker so will work fast without user impact 
             if (mSpyElement == null) return;
 
-            StatusTextBlock.Text = mSpyElement.XPath;
+            //StatusTextBlock.Text = mSpyElement.XPath;
             if (WindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
             {
                 foreach (ElementInfo EI in VisibleElementsInfoList)
@@ -637,17 +637,17 @@ namespace Ginger.WindowExplorer
         }
         private void WindowControlsTreeView_SearchStarted(object sender, EventArgs e)
         {
-            StatusTextBlock.Text = "Searching...";
+            //StatusTextBlock.Text = "Searching...";
         }
 
         private void WindowControlsTreeView_SearchCancelled(object sender, EventArgs e)
         {
-            StatusTextBlock.Text = "Ready";
+            //StatusTextBlock.Text = "Ready";
         }
 
         private void WindowControlsTreeView_SearchCompleted(object sender, EventArgs e)
         {
-            StatusTextBlock.Text = "Ready";
+            //StatusTextBlock.Text = "Ready";
         }
 
         private void ShowCurrentControlInfo()
@@ -940,7 +940,7 @@ namespace Ginger.WindowExplorer
             {
                 try
                 {
-                    StatusTextBlock.Text = "Loading";
+                    //StatusTextBlock.Text = "Loading";
                     List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
 
                     // Convert to obserable for the grid
@@ -956,7 +956,7 @@ namespace Ginger.WindowExplorer
                 }
                 finally
                 {
-                    StatusTextBlock.Text = "Ready";
+                    //StatusTextBlock.Text = "Ready";
                 }
 
                 WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
@@ -1163,14 +1163,14 @@ namespace Ginger.WindowExplorer
 
         private void ControlsRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            StatusTextBlock.Text = "Loading Elements...";
+            //StatusTextBlock.Text = "Loading Elements...";
             GingerCore.General.DoEvents();
 
             if (WindowControlsTreeView.Visibility == System.Windows.Visibility.Visible)
                 RefreshTreeControls();
             else
                 RefreshFilteredElements();
-            StatusTextBlock.Text = "Ready";
+            //StatusTextBlock.Text = "Ready";
         }
 
         private void AddSwitchWindowActionButton_Click(object sender, RoutedEventArgs e)
@@ -1185,16 +1185,16 @@ namespace Ginger.WindowExplorer
         {
             ControlsViewRow.Height = new GridLength(200, GridUnitType.Star);
             ControlsViewRow.MaxHeight = Double.PositiveInfinity;
-            if (Row2Splitter != null)
-                Row2Splitter.IsEnabled = true;
+            //if (Row2Splitter != null)
+            //    Row2Splitter.IsEnabled = true;
         }
 
         private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             ControlsViewRow.Height = new GridLength(35);
             ControlsViewRow.MaxHeight = 35;
-            if (Row2Splitter != null)
-                Row2Splitter.IsEnabled = false;
+            //if (Row2Splitter != null)
+            //    Row2Splitter.IsEnabled = false;
         }
 
         private void SelectedControlDetailsExpander_Expanded(object sender, RoutedEventArgs e)
@@ -1210,8 +1210,8 @@ namespace Ginger.WindowExplorer
 
         private void SelectedControlDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
         {
-            ControlDetailsRow.Height = new GridLength(35);
-            ControlDetailsRow.MaxHeight = 35;
+            //ControlDetailsRow.Height = new GridLength(35);
+            //ControlDetailsRow.MaxHeight = 35;
         }
 
         private void SetDetailsExpanderDesign(bool detailsExist, ElementInfo selectedElementInfo)
@@ -1270,7 +1270,7 @@ namespace Ginger.WindowExplorer
                         CheckedFilteringCreteriaList.Add(filter);
                 }
 
-            StatusTextBlock.Text = "Searching Elements...";
+            //StatusTextBlock.Text = "Searching Elements...";
             GingerCore.General.DoEvents();
 
             isSearched = RefreshFilteredElements();
@@ -1344,26 +1344,6 @@ namespace Ginger.WindowExplorer
             //}
         }
 
-        private void GridViewTab_GotFocus(object sender, RoutedEventArgs e)
-        {
-            //switch to grid view
-            if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
-                ShowFilterElementsPage();
-
-            RefreshControlsGrid();
-            RefreshFilteredElements();
-        }
-
-        private void TreeViewTab_GotFocus(object sender, RoutedEventArgs e)
-        {
-            StatusTextBlock.Text = "Loading Elements...";
-            GingerCore.General.DoEvents();
-            
-            RefreshTreeControls();
-            
-            StatusTextBlock.Text = "Ready";
-        }
-
         ScreenShotViewPage mScreenShotViewPage;
 
         public void ShowScreenShot()
@@ -1410,35 +1390,6 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        //private void ElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    //set the selected tab text style
-        //    try
-        //    {
-        //        if (xElementDetailsTabs.SelectedItem != null)
-        //        {
-        //            foreach (TabItem tab in xElementDetailsTabs.Items)
-        //            {
-        //                foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
-        //                    if (ctrl.GetType() == typeof(TextBlock))
-        //                    {
-        //                        if (xElementDetailsTabs.SelectedItem == tab)
-        //                            ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        //                        else
-        //                            ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-        //                        ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
-        //                    }
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
-        //    }
-        //}
-
         private void xSSCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
 
@@ -1474,15 +1425,55 @@ namespace Ginger.WindowExplorer
 
         }
 
-        private void xTakeScreenshotBtn_Click(object sender, RoutedEventArgs e)
+        bool RefreshGrid = false;
+        bool RefreshTree = false;
+        bool RefreshScreenshot = false;
+
+        private void xRefreshCurrentTabContentBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowScreenShot();
+            RefreshGrid = true;
+            RefreshTree = true;
+            RefreshScreenshot = true;
+
+            if (xViewsTabs.SelectedItem == ScreenShotViewTab)
+            {
+                ShowScreenShot();
+                RefreshScreenshot = false;
+            }
+            else if (xViewsTabs.SelectedItem == xGridViewTab)
+            {
+                if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
+                    ShowFilterElementsPage();
+
+                RefreshControlsGrid();
+                RefreshFilteredElements();
+
+                RefreshGrid = false;
+            }
+            else
+            {
+                GingerCore.General.DoEvents();
+
+                RefreshTreeControls();
+
+                RefreshTree = false;
+            }
         }
 
-        //private void xSelectionDDLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    ElementInfo EI = (ElementInfo)WindowControlsGridView.CurrentItem;
-        //    xLocateByValueTxt.Text = EI.GetElementLocators().Where(l => l.LocateBy.ToString() == xSelectionDDLocateBy.SelectedItem.ToString()).FirstOrDefault().LocateValue;
-        //}
+        private void xMainStack_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ActualWidth > 700)
+            {
+                xMainStack.Orientation = Orientation.Horizontal;
+                xRowSplitter.Visibility = Visibility.Collapsed;
+                xColumnSplitter.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xMainStack.Orientation = Orientation.Vertical;
+                xRowSplitter.Visibility = Visibility.Visible;
+                xColumnSplitter.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

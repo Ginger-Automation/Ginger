@@ -24,7 +24,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Amdocs.Ginger.UserControls
+namespace Ginger
 {
     /// <summary>
     /// Interaction logic for UCElementDetails.xaml
@@ -38,6 +38,44 @@ namespace Amdocs.Ginger.UserControls
             ActUIElement UIElementAction = new ActUIElement();
             ActUIElementEditPage ActEditPage = new ActUIElementEditPage(UIElementAction);
             xActUIPageFrame.Content = ActEditPage;
+        }
+
+        private void ElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (xElementDetailsTabs.SelectedItem != null)
+                {
+                    foreach (TabItem tab in xElementDetailsTabs.Items)
+                    {
+                        foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
+
+                            if (ctrl.GetType() == typeof(TextBlock))
+                            {
+                                if (xElementDetailsTabs.SelectedItem == tab)
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                else
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+
+                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                            }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error in POM Edit Page tabs style", ex);
+            }
+        }
+
+        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void xAddActBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -1,15 +1,24 @@
-﻿<UserControl x:Class="Amdocs.Ginger.UserControls.UCElementDetails"
+﻿<UserControl x:Class="Ginger.UCElementDetails"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" 
-             xmlns:Ginger="clr-namespace:Ginger"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Ginger="clr-namespace:Ginger" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <Grid>
-        <TabControl x:Name="xElementDetailsTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="xElementDetailsTabs_SelectionChanged" >
+    <Grid Grid.Row="3" x:Name="xSelectedElementSectionGrid" Margin="0,2,0,-2">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="xTitleSection" Height="32"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0" Margin="0,5,0,5">
+            <UserControls:ImageMakerControl ImageType="Tag"  SetAsFontImageWithSize="18"  Width="18" Height="18" Margin="5,5,0,0" VerticalAlignment="Center" />
+            <TextBlock x:Name="xSelectedElementTextBlock" Text="Selected Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" FontSize="15" />
+        </StackPanel>
+
+        <TabControl x:Name="xElementDetailsTabs" Grid.Row="1"  HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -29,7 +38,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xPropertiesTextBlock" Text="Control Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
@@ -50,8 +59,16 @@
                         <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame x:Name="xActUIPageFrame" Margin="5" />
+                <Frame x:Name="xActUIPageFrame" Margin="5" VerticalAlignment="Stretch" Width="Auto" />
             </TabItem>
         </TabControl>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" >
+            <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run Action" ButtonImageHeight="16" HorizontalAlignment="Center"
+                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="25,0,0,0" Click="xRunActBtn_Click" />
+
+            <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Upload" ButtonText="Add Action" ButtonImageHeight="16" HorizontalAlignment="Center"
+                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="100,0,0,0" Click="xAddActBtn_Click" />
+        </StackPanel>
     </Grid>
 </UserControl>
