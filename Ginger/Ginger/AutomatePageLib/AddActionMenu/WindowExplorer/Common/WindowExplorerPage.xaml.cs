@@ -107,7 +107,7 @@ namespace Ginger.WindowExplorer
             xWindowSelection.AddSwitchWindowActionButton.Click += AddSwitchWindowActionButton_Click;
 
             mContext = context;
-
+            xWindowSelection.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             //Instead of check make it disabled ?
@@ -528,14 +528,14 @@ namespace Ginger.WindowExplorer
             if (mSpyElement == null) return;
 
             //StatusTextBlock.Text = mSpyElement.XPath;
-            if (WindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
+            if (xWindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
             {
                 foreach (ElementInfo EI in VisibleElementsInfoList)
                 {
                     if (EI.XPath == mSpyElement.XPath && EI.Path == mSpyElement.Path)
                     {
                         VisibleElementsInfoList.CurrentItem = EI;
-                        WindowControlsGridView.ScrollToViewCurrentItem();
+                        xWindowControlsGridView.ScrollToViewCurrentItem();
                         ShowCurrentControlInfo();
                         break;
                     }
@@ -836,7 +836,7 @@ namespace Ginger.WindowExplorer
                     break;
             }
 
-            if (WindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
+            if (xWindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
             {
                 RefreshControlsGrid();
             }
@@ -906,17 +906,16 @@ namespace Ginger.WindowExplorer
         private void SetControlsGridView()
         {
             //Set the Tool Bar look
-            WindowControlsGridView.ShowAdd = Visibility.Collapsed;
-            WindowControlsGridView.ShowClearAll = Visibility.Collapsed;
-            WindowControlsGridView.ShowUpDown = Visibility.Collapsed;
-            WindowControlsGridView.ShowRefresh = Visibility.Collapsed;
+            xWindowControlsGridView.ShowAdd = Visibility.Collapsed;
+            xWindowControlsGridView.ShowClearAll = Visibility.Collapsed;
+            xWindowControlsGridView.ShowUpDown = Visibility.Collapsed;
+            xWindowControlsGridView.ShowRefresh = Visibility.Collapsed;
 
-
-            WindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
+            xWindowControlsGridView.AddToolbarTool("@Filter16x16.png", "Filter Elements to show", new RoutedEventHandler(FilterElementButtonClicked));
             //TODO: enable refresh to do refresh
 
-            WindowControlsGridView.ShowEdit = System.Windows.Visibility.Collapsed;
-            WindowControlsGridView.ShowDelete = System.Windows.Visibility.Collapsed;
+            xWindowControlsGridView.ShowEdit = System.Windows.Visibility.Collapsed;
+            xWindowControlsGridView.ShowDelete = System.Windows.Visibility.Collapsed;
 
             //TODO: add button to show all...        
 
@@ -930,8 +929,8 @@ namespace Ginger.WindowExplorer
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150 });
 
-            WindowControlsGridView.SetAllColumnsDefaultView(view);
-            WindowControlsGridView.InitViewItems();
+            xWindowControlsGridView.SetAllColumnsDefaultView(view);
+            xWindowControlsGridView.InitViewItems();
         }
 
         private async void RefreshControlsGrid()
@@ -959,7 +958,7 @@ namespace Ginger.WindowExplorer
                     //StatusTextBlock.Text = "Ready";
                 }
 
-                WindowControlsGridView.DataSourceList = VisibleElementsInfoList;
+                xWindowControlsGridView.DataSourceList = VisibleElementsInfoList;
 
             }
         }
@@ -967,7 +966,7 @@ namespace Ginger.WindowExplorer
         List<string> ListUIElementTypes = null;
         private void ControlsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            ElementInfo EI = (ElementInfo)WindowControlsGridView.CurrentItem;
+            ElementInfo EI = (ElementInfo)xWindowControlsGridView.CurrentItem;
 
             mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(EI);
 
@@ -1356,9 +1355,9 @@ namespace Ginger.WindowExplorer
 
             mWindowExplorerDriver.UnHighLightElements();
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
-            xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
-            //mScreenShotViewPage = new ScreenShotViewPage("ExplorerScreenshot", ScreenShotBitmap);
-                //xScreenShotFrame.Content = mScreenShotViewPage;
+            mScreenShotViewPage = new ScreenShotViewPage("ExplorerScreenshot", ScreenShotBitmap, 0.5);
+            xScreenShotFrame.Content = mScreenShotViewPage;
+            //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
         }
 
         private void ViewsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1442,7 +1441,7 @@ namespace Ginger.WindowExplorer
             }
             else if (xViewsTabs.SelectedItem == xGridViewTab)
             {
-                if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
+                if (xWindowControlsGridView.DataSourceList == null || xWindowControlsGridView.DataSourceList.Count == 0)
                     ShowFilterElementsPage();
 
                 RefreshControlsGrid();
@@ -1460,19 +1459,66 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void xMainStack_SizeChanged(object sender, SizeChangedEventArgs e)
+        //private void xMainStack_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    if (ActualWidth > 700)
+        //    {
+        //        xMainStack.Orientation = Orientation.Horizontal;
+        //        xRowSplitter.Visibility = Visibility.Collapsed;
+        //        xColumnSplitter.Visibility = Visibility.Visible;
+        //    }
+        //    else
+        //    {
+        //        xMainStack.Orientation = Orientation.Vertical;
+        //        xRowSplitter.Visibility = Visibility.Visible;
+        //        xColumnSplitter.Visibility = Visibility.Collapsed;
+        //    }
+        //}
+
+        private void xMainDock_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ActualWidth > 700)
             {
-                xMainStack.Orientation = Orientation.Horizontal;
                 xRowSplitter.Visibility = Visibility.Collapsed;
                 xColumnSplitter.Visibility = Visibility.Visible;
+
+                xViewAndControlsSection.SetValue(DockPanel.DockProperty, Dock.Left);
+                xUCElementDetails.SetValue(DockPanel.DockProperty, Dock.Right);
             }
             else
             {
-                xMainStack.Orientation = Orientation.Vertical;
                 xRowSplitter.Visibility = Visibility.Visible;
                 xColumnSplitter.Visibility = Visibility.Collapsed;
+
+                xViewAndControlsSection.SetValue(DockPanel.DockProperty, Dock.Top);
+                xUCElementDetails.SetValue(DockPanel.DockProperty, Dock.Bottom);
+            }
+        }
+
+        private void xGridViewTab_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(RefreshGrid)
+            {
+
+                RefreshGrid = false;
+            }
+        }
+
+        private void xTreeViewTab_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(RefreshTree)
+            {
+
+                RefreshTree = false;
+            }
+        }
+
+        private void ScreenShotViewTab_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(RefreshScreenshot)
+            {
+                ShowScreenShot();
+                RefreshScreenshot = false;
             }
         }
     }

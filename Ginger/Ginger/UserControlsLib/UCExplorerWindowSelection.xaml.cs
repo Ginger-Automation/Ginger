@@ -29,10 +29,5 @@ namespace Amdocs.Ginger.UserControls
         {
 
         }
-
-        private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

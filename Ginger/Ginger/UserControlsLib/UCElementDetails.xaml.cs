@@ -68,6 +68,23 @@ namespace Ginger
             }
         }
 
+        public enum eViewPage
+        {
+            POM, Explorer
+        }
+
+        public void InitGridView(eViewPage BasePage)
+        {
+            switch (BasePage)
+            {
+                case eViewPage.POM:
+                    break;
+
+                case eViewPage.Explorer:
+                    break;
+            }    
+        }
+
         private void xRunActBtn_Click(object sender, RoutedEventArgs e)
         {
 

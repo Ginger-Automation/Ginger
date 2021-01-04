@@ -10,8 +10,8 @@
     mc:Ignorable="d" 
 	Title="Ginger Window Explorer">
 
-    <StackPanel x:Name="xMainStack" Orientation="Vertical" SizeChanged="xMainStack_SizeChanged"  >
-        <Grid x:Name="xViewAndControlsSection" Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+    <DockPanel x:Name="xMaiDock" SizeChanged="xMainDock_SizeChanged">
+        <Grid x:Name="xViewAndControlsSection" Background="{StaticResource $BackgroundColor_LightGray}" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" >
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="WindowComboboxRow" Height="30" />
                 <RowDefinition Height="32"/>
@@ -42,7 +42,7 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem x:Name="ScreenShotViewTab">
+                <TabItem x:Name="ScreenShotViewTab" GotFocus="ScreenShotViewTab_GotFocus">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="1" >
                             <usercontrols:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
@@ -50,7 +50,8 @@
                         </StackPanel>
                     </TabItem.Header>
 
-                    <ScrollViewer x:Name="xMainScrollViewer" Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <Frame x:Name="xScreenShotFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <!--<ScrollViewer x:Name="xMainScrollViewer" Grid.Row="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <Canvas x:Name="xSSCanvas" SizeChanged="xSSCanvas_SizeChanged" Height="Auto" Width="Auto">
                             <Image x:Name="xDeviceImage" Height="Auto"  Width="Auto"  
                                    MinHeight="150" MinWidth="150"
@@ -62,10 +63,10 @@
                                Source="{StaticResource @NotAvailable_600x600}" SizeChanged="DeviceImage_SizeChanged">
                             </Image>
                         </Canvas>
-                    </ScrollViewer>
+                    </ScrollViewer>-->
                 </TabItem>
 
-                <TabItem x:Name="xGridViewTab">
+                <TabItem x:Name="xGridViewTab" GotFocus="xGridViewTab_GotFocus">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="1" >
                             <usercontrols:ImageMakerControl ImageType="TreeView"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -75,14 +76,14 @@
                     <UCTreeView:TreeView1 x:Name="WindowControlsTreeView"  Grid.Row="2" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                 </TabItem>
 
-                <TabItem x:Name="xTreeViewTab">
+                <TabItem x:Name="xTreeViewTab" GotFocus="xTreeViewTab_GotFocus">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="1">
                             <usercontrols:ImageMakerControl ImageType="DataTable"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
                             <TextBlock x:Name="xGridViewTabTextBlock" VerticalAlignment="Center" Text="Grid View"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                         </StackPanel>
                     </TabItem.Header>
-                    <Ginger:ucGrid x:Name="WindowControlsGridView" Grid.Row="2" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <Ginger:ucGrid x:Name="xWindowControlsGridView" Grid.Row="2" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 </TabItem>
 
                 <TabItem HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" Margin="0">
@@ -92,12 +93,13 @@
                     </TabItem.Header>
                 </TabItem>
             </TabControl>
-
-            <GridSplitter x:Name="xRowSplitter" Grid.Row="2" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}"/>
-            <GridSplitter x:Name="xColumnSplitter" Grid.Row="2" ResizeDirection="Columns" Height="Auto" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" Visibility="Collapsed"/>
         </Grid>
 
-        <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <GridSplitter x:Name="xRowSplitter" DockPanel.Dock="Top" ResizeDirection="Rows" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}"/>
+        <GridSplitter x:Name="xColumnSplitter" DockPanel.Dock="Left" ResizeDirection="Columns" Height="Auto" Width="5" HorizontalAlignment="Right" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" Visibility="Collapsed"/>
 
-    </StackPanel>
+        <Ginger:UCElementDetails x:Name="xUCElementDetails" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+    </DockPanel>
+    <!--</StackPanel>-->
 </Page>

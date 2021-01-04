@@ -25,7 +25,7 @@
 
         <Label Grid.Column="0" Content="Page:" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" Padding="5,0,0,0" FontWeight="Bold"/>
 
-        <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="0,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" MinWidth="100" Width="Auto" Style="{StaticResource $FlatInputComboBoxStyle}" 
+        <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="0,0,0,0" MinWidth="100" Width="Auto" Style="{StaticResource $FlatInputComboBoxStyle}" 
                   HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
 
         <usercontrols:ucButton Grid.Column="2" x:Name="RefreshWindowsButton" ButtonType="ImageButton" ButtonImageType="Refresh" 
