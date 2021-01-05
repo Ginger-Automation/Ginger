@@ -66,7 +66,7 @@
                     </ScrollViewer>-->
                 </TabItem>
 
-                <TabItem x:Name="xGridViewTab" GotFocus="xGridViewTab_GotFocus">
+                <TabItem x:Name="xTreeViewTab" GotFocus="xTreeViewTab_GotFocus">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="1" >
                             <usercontrols:ImageMakerControl ImageType="TreeView"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -76,7 +76,7 @@
                     <UCTreeView:TreeView1 x:Name="WindowControlsTreeView"  Grid.Row="2" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                 </TabItem>
 
-                <TabItem x:Name="xTreeViewTab" GotFocus="xTreeViewTab_GotFocus">
+                <TabItem x:Name="xGridViewTab" GotFocus="xGridViewTab_GotFocus">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="1">
                             <usercontrols:ImageMakerControl ImageType="DataTable"  SetAsFontImageWithSize="18"  Width="18" Height="18" />

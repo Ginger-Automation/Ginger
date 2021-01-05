@@ -168,6 +168,7 @@ namespace Ginger.WindowExplorer
 
             InitControlPropertiesGridView(); 
             InitControlLocatorsGridView();
+
             xUCElementDetails.xPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
 
             UpdateWindowsList();
@@ -180,6 +181,7 @@ namespace Ginger.WindowExplorer
                 //StepstoUpdateActionRow.Height = new GridLength(0);
             }
 
+            RefreshTabsContent();
             //((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
         }
 
@@ -202,8 +204,8 @@ namespace Ginger.WindowExplorer
             //TODO: fix me for cached properties like ASCFBrowserElements, it will not work
             if (mCurrentControlTreeViewItem != null)
             {
-                xUCElementDetails.xPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
-                //xLocatorsGrid.DataSourceList = ((IWindowExplorerTreeItem)m)
+                ElementInfo EI = (ElementInfo)mCurrentControlTreeViewItem.NodeObject();
+                UpdatePropertiesAndLocators(EI);
             }
         }
 
@@ -294,13 +296,102 @@ namespace Ginger.WindowExplorer
             mTreeRootItem.IsExpanded = false;
         }
 
-        private void RefreshTreeControls()
+        private void RefreshTreeContent()
         {
-            WindowControlsTreeView.Tree.ClearTreeItems();
-            if (xWindowSelection.WindowsComboBox.SelectedValue != null && mRootItem != null)
+            GingerCore.General.DoEvents();
+
+            AppWindow AW = (AppWindow)xWindowSelection.WindowsComboBox.SelectedItem;
+            if (AW == null) return;
+            mWindowExplorerDriver.SwitchWindow(AW.Title);
+
+            switch (AW.WindowType)
             {
-                TreeViewItem TVI = WindowControlsTreeView.Tree.AddItem(mRootItem);
-                TVI.IsExpanded = false;
+                case AppWindow.eWindowType.Windows:
+                    WindowsWindowTreeItem WWTI = new WindowsWindowTreeItem();
+                    UIAElementInfo WEI = (UIAElementInfo)AW.RefObject;
+                    WEI.WindowExplorer = mWindowExplorerDriver;
+                    WWTI.UIAElementInfo = WEI;
+                    WWTI.UIAElementInfo.ElementObject = WEI.ElementObject;
+
+                    InitTree(WWTI);
+                    break;
+                case AppWindow.eWindowType.PowerBuilder:
+                    PBWindowTreeItem WTI = new PBWindowTreeItem();
+                    UIAElementInfo PBEI = (UIAElementInfo)AW.RefObject;
+                    PBEI.WindowExplorer = mWindowExplorerDriver;
+                    WTI.UIAElementInfo = PBEI;
+                    InitTree(WTI);
+                    break;
+                case AppWindow.eWindowType.ASCFForm:
+                    ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
+                    AFTI.Name = AW.Title;
+                    AFTI.Path = AW.Path;
+                    InitTree(AFTI);
+                    break;
+                case AppWindow.eWindowType.SeleniumWebPage:
+                    HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
+                    HTMLElementInfo EI = new HTMLElementInfo();
+                    EI.ElementTitle = AW.Title;
+                    EI.XPath = "/html";
+                    EI.WindowExplorer = mWindowExplorerDriver;
+                    HPTI.ElementInfo = EI;
+                    InitTree(HPTI);
+                    break;
+                case AppWindow.eWindowType.JFrmae:
+                    JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
+                    JavaElementInfo JEI = new JavaElementInfo();
+                    JEI.ElementTitle = AW.Title;
+                    JEI.Path = AW.Title;
+                    JEI.XPath = "/";
+                    JEI.IsExpandable = true;
+                    JWTI.JavaElementInfo = JEI;
+                    JEI.WindowExplorer = mWindowExplorerDriver;
+                    InitTree(JWTI);
+                    break;
+                case AppWindow.eWindowType.Appium:
+                    AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
+
+                    AppiumElementInfo AEI = new AppiumElementInfo();
+                    AEI.WindowExplorer = mWindowExplorerDriver;
+                    AEI.XPath = "/";
+                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
+
+
+                    string pageSourceString = SAD.GetPageSource().Result;
+                    XmlDocument pageSourceXml = new XmlDocument();
+                    pageSourceXml.LoadXml(pageSourceString);
+                    AEI.XmlDoc = pageSourceXml;
+                    AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
+
+                    AWTI.AppiumElementInfo = AEI;
+
+                    // AWTI.UIAElementInfo = AEI;
+                    InitTree(AWTI);
+                    break;
+                //case AppWindow.eWindowType.AndroidDevice:
+                //    AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
+
+                //    AndroidElementInfo AWI = new AndroidElementInfo();
+                //    AWI.WindowExplorer = mWindowExplorerDriver;
+                //    AWI.XPath = "/";
+                //    string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
+                //    XmlDocument pageSourceXml2 = new XmlDocument();
+                //    pageSourceXml2.LoadXml(pageSourceString2);
+                //    AWI.XmlDoc = pageSourceXml2;
+                //    AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
+
+                //    ADTI.AndroidElementInfo = AWI;
+                //    InitTree(ADTI);
+                //    break;
+                case AppWindow.eWindowType.Mainframe:
+                    MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
+                    MFTI.Name = AW.Title;
+                    MFTI.Path = AW.Path;
+                    InitTree(MFTI);
+                    break;
+                default:
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
+                    break;
             }
         }
 
@@ -667,8 +758,7 @@ namespace Ginger.WindowExplorer
                     SetDetailsExpanderDesign(true, EI);
                     if (mCurrentControlTreeViewItem is IWindowExplorerTreeItem)
                     {
-                        xUCElementDetails.xPropertiesGrid.DataSourceList = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
-                        xUCElementDetails.xPropertiesGrid.Visibility = System.Windows.Visibility.Visible;
+                        UpdatePropertiesAndLocators(EI);
                     }
                     else
                     {
@@ -741,105 +831,7 @@ namespace Ginger.WindowExplorer
         //TODO: fix to be OO style
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AppWindow AW = (AppWindow)xWindowSelection.WindowsComboBox.SelectedItem;
-            if (AW == null) return;
-            mWindowExplorerDriver.SwitchWindow(AW.Title);
-            //RecordingButton.IsEnabled = true;
-
-            switch (AW.WindowType)
-            {
-                case AppWindow.eWindowType.Windows:
-                    WindowsWindowTreeItem WWTI = new WindowsWindowTreeItem();
-                    UIAElementInfo WEI = (UIAElementInfo)AW.RefObject;
-                    WEI.WindowExplorer = mWindowExplorerDriver;
-                    WWTI.UIAElementInfo = WEI;
-                    WWTI.UIAElementInfo.ElementObject = WEI.ElementObject;
-
-                    InitTree(WWTI);
-                    break;
-                case AppWindow.eWindowType.PowerBuilder:
-                    PBWindowTreeItem WTI = new PBWindowTreeItem();
-                    UIAElementInfo PBEI = (UIAElementInfo)AW.RefObject;
-                    PBEI.WindowExplorer = mWindowExplorerDriver;
-                    WTI.UIAElementInfo = PBEI;
-                    InitTree(WTI);
-                    break;
-                case AppWindow.eWindowType.ASCFForm:
-                    ASCFFormTreeItem AFTI = new ASCFFormTreeItem();
-                    AFTI.Name = AW.Title;
-                    AFTI.Path = AW.Path;
-                    InitTree(AFTI);
-                    break;
-                case AppWindow.eWindowType.SeleniumWebPage:
-                    HTMLPageTreeItem HPTI = new HTMLPageTreeItem();
-                    HTMLElementInfo EI = new HTMLElementInfo();
-                    EI.ElementTitle = AW.Title;
-                    EI.XPath = "/html";
-                    EI.WindowExplorer = mWindowExplorerDriver;
-                    HPTI.ElementInfo = EI;
-                    InitTree(HPTI);
-                    break;
-                case AppWindow.eWindowType.JFrmae:
-                    JavaWindowTreeItem JWTI = new JavaWindowTreeItem();
-                    JavaElementInfo JEI = new JavaElementInfo();
-                    JEI.ElementTitle = AW.Title;
-                    JEI.Path = AW.Title;
-                    JEI.XPath = "/";
-                    JEI.IsExpandable = true;
-                    JWTI.JavaElementInfo = JEI;
-                    JEI.WindowExplorer = mWindowExplorerDriver;
-                    InitTree(JWTI);
-                    break;
-                case AppWindow.eWindowType.Appium:
-                    AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
-
-                    AppiumElementInfo AEI = new AppiumElementInfo();
-                    AEI.WindowExplorer = mWindowExplorerDriver;
-                    AEI.XPath = "/";
-                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
-
-
-                    string pageSourceString = SAD.GetPageSource().Result;
-                    XmlDocument pageSourceXml = new XmlDocument();
-                    pageSourceXml.LoadXml(pageSourceString);
-                    AEI.XmlDoc = pageSourceXml;
-                    AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
-
-                    AWTI.AppiumElementInfo = AEI;
-
-                    // AWTI.UIAElementInfo = AEI;
-                    InitTree(AWTI);
-                    break;
-                //case AppWindow.eWindowType.AndroidDevice:
-                //    AndroidWindowTreeItem ADTI = new AndroidWindowTreeItem();
-
-                //    AndroidElementInfo AWI = new AndroidElementInfo();
-                //    AWI.WindowExplorer = mWindowExplorerDriver;
-                //    AWI.XPath = "/";
-                //    string pageSourceString2 = ((AndroidADBDriver)mWindowExplorerDriver).GetPageSource();
-                //    XmlDocument pageSourceXml2 = new XmlDocument();
-                //    pageSourceXml2.LoadXml(pageSourceString2);
-                //    AWI.XmlDoc = pageSourceXml2;
-                //    AWI.XmlNode = pageSourceXml2.SelectSingleNode("/hierarchy");
-
-                //    ADTI.AndroidElementInfo = AWI;
-                //    InitTree(ADTI);
-                //    break;
-                case AppWindow.eWindowType.Mainframe:
-                    MainframeTreeItemBase MFTI = new MainframeTreeItemBase();
-                    MFTI.Name = AW.Title;
-                    MFTI.Path = AW.Path;
-                    InitTree(MFTI);
-                    break;
-                default:
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unknown Window type:" + AW.WindowType);
-                    break;
-            }
-
-            if (xWindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
-            {
-                RefreshControlsGrid();
-            }
+            RefreshTabsContent();
         }
 
         private void ControlTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -970,24 +962,21 @@ namespace Ginger.WindowExplorer
 
             mCurrentControlTreeViewItem = GetTreeViewItemForElementInfo(EI);
 
+            UpdatePropertiesAndLocators(EI);
+
+            ShowCurrentControlInfo();
+        }
+
+        private void UpdatePropertiesAndLocators(ElementInfo EI)
+        {
             xUCElementDetails.xPropertiesGrid.DataSourceList = EI.Properties;
             xUCElementDetails.xLocatorsGrid.DataSourceList = EI.Locators;
 
-            //xSelectionDDLocateBy.ItemsSource = EI.Locators.Select(l => l.LocateBy.ToString()).ToList();
-            //xLocateByValueTxt.Text = EI.Locators.Where(l => l.LocateBy.ToString() == xSelectionDDLocateBy.SelectedItem.ToString()).FirstOrDefault().LocateValue;
-
-            //if (ListUIElementTypes == null || ListUIElementTypes.Count == 0)
-            //{ switch (((Agent)mApplicationAgent.Agent).Platform)
-            //    {
-            //        case ePlatformType.Web:
-            //            WebPlatform webPlatformInfo = new WebPlatform();
-            //            ListUIElementTypes = webPlatformInfo.GetPlatformUIElementsType().Select(e => e.ToString()).ToList();
-            //            break;
-            //    }
-            //}
-
-            //xSelectionDDElementType.ItemsSource = ListUIElementTypes;
-            //ShowCurrentControlInfo();
+            Dispatcher.Invoke(() =>
+            {
+                xUCElementDetails.xPropertiesTextBlock.Text = string.Format("Properties ({0})", EI.Properties.Count);
+                xUCElementDetails.xLocatorsTextBlock.Text = string.Format("Locators ({0})", EI.Locators.Count);
+            });
         }
 
         private ITreeViewItem GetTreeViewItemForElementInfo(Amdocs.Ginger.Common.UIElement.ElementInfo EI)
@@ -1160,17 +1149,17 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void ControlsRefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            //StatusTextBlock.Text = "Loading Elements...";
-            GingerCore.General.DoEvents();
+        //private void ControlsRefreshButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //StatusTextBlock.Text = "Loading Elements...";
+        //    GingerCore.General.DoEvents();
 
-            if (WindowControlsTreeView.Visibility == System.Windows.Visibility.Visible)
-                RefreshTreeControls();
-            else
-                RefreshFilteredElements();
-            //StatusTextBlock.Text = "Ready";
-        }
+        //    if (WindowControlsTreeView.Visibility == System.Windows.Visibility.Visible)
+        //        RefreshTreeControls();
+        //    else
+        //        RefreshFilteredElements();
+        //    //StatusTextBlock.Text = "Ready";
+        //}
 
         private void AddSwitchWindowActionButton_Click(object sender, RoutedEventArgs e)
         {
@@ -1430,33 +1419,40 @@ namespace Ginger.WindowExplorer
 
         private void xRefreshCurrentTabContentBtn_Click(object sender, RoutedEventArgs e)
         {
+            RefreshTabsContent();
+        }
+
+        public void RefreshTabsContent()
+        {
             RefreshGrid = true;
             RefreshTree = true;
             RefreshScreenshot = true;
 
-            if (xViewsTabs.SelectedItem == ScreenShotViewTab)
+            if (xViewsTabs.SelectedItem == ScreenShotViewTab)       /// Screenshot View
             {
                 ShowScreenShot();
                 RefreshScreenshot = false;
             }
-            else if (xViewsTabs.SelectedItem == xGridViewTab)
+            else if (xViewsTabs.SelectedItem == xGridViewTab)       /// Grid View
             {
-                if (xWindowControlsGridView.DataSourceList == null || xWindowControlsGridView.DataSourceList.Count == 0)
-                    ShowFilterElementsPage();
-
-                RefreshControlsGrid();
-                RefreshFilteredElements();
+                RefreshGridContent();
 
                 RefreshGrid = false;
             }
-            else
+            else        /// Tree View
             {
-                GingerCore.General.DoEvents();
-
-                RefreshTreeControls();
+                RefreshTreeContent();
 
                 RefreshTree = false;
             }
+        }
+
+        private void RefreshGridContent()
+        {
+            if (xWindowControlsGridView.DataSourceList == null || xWindowControlsGridView.DataSourceList.Count == 0)
+                ShowFilterElementsPage();
+
+            RefreshFilteredElements();
         }
 
         //private void xMainStack_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1499,7 +1495,7 @@ namespace Ginger.WindowExplorer
         {
             if(RefreshGrid)
             {
-
+                RefreshGridContent();
                 RefreshGrid = false;
             }
         }
@@ -1508,7 +1504,7 @@ namespace Ginger.WindowExplorer
         {
             if(RefreshTree)
             {
-
+                RefreshTreeContent();
                 RefreshTree = false;
             }
         }
