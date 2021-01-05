@@ -950,7 +950,7 @@ namespace GingerCore
 
             if (!string.IsNullOrEmpty(passwordValue))
             {
-                dataString.Replace(passwordValue, "*****");
+                dataString = dataString.Replace(passwordValue, "*****");
             }
             return dataString;
         }
