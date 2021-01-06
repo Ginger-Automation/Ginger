@@ -247,7 +247,7 @@ namespace Ginger.Run.RunSetActions
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Run set operation send Email ,error :" + ex.ToString());
+                            Reporter.ToLog(eLogLevel.ERROR, "Run set operation send Email ,error :", ex);
                         }
                     }
                 }
@@ -759,7 +759,8 @@ namespace Ginger.Run.RunSetActions
                                     {
                                         fieldsNamesHTMLTableCells.Append("<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>" + selectedField_internal.FieldName + "</td>");
                                     }
-                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(act.GetType().GetProperty(fieldName).GetValue(act).ToString()) + "</td>");
+                          
+                                    fieldsValuesHTMLTableCells.Append("<td style='padding: 10px; border: 1px solid #dddddd'>" + OverrideHTMLRelatedCharacters(Convert.ToString(act.GetType().GetProperty(fieldName).GetValue(act))) + "</td>");
                                 }
                             }
                             fieldsValuesHTMLTableCells.Append("</tr>");
