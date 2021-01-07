@@ -104,12 +104,12 @@ namespace GingerCoreCommonTest.VariableTests
             var variableDateTime = new VariableDateTime();
             variableDateTime.Name = "test";
             variableDateTime.Value = "123";
-            variableDateTime.InitialDateTime = "01-Jan-2020";
+            variableDateTime.InitialDateTime = "01-Jan-2021";
             //Act
             string formulaStr = variableDateTime.GetFormula();
 
             //Assert
-            Assert.AreEqual(@"Initial DateTime : 01-Jan-2020", formulaStr, "Mismatch with Default Formula String");
+            Assert.AreEqual(@"Initial DateTime : 01-Jan-2021", formulaStr, "Mismatch with Default Formula String");
             Assert.AreEqual(variableDateTime.InitialDateTime, variableDateTime.Value);
         }
 
