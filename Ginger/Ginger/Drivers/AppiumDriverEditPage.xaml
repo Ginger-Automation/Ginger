@@ -43,8 +43,8 @@
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label  Content="Platform:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
-                            <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="Platform" VerticalAlignment="Center"/>
-                            <RadioButton x:Name="xIOSRdBtn" Content="iOS" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="Platform" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="PlatformType" VerticalAlignment="Center" Checked="xAndroidRdBtn_Checked"/>
+                            <RadioButton x:Name="xIOSRdBtn" Content="iOS" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="PlatformType" VerticalAlignment="Center" Margin="10,0,0,0" Checked="xIOSRdBtn_Checked"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label  Content="Application Type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />

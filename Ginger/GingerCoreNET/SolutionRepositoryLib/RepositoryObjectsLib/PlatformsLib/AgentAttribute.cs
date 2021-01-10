@@ -56,4 +56,14 @@ namespace GingerCore
             return "Multi Values";
         }
     }
+
+    public class UserConfiguredEnumTypeAttribute : Attribute
+    {
+        public Type EnumType { get; set; }
+
+        public UserConfiguredEnumTypeAttribute(Type UserConfiguredEnumType)
+        {
+            this.EnumType = UserConfiguredEnumType;
+        }
+    }
 }

@@ -631,6 +631,23 @@ namespace GingerCore
                         else
                         {
                             string tpName = tp.PropertyType.Name;
+                            UserConfiguredEnumTypeAttribute enumTypeConfig = null;
+                            try
+                            {
+                                MemberInfo[] mf = Driver.GetType().GetMember(DCP.Parameter);
+                                if (mf != null)
+                                {
+                                    enumTypeConfig = Attribute.GetCustomAttribute(mf[0], typeof(UserConfiguredEnumTypeAttribute), false) as UserConfiguredEnumTypeAttribute;
+                                    if (enumTypeConfig != null)
+                                    {
+                                        tpName = "eType";
+                                    }
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to check if the driver configuration '{0}' is from EnumType", DCP.Parameter), ex);
+                            }
                             switch (tpName)
                             {
                                 case "String":
@@ -651,9 +668,9 @@ namespace GingerCore
                                     int i = int.Parse(value);
                                     Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, i);
                                     break;
-                                case "eType":
-                                    //TODO: Handle enums later...
-                                    throw new Exception("Driver Config - Enum not supported yet");
+                                case "eType":                                    
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, Enum.Parse(enumTypeConfig.EnumType, value));
+                                    break;
                                 default:
                                     Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
                                     break;
@@ -688,7 +705,6 @@ namespace GingerCore
                 Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
                 SetDriverDefualtParams(driverType);
             }
-
             else if (AgentType == eAgentType.Service)
             {
                 SetServiceConfiguration();
@@ -809,10 +825,8 @@ namespace GingerCore
                     continue;
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
-
                 DriverConfiguration.Add(configParam);
             }
-
         }
         /// <summary>
         /// This function will add missing Driver config parameters to Driver configuration

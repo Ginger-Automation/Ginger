@@ -28,6 +28,7 @@ namespace Ginger.Drivers
     {
         Agent mAgent = null;
         DriverConfigParam mAppiumServer;
+        DriverConfigParam mDevicePlatformType;
         DriverConfigParam mAppiumCapabilities;
 
         public AppiumDriverEditPage(Agent appiumAgent)
@@ -42,16 +43,37 @@ namespace Ginger.Drivers
 
         private void BindConfigurationsFields()
         {
-            if (mAgent.DriverConfiguration == null)
-            {
-                mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
-            }
+            //if (mAgent.DriverConfiguration == null)
+            //{
+            //    mAgent.DriverConfiguration = new ObservableList<DriverConfigParam>();
+            //}
 
-            mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer), "http://127.0.0.1:4444");
-            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, "Value");
+            mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer));
+            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.ToolTipProperty, mAppiumServer, nameof(DriverConfigParam.Description));
+
+            mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
+            if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
+            {
+                xAndroidRdBtn.IsChecked = true;
+            }
+            else if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.iOS.ToString())
+            {
+                xIOSRdBtn.IsChecked = true;
+            }
 
             mAppiumCapabilities = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumCapabilities));
             SetCapabilitiesGridView();
+        }
+
+        private void xAndroidRdBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            mDevicePlatformType.Value = GenericAppiumDriver.eDevicePlatformType.Android.ToString();
+        }
+
+        private void xIOSRdBtn_Checked(object sender, RoutedEventArgs e)
+        {
+            mDevicePlatformType.Value = GenericAppiumDriver.eDevicePlatformType.iOS.ToString();
         }
 
         private void SetCapabilitiesGridView()
@@ -61,7 +83,7 @@ namespace Ginger.Drivers
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header="Capability", BindingMode = BindingMode.OneWay, WidthWeight = 20 });
+            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header="Capability", WidthWeight = 20 });
             view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, MaxWidth = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["ParamValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Description, BindingMode = BindingMode.OneWay, WidthWeight = 45 });
@@ -109,6 +131,6 @@ namespace Ginger.Drivers
             VEEW.ShowAsWindow();
         }
 
-       
+
     }
 }
