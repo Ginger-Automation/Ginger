@@ -228,9 +228,14 @@ namespace GingerCore.DataSource
             RunQuery(query);
         }
 
-        public override bool ExporttoExcel(string TableName,string sExcelPath, String sSheetName)
+        public override bool ExporttoExcel(string TableName,string sExcelPath, string sSheetName,string sTableQueryValue="" )
         {
-            DataTable dsTable = GetQueryOutput("select * from " + TableName);
+            var query = "select * from " + TableName;
+            if (!string.IsNullOrEmpty(sTableQueryValue))
+            {
+                query = sTableQueryValue;
+            }
+            DataTable dsTable = GetQueryOutput(query);
             bool result;
             lock(thisObj)
             {

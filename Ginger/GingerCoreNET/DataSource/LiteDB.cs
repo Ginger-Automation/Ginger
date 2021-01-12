@@ -275,10 +275,14 @@ namespace GingerCoreNET.DataSource
             }
         }
 
-        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName)
+        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName,string sTableQueryValue="")
         {
             DataTable table = GetTable(TableName);
             table.Columns.Remove("_id");
+            if (!string.IsNullOrEmpty(sTableQueryValue))
+            {
+                var dt = GetQueryOutput(sTableQueryValue);
+            }
 
             return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sExcelPath, sSheetName);
         }
@@ -1078,7 +1082,7 @@ namespace GingerCoreNET.DataSource
                     break;
                 case eControlAction.ExportToExcel:
                     string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
-                    ExporttoExcel(actDSTable.DSTableName, token[0], token[1]);
+                    ExporttoExcel(actDSTable.DSTableName, token[0], token[1],actDSTable.ExcelConfig.ExportQueryValue);
                     break;
                 case eControlAction.DeleteRow:
                     if (actDSTable.IsKeyValueTable)

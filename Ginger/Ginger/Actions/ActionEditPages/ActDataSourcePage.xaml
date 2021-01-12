@@ -14,7 +14,7 @@
             <RowDefinition Height="55"/>
             <RowDefinition x:Name="ActionRow" Height="55"/>
             <RowDefinition x:Name="TableRow" Height="35" />
-            <RowDefinition x:Name="IdentifierRow" Height="510" />
+            <RowDefinition x:Name="IdentifierRow" Height="510*" />
             <RowDefinition x:Name="MarkRow" Height="25"/>
             <RowDefinition x:Name="VERow" Height="80" />
             <RowDefinition x:Name="ValRow" Height="55" />
@@ -77,13 +77,12 @@
                     <Grid Visibility="Collapsed" Name="ExcelGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
-                            <RowDefinition/>
+                            <!--<RowDefinition/>-->
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,8,0,0">
+                        <!--<StackPanel Grid.Row="0" Grid.Column="0" Margin="0,8,0,0">
                             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Top">Excel Path:</Label>
                         </StackPanel>
                         <StackPanel Grid.Row="0"  VerticalAlignment="Top" Grid.Column="1" Margin="0,8,0,0">
@@ -97,8 +96,8 @@
                         <StackPanel Grid.Row="1"  VerticalAlignment="Top" Grid.Column="1" Margin="0,8,0,0">
                             <Actions:UCValueExpression x:Name="ExcelSheetName" Grid.Column="1" VerticalAlignment="Center" ToolTip="Excel Sheet Name" Margin="0,0,-325,0"/>
                             
-                        </StackPanel>
-                        
+                        </StackPanel>-->
+                        <Frame  Grid.Row="0" HorizontalAlignment="Left" x:Name="ExcelSpecificFrame" Content="ExcelSpecificFrame" Visibility="Collapsed" Margin="10,0,0,0" NavigationUIVisibility="Hidden"/>
                     </Grid>
                     
                     <Grid Visibility="Collapsed" Name="KeyGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">

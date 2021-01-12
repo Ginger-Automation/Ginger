@@ -26,6 +26,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
 using System.Data;
+using Amdocs.Ginger.CoreNET.DataSource;
 
 namespace GingerCore.Actions
 {
@@ -118,12 +119,12 @@ namespace GingerCore.Actions
                         break;
                     case eControlAction.ExportToExcel:
                         ValueExpression VEETE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VEETE.Value = ExcelPath;
+                        VEETE.Value = ExcelConfig.ExcelPath;
                         string ExcelFilePath = VEETE.ValueCalculated;
 
                         if (ExcelFilePath.ToLower().EndsWith(".xlsx"))
                         {
-                            DataSource.ExporttoExcel(DSTableName, ExcelFilePath, ExcelSheetName);
+                            DataSource.ExporttoExcel(DSTableName, ExcelFilePath, ExcelConfig.ExcelSheetName,ExcelConfig.ExportQueryValue);
                         }
                         else
                         {
@@ -234,8 +235,10 @@ namespace GingerCore.Actions
         public string ValueUC { get; set; }
 
         //[IsSerializedForLocalRepository]
-        public ObservableList<ActDSConditon> WhereConditions { get;
-            set; }
+        public ObservableList<ActDSConditon> WhereConditions { get; set; }
+
+        [IsSerializedForLocalRepository]
+        public ExportToExcelConfig ExcelConfig { get; set; }
 
         public enum eControlAction
         {
