@@ -277,14 +277,21 @@ namespace GingerCoreNET.DataSource
 
         public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName,string sTableQueryValue="")
         {
-            DataTable table = GetTable(TableName);
-            table.Columns.Remove("_id");
+            var dataTable = GetTable(TableName);
+
             if (!string.IsNullOrEmpty(sTableQueryValue))
             {
-                var dt = GetQueryOutput(sTableQueryValue);
+                dataTable = GetQueryOutput(TableName);
+
+                var selectedColumn = sTableQueryValue.Split(',');
+                dataTable = dataTable.DefaultView.ToTable(false, selectedColumn);
+            }
+            else
+            {
+                dataTable.Columns.Remove("_id");
             }
 
-            return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sExcelPath, sSheetName);
+            return GingerCoreNET.GeneralLib.General.ExportToExcel(dataTable, sExcelPath, sSheetName);
         }
 
         public override List<string> GetColumnList(string tableName)
@@ -1081,8 +1088,16 @@ namespace GingerCoreNET.DataSource
                     actDSTable.AddOrUpdateReturnParamActual("Count", dt.Rows.Count.ToString());
                     break;
                 case eControlAction.ExportToExcel:
-                    string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
-                    ExporttoExcel(actDSTable.DSTableName, token[0], token[1],actDSTable.ExcelConfig.ExportQueryValue);
+                    if (actDSTable.ExcelConfig != null)
+                    {
+                        ExporttoExcel(actDSTable.DSTableName,actDSTable.ExcelConfig.ExcelPath, actDSTable.ExcelConfig.ExcelSheetName, actDSTable.ExcelConfig.ExportQueryValue);
+                    }
+                    else
+                    {
+                        string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
+                        ExporttoExcel(actDSTable.DSTableName, token[0], token[1]);
+                    }
+                    
                     break;
                 case eControlAction.DeleteRow:
                     if (actDSTable.IsKeyValueTable)

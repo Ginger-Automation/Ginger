@@ -49,7 +49,7 @@ namespace Ginger.DataSource
 
         public ExportToExcelConfig mExcelConfig = new ExportToExcelConfig();
 
-        public ObservableList<ActDSConditon> mWhereConditionList = null;
+        public ObservableList<ActDSConditon> mWhereConditionList = new ObservableList<ActDSConditon>();
 
         private DataTable mDataTable = null;
         private ActDSTableElement mActDSTableElement = null;
@@ -234,19 +234,30 @@ namespace Ginger.DataSource
 
             xColumnListGrid.DataSourceList = mColumnList;
             xColumnListGrid.RowChangedEvent += XColumnListGrid_RowChangedEvent;
+            xColumnListGrid.LostFocus += XColumnListGrid_LostFocus;
+        }
+
+        private void XColumnListGrid_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateQueryValue();
         }
 
         private void XColumnListGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            if (mActDSTableElement != null)
-            {
-                mActDSTableElement.ExcelConfig.ExportQueryValue = mActDSTableElement.ExcelConfig.CreateQueryWithColumnList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName);
-            }
-            else
-            {
-               mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithColumnList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName);
-            }
+            UpdateQueryValue();
+        }
 
+        private void UpdateQueryValue()
+        {
+            //if (mActDSTableElement != null)
+            //{
+            //    mActDSTableElement.ExcelConfig.ExportQueryValue = mActDSTableElement.ExcelConfig.CreateQueryWithColumnList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName, mDataSourceTable.DSC.DSType);
+            //}
+            //else
+            //{
+            //    mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithColumnList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName, mDataSourceTable.DSC.DSType);
+            //}
+            CreateQueryBasedWhereCondition();
             mActDSTableElement.ExcelConfig.ColumnList = mColumnList;
         }
 
@@ -294,7 +305,7 @@ namespace Ginger.DataSource
             {
                 var selectedColumnList = mColumnList.ToList().FindAll(x => x.IsSelected == true);
                
-                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithColumnList(selectedColumnList,mDataTable.TableName); 
+                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(selectedColumnList,mDataTable.TableName,mDataSourceTable.DSC.DSType); 
             }
             else
             {
@@ -345,19 +356,33 @@ namespace Ginger.DataSource
 
             if (mActDSTableElement != null)
             {
-                if (mActDSTableElement.ExcelConfig.WhereConditionList == null)
+                if (mActDSTableElement.ExcelConfig.WhereConditionStringList == null)
                 {
-                    mActDSTableElement.ExcelConfig.WhereConditionList = new ObservableList<ActDSConditon>() { };
+                    mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList); ;
                 }
-                mWhereConditionList = mActDSTableElement.ExcelConfig.WhereConditionList;
+                
+                mWhereConditionList = mActDSTableElement.ExcelConfig.GetConditons(mActDSTableElement.ExcelConfig.WhereConditionStringList,mDataTable);
+
             }
+            else
+            {
+                //mWhereConditionList = mExcelConfig
+            }
+
+            xGrdExportCondition.DataSourceList = mWhereConditionList;
             xGrdExportCondition.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddWhereCondition));
             xGrdExportCondition.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteWhereCondition));
-            
+
+            xGrdExportCondition.LostFocus += XGrdExportCondition_LostFocus;
             if (Convert.ToBoolean(xExportWhereChkBox.IsChecked))
             {
                 xGrdExportCondition.Visibility = Visibility.Visible;
             }
+        }
+
+        private void XGrdExportCondition_LostFocus(object sender, RoutedEventArgs e)
+        {
+            CreateQueryBasedWhereCondition();
         }
 
         private void xRdoByQueryExport_Checked(object sender, RoutedEventArgs e)
@@ -372,7 +397,7 @@ namespace Ginger.DataSource
             xExcelExportCustomPanel.Visibility = Visibility.Visible;
             if (mActDSTableElement != null)
             {
-                CreateQueryBasedWhereCondition();
+                //CreateQueryBasedWhereCondition();
             }
         }
 
@@ -425,7 +450,13 @@ namespace Ginger.DataSource
         {
             if (mActDSTableElement != null)
             {
-                mActDSTableElement.ExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected == true), mWhereConditionList, mDataTable.TableName);
+                mActDSTableElement.ExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected == true), mWhereConditionList, mDataTable.TableName,mDataSourceTable.DSC.DSType);
+                mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList);
+            }
+            else
+            {
+                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName, mDataSourceTable.DSC.DSType);
+                mExcelConfig.WhereConditionStringList = mExcelConfig.CreateConditionStringList(mWhereConditionList);
             }
         }
 
