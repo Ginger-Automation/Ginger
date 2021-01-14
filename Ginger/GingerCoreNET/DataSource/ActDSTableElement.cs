@@ -122,23 +122,30 @@ namespace GingerCore.Actions
 
                         var excelSheetName = string.Empty;
                         var query = string.Empty;
+                        var excelFilePath = string.Empty; ;
                         if (ExcelConfig == null)
                         {
                             VEETE.Value = ExcelPath;
-                            excelSheetName = ExcelSheetName;
+                            excelFilePath = VEETE.ValueCalculated;
+
+                            VEETE.Value = ExcelSheetName;
+                            excelSheetName = VEETE.ValueCalculated;
                         }
                         else
                         {
                             VEETE.Value = ExcelConfig.ExcelPath;
-                            excelSheetName = ExcelConfig.ExcelSheetName;
-                            query = ExcelConfig.ExportQueryValue;
-                        }
-                        
-                        string ExcelFilePath = VEETE.ValueCalculated;
+                            excelFilePath = VEETE.ValueCalculated;
 
-                        if (ExcelFilePath.ToLower().EndsWith(".xlsx"))
+                            VEETE.Value = ExcelConfig.ExcelSheetName;
+                            excelSheetName = VEETE.ValueCalculated;
+                            
+                            VEETE.Value = ExcelConfig.ExportQueryValue;
+                            query = VEETE.ValueCalculated;
+                        }
+
+                        if (excelFilePath.ToLower().EndsWith(".xlsx"))
                         {
-                            DataSource.ExporttoExcel(DSTableName, ExcelFilePath, excelSheetName,query);
+                            DataSource.ExporttoExcel(DSTableName, excelFilePath, excelSheetName,query);
                         }
                         else
                         {

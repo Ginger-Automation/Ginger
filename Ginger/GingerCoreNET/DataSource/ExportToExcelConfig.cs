@@ -9,11 +9,38 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 {
     public class ExportToExcelConfig : ActInputValue
     {
-        [IsSerializedForLocalRepository]
-        public string ExcelSheetName { get; set; } = string.Empty;
+        private string mExcelSheetName = string.Empty;
 
         [IsSerializedForLocalRepository]
-        public string ExcelPath { get; set; } = string.Empty;
+        public string ExcelSheetName 
+        {
+            get
+            {
+                return mExcelSheetName;
+            }
+            set 
+            {
+                mExcelSheetName = value;
+                OnPropertyChanged("ExcelSheetName");
+            }
+        }
+
+        private string mExcelPath = string.Empty;
+
+       [IsSerializedForLocalRepository]
+        public string ExcelPath 
+        { 
+            get
+            {
+                return mExcelPath;
+            }
+            set
+            {
+                mExcelPath = value;
+
+                OnPropertyChanged("ExcelPath");
+            }
+        } 
 
         private string mExportQueryValue = string.Empty;
 

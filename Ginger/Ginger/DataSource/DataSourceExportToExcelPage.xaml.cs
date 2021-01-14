@@ -113,8 +113,8 @@ namespace Ginger.DataSource
             SetSheetName();
             ExcelFilePath.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExcelPath), true, true, UCValueExpression.eBrowserType.File, "xlsx");
 
-            xExcelExportQuery.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExportQueryValue));
-            xExportSheetName.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExcelSheetName));
+            xExcelExportQuery.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExportQueryValue),true);
+            xExportSheetName.Init(Context.GetAsContext(mActDSTableElement.Context), mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.ExcelSheetName),true);
 
             BindingHandler.ObjFieldBinding(xRdoByCustomExport, RadioButton.IsCheckedProperty, mActDSTableElement.ExcelConfig, nameof(ExportToExcelConfig.IsCustomExport));
            
@@ -303,7 +303,10 @@ namespace Ginger.DataSource
                 {
                     elem.IsSelected = valueToSet;
                 }
+                xColumnListGrid.DataSourceList = mColumnList;
+                CreateQueryBasedWhereCondition();
             }
+
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -320,8 +323,6 @@ namespace Ginger.DataSource
             if (xRdoByCustomExport.IsChecked==true)
             {
                 var selectedColumnList = mColumnList.ToList().FindAll(x => x.IsSelected == true);
-
-                //mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(selectedColumnList,mDataTable.TableName,mDataSourceTable.DSC.DSType); 
                 CreateQueryBasedWhereCondition();
             }
             else
@@ -381,10 +382,6 @@ namespace Ginger.DataSource
                 mWhereConditionList = mActDSTableElement.ExcelConfig.GetConditons(mActDSTableElement.ExcelConfig.WhereConditionStringList,mDataTable);
 
             }
-            else
-            {
-                //mWhereConditionList = mExcelConfig
-            }
 
             xGrdExportCondition.DataSourceList = mWhereConditionList;
             xGrdExportCondition.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddWhereCondition));
@@ -412,10 +409,6 @@ namespace Ginger.DataSource
         {
             xByQueryPanel.Visibility = Visibility.Collapsed;
             xExcelExportCustomPanel.Visibility = Visibility.Visible;
-            if (mActDSTableElement != null)
-            {
-                //CreateQueryBasedWhereCondition();
-            }
         }
 
         private void xGrdExportCondition_Loaded(object sender, RoutedEventArgs e)
@@ -494,10 +487,6 @@ namespace Ginger.DataSource
             CreateQueryBasedWhereCondition();
         }
 
-        private void xExportWhereChkBox_Checked(object sender, RoutedEventArgs e)
-        {
-            
-        }
     }
 
 }
