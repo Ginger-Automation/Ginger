@@ -158,12 +158,28 @@ namespace Ginger.DataSource
 
         private void ExcelSheetNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            mActDSTableElement.ExcelConfig.ExcelSheetName = xExportSheetName.ValueTextBox.Text;
+            if (mActDSTableElement != null)
+            {
+                mActDSTableElement.ExcelConfig.ExcelSheetName = xExportSheetName.ValueTextBox.Text;
+            }
+            else
+            {
+                mExcelConfig.ExcelSheetName = xExportSheetName.ValueTextBox.Text;
+            }
+            
         }
 
         private void ExcelFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            mActDSTableElement.ExcelConfig.ExcelPath = ExcelFilePath.ValueTextBox.Text;
+            if (mActDSTableElement != null)
+            {
+                mActDSTableElement.ExcelConfig.ExcelPath = ExcelFilePath.ValueTextBox.Text;
+            }
+            else
+            {
+                mExcelConfig.ExcelPath = ExcelFilePath.ValueTextBox.Text;
+            }
+            
         }
 
         private void SetDataTable()
@@ -249,16 +265,16 @@ namespace Ginger.DataSource
 
         private void UpdateQueryValue()
         {
-            //if (mActDSTableElement != null)
-            //{
-            //    mActDSTableElement.ExcelConfig.ExportQueryValue = mActDSTableElement.ExcelConfig.CreateQueryWithColumnList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName, mDataSourceTable.DSC.DSType);
-            //}
-            //else
-            //{
-            //    mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithColumnList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName, mDataSourceTable.DSC.DSType);
-            //}
             CreateQueryBasedWhereCondition();
-            mActDSTableElement.ExcelConfig.ColumnList = mColumnList;
+            if (mActDSTableElement != null)
+            {
+                mActDSTableElement.ExcelConfig.ColumnList = mColumnList;
+            }
+            else
+            {
+                mExcelConfig.ColumnList = mColumnList;
+            }
+            
         }
 
         private void SetTableColumnListGridView()
@@ -304,8 +320,9 @@ namespace Ginger.DataSource
             if (xRdoByCustomExport.IsChecked==true)
             {
                 var selectedColumnList = mColumnList.ToList().FindAll(x => x.IsSelected == true);
-               
-                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(selectedColumnList,mDataTable.TableName,mDataSourceTable.DSC.DSType); 
+
+                //mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(selectedColumnList,mDataTable.TableName,mDataSourceTable.DSC.DSType); 
+                CreateQueryBasedWhereCondition();
             }
             else
             {
@@ -415,6 +432,7 @@ namespace Ginger.DataSource
             else
             {
                 xGrdExportCondition.Visibility = Visibility.Collapsed;
+                mWhereConditionList.Clear();
             }
             CreateQueryBasedWhereCondition();
         }
@@ -431,8 +449,13 @@ namespace Ginger.DataSource
             if (mWhereConditionList.Count > 0)
             {
                 foreach (ActDSConditon.eCondition item in Enum.GetValues(typeof(ActDSConditon.eCondition)))
+                {
                     if (item.ToString() != "EMPTY")
+                    {
                         Condition.Add(item.ToString());
+                    }
+                }
+
                 defaultCondition = ActDSConditon.eCondition.AND;
             }
             List<string> cols = new List<string>();
@@ -455,7 +478,7 @@ namespace Ginger.DataSource
             }
             else
             {
-                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mDataTable.TableName, mDataSourceTable.DSC.DSType);
+                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mWhereConditionList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
                 mExcelConfig.WhereConditionStringList = mExcelConfig.CreateConditionStringList(mWhereConditionList);
             }
         }

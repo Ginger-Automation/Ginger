@@ -119,12 +119,26 @@ namespace GingerCore.Actions
                         break;
                     case eControlAction.ExportToExcel:
                         ValueExpression VEETE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
-                        VEETE.Value = ExcelConfig.ExcelPath;
+
+                        var excelSheetName = string.Empty;
+                        var query = string.Empty;
+                        if (ExcelConfig == null)
+                        {
+                            VEETE.Value = ExcelPath;
+                            excelSheetName = ExcelSheetName;
+                        }
+                        else
+                        {
+                            VEETE.Value = ExcelConfig.ExcelPath;
+                            excelSheetName = ExcelConfig.ExcelSheetName;
+                            query = ExcelConfig.ExportQueryValue;
+                        }
+                        
                         string ExcelFilePath = VEETE.ValueCalculated;
 
                         if (ExcelFilePath.ToLower().EndsWith(".xlsx"))
                         {
-                            DataSource.ExporttoExcel(DSTableName, ExcelFilePath, ExcelConfig.ExcelSheetName,ExcelConfig.ExportQueryValue);
+                            DataSource.ExporttoExcel(DSTableName, ExcelFilePath, excelSheetName,query);
                         }
                         else
                         {

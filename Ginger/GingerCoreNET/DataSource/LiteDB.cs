@@ -282,9 +282,27 @@ namespace GingerCoreNET.DataSource
             if (!string.IsNullOrEmpty(sTableQueryValue))
             {
                 dataTable = GetQueryOutput(TableName);
+                var whereCond = string.Empty;
+                var selectedColumn = string.Empty;
+                if (sTableQueryValue.ToLower().Contains(" where "))
+                {
+                    var index = sTableQueryValue.ToLower().IndexOf(" where ");
+                    whereCond = sTableQueryValue.Substring(index);
 
-                var selectedColumn = sTableQueryValue.Split(',');
-                dataTable = dataTable.DefaultView.ToTable(false, selectedColumn);
+                    selectedColumn = sTableQueryValue.Substring(0, index);
+
+                    var filter = whereCond.Remove(0,6).Trim();
+                    DataView dv = new DataView(dataTable);
+                    dv.RowFilter = filter;
+                    dataTable = dv.ToTable();
+
+                    dataTable = dataTable.DefaultView.ToTable(false, selectedColumn.Split(','));
+                }
+                else
+                {
+                    dataTable = dataTable.DefaultView.ToTable(false, sTableQueryValue.Trim().Split(','));
+                }
+                
             }
             else
             {

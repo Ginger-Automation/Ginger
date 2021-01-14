@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         [IsSerializedForLocalRepository]
         public bool IsExportByQuery { get; set; } = false;
 
-        public string CreateQueryWithWhereList(List<ColumnCheckListItem> selectedColumnList, string tableName, DataSourceBase.eDSType dSType)
+        public string CreateQueryWithColumnList(List<ColumnCheckListItem> selectedColumnList, string tableName, DataSourceBase.eDSType dSType)
         {
             var selectedColumn = string.Empty;
             foreach (var column in selectedColumnList)
@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<GingerCore.DataSource.ActDSConditon> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
         {
-            var query = CreateQueryWithWhereList(mColumnList, tableName, dSType);
+            var query = CreateQueryWithColumnList(mColumnList, tableName, dSType);
 
             if (whereConditionList == null)
             {
