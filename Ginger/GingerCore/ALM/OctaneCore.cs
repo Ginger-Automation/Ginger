@@ -62,14 +62,14 @@ namespace GingerCore.ALM
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public ProjectArea ProjectArea { get; private set; }
         List<Release> releases;
-        public RestConnector mOctaneRestConnector;
-        public EntityService entityService;
-        protected LwssoAuthenticationStrategy lwssoAuthenticationStrategy;
+        public RestConnector mOctaneRestConnector;      
         protected WorkspaceContext workspaceContext;
         protected SharedSpaceContext sharedSpaceContext;
         protected OctaneRepository octaneRepository;
         private LoginDTO loginDto;
         private static Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
+
+        private bool isSSOConnection = false;
 
         public OctaneCore()
         {
@@ -216,18 +216,32 @@ namespace GingerCore.ALM
                 if (octaneRepository == null)
                 {
                     octaneRepository = new OctaneRepository();
-                }
+                }           
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Octane server");
                 return Task.Run(() =>
                     {
-                        return octaneRepository.IsLoginValid(
-                            new LoginDTO()
-                            {
-                                User = ALMCore.DefaultAlmConfig.ALMUserName,
-                                Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                                Server = ALMCore.DefaultAlmConfig.ALMServerURL
-                            });
+                        if (IsServerConnected())
+                        {
+                            return true;
+                        }
+
+                        if (isSSOConnection)
+                        {
+                            return octaneRepository.LoginWithSSO(ALMCore.DefaultAlmConfig.ALMServerURL);                            
+                        }
+                        else
+                        {
+                            return octaneRepository.IsLoginValid(
+                          new LoginDTO()
+                          {
+                              User = ALMCore.DefaultAlmConfig.ALMUserName,
+                              Password = ALMCore.DefaultAlmConfig.ALMPassword,
+                              Server = ALMCore.DefaultAlmConfig.ALMServerURL
+                          });
+                        }
+
                     }).Result;
+
             }
             catch (Exception ex)
             {
@@ -237,6 +251,36 @@ namespace GingerCore.ALM
             }
         }
 
+        public override Dictionary<string, string> GetSSOTokens()
+        {
+            
+            isSSOConnection = true;
+           SsoTokenInfo tokenInfo=  octaneRepository.GetSsoTokens(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName);
+
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result.Add("authentication_url", tokenInfo.authentication_url);
+            result.Add("id", tokenInfo.id);
+            result.Add("userName", tokenInfo.userName);
+            result.Add("Error", tokenInfo.Error);
+            
+            return result;
+        }
+
+        public override Dictionary<string, string> GetConnectionInfo()
+        {
+            return octaneRepository.GetConectionsInfo();
+        }
+
+        public override Dictionary<string, string> GetTokenInfo()
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            var tokenInfo = octaneRepository.GetTokenInfo();                     
+            result.Add("authentication_url", tokenInfo.authentication_url);
+            result.Add("id", tokenInfo.id);
+            result.Add("userName", tokenInfo.userName);
+            return null;
+        }
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)
         {
             Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
@@ -342,6 +386,10 @@ namespace GingerCore.ALM
 
         public override void DisconnectALMServer()
         {
+            if (isSSOConnection)
+            {
+                return;
+            }
             var result = Task.Run(() =>
             {
                 this.octaneRepository.DisconnectProject();
@@ -722,10 +770,11 @@ namespace GingerCore.ALM
 
         public override bool IsServerConnected()
         {
-            throw new NotImplementedException();
+            return octaneRepository.IsConnected();
+
         }
 
-        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+            public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
         {
             QCTestInstanceColl testInstances = GetTestsFromTSId(testSet.TestSetID);
 
@@ -1481,7 +1530,10 @@ namespace GingerCore.ALM
 
             AddEntityFieldValues(testCaseFields, test, "test_manual");
 
-            test = Task.Run(() => { return this.octaneRepository.CreateEntity(GetLoginDTO(), test, null); }).Result;
+            test = Task.Run(() => 
+            { 
+                return this.octaneRepository.CreateEntity(GetLoginDTO(), test, null); 
+            }).Result;
 
             activitiesGroup.ExternalID = test.Id.ToString();
             activitiesGroup.ExternalID2 = test.Id.ToString();
