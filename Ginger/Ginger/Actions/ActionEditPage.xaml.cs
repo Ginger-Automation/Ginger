@@ -87,6 +87,8 @@ namespace Ginger.Actions
         Button mRunActionBtn = new Button();
         Button mStopRunBtn = new Button();
         ComboBox dsOutputParamMapType = new ComboBox();
+        CheckBox dsOutputParamAutoCheck = new CheckBox();
+
         private bool saveWasDone = false;
         ActionFlowControlPage mAFCP;
         Context mContext;
@@ -284,12 +286,21 @@ namespace Ginger.Actions
         {
             xOutputValuesTab.Tag = true;//marking that bindings were done
 
+            xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All", new RoutedEventHandler(CheckUnCheckGridRow));
+
             //Outputs to Data Source
             dsOutputParamMapType = xDataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
+
+            //output param auto check Fields
+            dsOutputParamAutoCheck = xDataSourceConfigGrid.AddCheckBox("Auto Select Parameters", new RoutedEventHandler(OutputParamAutoMap));
+
             BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
             BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, nameof(Act.OutDSParamMapType));
+
+            BindingHandler.ObjFieldBinding(dsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
+
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
             {
                 xDataSourceExpander.IsExpanded = true;
@@ -321,6 +332,11 @@ namespace Ginger.Actions
             {
                 xOutputValuesGrid.DisableGridColoumns();
             }
+        }
+
+        private void OutputParamAutoMap(object sender, RoutedEventArgs e)
+        {
+           // throw new NotImplementedException();
         }
 
         private void InitExecutionReportTabView()
@@ -617,6 +633,18 @@ namespace Ginger.Actions
                 xDataSourceConfigGrid.SetAllColumnsDefaultView(view);
             xDataSourceConfigGrid.InitViewItems();
             xDataSourceConfigGrid.SetTitleLightStyle = true;
+        }
+
+        private void CheckUnCheckGridRow(object sender, RoutedEventArgs e)
+        {
+            if (mAction.DSOutputConfigParams.Count > 0)
+            {
+                bool valueToSet = !mAction.DSOutputConfigParams[0].Active;
+                foreach (var elem in mAction.DSOutputConfigParams)
+                {
+                    elem.Active = valueToSet;
+                }
+            }
         }
 
         private void SetActReturnValuesGrid()
@@ -1457,7 +1485,7 @@ namespace Ginger.Actions
                 {
                     foreach (ActOutDataSourceConfig oDSParam in DSConfigParam)
                     {
-                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, oDSParam.OutputType, oDSParam.TableColumn, "", mColNames, mAction.OutDSParamMapType);
+                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, oDSParam.OutputType, oDSParam.TableColumn, mAction.ConfigOutDSParamAutoCheck.ToString(), mColNames, mAction.OutDSParamMapType);
                     }
                 }
             }
@@ -1475,7 +1503,10 @@ namespace Ginger.Actions
             aOutDSConfigParam.Clear();
 
             foreach (ActOutDataSourceConfig aOutDSConfig in DSConfigParam)
+            {
                 aOutDSConfigParam.Add(aOutDSConfig);
+            }
+                
 
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
