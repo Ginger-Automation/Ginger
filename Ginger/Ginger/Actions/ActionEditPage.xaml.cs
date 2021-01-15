@@ -336,7 +336,7 @@ namespace Ginger.Actions
 
         private void OutputParamAutoMap(object sender, RoutedEventArgs e)
         {
-           // throw new NotImplementedException();
+           // Automap paramaters checkbox clicked
         }
 
         private void InitExecutionReportTabView()
