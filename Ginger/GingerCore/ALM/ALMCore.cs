@@ -99,7 +99,7 @@ namespace GingerCore.ALM
         }
         
         public static string SolutionFolder { get; set; }
-        public ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
+        public static ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer(); 
         public abstract bool ConnectALMProject();
         public abstract Boolean IsServerConnected();
