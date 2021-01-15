@@ -76,30 +76,30 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         public string CreateQueryWithColumnList(List<ColumnCheckListItem> selectedColumnList, string tableName, DataSourceBase.eDSType dSType)
         {
-            var selectedColumn = string.Empty;
+            var selectedColumn = new StringBuilder();
             foreach (var column in selectedColumnList)
             {
-                selectedColumn += column.ColumnText.ToLower();
+                selectedColumn.Append(column.ColumnText.ToLower());
                 if (selectedColumnList.Count > 1)
                 {
-                    selectedColumn += ",";
+                    selectedColumn.Append(",");
                 }
             }
 
-            if (selectedColumn.EndsWith(","))
+            if (selectedColumn[selectedColumn.Length - 1].Equals(','))
             {
-                selectedColumn = selectedColumn.Remove(selectedColumn.Length - 1);
+                selectedColumn = selectedColumn.Remove((selectedColumn.Length - 1),1);
             }
 
             var query = "";
 
             if (dSType.Equals(DataSourceBase.eDSType.LiteDataBase))
             {
-                query = selectedColumn;
+                query = selectedColumn.ToString();
             }
             else
             {
-                query = "Select " + selectedColumn + " from " + tableName;
+                query =string.Concat("Select ", selectedColumn," from ", tableName);
             }
 
             return query;

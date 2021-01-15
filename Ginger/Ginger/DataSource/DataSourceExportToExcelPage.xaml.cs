@@ -465,12 +465,12 @@ namespace Ginger.DataSource
         {
             if (mActDSTableElement != null)
             {
-                mActDSTableElement.ExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected == true), mWhereConditionList, mDataTable.TableName,mDataSourceTable.DSC.DSType);
+                mActDSTableElement.ExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mActDSTableElement.ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), mWhereConditionList, mDataTable.TableName,mDataSourceTable.DSC.DSType);
                 mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList);
             }
             else
             {
-                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected == true), mWhereConditionList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
+                mExcelConfig.ExportQueryValue = mExcelConfig.CreateQueryWithWhereList(mColumnList.ToList().FindAll(x => x.IsSelected), mWhereConditionList, mDataTable.TableName, mDataSourceTable.DSC.DSType);
                 mExcelConfig.WhereConditionStringList = mExcelConfig.CreateConditionStringList(mWhereConditionList);
             }
         }
