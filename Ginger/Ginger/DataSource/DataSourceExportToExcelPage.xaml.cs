@@ -322,7 +322,6 @@ namespace Ginger.DataSource
 
             if (xRdoByCustomExport.IsChecked==true)
             {
-                var selectedColumnList = mColumnList.ToList().FindAll(x => x.IsSelected == true);
                 CreateQueryBasedWhereCondition();
             }
             else
@@ -376,7 +375,7 @@ namespace Ginger.DataSource
             {
                 if (mActDSTableElement.ExcelConfig.WhereConditionStringList == null)
                 {
-                    mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList); ;
+                    mActDSTableElement.ExcelConfig.WhereConditionStringList = mActDSTableElement.ExcelConfig.CreateConditionStringList(mWhereConditionList);
                 }
                 
                 mWhereConditionList = mActDSTableElement.ExcelConfig.GetConditons(mActDSTableElement.ExcelConfig.WhereConditionStringList,mDataTable);
@@ -413,7 +412,7 @@ namespace Ginger.DataSource
 
         private void xGrdExportCondition_Loaded(object sender, RoutedEventArgs e)
         {
-
+            //grd loaded
         }
 
         private void xExportWhereChkBox_Click(object sender, RoutedEventArgs e)
@@ -432,7 +431,7 @@ namespace Ginger.DataSource
 
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
-
+            //ValueExpressionButton clicked
         }
 
         private void AddWhereCondition(object sender, RoutedEventArgs e)

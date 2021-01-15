@@ -61,7 +61,6 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         [IsSerializedForLocalRepository]
         public ObservableList<ColumnCheckListItem> ColumnList { get; set; }
        
-        //public ObservableList<ActDSConditon> WhereConditionList { get; set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<WhereConditionItem> WhereConditionStringList { get; set; }

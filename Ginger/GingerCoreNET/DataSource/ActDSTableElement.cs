@@ -122,7 +122,7 @@ namespace GingerCore.Actions
 
                         var excelSheetName = string.Empty;
                         var query = string.Empty;
-                        var excelFilePath = string.Empty; ;
+                        var excelFilePath = string.Empty;
                         if (ExcelConfig == null)
                         {
                             VEETE.Value = ExcelPath;
