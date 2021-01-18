@@ -6,7 +6,7 @@
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:Ginger="clr-namespace:Ginger" h:GingerHelpProvider.HelpString="Data Source"
-      Height="750" Width="600"
+      Height="750" Width="718"
 	  Title="Export to Excel">
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
@@ -18,7 +18,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition x:Name="SheetRow"  Height="30"/>
             <RowDefinition  Height="80"/>
-            <RowDefinition Height="80*"/>
+            <RowDefinition Height="500*"/>
         </Grid.RowDefinitions>
         
         <Label Style="{StaticResource @InputFieldLabelStyle}">Excel File Path:</Label>
@@ -40,9 +40,9 @@
 
             <StackPanel  x:Name="xExcelExportCustomPanel"  Visibility="Collapsed" >
                 <Label HorizontalAlignment="Left" FontWeight="Medium" Style="{StaticResource @LabelStyle}">Select Column To Export :</Label>
-                <Ginger:ucGrid x:Name="xColumnListGrid" AutomationProperties.AutomationId="ColumnListGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                <Ginger:ucGrid x:Name="xColumnListGrid" AutomationProperties.AutomationId="ColumnListGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" Width="500" HorizontalAlignment="Left" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
 
-                <CheckBox x:Name="xExportWhereChkBox" Content="Filter Record Based On Where Clause :" Click="xExportWhereChkBox_Click" Margin="0,10,0,5" FontWeight="Medium"/>
+                <CheckBox x:Name="xExportWhereChkBox" Content="Filter Record Based On Where Clause :" Click="xExportWhereChkBox_Click" Margin="0,20,0,5" FontWeight="Medium"/>
                 
 
                 <Grid Name ="WhereGrid" Background="{StaticResource $BackgroundColor_LightGray}">
@@ -53,7 +53,7 @@
                     </Grid.Resources>
                     <Grid.ColumnDefinitions/>
                     <Grid.RowDefinitions/>
-                    <Ginger:ucGrid Grid.Row="0" x:Name="xGrdExportCondition" Loaded="xGrdExportCondition_Loaded"  Height="200" Title="Where Condition(s)" Visibility="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
+                    <Ginger:ucGrid Grid.Row="0" x:Name="xGrdExportCondition"  Height="190" Title="Where Condition(s)" Visibility="Collapsed" ShowUpDown="Collapsed"></Ginger:ucGrid>
                 </Grid>
             </StackPanel>
         </StackPanel>

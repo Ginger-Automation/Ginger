@@ -87,7 +87,38 @@ namespace GingerCore.Actions
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
                 string Query  = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(DataSource.FileFullPath);
-                liteDB.Execute(this, Query);
+
+                if (this.ExcelConfig != null)
+                {
+                    var orgExcelConfig = this.ExcelConfig;
+                    var tempExp = new ExportToExcelConfig();
+                    try
+                    {
+                        ValueExpression VE = new ValueExpression(RunOnEnvironment, RunOnBusinessFlow, DSList);
+                        VE.Value = ExcelConfig.ExcelPath;
+                        tempExp.ExcelPath = VE.ValueCalculated;
+
+                        VE.Value = ExcelConfig.ExcelSheetName;
+                        tempExp.ExcelSheetName = VE.ValueCalculated;
+
+                        VE.Value = ExcelConfig.ExportQueryValue;
+                        tempExp.ExportQueryValue = VE.ValueCalculated;
+                        if (ExcelConfig.IsCustomExport)
+                        {
+                            tempExp.ExportQueryValue = this.ExcelConfig.CreateQueryWithWhereList(ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), ExcelConfig.WhereConditionStringList, DSTableName, DataSourceBase.eDSType.LiteDataBase);
+                        }
+                        this.ExcelConfig = tempExp;
+                        liteDB.Execute(this, Query);
+                    }
+                    finally
+                    {
+                        this.ExcelConfig = orgExcelConfig;
+                    }
+                }
+                else
+                {
+                    liteDB.Execute(this, Query);
+                }
             }
             else if (DataSource.DSType == DataSourceBase.eDSType.MSAccess)
             {
@@ -141,6 +172,11 @@ namespace GingerCore.Actions
                             
                             VEETE.Value = ExcelConfig.ExportQueryValue;
                             query = VEETE.ValueCalculated;
+
+                            if (ExcelConfig.IsCustomExport)
+                            {
+                               query = this.ExcelConfig.CreateQueryWithWhereList(ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), ExcelConfig.WhereConditionStringList, DSTableName, DataSourceBase.eDSType.MSAccess);
+                            }
                         }
 
                         if (excelFilePath.ToLower().EndsWith(".xlsx"))

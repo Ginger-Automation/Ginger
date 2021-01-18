@@ -803,14 +803,7 @@ namespace Ginger.Actions
                 else
                     TBH.AddBoldText("MASD");
 
-                if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
-                {
-                    //TBH.AddBoldText(" EP=");
-                    //TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim());
-                    //TBH.AddBoldText(" ES=");
-                    //TBH.AddBoldText(ExcelSheetName.ValueTextBox.Text.Trim());
-                }
-                else
+                if (ControlActionComboBox.SelectedValue.ToString() != "ExportToExcel")
                 {
                     if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
                     {
@@ -2018,7 +2011,7 @@ namespace Ginger.Actions
                 }
             }
 
-            if (ControlActionComboBox.SelectedValue.ToString() != ActDSTableElement.eControlAction.ExportToExcel.ToString())
+            if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() != ActDSTableElement.eControlAction.ExportToExcel.ToString())
             {
                 UpdateValueExpression();
             }

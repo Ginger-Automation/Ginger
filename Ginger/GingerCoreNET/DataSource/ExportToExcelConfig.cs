@@ -77,6 +77,10 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         public string CreateQueryWithColumnList(List<ColumnCheckListItem> selectedColumnList, string tableName, DataSourceBase.eDSType dSType)
         {
             var selectedColumn = new StringBuilder();
+            if (selectedColumnList.Count == 0)
+            {
+                return string.Empty;
+            }
             foreach (var column in selectedColumnList)
             {
                 selectedColumn.Append(column.ColumnText.ToLower());
@@ -106,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
 
 
-        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<GingerCore.DataSource.ActDSConditon> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
+        public string CreateQueryWithWhereList(List<ColumnCheckListItem> mColumnList, ObservableList<WhereConditionItem> whereConditionList, string tableName, DataSourceBase.eDSType dSType)
         {
             var query = CreateQueryWithColumnList(mColumnList, tableName, dSType);
 
@@ -119,10 +123,10 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             for (int i = 0; i < whereConditionList.Count; i++)
             {
                 var wQuery = "";
-                var wCond = whereConditionList[i].wCondition.ToString().ToLower();
-                var wColVal = whereConditionList[i].wTableColumn.ToString().Trim();
-                var wOpr = whereConditionList[i].wOperator.ToString();
-                var wRowVal = Convert.ToString(whereConditionList[i].wValue);
+                var wCond = whereConditionList[i].Condition.ToLower();
+                var wColVal = whereConditionList[i].TableColumn.Trim();
+                var wOpr = whereConditionList[i].Opertor;
+                var wRowVal = whereConditionList[i].RowValue;
 
                 if (string.IsNullOrEmpty(wRowVal))
                 {
