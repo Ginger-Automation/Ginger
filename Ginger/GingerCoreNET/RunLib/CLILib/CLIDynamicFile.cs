@@ -271,6 +271,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         if (almDetails.ConfigPackageFolderPath != null)
                         {
                             solutionAlmConfig.ALMConfigPackageFolderPath = almDetails.ConfigPackageFolderPath;
+                            userProfileAlmConfig.ALMConfigPackageFolderPath = almDetails.ConfigPackageFolderPath;
                         }
                         if (almDetails.UseRest != null)
                         {

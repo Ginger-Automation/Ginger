@@ -797,7 +797,8 @@ namespace WorkspaceHold
             Assert.AreEqual(octaneSolConfig.ALMPassword, "@205372322126A", "Validating correct ALMPassword");
             Assert.AreEqual(octaneUsrConfig.ALMPassword, "@205372322126A", "Validating correct ALMPassword");
             Assert.AreEqual(octaneSolConfig.ALMDomain, "domainCLI", "Validating correct ALMDomain");
-            Assert.AreEqual(octaneSolConfig.ALMProjectName, "projectCLI", "Validating correct ALMProjectName");            
+            Assert.AreEqual(octaneSolConfig.ALMProjectName, "projectCLI", "Validating correct ALMProjectName");
+            Assert.AreEqual(octaneSolConfig.ALMConfigPackageFolderPath, "C:\\Temp\\Test Octane\\Octane Settings", "Validating correct ALMConfigPackageFolderPath");
 
             //Validate QC ALM details on Solution and User profile ALM details which been used for actual ALM connection
             Assert.AreEqual(qcSolConfig.ALMServerURL, @"http:/QC.CLI", "Validating correct ALMServerURL");
