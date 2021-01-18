@@ -290,11 +290,8 @@ namespace Ginger.Actions
             BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
-            BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, nameof(Act.OutDSParamMapType));
+            BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.TextProperty, mAction, nameof(Act.OutDSParamMapType));
 
-            xdsOutputParamMapType.ItemsSource = Enum.GetValues(typeof(Act.eOutputDSParamMapType)).Cast<Act.eOutputDSParamMapType>();
-            xdsOutputParamMapType.SelectedIndex = (int) ((Act.eOutputDSParamMapType)Enum.Parse(typeof(Act.eOutputDSParamMapType), mAction.OutDSParamMapType));
- 
             BindingHandler.ObjFieldBinding(xdsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
 
             if (mAction.ConfigOutDSParamAutoCheck)
@@ -334,10 +331,6 @@ namespace Ginger.Actions
             }
         }
 
-        private void OutputParamAutoMap(object sender, RoutedEventArgs e)
-        {
-           // Automap paramaters checkbox clicked
-        }
 
         private void InitExecutionReportTabView()
         {
@@ -1426,13 +1419,15 @@ namespace Ginger.Actions
                 mDataSourceName = mDSNames[0];
             }
 
+            xdsOutputParamMapType.ItemsSource = Enum.GetValues(typeof(Act.eOutputDSParamMapType)).Cast<Act.eOutputDSParamMapType>();
             if (mAction.OutDSParamMapType == null || mAction.OutDSParamMapType == "")
             {
                 xdsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
             }
             else
             {
-                xdsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
+                Enum.TryParse(mAction.OutDSParamMapType, out Act.eOutputDSParamMapType selecedEnumVal);
+                xdsOutputParamMapType.SelectedValue = selecedEnumVal;
             }
                
 

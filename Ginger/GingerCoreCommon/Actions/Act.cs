@@ -302,9 +302,8 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public bool ConfigOutputDS { get { return mConfigOutputDS; } set { mConfigOutputDS = value; } }
 
-        private bool mConfigOutDSParamAutoCheck = false;
         [IsSerializedForLocalRepository]
-        public bool ConfigOutDSParamAutoCheck { get { return mConfigOutDSParamAutoCheck; } set { mConfigOutDSParamAutoCheck = value; } }
+        public bool ConfigOutDSParamAutoCheck { get; set; }
 
 
         private ePlatformType mPlatform;
