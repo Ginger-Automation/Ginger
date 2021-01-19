@@ -214,6 +214,10 @@
                                                     <ComboBox Name="xDataSourceNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}"  Width="200" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
                                                     <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
                                                     <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
+
+                                                    <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Out Param Mapping:</Label>
+                                                    <ComboBox Name="xdsOutputParamMapType" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="OutDSParamType_SelectionChanged"></ComboBox>
+                                                    <CheckBox x:Name="xdsOutputParamAutoCheck" Content="Auto Map Parameters" Click="xdsOutputParamAutoCheck_Click" Style="{StaticResource @CheckBoxStyle}" Margin="5,5,0,0"/>
                                                 </StackPanel>
                                                 <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" Margin="0,0,0,10" />
                                             </DockPanel>
