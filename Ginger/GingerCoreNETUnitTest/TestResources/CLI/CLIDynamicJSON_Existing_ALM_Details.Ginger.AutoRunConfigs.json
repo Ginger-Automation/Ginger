@@ -17,7 +17,7 @@
       "domain": "domainCLI",
       "project": "projectCLI",
       "projectKey": "projectKeyCLI",
-      "useRest": true,     
+      "useRest": true     
     },
     {
       "almType": "Octane",
@@ -27,7 +27,8 @@
       "passwordEncrypted": false,
       "domain": "domainCLI",
       "project": "projectCLI",
-      "isDefault": true
+      "isDefault": true,
+      "ConfigPackageFolderPath": "C:\\Temp\\Test Octane\\Octane Settings"
     }
   ],
   "SolutionLocalPath": "SOLUTION_PATH",
