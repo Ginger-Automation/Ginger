@@ -62,7 +62,7 @@ namespace GingerCore.ALM
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public ProjectArea ProjectArea { get; private set; }
         List<Release> releases;
-        public RestConnector mOctaneRestConnector;      
+        public RestConnector mOctaneRestConnector;
         protected WorkspaceContext workspaceContext;
         protected SharedSpaceContext sharedSpaceContext;
         protected OctaneRepository octaneRepository;
@@ -216,7 +216,7 @@ namespace GingerCore.ALM
                 if (octaneRepository == null)
                 {
                     octaneRepository = new OctaneRepository();
-                }           
+                }
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Octane server");
                 return Task.Run(() =>
                     {
@@ -227,7 +227,7 @@ namespace GingerCore.ALM
 
                         if (isSSOConnection)
                         {
-                            return octaneRepository.LoginWithSSO(ALMCore.DefaultAlmConfig.ALMServerURL);                            
+                            return octaneRepository.LoginWithSSO(ALMCore.DefaultAlmConfig.ALMServerURL);
                         }
                         else
                         {
@@ -253,16 +253,16 @@ namespace GingerCore.ALM
 
         public override Dictionary<string, string> GetSSOTokens()
         {
-            
+
             isSSOConnection = true;
-           SsoTokenInfo tokenInfo=  octaneRepository.GetSsoTokens(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName);
+            SsoTokenInfo tokenInfo = octaneRepository.GetSsoTokens(ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMUserName);
 
             Dictionary<string, string> result = new Dictionary<string, string>();
             result.Add("authentication_url", tokenInfo.authentication_url);
             result.Add("id", tokenInfo.id);
             result.Add("userName", tokenInfo.userName);
             result.Add("Error", tokenInfo.Error);
-            
+
             return result;
         }
 
@@ -275,7 +275,7 @@ namespace GingerCore.ALM
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            var tokenInfo = octaneRepository.GetTokenInfo();                     
+            var tokenInfo = octaneRepository.GetTokenInfo();
             result.Add("authentication_url", tokenInfo.authentication_url);
             result.Add("id", tokenInfo.id);
             result.Add("userName", tokenInfo.userName);
@@ -451,7 +451,7 @@ namespace GingerCore.ALM
                                     List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
 
                                     //Commented below create test run as Above create test suite function creates test runs by default.
-                                    //CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
+                                    CrateTestRun(publishToALMConfig, activGroup, tsTest, runSuite.Id, runFields);
 
                                     // Attach ActivityGroup Report if needed
                                     if (publishToALMConfig.ToAttachActivitiesGroupReport)
@@ -589,15 +589,42 @@ namespace GingerCore.ALM
                 });
                 AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
-                return Task.Run(() =>
+                runSuiteToExport = Task.Run(() =>
                 {
                     return this.octaneRepository.CreateEntity<RunSuite>(GetLoginDTO(), runSuiteToExport, null);
                 }).Result;
+                UpdateRunSuite(runSuiteToExport);
+                return runSuiteToExport;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "In CreateRunSuite/OctaneCore.cs method ", ex);
                 throw;
+            }
+        }
+
+        private void UpdateRunSuite(RunSuite runSuiteToExport)
+        {
+            try
+            {
+                EntityListResult<RunSuite> testFolders = new EntityListResult<RunSuite>();
+                LogicalQueryPhrase run_Suite = new LogicalQueryPhrase("id", runSuiteToExport.Id, ComparisonOperator.Equal);
+                CrossQueryPhrase qd = new CrossQueryPhrase("parent_suite", run_Suite);
+                IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
+                List<RunManual> runsToDelete = octaneRepository.GetEntities<RunManual>(GetLoginDTO(), filter);                
+                foreach (var run in runsToDelete)
+                {
+                    Task.Run(() =>
+                    {
+                        return this.octaneRepository.DeleteEntity<RunManual>(GetLoginDTO(), new List<IQueryPhrase> { new LogicalQueryPhrase("id", run.Id, ComparisonOperator.Equal) });
+                    });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "In UpdateRunSuite/OctaneCore.cs method ", ex);
+                //throw;
             }
         }
 
@@ -774,7 +801,7 @@ namespace GingerCore.ALM
 
         }
 
-            public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
+        public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
         {
             QCTestInstanceColl testInstances = GetTestsFromTSId(testSet.TestSetID);
 
@@ -1530,9 +1557,9 @@ namespace GingerCore.ALM
 
             AddEntityFieldValues(testCaseFields, test, "test_manual");
 
-            test = Task.Run(() => 
-            { 
-                return this.octaneRepository.CreateEntity(GetLoginDTO(), test, null); 
+            test = Task.Run(() =>
+            {
+                return this.octaneRepository.CreateEntity(GetLoginDTO(), test, null);
             }).Result;
 
             activitiesGroup.ExternalID = test.Id.ToString();
