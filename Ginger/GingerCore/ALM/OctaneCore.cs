@@ -1,20 +1,4 @@
-#region License
-/*
-Copyright © 2014-2020 European Support Limited
 
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-*/
-#endregion
 
 using ALM_Common.Data_Contracts;
 using ALM_Common.DataContracts;
@@ -33,6 +17,7 @@ using OctaneSdkStandard.Connector.Credentials;
 using OctaneSdkStandard.Entities.Base;
 using OctaneSdkStandard.Entities.Releases;
 using OctaneSdkStandard.Entities.Tests;
+using OctaneSdkStandard.Entities.Users;
 using OctaneSdkStandard.Entities.WorkItems;
 using OctaneSdkStandard.Services;
 using OctaneSdkStandard.Services.Queries;
@@ -229,13 +214,13 @@ namespace GingerCore.ALM
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, "Performing Octane Sys-2-Sys connection");                            
+                            Reporter.ToLog(eLogLevel.DEBUG, "Performing Octane Sys-2-Sys connection");
                             APIKeyConnectionInfo aPIKeyConnectionInfo = new APIKeyConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
                             ClientCertificateData clientCertificateData = null;
                             if (ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath != null)
                             {
                                 try
-                                {                                  
+                                {
                                     string octaneSettingsFilePath = Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath, "OctaneSettings.json");
                                     if (File.Exists(octaneSettingsFilePath))
                                     {
@@ -266,7 +251,7 @@ namespace GingerCore.ALM
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, string.Format("Octane connection details Client_ID='{0}', Server='{1}', Certificate='{2}'", ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMServerURL, clientCertificateData.Path));
                             }
-                           
+
                             return octaneRepository.LoginWithClientId(aPIKeyConnectionInfo, ALMCore.DefaultAlmConfig.ALMServerURL, clientCertificateData);
                         }
 
@@ -316,33 +301,88 @@ namespace GingerCore.ALM
             Dictionary<string, List<string>> defectsBFs = new Dictionary<string, List<string>>();
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
-                Dictionary<string, string> filedsToUpdate = new Dictionary<string, string>();
+                //Dictionary<string, string> filedsToUpdate = new Dictionary<string, string>();
 
-                foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
-                {
-                    if (string.IsNullOrEmpty(item.SelectedValue) || item.SelectedValue == "Unassigned")
-                    {
-                        item.SelectedValue = defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID] != "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
-                    }
-                    filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
-                }
+                //foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
+                //{
+                //    if (string.IsNullOrEmpty(item.SelectedValue) || item.SelectedValue == "Unassigned")
+                //    {
+                //        item.SelectedValue = defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID] != "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
+                //    }
+                //    filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
+                //}
+
 
                 //TODO: ToUpdate field is not set to true correctly on fields grid. 
-                // So description is not captured. Setting it explicitly until grid finding is fixed
-                filedsToUpdate.Add("severity", defectForOpening.Value.ContainsKey("severity") ? defectForOpening.Value["severity"] : string.Empty);
-                filedsToUpdate.Add("description", defectForOpening.Value.ContainsKey("description") ? defectForOpening.Value["description"] : string.Empty);
-
-                string newDefectID = Task.Run(() =>
+                // So description is not captured. Setting it explicitly until grid finding is fixeddefectForOpening.Value["severity"];
+                Defect newDefect = new Defect();
+                //test.Name = activitiesGroup.Name;
+                if (defectForOpening.Value.ContainsKey("description"))
                 {
-                    return octaneRepository.CreateDefect(GetLoginDTO(), filedsToUpdate);
+                    newDefect.SetValue("description", defectForOpening.Value["description"]);
+                }
+                if (defectForOpening.Value.ContainsKey("severity"))
+                {
+                    newDefect.SetValue("severity", new BaseEntity()
+                    {
+                        TypeName = "list_node",
+                        Id = "list_node.severity." + defectForOpening.Value["severity"].ToLower()
+                    });
+                }
+                else
+                {
+                    newDefect.SetValue("severity", new BaseEntity()
+                    {
+                        TypeName = "list_node",
+                        Id = "list_node.severity.medium"
+                    });
+                }
+                try
+                {
+                    LogicalQueryPhrase userFilter = new LogicalQueryPhrase("email", ALMCore.DefaultAlmConfig.ALMUserName, ComparisonOperator.Equal);
+                    List<WorkspaceUser> users = octaneRepository.GetEntities<WorkspaceUser>(GetLoginDTO(), new List<IQueryPhrase>() { userFilter });
+                    if (users.Any())
+                    {
+                        newDefect.SetValue("detected_by", new BaseEntity()
+                        {
+                            TypeName = "workspace_user",
+                            Id = users.First().Id
+                        });
+                        newDefect.SetValue("owner", new BaseEntity()
+                        {
+                            TypeName = "workspace_user",
+                            Id = users.First().Id
+                        });
+                    }
+                    //newDefect.SetValue("detected_by", new BaseEntity()
+                    //{
+                    //    TypeName = "workspace_user",
+                    //    Id = "19001"
+                    //});
+                    //newDefect.SetValue("owner", new BaseEntity()
+                    //{
+                    //    TypeName = "workspace_user",
+                    //    Id = "19001"
+                    //});
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error while fetching User ID from Octane User API", ex);
+                }
 
+                AddEntityFieldValues(defectsFields, newDefect, "defect");
+
+                newDefect = Task.Run(() =>
+                {
+                    return this.octaneRepository.CreateEntity(GetLoginDTO(), newDefect, null);
                 }).Result;
-                defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
+
+                defectsOpeningResults.Add(defectForOpening.Key, newDefect.Id);
 
                 // Add screen shot as a attachment to defect
                 if (defectForOpening.Value.ContainsKey("screenshots") && !string.IsNullOrEmpty(defectForOpening.Value["screenshots"]))
                 {
-                    AddAttachmentToDefect(newDefectID, defectForOpening.Value["screenshots"]);
+                    AddAttachmentToDefect(newDefect.Id, defectForOpening.Value["screenshots"]);
                 }
 
                 if (defectForOpening.Value.ContainsKey("BFExternalID1") && !string.IsNullOrEmpty(defectForOpening.Value["BFExternalID1"]))
@@ -350,12 +390,12 @@ namespace GingerCore.ALM
                     if (defectsBFs.ContainsKey(defectForOpening.Value["BFExternalID1"]))
                     {
                         var tempList = defectsBFs[defectForOpening.Value["BFExternalID1"]];
-                        tempList.Add(newDefectID);
+                        tempList.Add(newDefect.Id);
                         defectsBFs[defectForOpening.Value["BFExternalID1"]] = tempList;
                     }
                     else
                     {
-                        defectsBFs.Add(defectForOpening.Value["BFExternalID1"], new List<string>() { newDefectID });
+                        defectsBFs.Add(defectForOpening.Value["BFExternalID1"], new List<string>() { newDefect.Id });
                     }
                 }
             }
@@ -572,7 +612,7 @@ namespace GingerCore.ALM
                 fs.Close();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect", ex);
                 return false;
@@ -617,7 +657,7 @@ namespace GingerCore.ALM
                     TypeName = "list_node",
                     Id = "list_node.run_native_status." + bizFlow.RunStatus,
                 });
-                AddEntityFieldValues(runFields, runSuiteToExport, "test_suite");
+                AddEntityFieldValues(runFields.ToList(), runSuiteToExport, "run_suite");
                 runSuiteToExport.SetValue("description", publishToALMConfig.VariableForTCRunName);
                 runSuiteToExport = Task.Run(() =>
                 {
@@ -641,7 +681,7 @@ namespace GingerCore.ALM
                 LogicalQueryPhrase run_Suite = new LogicalQueryPhrase("id", runSuiteToExport.Id, ComparisonOperator.Equal);
                 CrossQueryPhrase qd = new CrossQueryPhrase("parent_suite", run_Suite);
                 IList<IQueryPhrase> filter = new List<IQueryPhrase> { qd };
-                List<RunManual> runsToDelete = octaneRepository.GetEntities<RunManual>(GetLoginDTO(), filter);                
+                List<RunManual> runsToDelete = octaneRepository.GetEntities<RunManual>(GetLoginDTO(), filter);
                 foreach (var run in runsToDelete)
                 {
                     Task.Run(() =>
@@ -670,7 +710,7 @@ namespace GingerCore.ALM
                 Id = runSuiteId
             });
             runToExport.SetValue("subtype", "run_manual");
-            AddEntityFieldValues(runFields, runToExport, "run_manual");
+            AddEntityFieldValues(runFields.ToList(), runToExport, "run_manual");
             //runToExport.SetValue("release", new BaseEntity()
             //{
             //    TypeName = "release",
@@ -1418,7 +1458,7 @@ namespace GingerCore.ALM
             {
                 data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
             });
-            AddEntityFieldValues(testSetFields, testSuite, "test_suite");
+            AddEntityFieldValues(testSetFields.ToList(), testSuite, "test_suite");
             TestSuite created = Task.Run(() =>
             {
                 return this.octaneRepository.CreateEntity<TestSuite>(GetLoginDTO(), testSuite);
@@ -1440,7 +1480,7 @@ namespace GingerCore.ALM
             {
                 data = new List<BaseEntity>() { new BaseEntity("product_area") { Id = fatherId, TypeName = "product_area" } }
             });
-            AddEntityFieldValues(testSetFields, testSuite, "test_suite");
+            AddEntityFieldValues(testSetFields.ToList(), testSuite, "test_suite");
             TestSuite created = (TestSuite)Task.Run(() =>
             {
                 return this.octaneRepository.UpdateTestSuite(GetLoginDTO(), testSuite);
@@ -1585,7 +1625,7 @@ namespace GingerCore.ALM
                 }
             });
 
-            AddEntityFieldValues(testCaseFields, test, "test_manual");
+            AddEntityFieldValues(testCaseFields.ToList(), test, "test_manual");
 
             test = Task.Run(() =>
             {
@@ -1599,7 +1639,7 @@ namespace GingerCore.ALM
             return test.Id.ToString();
         }
 
-        private void AddEntityFieldValues(ObservableList<ExternalItemFieldBase> fields, BaseEntity test, string entityType)
+        private void AddEntityFieldValues(List<ExternalItemFieldBase> fields, BaseEntity test, string entityType)
         {
             foreach (ExternalItemFieldBase field in fields)
             {
@@ -1630,6 +1670,32 @@ namespace GingerCore.ALM
                                     {
                                         TypeName = "release",
                                         Id = releases.Where(r => r.Name.Equals(field.SelectedValue)).FirstOrDefault().Id
+                                    });
+                                }
+                                else if (field.ExternalID == "severity")
+                                {
+                                    test.SetValue(field.ExternalID, new BaseEntity()
+                                    {
+                                        TypeName = "list_node",
+                                        Id = "list_node.severity." + field.SelectedValue.ToLower()
+                                    });
+                                }
+                                else if (field.ExternalID == "detected_by")
+                                {
+                                    //Value must be Octane User ID, not the User name
+                                    test.SetValue(field.ExternalID, new BaseEntity()
+                                    {
+                                        TypeName = "workspace_user",
+                                        Id = field.SelectedValue.ToLower()
+                                    });
+                                }
+                                else if (field.ExternalID == "owner")
+                                {
+                                    //Value must be Octane User ID, not the User name
+                                    test.SetValue(field.ExternalID, new BaseEntity()
+                                    {
+                                        TypeName = "workspace_user",
+                                        Id = field.SelectedValue.ToLower()
                                     });
                                 }
                                 else
@@ -1694,7 +1760,7 @@ namespace GingerCore.ALM
                 }
             });
 
-            AddEntityFieldValues(testCaseFields, test, "test_manual");
+            AddEntityFieldValues(testCaseFields.ToList(), test, "test_manual");
 
             test = (TestManual)Task.Run(() =>
             {
