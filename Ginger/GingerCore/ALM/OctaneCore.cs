@@ -301,22 +301,9 @@ namespace GingerCore.ALM
             Dictionary<string, List<string>> defectsBFs = new Dictionary<string, List<string>>();
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
-                //Dictionary<string, string> filedsToUpdate = new Dictionary<string, string>();
-
-                //foreach (var item in defectsFields.Where(a => a.Mandatory || a.ToUpdate))
-                //{
-                //    if (string.IsNullOrEmpty(item.SelectedValue) || item.SelectedValue == "Unassigned")
-                //    {
-                //        item.SelectedValue = defectForOpening.Value.ContainsKey(item.ExternalID) && defectForOpening.Value[item.ExternalID] != "Unassigned" ? defectForOpening.Value[item.ExternalID] : string.Empty;
-                //    }
-                //    filedsToUpdate.Add(item.ExternalID, item.SelectedValue);
-                //}
-
-
                 //TODO: ToUpdate field is not set to true correctly on fields grid. 
                 // So description is not captured. Setting it explicitly until grid finding is fixeddefectForOpening.Value["severity"];
                 Defect newDefect = new Defect();
-                //test.Name = activitiesGroup.Name;
                 if (defectForOpening.Value.ContainsKey("description"))
                 {
                     newDefect.SetValue("description", defectForOpening.Value["description"]);
@@ -346,7 +333,7 @@ namespace GingerCore.ALM
                         newDefect.SetValue("detected_by", new BaseEntity()
                         {
                             TypeName = "workspace_user",
-                            Id = users.First().Id
+                            Id = users.First().Id // Provide user Id here
                         });
                         newDefect.SetValue("owner", new BaseEntity()
                         {
@@ -354,16 +341,6 @@ namespace GingerCore.ALM
                             Id = users.First().Id
                         });
                     }
-                    //newDefect.SetValue("detected_by", new BaseEntity()
-                    //{
-                    //    TypeName = "workspace_user",
-                    //    Id = "19001"
-                    //});
-                    //newDefect.SetValue("owner", new BaseEntity()
-                    //{
-                    //    TypeName = "workspace_user",
-                    //    Id = "19001"
-                    //});
                 }
                 catch (Exception ex)
                 {
