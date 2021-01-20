@@ -16,43 +16,39 @@ limitations under the License.
 */
 #endregion
 
+using ALM_Common.Data_Contracts;
 using ALM_Common.DataContracts;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
+using GingerCore.ALM.Octane;
+using GingerCore.ALM.QC;
 using GingerCore.Variables;
+using Octane_Repository;
 using OctaneSdkStandard.Connector;
-using OctaneSdkStandard.Connector.Authentication;
 using OctaneSdkStandard.Connector.Credentials;
+using OctaneSdkStandard.Entities.Base;
+using OctaneSdkStandard.Entities.Releases;
+using OctaneSdkStandard.Entities.Tests;
+using OctaneSdkStandard.Entities.WorkItems;
 using OctaneSdkStandard.Services;
+using OctaneSdkStandard.Services.Queries;
 using OctaneSdkStandard.Services.RequestContext;
+using QCRestClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Octane_Repository;
-using ALM_Common.Data_Contracts;
-using Octane_Repository.BLL;
-using OctaneSdkStandard.Entities.Base;
-using OctaneSdkStandard.Entities.WorkItems;
-using OctaneSdkStandard.Entities.Tests;
-using OctaneSdkStandard.Entities.Requirements;
-using GingerCore.ALM.QC;
-using OctaneSdkStandard.Services.Queries;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using System.Web;
-using QCRestClient;
-using QCTestSet = QCRestClient.QCTestSet;
-using Couchbase.Utils;
-using Amdocs.Ginger.Common.InterfacesLib;
 using System.IO;
 using System.IO.Compression;
-using OctaneSdkStandard.Entities.Releases;
-using amdocs.ginger.GingerCoreNET;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+using QCTestSet = QCRestClient.QCTestSet;
 
 namespace GingerCore.ALM
 {
@@ -222,30 +218,63 @@ namespace GingerCore.ALM
                     {
                         if (IsServerConnected())
                         {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Found that connection to Octane server already exist");
                             return true;
                         }
 
                         if (isSSOConnection)
                         {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Performing Octane SSO connection");
                             return octaneRepository.LoginWithSSO(ALMCore.DefaultAlmConfig.ALMServerURL);
                         }
                         else
                         {
-                            return octaneRepository.IsLoginValid(
-                          new LoginDTO()
-                          {
-                              User = ALMCore.DefaultAlmConfig.ALMUserName,
-                              Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                              Server = ALMCore.DefaultAlmConfig.ALMServerURL
-                          });
+                            Reporter.ToLog(eLogLevel.DEBUG, "Performing Octane Sys-2-Sys connection");                            
+                            APIKeyConnectionInfo aPIKeyConnectionInfo = new APIKeyConnectionInfo(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword);
+                            ClientCertificateData clientCertificateData = null;
+                            if (ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath != null)
+                            {
+                                try
+                                {                                  
+                                    string octaneSettingsFilePath = Path.Combine(ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath, "OctaneSettings.json");
+                                    if (File.Exists(octaneSettingsFilePath))
+                                    {
+                                        Reporter.ToLog(eLogLevel.DEBUG, "Loading Octane extra connection settings");
+                                        OctaneSettings octaneSettings = JsonUtils.DeserializeObject<OctaneSettings>(File.ReadAllText(octaneSettingsFilePath));
+                                        if (octaneSettings.IsCertificatePasswordEncrypted)
+                                        {
+                                            octaneSettings.CertificatePassword = EncryptionHandler.DecryptwithKey(octaneSettings.CertificatePassword);
+                                        }
+                                        clientCertificateData = new ClientCertificateData() { Path = Path.GetFullPath(octaneSettings.CertificateFilePath), Password = octaneSettings.CertificatePassword };
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to load Octane Settings from folder: '{0}'", ALMCore.DefaultAlmConfig.ALMConfigPackageFolderPath));
+                                }
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Octane extra connection settings is not been used"));
+                            }
+
+                            if (clientCertificateData == null)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Octane connection details Client_ID='{0}', Server='{1}'", ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMServerURL));
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, string.Format("Octane connection details Client_ID='{0}', Server='{1}', Certificate='{2}'", ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMServerURL, clientCertificateData.Path));
+                            }
+                           
+                            return octaneRepository.LoginWithClientId(aPIKeyConnectionInfo, ALMCore.DefaultAlmConfig.ALMServerURL, clientCertificateData);
                         }
 
                     }).Result;
-
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Connecting to Octane server", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured during Octane server connection", ex);
                 mOctaneRestConnector = null;
                 return false;
             }
@@ -543,8 +572,9 @@ namespace GingerCore.ALM
                 fs.Close();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect", ex);
                 return false;
             }
         }

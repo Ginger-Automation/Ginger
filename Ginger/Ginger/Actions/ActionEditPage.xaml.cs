@@ -86,7 +86,7 @@ namespace Ginger.Actions
         Button mSimulateRunBtn = new Button();
         Button mRunActionBtn = new Button();
         Button mStopRunBtn = new Button();
-        ComboBox dsOutputParamMapType = new ComboBox();
+
         private bool saveWasDone = false;
         ActionFlowControlPage mAFCP;
         Context mContext;
@@ -284,12 +284,20 @@ namespace Ginger.Actions
         {
             xOutputValuesTab.Tag = true;//marking that bindings were done
 
-            //Outputs to Data Source
-            dsOutputParamMapType = xDataSourceConfigGrid.AddComboBox(typeof(Act.eOutputDSParamMapType), "Out Param Mapping", "", new RoutedEventHandler(OutDSParamType_SelectionChanged));
+            xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All", new RoutedEventHandler(CheckUnCheckGridRow));
+
+ 
             BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
             BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
             BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
-            BindingHandler.ObjFieldBinding(dsOutputParamMapType, ComboBox.SelectedValueProperty, mAction, nameof(Act.OutDSParamMapType));
+            BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.TextProperty, mAction, nameof(Act.OutDSParamMapType));
+
+            BindingHandler.ObjFieldBinding(xdsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
+
+            if (mAction.ConfigOutDSParamAutoCheck)
+            {
+                xDataSourceConfigGrid.Visibility = Visibility.Collapsed;
+            }
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
             {
                 xDataSourceExpander.IsExpanded = true;
@@ -322,6 +330,7 @@ namespace Ginger.Actions
                 xOutputValuesGrid.DisableGridColoumns();
             }
         }
+
 
         private void InitExecutionReportTabView()
         {
@@ -617,6 +626,18 @@ namespace Ginger.Actions
                 xDataSourceConfigGrid.SetAllColumnsDefaultView(view);
             xDataSourceConfigGrid.InitViewItems();
             xDataSourceConfigGrid.SetTitleLightStyle = true;
+        }
+
+        private void CheckUnCheckGridRow(object sender, RoutedEventArgs e)
+        {
+            if (mAction.DSOutputConfigParams.Count > 0)
+            {
+                bool valueToSet = !mAction.DSOutputConfigParams[0].Active;
+                foreach (var elem in mAction.DSOutputConfigParams)
+                {
+                    elem.Active = valueToSet;
+                }
+            }
         }
 
         private void SetActReturnValuesGrid()
@@ -1398,12 +1419,17 @@ namespace Ginger.Actions
                 mDataSourceName = mDSNames[0];
             }
 
+            xdsOutputParamMapType.ItemsSource = Enum.GetValues(typeof(Act.eOutputDSParamMapType)).Cast<Act.eOutputDSParamMapType>();
             if (mAction.OutDSParamMapType == null || mAction.OutDSParamMapType == "")
             {
-                dsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
+                xdsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
             }
             else
-                dsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
+            {
+                Enum.TryParse(mAction.OutDSParamMapType, out Act.eOutputDSParamMapType selecedEnumVal);
+                xdsOutputParamMapType.SelectedValue = selecedEnumVal;
+            }
+               
 
             SetDataSourceConfigTabView();
 
@@ -1438,7 +1464,7 @@ namespace Ginger.Actions
 
             if (mDSTable.DSTableType == DataSourceTable.eDSTableType.Customized)
             {
-                dsOutputParamMapType.IsEnabled = true;
+                xdsOutputParamMapType.IsEnabled = true;
                 mColNames.Remove("GINGER_ID");
                 if (mColNames.Contains("GINGER_LAST_UPDATED_BY"))
                     mColNames.Remove("GINGER_LAST_UPDATED_BY");
@@ -1457,14 +1483,14 @@ namespace Ginger.Actions
                 {
                     foreach (ActOutDataSourceConfig oDSParam in DSConfigParam)
                     {
-                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, oDSParam.OutputType, oDSParam.TableColumn, "", mColNames, mAction.OutDSParamMapType);
+                        mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, oDSParam.OutputType, oDSParam.TableColumn, mAction.ConfigOutDSParamAutoCheck.ToString(), mColNames, mAction.OutDSParamMapType);
                     }
                 }
             }
             else
             {
-                dsOutputParamMapType.IsEnabled = false;
-                dsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
+                xdsOutputParamMapType.IsEnabled = false;
+                xdsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
                 mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter.ToString(), "GINGER_KEY_NAME");
                 mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Parameter_Path.ToString(), "GINGER_KEY_NAME");
                 mAction.AddOrUpdateOutDataSourceParam(mDataSourceName, mDSTable.Name, ActOutDataSourceConfig.eOutputType.Actual.ToString(), "GINGER_KEY_VALUE");
@@ -1475,17 +1501,16 @@ namespace Ginger.Actions
             aOutDSConfigParam.Clear();
 
             foreach (ActOutDataSourceConfig aOutDSConfig in DSConfigParam)
+            {
                 aOutDSConfigParam.Add(aOutDSConfig);
+            }
+                
 
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
             SetActDataSourceConfigGrid();
             mAction.DSOutputConfigParams = aOutDSConfigParam;
             xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
-        }
-        private void OutDSParamType_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            updateDSOutGrid();
         }
 
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1501,8 +1526,9 @@ namespace Ginger.Actions
                     mColNames = mDSTable.DSC.GetColumnList(mDSTable.Name);
                     if (mAction.OutDSParamMapType == null)
                         mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
-                    dsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
+                    xdsOutputParamMapType.SelectedValue = mAction.OutDSParamMapType;
                     updateDSOutGrid();
+                    SetDSGridVisibility();
                     break;
                 }
             }
@@ -1674,7 +1700,7 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xAddOutToDSCheckbox);
             BindingOperations.ClearAllBindings(xDataSourceNameCombo);
             BindingOperations.ClearAllBindings(xDataSourceTableNameCombo);
-            BindingOperations.ClearAllBindings(dsOutputParamMapType);
+            BindingOperations.ClearAllBindings(xdsOutputParamMapType);
             BindingOperations.ClearAllBindings(xEnableActionLogConfigCheckBox);
             BindingOperations.ClearAllBindings(xLocateValueVE);
             xTagsViewer.ClearBinding();
@@ -1732,6 +1758,29 @@ namespace Ginger.Actions
         private void XHelpButton_Click(object sender, RoutedEventArgs e)
         {
             xActionTabs.SelectedItem = xHelpTab;
+        }
+
+        private void xdsOutputParamAutoCheck_Click(object sender, RoutedEventArgs e)
+        {
+            SetDSGridVisibility();
+        }
+
+        private void SetDSGridVisibility()
+        {
+            if (xdsOutputParamAutoCheck.IsChecked == true)
+            {
+                xDataSourceConfigGrid.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xDataSourceConfigGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void OutDSParamType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            updateDSOutGrid();
+            SetDSGridVisibility();
         }
     }
 }
