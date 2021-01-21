@@ -64,6 +64,20 @@ namespace GingerCoreNET.ALMLib
                 EncryptedALMPassword = EncryptionHandler.EncryptString(value, ref res);
             }
         }
+        private string mALMToken;
+        [IsSerializedForLocalRepository]
+        public string ALMToken
+        {
+            get { return mALMToken; }
+            set
+            {
+                if (mALMToken != value)
+                {
+                    mALMToken = value;
+                    OnPropertyChanged(nameof(ALMToken));
+                }
+            }
+        }
         private ALMIntegration.eALMType mAlmType = ALMIntegration.eALMType.QC;
         [IsSerializedForLocalRepository]
         public ALMIntegration.eALMType AlmType
