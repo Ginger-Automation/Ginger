@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.Rally;
 using GingerCore.ALM.RQM;
+using OctaneSdkStandard.Connector.Credentials;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -85,6 +86,14 @@ namespace GingerCore.ALM
                     AlmUserConfig.AlmType = AlmConfig.AlmType;
                     WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(AlmUserConfig);
                 }
+                if (AlmUserConfig.ALMServerURL != null)
+                {
+                    AlmConfig.ALMServerURL = AlmUserConfig.ALMServerURL;
+                }
+                if (AlmUserConfig.ALMConfigPackageFolderPath != null)
+                {
+                    AlmConfig.ALMConfigPackageFolderPath = AlmUserConfig.ALMConfigPackageFolderPath;
+                }
                 AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
                 AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
                 AlmConfig.ALMToken = AlmUserConfig.ALMToken;
@@ -99,7 +108,7 @@ namespace GingerCore.ALM
         }
         
         public static string SolutionFolder { get; set; }
-        public ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
+        public static ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer(); 
         public abstract bool ConnectALMProject();
         public abstract Boolean IsServerConnected();
@@ -110,6 +119,23 @@ namespace GingerCore.ALM
         public abstract bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null);
         public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ALM_Common.DataContracts.ResourceType resourceType = ALM_Common.DataContracts.ResourceType.ALL);
         public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false);
+
+
+        public virtual Dictionary<string, string> GetSSOTokens()
+        {
+            return null;
+        }
+
+        public virtual Dictionary<string, string> GetTokenInfo()
+        {
+            return null;
+        }
+
+        public virtual Dictionary<string, string> GetConnectionInfo()
+        {
+            return null;
+        }
+
 
         public virtual void SetALMConfigurations(   string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
                                                     string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
@@ -135,7 +161,14 @@ namespace GingerCore.ALM
                 AlmConfig = new GingerCoreNET.ALMLib.ALMConfig();
                 AlmConfigs.Add(AlmConfig);
             }
-            AlmConfig.ALMServerURL = ALMServerUrl;
+            if (CurrentAlmUserConfigurations.ALMServerURL != null)
+            {
+                AlmConfig.ALMServerURL = CurrentAlmUserConfigurations.ALMServerURL;
+            }
+            else
+            {
+                AlmConfig.ALMServerURL = ALMServerUrl;
+            }
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
             AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
@@ -147,9 +180,16 @@ namespace GingerCore.ALM
             AlmConfig.AlmType = almType;
             AlmConfig.JiraTestingALM = jiraTestingALM;
 
-            if (!String.IsNullOrEmpty(ALMConfigPackageFolderPath))
+            if (CurrentAlmUserConfigurations.ALMConfigPackageFolderPath != null)
             {
-                AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+                AlmConfig.ALMConfigPackageFolderPath = CurrentAlmUserConfigurations.ALMConfigPackageFolderPath;
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(ALMConfigPackageFolderPath))
+                {
+                    AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+                }
             }
         }
 

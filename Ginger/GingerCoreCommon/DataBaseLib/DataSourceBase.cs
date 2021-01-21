@@ -157,7 +157,7 @@ namespace GingerCore.DataSource
         public abstract bool IsTableExist(string tableName);
 
         public abstract void SaveTable(DataTable dataTable);
-        public abstract bool ExporttoExcel(string TableName, string sExcelPath,String sSheetName);
+        public abstract bool ExporttoExcel(string TableName, string sExcelPath,String sSheetName,string sTableQueryValue="");
 
         //public override void Save()
         //{

@@ -239,7 +239,7 @@ namespace Ginger.ALM
                     JiraTestingALMComboBox.Items.Clear();
                 }
             }
-
+     
             isServerDetailsCorrect = almConn;
             if (isServerDetailsCorrect)
             {
