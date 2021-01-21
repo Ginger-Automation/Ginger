@@ -30,7 +30,6 @@ namespace GingerCore.ALM
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public ZephyrEntCore()
         {
-            string settingsPath = DefaultAlmConfig.ALMConfigPackageFolderPath;
             zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()
             {
                 User = ALMCore.DefaultAlmConfig.ALMUserName,
