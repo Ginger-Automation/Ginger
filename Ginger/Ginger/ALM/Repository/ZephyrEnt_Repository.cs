@@ -137,9 +137,13 @@ namespace Ginger.ALM.Repository
                     //ask user if want to continute
                     userSelec = Reporter.ToUser(eUserMsgKey.BusinessFlowAlreadyMappedToTC, businessFlow.Name, matchingTS[0].TryGetItem("name").ToString());
                     if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                    {
                         return false;
+                    }
                     else if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    {
                         matchingTS = null;
+                    }
                 }
             }
 

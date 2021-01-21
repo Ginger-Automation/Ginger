@@ -172,7 +172,10 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
             try
             {
-                if (testSet == null) return null;
+                if (testSet == null)
+                {
+                    return null;
+                }
 
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();

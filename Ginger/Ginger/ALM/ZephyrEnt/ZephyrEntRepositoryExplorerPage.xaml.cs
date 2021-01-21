@@ -49,7 +49,9 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
         private void GetFolderChilds(ITreeViewItem folder, JToken categories)
         {
             if (((TestRepositoryFolderTreeItem)folder).CurrentChildrens == null)
+            {
                 return;
+            }
             foreach (var item in categories)
             {
                 TestRepositoryFolderTreeItem tvv = new TestRepositoryFolderTreeItem();
