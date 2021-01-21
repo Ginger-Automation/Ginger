@@ -197,7 +197,7 @@ namespace Ginger.ALM
             {
                 OctaneRadioButton.IsChecked = true;
             }
-            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnt && !(bool)ZephyrEntRadioButton.IsChecked)
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise && !(bool)ZephyrEntRadioButton.IsChecked)
             {
                 ZephyrEntRadioButton.IsChecked = true;
             }
@@ -569,7 +569,7 @@ namespace Ginger.ALM
                     RestAPICheckBox.IsEnabled = false;
                     break;
 
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnt:
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
                     xDefualtImageZephyrEnt.Visibility = Visibility.Visible;
                     ZephyrEntRadioButton.FontWeight = FontWeights.ExtraBold;
                     ZephyrEntRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
@@ -636,7 +636,7 @@ namespace Ginger.ALM
                         break;
 
                     case "ZephyrEntRadioButton":
-                        almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnt;
+                        almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise;
                         break;
 
                     default:

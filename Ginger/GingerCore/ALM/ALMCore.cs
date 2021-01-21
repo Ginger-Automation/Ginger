@@ -73,7 +73,7 @@ namespace GingerCore.ALM
 
             if (this.GetType() == typeof(GingerCore.ALM.ZephyrEntCore))
             {
-                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnt).FirstOrDefault();
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise).FirstOrDefault();
             }
 
             if (AlmConfig != null)

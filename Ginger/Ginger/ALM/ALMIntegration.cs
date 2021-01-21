@@ -84,7 +84,7 @@ namespace Ginger.ALM
                     AlmRepo = new OctaneRepository();
                     break;
 
-                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnt:
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
                     AlmCore = new ZephyrEntCore();
                     AlmRepo = new ZephyrEnt_Repository(AlmCore);
                     break;

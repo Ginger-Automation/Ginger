@@ -30,7 +30,7 @@ namespace GingerCoreNET.ALMLib
             Jira = 4,
             Qtest = 5,
             Octane = 6,
-            ZephyrEnt = 7
+            ZephyrEnterprise = 7
         }
 
         public enum eALMConnectType
