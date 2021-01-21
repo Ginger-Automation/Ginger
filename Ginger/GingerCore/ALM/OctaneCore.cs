@@ -302,7 +302,7 @@ namespace GingerCore.ALM
             foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
             {
                 //TODO: ToUpdate field is not set to true correctly on fields grid. 
-                // So description is not captured. Setting it explicitly until grid finding is fixeddefectForOpening.Value["severity"];
+                // So description is not captured. Setting it explicitly until grid finding is fixed
                 Defect newDefect = new Defect();
                 if (defectForOpening.Value.ContainsKey("description"))
                 {
@@ -671,7 +671,6 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "In UpdateRunSuite/OctaneCore.cs method ", ex);
-                //throw;
             }
         }
 
