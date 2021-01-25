@@ -58,16 +58,6 @@ namespace GingerCore.ALM
         {
             try
             {
-                if (zephyrEntRepository == null)
-                {
-                    zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()
-                    {
-                        User = ALMCore.DefaultAlmConfig.ALMUserName,
-                        Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                        AuthToken = ALMCore.DefaultAlmConfig.ALMToken,
-                        Server = ALMCore.DefaultAlmConfig.ALMServerURL
-                    });
-                }
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Zephyr server");
                 return Task.Run(() =>
                 {
@@ -251,7 +241,7 @@ namespace GingerCore.ALM
                 //Regular TC
                 newTSTest.TestID = testInstance["id"].ToString();
                 newTSTest.TestName = testInstance["name"].ToString();
-                newTSTest.Description = String.IsNullOrEmpty(testInstance["description"].ToString()) ? "" : testInstance["description"].ToString();
+                newTSTest.Description = testInstance["description"] == null ? "" : testInstance["description"].ToString();
             }
 
             var testSteps = zephyrEntRepository.GetTeststepByTestcaseId(Convert.ToInt32(newTSTest.TestID), versionId);
