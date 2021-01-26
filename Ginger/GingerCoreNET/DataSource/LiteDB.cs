@@ -869,8 +869,12 @@ namespace GingerCoreNET.DataSource
                     {
                         if (dr.RowState != DataRowState.Deleted)//Commit after row is deleted 
                         {
-                            dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
-                            dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
+                            if (dr.RowState.Equals(DataRowState.Added) || dr.RowState.Equals(DataRowState.Modified))
+                            {
+                                dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
+                                dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
+                            }
+                            
                             if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((Convert.ToString(dr["GINGER_ID"]))))
                             {
                                 dr["GINGER_ID"] = dtChange.Rows.IndexOf(dr) + 1;
