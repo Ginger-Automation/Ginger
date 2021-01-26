@@ -613,9 +613,9 @@ namespace Ginger.ALM
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
         {
             ObservableList<ExternalItemFieldBase> updatedFields = new ObservableList<ExternalItemFieldBase>();
-            if (AlmCore.AlmItemFields != null)
+            if (ALMCore.AlmItemFields != null)
             {
-                foreach (ExternalItemFieldBase defaultField in AlmCore.AlmItemFields)
+                foreach (ExternalItemFieldBase defaultField in ALMCore.AlmItemFields)
                 {
                     ExternalItemFieldBase currentField = mItemsFields.Where(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType).FirstOrDefault();
                     if (currentField != null)

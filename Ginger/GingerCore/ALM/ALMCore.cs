@@ -86,6 +86,10 @@ namespace GingerCore.ALM
                 {
                     AlmConfig.ALMServerURL = AlmUserConfig.ALMServerURL;
                 }
+                if (AlmUserConfig.ALMConfigPackageFolderPath != null)
+                {
+                    AlmConfig.ALMConfigPackageFolderPath = AlmUserConfig.ALMConfigPackageFolderPath;
+                }
                 AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
                 AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
             }
@@ -99,7 +103,7 @@ namespace GingerCore.ALM
         }
         
         public static string SolutionFolder { get; set; }
-        public ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
+        public static ObservableList<ExternalItemFieldBase> AlmItemFields { get; set; }
         public abstract bool ConnectALMServer(); 
         public abstract bool ConnectALMProject();
         public abstract Boolean IsServerConnected();
@@ -169,9 +173,16 @@ namespace GingerCore.ALM
             AlmConfig.AlmType = almType;
             AlmConfig.JiraTestingALM = jiraTestingALM;
 
-            if (!String.IsNullOrEmpty(ALMConfigPackageFolderPath))
+            if (CurrentAlmUserConfigurations.ALMConfigPackageFolderPath != null)
             {
-                AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+                AlmConfig.ALMConfigPackageFolderPath = CurrentAlmUserConfigurations.ALMConfigPackageFolderPath;
+            }
+            else
+            {
+                if (!String.IsNullOrEmpty(ALMConfigPackageFolderPath))
+                {
+                    AlmConfig.ALMConfigPackageFolderPath = ALMConfigPackageFolderPath;
+                }
             }
         }
 

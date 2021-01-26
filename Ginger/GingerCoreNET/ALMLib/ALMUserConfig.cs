@@ -26,6 +26,20 @@ namespace GingerCoreNET.ALMLib
 {
     public class ALMUserConfig : RepositoryItemBase
     {
+        private string mALMConfigPackageFolderPath;
+        public string ALMConfigPackageFolderPath
+        {
+            get { return mALMConfigPackageFolderPath; }
+            set
+            {
+                if (mALMConfigPackageFolderPath != value)
+                {
+                    mALMConfigPackageFolderPath = value;
+                    OnPropertyChanged(nameof(ALMConfigPackageFolderPath));
+                }
+            }
+        }
+
         private string mALMServerURL;
         public string ALMServerURL
         {
@@ -57,6 +71,7 @@ namespace GingerCoreNET.ALMLib
 
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
+
         public string ALMPassword
         {
             get
