@@ -91,11 +91,10 @@ namespace Ginger
             // TODO: remove after we don't need old serializer to load old repo items
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
-            // Add all RI classes from GingerCore
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(GingerCore.Actions.ActASCFControl).Assembly); // GingerCore.dll
-
+            // Add all RI classes from GingerCore           
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCore); 
             // add from Ginger
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(Ginger.App).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.Ginger);
 
             // Each class which moved from GingerCore to GingerCoreCommon needed to be added here, so it will auto translate
             // For backward compatibility of loading old object name in xml

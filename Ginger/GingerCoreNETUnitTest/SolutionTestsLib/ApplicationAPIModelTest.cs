@@ -51,7 +51,7 @@ namespace GingerCoreNETUnitTest.SolutionTestsLib
             SR.CreateRepository(TempSolutionFolder);
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ApplicationAPIModel).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
             SR.Open(TempSolutionFolder);            
         }
 

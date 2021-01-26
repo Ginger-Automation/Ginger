@@ -38,7 +38,7 @@ namespace GingerCoreCommonTest.Repository
         {
             mTestHelper.ClassInitialize(TestContext);
             
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(MyComplextRepositoryItem).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);
         }
 
         [ClassCleanup]
