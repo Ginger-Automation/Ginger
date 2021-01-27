@@ -40,7 +40,7 @@
 
             <StackPanel  x:Name="xExcelExportCustomPanel"  Visibility="Collapsed" >
                 <Label HorizontalAlignment="Left" FontWeight="Medium" Style="{StaticResource @LabelStyle}">Select Column To Export :</Label>
-                <Ginger:ucGrid x:Name="xColumnListGrid" AutomationProperties.AutomationId="ColumnListGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" Width="500" HorizontalAlignment="Left" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
+                <Ginger:ucGrid x:Name="xColumnListGrid" MaxHeight="250" AutomationProperties.AutomationId="ColumnListGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" Width="500" HorizontalAlignment="Left" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
 
                 <CheckBox x:Name="xExportWhereChkBox" Content="Filter Record Based On Where Clause :" Click="xExportWhereChkBox_Click" Margin="0,20,0,5" FontWeight="Medium"/>
                 
