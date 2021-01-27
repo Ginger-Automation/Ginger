@@ -45,7 +45,7 @@ namespace Ginger.ALM
         public ALMItemsFieldsConfigurationPage()
         {
             InitializeComponent();
-
+            ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
             mItemsFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
             if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
@@ -92,9 +92,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
             WorkSpace.Instance.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
-            WorkSpace.Instance.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();
-
         }
 
         #region BackgroundWorker Thread

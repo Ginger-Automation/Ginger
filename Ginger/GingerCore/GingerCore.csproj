@@ -220,11 +220,10 @@
     <Reference Include="Npgsql, Version=4.0.7.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.4.0.7\lib\net451\Npgsql.dll</HintPath>
     </Reference>
-    <Reference Include="OctaneSDK, Version=15.0.60.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DLLs\OctaneSDK.dll</HintPath>
+    <Reference Include="OctaneSdkStandard">
+      <HintPath>DLLs\OctaneSdkStandard.dll</HintPath>
     </Reference>
-    <Reference Include="Octane_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Octane_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\Octane_Repository.dll</HintPath>
     </Reference>
@@ -611,6 +610,7 @@
     <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
     <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\OctaneCore.cs" />
+    <Compile Include="ALM\Octane\OctaneSettings.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
@@ -862,9 +862,7 @@
     <Content Include="DLLs\ObjectsUtils.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\OctaneSDK.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="DLLs\OctaneSdkStandard.dll" />
     <Content Include="DLLs\Octane_Repository.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
