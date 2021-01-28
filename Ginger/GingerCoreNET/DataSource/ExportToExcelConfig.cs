@@ -192,6 +192,10 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 }
             }
 
+            if (mDataTable == null)
+            {
+                return dsConditionList;
+            }
           
             List<string> tableColsValue = new List<string>();
             var columns = mDataTable.Columns;

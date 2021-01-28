@@ -292,6 +292,10 @@ namespace GingerCoreNET.DataSource
                     selectedColumn = sTableQueryValue.Substring(0, index);
 
                     var filter = whereCond.Remove(0,6).Trim();
+                    if (filter.Contains("\""))
+                    {
+                      filter =  filter.Replace("\"", "'");
+                    }
                     DataView dv = new DataView(dataTable);
                     dv.RowFilter = filter;
                     dataTable = dv.ToTable();

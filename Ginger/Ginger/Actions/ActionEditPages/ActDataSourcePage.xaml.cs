@@ -489,6 +489,7 @@ namespace Ginger.Actions
             if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
             {
                 mActDSTblElem.DSTableName = mDSTable.Name;
+                mActDSTblElem.DSName = mDSTable.DSC.Name;
                 Page  pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
                 ExcelSpecificFrame.Content = pageContent;
                 ExcelSpecificFrame.Visibility = Visibility.Visible;
