@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -18,10 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Properties;
 using GingerCore.GeneralLib;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Enums;
@@ -45,7 +42,7 @@ namespace GingerCore.Actions
         public override string ActionEditPage { get { return null; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return true; } }
-        
+
         public override List<ePlatformType> Platforms
         {
             get
@@ -95,7 +92,7 @@ namespace GingerCore.Actions
                 ConditionCalculated = "";
                 return;
             }
-            
+
             ValueExpression.Value = Condition;
 
             ValueExpression.Value = ValueExpression.Value.Replace("{ActionStatus}", act.Status.ToString());

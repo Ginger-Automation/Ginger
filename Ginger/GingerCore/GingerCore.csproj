@@ -516,7 +516,6 @@
     <Compile Include="Actions\WebServices\ActSoapUI.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActReadTextFile.cs" />
-    <Compile Include="Actions\ActValidation.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
