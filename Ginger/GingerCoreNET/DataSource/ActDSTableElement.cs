@@ -181,7 +181,7 @@ namespace GingerCore.Actions
 
                         if (excelFilePath.ToLower().EndsWith(".xlsx"))
                         {
-                            DataSource.ExporttoExcel(DSTableName, excelFilePath, excelSheetName,query);
+                            DataSource.ExporttoExcel(DSTableName, excelFilePath, excelSheetName,query.ToLower());
                         }
                         else
                         {
