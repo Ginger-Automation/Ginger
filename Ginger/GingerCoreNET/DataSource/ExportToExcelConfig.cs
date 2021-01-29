@@ -153,23 +153,39 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 {
                     if (wColVal == "GINGER_ID")
                     {
-                        wQuery = string.Concat(wQuery," ", wCond," ",wColVal," != ", wRowVal);
+                        wQuery = string.Concat(wQuery," ", wCond," ",wColVal," <> ", wRowVal);
                     }
                     else
                     {
-                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " !=  \"", wRowVal, "\"");
+                        wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " <>  \"", wRowVal, "\"");
                     }
                 }
                 else if (wOpr == "Contains")
                 {
-                    wQuery = string.Concat(wQuery, " ", wCond , " ", wColVal, " contains ", "\"", wRowVal, "\"");
+                    wQuery = string.Concat(wQuery, " ", wCond , " ", wColVal, " Like ", "\"%", wRowVal, "%\"");
+                }
+                else if (wOpr == "NotContains")
+                {
+                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " Not Like ", "\"%", wRowVal, "%\"");
                 }
                 else if (wOpr == "StartsWith")
                 {
-                    wQuery = string.Concat(wQuery , " ", wCond, " ", wColVal, " like ", "\"", wRowVal, "\"");
+                    wQuery = string.Concat(wQuery , " ", wCond, " ", wColVal, " like ", "\"", wRowVal, "%\"");
                 }
-                    
-                
+                else if (wOpr == "NotStartsWith")
+                {
+                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " Not Like ", "\"", wRowVal, "%\"");
+                }
+                else if (wOpr == "EndsWith")
+                {
+                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " like ", "\"%", wRowVal, "\"");
+                }
+                else if (wOpr == "NotEndsWith")
+                {
+                    wQuery = string.Concat(wQuery, " ", wCond, " ", wColVal, " not like ", "\"%", wRowVal, "\"");
+                }
+
+
                 whereQuery = string.Concat(whereQuery, wQuery);
             }
             if (whereQuery != string.Empty)
