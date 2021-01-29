@@ -385,11 +385,7 @@ namespace GingerCore.DataSource
             mColumnNames = mDSTableDetails.DSC.GetColumnList(mDSTableDetails.Name);
             foreach (string sColName in mColumnNames)
             {
-                if (sColName == "GINGER_USED")
-                {
-                    dr[sColName] = "false";
-                }
-                else if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
+                if (sColName != "GINGER_ID" && sColName != "GINGER_LAST_UPDATED_BY" && sColName != "GINGER_LAST_UPDATE_DATETIME")
                 {
                         dr[sColName] = "";
                 }
