@@ -993,7 +993,12 @@ namespace GingerCore
                             {
                                 nextavail = true;
                             }
-                            liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
+
+                            if (litedbquery != "" && Markasdone == true)
+                            {
+                                liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
+                                mValueCalculated = "";
+                            }
                         }
                     }
                     else
