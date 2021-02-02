@@ -79,8 +79,6 @@
                             <StackPanel>
                                 <Label x:Name="PasswordLabel" Style="{StaticResource @InputFieldLabelStyle}">Password:</Label>
                                 <PasswordBox x:Name="PasswordTextBox" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
-                                <Label x:Name="TokenLabel" Style="{StaticResource @InputFieldLabelStyle}" Visibility="Collapsed">Token:</Label>
-                                <TextBox x:Name="TokenTextBox" Style="{StaticResource @TextBoxStyle}" Visibility="Collapsed" Height="25" TextChanged="TokenTextBox_TokenChanged" ></TextBox>
                             </StackPanel>
                         </StackPanel>
                         <CheckBox x:Name="RestAPICheckBox" IsChecked="True" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>

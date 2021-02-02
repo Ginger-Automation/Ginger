@@ -84,21 +84,6 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private string mALMToken;
-        [IsSerializedForLocalRepository]
-        public string ALMToken
-        {
-            get { return mALMToken; }
-            set
-            {
-                if (mALMToken != value)
-                {
-                    mALMToken = value;
-                    OnPropertyChanged(nameof(ALMToken));
-                }
-            }
-        }
-
         private string mALMProjectName;
         [IsSerializedForLocalRepository]
         public string ALMProjectName

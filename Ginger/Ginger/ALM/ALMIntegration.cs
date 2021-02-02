@@ -109,7 +109,7 @@ namespace Ginger.ALM
                 AlmCore.SetALMConfigurations(   CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
                                                 CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
                                                 CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
-                                                CurrentAlmConfigurations.ZepherEntToken, CurrentAlmConfigurations.ALMToken, CurrentAlmConfigurations.JiraTestingALM);
+                                                CurrentAlmConfigurations.ZepherEntToken, CurrentAlmConfigurations.JiraTestingALM);
             }
         }
 
@@ -299,22 +299,6 @@ namespace Ginger.ALM
         {
             return ((JiraCore)AlmCore).GetZephyrCyclesWithFolders(getFolders);
         }
-        //public object GetZephyrEntTree(string type, int releaseId, int revisionId, int parentId)
-        //{
-        //    return ((ZephyrEntCore)AlmCore).GetTreeByCretiria(type, releaseId, revisionId, parentId);
-        //}
-        //internal List<BaseResponseItem> GetZephyrEntTreeData(int releaseId, EntityFolderType entityType, bool v2)
-        //{
-        //    return ((ZephyrEntCore)AlmCore).GetZephyrEntTreeData(releaseId, entityType.ToString(), v2);
-        //}
-        //internal List<BaseResponseItem> GetRepositoryTreeByReleaseId(string releaseId)
-        //{
-        //    return ((ZephyrEntCore)AlmCore).GetRepositoryTreeByReleaseId(releaseId);
-        //}
-        //internal List<BaseResponseItem> GetZephyrEntPhaseById(int treeId)
-        //{
-        //    return ((ZephyrEntCore)AlmCore).GetZephyrEntPhaseById(treeId);
-        //}
         
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {

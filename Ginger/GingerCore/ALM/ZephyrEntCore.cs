@@ -29,7 +29,7 @@ namespace GingerCore.ALM
             {
                 User = ALMCore.DefaultAlmConfig.ALMUserName,
                 Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                AuthToken = ALMCore.DefaultAlmConfig.ALMToken,
+                AuthToken = ALMCore.DefaultAlmConfig.ALMPassword,
                 Server = ALMCore.DefaultAlmConfig.ALMServerURL
             });
             zephyrEntExportManager = new ZephyrEntExportManager(zephyrEntRepository);
@@ -56,19 +56,32 @@ namespace GingerCore.ALM
         } 
         public override bool ConnectALMServer()
         {
+            LoginDTO loginDTO = null; 
+            if(ALMCore.DefaultAlmConfig.ZepherEntToken)
+            {
+                loginDTO = new LoginDTO()
+                {
+                    User = ALMCore.DefaultAlmConfig.ALMUserName,
+                    Password = ALMCore.DefaultAlmConfig.ALMPassword,
+                    AuthToken = ALMCore.DefaultAlmConfig.ALMPassword,
+                    Server = ALMCore.DefaultAlmConfig.ALMServerURL
+                };
+            }
+            else
+            {
+                loginDTO = new LoginDTO()
+                {
+                    User = ALMCore.DefaultAlmConfig.ALMUserName,
+                    Password = ALMCore.DefaultAlmConfig.ALMPassword,
+                    Server = ALMCore.DefaultAlmConfig.ALMServerURL
+                };
+            }
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Zephyr server");
                 return Task.Run(() =>
                 {
-                    return zephyrEntRepository.IsLoginValid(
-                        new LoginDTO()
-                        {
-                            User = ALMCore.DefaultAlmConfig.ALMUserName,
-                            Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                            AuthToken = ALMCore.DefaultAlmConfig.ALMToken,
-                            Server = ALMCore.DefaultAlmConfig.ALMServerURL
-                        });
+                    return zephyrEntRepository.IsLoginValid(loginDTO);
                 }).Result;
             }
             catch (Exception ex)
@@ -117,7 +130,7 @@ namespace GingerCore.ALM
         {
             AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
             {
-                return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMToken, ALMCore.DefaultAlmConfig.ALMServerURL);
+                return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
             return domains.DataResult.Where(f => f.DomainName.Equals(ALMDomainName)).FirstOrDefault().Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
         }
@@ -140,7 +153,7 @@ namespace GingerCore.ALM
         {
             AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
             {
-                return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMToken, ALMCore.DefaultAlmConfig.ALMServerURL);
+                return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
 
             return domains.DataResult.Select(f => f.DomainName).ToList();

@@ -49,7 +49,6 @@ namespace Ginger.ALM
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.UseRest));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ZephyrEntTokenCheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ZepherEntToken));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMUserName));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TokenTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmConfigurations.ALMToken));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(JiraTestingALMComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.JiraTestingALM));
@@ -93,7 +92,7 @@ namespace Ginger.ALM
         
         private void SetControls()
         {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && (!string.IsNullOrEmpty(PasswordTextBox.Password) || !string.IsNullOrEmpty(TokenTextBox.Text)))
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && (!string.IsNullOrEmpty(PasswordTextBox.Password)))
             {
                 LoginServerButton.IsEnabled = true;
             }
@@ -114,7 +113,6 @@ namespace Ginger.ALM
             }
             UserNameTextBox.IsEnabled = true;
             PasswordTextBox.IsEnabled = true;
-            TokenTextBox.IsEnabled = true;
             RestAPICheckBox.IsEnabled = true;
             ZephyrEntTokenCheckBox.IsEnabled = true;
             if (isConnWin)
@@ -146,7 +144,6 @@ namespace Ginger.ALM
                 UserNameTextBox.IsEnabled = false;
                 PasswordTextBox.IsEnabled = false;
                 RestAPICheckBox.IsEnabled = false;
-                TokenTextBox.IsEnabled = false;
                 ZephyrEntTokenCheckBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
             }
@@ -713,13 +710,6 @@ namespace Ginger.ALM
             CurrentAlmUserConfigurations.ALMPassword = PasswordTextBox.Password;
             SetControls();
         }
-
-        private void TokenTextBox_TokenChanged(object sender, RoutedEventArgs e)
-        {
-            CurrentAlmUserConfigurations.ALMToken = TokenTextBox.Text;
-            SetControls();
-        }
-
         private void ProjectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectComboBox != null && ProjectComboBox.SelectedItem != null)
@@ -768,18 +758,13 @@ namespace Ginger.ALM
         }
         private void ZephyrEntTokenCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            PasswordLabel.Visibility = Visibility.Collapsed;
-            PasswordTextBox.Visibility = Visibility.Collapsed;
-            TokenLabel.Visibility = Visibility.Visible;
-            TokenTextBox.Visibility = Visibility.Visible;
+
+            PasswordLabel.Content = "Token";
         }
 
         private void ZephyrEntTokenCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            TokenLabel.Visibility = Visibility.Collapsed;
-            TokenTextBox.Visibility = Visibility.Collapsed;
-            PasswordLabel.Visibility = Visibility.Visible;
-            PasswordTextBox.Visibility = Visibility.Visible;
+            PasswordLabel.Content = "Password";
         }
         private void ShowToolTip(object sender, MouseEventArgs e)
         {

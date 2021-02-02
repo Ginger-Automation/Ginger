@@ -96,7 +96,6 @@ namespace GingerCore.ALM
                 }
                 AlmConfig.ALMUserName = AlmUserConfig.ALMUserName;
                 AlmConfig.ALMPassword = AlmUserConfig.ALMPassword;
-                AlmConfig.ALMToken = AlmUserConfig.ALMToken;
             }
             else
             {
@@ -139,7 +138,7 @@ namespace GingerCore.ALM
 
         public virtual void SetALMConfigurations(   string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
                                                     string ALMDomain, string ALMProject, string ALMProjectKey, GingerCoreNET.ALMLib.ALMIntegration.eALMType almType,
-                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, string ALMToken, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
+                                                    string ALMConfigPackageFolderPath, bool ZephyrEntToken, GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType jiraTestingALM = GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType.None)
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = ALMCore.AlmConfigs.FirstOrDefault(x => x.AlmType == almType);
             if (AlmConfig == null)
@@ -172,7 +171,6 @@ namespace GingerCore.ALM
             AlmConfig.UseRest = UseRest;
             AlmConfig.ALMUserName = CurrentAlmUserConfigurations.ALMUserName;
             AlmConfig.ALMPassword = CurrentAlmUserConfigurations.ALMPassword;
-            AlmConfig.ALMToken = CurrentAlmUserConfigurations.ALMToken;
             AlmConfig.ZepherEntToken = ZephyrEntToken;
             AlmConfig.ALMDomain = ALMDomain;
             AlmConfig.ALMProjectName = ALMProject;
