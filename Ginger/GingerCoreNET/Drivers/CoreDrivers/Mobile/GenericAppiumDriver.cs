@@ -33,7 +33,6 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -47,30 +46,18 @@ namespace Amdocs.Ginger.CoreNET
 {
     public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord
     {
-        //public override bool IsSTAThread()
-        //{
-        //    if (LoadGingerDeviceWindow != null && LoadGingerDeviceWindow.Trim().ToUpper() == "YES")
-        //    {
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
-        //public enum eMobileDeviceType
-        //{
-        //    Phone = 0,
-        //    Tablet = 1
-        //}
-
-        public enum eMobilePlatformType
+        public enum eDevicePlatformType
         {
             Android = 0,
-            iOS = 1,
-            AndroidBrowser = 2,
-            iOSBrowser = 3,
+            iOS = 1
+        }
+
+        public enum eAppType
+        {
+            NativeHybride = 0,
+            Web = 1,
         }
 
         public enum eSwipeSide
@@ -78,51 +65,36 @@ namespace Amdocs.Ginger.CoreNET
             Up, Down, Left, Right
         }
 
-        public bool ConnectedToDevice=false;
-        
-        public override ePlatformType Platform { get { return ePlatformType.Mobile; }}
-
-        //Mobile Agent configurations
+        //Mobile Driver Configurations
         [UserConfigured]
-        [UserConfiguredDescription("Full Appium server address. Will override other server related configurations")]
+        [UserConfiguredDefault(@"https://AppiumServer:port/wd/hub")]
+        [UserConfiguredDescription("Full Appium server address including port if needed")]
         public String AppiumServer { get; set; }
 
         [UserConfigured]
-        //[UserConfiguredDefault("127.0.0.1")]
-        [UserConfiguredDescription("Appium server location IP address - It can be on the local ('127.0.0.1') or remote host")]
-        public String AppiumServerIP { get; set; }
+        [UserConfiguredEnumType(typeof(eDevicePlatformType))]
+        [UserConfiguredDescription("The device platform name 'Android' or 'iOS'")]
+        public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
-        //[UserConfiguredDefault("4723")]
-        [UserConfiguredDescription("Set specific Appium server Port (like '4723') Or 'Dynamic' for auto port allocation (Start searching from port 4723 with jumps of 2)")]
-        public String AppiumServerPort { get; set; }
+        [UserConfiguredEnumType(typeof(eAppType))]
+        [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
+        public eAppType AppType { get; set; }
 
-        [UserConfigured]
-        //[UserConfiguredDefault("C:/Program Files (x86)/Appium")]
-        [UserConfiguredDescription("Appium installation folder Path, default path is: 'C:/Program Files (x86)/Appium'")]
-        public String AppiumInstallationFolderPath { get; set; }
+        //[UserConfigured]
+        //[UserConfiguredDescription("The device unique identifier")]
+        //public String DeviceID { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("False")]
-        [UserConfiguredDescription("Set to 'True' if you want Appium Server to start Automatically, 'AppiumServerIP' & 'AppiumServerPort' & 'AppiumInstallationFolderPath' configrations are required, available only if Ginger and Appium installed and running on the same machine")]
-        public Boolean StartAppiumServerAutomatically { get; set; }
+        //[UserConfigured]
+        //[UserConfiguredDescription("The name which is associated with the device")]
+        //public String DeviceName { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDescription("The device unique identifier")]
-        public String DeviceID { get; set; }
+        //[UserConfigured]
+        //[UserConfiguredDefault("Phone")]
+        //[UserConfiguredDescription("The device type, set it to 'Phone' or 'Tablet'")]
+        //public String DeviceType { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDescription("The name which is associated with the device")]
-        public String DeviceName { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("Phone")]
-        [UserConfiguredDescription("The device type, set it to 'Phone' or 'Tablet'")]
-        public String DeviceType { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("The device platform name like 'Android' or 'iOS'. keep empty if not needed")]
-        public String DevicePlatformName { get; set; }
 
         [UserConfigured]
         [UserConfiguredDescription("The device OS version- e.g.: 4.4.4, 5.0. Keep empty if not needed")]
@@ -163,9 +135,14 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session")]
         public int NewCommandTimeout { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredMultiValues]
+        [UserConfiguredDescription("Appium capabilities")]
+        public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
+
         private AppiumDriver<AppiumWebElement> Driver;//appium on top selenium
-        //private SeleniumDriver mSeleniumDriver;//selenium base
-        public eMobilePlatformType DriverPlatformType;
+        private SeleniumDriver mSeleniumDriver;//selenium base
+        public eDevicePlatformType DriverPlatformType;
         //public eMobileDeviceType DriverDeviceType;
 
         //public GenericAppiumDriver(eMobilePlatformType platformType, BusinessFlow BF)
@@ -178,6 +155,7 @@ namespace Amdocs.Ginger.CoreNET
         private static List<int> reservedPorts = new List<int>();
         private int bootstrapPort = 0;
         private int chromeDriverPort = 0;
+        public bool mConnectedToDevice = false;
         public override void StartDriver()
         {
             //if (LoadGingerDeviceWindow != null && LoadGingerDeviceWindow.Trim().ToUpper() == "YES")
@@ -188,7 +166,7 @@ namespace Amdocs.Ginger.CoreNET
             //{
             //    ConnectedToDevice = ConnectToAppium();
             //}
-            ConnectedToDevice = ConnectToAppium();
+            mConnectedToDevice = ConnectToAppium();
         }
 
         //public void ShowDriverWindow()
@@ -226,8 +204,7 @@ namespace Amdocs.Ginger.CoreNET
             try//Adding back the Try-Catch because without it in case of connection issue Ginger crash
             {
                 Uri serverUri = null;
-                if (String.IsNullOrEmpty(AppiumServer) == false)
-                {
+               
                     try
                     {
                         serverUri = new Uri(AppiumServer);
@@ -236,43 +213,9 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         throw new Exception("In-Valid AppiumServer configuration");
                     }
-                }
-                else
-                {
-                    if (String.IsNullOrEmpty(AppiumServerIP) == true || String.IsNullOrEmpty(AppiumServerPort) == true)
-                    {
-                        throw new Exception("In-Valid AppiumServerIP/AppiumServerPort configuration");
-                    }
+              
 
-                    //Check if the user want to launch Appium server automatically
-                    if (StartAppiumServerAutomatically)
-                    {
-                        //Start Appium server
-                        //return false if Appium server failed to launch
-                        if (StartAppiumServer() == false)
-                        {
-                            return false;
-                        }
-                    }
-
-                    //If not starting Appium Server automatic and Port set to dynamic - Throw exception and tell the user to insert a valid port number - The same as in manually started appium sever
-                    if (!StartAppiumServerAutomatically && AppiumServerPort.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        throw new Exception("Insert Valid Appium Server Port number");
-                    }
-
-                    //set params
-                    serverUri = new Uri("http://" + AppiumServerIP + ":" + AppiumServerPort + "/wd/hub");
-                }
-
-                //if (DeviceType != null && DeviceType.Trim().ToUpper() == "TABLET")
-                //{
-                //    DriverDeviceType = eMobileDeviceType.Tablet;
-                //}
-                //else
-                //{
-                //    DriverDeviceType = eMobileDeviceType.Phone;
-                //}
+               
 
                 //set timeout
                 if (NewCommandTimeout < 0)
@@ -287,23 +230,23 @@ namespace Amdocs.Ginger.CoreNET
                 //creating driver
                 switch (DriverPlatformType)
                 {
-                    case eMobilePlatformType.Android:
+                    case eDevicePlatformType.Android:
                         Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
                         break;
-                    case eMobilePlatformType.iOS:
+                    case eDevicePlatformType.iOS:
                         Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
                         break;
-                    case eMobilePlatformType.AndroidBrowser:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                        Driver.Navigate().GoToUrl("http://www.google.com");
-                        break;
-                    case eMobilePlatformType.iOSBrowser:
-                        //TODO: start ios-web-proxy automatically
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                        break;
+                    //case eDevicePlatformType.AndroidBrowser:
+                    //    Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                    //    Driver.Navigate().GoToUrl("http://www.google.com");
+                    //    break;
+                    //case eDevicePlatformType.iOSBrowser:
+                    //    //TODO: start ios-web-proxy automatically
+                    //    Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                    //    break;
                 }
 
-                //mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
 
                 return true;
             }
@@ -314,255 +257,82 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        //Get IP address and port from old settings - AppiumServer string value
-        //Return false if couldn't extract IP or port
-        private void GetPortAndIPFromOldSettings() 
-        {
-            try {
-                var uri = new Uri(AppiumServer);
-                //Extract IP address from String and check if it is valid
-                var IPFromString = uri.GetComponents(UriComponents.Host, UriFormat.UriEscaped);
-                if (String.IsNullOrEmpty(IPFromString) == false) {
-                    AppiumServerIP = IPFromString;
-                }
-
-                //Extract PORT from String and check if it is valid
-                var PortFromString = uri.GetComponents(UriComponents.Port, UriFormat.UriEscaped);
-                if (String.IsNullOrEmpty(PortFromString) == false) {
-                    AppiumServerPort = PortFromString;
-                }
-            }
-            catch (Exception ex) {
-                throw ex;
-            }
-        }
-
-        private Boolean StartAppiumServer() {
-            String AppiumNodeSuffixPath = "/node.exe";
-            String AppiumJSSuffixPath = "/node_modules/appium/bin/appium.js";
-
-            String AppiumNodePath = AppiumInstallationFolderPath + AppiumNodeSuffixPath;
-            String AppiumJSPath = "\""+AppiumInstallationFolderPath + AppiumJSSuffixPath + "\"";
-
-            String userFolder = System.Environment.GetEnvironmentVariable("USERPROFILE");
-            System.IO.Directory.CreateDirectory(userFolder+"\\Ginger\\Appium");
-            String logPathDirectory = userFolder + "\\Ginger\\Appium\\";
-            DeleteOldLogs(logPathDirectory);
-
-            DateTime currentTime = DateTime.Now;
-            String AppiumLogFileName = "AppiumLog"+currentTime.ToString("ddMMyyyyHHmm")+".txt";
-
-            String logPath = logPathDirectory+AppiumLogFileName;
-
-            //Check if the user set Dynamic port or specefic port number
-            if (AppiumServerPort.Equals("dynamic", StringComparison.InvariantCultureIgnoreCase) || !IsPortFree(AppiumServerPort)) {
-                //Choose free port for launching current Appium server
-                AppiumServerPort =  AllocateAppiumPort(4723).ToString();
-            }
-
-            //Start Appium Server launching process
-            System.Diagnostics.Process process;
-            process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden; //Change to Maximized or Hidden to debug Appium
-            startInfo.FileName = AppiumNodePath;
-            bootstrapPort = AllocateAppiumPort();
-            chromeDriverPort = AllocateAppiumPort();
-   
-            startInfo.Arguments = AppiumJSPath + " --address " + AppiumServerIP + " --port " + AppiumServerPort + "--bootstrap-port "+ bootstrapPort.ToString ()+ "--chromedriver-port"+ chromeDriverPort.ToString() + " --automation-name Appium --log-no-color --session-override --log " + logPath;
-            process.StartInfo = startInfo;
-            process.Start();
-
-            Thread.Sleep(1000);
-            for (int i = 0; i < DriverLoadWaitingTime; i++) {
-                Thread.Sleep(1000);
-                Boolean? IsAppiumLaunched = CheckIfAppiumLaunched(logPath);
-                //TRUE - found text in log: "listener started on"
-                //FALSE - found text "error"
-                //NULL - still didn't find anything
-                if (IsAppiumLaunched != null && IsAppiumLaunched == true) {
-                    return true;
-                }
-            }
-            //Appium server didn't launched successfully - timeout
-            return false;
-        }
-
-        //Delete Appium log files that are older of today's date
-        private void DeleteOldLogs(String appiumLogsPath)
-        {
-            string[] logFileNames = Directory.GetFiles(appiumLogsPath);
-            foreach (String currFileName in logFileNames) {
-                DateTime dt = File.GetLastWriteTime(currFileName);
-                if ((int)DateTime.Now.Subtract(dt).TotalDays > 0) {
-                    try {
-                        File.Delete(currFileName);
-                    }catch(Exception e) {
-                        //Couldn't delete log file
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-                    }
-                }
-            }
-        }
-
-        //Read Appium log file and check Appium server launch status
-        private Boolean? CheckIfAppiumLaunched(String logPath) {
-            try{
-                String textFromLog;
-                var fileStream = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using (var streamReader = new StreamReader(fileStream)) {
-                    textFromLog = streamReader.ReadToEnd();
-                }
-                if (textFromLog.Contains("listener started on")) {
-                    //Appium Server Launched
-                    return true;
-                }else if(textFromLog.Contains("error")){
-                    //Error launching Appium server
-                    return false;
-                }
-            }
-            catch (UnauthorizedAccessException ex) {
-                //Access denied - probably when file is being used by another process
-                Thread.Sleep(2000);
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                return null;
-            }
-            catch(Exception e){
-                //Still launching Appium Server Or reading file exception
-                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-                return null;
-            }
-            //Still launching Appium Server
-            return null;
-        }
-
-
-        //When the user set 'Dynamic' port
-        //Search and choose free port and Launch Appium server with that port
-        private int AllocateAppiumPort(int defaultPort=4800) {
-            Boolean foundFreePort = false;
-            int portStartValue = defaultPort;
-
-            while (!foundFreePort) {
-
-                IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-                TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
-                Boolean portTaken = false;
-                foreach (TcpConnectionInformation tcpi in tcpConnInfoArray) {
-                    if (tcpi.LocalEndPoint.Port == portStartValue) {
-                        portTaken = true;
-                        break;
-                    }
-                }
-                if(portTaken || reservedPorts.Contains(portStartValue)){
-                    portStartValue += 2;
-                }else{
-                    foundFreePort = true;
-                    reservedPorts.Add(portStartValue);
-                }
-            }
-            return portStartValue;
-        }
-
-        //Check if specific port is free before starting Appium
-        private Boolean IsPortFree(String portToCheck) {
-            Boolean portIsFree = true;
-            int intPortToCheck;
-            Int32.TryParse(portToCheck, out intPortToCheck);
-            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
-            TcpConnectionInformation[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpConnections();
-            foreach (TcpConnectionInformation tcpi in tcpConnInfoArray) {
-                Console.WriteLine("port is: " + tcpi.LocalEndPoint.Port);
-                if (tcpi.LocalEndPoint.Port == intPortToCheck) {
-                    portIsFree = false;
-                    break;
-                }
-            }
-            return portIsFree;
-        }
-
         private DriverOptions GetCapabilities()
         {
             DriverOptions driverOptions = new AppiumOptions();
 
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
 
-            //Device capabilities
-            if (string.IsNullOrEmpty(DeviceID) == false)
-            {
-                driverOptions.AddAdditionalCapability("udid", DeviceID);
-            }
-            if (string.IsNullOrEmpty(DeviceName) == false)
-            {
-                driverOptions.AddAdditionalCapability("deviceName", DeviceName);
-            }
+            ////Device capabilities
+            //if (string.IsNullOrEmpty(DeviceID) == false)
+            //{
+            //    driverOptions.AddAdditionalCapability("udid", DeviceID);
+            //}
+            //if (string.IsNullOrEmpty(DeviceName) == false)
+            //{
+            //    driverOptions.AddAdditionalCapability("deviceName", DeviceName);
+            //}
 
-            //Capabilities per platform type
-            if (string.IsNullOrEmpty(DevicePlatformName) == false)
-            {
-                driverOptions.AddAdditionalCapability("platformName", DevicePlatformName);
-            }
-            if (string.IsNullOrEmpty(DevicePlatformVersion) == false)
-            {
-                driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
-            }
-            switch (DriverPlatformType)
-            {
-                case eMobilePlatformType.Android:                      
-                    if (!string.IsNullOrEmpty(AppInstallerPath))
-                    {
-                        driverOptions.AddAdditionalCapability("app", AppInstallerPath);
-                        driverOptions.AddAdditionalCapability("browserName", "");
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(InstalledAppPackage))
-                        {
-                            driverOptions.AddAdditionalCapability("appPackage", InstalledAppPackage);
-                            driverOptions.AddAdditionalCapability("appActivity", InstalledAppActivity);
-                            driverOptions.AddAdditionalCapability("appWaitPackage", InstalledAppPackage);
-                            driverOptions.AddAdditionalCapability("appWaitActivity", InstalledAppActivity);
-                        }
-                    }
-                    break;
+            ////Capabilities per platform type
+            //if (string.IsNullOrEmpty(DevicePlatformName) == false)
+            //{
+            //    driverOptions.AddAdditionalCapability("platformName", DevicePlatformName);
+            //}
+            //if (string.IsNullOrEmpty(DevicePlatformVersion) == false)
+            //{
+            //    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
+            //}
+            //switch (DriverPlatformType)
+            //{
+            //    case eDevicePlatformType.Android:                      
+            //        if (!string.IsNullOrEmpty(AppInstallerPath))
+            //        {
+            //            driverOptions.AddAdditionalCapability("app", AppInstallerPath);
+            //            driverOptions.AddAdditionalCapability("browserName", "");
+            //        }
+            //        else
+            //        {
+            //            if (!string.IsNullOrEmpty(InstalledAppPackage))
+            //            {
+            //                driverOptions.AddAdditionalCapability("appPackage", InstalledAppPackage);
+            //                driverOptions.AddAdditionalCapability("appActivity", InstalledAppActivity);
+            //                driverOptions.AddAdditionalCapability("appWaitPackage", InstalledAppPackage);
+            //                driverOptions.AddAdditionalCapability("appWaitActivity", InstalledAppActivity);
+            //            }
+            //        }
+            //        break;
 
-                case eMobilePlatformType.iOS:                    
-                    if (!string.IsNullOrEmpty(AppInstallerPath))
-                    {
-                        driverOptions.AddAdditionalCapability("app", AppInstallerPath);
-                        driverOptions.AddAdditionalCapability("browserName", "");
-                    }
-                    if (!string.IsNullOrEmpty(InstalledAppBundleID))
-                    {
-                        driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);
-                    }
-                    break;
+            //    case eDevicePlatformType.iOS:                    
+            //        if (!string.IsNullOrEmpty(AppInstallerPath))
+            //        {
+            //            driverOptions.AddAdditionalCapability("app", AppInstallerPath);
+            //            driverOptions.AddAdditionalCapability("browserName", "");
+            //        }
+            //        if (!string.IsNullOrEmpty(InstalledAppBundleID))
+            //        {
+            //            driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);
+            //        }
+            //        break;
 
-                case eMobilePlatformType.AndroidBrowser:
-                    driverOptions.AddAdditionalCapability("browserName", "chrome");
-                    //capabilities.SetCapability("chromedriverExecutable", ""); //The absolute local path to webdriver executable (if Chromium embedder provides its own webdriver, it should be used instead of original chromedriver bundled with Appium); exp: /abs/path/to/webdriver
-                    //capabilities.SetCapability("chromeOptions", ""); //Allows passing chromeOptions capability for chrome driver. For more information see chromeOptions: https://sites.google.com/a/chromium.org/chromedriver/capabilities
-                    break;
+            //    case eDevicePlatformType.AndroidBrowser:
+            //        driverOptions.AddAdditionalCapability("browserName", "chrome");
+            //        break;
 
-                case eMobilePlatformType.iOSBrowser:
-                    //Tested application capabilities 
-                    driverOptions.AddAdditionalCapability("browserName", "safari");
-                    //capabilities.setCapability("safariInitialUrl", "");  //(Sim-only) (>= 8.1) Initial safari url, default is a local welcome page
-                    driverOptions.AddAdditionalCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
-                    //capabilities.setCapability("safariOpenLinksInBackground", false);  //(Sim-only) Whether Safari should allow links to open in new windows. Default keeps current sim setting.
-                    break;
-            }
+            //    case eDevicePlatformType.iOSBrowser:
+            //        //Tested application capabilities 
+            //        driverOptions.AddAdditionalCapability("browserName", "safari");
+            //        driverOptions.AddAdditionalCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
+            //        break;
+            //}
 
-            //Generic capabilities
-            //driverOptions.AddAdditionalCapability("newCommandTimeout", SERVER_TIMEOUT_SEC); //How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session
-            driverOptions.AddAdditionalCapability("newCommandTimeout", NewCommandTimeout.ToString());            
-            if (string.IsNullOrEmpty(AutomationName) == false)
-            {
-                driverOptions.AddAdditionalCapability("automationName", AutomationName);
-            }
+       
+            //if (string.IsNullOrEmpty(AutomationName) == false)
+            //{
+            //    driverOptions.AddAdditionalCapability("automationName", AutomationName);
+            //}
 
             //User customized capabilities
-            foreach (DriverConfigParam UserCapability in AdvanceDriverConfigurations)
+            foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
                 bool boolValue;
                 int intValue=0;
@@ -592,14 +362,17 @@ namespace Amdocs.Ginger.CoreNET
                 }                
             }
 
+            //Generic capabilities
+            driverOptions.AddAdditionalCapability("newCommandTimeout", NewCommandTimeout.ToString());     //needed??
+
             return driverOptions;                        
         }
 
 
         public override void CloseDriver()
         {
-            reservedPorts.Remove(chromeDriverPort);
-            reservedPorts.Remove(bootstrapPort);
+            //reservedPorts.Remove(chromeDriverPort);
+            //reservedPorts.Remove(bootstrapPort);
 
             //try { 
             //    if (DriverWindow != null){
@@ -614,38 +387,38 @@ namespace Amdocs.Ginger.CoreNET
                 Driver.Quit();
 
                 //Check if needed also to close Appium server
-                if (StartAppiumServerAutomatically) {
-                    //Close Appium connection
-                    CloseAppiumConnection();
-                }
+                //if (StartAppiumServerAutomatically) {
+                //    //Close Appium connection
+                //    CloseAppiumConnection();
+                //}
             }
 
-            ConnectedToDevice = false;
+            mConnectedToDevice = false;
         }
         
         //Close Appium connection
-        private Boolean CloseAppiumConnection() {
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = "CMD.exe";
-            String[] stopServerCommand = new String[]{"cmd", "/c",
-                    "echo off & FOR /F \"usebackq tokens=5\" %a in (`netstat -nao ^| findstr /R /C:\""
-                    + AppiumServerPort
-                    + " \"`) do (FOR /F \"usebackq\" %b in (`TASKLIST /FI \"PID eq %a\" ^| findstr /I node.exe`) do taskkill /F /PID %a)"};
-            startInfo.Arguments = string.Join("", stopServerCommand);
-            process.StartInfo = startInfo;
-            process.Start();
+        //private Boolean CloseAppiumConnection() {
+        //    System.Diagnostics.Process process = new System.Diagnostics.Process();
+        //    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+        //    startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+        //    startInfo.FileName = "CMD.exe";
+        //    String[] stopServerCommand = new String[]{"cmd", "/c",
+        //            "echo off & FOR /F \"usebackq tokens=5\" %a in (`netstat -nao ^| findstr /R /C:\""
+        //            + AppiumServerPort
+        //            + " \"`) do (FOR /F \"usebackq\" %b in (`TASKLIST /FI \"PID eq %a\" ^| findstr /I node.exe`) do taskkill /F /PID %a)"};
+        //    startInfo.Arguments = string.Join("", stopServerCommand);
+        //    process.StartInfo = startInfo;
+        //    process.Start();
 
-            return true;
-        }
+        //    return true;
+        //}
         
         public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
         {
-            //if (DriverPlatformType == eMobilePlatformType.AndroidBrowser || DriverPlatformType == eMobilePlatformType.iOSBrowser)
-                //return mSeleniumDriver.LocateElements(LocatorType, LocValue);
+            if (AppType == eAppType.Web)
+                return mSeleniumDriver.LocateElements(LocatorType, LocValue);
 
-            IReadOnlyCollection<IWebElement> elem = null;
+                IReadOnlyCollection<IWebElement> elem = null;
 
             switch (LocatorType)
             {
@@ -653,7 +426,7 @@ namespace Amdocs.Ginger.CoreNET
                 //if not then to run the regular selenium driver locator for it to avoid duplication
 
                 default:
-                    //elem = mSeleniumDriver.LocateElements(LocatorType, LocValue);
+                    elem = mSeleniumDriver.LocateElements(LocatorType, LocValue);
                     break;
             }
 
@@ -662,8 +435,8 @@ namespace Amdocs.Ginger.CoreNET
 
         public IWebElement LocateElement(Act act)
         {
-                //if (DriverPlatformType == eMobilePlatformType.AndroidBrowser || DriverPlatformType == eMobilePlatformType.iOSBrowser)
-                //    return mSeleniumDriver.LocateElement(act);
+                if (AppType == eAppType.Web)
+                    return mSeleniumDriver.LocateElement(act);
 
             eLocateBy LocatorType = act.LocateBy;
                 IWebElement elem = null;
@@ -679,7 +452,7 @@ namespace Amdocs.Ginger.CoreNET
                     //if not then to run the regular selenium driver locator for it to avoid duplication                
 
                     default:
-                        //elem = mSeleniumDriver.LocateElement(act);
+                        elem = mSeleniumDriver.LocateElement(act);
                         break;
                 }
 
@@ -688,7 +461,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override Act GetCurrentElement()
         {
-            //return mSeleniumDriver.GetCurrentElement();
+            return mSeleniumDriver.GetCurrentElement();
             return null;
         }
 
@@ -696,9 +469,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                if (DriverPlatformType == eMobilePlatformType.AndroidBrowser || DriverPlatformType == eMobilePlatformType.iOSBrowser)
+                if (AppType == eAppType.Web)
                 {                   
-                    //mSeleniumDriver.RunAction(act);              
+                    mSeleniumDriver.RunAction(act);              
                     return;
                 }
 
@@ -1144,10 +917,10 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (DriverPlatformType)
             {
-                case eMobilePlatformType.Android:
+                case eDevicePlatformType.Android:
                     Driver.Navigate().Back();
                     break;
-                case eMobilePlatformType.iOS:
+                case eDevicePlatformType.iOS:
                     Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
@@ -1157,11 +930,11 @@ namespace Amdocs.Ginger.CoreNET
         {               
             switch (DriverPlatformType)
             {
-                case eMobilePlatformType.Android:
+                case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Home);
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
-                case eMobilePlatformType.iOS:
+                case eDevicePlatformType.iOS:
                     Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
@@ -1171,10 +944,10 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (DriverPlatformType)
             {
-                case eMobilePlatformType.Android:
+                case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
                     break;
-                case eMobilePlatformType.iOS:
+                case eDevicePlatformType.iOS:
                     Reporter.ToUser(eUserMsgKey.MissingImplementation2);
                     break;
             }
@@ -1254,7 +1027,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override bool IsRunning()
         {
-            return ConnectedToDevice;           
+            return mConnectedToDevice;           
         }
         
         public override bool IsWindowExplorerSupportReady()

@@ -45,8 +45,9 @@ namespace UnitTests.NonUITests
         {
             //TODO::
             mTestHelper.ClassInitialize(TestContext);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ActValidation).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(BusinessFlow).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCore);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreNET);
         }
 
         [TestInitialize]

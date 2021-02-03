@@ -667,13 +667,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-
-        //TODO: remove from here get in init
-
-            //TODO: move to common global for others to use if needed 
-            // public static Assembly GingerCoreNETAssembly = typeof(GingerCoreNET.SolutionRepositoryLib.RepositoryItem).Assembly;
-        public static Assembly GingerCoreCommonAssembly = typeof(RepositoryItemBase).Assembly;        
-
         private static object xmlReadObject(Object Parent, XmlReader xdr, RepositoryItemBase targetObj = null, string filePath = "")
         {
             //TODO: check order of creation and remove unused
@@ -881,22 +874,30 @@ namespace Amdocs.Ginger.Repository
         static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
 
         static List<Assembly> mAssemblies = new List<Assembly>();
-        public static void AddClassesFromAssembly(Assembly assembly)
+        public enum eAssemblyType { Ginger, GingerCore, GingerCoreCommon, GingerCoreCommonTest, GingerCoreNET }
+        public static void AddClassesFromAssembly(eAssemblyType assemblyType)
         {
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.Contains(assemblyType.ToString()+",")).FirstOrDefault();
+            if (assembly == null)
+            {
+                string err = string.Format("Failed to load the assembly '{0}' into NewRepositorySerializer", assemblyType.ToString());
+                Reporter.ToLog(eLogLevel.ERROR, err);
+                throw new Exception(err) ;
+            }
+
             lock (mAssemblies) // Avoid reentry to add assembly - can happen in unit tests
             {
-               
                 if (mAssemblies.Contains(assembly))
                 {
                     return;
                 }
                 try
                 {
-                     var RepositoryItemTypes =
-                      from type in assembly.GetTypes()
-                      //where type.IsSubclassOf(typeof(RepositoryItemBase))              
-                  where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
-                  select type;
+                    var RepositoryItemTypes =
+                     from type in assembly.GetTypes()
+                          //where type.IsSubclassOf(typeof(RepositoryItemBase))              
+                      where typeof(RepositoryItemBase).IsAssignableFrom(type) // Will load all sub classes including level 2,3 etc.
+                      select type;
 
                     foreach (Type t in RepositoryItemTypes)
                     {

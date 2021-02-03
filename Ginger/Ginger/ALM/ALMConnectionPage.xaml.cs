@@ -91,7 +91,7 @@ namespace Ginger.ALM
         
         private void SetControls()
         {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !string.IsNullOrEmpty(PasswordTextBox.Password))
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !(string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility==Visibility.Visible))
             {
                 LoginServerButton.IsEnabled = true;
             }
@@ -228,7 +228,7 @@ namespace Ginger.ALM
                     JiraTestingALMComboBox.Items.Clear();
                 }
             }
-
+     
             isServerDetailsCorrect = almConn;
             if (isServerDetailsCorrect)
             {
@@ -471,6 +471,8 @@ namespace Ginger.ALM
                     qTestRadioButton.Foreground = Brushes.Black;
                     OctaneRadioButton.FontWeight = FontWeights.Regular;
                     OctaneRadioButton.Foreground = Brushes.Black;
+                    xPasswordPanel.Visibility = Visibility.Visible;
+
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM:
@@ -496,6 +498,7 @@ namespace Ginger.ALM
                     qTestRadioButton.Foreground = Brushes.Black;
                     OctaneRadioButton.FontWeight = FontWeights.Regular;
                     OctaneRadioButton.Foreground = Brushes.Black;
+                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
@@ -519,6 +522,7 @@ namespace Ginger.ALM
                     qTestRadioButton.Foreground = Brushes.Black;
                     OctaneRadioButton.FontWeight = FontWeights.Regular;
                     OctaneRadioButton.Foreground = Brushes.Black;
+                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
@@ -542,6 +546,7 @@ namespace Ginger.ALM
                     qTestRadioButton.Foreground = Brushes.Black;
                     OctaneRadioButton.FontWeight = FontWeights.Regular;
                     OctaneRadioButton.Foreground = Brushes.Black;
+                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
@@ -567,6 +572,7 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = Brushes.Black;
                     OctaneRadioButton.FontWeight = FontWeights.Regular;
                     OctaneRadioButton.Foreground = Brushes.Black;
+                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
@@ -592,6 +598,10 @@ namespace Ginger.ALM
                     JiraRadioButton.Foreground = Brushes.Black;
                     qTestRadioButton.FontWeight = FontWeights.Regular;
                     qTestRadioButton.Foreground = Brushes.Black;
+
+                    xPasswordPanel.Visibility = Visibility.Collapsed;
+
+
                     break;
 
                 default:

@@ -135,7 +135,7 @@ namespace GingerCore.ALM
 
             if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
             {
-                return GetALMItemFields();
+                fields = GetALMItemFields();
             }
             else
             {

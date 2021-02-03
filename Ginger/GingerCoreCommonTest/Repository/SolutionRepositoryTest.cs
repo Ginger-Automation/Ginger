@@ -78,7 +78,7 @@ namespace GingerCoreCommonTest.Repository
                                                                );
 
             NewRepositorySerializer RS = new NewRepositorySerializer();                        
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(MyRepositoryItem).Assembly);            
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommonTest);            
             mSolutionRepository.Open(TempRepositoryFolder);            
         }
 

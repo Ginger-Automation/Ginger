@@ -955,7 +955,12 @@ namespace GingerCore
             {
                 passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
             }
-            return dataString.Replace(passwordValue, "*****");
+
+            if (!string.IsNullOrEmpty(passwordValue))
+            {
+                dataString = dataString.Replace(passwordValue, "*****");
+            }
+            return dataString;
         }
     }
 }
