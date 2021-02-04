@@ -66,8 +66,10 @@ namespace Ginger.ALM.Repository
         public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
         {
             TestCaseResource currentTC;
-            if (activtiesGroup == null) return false;
-            //ZephyrEntExportManager zephyrEntExportManager = new ZephyrEntExportManager(zephyrEntCore, ALMCore.DefaultAlmConfig.ALMProjectKey, businessFlow);
+            if (activtiesGroup == null)
+            {
+                return false;
+            }
             //if it is called from shared repository need to select path
             if (uploadPath == null)
             {
@@ -117,7 +119,9 @@ namespace Ginger.ALM.Repository
         public override bool ExportBusinessFlowToALM(BusinessFlow businessFlow, bool performSaveAfterExport = false, ALMIntegration.eALMConnectType almConectStyle = ALMIntegration.eALMConnectType.Manual, string testPlanUploadPath = null, string testLabUploadPath = null)
         {
             if (businessFlow == null)
+            {
                 return false;
+            }
 
             if (businessFlow.ActivitiesGroups.Count == 0)
             {
@@ -161,9 +165,13 @@ namespace Ginger.ALM.Repository
                         //ask user if want to continue
                         Amdocs.Ginger.Common.eUserMsgSelection userSelect = Reporter.ToUser(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, ag.Name, matchingTC[0].TryGetItem("name").ToString());
                         if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.Cancel)
+                        {
                             return false;
+                        }
                         else if (userSelect == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                        {
                             matchingTC = null;
+                        }
                         else
                         {
                             if (String.IsNullOrEmpty(testPlanUploadPath))
@@ -245,8 +253,12 @@ namespace Ginger.ALM.Repository
                 return true;
             }
             else
+            {
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
-                Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                {
+                    Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), businessFlow.Name, res);
+                }
+            }
 
             return exportRes;
         }
@@ -429,24 +441,36 @@ namespace Ginger.ALM.Repository
                         {
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                                {
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {
                                         ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
                                     }
+                                }
+                            }
                             //handle non mapped Activities
                             if (tsBusFlow.TargetApplications.Count == 0)
+                            {
                                 tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                            }
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
+                                {
                                     activ.TargetApplication = tsBusFlow.MainApplication;
+                                }
+                            }
                         }
                         else
                         {
                             foreach (Activity activ in tsBusFlow.Activities)
+                            {
                                 activ.TargetApplication = null; // no app configured on solution level
+                            }
                         }
 
                         AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
