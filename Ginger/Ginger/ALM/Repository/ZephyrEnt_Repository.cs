@@ -317,8 +317,7 @@ namespace Ginger.ALM.Repository
                 BaseResponseItem item = phase.FirstOrDefault(md => md.id.ToString().Equals(testLabUploadPath));
                 if(isUpdate)
                 {
-                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).UpdateTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id"))
-                    , businessFlow.Name, String.IsNullOrEmpty(businessFlow.Description) ? businessFlow.Name + " description" : businessFlow.Description);
+                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).UpdateTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id")), businessFlow);
                     return true;
                 }
                 dynamic treeNode = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateNewTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id"))
@@ -332,8 +331,7 @@ namespace Ginger.ALM.Repository
                 BaseResponseItem item = module.FirstOrDefault(md => md.id.ToString().Equals(testLabUploadPath));
                 if (isUpdate)
                 {
-                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).UpdateTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id"))
-                    , businessFlow.Name, String.IsNullOrEmpty(businessFlow.Description) ? businessFlow.Name + " description" : businessFlow.Description);
+                    ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).UpdateTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id")), businessFlow);
                     return true;
                 }
                 dynamic treeNode = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateNewTestPlanningFolder(Convert.ToInt64(folderCycleId), Convert.ToInt64(item.TryGetItem("id"))

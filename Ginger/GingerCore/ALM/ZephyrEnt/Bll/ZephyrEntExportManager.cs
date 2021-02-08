@@ -51,9 +51,20 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             return zephyrEntRepository.CreateNewTestPlanningFolder(cycleId, parenttreeid, folderName, folderDesc);
         }
-        public dynamic UpdateTestPlanningFolder(long cycleId, long parenttreeid, string folderName, string folderDesc)
+        public dynamic UpdateTestPlanningFolder(long cycleId, long parenttreeid, BusinessFlow businessFlow)
         {
-            return zephyrEntRepository.UpdateTestPlanningFolder(cycleId, parenttreeid, folderName, folderDesc);
+            List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(parenttreeid));
+            testCaseResources.ForEach(tcr => {
+                if(!businessFlow.ActivitiesGroups.Any(ag => ag.ExternalID2.Equals(tcr.testcase.id.ToString())))
+                {
+                    bool isDeleted = zephyrEntRepository.DeleteTestFromPhaseByTestId(Convert.ToInt32(tcr.testcase.testcaseId), Convert.ToInt32(tcr.tct.tcrCatalogTreeId), Convert.ToInt32(cycleId));
+                    if(!isDeleted)
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "User doesn't have permission to delete from Zephyr");
+                    }
+                }
+            });
+            return zephyrEntRepository.UpdateTestPlanningFolder(cycleId, parenttreeid, businessFlow.Name, String.IsNullOrEmpty(businessFlow.Description) ? businessFlow.Name + " description" : businessFlow.Description);
         }
         public TestCaseResource CreateTestCase(long treeNodeId, ActivitiesGroup activtiesGroup)
         {

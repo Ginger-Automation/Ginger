@@ -40,9 +40,9 @@ namespace GingerCore.ALM
         {
             return zephyrEntRepository.CreateNewTestPlanningFolder(cycleId, parenttreeid, folderName, folderDesc);
         }
-        public dynamic UpdateTestPlanningFolder(long cycleId, long parenttreeid, string folderName, string folderDesc)
+        public dynamic UpdateTestPlanningFolder(long cycleId, long parenttreeid, BusinessFlow businessFlow)
         {
-            return zephyrEntRepository.UpdateTestPlanningFolder(cycleId, parenttreeid, folderName, folderDesc);
+            return zephyrEntExportManager.UpdateTestPlanningFolder(cycleId, parenttreeid, businessFlow);
         }
         
         public override bool ConnectALMProject()
