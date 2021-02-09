@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
-      mc:Ignorable="d" d:DesignWidth="600" Height="900" 
+      mc:Ignorable="d" d:DesignWidth="600" Height="1040" 
 	Title="DataSource Expression Editor" >
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">

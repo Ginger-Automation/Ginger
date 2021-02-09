@@ -67,68 +67,55 @@ namespace Amdocs.Ginger.CoreNET
 
         //Mobile Driver Configurations
         [UserConfigured]
-        [UserConfiguredDefault(@"https://AppiumServer:port/wd/hub")]
-        [UserConfiguredDescription("Full Appium server address including port if needed")]
+        [UserConfiguredDefault(@"https://127.0.0.1:4723/wd/hub")]
+        [UserConfiguredDescription("Full Appium server address including port if needed, default address is: 'https://ServerIP:Port/wd/hub'")]
         public String AppiumServer { get; set; }
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDevicePlatformType))]
-        [UserConfiguredDescription("The device platform name 'Android' or 'iOS'")]
+        [UserConfiguredDefault("Android")]
+        [UserConfiguredDescription("Device platform type 'Android' or 'iOS'")]
         public eDevicePlatformType DevicePlatformType { get; set; }
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eAppType))]
+        [UserConfiguredDefault("NativeHybride")]
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
         public eAppType AppType { get; set; }
 
         //[UserConfigured]
-        //[UserConfiguredDescription("The device unique identifier")]
-        //public String DeviceID { get; set; }
+        //[UserConfiguredDescription("The device OS version- e.g.: 4.4.4, 5.0. Keep empty if not needed")]
+        //public String DevicePlatformVersion { get; set; }
 
         //[UserConfigured]
-        //[UserConfiguredDescription("The name which is associated with the device")]
-        //public String DeviceName { get; set; }
+        //[UserConfiguredDescription("The absolute local path or remote http URL to an .ipa (iOS) or .apk (Android) file, or a .zip containing one of these. Appium will attempt to install this app on the appropriate device first")]
+        //public String AppInstallerPath { get; set; }
 
         //[UserConfigured]
-        //[UserConfiguredDefault("Phone")]
-        //[UserConfiguredDescription("The device type, set it to 'Phone' or 'Tablet'")]
-        //public String DeviceType { get; set; }
+        //[UserConfiguredDescription("Android Only | Only if 'AppInstallerPath' is empty. Java package of the Android app you want to run, e.g. \"com.example.android.myApp\" or \"com.android.dialer\"")]
+        //public String InstalledAppPackage { get; set; }
 
+        //[UserConfigured]
+        //[UserConfiguredDescription("Android Only | Only if 'InstalledAppPackage' was populated. The Android activity you want to launch from your package. This often needs to be preceded by a '.' (e.g., .MainActivity instead of MainActivity)")]
+        //public String InstalledAppActivity { get; set; }
 
+        //[UserConfigured]
+        //[UserConfiguredDescription("iOS Only | Only if 'AppInstallerPath' is empty. Bundle ID of the app under test. Useful for starting an installed app on a real device or for using other caps which require the bundle ID during test startup.")]
+        //public String InstalledAppBundleID { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDescription("The device OS version- e.g.: 4.4.4, 5.0. Keep empty if not needed")]
-        public String DevicePlatformVersion { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("The absolute local path or remote http URL to an .ipa (iOS) or .apk (Android) file, or a .zip containing one of these. Appium will attempt to install this app on the appropriate device first")]
-        public String AppInstallerPath { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("Android Only | Only if 'AppInstallerPath' is empty. Java package of the Android app you want to run, e.g. \"com.example.android.myApp\" or \"com.android.dialer\"")]
-        public String InstalledAppPackage { get; set; }
+        //[UserConfigured]
+        //[UserConfiguredDescription("Which automation engine to use, 'Appium' or 'UiAutomator2' or 'Espresso' for Android or 'XCUITest' for iOS or 'YouiEngine' for application built with You.i Engine. Keep empty to use default")]
+        //public String AutomationName { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDescription("Android Only | Only if 'InstalledAppPackage' was populated. The Android activity you want to launch from your package. This often needs to be preceded by a '.' (e.g., .MainActivity instead of MainActivity)")]
-        public String InstalledAppActivity { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("iOS Only | Only if 'AppInstallerPath' is empty. Bundle ID of the app under test. Useful for starting an installed app on a real device or for using other caps which require the bundle ID during test startup.")]
-        public String InstalledAppBundleID { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDescription("Which automation engine to use, 'Appium' or 'UiAutomator2' or 'Espresso' for Android or 'XCUITest' for iOS or 'YouiEngine' for application built with You.i Engine. Keep empty to use default")]
-        public String AutomationName { get; set; }
-
-        [UserConfigured]
-        [UserConfiguredDefault("Yes")]
+        [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Set to 'Yes' or 'No', determine if the Ginger device window will be loaded with the Agent")]
-        public String LoadGingerDeviceWindow { get; set; }
+        public bool LoadDeviceWindow { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("Yes")]
+        [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Set to 'Yes' or 'No', determine if the Ginger device window will refresh the device screenshot after each action been performed")]
-        public String RefreshDeviceScreenShots { get; set; }
+        public bool AutoRefreshDeviceWindowScreenshot { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("120")]
