@@ -20,6 +20,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <CodeAnalysisRuleSet>GingerConsole.ruleset</CodeAnalysisRuleSet>
+    <WarningLevel>2</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,5 +38,16 @@
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild_CopySeleniumDrivers" AfterTargets="Build">
+    <ItemGroup>
+      <LinuxDrivers Include="$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*;$(ProjectDir)..\GingerLinuxOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" />
+      <MacDrivers Include="$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\chromedriver.*;$(ProjectDir)..\GingerMacOsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.*" />     
+      <Windows64BitDrivers Include="$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\IEDriverServer.exe;$(ProjectDir)..\GingerWin64OsSupport\bin\$(Configuration)\netstandard2.0\geckodriver.exe" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LinuxDrivers);" DestinationFolder="$(TargetDir)\Linux" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(MacDrivers);" DestinationFolder="$(TargetDir)\Mac" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(Windows64BitDrivers);" DestinationFolder="$(TargetDir)\Win64" SkipUnchangedFiles="true" />
+  </Target>
 
 </Project>

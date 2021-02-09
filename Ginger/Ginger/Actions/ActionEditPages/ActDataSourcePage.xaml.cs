@@ -489,6 +489,7 @@ namespace Ginger.Actions
             if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
             {
                 mActDSTblElem.DSTableName = mDSTable.Name;
+                mActDSTblElem.DSName = mDSTable.DSC.Name;
                 Page  pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
                 ExcelSpecificFrame.Content = pageContent;
                 ExcelSpecificFrame.Visibility = Visibility.Visible;
@@ -1006,7 +1007,15 @@ namespace Ginger.Actions
                         if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel" && (DataSource.DSType.ToString().Equals("LiteDataBase")))
                         {
                             TBH.AddText(" Query QUERY=");
-                            TBH.AddBoldText(mActDSTblElem.ExcelConfig.ExcelPath + "," + mActDSTblElem.ExcelConfig.ExcelSheetName);
+                            if (mActDSTblElem.ExcelConfig == null)
+                            {
+                                TBH.AddBoldText(mActDSTblElem.ExcelPath + "," + mActDSTblElem.ExcelSheetName);
+                            }
+                            else
+                            {
+                                TBH.AddBoldText(mActDSTblElem.ExcelConfig.ExcelPath + "," + mActDSTblElem.ExcelConfig.ExcelSheetName);
+                            }
+
                             TBH.AddText("}");
                             mActDSTblElem.ValueExp = TBH.GetText();
                             return;

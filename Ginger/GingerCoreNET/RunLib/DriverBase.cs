@@ -202,5 +202,9 @@ namespace GingerCore.Drivers
         }
 
         #endregion
+
+        public virtual void InitDriver(Agent agent)
+        {
+        }
     }
 }

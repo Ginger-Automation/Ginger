@@ -16,25 +16,27 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.GeneralLib;
+
 namespace GingerCore.Helpers
 {
     public class HTMLHelper
     {
         public static string GetJquery()
         {
-            string script = Properties.Resources.jquery_min;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min);
             return script;
         }
 
         public static string GetGingerHTMLHelper()
         {
-            string script = Properties.Resources.GingerHTMLHelper;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper);
             return script;
         }
 
         public static string wgxpath_install()
         {
-            string script = Properties.Resources.wgxpath_install;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install);
             return script;
         }
     }

@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
@@ -46,9 +45,9 @@ namespace UnitTests.NonUITests
         {
             //TODO::
             mTestHelper.ClassInitialize(TestContext);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ActButton).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(BusinessFlow).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCore);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreNET);
         }
 
         [TestInitialize]

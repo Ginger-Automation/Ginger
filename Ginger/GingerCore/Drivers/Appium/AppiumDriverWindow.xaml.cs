@@ -17,23 +17,21 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using OpenQA.Selenium;
-using System.Threading;
-using GingerCore.Actions;
 using System.Xml;
-using GingerCore.GeneralLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Drivers.Appium
 {
@@ -448,8 +446,8 @@ namespace GingerCore.Drivers.Appium
             //take screen shot
             try
             {
-                Screenshot SC = AppiumDriver.GetScreenShot();
-                UpdateDriverImageFromScreenshot(SC);
+                //Screenshot SC = AppiumDriver.GetScreenShot();//commented to allow build
+                //UpdateDriverImageFromScreenshot(SC);
 
                 return true;
             }
@@ -463,28 +461,29 @@ namespace GingerCore.Drivers.Appium
             }
         }
 
-       public void UpdateDriverImageFromScreenshot(Screenshot SC)
-        {
-            var image = new BitmapImage();
-            using (var ms = new System.IO.MemoryStream(SC.AsByteArray))
-            {
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad; // here
-                image.StreamSource = ms;
-                image.EndInit();
-            }
-            DeviceImage.Source = image;
+        //public void UpdateDriverImageFromScreenshot(Screenshot SC)//commented to allow build
+        //UpdateDriverImageFromScreenshot(SC);
+        // {
+        //     var image = new BitmapImage();
+        //     using (var ms = new System.IO.MemoryStream(SC.AsByteArray))
+        //     {
+        //         image.BeginInit();
+        //         image.CacheOption = BitmapCacheOption.OnLoad; // here
+        //         image.StreamSource = ms;
+        //         image.EndInit();
+        //     }
+        //     DeviceImage.Source = image;
 
-            //take the page source if needed
-            if (InspectBtn.IsChecked == true || RecordBtn.IsChecked == true)
-            {
-                StorePageSource();
-                if (InspectBtn.IsChecked == true)
-                    SetAttributesActionsView(false);
-            }
+        //     //take the page source if needed
+        //     if (InspectBtn.IsChecked == true || RecordBtn.IsChecked == true)
+        //     {
+        //         StorePageSource();
+        //         if (InspectBtn.IsChecked == true)
+        //             SetAttributesActionsView(false);
+        //     }
 
-            Mouse.OverrideCursor = null;
-        }
+        //     Mouse.OverrideCursor = null;
+        // }
 
         public void ShowActionEfect(bool wait = false, Int32 waitingTimeInMiliSeconds = 2000)
         {

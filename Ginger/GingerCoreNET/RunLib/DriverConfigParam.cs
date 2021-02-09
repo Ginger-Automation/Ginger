@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System.Collections.Generic;
 
@@ -55,6 +56,9 @@ namespace GingerCore
                 }
             }
         }
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<DriverConfigParam> MultiValues { get; set; } = null;
 
         string mDescription;
         [IsSerializedForLocalRepository]

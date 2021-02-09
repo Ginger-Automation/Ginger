@@ -51,7 +51,7 @@ namespace Ginger.DataSource
 
         public ObservableList<ActDSConditon> mWhereConditionList = new ObservableList<ActDSConditon>();
 
-        private DataTable mDataTable = null;
+        private DataTable mDataTable = new DataTable();
         private ActDSTableElement mActDSTableElement = null;
 
         private DataSourceTable mDataSourceTable = null;
@@ -132,6 +132,7 @@ namespace Ginger.DataSource
             }
 
             SetConditionGridView();
+            UpdateQueryValue();
         }
 
         private void SetFilePath()

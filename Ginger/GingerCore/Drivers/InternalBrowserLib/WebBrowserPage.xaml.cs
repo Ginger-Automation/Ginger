@@ -18,6 +18,7 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using mshtml;
 using System;
 using System.Collections;
@@ -159,7 +160,7 @@ namespace GingerCore.Drivers
             var v= doc.body.getAttribute("data-GingerXpath");
             if (v is System.DBNull)
             {
-                injectScriptCode(doc, Properties.Resources.wgxpath_install);
+                injectScriptCode(doc, JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install));
                 string js = GetXpathJS();
                 injectScriptCode(doc, js);
                 doc.body.setAttribute("data-GingerXpath", "Done");
