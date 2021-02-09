@@ -3917,5 +3917,10 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             return optionalValues;
         }
+
+        public ElementInfo GetElementAtPoint(long ptX, long ptY)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

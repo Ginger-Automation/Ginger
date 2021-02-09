@@ -1002,5 +1002,10 @@ namespace GingerCore.Drivers.WindowsLib
         {
             throw new NotImplementedException();
         }
+
+        public ElementInfo GetElementAtPoint(long ptX, long ptY)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

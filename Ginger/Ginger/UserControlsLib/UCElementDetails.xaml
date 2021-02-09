@@ -10,7 +10,6 @@
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xTitleSection" Height="32"/>
             <RowDefinition Height="*" />
-            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0" Margin="0,5,0,5">
@@ -52,23 +51,29 @@
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
             </TabItem>
-            <TabItem>
+            <TabItem x:Name="xAddActionTab">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Action"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
                         <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Frame x:Name="xActUIPageFrame" Margin="5" VerticalAlignment="Stretch" Width="Auto" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+                    <Frame x:Name="xActUIPageFrame" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" Width="Auto" />
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" >
+                        <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run Action" ButtonImageHeight="16" HorizontalAlignment="Center"
+                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="25,0,0,0" Click="xRunActBtn_Click" />
+
+                        <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Upload" ButtonText="Add Action" ButtonImageHeight="16" HorizontalAlignment="Center"
+                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="100,0,0,0" Click="xAddActBtn_Click" />
+                    </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" >
-            <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run Action" ButtonImageHeight="16" HorizontalAlignment="Center"
-                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="25,0,0,0" Click="xRunActBtn_Click" />
-
-            <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Upload" ButtonText="Add Action" ButtonImageHeight="16" HorizontalAlignment="Center"
-                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="100,0,0,0" Click="xAddActBtn_Click" />
-        </StackPanel>
     </Grid>
 </UserControl>

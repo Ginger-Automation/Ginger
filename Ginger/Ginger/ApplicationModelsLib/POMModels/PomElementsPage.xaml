@@ -75,7 +75,7 @@
                 <Label x:Name="xDetailsExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
             </Expander.Header>
             <Expander.Content>
-                <Ginger:UCElementDetails x:Name="xElementDetails" />
+                <Ginger:UCElementDetails x:Name="xElementDetails" ShowActionTab="False" />
             </Expander.Content>
         </Expander>
         

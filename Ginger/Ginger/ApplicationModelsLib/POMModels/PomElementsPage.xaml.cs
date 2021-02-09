@@ -136,10 +136,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             SetElementsGridView();
 
-            xElementDetails.InitGridView(UCElementDetails.eViewPage.POM);
-
             SetLocatorsGridView();
             SetControlPropertiesGridView();
+
+            //xElementDetails.InitGridView(this)
 
             xMainElementsGrid.DataSourceList = mElements;
 

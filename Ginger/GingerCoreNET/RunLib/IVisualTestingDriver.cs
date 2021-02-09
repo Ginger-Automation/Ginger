@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.UIElement;
 using System;
 using System.Drawing;
 
@@ -28,5 +29,7 @@ namespace GingerCore.Actions.VisualTesting
 
         VisualElementsInfo GetVisualElementsInfo();
         void ChangeAppWindowSize(int Width, int Height);
+
+        ElementInfo GetElementAtPoint(long ptX, long ptY);
     }
 }
