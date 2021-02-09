@@ -57,7 +57,7 @@ namespace Ginger.SourceControl
             SourceControlIntegration.BusyInProcessWhileDownloading = false;
             mPath = path;
             lblAnalyzedPath.Content = mPath;
-
+            lblSourceControlBranch.Content = WorkSpace.Instance.Solution.SourceControl.SourceControlBranch;
             Init();
 
             SetCheckinGridView();

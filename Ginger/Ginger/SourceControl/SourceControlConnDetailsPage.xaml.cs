@@ -66,16 +66,19 @@ namespace Ginger.SourceControl
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
+            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlBranchTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlBranch));
+            
             if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
+                xBranchPanel.Visibility = Visibility.Visible;
             }
             else
             {
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
                 xTimeoutPanel.Visibility = Visibility.Visible;
-               
-              
+                xBranchPanel.Visibility = Visibility.Hidden;
             }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));

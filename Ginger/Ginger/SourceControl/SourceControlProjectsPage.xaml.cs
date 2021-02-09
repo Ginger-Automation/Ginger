@@ -30,6 +30,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using amdocs.ginger.GingerCoreNET;
+using System.Collections.Generic;
+
 namespace Ginger.SourceControl
 {
     /// <summary>
@@ -90,16 +92,29 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
 
             SolutionsGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
+
+            if (mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                BranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+            }
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
+
         }
-        private void UpdateTimeoutVisibility()
+        private void UpdateTimeoutAndBranchPanelVisibility()
         {
             if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
+                FetchBranchesButton.Visibility = Visibility.Visible;
+                SelectBranchLabel.Visibility = Visibility.Visible;
+                BranchesCombo.Visibility = Visibility.Visible;
             }
             if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 xTimeoutPanel.Visibility = Visibility.Visible;
+                FetchBranchesButton.Visibility = Visibility.Hidden;
+                SelectBranchLabel.Visibility = Visibility.Hidden;
+                BranchesCombo.Visibility = Visibility.Hidden;
             }
         }
         
@@ -109,7 +124,7 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlPass));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
-            UpdateTimeoutVisibility();
+            UpdateTimeoutAndBranchPanelVisibility();
             SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
@@ -322,7 +337,7 @@ namespace Ginger.SourceControl
 
         private void ConnectionDetailsExpended(object sender, RoutedEventArgs e)
         {
-            ExpenderDetailsRow.Height = new GridLength(200);
+            ExpenderDetailsRow.Height = new GridLength(230);
         }
 
         private void ConnectionDetailsCollapsed(object sender, RoutedEventArgs e)
@@ -346,6 +361,7 @@ namespace Ginger.SourceControl
                 mSourceControl.SourceControlUser =  WorkSpace.Instance.UserProfile.SourceControlUser;
                 mSourceControl.SourceControlPass =  WorkSpace.Instance.UserProfile.SourceControlPass;
                 mSourceControl.SourceControlLocalFolder =  WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SourceControlBranch;
 
                 mSourceControl.SourceControlConfigureProxy =  WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
                 mSourceControl.SourceControlProxyAddress =  WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress;
@@ -369,6 +385,7 @@ namespace Ginger.SourceControl
              WorkSpace.Instance.UserProfile.SourceControlUser = mSourceControl.SourceControlUser;
              WorkSpace.Instance.UserProfile.SourceControlPass = mSourceControl.SourceControlPass;
              WorkSpace.Instance.UserProfile.SourceControlLocalFolder = mSourceControl.SourceControlLocalFolder;
+             WorkSpace.Instance.UserProfile.SourceControlBranch = mSourceControl.SourceControlBranch;
 
              WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = mSourceControl.SourceControlConfigureProxy;
              WorkSpace.Instance.UserProfile.SolutionSourceControlProxyAddress = mSourceControl.SourceControlProxyAddress;
@@ -445,6 +462,16 @@ namespace Ginger.SourceControl
             ProxyPortTextBox.IsEnabled = false;            
         }
 
-  
+        private void FetchBranches_Click(object sender, RoutedEventArgs e)
+        {
+            xProcessingIcon.Visibility = Visibility.Visible;
+            BranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+            if (BranchesCombo.Items.Count > 0)
+            {
+                BranchesCombo.SelectedIndex = 0;
+            }
+            xProcessingIcon.Visibility = Visibility.Collapsed;
+        }
+       
     }
 }

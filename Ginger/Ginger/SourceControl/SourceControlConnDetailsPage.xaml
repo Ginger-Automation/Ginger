@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-     Height="300" Width="500" MinHeight="155"
+     Height="400" Width="500" MinHeight="155"
 	  Title="Source Control Connection Details">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -25,11 +25,15 @@
                 <TextBox x:Name="SourceControlUserAuthorNameTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"/>
                 <Label Content="Author Email:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"/>
                 <TextBox x:Name="SourceControlAuthorEmailTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" TextChanged="SourceControlUserDetails_TextChanged"/>
-                <StackPanel x:Name="xTimeoutPanel" Visibility="Visible">
-                <Label x:Name="xLabelConnectionTimeout" Content="Connection Timeout:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible"/>
-                <TextBox x:Name="xTextSourceControlConnectionTimeout" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged"></TextBox>
+                <StackPanel x:Name="xBranchPanel" Visibility="Visible">
+                    <Label x:Name="xLabelBranch" Content="Source Control Branch:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch"/>
+                    <TextBox x:Name="SourceControlBranchTextBox" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Text="" HorizontalAlignment="Stretch" IsReadOnly="True" IsEnabled="False"></TextBox>
                 </StackPanel>
-
+                <StackPanel x:Name="xTimeoutPanel" Visibility="Visible">
+                    <Label x:Name="xLabelConnectionTimeout" Content="Connection Timeout:" Style="{StaticResource @InputFieldLabelStyle}" HorizontalAlignment="Stretch" Visibility="Visible"/>
+                    <TextBox x:Name="xTextSourceControlConnectionTimeout" Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap" Visibility="Visible" Text="" HorizontalAlignment="Stretch" TextChanged="txtSourceControlConnectionTimeout_TextChanged"></TextBox>
+                </StackPanel>
+                
             </StackPanel>
         </Grid>
     </ScrollViewer>
