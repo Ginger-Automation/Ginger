@@ -20,7 +20,7 @@
             <ScrollViewer x:Name="xMainScrollViewer" Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <Canvas x:Name="xMainCanvas" >
                     <Image x:Name="xMainImage"  MouseLeftButtonDown="MainImage_MouseLeftButtonDown" MouseLeftButtonUp="MainImage_MouseLeftButtonUp" MouseMove="MainImage_MouseMove"/>
-                    <Border x:Name="xHighlighterBorder" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="5" Visibility="Collapsed" />
+                    <Border x:Name="xHighlighterBorder" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="3" Visibility="Collapsed" Margin="3" />
                     <Rectangle x:Name="xHighLighterRectangle" Margin="50,50,0,0" Width="200" Height="50" Fill="Pink" Opacity="0.4" ></Rectangle>
                 </Canvas>
             </ScrollViewer>
