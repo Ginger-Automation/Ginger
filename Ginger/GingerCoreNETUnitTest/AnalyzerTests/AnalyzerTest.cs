@@ -21,7 +21,8 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         public static void ClassInitialize(TestContext TC)
         {
             string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution");
-            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);            
+            SR = WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
+            SR.StopAllRepositoryFolderWatchers();
         }
 
         [ClassCleanup]

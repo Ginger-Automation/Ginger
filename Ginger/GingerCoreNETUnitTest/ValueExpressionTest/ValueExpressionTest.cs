@@ -60,6 +60,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+            mSolutionRepository.StopAllRepositoryFolderWatchers();
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
            
