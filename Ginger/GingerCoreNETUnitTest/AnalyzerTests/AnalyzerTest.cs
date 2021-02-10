@@ -28,7 +28,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+            SR.StopAllRepositoryFolderWatchers();
         }
 
         [TestMethod]
