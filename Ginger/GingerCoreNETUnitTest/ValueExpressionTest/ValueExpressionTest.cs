@@ -46,6 +46,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         ProjEnvironment mEnv;
         GingerCore.Activity mActivity;
         Act mAct;
+        SolutionRepository mSolutionRepository;
 
         [TestInitialize]
         public void TestInitialize()
@@ -54,12 +55,13 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
-            SolutionRepository mSolutionRepository = WorkSpace.Instance.SolutionRepository;           
+            mSolutionRepository = WorkSpace.Instance.SolutionRepository;           
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+            mSolutionRepository.StopAllRepositoryFolderWatchers();
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
            
@@ -112,7 +114,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mSolutionRepository.StopAllRepositoryFolderWatchers();
         }
 
 
