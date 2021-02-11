@@ -583,7 +583,7 @@ namespace GingerCoreCommonTest.Repository
         [TestMethod]
         public void FileWatcherChangeExisitingMRIOnDisk()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
             {
                 return;
             }
