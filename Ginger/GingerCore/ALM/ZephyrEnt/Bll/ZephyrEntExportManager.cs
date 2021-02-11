@@ -1,10 +1,15 @@
 ﻿using ALM_Common.DataContracts;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.IO;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,10 +60,10 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         {
             List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(parenttreeid));
             testCaseResources.ForEach(tcr => {
-                if(!businessFlow.ActivitiesGroups.Any(ag => ag.ExternalID2.Equals(tcr.testcase.id.ToString())))
+                if (!businessFlow.ActivitiesGroups.Any(ag => ag.ExternalID2.Equals(tcr.testcase.id.ToString())))
                 {
                     bool isDeleted = zephyrEntRepository.DeleteTestFromPhaseByTestId(Convert.ToInt32(tcr.testcase.testcaseId), Convert.ToInt32(tcr.tct.tcrCatalogTreeId), Convert.ToInt32(cycleId));
-                    if(!isDeleted)
+                    if (!isDeleted)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "User doesn't have permission to delete from Zephyr");
                     }
@@ -111,6 +116,134 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 return null;
             }
         }
+
+        internal bool ExportExceutionDetailsToALM(BusinessFlow bizFlow, ref string result, ObservableList<ExternalItemFieldBase> runFields, bool exectutedFromAutomateTab, PublishToALMConfig publishToALMConfig)
+        {
+            result = string.Empty;
+            if (bizFlow.ExternalID == "0" || String.IsNullOrEmpty(bizFlow.ExternalID))
+            {
+                result = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + bizFlow.Name + " is missing ExternalID, cannot locate QC TestSet without External ID";
+                return false;
+            }
+
+            try
+            {
+                //get the BF matching test set
+                List<BaseResponseItem> eportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
+                BaseResponseItem item = eportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
+                if (item != null)
+                {
+                    long scheduleId = 0;
+                    //get the Test set TC's
+                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.TryGetItem("id")));
+                    //get phase execution list
+                    List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt64(bizFlow.ExternalID2));
+                    //get all BF Activities groups
+                    ObservableList<ActivitiesGroup> activGroups = bizFlow.ActivitiesGroups;
+                    if (activGroups.Count > 0)
+                    {
+                        foreach (ActivitiesGroup activGroup in activGroups)
+                        {
+                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                            || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                            || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            {
+                                TestCaseResource testCase = null;
+                                //go by TC ID = TC Instances ID
+                                testCase = testCaseResources.Find(x => x.testcase.testcaseId.ToString() == activGroup.ExternalID);
+                                if (testCase != null)
+                                {
+                                    //get activities in group
+                                    List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.Name)).Select(a => a).ToList();
+                                    string TestCaseName = PathHelper.CleanInValidPathChars(activGroup.Name);
+                                    if ((publishToALMConfig.VariableForTCRunName == null) || (publishToALMConfig.VariableForTCRunName == string.Empty))
+                                    {
+                                        String timeStamp = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                                        publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
+                                    }
+                                    scheduleId = executions.FindLast(tc => tc.tcrTreeTestcase.testcase.testcaseId.ToString().Equals(activGroup.ExternalID)).id;
+                                    dynamic executionResult = zephyrEntRepository.ExecuteTestCase(scheduleId, GetTestStatus(activGroup), zephyrEntRepository.GetCurrentUser()[0].id);
+
+                                    //runToExport.ElementsField["name"] = publishToALMConfig.VariableForTCRunNameCalculated;
+
+                                    if (executionResult == null)
+                                    {
+                                        result = "Failed to create run using rest API";
+                                        return false;
+                                    }
+
+                                    // Attach ActivityGroup Report if needed
+                                    if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                                    {
+                                        if ((activGroup.TempReportFolder != null) && (activGroup.TempReportFolder != string.Empty) &&
+                                            (System.IO.Directory.Exists(activGroup.TempReportFolder)))
+                                        {
+                                            //Creating the Zip file - start
+                                            string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
+                                            string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
+
+                                            if (!System.IO.File.Exists(zipFileName))
+                                            {
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            else
+                                            {
+                                                System.IO.File.Delete(zipFileName);
+                                                ZipFile.CreateFromDirectory(activGroup.TempReportFolder, zipFileName);
+                                            }
+                                            System.IO.Directory.Delete(activGroup.TempReportFolder, true);
+                                            //Creating the Zip file - finish
+
+                                            //ALMResponseData attachmentResponse = QCRestAPIConnect.CreateAttachment(ResourceType.TEST_RUN, currentRun.Id, zipFileName);
+
+                                            //if (!attachmentResponse.IsSucceed)
+                                            //{
+                                            //    result = "Failed to create attachment";
+                                            //    return false;
+                                            //}
+
+                                            System.IO.File.Delete(zipFileName);
+                                        }
+                                    }
+
+                                }
+                                else
+                                {
+                                    //No matching TC was found for the ActivitiesGroup in QC
+                                    result = "Matching TC's were not found for all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " in QC/ALM.";
+                                }
+                            }
+                            if (result != string.Empty)
+                                return false;
+                        }
+                    }
+                    else
+                    {
+                        //No matching Test Set was found for the BF in QC
+                        result = "No matching Test Set was found in QC/ALM.";
+                    }
+
+                    if (result == string.Empty)
+                    {
+                        result = "Export performed successfully.";
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "Unexpected error occurred- " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to QC/ALM", ex);
+                return false;
+            }
+
+            return false; // Remove it at the end
+        }
+
         private List<TestStepResource> CreateTestSteps(ObservableList<ActivityIdentifiers> testStepsList, long tcVersionId, long tcId)
         {
             try

@@ -44,7 +44,7 @@ namespace GingerCore.ALM
         {
             return zephyrEntExportManager.UpdateTestPlanningFolder(cycleId, parenttreeid, businessFlow);
         }
-        
+
         public override bool ConnectALMProject()
         {
             return this.ConnectALMServer();
@@ -53,11 +53,11 @@ namespace GingerCore.ALM
         public List<string[]> GetTCsDataSummary(int tsId)
         {
             return zephyrEntImportManager.GetTCsDataSummary(tsId);
-        } 
+        }
         public override bool ConnectALMServer()
         {
-            LoginDTO loginDTO = null; 
-            if(ALMCore.DefaultAlmConfig.ZepherEntToken)
+            LoginDTO loginDTO = null;
+            if (ALMCore.DefaultAlmConfig.ZepherEntToken)
             {
                 loginDTO = new LoginDTO()
                 {
@@ -123,7 +123,7 @@ namespace GingerCore.ALM
 
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
         {
-            throw new NotImplementedException();
+            return zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -224,7 +224,7 @@ namespace GingerCore.ALM
                 revision = Convert.ToInt32(cycle[0].TryGetItem("revision"))
             };
         }
-        
+
         public List<BaseResponseItem> GetZephyrEntTcsByTreeId(int treeId)
         {
             return zephyrEntRepository.GetTCsByTreeId(treeId);
@@ -232,7 +232,7 @@ namespace GingerCore.ALM
 
         public QC.QCTestSet ImportTestSetData(QC.QCTestSet testSet)
         {
-            List <BaseResponseItem> selectedTcs = GetZephyrEntTcsByTreeId(Convert.ToInt32(testSet.TestSetID));
+            List<BaseResponseItem> selectedTcs = GetZephyrEntTcsByTreeId(Convert.ToInt32(testSet.TestSetID));
             var token = (JToken)selectedTcs[0].TryGetItem("results");
             foreach (var testInstance in token)
             {
