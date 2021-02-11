@@ -582,8 +582,12 @@ namespace GingerCoreCommonTest.Repository
         [TestMethod]
         public void FileWatcherChangeExisitingMRIOnDisk()
         {
-            //Arrange
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+            {
+                return;
+            }
 
+            //Arrange
             ObservableList<MyRepositoryItem> allMRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
 
             string name = "BF MRI file v0";
