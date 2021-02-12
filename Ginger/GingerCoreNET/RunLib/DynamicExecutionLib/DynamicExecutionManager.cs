@@ -485,6 +485,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.Exist = true;
             runset.Name = runsetExecutor.RunSetConfig.Name;
             runset.ID = runsetExecutor.RunSetConfig.Guid;
+            runset.Description = runsetExecutor.RunSetConfig.Description;
 
             runset.EnvironmentName = runsetExecutor.RunsetExecutionEnvironment.Name;
             runset.EnvironmentID = runsetExecutor.RunsetExecutionEnvironment.Guid;
@@ -742,6 +743,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             if (gingerExecConfig.ExecutionID != null)
             {
                 runSetConfig.ExecutionID = (Guid)gingerExecConfig.ExecutionID;
+            }
+
+            if (!String.IsNullOrEmpty(gingerExecConfig.Runset.Description))
+            {
+                runSetConfig.Description = gingerExecConfig.Runset.Description;
             }
 
             if (dynamicRunsetConfigs.RunAnalyzer != null)
