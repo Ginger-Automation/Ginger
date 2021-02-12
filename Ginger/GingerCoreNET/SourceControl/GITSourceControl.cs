@@ -772,9 +772,13 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 if (ex.Message.Contains("remote has never connected"))
+                {
                     Reporter.ToUser(eUserMsgKey.SourceControlRemoteCannotBeAccessed, ex.Message);
+                }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.SourceControlConnFaild, ex.Message);
+                }
                 return null;
             }
         }
