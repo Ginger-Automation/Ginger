@@ -6,5 +6,6 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 {
     class ActeMailTests
     {
+
     }
 }
