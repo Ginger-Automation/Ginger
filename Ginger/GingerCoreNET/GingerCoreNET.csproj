@@ -301,7 +301,7 @@
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.6" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.8" />
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="1.0.0" />
   
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
@@ -309,7 +309,7 @@
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
   
-    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="log4net" Version="2.0.12" />
   
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
