@@ -175,9 +175,13 @@ namespace Ginger.ALM.ZephyrEnt
             foreach (ITreeViewItem item in ((TestPlanningFolderTreeItem)folder).CurrentChildrens)
             {
                 if (item is ZephyrEntPhaseTreeItem)
+                {
                     mCurrentSelectedTestSets.Add((ZephyrEntPhaseTreeItem)item);
+                }
                 else
+                {
                     GetFolderChildTestSets(item);
+                }
             }
         }
 

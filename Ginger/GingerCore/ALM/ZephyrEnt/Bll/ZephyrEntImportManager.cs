@@ -293,7 +293,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                             //get the param value
                             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+                            {
                                 paramSelectedValue = tcParameter.Value;
+                            }
                             else
                             {
                                 isflowControlParam = null;//empty value
@@ -442,7 +444,10 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                     continue;//activity which not originally came from the TC
                                 numOfSeenSteps++;
 
-                                if (numOfSeenSteps >= stepIndx) break;
+                                if (numOfSeenSteps >= stepIndx)
+                                {
+                                    break;
+                                }
                             }
                             ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
@@ -654,7 +659,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                 //get the param value
                 if (testInstanceParameter.ElementsField["actual-value"] != null)
+                {
                     paramSelectedValue = StripHTML(testInstanceParameter.ElementsField["actual-value"].ToString());
+                }
                 else
                 {
                     isflowControlParam = null;//empty value

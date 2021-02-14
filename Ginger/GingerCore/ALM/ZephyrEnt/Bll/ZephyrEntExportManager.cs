@@ -214,7 +214,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 }
                             }
                             if (result != string.Empty)
+                            {
                                 return false;
+                            }
                         }
                     }
                     else

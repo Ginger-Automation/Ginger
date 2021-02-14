@@ -106,7 +106,9 @@ namespace Ginger.ALM.Repository
                 return true;
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.ExportItemToALMFailed, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), activtiesGroup.Name, false);
+            }
 
             return false;
         }
@@ -249,7 +251,9 @@ namespace Ginger.ALM.Repository
                     Reporter.HideStatusMessage();
                 }
                 if (almConectStyle != ALMIntegration.eALMConnectType.Auto)
+                {
                     Reporter.ToUser(eUserMsgKey.ExportItemToALMSucceed);
+                }
                 return true;
             }
             else
@@ -414,7 +418,10 @@ namespace Ginger.ALM.Repository
                     }
                 }
 
-                if (testSetsItemsToImport.Count == 0) return false; //noting to import
+                if (testSetsItemsToImport.Count == 0)
+                {
+                    return false; //noting to import
+                }
 
                 //Refresh Ginger repository
                 ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
