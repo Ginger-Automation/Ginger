@@ -104,6 +104,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     {
                         cliHelper.UndoSolutionLocalChanges = (bool)exeConfiguration.SolutionScmDetails.UndoSolutionLocalChanges;
                     }
+                    cliHelper.SetSourceControlBranch(exeConfiguration.SolutionScmDetails.Branch);
+
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {

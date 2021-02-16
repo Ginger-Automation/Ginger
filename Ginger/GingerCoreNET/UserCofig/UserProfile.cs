@@ -263,6 +263,11 @@ namespace Ginger
         public string SolutionSourceControlUser { get; set; }
 
         [IsSerializedForLocalRepository]
+        public string SourceControlBranch { get; set; }
+
+        public string SolutionSourceControlBranch { get; set; }
+
+        [IsSerializedForLocalRepository]
         public bool SolutionSourceControlConfigureProxy { get; set; }
 
         [IsSerializedForLocalRepository]
