@@ -95,26 +95,26 @@ namespace Ginger.SourceControl
 
             if (mSourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
-                BranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+                xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
             }
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(BranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBranchesCombo, ComboBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlBranch));
 
         }
-        private void UpdateTimeoutAndBranchPanelVisibility()
+        private void SetConfigurationsVisibility()
         {
             if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT)
             {
                 xTimeoutPanel.Visibility = Visibility.Hidden;
-                FetchBranchesButton.Visibility = Visibility.Visible;
-                SelectBranchLabel.Visibility = Visibility.Visible;
-                BranchesCombo.Visibility = Visibility.Visible;
+                xFetchBranchesButton.Visibility = Visibility.Visible;
+                xSelectBranchLabel.Visibility = Visibility.Visible;
+                xBranchesCombo.Visibility = Visibility.Visible;
             }
             if ( WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 xTimeoutPanel.Visibility = Visibility.Visible;
-                FetchBranchesButton.Visibility = Visibility.Hidden;
-                SelectBranchLabel.Visibility = Visibility.Hidden;
-                BranchesCombo.Visibility = Visibility.Hidden;
+                xFetchBranchesButton.Visibility = Visibility.Hidden;
+                xSelectBranchLabel.Visibility = Visibility.Hidden;
+                xBranchesCombo.Visibility = Visibility.Hidden;
             }
         }
         
@@ -124,7 +124,7 @@ namespace Ginger.SourceControl
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlPass));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtConnectionTimeout, TextBox.TextProperty, mSourceControl, nameof(SourceControlBase.SourceControlTimeout));
-            UpdateTimeoutAndBranchPanelVisibility();
+            SetConfigurationsVisibility();
             SourceControlPassTextBox.Password = mSourceControl.SourceControlPass;
             SourceControlPassTextBox.PasswordChanged += SourceControlPassTextBox_PasswordChanged;
         }
@@ -465,10 +465,10 @@ namespace Ginger.SourceControl
         private void FetchBranches_Click(object sender, RoutedEventArgs e)
         {
             xProcessingIcon.Visibility = Visibility.Visible;
-            BranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
-            if (BranchesCombo.Items.Count > 0)
+            xBranchesCombo.ItemsSource = SourceControlIntegration.GetBranches(mSourceControl);
+            if (xBranchesCombo.Items.Count > 0)
             {
-                BranchesCombo.SelectedIndex = 0;
+                xBranchesCombo.SelectedIndex = 0;
             }
             xProcessingIcon.Visibility = Visibility.Collapsed;
         }

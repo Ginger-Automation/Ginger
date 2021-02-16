@@ -23,9 +23,9 @@
             <Label Content="Analyzed Local Path:"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"/>
             <Label x:Name="lblAnalyzedPath" Content="C:\\aaa\bbb" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center"/>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
+        <StackPanel x:Name="xSourceControlBranchPanel" Orientation="Horizontal" Grid.Row="1">
             <Label Content="Selected Source Control Branch:"  Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center"/>
-            <Label x:Name="lblSourceControlBranch" Content="" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Label x:Name="xSourceControlBranchLabel" Content="" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center"/>
         </StackPanel>
         <Ginger:ucGrid x:Name="CheckInFilesGrid" Grid.Row="2" Title="Pending Check-In Items" IsReadOnly="False" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" />
 

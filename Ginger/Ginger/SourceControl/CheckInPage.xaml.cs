@@ -57,7 +57,15 @@ namespace Ginger.SourceControl
             SourceControlIntegration.BusyInProcessWhileDownloading = false;
             mPath = path;
             lblAnalyzedPath.Content = mPath;
-            lblSourceControlBranch.Content = WorkSpace.Instance.Solution.SourceControl.SourceControlBranch;
+            if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                xSourceControlBranchPanel.Visibility = Visibility.Visible;
+                xSourceControlBranchLabel.Content = WorkSpace.Instance.Solution.SourceControl.SourceControlBranch;
+            }
+            else
+            {
+                xSourceControlBranchPanel.Visibility = Visibility.Collapsed;
+            }
             Init();
 
             SetCheckinGridView();
