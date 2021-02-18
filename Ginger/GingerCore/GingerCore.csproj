@@ -278,7 +278,6 @@
     <Compile Include="Actions\ActGetMsgboxText.cs" />
     <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
-    <Compile Include="Actions\ActDBValidation.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
@@ -440,12 +439,6 @@
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HTMLHelper.cs" />
-    <Compile Include="NoSqlBase\GingerMongoDb.cs" />
-    <Compile Include="NoSqlBase\GingerCouchbase.cs" />
-    <Compile Include="NoSqlBase\GingerUDTMap.cs" />
-    <Compile Include="NoSqlBase\GingerCassandra.cs" />
-    <Compile Include="NoSqlBase\MyClassBuilder.cs" />
-    <Compile Include="NoSqlBase\NoSqlBase.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -486,7 +479,6 @@
     </Compile>
     <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
@@ -642,6 +634,7 @@
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
+    <Folder Include="Environments\" />
     <Folder Include="Plugins\Jenkins\" />
   </ItemGroup>
   <ItemGroup>

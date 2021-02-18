@@ -242,7 +242,7 @@ namespace GingerCore.Environments
         }
         public void SplitUserIdPassFromTNS()
         {
-            System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
+            SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder();
             scSB.ConnectionString = TNS;
             TNS = scSB.DataSource;
             User = scSB.UserID;
