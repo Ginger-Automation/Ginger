@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -326,22 +327,25 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
-                mFileWatcher = new FileSystemWatcher();
-                mFileWatcher.Path = base.FolderFullPath;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+                {
+                    mFileWatcher = new FileSystemWatcher();
+                    mFileWatcher.Path = base.FolderFullPath;
 
-                //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
-                // for now we do all xml
-                // mFileWatcher.Filter = "*.xml";
+                    //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
+                    // for now we do all xml
+                    // mFileWatcher.Filter = "*.xml";
 
-                mFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                mFileWatcher.IncludeSubdirectories = false;
+                    mFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                    mFileWatcher.IncludeSubdirectories = false;
 
-                mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
-                mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
-                mFileWatcher.Created += new FileSystemEventHandler(FileWatcher_Changed);
-                mFileWatcher.Renamed += new RenamedEventHandler(FileWatcher_Renamed);
+                    mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
+                    mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
+                    mFileWatcher.Created += new FileSystemEventHandler(FileWatcher_Changed);
+                    mFileWatcher.Renamed += new RenamedEventHandler(FileWatcher_Renamed);
 
-                mFileWatcher.EnableRaisingEvents = true;
+                    mFileWatcher.EnableRaisingEvents = true;
+                }
             }
             catch(Exception ex)
             {

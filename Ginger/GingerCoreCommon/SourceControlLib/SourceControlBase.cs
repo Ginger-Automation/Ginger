@@ -50,6 +50,9 @@ namespace GingerCoreNET.SourceControl
         string mSourceControlUser;
         public string SourceControlUser { get { return mSourceControlUser; } set { mSourceControlUser = value; OnPropertyChanged(nameof(SourceControlUser)); } }
 
+        string mSourceControlBranch;
+        public string SourceControlBranch { get { return mSourceControlBranch; } set { mSourceControlBranch = value; OnPropertyChanged(nameof(SourceControlBranch)); } }
+
         string mSourceControlPass;
         public string SourceControlPass { get { return mSourceControlPass; } set { mSourceControlPass = value; OnPropertyChanged(nameof(SourceControlPass)); } }
 
@@ -118,6 +121,10 @@ namespace GingerCoreNET.SourceControl
         public abstract void Init();
 
         public abstract bool TestConnection(ref string error);
+
+        public abstract List<string> GetBranches();
+
+        public abstract string GetCurrentBranchForSolution();
 
         public abstract void Disconnect();
 
