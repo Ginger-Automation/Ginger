@@ -373,6 +373,8 @@ namespace Ginger.SourceControl
                     mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
                     mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
                     mSourceControl.supressMessage = true;
+
+                    mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SolutionSourceControlBranch;
                 }
 
                 if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
@@ -452,5 +454,24 @@ namespace Ginger.SourceControl
                 return false;
             }
         }
+
+        public static List<string> GetBranches(SourceControlBase SourceControl)
+        {
+            return SourceControl.GetBranches();
+        }
+
+        public static string GetCurrentBranchForSolution(SourceControlBase SourceControl)
+        {
+            try
+            {
+                return SourceControl.GetCurrentBranchForSolution();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Fetching Branches..", ex);
+                return null;
+            }
+        }
+        
     }
 }
