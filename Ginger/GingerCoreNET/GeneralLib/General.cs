@@ -429,24 +429,6 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
-        /// <summary>
-        /// This method replaces quotes from original string with ___~___, which can be used to execute cs function
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns>String after replacing quotes from original string with ___~___</returns>
-        public static string RemoveQuotesFromActualString(string input)
-        {
-            return input.Replace("\"", "___~___");
-        }
-        /// <summary>
-        /// This method replaces ___~___ from original string with quotes, which can be used to get actual string
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns>String after replacing ___~___ from original string with quotes</returns>
-        public static string AddQuotesToActualString(string input)
-        {
-            return input.Replace("___~___", "\"");
-        }
     }
 
 }

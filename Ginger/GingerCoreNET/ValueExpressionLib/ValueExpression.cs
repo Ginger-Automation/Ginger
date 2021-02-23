@@ -29,7 +29,6 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
-using GingerCoreNET.GeneralLib;
 using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
@@ -239,9 +238,6 @@ namespace GingerCore
                 mValueCalculated = "~" + mValueCalculated.Substring(2);
 
             }
-
-            //Adding back the quotes if replaced any
-            mValueCalculated = General.AddQuotesToActualString(mValueCalculated);
         }
 
 #region Flow Details
@@ -1161,7 +1157,7 @@ namespace GingerCore
                 }
                 else
                 {
-                    mValueCalculated = mValueCalculated.Replace(p, General.RemoveQuotesFromActualString(vb.Value));
+                    mValueCalculated = mValueCalculated.Replace(p, vb.Value);
                 }
             }
             else
@@ -1371,12 +1367,17 @@ namespace GingerCore
                         FuncSplit.RemoveAll(x => x.Equals(""));
                         List<string> parameters = Regex.Split(FuncSplit[0].ToString(), paramPattern).ToList<string>();
                         parameters.RemoveAll(y => y.Equals(""));
-                        parameters = parameters.Where(z => z.Contains("\"")).Select(z => z.Replace("\"", "")).ToList<string>();
-
+                        
+                        parameters[0] = parameters.FirstOrDefault().Trim('\"');
+                        
                         object[] listOfParams = new object[parameters.Count];
                         int index = 0;
                         foreach (var item in parameters)
                         {
+                            if (item.Equals(","))
+                            {
+                                continue;
+                            }
                             listOfParams[index++] = item;
                         }
                         string funcOut = mi.Invoke(classInstance, new object[] { listOfParams }).ToString();

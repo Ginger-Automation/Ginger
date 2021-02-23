@@ -40,7 +40,6 @@ using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using GingerCoreNET.GeneralLib;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
@@ -2713,7 +2712,7 @@ namespace Ginger.Run
                         }
                         else
                         {
-                            ve.Value = ve.Value.Replace("{Actual}", "\"" + General.RemoveQuotesFromActualString(actReturnValue.Actual) + "\"");
+                            ve.Value = ve.Value.Replace("{Actual}", "\"" + actReturnValue.Actual + "\"");
                         }
                     }
                     //calculate the expected value
