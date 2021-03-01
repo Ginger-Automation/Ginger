@@ -1367,9 +1367,9 @@ namespace GingerCore
                         FuncSplit.RemoveAll(x => x.Equals(""));
                         List<string> parameters = Regex.Split(FuncSplit[0].ToString(), paramPattern).ToList<string>();
                         parameters.RemoveAll(y => y.Equals(""));
-                        
-                        parameters[0] = parameters.FirstOrDefault().Trim('\"');
-                        
+
+                        parameters = parameters.Select(z => z.Length > 1 ? z.Trim('\"') : z).ToList<string>();
+
                         object[] listOfParams = new object[parameters.Count];
                         int index = 0;
                         foreach (var item in parameters)
