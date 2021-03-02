@@ -865,7 +865,7 @@
       <Version>4.0.7</Version>
     </PackageReference>
     <PackageReference Include="Oracle.ManagedDataAccess">
-      <Version>19.3.0</Version>
+      <Version>19.10.1</Version>
     </PackageReference>
     <PackageReference Include="PDFsharp">
       <Version>1.50.5147</Version>

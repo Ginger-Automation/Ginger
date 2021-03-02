@@ -596,6 +596,9 @@ namespace GingerCore.Environments
                                 case eDBTypes.MySQL:
                                     tableName = (string)row[2];
                                     break;
+                                case eDBTypes.PostgreSQL:
+                                    tableName = (string)row[2];
+                                    break;
                             }
 
                             rc.Add(tableName);
@@ -643,7 +646,16 @@ namespace GingerCore.Environments
                 {
                     DbCommand command = oConn.CreateCommand();
                     // Do select with zero records
-                    command.CommandText = "select * from " + table + " where 1 = 0";
+                    switch(DBType)
+                    {
+                        case eDBTypes.PostgreSQL:
+                            command.CommandText = "select * from public.\"" + table + "\" where 1 = 0";
+                            break;
+                        default:
+                            command.CommandText = "select * from " + table + " where 1 = 0";
+                            break;
+                    }
+
                     command.CommandType = CommandType.Text;
 
                     reader = command.ExecuteReader();
@@ -737,7 +749,10 @@ namespace GingerCore.Environments
                 }
                 finally
                 {
-                    reader.Close();
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
                 }
             }            
             return rc;
@@ -834,7 +849,10 @@ namespace GingerCore.Environments
                 }
                 finally
                 {
-                    reader.Close();
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
                 }
             }
             
