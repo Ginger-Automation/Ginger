@@ -832,7 +832,7 @@
       <Version>2.0.278</Version>
     </PackageReference>
     <PackageReference Include="log4net">
-      <Version>2.0.8</Version>
+      <Version>2.0.12</Version>
     </PackageReference>
     <PackageReference Include="lz4net">
       <Version>1.0.15.93</Version>

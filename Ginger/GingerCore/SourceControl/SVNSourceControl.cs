@@ -818,5 +818,16 @@ namespace GingerCore.SourceControl
         {
             return true;
         }
+
+        public override List<string> GetBranches()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetCurrentBranchForSolution()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
