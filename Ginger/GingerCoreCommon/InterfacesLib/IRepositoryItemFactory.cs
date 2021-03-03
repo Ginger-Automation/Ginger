@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
@@ -84,5 +85,9 @@ namespace Amdocs.Ginger.Common
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();
+
+
+        DbConnection GetMSAccessConnection();
+
     }
 }

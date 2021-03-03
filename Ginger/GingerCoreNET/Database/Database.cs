@@ -35,6 +35,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 
 using GingerCore.Actions;
 using System.Runtime.InteropServices;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Environments
 {
@@ -403,13 +404,10 @@ namespace GingerCore.Environments
 
                     case eDBTypes.MSAccess:
 
-                        throw new NotSupportedException("MSAcess not supported yet");
-                        // anything better than below?
-                        // TODO: working only with mdb access97, not with accmdb
-                      /*  factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-                        oConn = factory.CreateConnection();
+
+                        oConn = RepositoryItemHelper.RepositoryItemFactory.GetMSAccessConnection();
                         oConn.ConnectionString = connectConnectionString;
-                        oConn.Open();*/
+                        oConn.Open();
                         break;
 
                     case eDBTypes.DB2:

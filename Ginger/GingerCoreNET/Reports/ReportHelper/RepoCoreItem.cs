@@ -35,6 +35,7 @@ using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
@@ -235,6 +236,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public string GetALMConfig()
         {
             throw new NotImplementedException();
+        }
+
+        public DbConnection GetMSAccessConnection()
+        {
+            throw new NotImplementedException("MS Acess is not supported on Ginger Console");
         }
     }
 }

@@ -49,6 +49,7 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -623,6 +624,11 @@ namespace Ginger.Repository
             return new SVNSourceControl();
         }
 
+        public DbConnection GetMSAccessConnection()
+        {
+            DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.OleDb");
+            return factory.CreateConnection();
+        }
     }
     
 }
