@@ -1379,8 +1379,7 @@ namespace GingerCore
                         int index = 0;
                         foreach (var item in parameters)
                         {
-                            var x = item.Length;
-                            if (item.Equals(",") || string.IsNullOrEmpty(item))
+                            if (item.Equals(","))
                             {
                                 continue;
                             }
