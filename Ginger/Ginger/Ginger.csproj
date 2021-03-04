@@ -215,6 +215,9 @@
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Actions\ActionEditPages\ActValidationEditPage.xaml.cs">
+      <DependentUpon>ActValidationEditPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
     </Compile>
@@ -2505,6 +2508,10 @@
     <Page Include="Actions\ActionConversion\SelectActivityWzardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Actions\ActionEditPages\ActValidationEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>

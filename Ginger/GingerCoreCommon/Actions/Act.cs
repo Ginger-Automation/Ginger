@@ -1811,8 +1811,9 @@ namespace GingerCore.Actions
         /// </summary>
         public object Context { get; set; }
 
-
-
-
+        public virtual void DoNewActionSetup()
+        {
+            // Base - do nothing
+        }
     }
 }

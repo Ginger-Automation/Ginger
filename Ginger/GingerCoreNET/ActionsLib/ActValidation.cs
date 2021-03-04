@@ -16,12 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore.GeneralLib;
+using GingerCoreNET.RosLynLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
+using System.Runtime.InteropServices;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -29,6 +31,25 @@ namespace GingerCore.Actions
     [Serializable]
     public class ActValidation : ActWithoutDriver
     {
+        public enum eCalcEngineType
+        {
+            VBS,
+            CS
+        }
+        
+        public eCalcEngineType CalcEngineType
+        {
+            get
+            {
+                //return (eCalcEngineType)GetInputParamValue<eCalcEngineType>(nameof(CalcEngineType));
+                return (eCalcEngineType)GetOrCreateInputParam<eCalcEngineType>(nameof(CalcEngineType),eCalcEngineType.VBS);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(CalcEngineType), value.ToString());
+                OnPropertyChanged(nameof(CalcEngineType));
+            }
+        }
         public override string ActionDescription { get { return "Condition Validation Action"; } }
         public override string ActionUserDescription { get { return "use this action to perform validation using value expression edit"; } }
         string ConditionCalculated = String.Empty;
@@ -37,11 +58,23 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action to perform validations Using Value Expression editor ");
 
         }
-        public string Condition { get { return this.Value; } set { this.Value = value; } }
+        public string Condition
+        {
+            get
+            {
+                return this.Value;
+            }
+            set
+            {
+                this.Value = value;
+                OnPropertyChanged(nameof(Condition));
+            }
+        }
 
-        public override string ActionEditPage { get { return null; } }
+
+        public override string ActionEditPage { get { return "ActionEditPages.ActValidationEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
-        public override bool ValueConfigsNeeded { get { return true; } }
+        public override bool ValueConfigsNeeded { get { return false; } }
 
         public override List<ePlatformType> Platforms
         {
@@ -68,8 +101,26 @@ namespace GingerCore.Actions
 
         public override void Execute()
         {
+            // in case of CS need to deferantionate failure reason compilation issue/ bool issue/false result and show info ontop act.exinfo
+
             CalculateCondition(this.RunOnBusinessFlow, RunOnEnvironment, this);
-            string rc = VBS.ExecuteVBSEval(ConditionCalculated.Trim());
+            string rc = String.Empty;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && CalcEngineType.Equals(eCalcEngineType.VBS))
+            {
+                rc = VBS.ExecuteVBSEval(ConditionCalculated.Trim());
+            }
+            else
+            {
+                Boolean parsedValue;
+                ConditionCalculated = rc = CodeProcessor.GetEvaluteResult(ConditionCalculated.Trim());
+                if (Boolean.TryParse(ConditionCalculated.Trim(), out parsedValue))
+                {
+                    if (parsedValue)
+                    {
+                        rc = "-1";
+                    }
+                }
+            }
             if (rc == "-1")
             {
                 ConditionCalculated += " is True";
@@ -81,8 +132,8 @@ namespace GingerCore.Actions
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 this.Error = ConditionCalculated;
-
             }
+            return;
         }
 
         public void CalculateCondition(BusinessFlow BusinessFlow, Environments.ProjEnvironment ProjEnvironment, Act act)
@@ -99,6 +150,9 @@ namespace GingerCore.Actions
 
             ConditionCalculated = ValueExpression.ValueCalculated;
         }
-
+        public override void DoNewActionSetup()
+        {
+            CalcEngineType = eCalcEngineType.CS;
+        }
     }
 }

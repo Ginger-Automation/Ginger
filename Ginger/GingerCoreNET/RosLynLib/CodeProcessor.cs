@@ -79,28 +79,7 @@ namespace GingerCoreNET.RosLynLib
                 //not doing string replacement to
                 exp = exp.Remove(exp.Length-1);
                 string Evalresult = exp;
-                try
-                {
-//TODO: Improve this and cache
-                    System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
-                    Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
-
-               object Result=     CSharpScript.EvaluateAsync(exp, ScriptOptions.Default.WithImports(Refrences)).Result;
-                    //c# generate True/False for bool.tostring which fails in subsequent expressions 
-                    if(Result.GetType()==typeof(Boolean))
-                    {
-                        Evalresult = Result.ToString().ToLower();
-                    }
-                    else
-                    {
-                        Evalresult = Result.ToString();
-                    }
-                }
-
-                catch (Exception e)
-                {
-                    Console.Write(e.Message);
-                }
+                Evalresult = GetEvaluteResult(exp);
                 Expression = Expression.Replace(match, Evalresult);
             }
 
@@ -108,7 +87,30 @@ namespace GingerCoreNET.RosLynLib
 
         }
 
-
+        public static string GetEvaluteResult(string Expression)
+        {
+            string Evalresult = Expression;
+            try
+            {
+                System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
+                Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
+                object result = CSharpScript.EvaluateAsync(Expression, ScriptOptions.Default.WithImports(Refrences)).Result;
+                //c# generate True/False for bool.tostring which fails in subsequent expressions 
+                if (result.GetType() == typeof(Boolean))
+                {
+                    Evalresult = result.ToString().ToLower();
+                }
+                else
+                {
+                    Evalresult = result.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return Evalresult;
+        }
         public static bool EvalCondition(string condition)
         {
             try

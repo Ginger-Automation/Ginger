@@ -296,7 +296,6 @@
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
-    <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
@@ -637,6 +636,7 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\Communication\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
