@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.Repository
         {
             if (this.AlmType == 0)
             {
-                string almType = RepositoryItemHelper.RepositoryItemFactory.GetALMConfig();
+                string almType = TargetFrameworkHelper.Helper.GetALMConfig();
                 Enum.TryParse(almType, out ALMIntegration.eALMType AlmType);
                 this.AlmType = AlmType;
             }

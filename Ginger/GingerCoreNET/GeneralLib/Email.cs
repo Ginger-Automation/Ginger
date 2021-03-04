@@ -260,14 +260,14 @@ namespace GingerCore.GeneralLib
         public AlternateView alternateView { get; set; }
         private bool Send_Outlook(bool actualSend = true)
         {
-            bool a = RepositoryItemHelper.RepositoryItemFactory.Send_Outlook(actualSend, MailTo, Event, Subject, Body, MailCC, Attachments, EmbededAttachment);
+            bool a = TargetFrameworkHelper.Helper.Send_Outlook(actualSend, MailTo, Event, Subject, Body, MailCC, Attachments, EmbededAttachment);
             return a;
         }
 
         public void DisplayAsOutlookMail()
         {
             Send_Outlook(false);
-            RepositoryItemHelper.RepositoryItemFactory.DisplayAsOutlookMail();
+            TargetFrameworkHelper.Helper.DisplayAsOutlookMail();
             // mOutlookMail.Display();
         }
 

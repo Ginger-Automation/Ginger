@@ -64,13 +64,13 @@ using System.Windows.Threading;
 using static GingerCore.Agent;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
-namespace Ginger.Repository
+namespace Ginger
 {
-    public class RepositoryItemFactory : IRepositoryItemFactory
+    public class DotNetFrameworkHelper : ITargetFrameworkHelper
     {
         Outlook.MailItem mOutlookMail;
         
-        public RepositoryItemFactory()
+        public DotNetFrameworkHelper()
         {
         }
 
@@ -249,7 +249,7 @@ namespace Ginger.Repository
             
         }
 
-        bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
+        bool ITargetFrameworkHelper.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
         {
             try
             {

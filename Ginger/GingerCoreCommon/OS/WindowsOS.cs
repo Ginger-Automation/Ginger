@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -23,19 +23,20 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Amdocs.Ginger.Common.Helpers;
 
-namespace GingerUtils.OSLib
+namespace Amdocs.Ginger.Common.OS
 {
-    class WindowsOS : IOperationgSystem
+    class WindowsOS : OperationgSystemBase
     {
         public string UserAgent => "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Mozilla / 5.0(X11; od - database - crawler) Gecko / 20100101 Firefox / 52.0 Gecko) Chrome/58.0.3029.110 Safari/537.36";
 
-        public Process Dotnet(string cmd)
+        public override Process Dotnet(string cmd)
         {
             return ShellHelper.Dotnet(cmd);
         }
 
-        public string GetFirstLocalHostIPAddress()
+        public override string GetFirstLocalHostIPAddress()
         {
             string LocalHostIP = string.Empty;
             IPHostEntry ipEntry = Dns.GetHostEntry(Dns.GetHostName());
@@ -60,7 +61,7 @@ namespace GingerUtils.OSLib
             return LocalHostIP;
         }
 
-        public void InitSmtpAuthenticationManager()
+        public override void InitSmtpAuthenticationManager()
         {
             // Mail server support GSSAPI, NTLM and LOGIN, GSSAPI and NTLM can't work well on Linux, but on windows all works so nothing to do here      
         }

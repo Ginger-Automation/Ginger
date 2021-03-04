@@ -37,7 +37,7 @@ namespace GingerAutoPilotTest
             // We provide the assembly to GingerTestHelper.TestResources so it can locate the 'TestResources' folder path
             TestResources.Assembly = Assembly.GetExecutingAssembly();
 
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             // Init Reporter
             Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
 

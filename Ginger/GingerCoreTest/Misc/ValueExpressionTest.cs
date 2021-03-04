@@ -44,7 +44,7 @@ namespace UnitTests.NonUITests
         [TestInitialize]
         public void TestInitialize()
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             mEnv = new ProjEnvironment();
             EnvApplication app1 = new EnvApplication();
             app1.Name = "App1";

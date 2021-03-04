@@ -538,7 +538,7 @@
     <Compile Include="ReporterLib\ReporterTestWindow.xaml.cs">
       <DependentUpon>ReporterTestWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\RepositoryItemFactory.cs" />
+    <Compile Include="DotNetFrameworkHelper.cs" />
     <Compile Include="Run\RunSetActions\RunSetActionDeliveryMethodConfigPage.xaml.cs">
       <DependentUpon>RunSetActionDeliveryMethodConfigPage.xaml</DependentUpon>
     </Compile>

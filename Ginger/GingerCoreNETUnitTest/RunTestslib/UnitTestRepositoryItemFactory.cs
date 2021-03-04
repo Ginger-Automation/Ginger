@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
-    public class UnitTestRepositoryItemFactory : IRepositoryItemFactory
+    public class UnitTestRepositoryItemFactory : ITargetFrameworkHelper
     {
         public void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title, string tempfolder)
         {

@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.Common
     }
     
 
-    public interface IRepositoryItemFactory
+    public interface ITargetFrameworkHelper
     {                
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);

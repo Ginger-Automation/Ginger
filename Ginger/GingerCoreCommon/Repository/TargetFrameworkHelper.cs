@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -18,17 +18,13 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
-namespace GingerUtils.OSLib
+namespace Amdocs.Ginger.Common
 {
-    public interface IOperationgSystem
+    public class TargetFrameworkHelper
     {
-        string UserAgent { get; }
-        Process Dotnet(string cmd);
-        string GetFirstLocalHostIPAddress();
+        public static ITargetFrameworkHelper Helper { get; set; }
 
-        void InitSmtpAuthenticationManager();
     }
 }

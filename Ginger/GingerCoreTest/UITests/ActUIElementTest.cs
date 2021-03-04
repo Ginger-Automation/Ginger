@@ -45,7 +45,7 @@ namespace UnitTests.UITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {            
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();

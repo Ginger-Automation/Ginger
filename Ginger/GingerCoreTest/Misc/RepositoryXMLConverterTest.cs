@@ -38,7 +38,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             WorkSpace.Init(new WorkSpaceEventHandler());                   
         }
 

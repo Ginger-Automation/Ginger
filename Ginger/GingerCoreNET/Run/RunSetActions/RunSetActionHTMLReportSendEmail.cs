@@ -300,7 +300,7 @@ namespace Ginger.Run.RunSetActions
                                 {
                                     if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
                                     {
-                                        RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
+                                        TargetFrameworkHelper.Helper.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
                                     }
                                     else
                                     {
@@ -521,7 +521,7 @@ namespace Ginger.Run.RunSetActions
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
-            RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
+            TargetFrameworkHelper.Helper.CreateCustomerLogo(currentTemplate, tempFolder);
             if (currentTemplate == null)
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
@@ -1143,7 +1143,7 @@ namespace Ginger.Run.RunSetActions
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
-            RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
+            TargetFrameworkHelper.Helper.CreateCustomerLogo(currentTemplate, tempFolder);
             //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             //CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
@@ -1810,7 +1810,7 @@ namespace Ginger.Run.RunSetActions
 
         private void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title)
         {
-            RepositoryItemHelper.RepositoryItemFactory.CreateChart(y, chartName, Title, tempFolder);
+            TargetFrameworkHelper.Helper.CreateChart(y, chartName, Title, tempFolder);
         }
         public LinkedResource GetLinkedResource(byte[] imageBytes, string id)
         {

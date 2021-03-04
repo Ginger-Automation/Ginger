@@ -93,7 +93,7 @@ namespace GingerCore.Variables
                     return "Value will be calculated during execution.";
                 }
 
-                IValueExpression Ve = RepositoryItemHelper.RepositoryItemFactory.CreateValueExpression(mProjEnvironment, mBusinessFlow);
+                IValueExpression Ve = TargetFrameworkHelper.Helper.CreateValueExpression(mProjEnvironment, mBusinessFlow);
                 Ve.Value = ValueExpression;
 
                 if (Ve.Value != null && Ve.Value.Contains("{Var Name=" + Name + "}"))
