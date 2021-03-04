@@ -33,11 +33,7 @@ namespace Amdocs.Ginger.Common.OS
     {
         public string UserAgent => "Mozilla/5.0 (X11; od-database-crawler) Gecko/20100101 Firefox/52.0";
 
-        public override Process Dotnet(string cmd)
-        {
-            return ShellHelper.Dotnet(cmd);
-        }
-
+    
         public override string GetFirstLocalHostIPAddress()
         {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();

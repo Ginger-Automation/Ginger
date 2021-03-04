@@ -21,16 +21,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using Amdocs.Ginger.Common.Helpers;
 
 namespace Amdocs.Ginger.Common.OS
 {
     public abstract class OperationgSystemBase
     {
         string UserAgent { get; }
-        public abstract Process Dotnet(string cmd);
+        public virtual Process Dotnet(string cmd)
+        {
+            return ShellHelper.Dotnet(cmd);
+        }
+
         public abstract string GetFirstLocalHostIPAddress();
 
-        public abstract void InitSmtpAuthenticationManager();
+        public virtual void InitSmtpAuthenticationManager()
+        {
+            //not required on windows
+        }
 
         public static  OperationgSystemBase GetOperatingSystem()
         {
