@@ -29,7 +29,7 @@ using Amdocs.Ginger.Common.Helpers;
 
 namespace Amdocs.Ginger.Common.OS
 {
-    class LinuxOS : OperationgSystemBase
+    class LinuxOS : OperatingSystemBase
     {
         public string UserAgent => "Mozilla/5.0 (X11; od-database-crawler) Gecko/20100101 Firefox/52.0";
 

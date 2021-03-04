@@ -64,7 +64,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static OperationgSystemBase OS;
+        public static OperatingSystemBase OS = OperatingSystemBase.GetOperatingSystem();
         static bool lockit;
 
         public static void LockWS()
@@ -93,7 +93,7 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
-            OS = OperationgSystemBase.GetOperatingSystem();
+         
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();

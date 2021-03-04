@@ -20,6 +20,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
+using Ginger;
 using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;

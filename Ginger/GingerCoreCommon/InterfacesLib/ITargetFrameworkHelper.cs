@@ -85,6 +85,5 @@ namespace Amdocs.Ginger.Common
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();
 
-        object GetExcelCOnnectionObject();
     }
 }

@@ -37,7 +37,7 @@ namespace GingerCore.GeneralLib
             if (!InitSmtpAuthenticationManagerDone)
             {
                 // For Linux we need to fix the auth
-                GingerUtils.OSHelper.Current.InitSmtpAuthenticationManager();
+               WorkSpace.OS.InitSmtpAuthenticationManager();
                 InitSmtpAuthenticationManagerDone = true;
             }
         }

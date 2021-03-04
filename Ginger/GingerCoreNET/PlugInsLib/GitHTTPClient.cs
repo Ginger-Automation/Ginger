@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             using (var client = new HttpClient())
             {                
                 // Simulate a browser header                
-                //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.OSHelper.Current.UserAgent);
+                //client.DefaultRequestHeaders.Add("User-Agent", GingerUtils.Workspace.OS.UserAgent);
                 client.DefaultRequestHeaders.Add("User-Agent", "Ginger-App");             
                 var result = client.GetAsync(url).Result;
                 Reporter.ToLog(eLogLevel.DEBUG, "result= " + result);

@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;

@@ -25,7 +25,7 @@ using Amdocs.Ginger.Common.Helpers;
 
 namespace Amdocs.Ginger.Common.OS
 {
-    public abstract class OperationgSystemBase
+    public abstract class OperatingSystemBase
     {
         string UserAgent { get; }
         public virtual Process Dotnet(string cmd)
@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.Common.OS
             //not required on windows
         }
 
-        public static  OperationgSystemBase GetOperatingSystem()
+        public static  OperatingSystemBase GetOperatingSystem()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
