@@ -47,12 +47,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
         ApplicationPOMModel mSelectedPOM = null;
         RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();       
         string mLocateValue;
+        public bool OnlyPOMSelection { get; set; }
 
         Object mObjectElementType;
         string mElementTypeFieldName;
         Object mObjectLocateValue;
         string mLocateValueFieldName;
         bool mOnlyPOMRequest;
+
         public delegate void ElementChangedEventHandler();
 
         public event ElementChangedEventHandler ElementChangedPageEvent;
@@ -144,7 +146,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     mLocateValue = string.Empty;
                     SelectPOM_Click(null, null);
                 }
-            }         
+            }
         }
 
         private void SetElementViewText(string elementName, string elementType)

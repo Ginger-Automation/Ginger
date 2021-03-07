@@ -4030,7 +4030,7 @@ namespace GingerCore.Drivers
 
             if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
-                if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+                if (!string.IsNullOrEmpty(EI.Path) && (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
                     EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
                 }
@@ -7155,6 +7155,8 @@ namespace GingerCore.Drivers
                 {
                     Driver.SwitchTo().DefaultContent();
 
+                    //elemInfo.X = ele.Coordinates.LocationInViewport.X;
+                    //elemInfo.Y = ele.Coordinates.LocationInViewport.Y;
                     break;
                 }
 

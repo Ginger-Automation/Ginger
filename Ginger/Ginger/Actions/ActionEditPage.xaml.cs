@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
+using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
@@ -779,31 +780,13 @@ namespace Ginger.Actions
         {
             //Each Action need to implement ActionEditPage which return the name of the page for edit
             //TODO: check all action are working and showing the correct Edit Page
-
             if (a.ActionEditPage != null)
             {
-                string classname = "Ginger.Actions." + a.ActionEditPage;
-                Type t = Assembly.GetExecutingAssembly().GetType(classname);
-                if (t == null)
+                Page actEditPage = ActionsFactory.GetActionEditPage(a, mContext);
+                if (actEditPage != null)
                 {
-                    throw new Exception("Action edit page not found - " + classname);
-                }
-                Page p = (Page)Activator.CreateInstance(t, a);
-                if (p != null)
-                {
-                    // For no driver actions we give the BF and env - used for example in set var value.
-                    if (typeof(ActWithoutDriver).IsAssignableFrom(a.GetType()))
-                    {
-                        if (mContext != null && mContext.Runner != null)
-                        {
-                            ((ActWithoutDriver)a).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
-                            ((ActWithoutDriver)a).RunOnEnvironment = (ProjEnvironment)mContext.Runner.ProjEnvironment;
-                            ((ActWithoutDriver)a).DSList = mContext.Runner.DSList;
-                        }
-                    }
-
                     // Load the page
-                    xActionPrivateConfigsFrame.SetContent(p);
+                    xActionPrivateConfigsFrame.SetContent(actEditPage);
                     xActionPrivateConfigsFrame.Visibility = System.Windows.Visibility.Visible;
                 }
             }

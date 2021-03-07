@@ -438,6 +438,9 @@
     <Compile Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml.cs">
       <DependentUpon>SharedRepositoryNavPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ControlActionsPage_New.xaml.cs">
+      <DependentUpon>ControlActionsPage_New.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowExplorerCommon.cs" />
     <Compile Include="AutomatePageLib\AddActionMenu\WindowExplorer\WindowsExplorerNavPage.xaml.cs">
       <DependentUpon>WindowsExplorerNavPage.xaml</DependentUpon>
@@ -2797,6 +2800,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AutomatePageLib\AddActionMenu\SharedRepositoryLib\SharedRepositoryNavPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AutomatePageLib\AddActionMenu\WindowExplorer\Common\ControlActionsPage_New.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

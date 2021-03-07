@@ -3920,6 +3920,40 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         public ElementInfo GetElementAtPoint(long ptX, long ptY)
         {
+            PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+            Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+            Request.ClosePackage();
+            General.DoEvents();
+
+            PayLoad Response = Send(Request);
+            if (!(Response.IsErrorPayLoad()))
+            {
+                if (Response.Name == "HTMLElement")
+                {
+                    return GetHTMLElementInfoFromPL(Response);
+                }
+                else if (Response.Name == "RequireInitializeBrowser")
+                {
+                    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                    JavaElementInfo JE = (JavaElementInfo)GetControlInfoFromPayLoad(Response);
+                    InitializeBrowser(JE);
+                    //Adding automatically action for InitializeBrowser
+                    BusinessFlow.AddAct(new ActBrowserElement
+                    {
+                        Description = "Initialize Browser Automatically - JExplorerBrowser",
+                        LocateBy = eLocateBy.ByXPath,
+                        LocateValue = JE.XPath,
+                        Value = ""
+                    });
+
+                    Mouse.OverrideCursor = null;
+                    Reporter.ToUser(eUserMsgKey.InitializeBrowser);
+                    return null;
+                }
+                else
+                    return GetControlInfoFromPayLoad(Response);
+            }
+            return null;
             throw new NotImplementedException();
         }
     }

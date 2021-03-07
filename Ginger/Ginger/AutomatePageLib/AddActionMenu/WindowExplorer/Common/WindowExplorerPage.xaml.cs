@@ -174,9 +174,12 @@ namespace Ginger.WindowExplorer
 
             SetControlsGridView();
 
-            InitControlPropertiesGridView(); 
+            InitControlPropertiesGridView();
             InitControlLocatorsGridView();
 
+            //xUCElementDetails.AppAgent = mApplicationAgent;
+            xWindowSelection.context = context;
+            xUCElementDetails.Context = context;
             xUCElementDetails.xPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
 
             UpdateWindowsList();
@@ -806,38 +809,88 @@ namespace Ginger.WindowExplorer
             {
                 ElementInfo EI = (ElementInfo)iv.NodeObject();
 
-                ControlActionsPage CAP = null;
+                ControlActionsPage_New CAP = null;
                 // We came from Action EditPage
-                if (mAction != null)
+                //if (mAction != null)
+                //{
+                //    CAP = new ControlActionsPage_New(mAction, EI);
+                //}
+                //else
+
+                ObservableList<Act> list = new ObservableList<Act>();
+                ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
+
+                //var elmentPresentationinfo = mPlatform.GetElementPresentatnInfo(EI);//type A (ActionType to show) || type B
+
+                //if(Type A)
+                //        { }
+                //else if (Type b)
+                //        {
+                //    list = ((IWindowExplorerTreeItem)iv).GetElementActions(); 
+                //}
+
+                if (mPlatform.PlatformType().Equals(ePlatformType.Web) || (mPlatform.PlatformType().Equals(ePlatformType.Java) && !EI.ElementType.Contains("JEditor")))
                 {
-                    CAP = new ControlActionsPage(mAction, EI);
+                    //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
+                    list = mPlatform.GetPlatformElementActions(EI);
+                }
+                else
+                {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
+                    list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
+                }                                                               //
+
+                //If no element actions returned then no need to get locator's. 
+                if (list == null || list.Count == 0)
+                {
+                    SetActionsTabDesign(false);
+                    return;
                 }
                 else
                 {
-                    ObservableList<Act> list = new ObservableList<Act>();
-                    ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-                    if (mPlatform.PlatformType().Equals(ePlatformType.Web) || (mPlatform.PlatformType().Equals(ePlatformType.Java) && !EI.ElementType.Contains("JEditor")))
-                    {
-                        //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
-                        list = mPlatform.GetPlatformElementActions(EI);
-                    }
-                    else
-                    {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                        list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
-                    }                                                               //
+                    Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
+                    actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
 
-                    //If no element actions returned then no need to get locator's. 
-                    if (list == null || list.Count == 0)
+                    ElementLocator eiLocator = EI.Locators.CurrentItem as ElementLocator;
+
+                    string elementVal = string.Empty;
+                    if (EI.OptionalValuesObjectsList.Count > 0)
                     {
-                        SetActionsTabDesign(false);
-                        return;
+                        elementVal = Convert.ToString(EI.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
                     }
-                    else
+                    //ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
+                    //{
+                    //    LocateBy = eLocateBy.POMElement,
+                    //    LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
+                    //    ElementValue = elementVal,
+                    //    AddPOMToAction = true,
+                    //    POMGuid = elementInfo.ParentGuid.ToString(),
+                    //    ElementGuid = elementInfo.Guid.ToString(),
+                    //    LearnedElementInfo = elementInfo,
+                    //};
+
+                    //check if we have POM in context if yes set the Locate by and value to the specific POM if not so set it to the first active Locator in the list of Locators
+                    ElementActionCongifuration actConfigurations = new ElementActionCongifuration
                     {
-                        Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
-                        actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
-                        CAP = new ControlActionsPage(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext);
-                    }
+                        LocateBy = eiLocator.LocateBy,
+                        LocateValue = eiLocator.LocateValue,
+                        ElementValue = elementVal,
+                        ElementGuid = EI.Guid.ToString(),
+                        LearnedElementInfo = EI,
+                    };
+
+                    CAP = new ControlActionsPage_New(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext, actConfigurations);
+                }
+
+                if (CAP == null)
+                {
+                    xUCElementDetails.xAddActionTab.Visibility = Visibility.Collapsed;
+                    xUCElementDetails.xActUIPageFrame.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xUCElementDetails.xActUIPageFrame.Content = CAP;
+                    xUCElementDetails.xAddActionTab.Visibility = Visibility.Visible;
+                    xUCElementDetails.xActUIPageFrame.Visibility = Visibility.Visible;
                 }
                 //ControlActionsFrame.Content = CAP;
                 SetActionsTabDesign(true);
@@ -1381,6 +1434,11 @@ namespace Ginger.WindowExplorer
         private void XMainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             xUCElementDetails.SelectedElement = currentHighlightedElement;
+
+            mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
+            //mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
+
+            ShowCurrentControlInfo();
         }
 
         //private async void StorePageSource()
@@ -1533,8 +1591,8 @@ namespace Ginger.WindowExplorer
 
             if (mApplicationAgent.Agent.Driver.Platform == ePlatformType.Mobile)
             {
-               //ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
-               // ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
+                //ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
+                // ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
             }
             else
             {
@@ -1800,7 +1858,7 @@ namespace Ginger.WindowExplorer
 
                 RefreshGrid = false;
             }
-            else if(xViewsTabs.SelectedItem == xTreeViewTab)        /// Tree View
+            else if (xViewsTabs.SelectedItem == xTreeViewTab)        /// Tree View
             {
                 RefreshTreeContent();
 
@@ -1896,7 +1954,7 @@ namespace Ginger.WindowExplorer
 
         private void xGridViewTab_GotFocus(object sender, RoutedEventArgs e)
         {
-            if(RefreshGrid)
+            if (RefreshGrid)
             {
                 RefreshGridContent();
                 RefreshGrid = false;
@@ -1905,7 +1963,7 @@ namespace Ginger.WindowExplorer
 
         private void xTreeViewTab_GotFocus(object sender, RoutedEventArgs e)
         {
-            if(RefreshTree)
+            if (RefreshTree)
             {
                 RefreshTreeContent();
                 RefreshTree = false;
@@ -1914,7 +1972,7 @@ namespace Ginger.WindowExplorer
 
         private void ScreenShotViewTab_GotFocus(object sender, RoutedEventArgs e)
         {
-            if(RefreshScreenshot)
+            if (RefreshScreenshot)
             {
                 ShowScreenShot();
                 RefreshScreenshot = false;

@@ -2,15 +2,23 @@
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
+using Ginger.Reports;
 using Ginger.UserControls;
+using Ginger.WindowExplorer;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
+using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +46,25 @@ namespace Ginger
     public partial class UCElementDetails : UserControl
     {
         public Agent mAgent { get; set; }
+        public Context Context;
+
+        //private ApplicationAgent mApplicationAgent { get; set; }
+        //public ApplicationAgent AppAgent { get; set; }
+        //{
+        //    get
+        //    {
+        //        return mApplicationAgent;
+        //    }
+        //    set
+        //    {
+        //        if (value != null)
+        //        {
+        //            mApplicationAgent = value;
+        //            mAgent = mApplicationAgent.Agent;
+        //        }
+        //    }
+        //}
+
         public bool ShowTestBtn { get; set; }
 
         PlatformInfoBase mPlatform { get; set; }
@@ -57,8 +84,48 @@ namespace Ginger
                 {
                     mSelectedElement = value;
                     RefreshPropertiesAndLocators();
+                    RefreshElementAction();
                 }
             }
+        }
+
+        ITreeViewItem mCurrentControlTreeViewItem;
+        private ObservableList<ActInputValue> mActInputValues;
+
+        private void RefreshElementAction()
+        {
+            mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(SelectedElement);
+            try
+            {
+                mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
+            }
+            catch(Exception exc)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
+            }
+            //UIElementAction.ElementType = SelectedElement.ElementTypeEnum;
+            //UIElementAction.ElementLocateBy = eLocateBy.ByXPath;
+
+            //UIElementAction.LocateBy = (SelectedElement.Locators.CurrentItem as ElementLocator).LocateBy;
+            //UIElementAction.LocateValue = (SelectedElement.Locators.CurrentItem as ElementLocator).LocateValue;
+
+            //UIElementAction.ElementLocateValue = SelectedElement.XPath;
+            //UIElementAction.Platform = Context.Agent.Platform;  // AppAgent.Agent.Platform;
+
+            //actEditPage = new ActUIElementEditPage(UIElementAction);
+
+            //actEditPage.xLocateByLbl.Visibility = Visibility.Collapsed;
+            //actEditPage.ElementLocateByComboBox.Visibility = Visibility.Collapsed;
+            //actEditPage.LocateValueLable.Visibility = Visibility.Collapsed;
+            //actEditPage.LocateValueEditFrame.Visibility = Visibility.Collapsed;
+
+            ////actEditPage.xLocateByCombo.Items.Clear();
+            ////actEditPage.xLocateByCombo.ItemsSource = SelectedElement.Locators.Select(l => l.LocateBy);
+            ////actEditPage.xLocateValueVE.ValueTextBox.IsEnabled = false;
+
+            //xActUIPageFrame.Content = actEditPage;
+
+            xExecutionStatusIcon.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
         }
 
         public bool ShowAutoLearnedColumn { get; set; }
@@ -82,13 +149,18 @@ namespace Ginger
             }
         }
 
+        //Act mAct = null;
+        //ActUIElement UIElementAction = null;
+        ///*ActionEditPage*/ ActUIElementEditPage actEditPage = null;
+        //ActUIElementEditPage ActEditPage = null;
+
         public UCElementDetails()
         {
             InitializeComponent();
 
-            ActUIElement UIElementAction = new ActUIElement();
-            ActUIElementEditPage ActEditPage = new ActUIElementEditPage(UIElementAction);
-            xActUIPageFrame.Content = ActEditPage;
+            //UIElementAction = new ActUIElement();
+
+            // new ActUIElementEditPage(UIElementAction);
         }
 
         private void ElementDetailsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -111,7 +183,7 @@ namespace Ginger
                                 ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                     }
-                }
+                } 
             }
             catch (Exception ex)
             {
@@ -124,14 +196,89 @@ namespace Ginger
             POM, Explorer
         }
 
-        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
-        {
+        //private void xRunActBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    xExecutionStatusIcon.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending;
 
+        //    Act act;
+        //    //We came from ActionEditPage 
+        //    if (UIElementAction != null)
+        //    {
+        //        act = (Act)UIElementAction.CreateCopy();     // (Act)((Act)(mAction)).CreateCopy();
+
+        //        SetActionDetails(act);
+
+        //        Context.Runner.PrepActionValueExpression(act);
+        //        ApplicationAgent ag = (ApplicationAgent)Context.Runner.ApplicationAgents.Where(x => x.AppName == Context.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+        //        if (ag != null)
+        //        {
+        //            Context.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+        //            ((Agent)ag.Agent).RunAction(act);
+        //        }
+
+        //        if (act.Status != null)
+        //            xExecutionStatusIcon.Status = act.Status.Value;
+        //        else
+        //            xExecutionStatusIcon.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+        //    }
+
+        //}
+
+        private Act SetActionDetails(Act act)
+        {
+            act.Active = true;
+            act.AddNewReturnParams = true;
+            //act.Value = UIElementAction.Value;  // ActEditPage.text ValueTextBox.Text;
+            //Set action unique input values
+            if (mActInputValues != null)
+            {
+                foreach (ActInputValue iv in mActInputValues)
+                {
+                    if (iv.Value != null)
+                    {
+                        act.AddOrUpdateInputParamValue(iv.Param, iv.Value);
+                    }
+
+                }
+            }
+
+            ElementLocator EL = (ElementLocator)SelectedElement.Locators.CurrentItem;
+
+            if (act.GetType() == typeof(ActUIElement))
+            {
+                //Set UIElement action locator
+                ActUIElement actUI = (ActUIElement)act;
+                actUI.ElementLocateBy = EL.LocateBy;
+                actUI.ElementLocateValue = EL.LocateValue;
+                //TODO: Remove below  if once one of the field from Value and Value to select is removed
+                if (actUI.ElementAction == ActUIElement.eElementAction.Click
+                    || actUI.ElementAction == ActUIElement.eElementAction.Select
+                    || actUI.ElementAction == ActUIElement.eElementAction.GetControlProperty
+                    || actUI.ElementAction == ActUIElement.eElementAction.AsyncSelect
+                    || actUI.ElementAction == ActUIElement.eElementAction.SelectByIndex)
+                {
+                    actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, act.Value);
+                }
+                else if (actUI.ElementAction.Equals(ActUIElement.eElementAction.TableCellAction))
+                {
+                    actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ControlActionValue, act.Value);
+                }
+
+                act = actUI;
+            }
+            else
+            {
+                //Set action locator
+                act.LocateBy = EL.LocateBy;
+                act.LocateValue = EL.LocateValue;
+            }
+            return act;
         }
 
         private void xAddActBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            //SetActionDetails(UIElementAction);
+            //ActionsFactory.AddActionsHandler(UIElementAction, Context);
         }
 
         internal void InitGridView()
@@ -185,8 +332,8 @@ namespace Ginger
 
                 Dispatcher.Invoke(() =>
                 {
-                    xPropertiesTextBlock.Text = string.Format("Properties ({0})", mSelectedElement.Properties.Count);
-                    xLocatorsTextBlock.Text = string.Format("Locators ({0})", mSelectedElement.Locators.Count);
+                    xPropertiesTextBlock.Text = mSelectedElement.Properties == null ? "Properties" : string.Format("Properties ({0})", mSelectedElement.Properties.Count);
+                    xLocatorsTextBlock.Text = mSelectedElement.Locators == null ? "Locators" : string.Format("Locators ({0})", mSelectedElement.Locators.Count);
                 });
             }
         }

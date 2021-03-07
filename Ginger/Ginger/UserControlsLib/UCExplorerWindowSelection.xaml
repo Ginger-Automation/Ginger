@@ -38,11 +38,16 @@
 
         <GridSplitter Grid.Column="3" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>
 
-        <CheckBox x:Name="xIntegratePOMChkBox" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.TextAlignment="Center" >
+        <CheckBox x:Name="xIntegratePOMChkBox" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                  TextBlock.TextAlignment="Center" IsChecked="False" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
             <TextBlock Text="POM" FontWeight="Bold"/>
         </CheckBox>
 
-        <ComboBox Grid.Column="6" x:Name="POMsComboBox" Margin="0,0,0,0" SelectionChanged="POMsComboBox_SelectionChanged" MinWidth="100" Width="Auto" Visibility="{Binding IsChecked, ElementName=xIntegratePOMChkBox,Converter={StaticResource boolToVisibility}}" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
+        <Frame x:Name="xPOMSelectionFrame" Grid.Column="6" Visibility="Collapsed" />
+
+        <!--<Frame x:Name="xPOMSelectionFrmae" Visibility="{Binding IsChecked, ElementName=xIntegratePOMChkBox,Converter={StaticResource boolToVisibility}}" />-->
+
+        <!--<ComboBox Grid.Column="6" x:Name="POMsComboBox" Margin="0,0,0,0" SelectionChanged="POMsComboBox_SelectionChanged" MinWidth="100" Width="Auto" Visibility="{Binding IsChecked, ElementName=xIntegratePOMChkBox,Converter={StaticResource boolToVisibility}}" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>-->
     </Grid>
 
 </UserControl>
