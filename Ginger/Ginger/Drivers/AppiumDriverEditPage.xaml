@@ -35,9 +35,13 @@
                                 <StackPanel Margin="10,0,0,0">
                                     <CheckBox x:Name="xSSLChkBox" Content="Use SSL" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>
                                     <CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow unauthorized certificates" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,10">
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                                         <CheckBox x:Name="xUseProxyChkBox" Content="Use proxy" Style="{StaticResource $CeckBoxStyle}"/>
-                                        <TextBox x:Name="xUseProxyTextBox" Style="{StaticResource $TextBoxStyle}" Width="200" Margin="10,0,0,0" IsEnabled="False"/>
+                                        <TextBox x:Name="xUseProxyTextBox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="50" Margin="10,0,0,0" IsEnabled="False"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+                                        <Label Content="Load timeout (seconds):" Style="{StaticResource $LabelStyle}"/>
+                                        <TextBox x:Name="xLoadTimeoutTxtbox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="50" Margin="10,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Expander.Content>
@@ -51,12 +55,12 @@
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <!--<StackPanel Orientation="Horizontal">
                             <Label Content="Device Name:" Style="{StaticResource $LabelStyle}"/>
                             <TextBox x:Name="xDeviceNameTextBox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="200" ToolTip="The kind of mobile device to use, e.g. 'Galaxy S4' or 'iPhone 6'" TextChanged="DeviceDetailsChanged" />
                             <Label Content="Device ID:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
                             <TextBox x:Name="xDeviceIDTextBox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="300" ToolTip="Unique device identifier of the connected physical device, e.g. '1ae203187fc012g'" TextChanged="DeviceDetailsChanged" />
-                        </StackPanel>
+                        </StackPanel>-->
                         <StackPanel Orientation="Horizontal">
                             <Label  Content="Platform:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="PlatformType" VerticalAlignment="Center" IsChecked="True" Checked="PlatformSelectionChanged"/>
@@ -67,14 +71,14 @@
                             <RadioButton x:Name="xNativeHybRdBtn" Content="Native/Hybrid" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AppType" VerticalAlignment="Center" IsChecked="True" Checked="ActivityTypeSelectionChanged"/>
                             <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="10,0,0,0" Checked="ActivityTypeSelectionChanged"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal"  Margin="0,10,0,0">
-                            <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True"/>
+                        <StackPanel Orientation="Vertical"  Margin="0,10,0,0">
+                            <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True" Checked="xAutoUpdateCapabiltiies_Checked"/>
                             <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,0"> 
-                            (for full Appium desired capabilities list,
+                            For full Appium desired capabilities list,
                             <Hyperlink NavigateUri="http://appium.io/docs/en/writing-running-appium/caps/" RequestNavigate="AppiumCapabilities_RequestNavigate">
                                 Click Here
                             </Hyperlink>
-                                )
+                                
                             </TextBlock>
                         </StackPanel>
                         <DockPanel Margin="0,10,0,0">

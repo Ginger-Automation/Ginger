@@ -40,6 +40,9 @@ namespace Ginger.Drivers
 
             BindingHandler.ObjFieldBinding(xLoadDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.LoadDeviceWindow)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
             BindingHandler.ObjFieldBinding(xAutoRefreshDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoRefreshDeviceWindowScreenshot)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
+           
+            BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.TextProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
             BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: GenericAppiumDriver.eDevicePlatformType.Android.ToString());
@@ -53,7 +56,7 @@ namespace Ginger.Drivers
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
             {
                 mAppiumCapabilities.MultiValues = new ObservableList<DriverConfigParam>();
-                InitCapabilities();
+                AutoSetCapabilities(true);
             }
             SetCapabilitiesGridView();
         }
@@ -97,28 +100,34 @@ namespace Ginger.Drivers
             AddOrUpdateCapability(automationName);
         }
 
-        private void SetApplicationCapabilities()
+        private void SetApplicationCapabilities(bool init=false)
         {
-            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android app you want to run" };
-            DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package" };
-            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the app under test" };
+            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android app you want to run", Value = "com.android.settings" };
+            DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
+            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the app under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
             if (mAppType.Value == GenericAppiumDriver.eAppType.NativeHybride.ToString())
             {
                 if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
                 {
-                    appPackage.Value = "com.android.settings";
-                    appActivity.Value = "com.android.settings.Settings";
+                    if (!init)
+                    {
+                        SetCurrentCapabilityValue(appPackage);
+                        SetCurrentCapabilityValue(appActivity);
+                    }
                     AddOrUpdateCapability(appPackage);
                     AddOrUpdateCapability(appActivity);
                     DeleteCapabilityIfExist(bundleId.Parameter);
                 }
                 else
                 {
-                    bundleId.Value = "com.apple.Preferences";
+                    if (!init)
+                    {
+                        SetCurrentCapabilityValue(bundleId);
+                    }
                     AddOrUpdateCapability(bundleId);
                     DeleteCapabilityIfExist(appPackage.Parameter);
-                    DeleteCapabilityIfExist(appActivity.Parameter);                                      
+                    DeleteCapabilityIfExist(appActivity.Parameter);
                 }
                 DeleteCapabilityIfExist(browserName.Parameter);
             }
@@ -134,19 +143,40 @@ namespace Ginger.Drivers
                 }                
                 AddOrUpdateCapability(browserName);
                 DeleteCapabilityIfExist(bundleId.Parameter);
+                DeleteCapabilityIfExist(appPackage.Parameter);
                 DeleteCapabilityIfExist(appActivity.Parameter);
-                DeleteCapabilityIfExist(browserName.Parameter);
             }
         }
 
-        private void SetDeviceCapabilities()
+        private void SetDeviceCapabilities(bool init = false)
         {
-            DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Description = "The kind of mobile device to use" };
-            DriverConfigParam udid = new DriverConfigParam() { Parameter = "udid", Description = "Unique device identifier of the connected physical device" };
-            deviceName.Value = xDeviceNameTextBox.Text;
-            udid.Value = xDeviceIDTextBox.Text;            
+            DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Value = string.Empty};
+            DriverConfigParam udid = new DriverConfigParam() { Parameter = "udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
+            if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
+            {
+                deviceName.Description = "The kind of mobile device to use, for example 'Galaxy S21'";
+            }
+            else
+            {
+                deviceName.Description = "The kind of mobile device to use, for example 'iPhone 12'";
+            }
+            if (!init)
+            {
+                SetCurrentCapabilityValue(deviceName);
+                SetCurrentCapabilityValue(udid);
+            }
             AddOrUpdateCapability(deviceName);
             AddOrUpdateCapability(udid);
+        }
+
+        private void SetOtherCapabilities(bool init=false)
+        {
+            DriverConfigParam newCommandTimeout = new DriverConfigParam() { Parameter = "newCommandTimeout", Description = "How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session", Value = "300" };
+            if (!init)
+            {
+                SetCurrentCapabilityValue(newCommandTimeout);
+            }
+            AddOrUpdateCapability(newCommandTimeout);
         }
 
         private void AddOrUpdateCapability(DriverConfigParam capability)
@@ -160,6 +190,15 @@ namespace Ginger.Drivers
             else
             {
                 mAppiumCapabilities.MultiValues.Add(capability);
+            }
+        }
+
+        private void SetCurrentCapabilityValue(DriverConfigParam capability)
+        {
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capability.Parameter).FirstOrDefault();
+            if (existingCap != null && string.IsNullOrEmpty(existingCap.Value) == false)
+            {
+                capability.Value = existingCap.Value;
             }
         }
 
@@ -177,18 +216,23 @@ namespace Ginger.Drivers
             mAppiumCapabilities.MultiValues.Add(new DriverConfigParam());
         }
 
-        private void InitCapabilities()
+        private void AutoSetCapabilities(bool init=false)
         {
-            SetDeviceCapabilities();
+            if (init)
+            {
+                mAppiumCapabilities.MultiValues.Clear();
+            }
             SetPlatformCapabilities();
-            SetApplicationCapabilities();            
+            SetDeviceCapabilities(init);            
+            SetApplicationCapabilities(init);
+            SetOtherCapabilities(init);
         }
 
         private void ResetCapabilities(object sender, RoutedEventArgs e)
         {
-            if (Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Capabilities list will be reset to default values, are you sure?") == eUserMsgSelection.Yes)
+            if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Capabilities list will be reset to default values, are you sure?") == eUserMsgSelection.Yes)
             {
-                InitCapabilities();
+                AutoSetCapabilities(true);
             }
         }
 
@@ -232,18 +276,24 @@ namespace Ginger.Drivers
 
         private void PlatformSelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+            if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
                 SetPlatformCapabilities();
+                SetApplicationCapabilities();
             }
         }
 
         private void ActivityTypeSelectionChanged(object sender, RoutedEventArgs e)
         {
-            if (xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
+            if (this.IsLoaded && xAutoUpdateCapabiltiies != null && xAutoUpdateCapabiltiies.IsChecked == true)
             {
                 SetApplicationCapabilities();
             }
+        }
+
+        private void xAutoUpdateCapabiltiies_Checked(object sender, RoutedEventArgs e)
+        {
+            AutoSetCapabilities();
         }
     }
 
