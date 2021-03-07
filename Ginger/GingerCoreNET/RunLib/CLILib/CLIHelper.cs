@@ -310,6 +310,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        internal void SetSourceControlBranch(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlBranch: '" + value + "'");
+            WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
+        }
+
         internal void SetSourceControlPassword(string value)
         {
             //Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlPassword: '" + value + "'");//we should not show the password in log
