@@ -437,7 +437,7 @@ namespace Ginger.SolutionGeneral
             //    return NewReportTemplate;
             //}
             //return null;
-            object report = RepositoryItemHelper.RepositoryItemFactory.CreateNewReportTemplate();
+            object report = TargetFrameworkHelper.Helper.CreateNewReportTemplate();
             return report;
         }
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -25,19 +25,16 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using Amdocs.Ginger.Common.Helpers;
 
-namespace GingerUtils.OSLib
+namespace Amdocs.Ginger.Common.OS
 {
-    class LinuxOS : IOperationgSystem
+    class LinuxOS : OperatingSystemBase
     {
         public string UserAgent => "Mozilla/5.0 (X11; od-database-crawler) Gecko/20100101 Firefox/52.0";
 
-        public Process Dotnet(string cmd)
-        {
-            return ShellHelper.Dotnet(cmd);
-        }
-
-        public string GetFirstLocalHostIPAddress()
+    
+        public override string GetFirstLocalHostIPAddress()
         {
             List<UnicastIPAddressInformation> unicastIPAddressInformationList = GetIPAddressCollectionList().ToList();
 
@@ -65,7 +62,7 @@ namespace GingerUtils.OSLib
 
 
         // TODO: try to work without it and make send email work on Linux 
-        public void InitSmtpAuthenticationManager()
+        public override void InitSmtpAuthenticationManager()
         {
             // Mail server support GSSAPI, NTLM and LOGIN, GSSAPI and NTLM can't work well on Linux, so we remove them            
             var smtpAuthenticationManager = typeof(SmtpClient).Assembly.GetType("System.Net.Mail.SmtpAuthenticationManager", false);

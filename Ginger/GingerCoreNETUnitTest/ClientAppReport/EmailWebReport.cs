@@ -47,7 +47,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
-            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new RepoCoreItem());
+            WorkSpace.Instance.InitWorkspace(new GingerUnitTestWorkspaceReporter(), new DotnetCoreHelper());
             WorkSpace.Instance.OpenSolution(mSolutionFolder);
             WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod = Ginger.Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;

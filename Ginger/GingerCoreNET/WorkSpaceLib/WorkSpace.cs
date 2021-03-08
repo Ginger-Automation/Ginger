@@ -33,8 +33,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
-using GingerCore.Variables;
-using GingerCoreNET.ALMLib;
+
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -46,6 +45,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.OS;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -64,6 +64,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public static readonly OperatingSystemBase OS = OperatingSystemBase.GetOperatingSystem();
         static bool lockit;
 
         public static void LockWS()
@@ -92,17 +93,18 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
-            mWorkSpace = new WorkSpace();         
+         
+            mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
 
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
-            }           
+            }
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
-        }     
+        }   
 
         public void StartLocalGrid()
         {
@@ -224,7 +226,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, IRepositoryItemFactory repositoryItemFactory)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper repositoryItemFactory)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -234,7 +236,7 @@ namespace amdocs.ginger.GingerCoreNET
 
             string phase = string.Empty;
 
-            RepositoryItemHelper.RepositoryItemFactory = repositoryItemFactory;
+            TargetFrameworkHelper.Helper = repositoryItemFactory;
 
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;

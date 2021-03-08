@@ -20,6 +20,7 @@ using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
+using Ginger;
 using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -45,7 +46,7 @@ namespace UnitTests.UITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {            
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();
