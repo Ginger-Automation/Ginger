@@ -64,9 +64,15 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static readonly OperatingSystemBase OS = OperatingSystemBase.GetOperatingSystem();
+        public  OperatingSystemBase OSHelper;
         static bool lockit;
-
+        public ITargetFrameworkHelper TargetFrameworkHelper
+        {
+            get
+            {
+                return Amdocs.Ginger.Common.TargetFrameworkHelper.Helper;
+            }
+        }      
         public static void LockWS()
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
@@ -97,7 +103,7 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-
+            mWorkSpace.OSHelper = OperatingSystemBase.GetOperatingSystem();
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
@@ -226,7 +232,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
 
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper repositoryItemFactory)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -236,7 +242,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             string phase = string.Empty;
 
-            TargetFrameworkHelper.Helper = repositoryItemFactory;
+            Amdocs.Ginger.Common.TargetFrameworkHelper.Helper = FrameworkHelper;
+            mWorkSpace.OSHelper = OperatingSystemBase.GetOperatingSystem();
 
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
