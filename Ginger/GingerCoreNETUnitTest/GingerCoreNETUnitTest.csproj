@@ -10,8 +10,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
-    <IsPackable>false</IsPackable>
-    <ApplicationIcon>Y`</ApplicationIcon>
+	  <IsPackable>false</IsPackable>
     <OutputType>Library</OutputType>
     <StartupObject />
   </PropertyGroup>
