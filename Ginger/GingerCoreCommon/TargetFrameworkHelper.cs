@@ -22,7 +22,7 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common
 {
-    public class TargetFrameworkHelper
+    public static class TargetFrameworkHelper
     {
         public static ITargetFrameworkHelper Helper { get; set; }
 

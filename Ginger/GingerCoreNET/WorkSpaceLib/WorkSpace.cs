@@ -64,7 +64,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-        public static OperatingSystemBase OS = OperatingSystemBase.GetOperatingSystem();
+        public static readonly OperatingSystemBase OS = OperatingSystemBase.GetOperatingSystem();
         static bool lockit;
 
         public static void LockWS()

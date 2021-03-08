@@ -46,19 +46,14 @@ namespace Amdocs.Ginger.Common.OS
             {
                 return new WindowsOS();
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return new LinuxOS();
-            }
-
-
-
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 return new MacOS();
             }
-            return new LinuxOS();
-
+            else
+            {
+                return new LinuxOS();
+            }
         }
 
     }
