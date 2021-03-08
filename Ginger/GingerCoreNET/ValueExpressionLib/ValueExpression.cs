@@ -1156,7 +1156,9 @@ namespace GingerCore
                     else mValueCalculated = mValueCalculated.Replace(p, vb.Value);
                 }
                 else
-                 mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                {
+                    mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                }
             }
             else
             {
@@ -1365,12 +1367,17 @@ namespace GingerCore
                         FuncSplit.RemoveAll(x => x.Equals(""));
                         List<string> parameters = Regex.Split(FuncSplit[0].ToString(), paramPattern).ToList<string>();
                         parameters.RemoveAll(y => y.Equals(""));
-                        parameters = parameters.Where(z => z.Contains("\"")).Select(z => z.Replace("\"", "")).ToList<string>();
+
+                        parameters = parameters.Select(z => z.Length > 1 ? z.Trim('\"') : z).ToList<string>();
 
                         object[] listOfParams = new object[parameters.Count];
                         int index = 0;
                         foreach (var item in parameters)
                         {
+                            if (item.Equals(","))
+                            {
+                                continue;
+                            }
                             listOfParams[index++] = item;
                         }
                         string funcOut = mi.Invoke(classInstance, new object[] { listOfParams }).ToString();
