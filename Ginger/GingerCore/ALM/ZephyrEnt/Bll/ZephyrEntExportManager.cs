@@ -79,13 +79,14 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     new TestCase()
                     {
                         name = activtiesGroup.Name,
-                        automated = false,
+                        automated = true,
                         requirementIds = new List<string>(),
                         releaseId = Convert.ToInt64(projectId),
                         customProperties = new Dictionary<string, object>(),
                         description = activtiesGroup.Description,
                         tcCreationDate = DateTime.Now.ToString("dd/MM/yyyy"),
-                        creationDate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                        creationDate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                        tag = "Ginger"
                     }, true, 0, 1, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
                 activtiesGroup.ExternalID = testCaseResource.testcase.testcaseId.ToString();
                 activtiesGroup.ExternalID2 = testCaseResource.testcase.id.ToString();
@@ -162,9 +163,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                         publishToALMConfig.VariableForTCRunName = "GingerRun_" + timeStamp;
                                     }
                                     scheduleId = executions.FindLast(tc => tc.tcrTreeTestcase.testcase.testcaseId.ToString().Equals(activGroup.ExternalID)).id;
-                                    dynamic executionResult = zephyrEntRepository.ExecuteTestCase(scheduleId, GetTestStatus(activGroup), zephyrEntRepository.GetCurrentUser()[0].id);
-
-                                    //runToExport.ElementsField["name"] = publishToALMConfig.VariableForTCRunNameCalculated;
+                                    string notes = publishToALMConfig.VariableForTCRunNameCalculated;
+                                    dynamic executionResult = zephyrEntRepository.ExecuteTestCase(scheduleId, GetTestStatus(activGroup), zephyrEntRepository.GetCurrentUser()[0].id, notes);
 
                                     if (executionResult == null)
                                     {
@@ -194,13 +194,13 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                             System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                             //Creating the Zip file - finish
 
-                                            //ALMResponseData attachmentResponse = QCRestAPIConnect.CreateAttachment(ResourceType.TEST_RUN, currentRun.Id, zipFileName);
+                                            Execution attachmentExecution = zephyrEntRepository.UpdateTestCaseAttachment(scheduleId.ToString() , zipFileName);
 
-                                            //if (!attachmentResponse.IsSucceed)
-                                            //{
-                                            //    result = "Failed to create attachment";
-                                            //    return false;
-                                            //}
+                                            if (attachmentExecution == null)
+                                            {
+                                                result = "Failed to create attachment";
+                                                return false;
+                                            }
 
                                             System.IO.File.Delete(zipFileName);
                                         }
