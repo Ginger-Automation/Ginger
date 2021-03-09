@@ -197,7 +197,7 @@ namespace Amdocs.Ginger.Repository
 
             Console.WriteLine("Creating Process..");
 
-            System.Diagnostics.Process proc = WorkSpace.OS.Dotnet(cmd);
+            System.Diagnostics.Process proc = WorkSpace.Instance.OSHelper.Dotnet(cmd);
 
             mProcesses.Add(new PluginProcessWrapper(pluginId, serviceID, proc));
             Console.WriteLine("Plug-in Running on the Process ID: " + proc.Id);
