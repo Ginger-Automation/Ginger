@@ -1,0 +1,92 @@
+﻿<Window x:Class="Ginger.Drivers.DriversWindows.MobileDriverWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="UpdatedAppiumDriverWindow" Height="600" Width="800"
+        MinHeight="600" MinWidth="300"
+        WindowStartupLocation="CenterScreen"
+        Topmost="False" >
+
+    <Grid x:Name="windowGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="300*"/>
+            <ColumnDefinition x:Name="ConfigurationsCol" Width="250"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <!--Main area top buttons-->
+        <Frame x:Name="MainTopFrame" Grid.Row="0" Grid.Column="0" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <Button x:Name="xRefreshButton" Grid.Column="0" Grid.Row="0" Click="xRefreshButton_Click" ToolTip="Refresh Mobile Screen Image" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3" Height="32" Width="32">
+            <Image Source="{StaticResource @RoundRefresh_32x32.png}"/>
+        </Button>
+        <ToggleButton x:Name="RecordBtn" Grid.Column="0" Grid.Row="0" Click="RecordBtn_Click" ToolTip="Record Operations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="39,0,0,3">
+            <Image Source="{StaticResource @Record_24x24.png}"/>
+        </ToggleButton>
+        <ToggleButton x:Name="ConfigurationsBtn" Grid.Column="0" Grid.Row="0" Click="ConfigurationsBtn_Click" ToolTip="Configurations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,3">
+            <Image Source="{StaticResource @Config_24x24.png}"/>
+        </ToggleButton>
+        <ToggleButton x:Name="PinBtn" Grid.Column="0" Grid.Row="0" Click="PinBtn_Click" ToolTip="Pin Window" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,39,3" IsChecked="False">
+            <Image Source="{StaticResource @Pin_24x24.png}"/>
+        </ToggleButton>
+        <ToggleButton x:Name="InspectBtn" Grid.Column="0" Grid.Row="0" Click="InspectBtn_Click" ToolTip="Inspector" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,3">
+            <Image Source="{StaticResource @MagnifyingGlass_24x24.png}"/>
+        </ToggleButton>
+
+        <!--Main area mobile image-->
+        <Canvas x:Name="DeviceImageCanvas" Grid.Column="0" Grid.Row="1" >
+            <Image x:Name="DeviceImage" Height="{Binding ActualHeight, ElementName=DeviceImageCanvas}" Width="{Binding ActualWidth, ElementName=DeviceImageCanvas}"  
+                   MouseLeftButtonDown="DeviceImage_MouseLeftButtonDown" 
+                   MouseMove="DeviceImage_MouseMove" 
+                   MouseLeftButtonUp="DeviceImage_MouseLeftButtonUp" 
+                   MouseEnter="DeviceImage_MouseEnter" 
+                   MouseLeave="DeviceImage_MouseLeave"  
+                   Source="{StaticResource  @NotAvailable_600x600}" SizeChanged="DeviceImage_SizeChanged">
+            </Image>
+        </Canvas>
+
+        <!--Main area bottom buttons-->
+        <Frame x:Name="MainBottomFrame" Grid.Row="2" Grid.Column="0" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <Button x:Name="xBackButton" Grid.Column="0" Grid.Row="2" Click="xBackBtn_Click" ToolTip="Back" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
+            <Image Source="{StaticResource @MobileBack_24x24.png}"/>
+        </Button>
+        <Button x:Name="xHomeBtn" Grid.Column="0" Grid.Row="2" Click="xHomeBtn_Click" ToolTip="Home" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0">
+            <Image Source="{StaticResource @Circle_24x24.png}"/>
+        </Button>
+        <Button x:Name="xMenuBtn" Grid.Column="0" Grid.Row="2" Click="xMenuBtn_Click" ToolTip="Menu" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0">
+            <Image Source="{StaticResource @MobileMenu_24x24.png}"/>
+        </Button>
+
+        <!--Configurations area-->
+        <Frame x:Name="ConfigurationsFrame" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <GridSplitter x:Name="configurationsSplitter" Grid.Column="0" Grid.Row="0" ResizeDirection="Columns"  Grid.RowSpan="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @VerticalGridSplitterStyle}"/>
+        <Label Grid.Column="2" Grid.Row="0" Content="Configurations" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
+        <ScrollViewer Grid.Column="1" Grid.Row="1">
+            <StackPanel >
+                <Label Content="Device Image:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Margin="0,10,0,0"></Label>
+                <CheckBox x:Name="TrackActionsChK"  Content="Refresh after Action run" IsChecked="True"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Refresh waiting rate:" Style="{StaticResource @LabelStyle}" Margin="5,5,10,0"></Label>
+                    <ComboBox x:Name="RefreshWaitingRateCombo" Style="{StaticResource @InputComboBoxStyle}" Width="50">
+                        <ComboBoxItem>0</ComboBoxItem>
+                        <ComboBoxItem IsSelected="True">1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                        <ComboBoxItem>4</ComboBoxItem>
+                        <ComboBoxItem>5</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <Label Content="Recording/Inspecting:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Margin="0,10,0,0"></Label>
+                <CheckBox x:Name="RecordByXpathChK" Content="Record by xPath" IsChecked="False"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                <CheckBox x:Name="FilterElementsChK" Content="Filter below element types:" IsChecked="True" Checked="FilterElementsChK_Checked" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,5,0,0"/>
+                <TextBox x:Name="FilterElementsTxtbox" Style="{StaticResource @MultiRowsTextBoxStyle}" Height="50" Margin="10,0,10,0">UIAWindow,FrameLayout,LinearLayout,RelativeLayout</TextBox>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

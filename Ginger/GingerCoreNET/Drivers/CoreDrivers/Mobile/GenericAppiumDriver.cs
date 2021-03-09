@@ -18,6 +18,8 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -43,26 +45,9 @@ using System.Xml;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IMobileWindowDriver
     {
-        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
-
-        public enum eDevicePlatformType
-        {
-            Android = 0,
-            iOS = 1
-        }
-
-        public enum eAppType
-        {
-            NativeHybride = 0,
-            Web = 1,
-        }
-
-        public enum eSwipeSide
-        {
-            Up, Down, Left, Right
-        }
+        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }       
 
         //Mobile Driver Configurations
         [UserConfigured]
@@ -120,35 +105,35 @@ namespace Amdocs.Ginger.CoreNET
             mConnectedToDevice = ConnectToAppium();
         }
 
-        //public void ShowDriverWindow()
-        //{
-        //    //show mobile window
-        //    DriverWindow = new AppiumDriverWindow();
-        //    DriverWindow.BF = BusinessFlow;
-        //    DriverWindow.AppiumDriver = this;
-        //    DriverWindow.DesignWindowInitialLook();
-        //    DriverWindow.Show();
-        //    for (int i = 0; i < 100; i++)
-        //    {
-        //        Thread.Sleep(100);
-        //    }
+        public void ShowDriverWindow()
+        {
+            //show mobile window
+            DriverWindow = new AppiumDriverWindow();
+            DriverWindow.BF = BusinessFlow;
+            DriverWindow.AppiumDriver = this;
+            DriverWindow.DesignWindowInitialLook();
+            DriverWindow.Show();
+            for (int i = 0; i < 100; i++)
+            {
+                Thread.Sleep(100);
+            }
 
-        //    ConnectedToDevice = ConnectToAppium();
-        //    if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
-        //    {               
-        //        OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-        //        Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
-        //        System.Windows.Threading.Dispatcher.Run();            
-        //    }
-        //    else
-        //    {
-        //        if (DriverWindow != null)
-        //        {
-        //            DriverWindow.Close();
-        //            DriverWindow = null;
-        //        }
-        //    }
-        //}
+            ConnectedToDevice = ConnectToAppium();
+            if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
+            {
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
+                System.Windows.Threading.Dispatcher.Run();
+            }
+            else
+            {
+                if (DriverWindow != null)
+                {
+                    DriverWindow.Close();
+                    DriverWindow = null;
+                }
+            }
+        }
 
         public bool ConnectToAppium()
         {
@@ -606,15 +591,15 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
-                        PressBackBtn();
+                        PerformBackButtonPress();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
-                        PressHomebtn();
+                        PerformHomeButtonPress();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressMenuButton:
-                        PressMenubtn();
+                        PerformMenuButtonPress();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
@@ -766,7 +751,7 @@ namespace Amdocs.Ginger.CoreNET
             Driver.PerformTouchAction(t);
         }
 
-        public void PressBackBtn()
+        public void PerformBackButtonPress()
         {
             switch (DriverPlatformType)
             {
@@ -779,7 +764,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PressHomebtn()
+        public void PerformHomeButtonPress()
         {               
             switch (DriverPlatformType)
             {
@@ -788,12 +773,12 @@ namespace Amdocs.Ginger.CoreNET
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
+                    Driver.ExecuteScript("mobile: pressButton", "name", "home");
                     break;
             }
         }
 
-        public void PressMenubtn()
+        public void PerformMenuButtonPress()
         {
             switch (DriverPlatformType)
             {
@@ -1259,6 +1244,16 @@ namespace Amdocs.Ginger.CoreNET
         List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
             throw new NotImplementedException();
+        }
+
+        public eDevicePlatformType GetDevicePlatformType()
+        {
+            return DevicePlatformType;
+        }
+
+        public eAppType GetAppType()
+        {
+            return AppType;
         }
     }
 }

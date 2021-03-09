@@ -199,10 +199,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\Appium\AppiumDriverWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Drivers\Common\DeviceViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -459,9 +455,6 @@
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
-      <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
       <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>

@@ -1,78 +1,45 @@
-#region License
-/*
-Copyright © 2014-2020 European Support Limited
-
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at 
-
-http://www.apache.org/licenses/LICENSE-2.0 
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, 
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-See the License for the specific language governing permissions and 
-limitations under the License. 
-*/
-#endregion
-
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Xml;
+using System.Windows.Shapes;
 
-namespace GingerCore.Drivers.Appium
+namespace Ginger.Drivers.DriversWindows
 {
     /// <summary>
-    /// Interaction logic for AppiumDriverWindow.xaml
+    /// Interaction logic for UpdatedAppiumDriverWindow.xaml
     /// </summary>
-    public partial class AppiumDriverWindow : Window
+    public partial class MobileDriverWindow : Window
     {
-        public SeleniumAppiumDriver AppiumDriver;
+
+        public IMobileWindowDriver mDriver;
 
         bool isMousePressed = false;
         bool isItDragAction = false;
-        System.Windows.Point mouseStartPoint;
-        System.Windows.Point mouseEndPoint;
-        public BusinessFlow BF;
-
-        XmlDocument pageSourceXml = null;
-        long inspectedElem_X;
-        long inspectedElem_Y;
-        System.Windows.Shapes.Rectangle mHighightRectangle;
         long rectangleStartPoint_X;
         long rectangleStartPoint_Y;
-        XmlNode rectangleXmlNode;
-        XmlNode prevInspectElementNode;
-        string pageSourceString = string.Empty;
-
-        public AppiumDriverWindow()
+        Point mouseStartPoint;
+        Point mouseEndPoint;
+        public BusinessFlow mBF;
+       
+        public MobileDriverWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         #region Events
-        private void DeviceImageCanvas_SizeChange(object sender, SizeChangedEventArgs e)
-        {
-            if (DeviceImageCanvas != null)
-            {
-                //correct the rectangle position
-                if (DeviceImageCanvas.Children.Contains(mHighightRectangle))
-                    DrawElementRectangle(rectangleXmlNode);
-            }
-        }
+
 
         private void DeviceImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -93,14 +60,12 @@ namespace GingerCore.Drivers.Appium
         }
 
         private void DeviceImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {  
-            if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+        {
+            if (mDriver.GetAppType() == eAppType.Web)
             {
                 e.Handled = true;
                 return;
             }
-
             try
             {
                 mouseStartPoint = e.GetPosition((System.Windows.Controls.Image)sender);
@@ -117,35 +82,12 @@ namespace GingerCore.Drivers.Appium
 
         private void DeviceImage_MouseMove(object sender, MouseEventArgs e)
         {
-            if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-            AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+            if (mDriver.GetAppType() == eAppType.Web)
             {
                 e.Handled = true;
                 return;
             }
-
-            if (InspectorPointBtn.IsChecked == true)
-            {
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Cross;
-                System.Windows.Point pointOnImage;
-                try
-                {
-                    pointOnImage = e.GetPosition((System.Windows.Controls.Image)sender);
-                }
-                catch
-                {
-                    pointOnImage = e.GetPosition((System.Windows.Shapes.Rectangle)sender);
-                    //convert to image scale
-                    pointOnImage.X = pointOnImage.X + rectangleStartPoint_X;
-                    pointOnImage.Y = pointOnImage.Y + rectangleStartPoint_Y;
-                }
-
-                //ShowSelectedElementDetails((long)pointOnMobile.X, (long)pointOnMobile.Y);
-                ShowSelectedElementDetails(pointOnImage);
-            }
-            else
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
-
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
             if (isMousePressed == true)
             {
                 //it's a drag
@@ -155,8 +97,7 @@ namespace GingerCore.Drivers.Appium
 
         private void DeviceImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-            AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+            if (mDriver.GetAppType() == eAppType.Web)
             {
                 e.Handled = true;
                 return;
@@ -174,46 +115,34 @@ namespace GingerCore.Drivers.Appium
                 mouseEndPoint.Y = mouseEndPoint.Y + rectangleStartPoint_Y;
             }
             isMousePressed = false;
-            if (InspectorPointBtn.IsChecked == false)
+
+            if (isItDragAction == true)
             {
-                if (isItDragAction == true)
-                {
-                    //do drag
-                    isItDragAction = false;
-                    DeviceImageMouseDrag(mouseStartPoint, mouseEndPoint);
-                }
-                else
-                {
-                    //do click
-                    DeviceImageMouseClick(mouseEndPoint);
-                }
+                //do drag
+                isItDragAction = false;
+                DeviceImageMouseDrag(mouseStartPoint, mouseEndPoint);
             }
             else
             {
-                //show selected element details
+                //do click
                 DeviceImageMouseClick(mouseEndPoint);
             }
         }
 
         private void DeviceImage_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-            AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+            if (mDriver.GetAppType() == eAppType.Web)
             {
                 e.Handled = true;
                 return;
             }
 
-            if (InspectorPointBtn.IsChecked == true)
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Cross;
-            else
-                Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
         }
 
         private void DeviceImage_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-            AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+            if (mDriver.GetAppType() == eAppType.Web)
             {
                 e.Handled = true;
                 return;
@@ -222,77 +151,39 @@ namespace GingerCore.Drivers.Appium
             Mouse.OverrideCursor = null;
         }
 
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        private void xRefreshButton_Click(object sender, RoutedEventArgs e)
         {
             LoadMobileScreenImage(false);
         }
-       
 
-        private void backBtn_Click(object sender, RoutedEventArgs e)
+
+        private void xBackBtn_Click(object sender, RoutedEventArgs e)
         {
-            AppiumDriver.PressBackBtn();
-            //update the screen
+            mDriver.PerformBackButtonPress();
             LoadMobileScreenImage(true, 300);
-            if (RecordBtn.IsChecked == true)
-                BF.CurrentActivity.Acts.Add(new ActMobileDevice() { Active = true, Description = "Click Device Back button", MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.PressBackButton, Platform = GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Mobile });
         }
 
-        private void homeBtn_Click(object sender, RoutedEventArgs e)
+        private void xHomeBtn_Click(object sender, RoutedEventArgs e)
         {
-            AppiumDriver.PressHomebtn();
+            mDriver.PerformHomeButtonPress();
             LoadMobileScreenImage(true, 300);
-            if (RecordBtn.IsChecked == true)
-                BF.CurrentActivity.Acts.Add(new ActMobileDevice() { Active = true, Description = "Click Device Home button", MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.PressHomeButton, Platform = ePlatformType.Mobile });
         }
 
-        private void menuBtn_Click(object sender, RoutedEventArgs e)
+        private void xMenuBtn_Click(object sender, RoutedEventArgs e)
         {
-            AppiumDriver.PressMenubtn();
-            LoadMobileScreenImage(true, 300);
-            if (RecordBtn.IsChecked == true)
-                BF.CurrentActivity.Acts.Add(new ActMobileDevice() { Active = true, Description = "Click Device Menu button", MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.PressMenuButton, Platform= ePlatformType.Mobile });
-        }
-
-        private void RecordBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //close inspect if open
-            if (InspectBtn.IsChecked == true)
-            {
-                SetInspectorPanelView(false);
-                RemoveElemntRectangle();
-                InspectBtn.IsChecked = false;
-            }
-
-            StorePageSource();
+            mDriver.PerformHomeButtonPress();
+            LoadMobileScreenImage(true, 300);           
         }
 
         private void ConfigurationsBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ConfigurationsBtn.IsChecked==true)
+            if (ConfigurationsBtn.IsChecked == true)
             {
                 SetConfigurationsPanelView(true);
             }
             else
             {
                 SetConfigurationsPanelView(false);
-            }
-        }
-
-        private void InspectBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (InspectBtn.IsChecked == true)
-            {
-                if (RecordBtn.IsChecked == false)
-                    StorePageSource();
-                else
-                    RecordBtn.IsChecked = false;
-                SetInspectorPanelView(true);
-            }
-            else
-            {
-                SetInspectorPanelView(false);
-                SetAttributesActionsView(false);
-                RemoveElemntRectangle();
             }
         }
 
@@ -308,51 +199,6 @@ namespace GingerCore.Drivers.Appium
             }
         }
 
-        private void inspectorElementTabsControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (inspectorElementTabsControl.SelectedIndex == 1)//Source tab
-            {
-                DesignSourceTabContent();
-            }
-        }
-
-        private void InspectorPointBtn_Click(object sender, RoutedEventArgs e)
-        {
-            SetAttributesActionsView(false);
-            if (InspectorPointBtn.IsChecked == false)
-                Mouse.OverrideCursor = null;
-        }
-
-        private void actBtnClick_Click(object sender, RoutedEventArgs e)
-        {
-            RecordAction(inspectedElem_X, inspectedElem_Y, ActGenElement.eGenElementAction.Click);
-        }
-
-        private void actBtnSetValue_Click(object sender, RoutedEventArgs e)
-        {
-            RecordAction(inspectedElem_X, inspectedElem_Y, ActGenElement.eGenElementAction.SetValue);
-        }
-
-        private void actBtnGetElementAttr_Click(object sender, RoutedEventArgs e)
-        {
-            RecordAction(inspectedElem_X, inspectedElem_Y, ActGenElement.eGenElementAction.GetCustomAttribute);
-        }
-
-        private void actBtnValidateVisible_Click(object sender, RoutedEventArgs e)
-        {
-            RecordAction(inspectedElem_X, inspectedElem_Y, ActGenElement.eGenElementAction.Visible);
-        }
-
-        private void sourceXMLRadioBtn_Checked(object sender, RoutedEventArgs e)
-        {
-            DesignSourceTabContent();
-        }
-
-        private void sourceXMLRadioBtn_Unchecked(object sender, RoutedEventArgs e)
-        {
-            DesignSourceTabContent();
-        }
-
         private void FilterElementsChK_Checked(object sender, RoutedEventArgs e)
         {
             if (FilterElementsChK.IsChecked == true)
@@ -360,7 +206,7 @@ namespace GingerCore.Drivers.Appium
                     FilterElementsTxtbox.IsEnabled = true;
                 else
                     if (FilterElementsTxtbox != null)
-                        FilterElementsTxtbox.IsEnabled = false;
+                    FilterElementsTxtbox.IsEnabled = false;
         }
         #endregion Events
 
@@ -370,14 +216,14 @@ namespace GingerCore.Drivers.Appium
         {
             try
             {
-                if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-                    this.Title = AppiumDriver.DeviceName + " " + AppiumDriver.DriverDeviceType.ToString() + " Browser";
+                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
+                        mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+                    this.Title = mDriver.DeviceName + " " + mDriver.DriverDeviceType.ToString() + " Browser";
                 else
-                    this.Title = AppiumDriver.DeviceName + " " + AppiumDriver.DriverDeviceType.ToString();
+                    this.Title = mDriver.DeviceName + " " + mDriver.DriverDeviceType.ToString();
 
                 //don't track actions if asked in agent
-                if (AppiumDriver.RefreshDeviceScreenShots != null && AppiumDriver.RefreshDeviceScreenShots.Trim().ToUpper() != "YES")
+                if (mDriver.RefreshDeviceScreenShots != null && mDriver.RefreshDeviceScreenShots.Trim().ToUpper() != "YES")
                     TrackActionsChK.IsChecked = false;
 
                 //hide optional columns
@@ -389,21 +235,21 @@ namespace GingerCore.Drivers.Appium
                 SetAttributesActionsView(false);
 
                 //don't allow to record if no business flow
-                if (BF == null)
+                if (mBF == null)
                 {
                     RecordBtn.Visibility = System.Windows.Visibility.Collapsed;
                     actionsStckPnl.Visibility = System.Windows.Visibility.Collapsed;
                 }
 
                 //don't allow record in browser mode
-                if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
+                        mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
                 {
                     RecordBtn.Visibility = System.Windows.Visibility.Collapsed;
                 }
 
                 //show device buttons according to type
-                switch (AppiumDriver.DriverPlatformType)
+                switch (mDriver.DriverPlatformType)
                 {
                     case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                         //all buttons as default
@@ -455,9 +301,9 @@ namespace GingerCore.Drivers.Appium
             {
                 Mouse.OverrideCursor = null;
                 Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, ex.Message);
-                AppiumDriver.ConnectedToDevice = false;
-                
-                return false;               
+                mDriver.ConnectedToDevice = false;
+
+                return false;
             }
         }
 
@@ -494,11 +340,11 @@ namespace GingerCore.Drivers.Appium
         private System.Windows.Point GetPointOnMobile(System.Windows.Point pointOnImage)
         {
             System.Windows.Point pointOnMobile = new System.Windows.Point();
-            double ratio_X=1;
-            double ratio_Y=1;
-            
-            if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOS &&
-                    AppiumDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
+            double ratio_X = 1;
+            double ratio_Y = 1;
+
+            if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOS &&
+                    mDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
             {
                 ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
                 ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
@@ -534,7 +380,7 @@ namespace GingerCore.Drivers.Appium
                     }
 
                     //click the element
-                    AppiumDriver.TapXY(pointOnMobile_X, pointOnMobile_Y);
+                    mDriver.TapXY(pointOnMobile_X, pointOnMobile_Y);
 
                     //update the screen
                     LoadMobileScreenImage(true, 1000);
@@ -561,7 +407,7 @@ namespace GingerCore.Drivers.Appium
             try
             {
                 step = 1;
-                pageSourceString = await AppiumDriver.GetPageSource();
+                pageSourceString = await mDriver.GetPageSource();
                 pageSourceTextViewer.Text = pageSourceString;
                 step = 2;
                 pageSourceXml = new XmlDocument();
@@ -570,8 +416,8 @@ namespace GingerCore.Drivers.Appium
             }
             catch (Exception ex)
             {
-                if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                                AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
+                                mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
                 else
                     Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
@@ -595,7 +441,7 @@ namespace GingerCore.Drivers.Appium
 
         private void DesignSourceTabContent()
         {
-            if(sourceXMLRadioBtn.IsChecked == true)
+            if (sourceXMLRadioBtn.IsChecked == true)
             {
                 if (pageSourceXMLViewer == null || pageSourceTextViewer == null)
                     return;
@@ -618,7 +464,7 @@ namespace GingerCore.Drivers.Appium
                         pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     //failed to load the XML view
                     sourceLbl.Content = "XML View Failure";
@@ -636,11 +482,11 @@ namespace GingerCore.Drivers.Appium
                 pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
-        
+
         public XmlNode GetElementXmlNodeFromMouse()
-        {              
-               System.Windows.Point pointOnImage = Mouse.GetPosition(DeviceImage);
-               return FindElementXmlNodeByXY((long)pointOnImage.X, (long)pointOnImage.Y);                    
+        {
+            System.Windows.Point pointOnImage = Mouse.GetPosition(DeviceImage);
+            return FindElementXmlNodeByXY((long)pointOnImage.X, (long)pointOnImage.Y);
         }
 
 
@@ -650,7 +496,7 @@ namespace GingerCore.Drivers.Appium
             {
                 //get screen elements nodes
                 XmlNodeList ElmsNodes;
-                 // Do once?
+                // Do once?
                 // if XMLSOurce changed we need to refresh
                 //pageSourceString = AppiumDriver.GetPageSource();                                
                 //pageSourceXml = new XmlDocument();
@@ -668,7 +514,7 @@ namespace GingerCore.Drivers.Appium
                     {
                         //if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOS && elemNode.LocalName == "UIAWindow") continue;                        
                         //try { if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.Android && elemNode.Attributes["focusable"].Value == "false") continue; }catch (Exception ex) { }
-                        bool skipElement= false;
+                        bool skipElement = false;
                         if (FilterElementsChK.IsChecked == true)
                         {
                             string[] filterList = FilterElementsTxtbox.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -683,8 +529,8 @@ namespace GingerCore.Drivers.Appium
                                         break;
                                     }
                             }
-                            catch (Exception ex) 
-                            { 
+                            catch (Exception ex)
+                            {
                                 //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); 
                             }
                         }
@@ -702,7 +548,7 @@ namespace GingerCore.Drivers.Appium
                         long element_Max_X = -1;
                         long element_Max_Y = -1;
 
-                        switch (AppiumDriver.DriverPlatformType)
+                        switch (mDriver.DriverPlatformType)
                         {
                             case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                 try
@@ -747,7 +593,7 @@ namespace GingerCore.Drivers.Appium
                                     element_Max_X = element_Start_X + Convert.ToInt64(elementNode.Attributes["width"].Value);
                                     element_Max_Y = element_Start_Y + Convert.ToInt64(elementNode.Attributes["height"].Value);
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     element_Start_X = -1;
                                     element_Start_Y = -1;
@@ -810,10 +656,10 @@ namespace GingerCore.Drivers.Appium
                     XmlNodeList validateElms;
                     //ID
                     string element_ID_attrib = string.Empty;
-                    string element_ID_value=string.Empty;
+                    string element_ID_value = string.Empty;
                     try
                     {
-                        switch(AppiumDriver.DriverPlatformType)
+                        switch (mDriver.DriverPlatformType)
                         {
                             case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                 element_ID_attrib = "resource-id";
@@ -847,10 +693,10 @@ namespace GingerCore.Drivers.Appium
                     }
                     //Content Description
                     string element_Desc_attrib = string.Empty;
-                    string element_Desc_value=string.Empty;
+                    string element_Desc_value = string.Empty;
                     try
                     {
-                        switch (AppiumDriver.DriverPlatformType)
+                        switch (mDriver.DriverPlatformType)
                         {
                             case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                 element_Desc_attrib = "content-desc";
@@ -884,10 +730,10 @@ namespace GingerCore.Drivers.Appium
                     }
                     //Text
                     string element_Text_attrib = string.Empty;
-                    string element_Text_value=string.Empty;
+                    string element_Text_value = string.Empty;
                     try
                     {
-                        switch (AppiumDriver.DriverPlatformType)
+                        switch (mDriver.DriverPlatformType)
                         {
                             case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                 element_Text_attrib = "text";
@@ -909,7 +755,7 @@ namespace GingerCore.Drivers.Appium
                             //name is no more supported by appium , so we'll always record by xpath instead of name
                             elemntAct.LocateBy = eLocateBy.ByXPath;
                             elemntAct.LocateValue = xpath;
-                       
+
                             return elemntAct;
                         }
                     }
@@ -935,7 +781,7 @@ namespace GingerCore.Drivers.Appium
                         {
                             //add index
                             string element_Xpath_Orig = element_Xpath;
-                            switch (AppiumDriver.DriverPlatformType)
+                            switch (mDriver.DriverPlatformType)
                             {
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                                     string element_Index;
@@ -955,7 +801,7 @@ namespace GingerCore.Drivers.Appium
                                     break;
 
                                 case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                    string element_path_attrib="path";
+                                    string element_path_attrib = "path";
                                     string element_path_value = string.Empty;
                                     try
                                     {
@@ -1016,7 +862,7 @@ namespace GingerCore.Drivers.Appium
                     case ActGenElement.eGenElementAction.Click:
                         elemntAct.GenElementAction = actionType;
                         elemntAct.Description = "Clicking on " + elemntAct.LocateValue;
-                        BF.CurrentActivity.Acts.Add(elemntAct);
+                        mBF.CurrentActivity.Acts.Add(elemntAct);
                         if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         break;
 
@@ -1027,7 +873,7 @@ namespace GingerCore.Drivers.Appium
                         if (InputBoxWindow.OpenDialog("Set Element Value", "Value to Set:", ref value))
                         {
                             elemntAct.AddOrUpdateInputParamValue("Value", value);
-                            BF.CurrentActivity.Acts.Add(elemntAct);
+                            mBF.CurrentActivity.Acts.Add(elemntAct);
                             if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         }
                         break;
@@ -1039,7 +885,7 @@ namespace GingerCore.Drivers.Appium
                         if (InputBoxWindow.OpenDialog("Set Element Attribute", "Wanted Attribute Name:", ref Attribute))
                         {
                             elemntAct.AddOrUpdateInputParamValue("Value", Attribute);
-                            BF.CurrentActivity.Acts.Add(elemntAct);
+                            mBF.CurrentActivity.Acts.Add(elemntAct);
                             if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         }
                         break;
@@ -1047,7 +893,7 @@ namespace GingerCore.Drivers.Appium
                     case ActGenElement.eGenElementAction.Visible:
                         elemntAct.GenElementAction = actionType;
                         elemntAct.Description = "Validate visibility of " + elemntAct.LocateValue;
-                        BF.CurrentActivity.Acts.Add(elemntAct);
+                        mBF.CurrentActivity.Acts.Add(elemntAct);
                         if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
                         break;
                 }
@@ -1057,7 +903,7 @@ namespace GingerCore.Drivers.Appium
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to record the mobile action", ex);
             }
         }
-        
+
         private void ShowSelectedElementDetails(System.Windows.Point clickedPoint)
         {
             try
@@ -1090,7 +936,7 @@ namespace GingerCore.Drivers.Appium
                     prevInspectElementNode = inspectElementNode;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.MobileShowElementDetailsFailed, ex.Message);
             }
@@ -1100,10 +946,10 @@ namespace GingerCore.Drivers.Appium
         {
             try
             {
-                AppiumDriver.DoDrag(Convert.ToInt32(startPoint.X), Convert.ToInt32(startPoint.Y),
+                mDriver.DoDrag(Convert.ToInt32(startPoint.X), Convert.ToInt32(startPoint.Y),
                                     Convert.ToInt32(endPoint.X), Convert.ToInt32(endPoint.Y));
                 if (RecordBtn.IsChecked == true)
-                    BF.CurrentActivity.Acts.Add(new ActMobileDevice()
+                    mBF.CurrentActivity.Acts.Add(new ActMobileDevice()
                     {
                         Active = true,
                         Description = "Do Drag XY to XY",
@@ -1138,7 +984,7 @@ namespace GingerCore.Drivers.Appium
                 double element_Max_X = 0;
                 double element_Max_Y = 0;
 
-                switch (AppiumDriver.DriverPlatformType)
+                switch (mDriver.DriverPlatformType)
                 {
                     case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
                         ratio_X = DeviceImage.Source.Width / DeviceImage.ActualWidth;
@@ -1158,7 +1004,7 @@ namespace GingerCore.Drivers.Appium
                         }
                         break;
                     case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                        if (AppiumDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
+                        if (mDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
                         {
                             ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
                             ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
@@ -1193,7 +1039,7 @@ namespace GingerCore.Drivers.Appium
                 mHighightRectangle.MouseEnter += DeviceImage_MouseEnter;
                 mHighightRectangle.MouseLeave += DeviceImage_MouseLeave;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to draw mobile element rectangle", ex);
             }
@@ -1233,7 +1079,7 @@ namespace GingerCore.Drivers.Appium
             {
                 selectElmtLbl.Visibility = System.Windows.Visibility.Collapsed;
                 attributesStckPnl.Visibility = System.Windows.Visibility.Visible;
-                if (BF != null)
+                if (mBF != null)
                 {
                     actionsStckPnl.Visibility = System.Windows.Visibility.Visible;
                     attributesActionsSpliter.Visibility = System.Windows.Visibility.Visible;
@@ -1259,8 +1105,8 @@ namespace GingerCore.Drivers.Appium
                 this.Width = this.Width + Convert.ToDouble(InspectorCol.Width.ToString());
 
                 //allow only XML view for browser mode
-                if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
+                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
+                        mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
                 {
                     elementAttributesTab.Visibility = System.Windows.Visibility.Collapsed;
                     InspectorPointBtn.Visibility = System.Windows.Visibility.Collapsed;
@@ -1278,7 +1124,7 @@ namespace GingerCore.Drivers.Appium
 
         public void HighLightElement(AppiumElementInfo AEI)
         {
-            DrawElementRectangle(AEI.XmlNode);            
+            DrawElementRectangle(AEI.XmlNode);
         }
 
         public void StartRecording()
