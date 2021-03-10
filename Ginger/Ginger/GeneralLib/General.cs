@@ -80,7 +80,12 @@ namespace Ginger
             /// <summary>
             /// List of items in Shared Repository to add
             /// </summary>
-            AddFromShardRepository = 7
+            AddFromShardRepository = 7,
+
+            /// <summary>
+            /// Item opened from Windows Explorer in the Side Panel
+            /// </summary>
+            Explorer
         }
 
         public static bool isDesignMode()

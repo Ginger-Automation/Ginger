@@ -202,7 +202,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mDispatcherTimer.IsEnabled = false;
         }
 
-        ElementInfo mSpyElement;
+        public ElementInfo mSpyElement;
 
         private void timenow(object sender, EventArgs e)
         {
@@ -230,7 +230,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        private void FocusSpyItemOnElementsGrid()
+        public void FocusSpyItemOnElementsGrid()
         {
             if (mSpyElement == null)
             {
@@ -244,7 +244,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mWinExplorer.LearnElementInfoDetails(mSpyElement);
                 matchingOriginalElement = (ElementInfo)mWinExplorer.GetMatchingElement(mSpyElement, mPOM.GetUnifiedElementsList());
             }
-
 
             if (mPOM.MappedUIElements.Contains(matchingOriginalElement))
             {

@@ -679,7 +679,8 @@ namespace GingerWPF.BusinessFlowsLib
                         mApplicationAgentsMapPage.MappingList.IsEnabled = false;
                     }
 
-                    if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add)
+                    bool RunActionFromExplorer = mAddActionMainPage.xSelectedItemFrame.Content.GetType() == typeof(LiveSpyNavPage) || mAddActionMainPage.xSelectedItemFrame.Content.GetType() == typeof(WindowsExplorerNavPage);
+                    if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add && !RunActionFromExplorer)
                     {
                         CollapseAddActionsPnl();
                     }
@@ -779,10 +780,10 @@ namespace GingerWPF.BusinessFlowsLib
                     UpdateAutomatePageRunner();
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentAction:
-                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object, false).ConfigureAwait(false);
+                    await RunAutomatePageAction((Tuple<Activity, Act, bool>)args.Object, false).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn:
-                    await RunAutomatePageAction((Tuple<Activity, Act>)args.Object).ConfigureAwait(false);
+                    await RunAutomatePageAction((Tuple<Activity, Act, bool>)args.Object).ConfigureAwait(false);
                     break;
                 case AutomateEventArgs.eEventType.RunCurrentActivity:
                     await RunAutomatePageActivity((Activity)args.Object).ConfigureAwait(false);
@@ -937,13 +938,25 @@ namespace GingerWPF.BusinessFlowsLib
             }
         }
 
-        public async Task RunAutomatePageAction(Tuple<Activity,Act> actionToExecuteInfo, bool moveToNextAction=true, bool checkIfActionAllowedToRun = true)
+        public async Task RunAutomatePageAction(Tuple<Activity,Act, bool> actionToExecuteInfo, bool moveToNextAction = true, bool checkIfActionAllowedToRun = true)
         {
             if (CheckIfExecutionIsInProgress()) return;
 
-            Activity parentActivity = actionToExecuteInfo.Item1;
+            bool skipInternalValidations = actionToExecuteInfo.Item3;
+
+            Activity parentActivity;
+
+            if (skipInternalValidations)
+            {
+                parentActivity = mBusinessFlow.CurrentActivity;
+            }
+            else
+            {
+                parentActivity = actionToExecuteInfo.Item1;
+            }
+
             Act actionToExecute = actionToExecuteInfo.Item2;
-            if (parentActivity.Acts.Count() == 0)
+            if (parentActivity.Acts.Count() == 0 && !skipInternalValidations)
             {
                 Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
                 return;
@@ -961,11 +974,14 @@ namespace GingerWPF.BusinessFlowsLib
                 //SetUIElementsBehaverDuringExecution();
 
                 mBusinessFlow.CurrentActivity = parentActivity;
-                mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                if (!skipInternalValidations)
+                {
+                    mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                }
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
                 //No need of agent for actions like DB and read for excel. For other need agent  
-                Type actType = mRunner.CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem.GetType();
+                Type actType = actionToExecute.GetType();
                 if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
                 {
                     mRunner.SetCurrentActivityAgent();
@@ -975,8 +991,6 @@ namespace GingerWPF.BusinessFlowsLib
                     mRunner.SetCurrentActivityAgent();
                 }
 
-                mBusinessFlow.CurrentActivity = parentActivity;
-                mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
                 mRunner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
 
                 var result = await mRunner.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);

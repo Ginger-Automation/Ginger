@@ -339,7 +339,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xRunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, mActionBeenEdit));
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(mActivity, mActionBeenEdit, false));
         }
 
         public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)

@@ -3921,7 +3921,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         public ElementInfo GetElementAtPoint(long ptX, long ptY)
         {
             PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-            Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+            Request.AddEnumValue(WindowExplorerOperationType.GetVisibleElements);
             Request.ClosePackage();
             General.DoEvents();
 

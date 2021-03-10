@@ -116,10 +116,11 @@ namespace Ginger.Actions
             EditMode = editMode;
 
             mAction = act;
-            if (editMode != General.eRIPageViewMode.View)
+            if (editMode != General.eRIPageViewMode.View && editMode != General.eRIPageViewMode.Explorer)
             {
                 mAction.SaveBackup();
             }
+
             mAction.PropertyChanged -= ActionPropertyChanged;
             mAction.PropertyChanged += ActionPropertyChanged;
             mAction.InputValues.CollectionChanged -= InputValues_CollectionChanged;
@@ -170,7 +171,7 @@ namespace Ginger.Actions
                 mAction.AddNewReturnParams = true;
             }
 
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusTabImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
             }
@@ -183,6 +184,10 @@ namespace Ginger.Actions
             {
                 SetViewMode();
             }
+            else if(EditMode == General.eRIPageViewMode.Explorer)
+            {
+                SetExplorerMode();
+            }
 
             if ((EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View) &&
                        (mAction.Status != null && mAction.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending))
@@ -193,6 +198,18 @@ namespace Ginger.Actions
             {
                 xActionTabs.SelectedItem = xOperationSettingsTab;
             }
+        }
+
+        private void SetExplorerMode()
+        {
+            xExplorerOperationsRow.Height = new GridLength(60);
+            xHelpTab.Visibility = Visibility.Collapsed;
+            xHelpButton.Visibility = Visibility.Collapsed;
+            xDetailsTabTextBlock.Visibility = Visibility.Collapsed;
+            xExecutionReportTabTextBlock.Visibility = Visibility.Collapsed;
+            xFlowControlTabHeaderTextBlock.Visibility = Visibility.Collapsed;
+            xOperationsTabTextBlock.Visibility = Visibility.Collapsed;
+            xOutputValuesTabHeaderTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void InitDetailsTabView()
@@ -345,7 +362,7 @@ namespace Ginger.Actions
             InitActionLog();
 
             //execution details section
-            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View)
+            if (EditMode == General.eRIPageViewMode.Automation || EditMode == General.eRIPageViewMode.View || EditMode == General.eRIPageViewMode.Explorer)
             {
                 BindingHandler.ObjFieldBinding(xExecutionStatusImage, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xExecutionStatusLabel, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
@@ -1764,6 +1781,24 @@ namespace Ginger.Actions
         {
             updateDSOutGrid();
             SetDSGridVisibility();
+        }
+
+        private void xRunActBtn_Click(object sender, RoutedEventArgs e)
+        {
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, mAction, true));
+
+            xActionTabs.SelectedItem = xExecutionReportTab;
+        }
+
+        private void xAddActBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mAction == null)
+            {
+                Reporter.ToUser(eUserMsgKey.AskToSelectAction);
+                return;
+            }
+
+            ActionsFactory.AddActionsHandler(mAction, mContext);
         }
     }
 }

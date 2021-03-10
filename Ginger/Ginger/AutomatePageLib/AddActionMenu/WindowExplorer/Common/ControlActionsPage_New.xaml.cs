@@ -6,7 +6,9 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowWindows;
 using Ginger.Reports;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms;
@@ -94,23 +96,8 @@ namespace Ginger.WindowExplorer
             else
             {
                 SetActionDetails(mAction);
-                actEditPage = ActionsFactory.GetActionEditPage(mAction, mContext);    // new ActionEditPage(mAction, General.eRIPageViewMode.Child);
-
-                //if (actEditPage.GetType() == typeof(ActUIElementEditPage))
-                //{
-                //    ActUIElementEditPage uiElemEditPage = actEditPage as ActUIElementEditPage;
-                //    uiElemEditPage.ElementLocateByComboBox.Visibility = Visibility.Collapsed;
-                //    uiElemEditPage.xLocateByLbl.Visibility = Visibility.Collapsed;
-
-                //    uiElemEditPage.LocateValueEditFrame.Visibility = Visibility.Collapsed;
-                //    uiElemEditPage.LocateValueLable.Visibility = Visibility.Collapsed;
-
-                //    if (mAction.GetType() == typeof(ActUIElement))
-                //    {
-                //        ActUIElement uiElemAct = mAction as ActUIElement;
-                //        uiElemEditPage.ElementTypeComboBox.SelectedItem = uiElemAct.ElementType;
-                //    }
-                //}
+                mAction.Context = mContext;
+                actEditPage = new ActionEditPage(mAction, General.eRIPageViewMode.Explorer);
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
                 xActEditPageFrame.Content = actEditPage;
@@ -127,17 +114,17 @@ namespace Ginger.WindowExplorer
             if (mDataPage != null)
             {
                 DataFrame.Visibility = System.Windows.Visibility.Visible;
-                DataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
-                DataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
+                xDataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
+                xDataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
                 xDataFrameExpander.Visibility = System.Windows.Visibility.Visible;
                 DataFrame.Content = mDataPage;
             }
             else
             {
-                mLastDataGridRowHeight = DataFrameRow.Height.Value;
+                mLastDataGridRowHeight = xDataFrameRow.Height.Value;
                 DataFrame.Visibility = System.Windows.Visibility.Collapsed;
-                DataFrameRow.Height = new GridLength(0);
-                DataFrameSplitter.Visibility = System.Windows.Visibility.Collapsed;
+                xDataFrameRow.Height = new GridLength(0);
+                xDataFrameSplitter.Visibility = System.Windows.Visibility.Collapsed;
                 xDataFrameExpander.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
@@ -209,13 +196,7 @@ namespace Ginger.WindowExplorer
         private void InitActionsGrid()
         {
             xDDActions.ItemsSource = mActions;
-            //GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-            //defView.GridColsView = new ObservableList<GridColView>();
-            //defView.GridColsView.Add(new GridColView() { Field = Act.Fields.Description, WidthWeight = 10 });
-            //AvailableControlActionsGrid.SetAllColumnsDefaultView(defView);
-            //AvailableControlActionsGrid.InitViewItems();
-            //AvailableControlActionsGrid.DataSourceList = mActions;
-            //AvailableControlActionsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
+            xDDActions.SelectedItem = mActions.CurrentItem;
         }
 
 
@@ -261,8 +242,13 @@ namespace Ginger.WindowExplorer
             {
                 //Set UIElement action locator
                 ActUIElement actUI = (ActUIElement)act;
-                actUI.ElementLocateBy = EL.LocateBy;
-                actUI.ElementLocateValue = EL.LocateValue;
+
+                if (EL != null && actUI.ElementLocateBy != eLocateBy.POMElement)
+                {
+                    actUI.ElementLocateBy = EL.LocateBy;
+                    actUI.ElementLocateValue = EL.LocateValue;
+                }
+
                 //TODO: Remove below  if once one of the field from Value and Value to select is removed
                 if (actUI.ElementAction == ActUIElement.eElementAction.Click
                     || actUI.ElementAction == ActUIElement.eElementAction.Select
@@ -292,34 +278,31 @@ namespace Ginger.WindowExplorer
 
         private void xRunActBtn_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: do events?
-            if(actEditPage != null)
-            {
-            }
-
-            //We came from ActionEditPage 
             if (mAction == null)
             {
-                mAction = (Act) mActions.CurrentItem;
+                mAction = (Act)mActions.CurrentItem;
             }
 
-            //SetActionDetails(mAction);
+            SetActionDetails(mAction);
 
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, mAction, true));
+
+            //mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             //mContext.Runner.PrepActionValueExpression(mAction);
+
             //ApplicationAgent ag = (ApplicationAgent)mContext.Runner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
             //if (ag != null)
             //{
             //    mContext.Runner.RunAction(mAction);
-            //mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
             //    mContext.Agent.RunAction(act);
             //}
 
-            mContext.Agent.RunAction(mAction);
+            //mContext.Agent.RunAction(mAction);
 
             if (mAction.Status != null)
                 xExecutionStatusIcon.Status = mAction.Status.Value;
             //else
-            //    xExecutionStatusIcon.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
+            //    xExecutionStatusIcon.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated;
 
             if (!string.IsNullOrEmpty(mAction.Error))
             {
@@ -343,7 +326,12 @@ namespace Ginger.WindowExplorer
                 xExecInfoLbl.Content = "Execution Info : ";
             }
 
-            string retval = GetAllRetVals(mAction);
+            string returnVals = GetAllRetVals(mAction);
+            if(!string.IsNullOrEmpty(returnVals))
+            {
+                xExecInfoRow.Height = new GridLength(30);
+                xExecInfoLbl.Content += Environment.NewLine + returnVals;
+            }
         }
 
         private string GetAllRetVals(Act act)
@@ -400,6 +388,18 @@ namespace Ginger.WindowExplorer
             mElementInfo.Locators.CurrentItem = mLocators.CurrentItem;
 
             xLocateValueTxtBox.Text = (mElementInfo.Locators.CurrentItem as ElementLocator).LocateValue;
+        }
+
+        private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            xDataFrameRow.Height = new GridLength(200, GridUnitType.Star);
+            xDataFrameRow.MaxHeight = Double.PositiveInfinity;
+        }
+
+        private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            xDataFrameRow.Height = new GridLength(35);
+            xDataFrameRow.MaxHeight = 35;
         }
     }
 }

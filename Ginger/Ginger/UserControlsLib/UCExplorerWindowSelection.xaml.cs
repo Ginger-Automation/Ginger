@@ -30,39 +30,38 @@ namespace Amdocs.Ginger.UserControls
     public partial class UCExplorerWindowSelection : UserControl
     {
         public Context context;
-        LocateByPOMElementPage locateByPOMElementPage;
+        public LocateByPOMElementPage locateByPOMElementPage;
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
-        ObservableList<ApplicationPOMModel> mPomModels = new ObservableList<ApplicationPOMModel>();
-        ApplicationPOMModel selectedPOM;
+        public ApplicationPOMModel SelectedPOM;
 
         public UCExplorerWindowSelection()
         {
             InitializeComponent();
         }
 
-        private void AddSelectedPOM(List<object> selectedPOMs)
-        {
-            if (selectedPOMs != null && selectedPOMs.Count > 0)
-            {
-                foreach (ApplicationPOMModel pom in selectedPOMs)
-                {
-                    if (mPomModels.Contains(pom) == false)
-                    {
-                        mPomModels.Add(pom);
-                    }
-                }
-            }
-        }
+        //private void AddSelectedPOM(List<object> selectedPOMs)
+        //{
+        //    if (selectedPOMs != null && selectedPOMs.Count > 0)
+        //    {
+        //        foreach (ApplicationPOMModel pom in selectedPOMs)
+        //        {
+        //            if (mPomModels.Contains(pom) == false)
+        //            {
+        //                mPomModels.Add(pom);
+        //            }
+        //        }
+        //    }
+        //}
 
-        private void MApplicationPOMSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
-        {
-            AddSelectedPOM(e.SelectedItems);
-        }
+        //private void MApplicationPOMSelectionPage_SelectionDone(object sender, SelectionTreeEventArgs e)
+        //{
+        //    AddSelectedPOM(e.SelectedItems);
+        //}
 
-        private void POMsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        //private void POMsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
 
-        }
+        //}
 
         private void xIntegratePOMChkBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -70,17 +69,27 @@ namespace Amdocs.Ginger.UserControls
             {
                 ActUIElement act = new ActUIElement();
 
-                ///try #1
                 locateByPOMElementPage = new LocateByPOMElementPage(context, act, nameof(ActUIElement.ElementType), act, nameof(ActUIElement.ElementLocateValue), true);
+                locateByPOMElementPage.SelectPOM_Click(sender, e);
 
-                // original
-                locateByPOMElementPage = new LocateByPOMElementPage(context, null, null, null, nameof(ActBrowserElement.Fields.PomGUID));
-                locateByPOMElementPage.OnlyPOMSelection = true;
+                locateByPOMElementPage.POMChangedPageEvent += LocateByPOMElementPage_POMChangedPageEvent;
 
+                SelectedPOM = locateByPOMElementPage.SelectedPOM;
                 xPOMSelectionFrame.Content = locateByPOMElementPage;
             }
 
             xPOMSelectionFrame.Visibility = Visibility.Visible;
+        }
+
+        private void LocateByPOMElementPage_POMChangedPageEvent()
+        {
+            SelectedPOM = locateByPOMElementPage.SelectedPOM;
+        }
+
+        private void SelectedPOM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Reporter.ToLog(eLogLevel.ERROR, "Selected POM Change TRIGGERED");
+            SelectedPOM = locateByPOMElementPage.SelectedPOM;
         }
 
         private void xIntegratePOMChkBox_Unchecked(object sender, RoutedEventArgs e)

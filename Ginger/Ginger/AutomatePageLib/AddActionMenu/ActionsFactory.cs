@@ -228,7 +228,7 @@ namespace Ginger.BusinessFlowPages
         /// <param name="elementInfo"></param>
         /// <param name="mContext"></param>
         /// <returns></returns>
-        static Act GeneratePOMElementRelatedAction(ElementInfo elementInfo, Context mContext)
+        public static Act GeneratePOMElementRelatedAction(ElementInfo elementInfo, Context mContext)
         {
             Act instance;
             IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);

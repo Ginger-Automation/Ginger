@@ -64,6 +64,7 @@ using System.Drawing;
 using Ginger.Actions.UserControls;
 using GingerCore.Actions.VisualTesting;
 using HtmlAgilityPack;
+using Ginger.ApplicationModelsLib.POMModels;
 
 namespace Ginger.WindowExplorer
 {
@@ -95,8 +96,9 @@ namespace Ginger.WindowExplorer
         ObservableList<ElementInfo> VisibleElementsInfoList = new ObservableList<ElementInfo>();
         bool mSyncControlsViewWithLiveSpy = false;
         bool mFirstElementSelectionDone = false;
-        Page mControlFrameContentPage = null;
+        //Page mControlFrameContentPage = null;
         WindowExplorerPOMPage mWindowExplorerPOMPage;
+        PomAllElementsPage pomAllElementsPage = null;
 
         Context mContext;
 
@@ -115,6 +117,7 @@ namespace Ginger.WindowExplorer
             xWindowSelection.AddSwitchWindowActionButton.Click += AddSwitchWindowActionButton_Click;
 
             mContext = context;
+            mContext.PropertyChanged += MContext_PropertyChanged;
             xWindowSelection.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
@@ -135,7 +138,7 @@ namespace Ginger.WindowExplorer
             if (mWindowExplorerDriver is IPOM)
             {
                 xWindowSelection.xIntegratePOMChkBox.Visibility = Visibility.Visible;
-                //xWindowSelection.POMsComboBox.Visibility = Visibility.Visible;
+                xWindowSelection.xIntegratePOMChkBox.IsChecked = true;
 
                 mWindowExplorerPOMPage = new WindowExplorerPOMPage(mApplicationAgent);
                 ((IPOM)mWindowExplorerDriver).ActionRecordedCallback(mWindowExplorerPOMPage.ActionRecorded);
@@ -174,6 +177,8 @@ namespace Ginger.WindowExplorer
 
             SetControlsGridView();
 
+            SetPlatformBasedUIUpdates();
+
             InitControlPropertiesGridView();
             InitControlLocatorsGridView();
 
@@ -194,6 +199,29 @@ namespace Ginger.WindowExplorer
 
             RefreshTabsContent();
             //((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
+        }
+
+        private void SetPlatformBasedUIUpdates()
+        {
+            if(mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile)
+            {
+                xPageSrcTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                xPageSrcTab.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
+            {
+                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+                {
+
+                }
+            }
         }
 
         /// <summary>
@@ -757,6 +785,8 @@ namespace Ginger.WindowExplorer
         {
             //StatusTextBlock.Text = "Ready";
         }
+        bool POMBasedAction = false;
+        ElementInfo POMElement = null;
 
         private void ShowCurrentControlInfo()
         {
@@ -772,10 +802,11 @@ namespace Ginger.WindowExplorer
                 if (mWindowExplorerDriver.IsElementObjectValid(EI.ElementObject))
                 {
                     EI.WindowExplorer = mWindowExplorerDriver;
+
                     mWindowExplorerDriver.HighLightElement(EI);
 
                     //General tab will show the generic element info page, customized page will be in Data tab
-                    mControlFrameContentPage = new ElementInfoPage(EI);
+                    //mControlFrameContentPage = new ElementInfoPage(EI);
                     //ControlFrame.Content = mControlFrameContentPage;
                     SetDetailsExpanderDesign(true, EI);
                     if (mCurrentControlTreeViewItem is IWindowExplorerTreeItem)
@@ -786,6 +817,38 @@ namespace Ginger.WindowExplorer
                     else
                     {
                         xUCElementDetails.xPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
+                    }
+
+                    if(xWindowSelection.xIntegratePOMChkBox.IsChecked == true && xWindowSelection.SelectedPOM != null)
+                    {
+                        pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
+                        ElementInfo matchingOriginalElement = (ElementInfo)mWindowExplorerDriver.GetMatchingElement(EI, xWindowSelection.SelectedPOM.GetUnifiedElementsList());
+
+                        if (matchingOriginalElement == null)
+                        {
+                            mWindowExplorerDriver.LearnElementInfoDetails(EI);
+                            matchingOriginalElement = (ElementInfo)mWindowExplorerDriver.GetMatchingElement(EI, xWindowSelection.SelectedPOM.GetUnifiedElementsList());
+                        }
+
+                        if (xWindowSelection.SelectedPOM.MappedUIElements.Contains(matchingOriginalElement) || xWindowSelection.SelectedPOM.UnMappedUIElements.Contains(matchingOriginalElement))
+                        {
+                            POMElement = matchingOriginalElement;
+                            /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
+                            POMBasedAction = true;
+                        }
+                        else
+                        {
+                            if (Reporter.ToUser(eUserMsgKey.ElementNotExistInPOM, EI.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
+                            {
+                                POMBasedAction = true;
+                                xWindowSelection.SelectedPOM.MappedUIElements.Add(EI);
+
+                                POMElement = EI;
+                                POMElement.ParentGuid = xWindowSelection.SelectedPOM.Guid;
+                            }
+                            else
+                                POMBasedAction = false;
+                        }
                     }
 
                     ShowControlActions(mCurrentControlTreeViewItem);
@@ -857,26 +920,44 @@ namespace Ginger.WindowExplorer
                     {
                         elementVal = Convert.ToString(EI.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
                     }
-                    //ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
-                    //{
-                    //    LocateBy = eLocateBy.POMElement,
-                    //    LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                    //    ElementValue = elementVal,
-                    //    AddPOMToAction = true,
-                    //    POMGuid = elementInfo.ParentGuid.ToString(),
-                    //    ElementGuid = elementInfo.Guid.ToString(),
-                    //    LearnedElementInfo = elementInfo,
-                    //};
 
-                    //check if we have POM in context if yes set the Locate by and value to the specific POM if not so set it to the first active Locator in the list of Locators
-                    ElementActionCongifuration actConfigurations = new ElementActionCongifuration
+                    ElementActionCongifuration actConfigurations;
+                    if (POMBasedAction)
                     {
-                        LocateBy = eiLocator.LocateBy,
-                        LocateValue = eiLocator.LocateValue,
-                        ElementValue = elementVal,
-                        ElementGuid = EI.Guid.ToString(),
-                        LearnedElementInfo = EI,
-                    };
+                        //ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
+                        //{
+                        //    LocateBy = eLocateBy.POMElement,
+                        //    LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
+                        //    ElementValue = elementVal,
+                        //    AddPOMToAction = true,
+                        //    POMGuid = elementInfo.ParentGuid.ToString(),
+                        //    ElementGuid = elementInfo.Guid.ToString(),
+                        //    LearnedElementInfo = elementInfo,
+                        //};
+                        //POMElement
+                        actConfigurations = new ElementActionCongifuration
+                        {
+                            LocateBy = eLocateBy.POMElement,
+                            LocateValue = POMElement.ParentGuid.ToString() + "_" + POMElement.Guid.ToString(),
+                            ElementValue = elementVal,
+                            AddPOMToAction = true,
+                            POMGuid = POMElement.ParentGuid.ToString(),
+                            ElementGuid = POMElement.Guid.ToString(),
+                            LearnedElementInfo = POMElement,
+                        };
+                    }
+                    else
+                    {
+                        //check if we have POM in context if yes set the Locate by and value to the specific POM if not so set it to the first active Locator in the list of Locators
+                        actConfigurations = new ElementActionCongifuration
+                        {
+                            LocateBy = eiLocator.LocateBy,
+                            LocateValue = eiLocator.LocateValue,
+                            ElementValue = elementVal,
+                            ElementGuid = EI.Guid.ToString(),
+                            LearnedElementInfo = EI,
+                        };
+                    }
 
                     CAP = new ControlActionsPage_New(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext, actConfigurations);
                 }
@@ -1433,6 +1514,11 @@ namespace Ginger.WindowExplorer
 
         private void XMainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if(xUCElementDetails.SelectedElement != null)
+            {
+                mWindowExplorerDriver.UnHighLightElements();
+            }
+
             xUCElementDetails.SelectedElement = currentHighlightedElement;
 
             mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
