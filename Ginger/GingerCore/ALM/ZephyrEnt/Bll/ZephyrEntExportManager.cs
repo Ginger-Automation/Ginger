@@ -180,7 +180,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                         {
                                             //Creating the Zip file - start
                                             string targetZipPath = System.IO.Directory.GetParent(activGroup.TempReportFolder).ToString();
-                                            string zipFileName = targetZipPath + "\\" + TestCaseName.ToString() + "_GingerHTMLReport.zip";
+                                            string zipFileName = targetZipPath + "\\" + TestCaseName + "_GingerHTMLReport.zip";
 
                                             if (!System.IO.File.Exists(zipFileName))
                                             {

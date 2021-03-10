@@ -63,7 +63,7 @@ namespace Ginger.ALM.Repository
             }
         }
 
-        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null)
+        public override bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath , bool performSaveAfterExport, BusinessFlow businessFlow = null)
         {
             TestCaseResource currentTC;
             if (activtiesGroup == null)
@@ -403,7 +403,7 @@ namespace Ginger.ALM.Repository
                 foreach (ZephyrEntPhaseTreeItem testSetItem in selectedTestSets)
                 {
                     //check if some of the Test Set was already imported                
-                    if (testSetItem.AlreadyImported == true)
+                    if (testSetItem.AlreadyImported)
                     {
                         Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testSetItem.Name);
                         if (userSelection == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
@@ -448,7 +448,7 @@ namespace Ginger.ALM.Repository
                             //add the applications mapped to the Activities
                             foreach (Activity activ in tsBusFlow.Activities)
                             {
-                                if (string.IsNullOrEmpty(activ.TargetApplication) == false)
+                                if (!string.IsNullOrEmpty(activ.TargetApplication))
                                 {
                                     if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
                                     {

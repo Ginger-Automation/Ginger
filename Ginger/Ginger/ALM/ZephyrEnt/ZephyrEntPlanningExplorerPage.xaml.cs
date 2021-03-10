@@ -298,7 +298,7 @@ namespace Ginger.ALM.ZephyrEnt
                         UpdateIfAlreadyImported(ts);
                     }
                 });
-                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSets) == true)
+                if (ALMIntegration.Instance.ImportSelectedTestSets(mImportDestinationPath, (IEnumerable<object>)CurrentSelectedTestSets))
                 {
                     //Refresh the explorer selected tree items import status
                     LoadDataBizFlows();

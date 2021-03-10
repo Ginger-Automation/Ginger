@@ -90,7 +90,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
 
         private void selectBtn_Clicked(object sender, RoutedEventArgs e)
         {
-            if (xCreateBusinessFlowFolder.IsChecked == true)
+            if (Convert.ToBoolean(xCreateBusinessFlowFolder.IsChecked))
             {
                 TestRepositoryFolderTreeItem.IsCreateBusinessFlowFolder = true;
             }
@@ -108,7 +108,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
         }
         private void xCreateBusinessFlowFolder_Checked(object sender, RoutedEventArgs e)
         {
-            if (xCreateBusinessFlowFolder.IsChecked == true)
+            if (Convert.ToBoolean(xCreateBusinessFlowFolder.IsChecked))
             {
                 TestRepositoryFolderTreeItem.IsCreateBusinessFlowFolder = true;
             }

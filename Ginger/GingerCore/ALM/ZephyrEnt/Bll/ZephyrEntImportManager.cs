@@ -78,7 +78,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             //Get the TC parameters and their selected value
             if (linkedTest != null)
             {
-                if (linkedTest.Split(';')[0].ToString() != testCase.Name.ToString())
+                if (linkedTest.Split(';')[0].ToString() != testCase.Name)
                 {
                     if (newTSTest.Description == null)
                     {
@@ -419,7 +419,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             }
 
                             //add linked variable if needed
-                            if (string.IsNullOrEmpty(linkedVariable) == false)
+                            if (!string.IsNullOrEmpty(linkedVariable))
                             {
                                 stepActivityVar.LinkedVariableName = linkedVariable;
                             }
@@ -493,7 +493,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         //add as String param
                         VariableString busVar = new VariableString();
                         busVar.Name = var.Key;
-                        ((VariableString)busVar).InitialStringValue = var.Value;
+                        busVar.InitialStringValue = var.Value;
                         busFlow.AddVariable(busVar);
                     }
                 }
@@ -564,7 +564,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                .Where(x => !tSTestCaseSteps.Where(item => item.TestId == testInstance.TestId).Select(y => y.Id).ToList().Contains(x.ExternalID)).ToList();
 
-                tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
+                tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
 
                 var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
                 for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)

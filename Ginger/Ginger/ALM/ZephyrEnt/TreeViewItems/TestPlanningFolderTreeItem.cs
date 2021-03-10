@@ -114,29 +114,6 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             return CurrentChildrens;
         }
 
-
-        private void AddsubFolders(string sDir, List<ITreeViewItem> Childrens)
-        {
-            try
-            {
-                foreach (string d in Directory.GetDirectories(Path))
-                {
-                    TestPlanningFolderTreeItem BFFTI = new TestPlanningFolderTreeItem();
-                    string FolderName = System.IO.Path.GetFileName(d);
-
-                    BFFTI.Folder = FolderName;
-                    BFFTI.Path = d;
-
-                    Childrens.Add(BFFTI);
-                }
-
-            }
-            catch (System.Exception excpt)
-            {
-                Console.WriteLine(excpt.Message);
-            }
-        }
-
         bool ITreeViewItem.IsExpandable()
         {
             return true;
