@@ -335,8 +335,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 }
                             }
                             else if (paramSelectedValue != "<Empty>")
+                            {
                                 isflowControlParam = true;
-
+                            }
                             //check if already exist param with that name
                             VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
                             if (stepActivityVar == null)
