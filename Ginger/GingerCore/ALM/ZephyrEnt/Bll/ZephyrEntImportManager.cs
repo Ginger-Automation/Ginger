@@ -397,7 +397,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                                     if (isflowControlParam == true)
+                                    {
                                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                                    }
                                 }
                                 //set the selected value
                                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -429,12 +431,17 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     {
                         int startGroupActsIndxInBf = 0;
                         if (busFlow.Activities.Count > 0)
+                        {
                             startGroupActsIndxInBf = busFlow.Activities.IndexOf(tcActivsGroup.ActivitiesIdentifiers[0].IdentifiedActivity);
+                        }
                         foreach (QC.QCTSTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
                             ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldn't be null
+                            if (actIdent == null || actIdent.IdentifiedActivity == null)
+                            {
+                                break;//something wrong- shouldn't be null
+                            }
                             Activity act = (Activity)actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -589,48 +596,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             return tcActivsGroup;
         }
 
-        private static void AddTcStepsAsActivities(ActivitiesGroup tcActivsGroup, BusinessFlow busFlow, QCTestInstance testInstance, QCTestCaseStepsColl tSTestCaseSteps, QCTestCaseParamsColl tSTestCasesParams, Dictionary<string, string> busVariables)
-        {
-            IEnumerable<QCTestCaseStep> relevantSteps = tSTestCaseSteps.Where(step => step.TestId == testInstance.TestId);
-            foreach (QCTestCaseStep step in relevantSteps)
-            {
-                Activity stepActivity;
-                bool toAddStepActivity = false;
-
-                //check if mapped activity exist in repository
-                Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.Id).FirstOrDefault();
-                if (repoStepActivity != null)
-                {
-                    //check if it is part of the Activities Group
-                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault();
-                    if (groupStepActivityIdent != null)
-                    {
-                        stepActivity = LinkStepAndUpdate(busFlow, groupStepActivityIdent, step, testInstance);
-                    }
-                    else//not in ActivitiesGroup so get instance from repo
-                    {
-                        stepActivity = (Activity)repoStepActivity.CreateInstance();
-                        toAddStepActivity = true;
-                    }
-                }
-                else//Step not exist in Ginger repository so create new one
-                {
-                    stepActivity = CreateNewStep(testInstance, step);
-                    toAddStepActivity = true;
-                }
-
-                if (toAddStepActivity)
-                {
-                    //not in group- need to add it
-                    busFlow.AddActivity(stepActivity, tcActivsGroup);
-                }
-
-                QCTestInstanceParamColl paramsColl = QCRestAPIConnect.GetTestInstanceParams(testInstance.Id);
-
-                PullTCStepParameterAndAddToActivityLevel(stepActivity, step, tSTestCasesParams, paramsColl, busVariables);
-            }
-        }
-
         private static Activity LinkStepAndUpdate(BusinessFlow busFlow, ActivityIdentifiers groupStepActivityIdent, QCTestCaseStep step, QCTestInstance testInstance)
         {
             Activity stepActivity;
@@ -654,205 +619,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             stepActivity.Expected = StripHTML(step.ElementsField["expected"].ToString());
 
             return stepActivity;
-        }
-
-        private static void PullTCStepParameterAndAddToActivityLevel(Activity stepActivity, QCTestCaseStep step, QCTestCaseParamsColl tSTestCasesParams, QCTestInstanceParamColl testInstanceParamsColl, Dictionary<string, string> busVariables)
-        {
-            //pull TC-Step parameters and add them to the Activity level
-            List<string> stepParamsList = new List<string>();
-            GetStepParameters(StripHTML(step.Description), ref stepParamsList);
-            GetStepParameters(StripHTML(step.ElementsField["expected"].ToString()), ref stepParamsList);
-            foreach (string param in stepParamsList)
-            {
-                //get the param value
-                string paramSelectedValue = string.Empty;
-                bool? isflowControlParam = null;
-                QCTestCaseParam tcParameter = tSTestCasesParams.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-                QCTestInstanceParam testInstanceParameter = testInstanceParamsColl.Where(x => x.ParentId == tcParameter.Id).FirstOrDefault();
-
-                //get the param value
-                if (testInstanceParameter.ElementsField["actual-value"] != null)
-                {
-                    paramSelectedValue = StripHTML(testInstanceParameter.ElementsField["actual-value"].ToString());
-                }
-                else
-                {
-                    isflowControlParam = null;//empty value
-                    paramSelectedValue = "<Empty>";
-                }
-
-                //check if parameter is part of a link
-                string linkedVariable = null;
-                if (paramSelectedValue.StartsWith("#$#"))
-                {
-                    string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
-                    if (valueParts.Count() == 3)
-                    {
-                        linkedVariable = valueParts[1];
-                        paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
-
-                        if (busVariables.Keys.Contains(linkedVariable) == false)
-                        {
-                            busVariables.Add(linkedVariable, valueParts[2]);
-                        }
-                    }
-                }
-
-                //determine if the param is Flow Control Param or not based on it value and agreed sign "$$_"
-                if (paramSelectedValue.StartsWith("$$_"))
-                {
-                    isflowControlParam = false;
-                    if (paramSelectedValue.StartsWith("$$_"))
-                    {
-                        paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
-                    }
-                }
-                else if (paramSelectedValue != "<Empty>")
-                {
-                    isflowControlParam = true;
-                }
-
-                //check if already exist param with that name
-                VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
-                if (stepActivityVar == null)
-                {
-                    //#Param not exist so add it
-                    if (isflowControlParam == true)
-                    {
-                        //add it as selection list param                               
-                        stepActivityVar = new VariableSelectionList();
-                        stepActivityVar.Name = param;
-                        stepActivity.AddVariable(stepActivityVar);
-                        stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new flow control param was added
-                    }
-                    else
-                    {
-                        //add as String param
-                        stepActivityVar = new VariableString();
-                        stepActivityVar.Name = param;
-                        ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                        stepActivity.AddVariable(stepActivityVar);
-                    }
-                }
-                else
-                {
-                    //#param exist
-                    if (isflowControlParam == true)
-                    {
-                        if (!(stepActivityVar is VariableSelectionList))
-                        {
-                            //flow control param must be Selection List so transform it
-                            stepActivity.Variables.Remove(stepActivityVar);
-                            stepActivityVar = new VariableSelectionList();
-                            stepActivityVar.Name = param;
-                            stepActivity.AddVariable(stepActivityVar);
-                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was added
-                        }
-                    }
-                    else if (isflowControlParam == false)
-                    {
-                        if (stepActivityVar is VariableSelectionList)
-                        {
-                            //change it to be string variable
-                            stepActivity.Variables.Remove(stepActivityVar);
-                            stepActivityVar = new VariableString();
-                            stepActivityVar.Name = param;
-                            ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                            stepActivity.AddVariable(stepActivityVar);
-                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because flow control param was removed
-                        }
-                    }
-                }
-
-                //add the variable selected value                          
-                if (stepActivityVar is VariableSelectionList)
-                {
-                    OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
-                    if (stepActivityVarOptionalVar == null)
-                    {
-                        //no such variable value option so add it
-                        stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
-                        ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
-                        //((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
-                        if (isflowControlParam == true)
-                        {
-                            stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
-                        }
-                    }
-                    //set the selected value
-                    ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
-                }
-                else
-                {
-                    //try just to set the value
-                    try
-                    {
-                        stepActivityVar.Value = paramSelectedValue;
-                        if (stepActivityVar is VariableString)
-                        {
-                            ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
-                        }
-                    }
-                    catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
-                }
-
-                //add linked variable if needed
-                if (string.IsNullOrEmpty(linkedVariable) == false)
-                {
-                    stepActivityVar.LinkedVariableName = linkedVariable;
-                }
-                else
-                {
-                    stepActivityVar.LinkedVariableName = string.Empty;//clear old links
-                }
-            }
-        }
-
-        private static ObservableList<ExternalItemFieldBase> AddFieldsValues(List<QCField> testSetfieldsCollection, string testSetfieldInRestSyntax)
-        {
-            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
-
-            if ((testSetfieldsCollection != null) && (testSetfieldsCollection.Count > 0))
-            {
-                foreach (QCField field in testSetfieldsCollection)
-                {
-                    if (string.IsNullOrEmpty(field.Label)) continue;
-
-                    ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
-                    itemfield.ID = field.PhysicalName;
-                    itemfield.ExternalID = field.Name;  // Temp ??? Check if ExternalID has other use in this case
-                    itemfield.Name = field.Label;
-                    itemfield.Mandatory = field.IsRequired;
-                    itemfield.SystemFieled = field.IsSystem;
-                    if (itemfield.Mandatory)
-                    {
-                        itemfield.ToUpdate = true;
-                    }
-                    itemfield.ItemType = testSetfieldInRestSyntax.ToString();
-                    itemfield.Type = field.Type;
-
-                    if ((field.ListId != null) && (field.ListId != string.Empty) && (field.FieldValues != null) && (field.FieldValues.Count > 0))
-                    {
-                        foreach (string value in field.FieldValues)
-                        {
-                            itemfield.PossibleValues.Add(value);
-                        }
-                    }
-
-                    if (itemfield.PossibleValues.Count > 0)
-                    {
-                        itemfield.SelectedValue = itemfield.PossibleValues[0];
-                    }
-                    else
-                    {
-                        // itemfield.SelectedValue = "NA";
-                    }
-
-                    fields.Add(itemfield);
-                }
-            }
-
-            return fields;
         }
 
         private static string StripHTML(string HTMLText, bool toDecodeHTML = true)
@@ -880,29 +646,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             }
         }
 
-        private static void GetStepParameters(string stepText, ref List<string> stepParamsList)
-        {
-            try
-            {
-                MatchCollection stepParams = Regex.Matches(stepText, @"\<<<([^>]*)\>>>");
-
-                foreach (var param in stepParams)
-                {
-                    string strParam = param.ToString().TrimStart(new char[] { '<' });
-                    strParam = strParam.TrimEnd(new char[] { '>' });
-                    stepParamsList.Add(strParam);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while pulling the parameters names from QC TC Step Description/Expected", ex);
-            }
-        }
-
-        private static QCTestInstanceColl GetListTSTest(QC.QCTestSet TS)
-        {
-            return QCRestAPIConnect.GetTestInstancesOfTestSet(TS.TestSetID);
-        }
 
         private static void FillRelevantDataForStepParams(QC.QCTSTest newTSTest, QCTestCaseStep tSLinkedTestCaseStep)
         {

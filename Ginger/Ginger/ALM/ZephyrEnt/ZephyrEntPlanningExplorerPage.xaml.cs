@@ -240,6 +240,8 @@ namespace Ginger.ALM.ZephyrEnt
                     selectFolderBtn.Click += new RoutedEventHandler(SelectFolder);
                     GingerCore.General.LoadGenericWindow(ref _GenericWin, App.MainWindow, windowStyle, "Browse ALM Test Planning", this, new ObservableList<Button> { selectFolderBtn }, true, "Cancel", Cancel_Clicked);
                     return CurrentSelectedPath;
+                default:
+                    return "";
             }
 
             return null;
@@ -265,7 +267,9 @@ namespace Ginger.ALM.ZephyrEnt
         private void SelectFolder(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
+            {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select a folder item");
+            }
             else
             {
                 _GenericWin.Close();

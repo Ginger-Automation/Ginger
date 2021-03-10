@@ -454,7 +454,9 @@ namespace Ginger.ALM.Repository
                                     {
                                         ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
                                         if (appAgent != null)
+                                        {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                                        }
                                     }
                                 }
                             }
