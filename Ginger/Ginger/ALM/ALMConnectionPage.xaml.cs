@@ -484,6 +484,7 @@ namespace Ginger.ALM
             OctaneRadioButton.Foreground = Brushes.Black;
             ZephyrEntRadioButton.FontWeight = FontWeights.Regular;
             ZephyrEntRadioButton.Foreground = Brushes.Black;
+            xPasswordPanel.Visibility = Visibility.Visible;
             switch (CurrentAlmConfigurations.AlmType)
             {
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC:
@@ -564,6 +565,7 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
+                    xPasswordPanel.Visibility = Visibility.Collapsed;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:

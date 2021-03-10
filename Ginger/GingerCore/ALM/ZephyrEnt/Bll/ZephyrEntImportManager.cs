@@ -1,6 +1,6 @@
-﻿using amdocs.ginger.GingerCoreNET;
+﻿using ALM_Common.DataContracts;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
@@ -9,10 +9,12 @@ using Newtonsoft.Json.Linq;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Web;
+using ZephyrEntSDK.Models;
 using ZephyrEntSDK.Models.Base;
 using Zepyhr_Ent_Repository;
 
@@ -932,6 +934,43 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         }
 
         #endregion private functions
+        public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
+        {
+            string fieldName = "";
+            ObservableList<ExternalItemFieldBase> almFields = new ObservableList<ExternalItemFieldBase>();
+            List<Preference> fieldsValues = zephyrEntRepository.GetCustomFieldsValues();
+            zephyrEntRepository.GetCustomFields().ForEach(ent => {
+                almFields.Add(new ExternalItemFieldBase()
+                {
+                    ID = ent.id.ToString(),
+                    Name = fieldName = String.IsNullOrEmpty(ent.displayName) ? ent.fieldName : ent.displayName,
+                    ExternalID = ent.description,
+                    Mandatory = ent.mandatory,
+                    ItemType = ent.entityName,
+                    PossibleValues = AddValuesToField(fieldsValues, ent.entityName, ent.fieldName)
+                });
+            });
 
+            return almFields;
+        }
+
+        private ObservableList<string> AddValuesToField(List<Preference> fieldsValues, string entityName, string fieldName)
+        {
+            ObservableList<string> possibleValues = new ObservableList<string>();
+            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new string[] { entityName.ToLower(), fieldName.ToLower() })));
+            if (field != null)
+            {
+                List<dynamic> values = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(field.value);
+                values.ForEach(x =>
+                {
+                    Dictionary<string, string> data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(((Newtonsoft.Json.Linq.JObject)x).ToString().Replace("{{", "{").Replace("}}", "}"));
+                    if(data != null && data.ContainsKey("value"))
+                    {
+                        possibleValues.Add(data["value"]);
+                    }
+                });
+            }
+            return possibleValues;
+        }
     }
 }

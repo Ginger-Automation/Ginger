@@ -76,7 +76,7 @@
                                 <Label Style="{StaticResource @InputFieldLabelStyle}">User Name:</Label>
                                 <TextBox x:Name="UserNameTextBox" TextChanged="UserNameTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
                             </StackPanel>
-                            <StackPanel>
+                            <StackPanel x:Name="xPasswordPanel">
                                 <Label x:Name="PasswordLabel" Style="{StaticResource @InputFieldLabelStyle}">Password:</Label>
                                 <PasswordBox x:Name="PasswordTextBox" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
                             </StackPanel>

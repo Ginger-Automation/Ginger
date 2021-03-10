@@ -158,23 +158,10 @@ namespace GingerCore.ALM
 
             return domains.DataResult.Select(f => f.DomainName).ToList();
         }
-
-        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
+        public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType)
         {
-            ObservableList<ExternalItemFieldBase> almFields = new ObservableList<ExternalItemFieldBase>();
-            zephyrEntRepository.GetCustomFields().ForEach(ent => {
-                almFields.Add(new ExternalItemFieldBase()
-                {
-                    ID = ent.id.ToString(),
-                    Name = String.IsNullOrEmpty(ent.displayName) ? ent.fieldName : ent.displayName,
-                    ExternalID = ent.description,
-                    Mandatory = ent.mandatory,
-                    ItemType = ent.entityName
-                });
-            });
-            return almFields;
+            return UpdatedAlmFields(zephyrEntImportManager.GetALMItemFields(bw, online, resourceType));
         }
-
         public object GetRepositoryTreeIdByTestcaseId(int testcaseId)
         {
             return zephyrEntExportManager.GetRepositoryTreeIdByTestcaseId(testcaseId);
@@ -259,7 +246,6 @@ namespace GingerCore.ALM
 
             var testSteps = zephyrEntRepository.GetTeststepByTestcaseId(Convert.ToInt32(newTSTest.TestID), versionId);
             //Get the TC design steps
-            //QCTestCaseStepsColl TSTestSteps = GetListTSTestSteps(testCase);
             if (testSteps.Count > 0)
             {
                 var testStepsToken = (JToken)testSteps[0].Properties["steps"];
@@ -272,32 +258,7 @@ namespace GingerCore.ALM
                     newtsStep.Description = testcaseStep["data"].ToString();
                     newtsStep.Expected = testcaseStep["result"].ToString();
                     newTSTest.Steps.Add(newtsStep);
-                    ////Get the TC parameters
-                    //CheckForParameter(newTSTest, newtsStep.Description);
                 }
-
-                ////Get the TC execution history
-                //try
-                //{
-                //    List<RunSuite> TSTestRuns = GetTestSuiteRun(testCase.TestSetId);
-
-                //    foreach (RunSuite run in TSTestRuns)
-                //    {
-                //        QC.QCTSTestRun newtsRun = new QC.QCTSTestRun();
-                //        newtsRun.RunID = run.Id;
-                //        newtsRun.RunName = run.Name;
-                //        newtsRun.Status = run.NativeStatus.Name;
-                //        newtsRun.ExecutionDate = (run.GetValue("started").ToString());
-                //        newtsRun.ExecutionTime = (run.GetValue("last_modified").ToString());
-                //        newtsRun.Tester = (run.DefaultRunBy.FullName).ToString();
-                //        newTSTest.Runs.Add(newtsRun);
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    Reporter.ToLog(eLogLevel.ERROR, "Failed to pull QC test case RUN info", ex);
-                //    newTSTest.Runs = new List<QC.QCTSTestRun>();
-                //}
             }
             return newTSTest;
         }
