@@ -594,7 +594,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 {
                     tcActivsGroup.ExternalID = relevantStep.ElementsField["link-test"].ToString();
                     tcActivsGroup.ExternalID2 = testInstance.Id; 
-                    tcActivsGroup.Description = QCRestAPIConnect.GetTestCases(new List<string>() { relevantStep.ElementsField["link-test"].ToString() })[0].ElementsField["description"].ToString();                                             //tcActivsGroup.Description = testInstance.des;
                 }
                 busFlow.AddActivitiesGroup(tcActivsGroup);
             }
