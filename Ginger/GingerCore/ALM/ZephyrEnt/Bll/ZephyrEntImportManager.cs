@@ -78,7 +78,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             //Get the TC parameters and their selected value
             if (linkedTest != null)
             {
-                if (linkedTest.Split(';')[0].ToString() != testCase.Name)
+                if (linkedTest.Split(';')[0] != testCase.Name)
                 {
                     if (newTSTest.Description == null)
                     {
@@ -155,7 +155,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     if (item.Value > 0)
                     {
                         string statusName = ((StatuesName)item.Key).ToString();
-                        tcsSummary.Add(new string[] { statusName, item.Value.ToString() });
+                        tcsSummary.Add(new [] { statusName, item.Value.ToString() });
                     }
                 }
                 return tcsSummary;
@@ -207,7 +207,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
                                                                                        .Where(x => !tc.Steps.Select(y => y.StepID).ToList().Contains(x.ExternalID)).ToList();
 
-                        tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance();
+                        tcActivsGroup = (ActivitiesGroup)repoActivsGroup.CreateInstance();
 
                         var ActivitySIdentifiersToRemove = tcActivsGroup.ActivitiesIdentifiers.Where(x => repoNotExistsStepActivity.Select(z => z.ExternalID).ToList().Contains(x.ActivityExternalID));
                         for (int indx = 0; indx < tcActivsGroup.ActivitiesIdentifiers.Count; indx++)
@@ -309,13 +309,13 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             string linkedVariable = null;
                             if (paramSelectedValue.StartsWith("#$#"))
                             {
-                                string[] valueParts = paramSelectedValue.Split(new string[] { "#$#" }, StringSplitOptions.None);
+                                string[] valueParts = paramSelectedValue.Split(new [] { "#$#" }, StringSplitOptions.None);
                                 if (valueParts.Count() == 3)
                                 {
                                     linkedVariable = valueParts[1];
                                     paramSelectedValue = "$$_" + valueParts[2];//so it still will be considered as non-flow control
 
-                                    if (busVariables.Keys.Contains(linkedVariable) == false)
+                                    if (!busVariables.Keys.Contains(linkedVariable))
                                     {
                                         busVariables.Add(linkedVariable, valueParts[2]);
                                     }
@@ -729,7 +729,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         private ObservableList<string> AddValuesToField(List<Preference> fieldsValues, string entityName, string fieldName)
         {
             ObservableList<string> possibleValues = new ObservableList<string>();
-            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new string[] { entityName.ToLower(), fieldName.ToLower() })));
+            Preference field = fieldsValues.Find(val => val.name.Contains(String.Join(".", new [] { entityName.ToLower(), fieldName.ToLower() })));
             if (field != null)
             {
                 List<dynamic> values = Newtonsoft.Json.JsonConvert.DeserializeObject<List<dynamic>>(field.value);

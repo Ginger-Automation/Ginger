@@ -62,7 +62,7 @@ namespace Ginger.ALM.ZephyrEnt
                 tvv.entityType = EntityFolderType.Cycle;
                 tvv.Folder = tvv.Name;
                 tvv.Path = tvv.Name;
-                tvv.FolderOnly = explorerTestPlanningPageUsageType.Equals(eExplorerTestPlanningPageUsageType.BrowseFolders) ? true : false;
+                tvv.FolderOnly = explorerTestPlanningPageUsageType.Equals(eExplorerTestPlanningPageUsageType.BrowseFolders);
                 tvv.CurrentChildrens = new List<ITreeViewItem>();
                 foreach (var item in (JArray)folder.TryGetItem("cyclePhases"))
                 {
