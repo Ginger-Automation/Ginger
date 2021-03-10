@@ -275,7 +275,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             stepActivity.ActivityName = tc.TestName + ">" + step.StepName;
                             stepActivity.ExternalID = step.StepID;
                             stepActivity.Description = StripHTML(step.Description);
-                            //stepActivity.Expected = StripHTML(step.Expected);
 
                             toAddStepActivity = true;
                         }
@@ -288,8 +287,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
 
                         //pull TC-Step parameters and add them to the Activity level
                         List<string> stepParamsList = new List<string>();
-                        //GetStepParameters(StripHTML(step.Description), ref stepParamsList);
-                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
                         foreach (string param in stepParamsList)
                         {
                             //get the param value
@@ -596,7 +593,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 else
                 {
                     tcActivsGroup.ExternalID = relevantStep.ElementsField["link-test"].ToString();
-                    tcActivsGroup.ExternalID2 = testInstance.Id; //original TC ID will be used for uploading the execution details back to QC
+                    tcActivsGroup.ExternalID2 = testInstance.Id; 
                     tcActivsGroup.Description = QCRestAPIConnect.GetTestCases(new List<string>() { relevantStep.ElementsField["link-test"].ToString() })[0].ElementsField["description"].ToString();                                             //tcActivsGroup.Description = testInstance.des;
                 }
                 busFlow.AddActivitiesGroup(tcActivsGroup);
@@ -669,7 +666,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 QC.QCTSTestParameter newtsVar = new QC.QCTSTestParameter();
                 if (paramName != null) { newtsVar.Name = paramName; }
                 if (paramValue != null) { newtsVar.Value = paramValue; }
-                //if (TestParam.LinkedParams.Type(i) != null) { newtsVar.Type = TestParam.LinkedParams.Type(i).ToString(); }
                 newTSTest.Parameters.Add(newtsVar);
             }
         }
