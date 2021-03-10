@@ -697,12 +697,6 @@ namespace Ginger.ALM
             return AlmRepo.ConnectALMServer(almConnectStyle);
         }
 
-        public void OpenALMItemsFieldsPage()
-        {
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
-            UpdateALMType(AlmConfig.AlmType);
-            AlmRepo.OpenALMItemsFieldsPage();
-        }
 
         public bool LoadALMConfigurations()
         {

@@ -772,7 +772,7 @@ namespace GingerCore.ALM
 
                 ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }
-            return fields;
+            return UpdatedAlmFields(fields);
         }
 
         private void ExtractFields(ObservableList<ExternalItemFieldBase> fields, string resourse, string resource2, LoginDTO loginDto, Dictionary<string, List<string>> listnodes)
