@@ -330,7 +330,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                             {
                                 isflowControlParam = false;
                                 if (paramSelectedValue.StartsWith("$$_"))
+                                {
                                     paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                                }
                             }
                             else if (paramSelectedValue != "<Empty>")
                                 isflowControlParam = true;
@@ -411,7 +413,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 {
                                     stepActivityVar.Value = paramSelectedValue;
                                     if (stepActivityVar is VariableString)
+                                    {
                                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                                    }
                                 }
                                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                             }
@@ -422,7 +426,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 stepActivityVar.LinkedVariableName = linkedVariable;
                             }
                             else
+                            {
                                 stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+                            }
                         }
                     }
 
@@ -514,7 +520,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             foreach (QCTestCaseStep step in steps)
             {
                 if (step.ElementsField.ContainsKey("link-test"))
+                {
                     return step;
+                }
             }
             return null;
         }

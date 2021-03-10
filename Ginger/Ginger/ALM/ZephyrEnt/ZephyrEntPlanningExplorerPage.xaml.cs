@@ -96,7 +96,9 @@ namespace Ginger.ALM.ZephyrEnt
             {
                 short number;
                 if (Int16.TryParse(detail[1], out number))
+                {
                     total += number;
+                }
             }
             Label totalTcsNum = new Label();
             totalTcsNum.Content = "Total Number of TC's: " + total;
@@ -171,7 +173,9 @@ namespace Ginger.ALM.ZephyrEnt
         {
             if (((TestPlanningFolderTreeItem)folder).CurrentChildrens == null ||
                 ((TestPlanningFolderTreeItem)folder).entityType is EntityFolderType.Cycle)
+            {
                 folder.Childrens();
+            }
             foreach (ITreeViewItem item in ((TestPlanningFolderTreeItem)folder).CurrentChildrens)
             {
                 if (item is ZephyrEntPhaseTreeItem)
@@ -250,7 +254,9 @@ namespace Ginger.ALM.ZephyrEnt
         private void Select(object sender, RoutedEventArgs e)
         {
             if (mCurrentSelectedTreeItem == null)
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
             else
             {
                 if (mCurrentSelectedTreeItem is QCTestLabFolderTreeItem)
