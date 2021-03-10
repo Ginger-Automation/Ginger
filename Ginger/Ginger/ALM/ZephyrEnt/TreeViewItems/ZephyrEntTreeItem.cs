@@ -21,6 +21,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
         public string VersionId { get; set; }
         public BaseResponseItem TreeItemData
         {
+            get { return treeItemData; }
             set { treeItemData = value; }
         }
         public ZephyrEntTreeItem()

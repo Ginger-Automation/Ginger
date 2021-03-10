@@ -51,7 +51,6 @@ namespace Ginger.ALM.ZephyrEnt
             mExplorerTestPlanningPageUsageType = explorerTestPlanningPageUsageType;
             mImportDestinationPath = importDestinationPath;
             LoadDataBizFlows();
-            //mParentSelectionMode = parentSelectionMode;
             GetTreeData();
 
             TestPlanningExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Zephyr Ent. Cycles Explorer";
@@ -147,7 +146,6 @@ namespace Ginger.ALM.ZephyrEnt
                 {
                     mCurrentSelectedTestSets.Add((ZephyrEntPhaseTreeItem)mCurrentSelectedTreeItem);
                     GetTestSetDetails(mCurrentSelectedTestSets[0]);
-                    //CurrentSelectedPath = mCurrentSelectedTestSets[0].Path;
                     ShowTestSetDetailsPanel(true);
                 }
                 else

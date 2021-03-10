@@ -78,7 +78,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             //Get the TC parameters and their selected value
             if (linkedTest != null)
             {
-                if ((linkedTest.Split(';')[0].ToString() != testCase.Name.ToString()) || (linkedTest.Split(';')[0].ToString() != testCase.Name.ToString()))
+                if (linkedTest.Split(';')[0].ToString() != testCase.Name.ToString())
                 {
                     if (newTSTest.Description == null)
                     {
