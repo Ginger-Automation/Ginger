@@ -195,9 +195,13 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     ActivitiesGroup tcActivsGroup;
                     ActivitiesGroup repoActivsGroup = null;
                     if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
+                    {
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                    }
                     if (repoActivsGroup == null)
+                    {
                         repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                    }
                     if (repoActivsGroup != null)
                     {
                         List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
@@ -443,7 +447,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
                                         tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                {
                                     continue;//activity which not originally came from the TC
+                                }
                                 numOfSeenSteps++;
 
                                 if (numOfSeenSteps >= stepIndx)
@@ -528,13 +534,18 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             foreach (QCTestCaseStep testcaseStep in relevantTestCaseSteps)
             {
                 if (testcaseStep.ElementsField.ContainsKey("link-test"))
+                {
                     relevantStep = testcaseStep;
+                }
             }
             if (relevantStep != null)
+            {
                 repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == relevantStep.ElementsField["link-test"].ToString()).FirstOrDefault();
+            }
             if (repoActivsGroup == null)
+            {
                 repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == testInstance.Id).FirstOrDefault();
-
+            }
             if (repoActivsGroup != null)
             {
                 List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
@@ -692,10 +703,14 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 {
                     isflowControlParam = false;
                     if (paramSelectedValue.StartsWith("$$_"))
+                    {
                         paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                    }
                 }
                 else if (paramSelectedValue != "<Empty>")
+                {
                     isflowControlParam = true;
+                }
 
                 //check if already exist param with that name
                 VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
@@ -760,7 +775,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                         //((VariableSelectionList)stepActivityVar).SyncOptionalValuesListAndString();
                         if (isflowControlParam == true)
+                        {
                             stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                        }
                     }
                     //set the selected value
                     ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -772,7 +789,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     {
                         stepActivityVar.Value = paramSelectedValue;
                         if (stepActivityVar is VariableString)
+                        {
                             ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                        }
                     }
                     catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 }
@@ -783,7 +802,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     stepActivityVar.LinkedVariableName = linkedVariable;
                 }
                 else
+                {
                     stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+                }
             }
         }
 
@@ -804,7 +825,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     itemfield.Mandatory = field.IsRequired;
                     itemfield.SystemFieled = field.IsSystem;
                     if (itemfield.Mandatory)
+                    {
                         itemfield.ToUpdate = true;
+                    }
                     itemfield.ItemType = testSetfieldInRestSyntax.ToString();
                     itemfield.Type = field.Type;
 
@@ -840,7 +863,9 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
                 var stripped = reg.Replace(HTMLText, "");
                 if (toDecodeHTML)
+                {
                     stripped = HttpUtility.HtmlDecode(stripped);
+                }
 
                 stripped = stripped.Trim();
                 stripped = stripped.TrimStart('\n', '\r');

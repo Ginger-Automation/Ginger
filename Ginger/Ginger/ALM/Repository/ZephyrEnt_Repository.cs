@@ -215,7 +215,9 @@ namespace Ginger.ALM.Repository
             if (matchingTS == null && string.IsNullOrEmpty(testLabUploadPath))
             {
                 if (userSelec == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
                     Reporter.ToUser(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder);
+                }
 
                 //get the zephyr Test Planning path to upload the activities group to
                 string[] getTypeAndId = SelectALMTestLabPath().Split('#');
@@ -395,7 +397,6 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
-            //List<BaseResponseItem> selectedTcs = zephyrEntCore.GetZephyrEntTcsByTreeId(17);
             if (selectedTestSets != null && selectedTestSets.Count() > 0)
             {
                 ObservableList<ZephyrEntPhaseTreeItem> testSetsItemsToImport = new ObservableList<ZephyrEntPhaseTreeItem>();

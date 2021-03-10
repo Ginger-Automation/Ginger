@@ -295,12 +295,16 @@ namespace Ginger.ALM.ZephyrEnt
                     //Refresh the explorer selected tree items import status
                     LoadDataBizFlows();
                     foreach (ZephyrEntPhaseTreeItem testSet in CurrentSelectedTestSets)
+                    {
                         testSet.IsTestSetAlreadyImported();
+                    }
                     ShowTestSetDetailsPanel(false);
                 }
             }
             else
+            {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+            }
         }
 
         private void UpdateIfAlreadyImported(ZephyrEntPhaseTreeItem ts)
