@@ -405,7 +405,7 @@ namespace GingerCore.Environments
                     case eDBTypes.MSAccess:
 
 
-                        oConn = RepositoryItemHelper.RepositoryItemFactory.GetMSAccessConnection();
+                        oConn = WorkSpace.Instance.TargetFrameworkHelper.GetMSAccessConnection();
                         oConn.ConnectionString = connectConnectionString;
                         oConn.Open();
                         break;
