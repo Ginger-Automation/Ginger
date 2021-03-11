@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Data.Common;
 namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class UnitTestRepositoryItemFactory : ITargetFrameworkHelper
@@ -154,6 +154,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public object GetDriverObject(IAgent agent)
         {
             throw new NotImplementedException();
+        }
+        public DbConnection GetMSAccessConnection()
+        {
+            throw new NotImplementedException("MS Acess is not supported on Ginger Console");
         }
     }
 }
