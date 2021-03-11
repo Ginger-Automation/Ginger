@@ -96,7 +96,8 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
 
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
-            throw new NotImplementedException();
+             RunSVNCommand(new object[] { "revert","-R", "." }, path);
+            return RunSVNCommand(new object[] { "up" }, path);
         }
 
         public override string GetLockOwner(string path, ref string error)
@@ -113,21 +114,9 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         {
 
 
-            var result = Command.Run("svn",
-               new object[] { "checkout", URI, "--username", SourceControlUser, "--password", SourceControlPass },
-              options: o => o.WorkingDirectory(Path)).Result;
 
-            if (result.Success)
-            {
-               // Reporter.ToLog(eLogLevel.INFO,result.StandardOutput);
-                return true;
-            }
-            else
-            {
-                Console.WriteLine(result.StandardError);
-               // Reporter.ToLog(eLogLevel.ERROR, result.StandardError);
-                return false;
-            }
+
+            return RunSVNCommand(new object[] { "checkout", URI, "--username", SourceControlUser, "--password", SourceControlPass }, Path);
         }
           
     
@@ -179,6 +168,25 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool UpdateFile(string Path, ref string error)
         {
             throw new NotImplementedException();
+        }
+
+        private static bool RunSVNCommand(object[] args,string Path)
+        {
+            var result = Command.Run("svn",
+                args,
+             options: o => o.WorkingDirectory(Path)).Result;
+
+            if (result.Success)
+            {
+                // Reporter.ToLog(eLogLevel.INFO,result.StandardOutput);
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(result.StandardError);
+                // Reporter.ToLog(eLogLevel.ERROR, result.StandardError);
+                return false;
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using Ginger.Reports.GingerExecutionReport;
@@ -190,7 +191,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public SourceControlBase GetNewSVnRepo()
         {
-            throw new PlatformNotSupportedException("SVN Repositories are not supported yet on Ginger CLI");
+            return new SVNSourceControlShellWrapper();
         }
 
         public void HTMLReportAttachment(string extraInformationCalculated, ref string emailReadyHtml, ref string reportsResultFolder, string runSetFolder, object Report, object conf)
