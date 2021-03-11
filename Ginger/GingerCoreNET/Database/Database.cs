@@ -32,9 +32,10 @@ using GingerCore.DataSource;
 using GingerCore.NoSqlBase;
 using MySql.Data.MySqlClient;
 using Amdocs.Ginger.Common.InterfacesLib;
-using MongoDB.Bson;
-using MongoDB.Driver;
+
 using GingerCore.Actions;
+using System.Runtime.InteropServices;
+using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Environments
 {
@@ -242,7 +243,7 @@ namespace GingerCore.Environments
         }
         public void SplitUserIdPassFromTNS()
         {
-            System.Data.SqlClient.SqlConnectionStringBuilder scSB = new System.Data.SqlClient.SqlConnectionStringBuilder();
+            SqlConnectionStringBuilder scSB = new SqlConnectionStringBuilder();
             scSB.ConnectionString = TNS;
             TNS = scSB.DataSource;
             User = scSB.UserID;
@@ -379,8 +380,9 @@ namespace GingerCore.Environments
                             //if (Temp.Contains ("ORA-03111"))
                             if (Temp.Contains("ORA-03111"))
                             {
-                                factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-                                oConn = factory.CreateConnection();
+                     
+                              
+                                oConn = SqlClientFactory.Instance.CreateConnection();
                                 oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
                                 oConn.Open();
                                 break;
@@ -401,34 +403,39 @@ namespace GingerCore.Environments
                         }
 
                     case eDBTypes.MSAccess:
-                        // anything better than below?
-                        // TODO: working only with mdb access97, not with accmdb
-                        factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-                        oConn = factory.CreateConnection();
+
+
+                        oConn = WorkSpace.Instance.TargetFrameworkHelper.GetMSAccessConnection();
                         oConn.ConnectionString = connectConnectionString;
                         oConn.Open();
                         break;
 
                     case eDBTypes.DB2:
-
-                        String DB2Cpath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\IBM\DB2\GLOBAL_PROFILE", "DB2PATH", "DNE");
-
-                        if (System.IO.Directory.Exists(DB2Cpath))
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                         {
-                            var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"DLLs\IBM.Data.DB2.dll");
+                            String DB2Cpath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\IBM\DB2\GLOBAL_PROFILE", "DB2PATH", "DNE");
 
-                            var class1Type = DLL.GetType("IBM.Data.DB2.DB2Connection");
+                            if (System.IO.Directory.Exists(DB2Cpath))
+                            {
+                                var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"DLLs\IBM.Data.DB2.dll");
 
-                            //Now you can use reflection or dynamic to call the method. I will show you the dynamic way
-                            object[] param = new object[1];
-                            param[0] = connectConnectionString;
-                            dynamic c = Activator.CreateInstance(class1Type, param);
-                            oConn = (DbConnection)c;
-                            oConn.Open();
+                                var class1Type = DLL.GetType("IBM.Data.DB2.DB2Connection");
+
+                                //Now you can use reflection or dynamic to call the method. I will show you the dynamic way
+                                object[] param = new object[1];
+                                param[0] = connectConnectionString;
+                                dynamic c = Activator.CreateInstance(class1Type, param);
+                                oConn = (DbConnection)c;
+                                oConn.Open();
+                            }
+                            else
+                            {
+                                throw new DllNotFoundException("DB2 Connect or IBM DB2 Drivers not installed.");
+                            }
                         }
                         else
                         {
-                            throw new Exception("DB2 Connect or IBM DB2 Drivers not installed.");
+                            throw new PlatformNotSupportedException("DB2 Connections are provided only on Windows Operationg System");
                         }
                         break;
 
@@ -494,7 +501,7 @@ namespace GingerCore.Environments
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + General.HidePasswordFromString(connectConnectionString), e);
+                Reporter.ToLog(eLogLevel.ERROR, "DB connection failed, DB type: " + DBType.ToString() + "; Connection String =" + HidePasswordFromString(connectConnectionString), e);
                 throw (e);
             }
             return false;
@@ -587,6 +594,9 @@ namespace GingerCore.Environments
                                 case eDBTypes.MySQL:
                                     tableName = (string)row[2];
                                     break;
+                                case eDBTypes.PostgreSQL:
+                                    tableName = (string)row[2];
+                                    break;
                             }
 
                             rc.Add(tableName);
@@ -634,7 +644,16 @@ namespace GingerCore.Environments
                 {
                     DbCommand command = oConn.CreateCommand();
                     // Do select with zero records
-                    command.CommandText = "select * from " + table + " where 1 = 0";
+                    switch(DBType)
+                    {
+                        case eDBTypes.PostgreSQL:
+                            command.CommandText = "select * from public.\"" + table + "\" where 1 = 0";
+                            break;
+                        default:
+                            command.CommandText = "select * from " + table + " where 1 = 0";
+                            break;
+                    }
+
                     command.CommandType = CommandType.Text;
 
                     reader = command.ExecuteReader();
@@ -728,7 +747,10 @@ namespace GingerCore.Environments
                 }
                 finally
                 {
-                    reader.Close();
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
                 }
             }            
             return rc;
@@ -825,13 +847,57 @@ namespace GingerCore.Environments
                 }
                 finally
                 {
-                    reader.Close();
+                    if (reader != null)
+                    {
+                        reader.Close();
+                    }
                 }
             }
             
             return rc;
         }
 
+        public static string HidePasswordFromString(string dataString)
+        {
+            string passwordValue = dataString.Replace(" ", "");//remove spaces
+            string passwordString = string.Empty;
+            //Matching string
+            if (dataString.ToLower().Contains("pwd="))
+            {
+                passwordString = "pwd=";
+            }
+            else if (dataString.ToLower().Contains("password="))
+            {
+                passwordString = "password=";
+            }
+            else
+            {
+                //returning origional as it does not conatain matching string
+                return dataString;
+            }
+            //get the password value based on start and end index
+            passwordValue = passwordValue.Substring(passwordValue.ToLower().IndexOf(passwordString));
+            int startIndex = passwordValue.ToLower().IndexOf(passwordString) + passwordString.Length;
+            int endIndex = -1;
+            if (passwordValue.Contains(";"))
+            {
+                endIndex = passwordValue.ToLower().IndexOf(";");
+            }
+            if (endIndex == -1)
+            {
+                passwordValue = passwordValue.Substring(startIndex);
+            }
+            else
+            {
+                passwordValue = passwordValue.Substring(startIndex, endIndex - startIndex);
+            }
+
+            if (!string.IsNullOrEmpty(passwordValue))
+            {
+                dataString = dataString.Replace(passwordValue, "*****");
+            }
+            return dataString;
+        }
         public override string ItemName
         {
             get

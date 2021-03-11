@@ -49,14 +49,14 @@ namespace GingerCore.NoSqlBase
                 this.CreateConstructor(DynamicClass);
                 for (int ind = 0; ind < PropertyNames.Count(); ind++)
                     CreateProperty(DynamicClass, PropertyNames[ind], Types[ind]);
-                Type type = DynamicClass.CreateType();
+                Type type = DynamicClass.CreateTypeInfo();
                 
                 return Activator.CreateInstance(type);
             }
 
             private TypeBuilder CreateClass()
             {
-                AssemblyBuilder assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(this.asemblyName, AssemblyBuilderAccess.Run);
+                AssemblyBuilder assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(this.asemblyName, AssemblyBuilderAccess.Run);
                 ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
                 TypeBuilder typeBuilder = moduleBuilder.DefineType(this.asemblyName.FullName
                                     , TypeAttributes.Public |

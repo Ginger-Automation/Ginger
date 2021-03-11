@@ -25,7 +25,7 @@ using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
-
+using System.Data.Common;
 namespace Amdocs.Ginger.Common
 {
     public enum eExecutedFrom
@@ -33,10 +33,10 @@ namespace Amdocs.Ginger.Common
         Automation,
         Run
     }
-    
+
 
     public interface ITargetFrameworkHelper
-    {                
+    {
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);
         IValueExpression CreateValueExpression(Object obj, string attr);
@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.Common
 
         void ShowAutoRunWindow();
 
-        bool Send_Outlook(bool actualSend = true, string MailTo=null, string Event=null, string Subject=null, string Body=null, string MailCC=null, List<string> Attachments=null, List<KeyValuePair<string, string>> EmbededAttachment=null);
+        bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null);
 
         void DisplayAsOutlookMail();
 
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.Common
 
         void CreateCustomerLogo(Object a, string t);
         Dictionary<string, string> TakeDesktopScreenShot(bool v);
-        
+
         void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 
         // string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT);
@@ -84,6 +84,6 @@ namespace Amdocs.Ginger.Common
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();
-
+        DbConnection GetMSAccessConnection();
     }
 }
