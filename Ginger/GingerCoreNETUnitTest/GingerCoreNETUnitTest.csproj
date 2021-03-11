@@ -10,8 +10,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RuntimeFrameworkVersion>3.1.0</RuntimeFrameworkVersion>
-    <IsPackable>false</IsPackable>
-    <ApplicationIcon />
+	  <IsPackable>false</IsPackable>
     <OutputType>Library</OutputType>
     <StartupObject />
   </PropertyGroup>
@@ -67,6 +66,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerAutoPilot\GingerAutoPilot.csproj" />
+    <ProjectReference Include="..\GingerConsole\GingerConsole.csproj" />
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
   </ItemGroup>
 

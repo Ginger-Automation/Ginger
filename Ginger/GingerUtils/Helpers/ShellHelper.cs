@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -20,7 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace GingerUtils
+namespace Amdocs.Ginger.Common.Helpers
 {
     public static class ShellHelper
     {

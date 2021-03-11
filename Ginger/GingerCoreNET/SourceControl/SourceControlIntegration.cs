@@ -352,11 +352,11 @@ namespace Ginger.SourceControl
                 }
                 else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
                 else
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
 
                 if (mSourceControl != null)
@@ -373,6 +373,8 @@ namespace Ginger.SourceControl
                     mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
                     mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
                     mSourceControl.supressMessage = true;
+
+                    mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SolutionSourceControlBranch;
                 }
 
                 if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
@@ -432,14 +434,14 @@ namespace Ginger.SourceControl
                         Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
                         try
                         {                            
-                            RepositoryItemHelper.RepositoryItemFactory.Revert(sol.LocalFolder, mSourceControl);
+                            TargetFrameworkHelper.Helper.Revert(sol.LocalFolder, mSourceControl);
                         }
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
                         }
                     }
-                    return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl);
                 }
                 else
                 {
@@ -452,5 +454,24 @@ namespace Ginger.SourceControl
                 return false;
             }
         }
+
+        public static List<string> GetBranches(SourceControlBase SourceControl)
+        {
+            return SourceControl.GetBranches();
+        }
+
+        public static string GetCurrentBranchForSolution(SourceControlBase SourceControl)
+        {
+            try
+            {
+                return SourceControl.GetCurrentBranchForSolution();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Fetching Branches..", ex);
+                return null;
+            }
+        }
+        
     }
 }

@@ -1324,7 +1324,7 @@ namespace GingerCore.Actions
         public void ActionDescriptionTextBlock(object ActionRecUseCaseTextBlock)
         {
 
-            ITextBoxFormatter TBH= RepositoryItemHelper.RepositoryItemFactory.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
+            ITextBoxFormatter TBH= TargetFrameworkHelper.Helper.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
   
             TBH.AddHeader1("Description:");
             TBH.AddLineBreak();
