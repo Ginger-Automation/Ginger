@@ -96,9 +96,9 @@ namespace GingerCore.ALM
             return zephyrEntExportManager.UpdateTestCase(treeNodeId, activtiesGroup, matchingTC);
         }
 
-        public TestCaseResource CreateTestCase(long treeNodeId, ActivitiesGroup activtiesGroup)
+        public TestCaseResource CreateTestCase(long treeNodeId, ActivitiesGroup activtiesGroup, Dictionary<string, string> testInstanceFields)
         {
-            return zephyrEntExportManager.CreateTestCase(treeNodeId, activtiesGroup);
+            return zephyrEntExportManager.CreateTestCase(treeNodeId, activtiesGroup, testInstanceFields);
         }
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false)

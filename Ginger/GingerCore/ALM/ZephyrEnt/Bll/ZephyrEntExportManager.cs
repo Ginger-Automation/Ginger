@@ -71,7 +71,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             });
             return zephyrEntRepository.UpdateTestPlanningFolder(cycleId, parenttreeid, businessFlow.Name, String.IsNullOrEmpty(businessFlow.Description) ? businessFlow.Name + " description" : businessFlow.Description);
         }
-        public TestCaseResource CreateTestCase(long treeNodeId, ActivitiesGroup activtiesGroup)
+        public TestCaseResource CreateTestCase(long treeNodeId, ActivitiesGroup activtiesGroup, Dictionary<string, string> testInstanceFields)
         {
             try
             {
@@ -82,7 +82,6 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                         automated = true,
                         requirementIds = new List<string>(),
                         releaseId = Convert.ToInt64(projectId),
-                        customProperties = new Dictionary<string, object>(),
                         description = activtiesGroup.Description,
                         tcCreationDate = DateTime.Now.ToString("dd/MM/yyyy"),
                         creationDate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
@@ -91,6 +90,8 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                 activtiesGroup.ExternalID = testCaseResource.testcase.testcaseId.ToString();
                 activtiesGroup.ExternalID2 = testCaseResource.testcase.id.ToString();
                 CreateTestSteps(activtiesGroup.ActivitiesIdentifiers, testCaseResource.testcase.id, testCaseResource.id);
+                testCaseResource.testcase.customProperties = testInstanceFields;
+                zephyrEntRepository.UpdateTestCase(testCaseResource);
                 return testCaseResource;
             }
             catch (Exception ex)

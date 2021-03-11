@@ -708,19 +708,21 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         #endregion private functions
         public ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            string fieldName = "";
             ObservableList<ExternalItemFieldBase> almFields = new ObservableList<ExternalItemFieldBase>();
             List<Preference> fieldsValues = zephyrEntRepository.GetCustomFieldsValues();
             zephyrEntRepository.GetCustomFields().ForEach(ent => {
-                almFields.Add(new ExternalItemFieldBase()
+                if (!String.IsNullOrEmpty(ent.columnName) && ent.columnName.StartsWith("zcf_"))
                 {
-                    ID = ent.id.ToString(),
-                    Name = fieldName = String.IsNullOrEmpty(ent.displayName) ? ent.fieldName : ent.displayName,
-                    ExternalID = ent.description,
-                    Mandatory = ent.mandatory,
-                    ItemType = ent.entityName,
-                    PossibleValues = AddValuesToField(fieldsValues, ent.entityName, ent.fieldName)
-                });
+                    almFields.Add(new ExternalItemFieldBase()
+                    {
+                        ID = ent.columnName,
+                        Name = String.IsNullOrEmpty(ent.displayName) ? ent.fieldName : ent.displayName,
+                        ExternalID = ent.description,
+                        Mandatory = ent.mandatory,
+                        ItemType = ent.entityName,
+                        PossibleValues = AddValuesToField(fieldsValues, ent.entityName, ent.fieldName)
+                    });
+                }
             });
 
             return almFields;
@@ -738,7 +740,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
                     Dictionary<string, string> data = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(((Newtonsoft.Json.Linq.JObject)x).ToString().Replace("{{", "{").Replace("}}", "}"));
                     if(data != null && data.ContainsKey("value"))
                     {
-                        possibleValues.Add(data["value"]);
+                        possibleValues.Add(String.Join("#",new[] { data["id"], data["value"] }));
                     }
                 });
             }

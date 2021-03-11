@@ -83,10 +83,10 @@ namespace Ginger.ALM.Repository
             {
                 ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                 ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
-                ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
+                Dictionary<string,string> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
 
                 Reporter.ToLog(eLogLevel.INFO, "Starting export to Zephyr Ent");
-                currentTC = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateTestCase(Convert.ToInt64(uploadPath), activtiesGroup);
+                currentTC = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).CreateTestCase(Convert.ToInt64(uploadPath), activtiesGroup, testInstanceFields);
             }
             else
             {
@@ -220,16 +220,17 @@ namespace Ginger.ALM.Repository
                 }
 
                 //get the zephyr Test Planning path to upload the activities group to
-                string[] getTypeAndId = SelectALMTestLabPath().Split('#');
-                testLabUploadPath = getTypeAndId[1];
-                bfEntityType = getTypeAndId[0];
-                moduleParentId = getTypeAndId[2] == null ? string.Empty : getTypeAndId[2];
-                folderCycleId = getTypeAndId[3];
-                if (String.IsNullOrEmpty(testLabUploadPath))
+                string uploadData = SelectALMTestLabPath();
+                if (String.IsNullOrEmpty(uploadData))
                 {
                     //no path to upload to
                     return false;
                 }
+                string[] getTypeAndId = uploadData.Split('#');
+                testLabUploadPath = getTypeAndId[1];
+                bfEntityType = getTypeAndId[0];
+                moduleParentId = getTypeAndId[2] == null ? string.Empty : getTypeAndId[2];
+                folderCycleId = getTypeAndId[3];
             }
 
             //upload the business flow
@@ -239,8 +240,8 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> allFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
             ALMIntegration.Instance.RefreshALMItemFields(allFields, true, null);
 
-            ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, EntityName.cycle);
-            ObservableList<ExternalItemFieldBase> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
+            Dictionary<string,string> testSetFieldsFields = CleanUnrelvantFields(allFields, EntityName.cycle);
+            Dictionary<string, string> testInstanceFields = CleanUnrelvantFields(allFields, EntityName.testcase);
 
             bool exportRes = ExportBusinessFlowToTestPlanning(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, testInstanceFields, ref res);
             Reporter.HideStatusMessage();
@@ -268,10 +269,10 @@ namespace Ginger.ALM.Repository
 
             return exportRes;
         }
-        private ObservableList<ExternalItemFieldBase> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, EntityName entityName)
+        private Dictionary<string,string> CleanUnrelvantFields(ObservableList<ExternalItemFieldBase> fields, EntityName entityName)
         {
             ObservableList<ExternalItemFieldBase> fieldsToReturn = new ObservableList<ExternalItemFieldBase>();
-
+            Dictionary<string, string> selectedFields = new Dictionary<string, string>();
             string currentResource = entityName.ToString();
             fields.ToList().ForEach(item =>
             {
@@ -280,10 +281,17 @@ namespace Ginger.ALM.Repository
                     fieldsToReturn.Add(item);
                 }
             });
-
-            return fieldsToReturn;
+            fieldsToReturn.ToList().ForEach(tst =>
+            {
+                if (!String.IsNullOrEmpty(tst.ID) && !String.IsNullOrEmpty(tst.SelectedValue) && !selectedFields.ContainsKey(tst.ID))
+                {
+                    int index = tst.SelectedValue.IndexOf("#");
+                    selectedFields.Add(tst.ID, index == -1 ? tst.SelectedValue :tst.SelectedValue.Remove(tst.SelectedValue.IndexOf("#")));
+                }
+            });
+            return selectedFields;
         }
-        private bool ExportBusinessFlowToTestPlanning(BusinessFlow businessFlow, List<BaseResponseItem> matchingTS, string testLabUploadPath, ObservableList<ExternalItemFieldBase> testSetFieldsFields, ObservableList<ExternalItemFieldBase> testInstanceFields, ref string res)
+        private bool ExportBusinessFlowToTestPlanning(BusinessFlow businessFlow, List<BaseResponseItem> matchingTS, string testLabUploadPath, Dictionary<string, string> testSetFieldsFields, Dictionary<string, string> testInstanceFields, ref string res)
         {
             Cycle cycle = null;
             CyclePhase cyclePhase = null;
