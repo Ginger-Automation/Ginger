@@ -645,6 +645,7 @@ namespace Ginger.ALM
                 //Clear bindings
                 BindingOperations.ClearAllBindings(ServerURLTextBox);
                 BindingOperations.ClearAllBindings(RestAPICheckBox);
+                BindingOperations.ClearAllBindings(UserNameTextBox);
                 BindingOperations.ClearAllBindings(ZephyrEntTokenCheckBox);
                 BindingOperations.ClearAllBindings(PasswordTextBox);
                 BindingOperations.ClearAllBindings(DomainComboBox);
