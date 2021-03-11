@@ -362,7 +362,7 @@ namespace GingerCore.GeneralLib
                 {
                     if (String.IsNullOrEmpty(AttachmentFileName) == false)
                     {
-                        Attachment a = new Attachment(ReplaceToCrossOSSeparator(AttachmentFileName));
+                        Attachment a = new Attachment(WorkSpace.Instance.OSHelper.AdjustFilePath(AttachmentFileName));
                         myMail.Attachments.Add(a);
                     }
                 }
@@ -408,11 +408,6 @@ namespace GingerCore.GeneralLib
 
                 return false;
             }
-        }
-
-        private string ReplaceToCrossOSSeparator(string AttachmentFileName)
-        {
-            return AttachmentFileName.Replace("\\", "/");
         }
 
         public override string ItemName

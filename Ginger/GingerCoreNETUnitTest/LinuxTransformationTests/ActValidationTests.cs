@@ -18,17 +18,6 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     [TestClass]
     public class ActValidationTests
     {
-        [TestInitialize]
-        public void TestInitialize()
-        {
-        }
-        [TestCleanup]
-        public void TestCleanUp()
-        {
-
-        }
-
-
         [TestMethod]
         [Timeout(60000)]
         public void ConditionEqualCSTest()
@@ -61,6 +50,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             Assert.AreEqual(actValidation.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
+            Assert.IsTrue(actValidation.ExInfo.Contains("error"));
         }
     }
 }

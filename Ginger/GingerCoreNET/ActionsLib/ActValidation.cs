@@ -41,7 +41,6 @@ namespace GingerCore.Actions
         {
             get
             {
-                //return (eCalcEngineType)GetInputParamValue<eCalcEngineType>(nameof(CalcEngineType));
                 return (eCalcEngineType)GetOrCreateInputParam<eCalcEngineType>(nameof(CalcEngineType),eCalcEngineType.VBS);
             }
             set
@@ -102,7 +101,7 @@ namespace GingerCore.Actions
         public override void Execute()
         {
             // in case of CS need to deferantionate failure reason compilation issue/ bool issue/false result and show info ontop act.exinfo
-
+            string csharpError = "";
             CalculateCondition(this.RunOnBusinessFlow, RunOnEnvironment, this);
             string rc = String.Empty;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && CalcEngineType.Equals(eCalcEngineType.VBS))
@@ -112,7 +111,7 @@ namespace GingerCore.Actions
             else
             {
                 Boolean parsedValue;
-                ConditionCalculated = rc = CodeProcessor.GetEvaluteResult(ConditionCalculated.Trim());
+                ConditionCalculated = rc = CodeProcessor.GetEvaluteResult(ConditionCalculated.Trim(), out csharpError);
                 if (Boolean.TryParse(ConditionCalculated.Trim(), out parsedValue))
                 {
                     if (parsedValue)
@@ -132,6 +131,10 @@ namespace GingerCore.Actions
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 this.Error = ConditionCalculated;
+                if(!string.IsNullOrEmpty(csharpError))
+                {
+                    this.ExInfo = csharpError;
+                }
             }
             return;
         }

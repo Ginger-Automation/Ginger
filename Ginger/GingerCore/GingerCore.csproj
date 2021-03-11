@@ -636,7 +636,6 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Actions\Communication\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />

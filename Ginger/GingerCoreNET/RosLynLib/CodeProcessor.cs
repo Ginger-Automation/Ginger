@@ -73,13 +73,13 @@ namespace GingerCoreNET.RosLynLib
 
             foreach (Match M in Pattern.Matches(Expression))
             {
+                string csharpError = "";
                 string match = M.Value;
                 string exp = match;
                 exp = exp.Replace(Clean.Match(exp).Value, "");
                 //not doing string replacement to
                 exp = exp.Remove(exp.Length-1);
-                string Evalresult = exp;
-                Evalresult = GetEvaluteResult(exp);
+                string Evalresult = GetEvaluteResult(exp, out csharpError);
                 Expression = Expression.Replace(match, Evalresult);
             }
 
@@ -87,9 +87,10 @@ namespace GingerCoreNET.RosLynLib
 
         }
 
-        public static string GetEvaluteResult(string Expression)
+        public static string GetEvaluteResult(string Expression, out string error)
         {
             string Evalresult = Expression;
+            error = "";
             try
             {
                 System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
@@ -107,7 +108,8 @@ namespace GingerCoreNET.RosLynLib
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Reporter.ToLog(eLogLevel.DEBUG, Expression + System.Environment.NewLine + " not a valid c# expression to evaluate", e);
+                error = e.Message;
             }
             return Evalresult;
         }
