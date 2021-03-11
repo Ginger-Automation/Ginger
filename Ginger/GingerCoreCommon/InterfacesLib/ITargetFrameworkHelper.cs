@@ -25,7 +25,7 @@ using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCoreNET.SourceControl;
-
+using System.Data.Common;
 namespace Amdocs.Ginger.Common
 {
     public enum eExecutedFrom

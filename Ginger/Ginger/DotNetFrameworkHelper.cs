@@ -64,7 +64,7 @@ using System.Web.UI.DataVisualization.Charting;
 using System.Windows.Threading;
 using static GingerCore.Agent;
 using Outlook = Microsoft.Office.Interop.Outlook;
-
+using System.Data.Common;
 namespace Ginger
 {
     public class DotNetFrameworkHelper : ITargetFrameworkHelper
@@ -623,7 +623,11 @@ namespace Ginger
         {
             return new SVNSourceControl();
         }
-
+        public DbConnection GetMSAccessConnection()
+        {
+            DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.OleDb");
+            return factory.CreateConnection();
+        }
 
     }
     
