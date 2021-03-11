@@ -22,9 +22,9 @@ using System.Text;
 
 namespace Amdocs.Ginger.Common
 {
-    public class RepositoryItemHelper
+    public static class TargetFrameworkHelper
     {
-        public static IRepositoryItemFactory RepositoryItemFactory { get; set; }
+        public static ITargetFrameworkHelper Helper { get; set; }
 
     }
 }

@@ -40,11 +40,11 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 {
-    public class RepoCoreItem : IRepositoryItemFactory
+    public class DotnetCoreHelper : ITargetFrameworkHelper
     {
         private OperationHandler operationHandlerObj;
 
-        public RepoCoreItem()
+        public DotnetCoreHelper()
         {
             operationHandlerObj = new OperationHandler();
         }

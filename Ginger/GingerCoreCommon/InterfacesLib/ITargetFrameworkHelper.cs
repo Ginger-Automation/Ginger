@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionAutoSaveAndRecover;
@@ -36,7 +35,7 @@ namespace Amdocs.Ginger.Common
     }
     
 
-    public interface IRepositoryItemFactory
+    public interface ITargetFrameworkHelper
     {                
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);
@@ -85,9 +84,6 @@ namespace Amdocs.Ginger.Common
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();
-
-
-        DbConnection GetMSAccessConnection();
 
     }
 }

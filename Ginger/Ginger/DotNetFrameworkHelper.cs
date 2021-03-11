@@ -49,7 +49,7 @@ using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
+using System.Data.OleDb;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -65,13 +65,13 @@ using System.Windows.Threading;
 using static GingerCore.Agent;
 using Outlook = Microsoft.Office.Interop.Outlook;
 
-namespace Ginger.Repository
+namespace Ginger
 {
-    public class RepositoryItemFactory : IRepositoryItemFactory
+    public class DotNetFrameworkHelper : ITargetFrameworkHelper
     {
         Outlook.MailItem mOutlookMail;
         
-        public RepositoryItemFactory()
+        public DotNetFrameworkHelper()
         {
         }
 
@@ -250,7 +250,7 @@ namespace Ginger.Repository
             
         }
 
-        bool IRepositoryItemFactory.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
+        bool ITargetFrameworkHelper.Send_Outlook(bool actualSend, string MailTo, string Event, string Subject, string Body, string MailCC, List<string> Attachments, List<KeyValuePair<string, string>> EmbededAttachment)
         {
             try
             {
@@ -624,11 +624,7 @@ namespace Ginger.Repository
             return new SVNSourceControl();
         }
 
-        public DbConnection GetMSAccessConnection()
-        {
-            DbProviderFactory factory = DbProviderFactories.GetFactory("System.Data.OleDb");
-            return factory.CreateConnection();
-        }
+
     }
     
 }
