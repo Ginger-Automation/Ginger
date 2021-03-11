@@ -639,11 +639,7 @@ namespace GingerCore
             }
         }
 
-        public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
-        {
-            return Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(xmlDoc, DisableProhibitDtd);
-        }
-
+     
         public static void ClearDirectoryContent(string DirPath)
         {
             Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);
