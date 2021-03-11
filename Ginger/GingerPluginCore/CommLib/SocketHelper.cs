@@ -65,8 +65,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         static int LastPort = 15000;  // Ginger Grid and nodes will be on 15000+ ports - this area is mainly free to find ports
         public static int GetOpenPort()
         {
-            return 80;
-#warning ambar 
+
             semaphore.WaitOne(); // control the reentry if several threads request at the same time                        
             int count = 999;         // We scan range of 999 ports
             int timeout = 0;
