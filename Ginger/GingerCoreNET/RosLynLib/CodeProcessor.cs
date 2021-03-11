@@ -79,39 +79,39 @@ namespace GingerCoreNET.RosLynLib
                 exp = exp.Replace(Clean.Match(exp).Value, "");
                 //not doing string replacement to
                 exp = exp.Remove(exp.Length-1);
-                string Evalresult = GetEvaluteResult(exp, out csharpError);
-                Expression = Expression.Replace(match, Evalresult);
+                string evalresult = GetEvaluteResult(exp, out csharpError);
+                Expression = Expression.Replace(match, evalresult);
             }
 
             return Expression;
 
         }
 
-        public static string GetEvaluteResult(string Expression, out string error)
+        public static string GetEvaluteResult(string expression, out string error)
         {
-            string Evalresult = Expression;
+            string evalresult = "";
             error = "";
             try
             {
                 System.Collections.Generic.List<String> Refrences = typeof(System.DateTime).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>();
                 Refrences.AddRange(typeof(string).Assembly.GetExportedTypes().Where(y => !String.IsNullOrEmpty(y.Namespace)).Select(x => x.Namespace).Distinct().ToList<string>());
-                object result = CSharpScript.EvaluateAsync(Expression, ScriptOptions.Default.WithImports(Refrences)).Result;
+                object result = CSharpScript.EvaluateAsync(expression, ScriptOptions.Default.WithImports(Refrences)).Result;
                 //c# generate True/False for bool.tostring which fails in subsequent expressions 
                 if (result.GetType() == typeof(Boolean))
                 {
-                    Evalresult = result.ToString().ToLower();
+                    evalresult = result.ToString().ToLower();
                 }
                 else
                 {
-                    Evalresult = result.ToString();
+                    evalresult = result.ToString();
                 }
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, Expression + System.Environment.NewLine + " not a valid c# expression to evaluate", e);
+                Reporter.ToLog(eLogLevel.DEBUG, expression + System.Environment.NewLine + " not a valid c# expression to evaluate", e);
                 error = e.Message;
             }
-            return Evalresult;
+            return evalresult;
         }
         public static bool EvalCondition(string condition)
         {
