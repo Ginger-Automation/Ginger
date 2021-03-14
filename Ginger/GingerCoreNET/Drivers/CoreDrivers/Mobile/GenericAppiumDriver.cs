@@ -45,13 +45,13 @@ using System.Xml;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IMobileWindowDriver
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }       
 
         //Mobile Driver Configurations
         [UserConfigured]
-        [UserConfiguredDefault(@"https://127.0.0.1:4723/wd/hub")]
+        [UserConfiguredDefault(@"http://127.0.0.1:4723/wd/hub")] 
         [UserConfiguredDescription("Full Appium server address including port if needed, default address is: 'https://ServerIP:Port/wd/hub'")]
         public String AppiumServer { get; set; }
 
@@ -82,58 +82,80 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
+        bool mIsDeviceConnected = false;
+        public bool IsDeviceConnected 
+        { 
+            get => mIsDeviceConnected; 
+            set => mIsDeviceConnected=value; 
+        }
+
+        public bool ShowWindow
+        {
+            get => LoadDeviceWindow;
+        }
+
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
         public eDevicePlatformType DriverPlatformType;
+
+        //public override bool IsSTAThread()
+        //{
+        //    return LoadDeviceWindow;
+        //}
 
         public GenericAppiumDriver(BusinessFlow BF)
         {
             BusinessFlow = BF;
         }
 
-        public bool mConnectedToDevice = false;
+        
         public override void StartDriver()
         {
-            //if (LoadGingerDeviceWindow != null && LoadGingerDeviceWindow.Trim().ToUpper() == "YES")
+            //if (LoadDeviceWindow)
             //{
             //    CreateSTA(ShowDriverWindow);
+
             //}
             //else
             //{
             //    ConnectedToDevice = ConnectToAppium();
             //}
-            mConnectedToDevice = ConnectToAppium();
-        }
-
-        public void ShowDriverWindow()
-        {
-            //show mobile window
-            DriverWindow = new AppiumDriverWindow();
-            DriverWindow.BF = BusinessFlow;
-            DriverWindow.AppiumDriver = this;
-            DriverWindow.DesignWindowInitialLook();
-            DriverWindow.Show();
-            for (int i = 0; i < 100; i++)
-            {
-                Thread.Sleep(100);
-            }
-
-            ConnectedToDevice = ConnectToAppium();
-            if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
-            {
+            mIsDeviceConnected = ConnectToAppium();
+            //if (mIsDeviceConnected)
+            //{
                 OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-                Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
-                System.Windows.Threading.Dispatcher.Run();
-            }
-            else
-            {
-                if (DriverWindow != null)
-                {
-                    DriverWindow.Close();
-                    DriverWindow = null;
-                }
-            }
+            //}
         }
+
+        //public void ShowDriverWindow()
+        //{
+        //    //show mobile window
+        //    DriverWindow = new AppiumDriverWindow();
+        //    DriverWindow.BF = BusinessFlow;
+        //    DriverWindow.AppiumDriver = this;
+        //    DriverWindow.DesignWindowInitialLook();
+        //    DriverWindow.Show();
+        //    for (int i = 0; i < 100; i++)
+        //    {
+        //        Thread.Sleep(100);
+        //    }
+
+        //    ConnectedToDevice = ConnectToAppium();
+        //    if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
+        //    {
+        //        OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+        //        Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
+        //        System.Windows.Threading.Dispatcher.Run();
+        //    }
+        //    else
+        //    {
+        //        if (DriverWindow != null)
+        //        {
+        //            DriverWindow.Close();
+        //            DriverWindow = null;
+        //        }
+        //    }
+        //}
 
         public bool ConnectToAppium()
         {
@@ -182,7 +204,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-
+               
                 return true;
             }
             catch (Exception ex)
@@ -249,7 +271,7 @@ namespace Amdocs.Ginger.CoreNET
                 Driver.Quit();
             }
 
-            mConnectedToDevice = false;
+            mIsDeviceConnected = false;
         }
         
         public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
@@ -727,14 +749,10 @@ namespace Amdocs.Ginger.CoreNET
             catch
             {
                 Bitmap bmp = new Bitmap (1024, 768);
-
                 var ms = new MemoryStream ();
-
-
                 bmp.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
                 var byteImage = ms.ToArray ();
                 ss = new Screenshot (Convert.ToBase64String (byteImage));
-
             }
              return ss;
         }
@@ -865,7 +883,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override bool IsRunning()
         {
-            return mConnectedToDevice;           
+            return mIsDeviceConnected;           
         }
         
         public override bool IsWindowExplorerSupportReady()
@@ -1254,6 +1272,26 @@ namespace Amdocs.Ginger.CoreNET
         public eAppType GetAppType()
         {
             return AppType;
+        }
+
+        public bool GetAutoRefreshDeviceWindowScreenshot()
+        {
+            return AutoRefreshDeviceWindowScreenshot;
+        }
+
+        public Byte[] GetScreenshotImage()
+        {
+            return Driver.GetScreenshot().AsByteArray;
+        }
+
+        public void PerformTap(long x, long y)
+        {
+            TapXY(x, y);
+        }
+
+        public void PerformDrag(Point start, Point end)
+        {
+           DoDrag(start.X, start.Y, end.X, end.Y);
         }
     }
 }

@@ -1,19 +1,14 @@
-﻿using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using GingerCore;
+using GingerCore.Drivers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Ginger.Drivers.DriversWindows
 {
@@ -23,38 +18,66 @@ namespace Ginger.Drivers.DriversWindows
     public partial class MobileDriverWindow : Window
     {
 
-        public IMobileWindowDriver mDriver;
-
-        bool isMousePressed = false;
-        bool isItDragAction = false;
-        long rectangleStartPoint_X;
-        long rectangleStartPoint_Y;
-        Point mouseStartPoint;
-        Point mouseEndPoint;
+        IMobileDriverWindow mDriver;
+        Agent mAgent;        
+        bool mIsMousePressed = false;
+        bool mIsItDragAction = false;
+        long mRectangleStartPoint_X;
+        long mRectangleStartPoint_Y;
+        System.Windows.Point mMouseStartPoint;
+        System.Windows.Point mMouseEndPoint;
         public BusinessFlow mBF;
        
-        public MobileDriverWindow()
+        public MobileDriverWindow(IMobileDriverWindow driver, Agent agent)
         {
             InitializeComponent();
+
+            mDriver = driver;
+            ((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;
+            mAgent = agent;
+
+            DesignWindowInitialLook();
         }
 
-        #region Events
+        private void MobileDriverWindow_DriverMessageEvent(object sender, DriverMessageEventArgs e)
+        {
+            switch(e.DriverMessageType)
+            {
+                case DriverBase.eDriverMessageType.DriverStatusChanged:
+                    if (mDriver.IsDeviceConnected)
+                    {
+                        LoadDeviceScreenshot();
+                    }
+                    else
+                    {
+                        this.Close();
+                    }
+                    break;
 
+                case DriverBase.eDriverMessageType.ActionPerformed:
+                    if (xTrackActionsChK.IsChecked == true)
+                    {
+                        LoadDeviceScreenshot();
+                    }
+                    break;
+            }
+        }
+        #region Events
 
         private void DeviceImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (DeviceImageCanvas != null)
             {
                 //correct the device buttons location
-                if (DeviceImage != null && DeviceImage.ActualWidth > 0)
+                if (xDeviceImage != null && xDeviceImage.ActualWidth > 0)
                 {
-                    double emptySpace = ((DeviceImageCanvas.ActualWidth - DeviceImage.ActualWidth) / 2);
-                    Thickness margin = backBtn.Margin;
+                    double emptySpace = ((DeviceImageCanvas.ActualWidth - xDeviceImage.ActualWidth) / 2);
+                    Thickness margin = xBackButton.Margin;
                     margin.Right = 10 + emptySpace;
-                    backBtn.Margin = margin;
-                    margin = menuBtn.Margin;
+                    xBackButton.Margin = margin;
+                    margin = xMenuBtn.Margin;
                     margin.Left = 10 + emptySpace;
-                    menuBtn.Margin = margin;
+                    xMenuBtn.Margin = margin;
                 }
             }
         }
@@ -68,16 +91,16 @@ namespace Ginger.Drivers.DriversWindows
             }
             try
             {
-                mouseStartPoint = e.GetPosition((System.Windows.Controls.Image)sender);
+                mMouseStartPoint = e.GetPosition((System.Windows.Controls.Image)sender);
             }
             catch
             {
-                mouseStartPoint = e.GetPosition((System.Windows.Shapes.Rectangle)sender);
+                mMouseStartPoint = e.GetPosition((System.Windows.Shapes.Rectangle)sender);
                 //convert to image scale
-                mouseStartPoint.X = mouseStartPoint.X + rectangleStartPoint_X;
-                mouseStartPoint.Y = mouseStartPoint.Y + rectangleStartPoint_Y;
+                mMouseStartPoint.X = mMouseStartPoint.X + mRectangleStartPoint_X;
+                mMouseStartPoint.Y = mMouseStartPoint.Y + mRectangleStartPoint_Y;
             }
-            isMousePressed = true;
+            mIsMousePressed = true;
         }
 
         private void DeviceImage_MouseMove(object sender, MouseEventArgs e)
@@ -88,10 +111,10 @@ namespace Ginger.Drivers.DriversWindows
                 return;
             }
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
-            if (isMousePressed == true)
+            if (mIsMousePressed == true)
             {
                 //it's a drag
-                isItDragAction = true;
+                mIsItDragAction = true;
             }
         }
 
@@ -105,27 +128,27 @@ namespace Ginger.Drivers.DriversWindows
 
             try
             {
-                mouseEndPoint = e.GetPosition((System.Windows.Controls.Image)sender);
+                mMouseEndPoint = e.GetPosition((System.Windows.Controls.Image)sender);
             }
             catch
             {
-                mouseEndPoint = e.GetPosition((System.Windows.Shapes.Rectangle)sender);
+                mMouseEndPoint = e.GetPosition((System.Windows.Shapes.Rectangle)sender);
                 //convert to image scale
-                mouseEndPoint.X = mouseEndPoint.X + rectangleStartPoint_X;
-                mouseEndPoint.Y = mouseEndPoint.Y + rectangleStartPoint_Y;
+                mMouseEndPoint.X = mMouseEndPoint.X + mRectangleStartPoint_X;
+                mMouseEndPoint.Y = mMouseEndPoint.Y + mRectangleStartPoint_Y;
             }
-            isMousePressed = false;
+            mIsMousePressed = false;
 
-            if (isItDragAction == true)
+            if (mIsItDragAction == true)
             {
                 //do drag
-                isItDragAction = false;
-                DeviceImageMouseDrag(mouseStartPoint, mouseEndPoint);
+                mIsItDragAction = false;
+                DeviceImageMouseDrag(mMouseStartPoint, mMouseEndPoint);
             }
             else
             {
                 //do click
-                DeviceImageMouseClick(mouseEndPoint);
+                DeviceImageMouseClick(mMouseEndPoint);
             }
         }
 
@@ -153,26 +176,26 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xRefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            LoadMobileScreenImage(false);
+            LoadDeviceScreenshot(false);
         }
 
 
         private void xBackBtn_Click(object sender, RoutedEventArgs e)
         {
             mDriver.PerformBackButtonPress();
-            LoadMobileScreenImage(true, 300);
+            LoadDeviceScreenshot(true, 300);
         }
 
         private void xHomeBtn_Click(object sender, RoutedEventArgs e)
         {
             mDriver.PerformHomeButtonPress();
-            LoadMobileScreenImage(true, 300);
+            LoadDeviceScreenshot(true, 300);
         }
 
         private void xMenuBtn_Click(object sender, RoutedEventArgs e)
         {
             mDriver.PerformHomeButtonPress();
-            LoadMobileScreenImage(true, 300);           
+            LoadDeviceScreenshot(true, 300);           
         }
 
         private void ConfigurationsBtn_Click(object sender, RoutedEventArgs e)
@@ -216,60 +239,39 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
-                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-                    this.Title = mDriver.DeviceName + " " + mDriver.DriverDeviceType.ToString() + " Browser";
-                else
-                    this.Title = mDriver.DeviceName + " " + mDriver.DriverDeviceType.ToString();
+                this.Title = string.Format("{0} Device View", mAgent.Name);
 
                 //don't track actions if asked in agent
-                if (mDriver.RefreshDeviceScreenShots != null && mDriver.RefreshDeviceScreenShots.Trim().ToUpper() != "YES")
-                    TrackActionsChK.IsChecked = false;
+                if (mDriver.GetAutoRefreshDeviceWindowScreenshot())
+                {
+                    xTrackActionsChK.IsChecked = false;
+                }
 
                 //hide optional columns
                 this.Width = 300;
                 ConfigurationsFrame.Visibility = System.Windows.Visibility.Collapsed;
                 ConfigurationsCol.Width = new GridLength(0);
-                InspectorFrame.Visibility = System.Windows.Visibility.Collapsed;
-                InspectorCol.Width = new GridLength(0);
-                SetAttributesActionsView(false);
-
-                //don't allow to record if no business flow
-                if (mBF == null)
-                {
-                    RecordBtn.Visibility = System.Windows.Visibility.Collapsed;
-                    actionsStckPnl.Visibility = System.Windows.Visibility.Collapsed;
-                }
-
-                //don't allow record in browser mode
-                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-                {
-                    RecordBtn.Visibility = System.Windows.Visibility.Collapsed;
-                }
 
                 //show device buttons according to type
-                switch (mDriver.DriverPlatformType)
+                switch (mDriver.GetDevicePlatformType())
                 {
-                    case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                        //all buttons as default
+                    case eDevicePlatformType.Android:
+                        if (mDriver.GetAppType() == eAppType.Web)
+                        {
+                            //browser mode- show buttons but disabled
+                            xBackButton.IsEnabled = false;
+                            xMenuBtn.IsEnabled = false;
+                            xHomeBtn.IsEnabled = false;
+                        }
                         break;
-                    case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                        //only middle button although not supported yet (apple limitation)
-                        backBtn.Visibility = System.Windows.Visibility.Collapsed;
-                        menuBtn.Visibility = System.Windows.Visibility.Collapsed;
-                        break;
-                    case SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser:
-                        //browser mode- show buttons but disabled
-                        backBtn.IsEnabled = false;
-                        menuBtn.IsEnabled = false;
-                        homeBtn.IsEnabled = false;
-                        break;
-                    case SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser:
-                        //browser mode- show buttons but disabled
-                        backBtn.Visibility = System.Windows.Visibility.Collapsed;
-                        menuBtn.Visibility = System.Windows.Visibility.Collapsed;
-                        homeBtn.IsEnabled = false;
+                    case eDevicePlatformType.iOS:
+                        //only middle button 
+                        xBackButton.Visibility = Visibility.Collapsed;
+                        xMenuBtn.Visibility = Visibility.Collapsed;
+                        if (mDriver.GetAppType() == eAppType.Web)
+                        {
+                            xHomeBtn.IsEnabled = false;
+                        }
                         break;
                 }
             }
@@ -279,62 +281,54 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
-        public bool LoadMobileScreenImage(bool wait = false, Int32 waitingTimeInMiliSeconds = 2000)
+        public bool LoadDeviceScreenshot(bool wait = false, Int32 waitingTimeInMiliSeconds = 2000)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            //Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             //wait before taking screen shot
-            if (wait)
+            if (wait)//TODO: remove?
             {
                 //Thread.Sleep(waitingTimeInMiliSeconds);
                 Thread.Sleep(waitingTimeInMiliSeconds * (int.Parse(RefreshWaitingRateCombo.Text.ToString())));
             }
-
             //take screen shot
             try
             {
-                //Screenshot SC = AppiumDriver.GetScreenShot();//commented to allow build
-                //UpdateDriverImageFromScreenshot(SC);
-
-                return true;
+                byte[] imageByteArray = mDriver.GetScreenshotImage();
+                if (imageByteArray == null || imageByteArray.Length == 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, "Failed to get the screenshot image from the device.");
+                    mDriver.IsDeviceConnected = false;
+                    return false;
+                }
+                else
+                {
+                    var image = new BitmapImage();
+                    using (var mem = new MemoryStream(imageByteArray))
+                    {
+                        image.BeginInit();
+                        image.CacheOption = BitmapCacheOption.OnLoad; // here
+                        image.StreamSource = mem;
+                        image.EndInit();
+                    }
+                    image.Freeze();
+                    xDeviceImage.Source = image;
+                    return true;
+                }               
             }
             catch (Exception ex)
-            {
-                Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, ex.Message);
-                mDriver.ConnectedToDevice = false;
-
+            {               
+                Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
+                mDriver.IsDeviceConnected = false;
                 return false;
             }
         }
 
-        //public void UpdateDriverImageFromScreenshot(Screenshot SC)//commented to allow build
-        //UpdateDriverImageFromScreenshot(SC);
-        // {
-        //     var image = new BitmapImage();
-        //     using (var ms = new System.IO.MemoryStream(SC.AsByteArray))
-        //     {
-        //         image.BeginInit();
-        //         image.CacheOption = BitmapCacheOption.OnLoad; // here
-        //         image.StreamSource = ms;
-        //         image.EndInit();
-        //     }
-        //     DeviceImage.Source = image;
-
-        //     //take the page source if needed
-        //     if (InspectBtn.IsChecked == true || RecordBtn.IsChecked == true)
-        //     {
-        //         StorePageSource();
-        //         if (InspectBtn.IsChecked == true)
-        //             SetAttributesActionsView(false);
-        //     }
-
-        //     Mouse.OverrideCursor = null;
-        // }
-
         public void ShowActionEfect(bool wait = false, Int32 waitingTimeInMiliSeconds = 2000)
         {
-            if (TrackActionsChK.IsChecked == true)
-                LoadMobileScreenImage(wait, waitingTimeInMiliSeconds);
+            if (xTrackActionsChK.IsChecked == true)
+            {
+                LoadDeviceScreenshot(wait, waitingTimeInMiliSeconds);
+            }
         }
 
         private System.Windows.Point GetPointOnMobile(System.Windows.Point pointOnImage)
@@ -343,27 +337,27 @@ namespace Ginger.Drivers.DriversWindows
             double ratio_X = 1;
             double ratio_Y = 1;
 
-            if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOS &&
-                    mDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
+            if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS && mDriver.GetAppType() == eAppType.NativeHybride)
             {
-                ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
-                ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
+                ratio_X = (xDeviceImage.Source.Width / 2) / xDeviceImage.ActualWidth;
+                ratio_Y = (xDeviceImage.Source.Height / 2) / xDeviceImage.ActualHeight;
             }
             else
             {
-                ratio_X = DeviceImage.Source.Width / DeviceImage.ActualWidth;
-                ratio_Y = DeviceImage.Source.Height / DeviceImage.ActualHeight;
+                ratio_X = xDeviceImage.Source.Width / xDeviceImage.ActualWidth;
+                ratio_Y = xDeviceImage.Source.Height / xDeviceImage.ActualHeight;
             }
 
-            pointOnMobile.X = (long)(pointOnImage.X * ratio_X);
-            pointOnMobile.Y = (long)(pointOnImage.Y * ratio_Y);
+            //pointOnMobile.X = (long)(pointOnImage.X * ratio_X);
+            //pointOnMobile.Y = (long)(pointOnImage.Y * ratio_Y);
+            pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
+            pointOnMobile.Y = (int)(pointOnImage.Y * ratio_Y);
 
             return pointOnMobile;
         }
 
         private void DeviceImageMouseClick(System.Windows.Point clickedPoint)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
             try
             {
                 //calculate clicked X,Y
@@ -371,574 +365,16 @@ namespace Ginger.Drivers.DriversWindows
                 long pointOnMobile_X = (long)pointOnMobile.X;
                 long pointOnMobile_Y = (long)pointOnMobile.Y;
 
-                if (InspectorPointBtn.IsChecked == false)
-                {
-                    //record action
-                    if (RecordBtn.IsChecked == true)
-                    {
-                        RecordAction(pointOnMobile_X, pointOnMobile_Y, ActGenElement.eGenElementAction.Click);
-                    }
+                //click the element
+                mDriver.PerformTap(pointOnMobile_X, pointOnMobile_Y);
 
-                    //click the element
-                    mDriver.TapXY(pointOnMobile_X, pointOnMobile_Y);
+                //update the screen
+                LoadDeviceScreenshot(true, 1000);
 
-                    //update the screen
-                    LoadMobileScreenImage(true, 1000);
-                }
-                else
-                {
-                    ShowSelectedElementDetails(clickedPoint);
-                    InspectorPointBtn.IsChecked = false;
-                    Mouse.OverrideCursor = null;
-                }
             }
             catch (Exception ex)
             {
-                Mouse.OverrideCursor = null;
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
-            }
-        }
-
-        private async void StorePageSource()
-        {
-            LoadingLabel.Visibility = Visibility.Visible;
-            inspectorElementTabsControl.Visibility = Visibility.Hidden;
-            int step = 0;
-            try
-            {
-                step = 1;
-                pageSourceString = await mDriver.GetPageSource();
-                pageSourceTextViewer.Text = pageSourceString;
-                step = 2;
-                pageSourceXml = new XmlDocument();
-                pageSourceXml.LoadXml(pageSourceString);
-                pageSourceXMLViewer.xmlDocument = pageSourceXml;
-            }
-            catch (Exception ex)
-            {
-                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                                mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
-                else
-                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
-
-                if (step == 1)
-                {
-                    pageSourceXml = null;
-                    pageSourceXMLViewer.xmlDocument = null;
-                    pageSourceTextViewer.Text = string.Empty;
-                }
-                else
-                {
-                    pageSourceXml = null;
-                    pageSourceXMLViewer.xmlDocument = null;
-                }
-            }
-
-            LoadingLabel.Visibility = Visibility.Hidden;
-            inspectorElementTabsControl.Visibility = Visibility.Visible;
-        }
-
-        private void DesignSourceTabContent()
-        {
-            if (sourceXMLRadioBtn.IsChecked == true)
-            {
-                if (pageSourceXMLViewer == null || pageSourceTextViewer == null)
-                    return;
-
-                //show XML
-                try
-                {
-                    if (pageSourceXMLViewer.xmlDocument != null)
-                    {
-                        pageSourceXMLViewer.Visibility = System.Windows.Visibility.Visible;
-                        sourceLbl.Visibility = System.Windows.Visibility.Collapsed;
-                        pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        //failed to load the XML view
-                        sourceLbl.Content = "XML View Failure";
-                        sourceLbl.Visibility = System.Windows.Visibility.Visible;
-                        pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
-                        pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //failed to load the XML view
-                    sourceLbl.Content = "XML View Failure";
-                    sourceLbl.Visibility = System.Windows.Visibility.Visible;
-                    pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    pageSourceTextViewer.Visibility = System.Windows.Visibility.Collapsed;
-                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                }
-            }
-            else
-            {
-                //show text
-                pageSourceTextViewer.Visibility = System.Windows.Visibility.Visible;
-                sourceLbl.Visibility = System.Windows.Visibility.Collapsed;
-                pageSourceXMLViewer.Visibility = System.Windows.Visibility.Collapsed;
-            }
-        }
-
-        public XmlNode GetElementXmlNodeFromMouse()
-        {
-            System.Windows.Point pointOnImage = Mouse.GetPosition(DeviceImage);
-            return FindElementXmlNodeByXY((long)pointOnImage.X, (long)pointOnImage.Y);
-        }
-
-
-        public XmlNode FindElementXmlNodeByXY(long pointOnMobile_X, long pointOnMobile_Y)
-        {
-            try
-            {
-                //get screen elements nodes
-                XmlNodeList ElmsNodes;
-                // Do once?
-                // if XMLSOurce changed we need to refresh
-                //pageSourceString = AppiumDriver.GetPageSource();                                
-                //pageSourceXml = new XmlDocument();
-                //pageSourceXml.LoadXml(pageSourceString);
-                // pageSourceXMLViewer.xmlDocument = pageSourceXml;   
-
-                ElmsNodes = pageSourceXml.SelectNodes("//*");
-
-                ///get the selected element from screen
-                if (ElmsNodes != null && ElmsNodes.Count > 0)
-                {
-                    //move to collection for getting last node which fits to bounds
-                    ObservableList<XmlNode> ElmsNodesColc = new ObservableList<XmlNode>();
-                    foreach (XmlNode elemNode in ElmsNodes)
-                    {
-                        //if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOS && elemNode.LocalName == "UIAWindow") continue;                        
-                        //try { if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.Android && elemNode.Attributes["focusable"].Value == "false") continue; }catch (Exception ex) { }
-                        bool skipElement = false;
-                        if (FilterElementsChK.IsChecked == true)
-                        {
-                            string[] filterList = FilterElementsTxtbox.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                            try
-                            {
-                                for (int indx = 0; indx < filterList.Length; indx++)
-                                    if (elemNode.Name.Contains(filterList[indx].Trim()) ||
-                                           elemNode.LocalName.Contains(filterList[indx].Trim()))
-                                    {
-                                        skipElement = true;
-                                        break;
-                                    }
-                            }
-                            catch (Exception ex)
-                            {
-                                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); 
-                            }
-                        }
-
-                        if (!skipElement)
-                            ElmsNodesColc.Add(elemNode);
-                    }
-
-                    Dictionary<XmlNode, long> foundElements = new Dictionary<XmlNode, long>();
-                    foreach (XmlNode elementNode in ElmsNodesColc.Reverse())
-                    {
-                        //get the element location
-                        long element_Start_X = -1;
-                        long element_Start_Y = -1;
-                        long element_Max_X = -1;
-                        long element_Max_Y = -1;
-
-                        switch (mDriver.DriverPlatformType)
-                        {
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                                try
-                                {
-                                    if (elementNode.Attributes["bounds"] != null)
-                                    {
-                                        string bounds = elementNode.Attributes["bounds"].Value;
-                                        bounds = bounds.Replace("[", ",");
-                                        bounds = bounds.Replace("]", ",");
-                                        string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                                        if (boundsXY.Count() == 4)
-                                        {
-                                            element_Start_X = Convert.ToInt64(boundsXY[0]);
-                                            element_Start_Y = Convert.ToInt64(boundsXY[1]);
-                                            element_Max_X = Convert.ToInt64(boundsXY[2]);
-                                            element_Max_Y = Convert.ToInt64(boundsXY[3]);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        element_Start_X = -1;
-                                        element_Start_Y = -1;
-                                        element_Max_X = -1;
-                                        element_Max_Y = -1;
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    element_Start_X = -1;
-                                    element_Start_Y = -1;
-                                    element_Max_X = -1;
-                                    element_Max_Y = -1;
-                                    //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                                }
-                                break;
-
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                try
-                                {
-                                    element_Start_X = Convert.ToInt64(elementNode.Attributes["x"].Value);
-                                    element_Start_Y = Convert.ToInt64(elementNode.Attributes["y"].Value);
-                                    element_Max_X = element_Start_X + Convert.ToInt64(elementNode.Attributes["width"].Value);
-                                    element_Max_Y = element_Start_Y + Convert.ToInt64(elementNode.Attributes["height"].Value);
-                                }
-                                catch (Exception ex)
-                                {
-                                    element_Start_X = -1;
-                                    element_Start_Y = -1;
-                                    element_Max_X = -1;
-                                    element_Max_Y = -1;
-                                    //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                                }
-                                break;
-                        }
-
-
-                        if (((pointOnMobile_X >= element_Start_X) && (pointOnMobile_X <= element_Max_X))
-                                   && ((pointOnMobile_Y >= element_Start_Y) && (pointOnMobile_Y <= element_Max_Y)))
-                        {
-                            //object found                                
-                            //return elementNode;
-                            foundElements.Add(elementNode, ((element_Max_X - element_Start_X) * (element_Max_Y - element_Start_Y)));
-                        }
-                    }
-
-                    //getting the small node size found
-                    XmlNode foundNode = null;
-                    long foundNodeSize = 0;
-                    if (foundElements.Count > 0)
-                    {
-                        foundNode = foundElements.Keys.First();
-                        foundNodeSize = foundElements.Values.First();
-                    }
-                    for (int indx = 0; indx < foundElements.Keys.Count; indx++)
-                    {
-                        if (foundElements.Values.ElementAt(indx) < foundNodeSize)
-                        {
-                            foundNode = foundElements.Keys.ElementAt(indx);
-                            foundNodeSize = foundElements.Values.ElementAt(indx);
-                        }
-                    }
-                    if (foundNode != null)
-                        return foundNode;
-                }
-
-                return null;
-            }
-            catch (Exception ex)
-            {
-                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-                return null;
-            }
-        }
-
-        private ActGenElement IdentifyClickedElement(long pointOnMobile_X, long pointOnMobile_Y)
-        {
-            ActGenElement elemntAct = new ActGenElement() { Active = true };
-            try
-            {
-                //get the clicked element
-                XmlNode clickedElementNode = FindElementXmlNodeByXY(pointOnMobile_X, pointOnMobile_Y);
-                if (clickedElementNode != null)
-                {
-                    ////try to identify by priority
-                    XmlNodeList validateElms;
-                    //ID
-                    string element_ID_attrib = string.Empty;
-                    string element_ID_value = string.Empty;
-                    try
-                    {
-                        switch (mDriver.DriverPlatformType)
-                        {
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                                element_ID_attrib = "resource-id";
-                                break;
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                element_ID_attrib = "name";
-                                break;
-                        }
-                        element_ID_value = clickedElementNode.Attributes[element_ID_attrib].Value;
-                    }
-                    catch { element_ID_value = string.Empty; }
-                    if (!string.IsNullOrEmpty(element_ID_value))
-                    {
-                        //check if unique 
-                        string xpath = "//*[@" + element_ID_attrib + "='" + element_ID_value + "']";
-                        validateElms = pageSourceXml.SelectNodes(xpath);
-                        if (validateElms != null && validateElms.Count == 1)
-                        {
-                            if (RecordByXpathChK.IsChecked == true)
-                            {
-                                elemntAct.LocateBy = eLocateBy.ByXPath;
-                                elemntAct.LocateValue = xpath;
-                            }
-                            else
-                            {
-                                elemntAct.LocateBy = eLocateBy.ByID;
-                                elemntAct.LocateValue = element_ID_value;
-                            }
-                            return elemntAct;
-                        }
-                    }
-                    //Content Description
-                    string element_Desc_attrib = string.Empty;
-                    string element_Desc_value = string.Empty;
-                    try
-                    {
-                        switch (mDriver.DriverPlatformType)
-                        {
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                                element_Desc_attrib = "content-desc";
-                                break;
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                element_Desc_attrib = "hint";
-                                break;
-                        }
-                        if (clickedElementNode.Attributes[element_Desc_attrib] != null)
-                        {
-                            element_Desc_value = clickedElementNode.Attributes[element_Desc_attrib].Value;
-                        }
-                        else
-                        {
-                            element_Desc_value = string.Empty;
-                        }
-                    }
-                    catch { element_Desc_value = string.Empty; }
-                    if (!string.IsNullOrEmpty(element_Desc_value))
-                    {
-                        string xpath = "//*[@" + element_Desc_attrib + "='" + element_Desc_value + "']";
-                        validateElms = pageSourceXml.SelectNodes(xpath);
-                        //check if unique
-                        if (validateElms != null && validateElms.Count == 1)
-                        {
-                            //name is no more supported by appium , so we'll always record by xpath instead of name
-                            elemntAct.LocateBy = eLocateBy.ByXPath;
-                            elemntAct.LocateValue = xpath;
-                            return elemntAct;
-                        }
-                    }
-                    //Text
-                    string element_Text_attrib = string.Empty;
-                    string element_Text_value = string.Empty;
-                    try
-                    {
-                        switch (mDriver.DriverPlatformType)
-                        {
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                                element_Text_attrib = "text";
-                                break;
-                            case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                element_Text_attrib = "label";
-                                break;
-                        }
-                        element_Text_value = clickedElementNode.Attributes[element_Text_attrib].Value;
-                    }
-                    catch { element_Text_value = string.Empty; }
-                    if (!string.IsNullOrEmpty(element_Text_value))
-                    {
-                        //check if unique
-                        string xpath = "//*[@" + element_Text_attrib + "='" + element_Text_value + "']";
-                        validateElms = pageSourceXml.SelectNodes(xpath);
-                        if (validateElms != null && validateElms.Count == 1)
-                        {
-                            //name is no more supported by appium , so we'll always record by xpath instead of name
-                            elemntAct.LocateBy = eLocateBy.ByXPath;
-                            elemntAct.LocateValue = xpath;
-
-                            return elemntAct;
-                        }
-                    }
-                    //Xpath
-                    string element_Xpath;
-                    //get element class
-                    string element_Class;
-                    element_Class = clickedElementNode.LocalName;//TO DO: validate!!
-                    if (element_Desc_value != element_Text_value)
-                        element_Xpath = "*//" + element_Class +
-                                            "[@" + element_ID_attrib + "='" + element_ID_value + "' and " +
-                                            "@" + element_Text_attrib + "='" + element_Text_value + "' and " +
-                                            "@" + element_Desc_attrib + "='" + element_Desc_value + "']";
-                    else
-                        element_Xpath = "*//" + element_Class +
-                                            "[@" + element_ID_attrib + "='" + element_ID_value + "' and " +
-                                            "@" + element_Text_attrib + "='" + element_Text_value + "']";
-                    if (!string.IsNullOrEmpty(element_Xpath))
-                    {
-                        //check if unique:
-                        validateElms = pageSourceXml.SelectNodes(element_Xpath);
-                        if (validateElms != null && validateElms.Count != 1)
-                        {
-                            //add index
-                            string element_Xpath_Orig = element_Xpath;
-                            switch (mDriver.DriverPlatformType)
-                            {
-                                case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                                    string element_Index;
-                                    try
-                                    {
-                                        element_Index = clickedElementNode.Attributes["index"].Value;
-                                    }
-                                    catch { element_Index = string.Empty; }
-                                    string element_Instance;
-                                    try
-                                    {
-                                        element_Instance = clickedElementNode.Attributes["instance"].Value;
-                                    }
-                                    catch { element_Instance = string.Empty; }
-                                    if (!string.IsNullOrEmpty(element_Index) || !string.IsNullOrEmpty(element_Instance))
-                                        element_Xpath = element_Xpath.Replace("']", "' and @index='" + element_Index + "' and @instance='" + element_Instance + "']");
-                                    break;
-
-                                case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                                    string element_path_attrib = "path";
-                                    string element_path_value = string.Empty;
-                                    try
-                                    {
-                                        element_path_value = clickedElementNode.Attributes[element_path_attrib].Value;
-                                    }
-                                    catch { element_path_value = string.Empty; }
-                                    if (!string.IsNullOrEmpty(element_path_value))
-                                        element_Xpath = element_Xpath.Replace("']", "' and @" + element_path_attrib + "='" + element_path_value + "']");
-                                    break;
-                            }
-
-                            if (element_Xpath_Orig != element_Xpath)
-                            {
-                                //check if unique
-                                validateElms = pageSourceXml.SelectNodes(element_Xpath);
-                                if (validateElms != null && validateElms.Count == 1)
-                                {
-                                    elemntAct.LocateBy = eLocateBy.ByXPath;
-                                    elemntAct.LocateValue = element_Xpath;
-                                    return elemntAct;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            elemntAct.LocateBy = eLocateBy.ByXPath;
-                            elemntAct.LocateValue = element_Xpath;
-                            return elemntAct;
-                        }
-                    }
-                }
-
-                //identify by X,Y
-                elemntAct.LocateBy = eLocateBy.ByXY;
-                elemntAct.LocateValue = pointOnMobile_X + "," + pointOnMobile_Y;
-                return elemntAct;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to identify the mobile element", ex);
-                elemntAct.LocateBy = eLocateBy.ByXY;
-                elemntAct.LocateValue = pointOnMobile_X + "," + pointOnMobile_Y;
-                return elemntAct;
-            }
-        }
-
-        private void RecordAction(long pointOnMobile_X, long pointOnMobile_Y, ActGenElement.eGenElementAction actionType)
-        {
-            try
-            {
-                //get the action with element identification
-                ActGenElement elemntAct = IdentifyClickedElement(pointOnMobile_X, pointOnMobile_Y);
-                elemntAct.Platform = ePlatformType.Mobile;
-
-                //add action by type
-                switch (actionType)
-                {
-                    case ActGenElement.eGenElementAction.Click:
-                        elemntAct.GenElementAction = actionType;
-                        elemntAct.Description = "Clicking on " + elemntAct.LocateValue;
-                        mBF.CurrentActivity.Acts.Add(elemntAct);
-                        if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
-                        break;
-
-                    case ActGenElement.eGenElementAction.SetValue:
-                        elemntAct.GenElementAction = actionType;
-                        elemntAct.Description = "Set value to " + elemntAct.LocateValue;
-                        string value = "";
-                        if (InputBoxWindow.OpenDialog("Set Element Value", "Value to Set:", ref value))
-                        {
-                            elemntAct.AddOrUpdateInputParamValue("Value", value);
-                            mBF.CurrentActivity.Acts.Add(elemntAct);
-                            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
-                        }
-                        break;
-
-                    case ActGenElement.eGenElementAction.GetCustomAttribute:
-                        elemntAct.GenElementAction = actionType;
-                        elemntAct.Description = "Get Attribute of " + elemntAct.LocateValue;
-                        string Attribute = "";
-                        if (InputBoxWindow.OpenDialog("Set Element Attribute", "Wanted Attribute Name:", ref Attribute))
-                        {
-                            elemntAct.AddOrUpdateInputParamValue("Value", Attribute);
-                            mBF.CurrentActivity.Acts.Add(elemntAct);
-                            if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
-                        }
-                        break;
-
-                    case ActGenElement.eGenElementAction.Visible:
-                        elemntAct.GenElementAction = actionType;
-                        elemntAct.Description = "Validate visibility of " + elemntAct.LocateValue;
-                        mBF.CurrentActivity.Acts.Add(elemntAct);
-                        if (InspectBtn.IsChecked == true) Reporter.ToUser(eUserMsgKey.MobileActionWasAdded);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to record the mobile action", ex);
-            }
-        }
-
-        private void ShowSelectedElementDetails(System.Windows.Point clickedPoint)
-        {
-            try
-            {
-                //calculate clicked point on mobile
-                System.Windows.Point pointOnMobile = GetPointOnMobile(clickedPoint);
-                long pointOnMobile_X = (long)pointOnMobile.X;
-                long pointOnMobile_Y = (long)pointOnMobile.Y;
-                inspectedElem_X = pointOnMobile_X;
-                inspectedElem_Y = pointOnMobile_Y;
-
-                //get the clicked element
-                XmlNode inspectElementNode = FindElementXmlNodeByXY(pointOnMobile_X, pointOnMobile_Y);
-                if (inspectElementNode != null && inspectElementNode != prevInspectElementNode)
-                {
-                    //show panel
-                    SetAttributesActionsView(true);
-
-                    //update the attributes details
-                    elementAttributesDetails.Text = string.Empty;
-                    elementAttributesDetails.Text = inspectElementNode.LocalName + ":" + System.Environment.NewLine;
-                    foreach (XmlAttribute attribute in inspectElementNode.Attributes)
-                        elementAttributesDetails.Text += attribute.Name + "=   '" + attribute.Value + "'" + System.Environment.NewLine;
-
-                    //mark the element bounds on image
-                    DrawElementRectangle(inspectElementNode);
-
-                    //TODO: select the node in the xml
-
-                    prevInspectElementNode = inspectElementNode;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.MobileShowElementDetailsFailed, ex.Message);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, string.Format("Failed to perform tap operation, error: '{0}'", ex.Message));
             }
         }
 
@@ -946,114 +382,16 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
-                mDriver.DoDrag(Convert.ToInt32(startPoint.X), Convert.ToInt32(startPoint.Y),
-                                    Convert.ToInt32(endPoint.X), Convert.ToInt32(endPoint.Y));
-                if (RecordBtn.IsChecked == true)
-                    mBF.CurrentActivity.Acts.Add(new ActMobileDevice()
-                    {
-                        Active = true,
-                        Description = "Do Drag XY to XY",
-                        MobileDeviceAction = ActMobileDevice.eMobileDeviceAction.DragXYXY,
-                        Value = Convert.ToInt32(startPoint.X).ToString() + "," + Convert.ToInt32(startPoint.Y).ToString() + "," + Convert.ToInt32(endPoint.X).ToString() + "," + Convert.ToInt32(endPoint.Y).ToString(),
-                        Platform = ePlatformType.Mobile
-                    });
-
+                mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));
+               
                 //update the screen
-                LoadMobileScreenImage(true, 300);
+                LoadDeviceScreenshot(true, 300);
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
+                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, string.Format("Failed to perform drag operation, error: '{0}'", ex.Message));
             }
         }
-
-        private void DrawElementRectangle(XmlNode clickedElementNode)
-        {
-            try
-            {
-                //remove previous rectangle
-                RemoveElemntRectangle();
-
-                rectangleXmlNode = clickedElementNode;
-
-                //get the element location
-                double ratio_X = 0;
-                double ratio_Y = 0;
-                double element_Start_X = 0;
-                double element_Start_Y = 0;
-                double element_Max_X = 0;
-                double element_Max_Y = 0;
-
-                switch (mDriver.DriverPlatformType)
-                {
-                    case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-                        ratio_X = DeviceImage.Source.Width / DeviceImage.ActualWidth;
-                        ratio_Y = DeviceImage.Source.Height / DeviceImage.ActualHeight;
-                        string bounds = rectangleXmlNode.Attributes["bounds"].Value;
-                        bounds = bounds.Replace("[", ",");
-                        bounds = bounds.Replace("]", ",");
-                        string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                        if (boundsXY.Count() == 4)
-                        {
-                            element_Start_X = (Convert.ToInt64(boundsXY[0])) / ratio_X;
-                            rectangleStartPoint_X = (long)element_Start_X;
-                            element_Start_Y = (Convert.ToInt64(boundsXY[1])) / ratio_Y;
-                            rectangleStartPoint_Y = (long)element_Start_Y;
-                            element_Max_X = (Convert.ToInt64(boundsXY[2])) / ratio_X;
-                            element_Max_Y = (Convert.ToInt64(boundsXY[3])) / ratio_Y;
-                        }
-                        break;
-                    case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-                        if (mDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
-                        {
-                            ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
-                            ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
-                        }
-                        else
-                        {
-                            ratio_X = DeviceImage.Source.Width / DeviceImage.ActualWidth;
-                            ratio_Y = DeviceImage.Source.Height / DeviceImage.ActualHeight;
-                        }
-                        element_Start_X = (Convert.ToInt64(rectangleXmlNode.Attributes["x"].Value)) / ratio_X;
-                        rectangleStartPoint_X = (long)element_Start_X;
-                        element_Start_Y = (Convert.ToInt64(rectangleXmlNode.Attributes["y"].Value)) / ratio_Y;
-                        rectangleStartPoint_Y = (long)element_Start_Y;
-                        element_Max_X = element_Start_X + ((Convert.ToInt64(rectangleXmlNode.Attributes["width"].Value)) / ratio_X);
-                        element_Max_Y = element_Start_Y + ((Convert.ToInt64(rectangleXmlNode.Attributes["height"].Value)) / ratio_Y);
-                        break;
-                }
-
-                //draw the rectangle
-                mHighightRectangle = new System.Windows.Shapes.Rectangle();
-                mHighightRectangle.SetValue(Canvas.LeftProperty, element_Start_X + ((DeviceImageCanvas.ActualWidth - DeviceImage.ActualWidth) / 2));
-                mHighightRectangle.SetValue(Canvas.TopProperty, element_Start_Y + ((DeviceImageCanvas.ActualHeight - DeviceImage.ActualHeight) / 2));
-                mHighightRectangle.Width = (element_Max_X - element_Start_X);
-                mHighightRectangle.Height = (element_Max_Y - element_Start_Y);
-                mHighightRectangle.Fill = new SolidColorBrush() { Color = Colors.Red, Opacity = 0.5f };
-                DeviceImageCanvas.Children.Add(mHighightRectangle);
-
-                //bind events to device image events
-                mHighightRectangle.MouseMove += DeviceImage_MouseMove;
-                mHighightRectangle.MouseLeftButtonDown += DeviceImage_MouseLeftButtonDown;
-                mHighightRectangle.MouseLeftButtonUp += DeviceImage_MouseLeftButtonUp;
-                mHighightRectangle.MouseEnter += DeviceImage_MouseEnter;
-                mHighightRectangle.MouseLeave += DeviceImage_MouseLeave;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to draw mobile element rectangle", ex);
-            }
-        }
-
-        private void RemoveElemntRectangle()
-        {
-            if (DeviceImageCanvas != null)
-            {
-                if (DeviceImageCanvas.Children.Contains(mHighightRectangle))
-                    DeviceImageCanvas.Children.Remove(mHighightRectangle);
-            }
-        }
-
 
         private void SetConfigurationsPanelView(bool show)
         {
@@ -1072,71 +410,6 @@ namespace Ginger.Drivers.DriversWindows
                 ConfigurationsCol.Width = new GridLength(0);
             }
         }
-
-        private void SetAttributesActionsView(bool show)
-        {
-            if (show == true)
-            {
-                selectElmtLbl.Visibility = System.Windows.Visibility.Collapsed;
-                attributesStckPnl.Visibility = System.Windows.Visibility.Visible;
-                if (mBF != null)
-                {
-                    actionsStckPnl.Visibility = System.Windows.Visibility.Visible;
-                    attributesActionsSpliter.Visibility = System.Windows.Visibility.Visible;
-                }
-            }
-            else
-            {
-                selectElmtLbl.Visibility = System.Windows.Visibility.Visible;
-                attributesStckPnl.Visibility = System.Windows.Visibility.Collapsed;
-                actionsStckPnl.Visibility = System.Windows.Visibility.Collapsed;
-                attributesActionsSpliter.Visibility = System.Windows.Visibility.Collapsed;
-                RemoveElemntRectangle();
-            }
-        }
-
-        private void SetInspectorPanelView(bool show)
-        {
-            if (show == true)
-            {
-                InspectorFrame.Visibility = System.Windows.Visibility.Visible;
-                inspectroSplitter.Visibility = System.Windows.Visibility.Visible;
-                InspectorCol.Width = new GridLength(250);
-                this.Width = this.Width + Convert.ToDouble(InspectorCol.Width.ToString());
-
-                //allow only XML view for browser mode
-                if (mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-                        mDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-                {
-                    elementAttributesTab.Visibility = System.Windows.Visibility.Collapsed;
-                    InspectorPointBtn.Visibility = System.Windows.Visibility.Collapsed;
-                    inspectorElementTabsControl.SelectedIndex = 1;//Source tab
-                }
-            }
-            else
-            {
-                InspectorFrame.Visibility = System.Windows.Visibility.Collapsed;
-                inspectroSplitter.Visibility = System.Windows.Visibility.Collapsed;
-                this.Width = this.Width - InspectorCol.ActualWidth;
-                InspectorCol.Width = new GridLength(0);
-            }
-        }
-
-        public void HighLightElement(AppiumElementInfo AEI)
-        {
-            DrawElementRectangle(AEI.XmlNode);
-        }
-
-        public void StartRecording()
-        {
-            RecordBtn.IsChecked = true;
-        }
-
-        internal void StopRecording()
-        {
-            RecordBtn.IsChecked = false;
-        }
-
         #endregion Functions
     }
 }

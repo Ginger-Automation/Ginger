@@ -9,7 +9,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         public static event DriverWindowEventHandler DriverWindowEvent;
         public delegate void DriverWindowEventHandler(DriverWindowEventArgs args);
-        public static void OnAutomateBusinessFlowEvent(DriverWindowEventArgs.eEventType eventType, DriverBase driver, object dataObject)
+        public static void OnDriverWindowEvent(DriverWindowEventArgs.eEventType eventType, DriverBase driver, object dataObject)
         {
             DriverWindowEventHandler handler = DriverWindowEvent;
             if (handler != null)
@@ -23,7 +23,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         public enum eEventType
         {
-            DriverStart
+            ShowDriverWindow, 
+            CloseDriverWindow
         }
 
         public eEventType EventType;

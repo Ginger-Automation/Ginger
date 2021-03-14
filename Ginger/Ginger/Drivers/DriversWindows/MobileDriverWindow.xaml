@@ -25,22 +25,22 @@
         <Button x:Name="xRefreshButton" Grid.Column="0" Grid.Row="0" Click="xRefreshButton_Click" ToolTip="Refresh Mobile Screen Image" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3" Height="32" Width="32">
             <Image Source="{StaticResource @RoundRefresh_32x32.png}"/>
         </Button>
-        <ToggleButton x:Name="RecordBtn" Grid.Column="0" Grid.Row="0" Click="RecordBtn_Click" ToolTip="Record Operations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="39,0,0,3">
+        <!--<ToggleButton x:Name="RecordBtn" Grid.Column="0" Grid.Row="0" Click="RecordBtn_Click" ToolTip="Record Operations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="39,0,0,3">
             <Image Source="{StaticResource @Record_24x24.png}"/>
-        </ToggleButton>
+        </ToggleButton>-->
         <ToggleButton x:Name="ConfigurationsBtn" Grid.Column="0" Grid.Row="0" Click="ConfigurationsBtn_Click" ToolTip="Configurations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,3">
             <Image Source="{StaticResource @Config_24x24.png}"/>
         </ToggleButton>
         <ToggleButton x:Name="PinBtn" Grid.Column="0" Grid.Row="0" Click="PinBtn_Click" ToolTip="Pin Window" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,39,3" IsChecked="False">
             <Image Source="{StaticResource @Pin_24x24.png}"/>
         </ToggleButton>
-        <ToggleButton x:Name="InspectBtn" Grid.Column="0" Grid.Row="0" Click="InspectBtn_Click" ToolTip="Inspector" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,3">
+        <!--<ToggleButton x:Name="InspectBtn" Grid.Column="0" Grid.Row="0" Click="InspectBtn_Click" ToolTip="Inspector" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10,0,0,3">
             <Image Source="{StaticResource @MagnifyingGlass_24x24.png}"/>
-        </ToggleButton>
+        </ToggleButton>-->
 
         <!--Main area mobile image-->
         <Canvas x:Name="DeviceImageCanvas" Grid.Column="0" Grid.Row="1" >
-            <Image x:Name="DeviceImage" Height="{Binding ActualHeight, ElementName=DeviceImageCanvas}" Width="{Binding ActualWidth, ElementName=DeviceImageCanvas}"  
+            <Image x:Name="xDeviceImage" Height="{Binding ActualHeight, ElementName=DeviceImageCanvas}" Width="{Binding ActualWidth, ElementName=DeviceImageCanvas}"  
                    MouseLeftButtonDown="DeviceImage_MouseLeftButtonDown" 
                    MouseMove="DeviceImage_MouseMove" 
                    MouseLeftButtonUp="DeviceImage_MouseLeftButtonUp" 
@@ -69,7 +69,7 @@
         <ScrollViewer Grid.Column="1" Grid.Row="1">
             <StackPanel >
                 <Label Content="Device Image:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" Margin="0,10,0,0"></Label>
-                <CheckBox x:Name="TrackActionsChK"  Content="Refresh after Action run" IsChecked="True"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                <CheckBox x:Name="xTrackActionsChK"  Content="Refresh after Action run" IsChecked="True"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0"/>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Refresh waiting rate:" Style="{StaticResource @LabelStyle}" Margin="5,5,10,0"></Label>
                     <ComboBox x:Name="RefreshWaitingRateCombo" Style="{StaticResource @InputComboBoxStyle}" Width="50">

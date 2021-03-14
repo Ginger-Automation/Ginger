@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.GeneralLib;
@@ -45,12 +46,12 @@ namespace Ginger.Drivers
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
-            BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: GenericAppiumDriver.eDevicePlatformType.Android.ToString());
-            BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: GenericAppiumDriver.eDevicePlatformType.iOS.ToString());
+            BindingHandler.ObjFieldBinding(xAndroidRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.Android.ToString());
+            BindingHandler.ObjFieldBinding(xIOSRdBtn, RadioButton.IsCheckedProperty, mDevicePlatformType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eDevicePlatformType.iOS.ToString());
 
             mAppType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppType));           
-            BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: GenericAppiumDriver.eAppType.NativeHybride.ToString());
-            BindingHandler.ObjFieldBinding(xWebRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: GenericAppiumDriver.eAppType.Web.ToString());
+            BindingHandler.ObjFieldBinding(xNativeHybRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.NativeHybride.ToString());
+            BindingHandler.ObjFieldBinding(xWebRdBtn, RadioButton.IsCheckedProperty, mAppType, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAppType.Web.ToString());
 
             mAppiumCapabilities = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumCapabilities));
             if (mAppiumCapabilities.MultiValues == null || mAppiumCapabilities.MultiValues.Count == 0)
@@ -86,7 +87,7 @@ namespace Ginger.Drivers
         {
             DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which mobile OS platform to use" };
             DriverConfigParam automationName = new DriverConfigParam() { Parameter = "automationName", Description = "Which automation engine to use" };
-            if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
+            if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
             {
                 platformName.Value = "Android";
                 automationName.Value = "UiAutomator2";
@@ -106,9 +107,9 @@ namespace Ginger.Drivers
             DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
             DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the app under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
-            if (mAppType.Value == GenericAppiumDriver.eAppType.NativeHybride.ToString())
+            if (mAppType.Value == eAppType.NativeHybride.ToString())
             {
-                if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
+                if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
                 {
                     if (!init)
                     {
@@ -133,7 +134,7 @@ namespace Ginger.Drivers
             }
             else
             {
-                if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
+                if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
                 {
                     browserName.Value = "Chrome";
                 }
@@ -152,7 +153,7 @@ namespace Ginger.Drivers
         {
             DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Value = string.Empty};
             DriverConfigParam udid = new DriverConfigParam() { Parameter = "udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
-            if (mDevicePlatformType.Value == GenericAppiumDriver.eDevicePlatformType.Android.ToString())
+            if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
             {
                 deviceName.Description = "The kind of mobile device to use, for example 'Galaxy S21'";
             }
@@ -293,7 +294,10 @@ namespace Ginger.Drivers
 
         private void xAutoUpdateCapabiltiies_Checked(object sender, RoutedEventArgs e)
         {
-            AutoSetCapabilities();
+            if (this.IsLoaded)
+            {
+                AutoSetCapabilities();
+            }
         }
     }
 
