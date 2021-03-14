@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -16,14 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using GingerCore.GeneralLib;
-using GingerCore.Helpers;
-using GingerCore.Platforms;
-using GingerCore.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 namespace GingerCore.Actions.Communication
@@ -38,12 +33,12 @@ namespace GingerCore.Actions.Communication
             TBH.AddText("Email Action let you send email");
             TBH.AddLineBreak();
             TBH.AddText("It is possible to include attachments");
-        }        
+        }
 
         public override string ActionEditPage { get { return "Communication.ActeMailEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool ValueConfigsNeeded { get { return false; } }
-        
+
         // return the list of platforms this action is supported on
         public override List<ePlatformType> Platforms
         {
@@ -63,7 +58,7 @@ namespace GingerCore.Actions.Communication
         }
 
         public new static partial class Fields
-        {            
+        {
             public static string EnableSSL = "EnableSSL";
             public static string ConfigureCredential = "ConfigureCredential";
         }
@@ -74,51 +69,61 @@ namespace GingerCore.Actions.Communication
         {
             get { return "Email" + eMailActionType.ToString(); }
         }
-        
+
         public eEmailActionType eMailActionType { get; set; }
-        
+
         public string Host
         {
             get
-            {                
+            {
                 return GetOrCreateInputParam(nameof(Host), "").Value;
             }
-            set { AddOrUpdateInputParamValue(nameof(Host), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Host), value);
                 OnPropertyChanged(nameof(Host));
             }
         }
-        
+
         public string Port
         {
             get
-            {               
+            {
                 return GetOrCreateInputParam(nameof(Port), "25").Value;
             }
-            set { AddOrUpdateInputParamValue(nameof(Port), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Port), value);
                 OnPropertyChanged(nameof(Port));
             }
         }
-        
+
         public string User
         {
             get { return GetInputParamValue(nameof(User)); }
-            set { AddOrUpdateInputParamValue(nameof(User), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(User), value);
                 OnPropertyChanged(nameof(User));
             }
         }
-        
+
         public string Pass
         {
             get { return GetInputParamValue(nameof(Pass)); }
-            set { AddOrUpdateInputParamValue(nameof(Pass), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Pass), value);
                 OnPropertyChanged(nameof(Pass));
             }
         }
-        
+
         public string MailFrom
         {
             get { return GetInputParamValue(nameof(MailFrom)); }
-            set { AddOrUpdateInputParamValue(nameof(MailFrom), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MailFrom), value);
                 OnPropertyChanged(nameof(MailFrom));
             }
         }
@@ -136,57 +141,69 @@ namespace GingerCore.Actions.Communication
         public string Mailto
         {
             get { return GetInputParamValue(nameof(Mailto)); }
-            set { AddOrUpdateInputParamValue(nameof(Mailto), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Mailto), value);
                 OnPropertyChanged(nameof(Mailto));
             }
         }
 
-        
+
         public string Mailcc
         {
             get { return GetInputParamValue(nameof(Mailcc)); }
-            set { AddOrUpdateInputParamValue(nameof(Mailcc), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Mailcc), value);
                 OnPropertyChanged(nameof(Mailcc));
             }
         }
 
-        
+
         public string Subject
         {
             get { return GetInputParamValue(nameof(Subject)); }
-            set { AddOrUpdateInputParamValue(nameof(Subject), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Subject), value);
                 OnPropertyChanged(nameof(Subject));
             }
         }
 
-        
+
         public string Body
         {
             get { return GetInputParamValue(nameof(Body)); }
-            set { AddOrUpdateInputParamValue(nameof(Body), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(Body), value);
                 OnPropertyChanged(nameof(Body));
             }
         }
 
-        
+
         public string AttachmentFileName
         {
             get { return GetInputParamValue(nameof(AttachmentFileName)); }
-            set { AddOrUpdateInputParamValue(nameof(AttachmentFileName), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(AttachmentFileName), value);
                 OnPropertyChanged(nameof(AttachmentFileName));
             }
         }
 
-        
+
         public string MailOption
         {
             get { return GetInputParamValue(nameof(MailOption)); }
-            set { AddOrUpdateInputParamValue(nameof(MailOption), value);
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MailOption), value);
                 OnPropertyChanged(nameof(MailOption));
             }
         }
 
-        
+
         public bool EnableSSL_Value
         {
             get
@@ -232,7 +249,7 @@ namespace GingerCore.Actions.Communication
             e.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));
             e.SMTPPass = this.GetInputParamCalculatedValue(nameof(Pass));
 
-            if(e.EmailMethod == Email.eEmailMethod.SMTP)
+            if (e.EmailMethod == Email.eEmailMethod.SMTP)
             {
                 e.MailFromDisplayName = this.GetInputParamCalculatedValue(nameof(MailFromDisplayName));
             }
@@ -259,12 +276,12 @@ namespace GingerCore.Actions.Communication
                     Error = "Failed: Please provide FROM email address.";
                     return;
                 }
-            }                
-            
+            }
+
             isSuccess = e.Send();
             if (isSuccess == false)
             {
-                Error = e.Event;                
+                Error = e.Event;
                 Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
 
