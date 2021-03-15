@@ -55,7 +55,19 @@ namespace Ginger.ALM.Repository
         public abstract bool LoadALMConfigurations();
         public abstract void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs);
         public abstract void UpdateBusinessFlow(ref BusinessFlow businessFlow);
-     
+
+        public void OpenALMItemsFieldsPage()
+        {
+            if (mALMFieldsPage == null)
+            {
+                mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
+                mALMFieldsPage.ShowAsWindow(false);
+            }
+            else 
+            {
+                mALMFieldsPage.ShowAsWindow(true);
+            }
+        }
         public void ALMDefectsProfilesPage()
         {
             if (mALMDefectsProfilesPage == null)

@@ -530,8 +530,9 @@ namespace Ginger
 
         private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
-            ALMItemsFieldsConfigurationPage mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
-            mALMFieldsPage.ShowAsWindow();
+            ALMIntegration.Instance.OpenALMItemsFieldsPage();
+            //ALMItemsFieldsConfigurationPage mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
+            //mALMFieldsPage.ShowAsWindow();
         }
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
