@@ -902,6 +902,24 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.TreeView:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Sitemap);
                     break;
+                case eImageType.Pin:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.ThumbTack);
+                    break;
+                case eImageType.Square:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Square);
+                    break;
+                case eImageType.Triangle:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Play);
+                    break;
+                case eImageType.Circle:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Circle);
+                    break;
+                case eImageType.ios:
+                    SetAsStaticImage("ios.png");
+                    break;
+                case eImageType.Android:
+                    SetAsStaticImage("android.png");
+                    break;
                 #endregion
 
                 #region Comparison Status Images

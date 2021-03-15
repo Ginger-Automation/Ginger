@@ -269,6 +269,12 @@ namespace Amdocs.Ginger.Common.Enums
         General,
         SignIn,
         SignOut,
+        Pin,
+        Square,
+        Triangle,
+        Circle,
+        ios,
+        Android,
         #endregion
 
         #region Source control Images     

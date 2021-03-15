@@ -367,7 +367,12 @@ namespace Amdocs.Ginger.CoreNET
                 act.Error = "Run Action Failed, Error details: " + ex.Message;
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
+            finally
+            {
+                OnDriverMessage(eDriverMessageType.ActionPerformed);
+            }
         }
+
         private void GenElementHandler(ActGenElement act)
         {
             try
