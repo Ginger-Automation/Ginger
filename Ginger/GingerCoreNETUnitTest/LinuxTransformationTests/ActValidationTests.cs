@@ -1,17 +1,6 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Repository;
-using Amdocs.Ginger.Repository;
-using Ginger.Run;
-using GingerCore;
+﻿using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Environments;
-using GingerCoreNETUnitTest.RunTestslib;
-using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
 
 namespace GingerCoreNETUnitTest.LinuxTransformationTests
 {
