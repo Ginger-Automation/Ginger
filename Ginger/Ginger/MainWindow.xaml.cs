@@ -531,8 +531,6 @@ namespace Ginger
         private void ALMFieldsConfiguration_Click(object sender, RoutedEventArgs e)
         {
             ALMIntegration.Instance.OpenALMItemsFieldsPage();
-            //ALMItemsFieldsConfigurationPage mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
-            //mALMFieldsPage.ShowAsWindow();
         }
 
         private void ALMDefectsProfiles_Click(object sender, RoutedEventArgs e)
