@@ -306,7 +306,6 @@
     </Compile>
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
-    <Compile Include="Actions\REST\ActREST.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
       <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -623,6 +622,7 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\REST\" />
     <Folder Include="Actions\WebServices\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />

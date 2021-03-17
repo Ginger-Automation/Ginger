@@ -32,8 +32,9 @@ using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
@@ -61,7 +62,7 @@ namespace UnitTests.NonUITests
 
             // Init SR
             SolutionRepository  mSolutionRepository = WorkSpace.Instance.SolutionRepository;
-            Ginger.App.InitClassTypesDictionary();
+     
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
@@ -608,7 +609,7 @@ namespace UnitTests.NonUITests
         [Timeout(600000)]
         public void EnhanceSecurityProtocalOnVersionUpgradeCheck()
         {
-            var targetFrameworkAttribute = typeof(Ginger.MainWindow).Assembly.GetCustomAttributes(typeof(System.Runtime.Versioning.TargetFrameworkAttribute), false)
+            var targetFrameworkAttribute = typeof(WebServicesDriver).Assembly.GetCustomAttributes(typeof(System.Runtime.Versioning.TargetFrameworkAttribute), false)
                                            .SingleOrDefault();
             var versionName = ((System.Runtime.Versioning.TargetFrameworkAttribute)targetFrameworkAttribute).FrameworkName;
             string versionStr = string.Empty;

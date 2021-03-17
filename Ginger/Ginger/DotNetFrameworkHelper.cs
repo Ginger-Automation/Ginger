@@ -629,6 +629,10 @@ namespace Ginger
             return factory.CreateConnection();
         }
 
+        public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
+        {
+            return new WebServicesDriverWindow(businessFlow);
+        }
     }
     
 }
