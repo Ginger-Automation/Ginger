@@ -21,6 +21,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
         Up, Down, Left, Right
     }
 
+    public enum eDeviceOrientation
+    {
+        Portrait, Landscape
+    }
+
     public class MobileDriverCommon
     {
 

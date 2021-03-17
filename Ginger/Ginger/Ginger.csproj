@@ -3192,6 +3192,8 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\ios.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

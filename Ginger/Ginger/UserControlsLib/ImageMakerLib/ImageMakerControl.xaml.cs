@@ -761,7 +761,7 @@ namespace Amdocs.Ginger.UserControls
                     break;
 
                 case eImageType.Mobile:
-                    SetAsFontAwesomeIcon(FontAwesomeIcon.Mobile);
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.MobilePhone);
                     break;
 
                 case eImageType.Codepen:
@@ -914,11 +914,17 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Circle:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.Circle);
                     break;
-                case eImageType.ios:
+                case eImageType.Ios:
                     SetAsStaticImage("ios.png");
+                    break;
+                case eImageType.IosOutline:
+                    SetAsStaticImage("iosOutline.png");
                     break;
                 case eImageType.Android:
                     SetAsStaticImage("android.png");
+                    break;
+                case eImageType.AndroidOutline:
+                    SetAsStaticImage("androidOutline.png");
                     break;
                 #endregion
 

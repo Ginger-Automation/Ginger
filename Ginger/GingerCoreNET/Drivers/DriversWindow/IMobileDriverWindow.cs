@@ -27,5 +27,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         void PerformTap(long x, long y);
 
         void PerformDrag(System.Drawing.Point start, System.Drawing.Point end);
+
+        void SwitchToLandscape();
+
+        void SwitchToPortrait();
+
+        eDeviceOrientation GetOrientation();
     }
 }

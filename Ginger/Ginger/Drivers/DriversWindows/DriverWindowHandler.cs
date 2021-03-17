@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using GingerCore;
 using GingerCore.Drivers;
 using System;
@@ -43,7 +44,15 @@ namespace Ginger.Drivers.DriversWindows
                 case DriverWindowEventArgs.eEventType.CloseDriverWindow:
                     if (mOpenWindowsDic.ContainsKey(args.Driver))
                     {
-                        mOpenWindowsDic[args.Driver].Close();
+                        try
+                        {
+                            mOpenWindowsDic[args.Driver].Close();
+                            mOpenWindowsDic.Remove(args.Driver);
+                        }
+                        catch(Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "Exception while trying to close Driver Window", ex);
+                        }
                     }
                     break;
             }

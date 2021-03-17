@@ -273,8 +273,10 @@ namespace Amdocs.Ginger.Common.Enums
         Square,
         Triangle,
         Circle,
-        ios,
+        Ios,
+        IosOutline,
         Android,
+        AndroidOutline,
         #endregion
 
         #region Source control Images     

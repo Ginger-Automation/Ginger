@@ -1298,5 +1298,20 @@ namespace Amdocs.Ginger.CoreNET
         {
            DoDrag(start.X, start.Y, end.X, end.Y);
         }
+
+        public void SwitchToLandscape()
+        {
+            Driver.Orientation = ScreenOrientation.Landscape;
+        }
+
+        public void SwitchToPortrait()
+        {
+            Driver.Orientation = ScreenOrientation.Portrait;
+        }
+
+        public eDeviceOrientation GetOrientation()
+        {
+            return (eDeviceOrientation)Enum.Parse(typeof(eDeviceOrientation), Driver.Orientation.ToString());
+        }
     }
 }
