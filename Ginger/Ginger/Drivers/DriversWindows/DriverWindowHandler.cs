@@ -25,19 +25,20 @@ namespace Ginger.Drivers.DriversWindows
         {
             switch (args.EventType)
             {
-                case DriverWindowEventArgs.eEventType.ShowDriverWindow:                    
-                    //Thread staThread = new Thread(()=>
-                    //{
-                        if (args.Driver is IDriverWindow)//TODO: think if better to do in reflection using DriverWindowPath
+                case DriverWindowEventArgs.eEventType.ShowDriverWindow:
+                    Thread staThread = new Thread(new ThreadStart(() =>
+                    {
+                        if (args.Driver is IDriverWindow)//TODO: think if better to do it with reflection using DriverWindowPath
                         {
                             MobileDriverWindow mobileDriverWindow = new MobileDriverWindow((IMobileDriverWindow)args.Driver, (Agent)args.DataObject);
                             mOpenWindowsDic.Add(args.Driver, mobileDriverWindow);
                             mobileDriverWindow.Show();
+                            System.Windows.Threading.Dispatcher.Run();
                         }
-                    //});
-                    //staThread.SetApartmentState(ApartmentState.STA);
-                    //staThread.IsBackground = true;
-                    //staThread.Start();
+                    }));
+                    staThread.SetApartmentState(ApartmentState.STA);
+                    staThread.IsBackground = true;
+                    staThread.Start();
                     //System.Windows.Threading.Dispatcher.Run();
                     break;
 
