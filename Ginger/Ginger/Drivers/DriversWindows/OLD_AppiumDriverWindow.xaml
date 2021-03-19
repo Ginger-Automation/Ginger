@@ -1,7 +1,6 @@
-    <Window x:Class="GingerCore.Drivers.Appium.AppiumDriverWindow"
+<Window x:Class="Ginger.Drivers.DriversWindows.AppiumDriverWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"        
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:UserControls="clr-namespace:GingerCore.UserControls"
         Title="AppiumDriverWindow" Height="600" Width="800"
         MinHeight="600" MinWidth="300"
         WindowStartupLocation="CenterScreen"
@@ -9,7 +8,7 @@
         >
     
     <Grid x:Name="windowGrid">
-        <Grid.ColumnDefinitions>
+        <!--<Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="InspectorCol" Width="250"/>
             <ColumnDefinition  Width="300*"/>
             <ColumnDefinition x:Name="ConfigurationsCol" Width="250"/>
@@ -20,7 +19,7 @@
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>      
         
-        <!--Main area top buttons-->
+        --><!--Main area top buttons--><!--
         <Frame x:Name="MainTopFrame" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
         <Button x:Name="RefreshButton" Grid.Column="1" Grid.Row="0" Click="RefreshButton_Click" ToolTip="Refresh Mobile Screen Image" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,3" Height="32" Width="32">
             <Image Source="{StaticResource @RoundRefresh_32x32.png}"/>
@@ -38,7 +37,7 @@
             <Image Source="{StaticResource @MagnifyingGlass_24x24.png}"/>
         </ToggleButton>
                 
-        <!--Main area mobile image-->
+        --><!--Main area mobile image--><!--
         <Canvas x:Name="DeviceImageCanvas" Grid.Column="1" Grid.Row="1" SizeChanged="DeviceImageCanvas_SizeChange">
             <Image x:Name="DeviceImage" Height="{Binding ActualHeight, ElementName=DeviceImageCanvas}" Width="{Binding ActualWidth, ElementName=DeviceImageCanvas}"  
                    MouseLeftButtonDown="DeviceImage_MouseLeftButtonDown" 
@@ -50,7 +49,7 @@
             </Image>
         </Canvas>
 
-        <!--Main area bottom buttons-->
+        --><!--Main area bottom buttons--><!--
         <Frame x:Name="MainBottomFrame" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
         <Button x:Name="backBtn" Grid.Column="1" Grid.Row="2" Click="backBtn_Click" ToolTip="Back" Style="{StaticResource @InputImageButtonStyle_NoBorder}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
             <Image Source="{StaticResource @MobileBack_24x24.png}"/>
@@ -62,7 +61,7 @@
             <Image Source="{StaticResource @MobileMenu_24x24.png}"/>
         </Button>
 
-        <!--Configurations area-->
+        --><!--Configurations area--><!--
         <Frame x:Name="ConfigurationsFrame" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
         <GridSplitter x:Name="configurationsSplitter" Grid.Column="1" Grid.Row="0" ResizeDirection="Columns"  Grid.RowSpan="3" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @VerticalGridSplitterStyle}"/>
         <Label Grid.Column="2" Grid.Row="0" Content="Configurations" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
@@ -89,7 +88,7 @@
             </StackPanel>
         </ScrollViewer>
 
-        <!--Inspector area-->
+        --><!--Inspector area--><!--
         <GridSplitter x:Name="inspectroSplitter" Grid.Column="1" Grid.Row="0" ResizeDirection="Columns" Grid.RowSpan="3" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="5" Style="{StaticResource @VerticalGridSplitterStyle}"/>
         <Frame x:Name="InspectorFrame" Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}"/>
         <Label Grid.Column="0" Grid.Row="0" Content="Inspector" Style="{StaticResource @InputFieldLabelStyle}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>
@@ -143,6 +142,6 @@
             </TabControl>
             <Label Content="Loading..." Name="LoadingLabel"/>
        
-        </DockPanel>
+        </DockPanel>-->
     </Grid>
 </Window>

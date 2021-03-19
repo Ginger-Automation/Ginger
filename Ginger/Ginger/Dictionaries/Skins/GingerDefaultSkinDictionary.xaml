@@ -11,6 +11,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#EDEFF5" />
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="DarkGray" />
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="White" />
+    <SolidColorBrush x:Key="$BackgroundColor_WhiteSmoke" Color="WhiteSmoke" />
 
     <!--Selection Colors-->
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F26F6F" />
@@ -190,6 +191,58 @@
     <Style TargetType="Button" x:Key="$ImageButtonStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$ImageButtonStyle_WhiteSmoke">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="WhiteSmoke" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="Transparent" BorderThickness="1">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$ImageButtonStyle_Pink">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
