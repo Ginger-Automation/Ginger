@@ -704,7 +704,10 @@ namespace Ginger.ALM
         public void OpenALMItemsFieldsPage()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
-            UpdateALMType(AlmConfig.AlmType);
+            if (AlmRepo == null)
+            {
+                UpdateALMType(AlmConfig.AlmType);
+            }
             AlmRepo.OpenALMItemsFieldsPage();
         }
 
