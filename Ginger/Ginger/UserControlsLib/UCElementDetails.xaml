@@ -7,6 +7,36 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <Grid Grid.Row="3" x:Name="xSelectedElementSectionGrid" Margin="0,2,0,-2">
+        <Grid.Resources>
+            <DataTemplate x:Key="xLocateValueVETemplate">
+                <Button x:Name="xLocateValueVEButton" Click="XLocateValueVEButton_Click" Content="..." ToolTip="Locate Value Expression" Style="{StaticResource DataGridCellButtonStyle}" ></Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="xTestElementButtonTemplate">
+                <Button x:Name="TestElementButton" Click="TestElementButtonClicked" ToolTip="Highlight Element" Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <UserControls:ImageMakerControl ImageType="Run" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate  x:Key="xTestStatusIconTemplate">
+                <UserControls:ImageMakerControl x:Name="xStatusIconImageMakerControl" ImageType="{Binding StatusIcon}" ImageToolTip="{Binding StatusError}" SetAsFontImageWithSize="16"  Width="16" Height="16" />
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Passed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Green"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Unknown">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Gray"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Failed">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Red"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding StatusIcon , Mode=OneWay,UpdateSourceTrigger=PropertyChanged}" Value="Pending">
+                        <Setter Property="DataGridCell.Foreground" TargetName="xStatusIconImageMakerControl" Value="Orange"/>
+                    </DataTrigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xTitleSection" Height="32"/>
             <RowDefinition Height="*" />
@@ -51,20 +81,30 @@
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
             </TabItem>
-            <TabItem x:Name="xAddActionTab" Visibility="Collapsed">
+            <TabItem x:Name="xAddActionTab" GotFocus="xAddActionTab_GotFocus">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Action"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
                         <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <Grid>
+                <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
                         <RowDefinition Height="50"/>
-                    </Grid.RowDefinitions>
-                    <Frame x:Name="xActUIPageFrame" Grid.Row="0" Margin="5" VerticalAlignment="Stretch" Width="Auto" />
-                </Grid>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>-->
+
+                <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_LightGray}">
+                    <StackPanel x:Name="xPOMCheckStackPanel" Orientation="Horizontal" DockPanel.Dock="Top">
+                        <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10"
+                          Style="{StaticResource $CeckBoxStyle}" Content="Integrate POM" IsChecked="False" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
+                        </CheckBox>
+                        <Frame x:Name="xPOMSelectionFrame" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                        <!--<Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" Width="Auto" DockPanel.Dock="Top" />-->
+                    </StackPanel>
+                    <Frame x:Name="xActUIPageFrame" Margin="5" VerticalAlignment="Stretch" Width="Auto" DockPanel.Dock="Bottom" />
+                </DockPanel>
+                <!--</Grid>-->
             </TabItem>
         </TabControl>
 

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Ginger.UserControlsLib"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d"
-             Background="White"
+             Background="{StaticResource $BackgroundColor_LightGray}"
              d:DesignHeight="30">
 
     <Grid Width="Auto" Margin="0,-1,0,1">
@@ -31,19 +31,19 @@
         <usercontrols:ucButton Grid.Column="2" x:Name="RefreshWindowsButton" ButtonType="ImageButton" ButtonImageType="Refresh" 
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="16" />
 
-        <GridSplitter Grid.Column="2" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <!--<GridSplitter Grid.Column="2" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>-->
 
         <usercontrols:ucButton Grid.Column="3" x:Name="AddSwitchWindowActionButton" ButtonType="ImageButton" ButtonImageType="Add"  
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Add Switch Window Action to Flow" ButtonFontImageSize="16" />
 
-        <GridSplitter Grid.Column="3" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <!--<GridSplitter Grid.Column="3" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>-->
 
-        <CheckBox x:Name="xIntegratePOMChkBox" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" 
+        <!--<CheckBox x:Name="xIntegratePOMChkBox" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" 
                   TextBlock.TextAlignment="Center" IsChecked="False" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >
             <TextBlock Text="POM" FontWeight="Bold"/>
-        </CheckBox>
+        </CheckBox>-->
 
-        <Frame x:Name="xPOMSelectionFrame" Grid.Column="6" Visibility="Collapsed" />
+        <!--<Frame x:Name="xPOMSelectionFrame" Grid.Column="6" Visibility="Collapsed" />-->
 
         <!--<Frame x:Name="xPOMSelectionFrmae" Visibility="{Binding IsChecked, ElementName=xIntegratePOMChkBox,Converter={StaticResource boolToVisibility}}" />-->
 

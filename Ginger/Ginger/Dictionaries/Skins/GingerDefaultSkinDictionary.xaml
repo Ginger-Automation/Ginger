@@ -1957,7 +1957,8 @@
     <Style TargetType="{x:Type Button}" x:Key="DataGridCellButtonStyle">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />
+        <!--<Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />-->
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Template">
@@ -3068,6 +3069,7 @@
         <Setter Property="Background" Value="#FFFFFF"/>
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
         <Setter Property="BorderThickness" Value="0,0,0,3"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoRadialGradientBrush}"/>
     </Style>

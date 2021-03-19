@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
@@ -7,10 +8,14 @@ using Ginger.Actions;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
+using Ginger.Drivers;
 using Ginger.Reports;
+using Ginger.UserControls;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using System;
@@ -73,13 +78,100 @@ namespace Ginger.WindowExplorer
             IsLegacyPlatform = mAction == null;
 
             SetPlatformBasedUIUpdates();
+
+            //mAction.PropertyChanged -= Action_PropertyChanged;
+            //mAction.PropertyChanged += Action_PropertyChanged;
+        }
+
+        private void InitOutputValuesGrid()
+        {
+            GridViewDef SimView = new GridViewDef(eGridView.All.ToString());
+            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
+            SimView.GridColsView = viewCols;
+
+            //Simulation view
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Active, WidthWeight = 50, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Param, Header = "Parameter", WidthWeight = 150 });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Path, WidthWeight = 100 });
+            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Actual, Header = "Return Value", WidthWeight = 150, BindingMode = BindingMode.OneWay });
+
+            xOutputValuesGrid.SetAllColumnsDefaultView(SimView);
+            xOutputValuesGrid.InitViewItems();
+
+            xOutputValuesGrid.AddSeparator();
+
+            xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
+            xOutputValuesGrid.ShowEdit = Visibility.Collapsed;
+
+            xOutputValuesGrid.AllowHorizentalScroll = true;
+            xOutputValuesGrid.Grid.MaxHeight = 500;
+        }
+
+        private void Action_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Act.Status))
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    xExecutionStatusIcon.Status = mAction.Status.Value;
+
+                    if(mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                    {
+                        xRunActBtn.IsEnabled = false;
+                        xRunActBtn.Opacity = 0.4;
+                    }
+                    else
+                    {
+                        xRunActBtn.IsEnabled = true;
+                        xRunActBtn.Opacity = 1;
+                    }
+
+                    string returnVals = GetAllRetVals(mAction);
+
+                    if (!string.IsNullOrEmpty(mAction.Error))
+                    {
+                        xErrorTxtBlock.Visibility = Visibility.Visible;
+                        xErrorTxtBlock.Text += mAction.Error;
+                    }
+                    else
+                    {
+                        xErrorTxtBlock.Visibility = Visibility.Collapsed;
+                        xErrorTxtBlock.Text = "Error : ";
+                    }
+
+                    if (string.IsNullOrEmpty(mAction.ExInfo) == false)
+                    {
+                        xExecInfoTxtBlock.Visibility = Visibility.Visible;
+                        xExecInfoTxtBlock.Text += mAction.ExInfo;
+                    }
+                    else
+                    {
+                        xExecInfoTxtBlock.Visibility = Visibility.Collapsed;
+                        xExecInfoTxtBlock.Text = "Execution Info : ";
+                    }
+
+                    if (!string.IsNullOrEmpty(returnVals))
+                    {
+                        xExecInfoTxtBlock.Visibility = Visibility.Visible;
+                        xExecInfoTxtBlock.Text += Environment.NewLine + "Return Values : " + returnVals;
+                    }
+                    else
+                    {
+
+                    }
+                });
+            }
+
+            if (e.PropertyName == nameof(Act.ReturnValues))
+            {
+            }
         }
 
         void SetPlatformBasedUIUpdates()
         {
-            if(IsLegacyPlatform)
+            if (IsLegacyPlatform)
             {
-                if(mActions.CurrentItem == null && mActions.Count > 0)
+                if (mActions.CurrentItem == null && mActions.Count > 0)
                 {
                     mActions.CurrentItem = mActions[0];
                 }
@@ -87,22 +179,28 @@ namespace Ginger.WindowExplorer
                 mAction = (Act)mActions.CurrentItem;
                 xActEditPageFrame.Visibility = Visibility.Collapsed;
 
-                xOperationsGrid.Visibility = Visibility.Visible;
                 xOperationsScrollView.Visibility = Visibility.Visible;
 
                 InitActionsGrid();
                 InitLocatorsGrid();
+
+                InitOutputValuesGrid();
+
+                BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
+                BindingHandler.ObjFieldBinding(xErrorTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.Error));
+                BindingHandler.ObjFieldBinding(xExecInfoTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.ExInfo));
+                BindingHandler.ObjFieldBinding(xOutputValuesGrid, DataGrid.ItemsSourceProperty, mAction, nameof(Act.ReturnValues));
+                //BindingHandler.ObjFieldBinding(xActExecutionDetails, Expander.IsExpandedProperty, mAction, Convert.ToString(mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed || mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed), new CheckboxConfigConverter());
             }
             else
             {
-                SetActionDetails(mAction);
                 mAction.Context = mContext;
+                SetActionDetails(mAction);
                 actEditPage = new ActionEditPage(mAction, General.eRIPageViewMode.Explorer);
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
                 xActEditPageFrame.Content = actEditPage;
 
-                xOperationsGrid.Visibility = Visibility.Collapsed;
                 xOperationsScrollView.Visibility = Visibility.Collapsed;
             }
 
@@ -235,7 +333,7 @@ namespace Ginger.WindowExplorer
 
             if (EL == null)
             {
-                EL = (ElementLocator) mElementInfo.Locators.CurrentItem;
+                EL = (ElementLocator)mElementInfo.Locators.CurrentItem;
             }
 
             if (mAction.GetType() == typeof(ActUIElement))
@@ -298,40 +396,6 @@ namespace Ginger.WindowExplorer
             //}
 
             //mContext.Agent.RunAction(mAction);
-
-            if (mAction.Status != null)
-                xExecutionStatusIcon.Status = mAction.Status.Value;
-            //else
-            //    xExecutionStatusIcon.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated;
-
-            if (!string.IsNullOrEmpty(mAction.Error))
-            {
-                xErrorRow.Height = new GridLength(20);
-                xErrorLbl.Content += mAction.Error;
-            }
-            else
-            {
-                xErrorRow.Height = new GridLength(0);
-                xErrorLbl.Content = "Error : ";
-            }
-
-            if (string.IsNullOrEmpty(mAction.ExInfo) == false)
-            {
-                xExecInfoRow.Height = new GridLength(20);
-                xExecInfoLbl.Content += mAction.ExInfo;
-            }
-            else
-            {
-                xExecInfoRow.Height = new GridLength(0);
-                xExecInfoLbl.Content = "Execution Info : ";
-            }
-
-            string returnVals = GetAllRetVals(mAction);
-            if(!string.IsNullOrEmpty(returnVals))
-            {
-                xExecInfoRow.Height = new GridLength(30);
-                xExecInfoLbl.Content += Environment.NewLine + returnVals;
-            }
         }
 
         private string GetAllRetVals(Act act)
@@ -387,7 +451,7 @@ namespace Ginger.WindowExplorer
             mLocators.CurrentItem = mLocators.Where(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem).FirstOrDefault();
             mElementInfo.Locators.CurrentItem = mLocators.CurrentItem;
 
-            xLocateValueTxtBox.Text = (mElementInfo.Locators.CurrentItem as ElementLocator).LocateValue;
+            xLocateValueTxtBlock.Text = (mElementInfo.Locators.CurrentItem as ElementLocator).LocateValue;
         }
 
         private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)

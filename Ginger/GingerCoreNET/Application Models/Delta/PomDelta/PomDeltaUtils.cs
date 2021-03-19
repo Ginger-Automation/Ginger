@@ -187,7 +187,7 @@ namespace GingerCoreNET.Application_Models
             return newDeltaElement;
         }
 
-        private void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
+        public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
         {
             DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();            
             //copy possible customized fields from original

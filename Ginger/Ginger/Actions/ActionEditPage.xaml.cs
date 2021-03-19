@@ -207,7 +207,9 @@ namespace Ginger.Actions
             xHelpButton.Visibility = Visibility.Collapsed;
             xDetailsTabTextBlock.Visibility = Visibility.Collapsed;
             xExecutionReportTabTextBlock.Visibility = Visibility.Collapsed;
-            xFlowControlTabHeaderTextBlock.Visibility = Visibility.Collapsed;
+
+            xFlowControlTab.Visibility = Visibility.Collapsed;
+
             xOperationsTabTextBlock.Visibility = Visibility.Collapsed;
             xOutputValuesTabHeaderTextBlock.Visibility = Visibility.Collapsed;
         }

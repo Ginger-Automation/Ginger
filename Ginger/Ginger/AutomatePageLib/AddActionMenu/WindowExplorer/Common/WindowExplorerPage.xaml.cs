@@ -65,6 +65,7 @@ using Ginger.Actions.UserControls;
 using GingerCore.Actions.VisualTesting;
 using HtmlAgilityPack;
 using Ginger.ApplicationModelsLib.POMModels;
+using GingerCoreNET.Application_Models;
 
 namespace Ginger.WindowExplorer
 {
@@ -97,8 +98,9 @@ namespace Ginger.WindowExplorer
         bool mSyncControlsViewWithLiveSpy = false;
         bool mFirstElementSelectionDone = false;
         //Page mControlFrameContentPage = null;
-        WindowExplorerPOMPage mWindowExplorerPOMPage;
-        PomAllElementsPage pomAllElementsPage = null;
+        //WindowExplorerPOMPage mWindowExplorerPOMPage;
+        //PomAllElementsPage pomAllElementsPage = null;
+        bool IsWebMobJavaPlatform = false;
 
         Context mContext;
 
@@ -121,6 +123,8 @@ namespace Ginger.WindowExplorer
             xWindowSelection.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
+            IsWebMobJavaPlatform = (mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile || mPlatform.PlatformType() == ePlatformType.Java);
+
             //Instead of check make it disabled ?
             if (((Agent)ApplicationAgent.Agent).Driver != null && (((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
             {
@@ -134,20 +138,6 @@ namespace Ginger.WindowExplorer
             mWindowExplorerDriver = WindowExplorerDriver;
             mAction = Act;
             mApplicationAgent = ApplicationAgent;
-
-            if (mWindowExplorerDriver is IPOM)
-            {
-                xWindowSelection.xIntegratePOMChkBox.Visibility = Visibility.Visible;
-                xWindowSelection.xIntegratePOMChkBox.IsChecked = true;
-
-                mWindowExplorerPOMPage = new WindowExplorerPOMPage(mApplicationAgent);
-                ((IPOM)mWindowExplorerDriver).ActionRecordedCallback(mWindowExplorerPOMPage.ActionRecorded);
-            }
-            else
-            {
-                xWindowSelection.xIntegratePOMChkBox.Visibility = Visibility.Collapsed;
-                //xWindowSelection.POMsComboBox.Visibility = Visibility.Collapsed;
-            }
 
             /// Beta Feature based section - will look into this later
             //if (WorkSpace.Instance.BetaFeatures.ShowPOMInWindowExplorer)
@@ -180,12 +170,29 @@ namespace Ginger.WindowExplorer
             SetPlatformBasedUIUpdates();
 
             InitControlPropertiesGridView();
-            InitControlLocatorsGridView();
 
             //xUCElementDetails.AppAgent = mApplicationAgent;
             xWindowSelection.context = context;
             xUCElementDetails.Context = context;
+            xUCElementDetails.WindowExplorerDriver = mWindowExplorerDriver;
+            xUCElementDetails.Platform = mPlatform;
             xUCElementDetails.xPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
+
+            if (mWindowExplorerDriver is IPOM)
+            {
+                xUCElementDetails.xIntegratePOMChkBox.Visibility = Visibility.Visible;
+                xUCElementDetails.xIntegratePOMChkBox.IsChecked = true;
+
+                //mWindowExplorerPOMPage = new WindowExplorerPOMPage(mApplicationAgent);
+                //((IPOM)mWindowExplorerDriver).ActionRecordedCallback(mWindowExplorerPOMPage.ActionRecorded);
+                xUCElementDetails.InitLocatorsGridView();
+            }
+            else
+            {
+                xUCElementDetails.xIntegratePOMChkBox.Visibility = Visibility.Collapsed;
+                //xWindowSelection.POMsComboBox.Visibility = Visibility.Collapsed;
+                xUCElementDetails.InitLegacyLocatorsGridView();
+            }
 
             UpdateWindowsList();
 
@@ -819,9 +826,10 @@ namespace Ginger.WindowExplorer
                         xUCElementDetails.xPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
                     }
 
+                    /*
                     if(xWindowSelection.xIntegratePOMChkBox.IsChecked == true && xWindowSelection.SelectedPOM != null)
                     {
-                        pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
+                        //pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
                         ElementInfo matchingOriginalElement = (ElementInfo)mWindowExplorerDriver.GetMatchingElement(EI, xWindowSelection.SelectedPOM.GetUnifiedElementsList());
 
                         if (matchingOriginalElement == null)
@@ -832,13 +840,77 @@ namespace Ginger.WindowExplorer
 
                         if (xWindowSelection.SelectedPOM.MappedUIElements.Contains(matchingOriginalElement) || xWindowSelection.SelectedPOM.UnMappedUIElements.Contains(matchingOriginalElement))
                         {
-                            POMElement = matchingOriginalElement;
+                            PomDeltaUtils pomDeltaUtils = new PomDeltaUtils(xWindowSelection.SelectedPOM, mContext.Agent);
+                            pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
+
+                            /// Not Required but 
+                            pomDeltaUtils.DeltaViewElements.Clear();
+
                             /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
+                            pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, EI);
+
+                            int originalItemIndex = -1;
+                            if ((ApplicationPOMModel.eElementGroup)matchingOriginalElement.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
+                            {
+                                originalItemIndex = xWindowSelection.SelectedPOM.MappedUIElements.IndexOf(matchingOriginalElement);
+                            }
+
+                            if (pomDeltaUtils.DeltaViewElements[0].DeltaStatus == eDeltaStatus.Changed)
+                            {
+                                //enter it to POM elements instead of existing one
+                                if (Reporter.ToUser(eUserMsgKey.UpdateExistingPOMElement, matchingOriginalElement.ElementName) == eUserMsgSelection.Yes)
+                                {
+                                    /// Replace existing element with new one
+                                    /// Element exists in Mapped Elements list
+                                    if (originalItemIndex > -1)
+                                    {
+                                        xWindowSelection.SelectedPOM.MappedUIElements.RemoveAt(originalItemIndex);
+                                        xWindowSelection.SelectedPOM.MappedUIElements.Insert(originalItemIndex, pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                    }
+                                    /// Element exists in Un-Mapped Elements list
+                                    /// We'll remove Element from Unmapped list and add it as new into Mapped Elements list
+                                    else
+                                    {
+                                        xWindowSelection.SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                        xWindowSelection.SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+                                    }
+
+                                    POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
+                                }
+                                else
+                                {
+                                    if(originalItemIndex == -1)
+                                    {
+                                        xWindowSelection.SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                        xWindowSelection.SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+
+                                        POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
+                                    }
+                                    else
+                                    {
+                                        POMElement = matchingOriginalElement;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                /// Element exist in UnMapped Elements List
+                                if (originalItemIndex == -1)
+                                {
+                                    //if (Reporter.ToUser(eUserMsgKey.POMMoveElementFromUnmappedToMapped, matchingOriginalElement.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
+                                    //{
+                                        xWindowSelection.SelectedPOM.MappedUIElements.Add(matchingOriginalElement);
+                                        xWindowSelection.SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+                                    //}
+                                }
+
+                                POMElement = matchingOriginalElement;
+                            }
                             POMBasedAction = true;
                         }
                         else
                         {
-                            if (Reporter.ToUser(eUserMsgKey.ElementNotExistInPOM, EI.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
+                            if (Reporter.ToUser(eUserMsgKey.POMElementNotExist, EI.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
                             {
                                 POMBasedAction = true;
                                 xWindowSelection.SelectedPOM.MappedUIElements.Add(EI);
@@ -847,10 +919,13 @@ namespace Ginger.WindowExplorer
                                 POMElement.ParentGuid = xWindowSelection.SelectedPOM.Guid;
                             }
                             else
+                            {
+                                POMElement = null;
                                 POMBasedAction = false;
+                            }
                         }
                     }
-
+                    */
                     ShowControlActions(mCurrentControlTreeViewItem);
                 }
                 else
@@ -913,6 +988,11 @@ namespace Ginger.WindowExplorer
                     Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                     actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
 
+                    if(EI.Locators.CurrentItem == null)
+                    {
+                        EI.Locators.CurrentItem = EI.Locators[0];
+                    }
+
                     ElementLocator eiLocator = EI.Locators.CurrentItem as ElementLocator;
 
                     string elementVal = string.Empty;
@@ -944,6 +1024,7 @@ namespace Ginger.WindowExplorer
                             POMGuid = POMElement.ParentGuid.ToString(),
                             ElementGuid = POMElement.Guid.ToString(),
                             LearnedElementInfo = POMElement,
+                            Type = POMElement.ElementTypeEnum
                         };
                     }
                     else
@@ -953,9 +1034,10 @@ namespace Ginger.WindowExplorer
                         {
                             LocateBy = eiLocator.LocateBy,
                             LocateValue = eiLocator.LocateValue,
+                            Type = EI.ElementTypeEnum,
                             ElementValue = elementVal,
                             ElementGuid = EI.Guid.ToString(),
-                            LearnedElementInfo = EI,
+                            LearnedElementInfo = EI
                         };
                     }
 
@@ -1009,19 +1091,6 @@ namespace Ginger.WindowExplorer
 
             xUCElementDetails.xPropertiesGrid.SetAllColumnsDefaultView(view);
             xUCElementDetails.xPropertiesGrid.InitViewItems();
-        }
-
-        private void InitControlLocatorsGridView()
-        {
-            // Grid View
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = "LocateBy", WidthWeight = 8, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = "LocateValue", WidthWeight = 20, ReadOnly = true });
-
-            xUCElementDetails.xLocatorsGrid.SetAllColumnsDefaultView(view);
-            xUCElementDetails.xLocatorsGrid.InitViewItems();
         }
 
         private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
@@ -1489,12 +1558,17 @@ namespace Ginger.WindowExplorer
             xLoadingScreenShotBanner.Visibility = Visibility.Visible;
             xScreenShotFrame.Visibility = Visibility.Collapsed;
 
-            mWindowExplorerDriver.UnHighLightElements();
+            if(IsWebMobJavaPlatform)
+                mWindowExplorerDriver.UnHighLightElements();
+
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
             mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
 
-            mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
-            mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
+            if (IsWebMobJavaPlatform)
+            {
+                mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
+                mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
+            }
 
             xScreenShotFrame.Content = mScreenShotViewPage;
             //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
@@ -1514,17 +1588,24 @@ namespace Ginger.WindowExplorer
 
         private void XMainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(xUCElementDetails.SelectedElement != null)
+            if (mContext.Runner.IsRunning)
             {
-                mWindowExplorerDriver.UnHighLightElements();
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done during execution.");
             }
+            else
+            {
+                if (xUCElementDetails.SelectedElement != null)
+                {
+                    mWindowExplorerDriver.UnHighLightElements();
+                }
 
-            xUCElementDetails.SelectedElement = currentHighlightedElement;
+                xUCElementDetails.SelectedElement = currentHighlightedElement;
 
-            mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
-            //mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
+                mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
+                //mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
-            ShowCurrentControlInfo();
+                ShowCurrentControlInfo();
+            }
         }
 
         //private async void StorePageSource()

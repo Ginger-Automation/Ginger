@@ -75,10 +75,10 @@ namespace Amdocs.Ginger.UserControls
                 locateByPOMElementPage.POMChangedPageEvent += LocateByPOMElementPage_POMChangedPageEvent;
 
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
-                xPOMSelectionFrame.Content = locateByPOMElementPage;
+                //xPOMSelectionFrame.Content = locateByPOMElementPage;
             }
 
-            xPOMSelectionFrame.Visibility = Visibility.Visible;
+            //xPOMSelectionFrame.Visibility = Visibility.Visible;
         }
 
         private void LocateByPOMElementPage_POMChangedPageEvent()
@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.UserControls
 
         private void xIntegratePOMChkBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            xPOMSelectionFrame.Visibility = Visibility.Collapsed;
+            //xPOMSelectionFrame.Visibility = Visibility.Collapsed;
         }
     }
 }
