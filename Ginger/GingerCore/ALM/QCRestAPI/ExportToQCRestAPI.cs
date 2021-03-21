@@ -867,7 +867,7 @@ namespace GingerCore.ALM.QCRestAPI
             }
             if (itemVals.GetType().GetProperty("TestOrder") != null && itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null) != null && !isUpdate)
             {
-                itemWithValues.Fields.Add("test-order", itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null));
+                itemWithValues.Fields.Add("order-id", itemVals.GetType().GetProperty("TestOrder").GetValue(itemVals, null));
             }
             if (itemVals.GetType().GetProperty("TestId") != null && itemVals.GetType().GetProperty("TestId").GetValue(itemVals, null) != null && !isUpdate)
             {

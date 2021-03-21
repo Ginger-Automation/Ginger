@@ -76,12 +76,16 @@ namespace Ginger.ALM
                 RunWorker(true);
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button saveButton = new Button();
             saveButton.Content = "Save";
             saveButton.ToolTip = "Save 'To Update' fields";
             saveButton.Click += new RoutedEventHandler(Save);
+            if (refreshFields)
+            {
+                ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
+            }
             grdQCFields.DataSourceList = WorkSpace.Instance.Solution.ExternalItemsFields;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
         }
