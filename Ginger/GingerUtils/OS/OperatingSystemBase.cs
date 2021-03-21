@@ -44,7 +44,12 @@ namespace Amdocs.Ginger.Common.OS
             //not required on windows
             return path;
         }
-    public static  OperatingSystemBase GetOperatingSystem()
+        public virtual string AdjustOSChars(String content)
+        {
+            //not required on windows
+            return content;
+        }
+    public static OperatingSystemBase GetOperatingSystem()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
