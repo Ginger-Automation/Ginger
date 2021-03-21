@@ -429,9 +429,6 @@ namespace GingerCoreNET.GeneralLib
                 return false;
             }
         }
-
-
-      
     }
 
 }

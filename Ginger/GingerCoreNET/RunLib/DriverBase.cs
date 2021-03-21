@@ -158,7 +158,7 @@ namespace GingerCore.Drivers
 
         public void OnDriverMessage(eDriverMessageType DriverMessageType)
         {
-            DriverMessageEventHandler handler = driverMessageEventHandler;
+            DriverMessageEventHandler handler = DriverMessageEvent;
             if (handler != null)
             {
                 handler(this, new DriverMessageEventArgs(DriverMessageType));
@@ -166,7 +166,7 @@ namespace GingerCore.Drivers
         }
 
         public delegate void DriverMessageEventHandler(object sender, DriverMessageEventArgs e);
-        public event DriverMessageEventHandler driverMessageEventHandler;
+        public event DriverMessageEventHandler DriverMessageEvent;
 
         public virtual void ActionCompleted(Act act)
         {
