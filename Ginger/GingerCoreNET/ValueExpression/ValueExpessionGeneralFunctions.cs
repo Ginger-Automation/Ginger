@@ -117,6 +117,26 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
             }
         }
 
+        [ValueExpressionFunctionAttribute]
+        [ValueExpressionFunctionDescription("Replace special chars by another")]
+        [ValueExpressionFunctionExpression("{Function Fun=ReplaceSpecialChars(\"Hello\",\",_)}")]
+        [ValueExpressionFunctionCategory("Data Operations")]
+        [ValueExpressionFunctionSubCategory("Functions")]
+        public string ReplaceSpecialChars(object[] obj)
+        {
+            try
+            {
+                return obj[0].ToString().Replace(obj[1].ToString(), obj[2].ToString());
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "User provided invalid number of string arguments");
+                return "Invalid string with arguments. "+ex.Message;
+
+            }
+        }
+
+
         #endregion PlaceHolders
 
     }

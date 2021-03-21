@@ -772,7 +772,7 @@ namespace GingerCore.ALM
 
                 ExtractFields(fields, resourse, resourse, _loginDto, listnodes);
             }
-            return fields;
+            return UpdatedAlmFields(fields);
         }
 
         private void ExtractFields(ObservableList<ExternalItemFieldBase> fields, string resourse, string resource2, LoginDTO loginDto, Dictionary<string, List<string>> listnodes)
@@ -843,7 +843,10 @@ namespace GingerCore.ALM
                             itemfield.PossibleValues = new ObservableList<string>(phases[field.Name]);
                         }
                     }
-
+                    if (itemfield.PossibleValues.Count > 0)
+                    {
+                        itemfield.SelectedValue = itemfield.PossibleValues[0];
+                    }
                     if (!(itemfield.PossibleValues != null && itemfield.PossibleValues.Count > 0) && itemfield.ExternalID != "closed_on")
                     {
                         itemfield.SelectedValue = "Unassigned";

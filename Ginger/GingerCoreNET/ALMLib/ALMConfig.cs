@@ -69,6 +69,21 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        private bool mZepherEntToken;
+        [IsSerializedForLocalRepository]
+        public bool ZepherEntToken
+        {
+            get { return mZepherEntToken; }
+            set
+            {
+                if (mZepherEntToken != value)
+                {
+                    mZepherEntToken = value;
+                    OnPropertyChanged(nameof(ZepherEntToken));
+                }
+            }
+        }
+
         private string mALMProjectName;
         [IsSerializedForLocalRepository]
         public string ALMProjectName
