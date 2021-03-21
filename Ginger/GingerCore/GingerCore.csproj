@@ -72,9 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">      
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="ALM_Common, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -169,6 +169,14 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\ZephyrEntSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Zepyhr_Ent_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\Zepyhr_Ent_Repository.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml">
@@ -386,6 +394,10 @@
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
+    <Compile Include="ALM\ZephyrEntCore.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ExportEntity.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntExportManager.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntImportManager.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">

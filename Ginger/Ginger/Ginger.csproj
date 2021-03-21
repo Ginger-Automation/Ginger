@@ -169,6 +169,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\ZephyrEntSDK.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -277,6 +281,18 @@
     <Compile Include="ALM\Qtest\TreeViewItems\QtestCycleTreeItem.cs" />
     <Compile Include="ALM\Qtest\TreeViewItems\QtestSuiteTreeItem.cs" />
     <Compile Include="ALM\Repository\QtestRepository.cs" />
+    <Compile Include="ALM\Repository\ZephyrEnt_Repository.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\TestPlanningFolderTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\TestRepositoryFolderTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\ZephyrEntPhaseTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\ZephyrEntFolderTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\ZephyrEntRepositoryExplorerPage.xaml.cs">
+      <DependentUpon>ZephyrEntRepositoryExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\ZephyrEntTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\ZephyrEntPlanningExplorerPage.xaml.cs">
+      <DependentUpon>ZephyrEntPlanningExplorerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\SSOPage.xaml.cs">
       <DependentUpon>SSOPage.xaml</DependentUpon>
     </Compile>
@@ -2524,6 +2540,14 @@
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\ZephyrEnt\ZephyrEntRepositoryExplorerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\ZephyrEnt\ZephyrEntPlanningExplorerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\SSOPage.xaml">
       <SubType>Designer</SubType>
