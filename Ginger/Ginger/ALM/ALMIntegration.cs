@@ -90,6 +90,10 @@ namespace Ginger.ALM
                   
                     break;
 
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                    AlmCore = new ZephyrEntCore();
+                    AlmRepo = new ZephyrEnt_Repository(AlmCore);
+                    break;
             }
             AlmCore.GetCurrentAlmConfig();
             SetALMCoreConfigurations(AlmType);
@@ -105,7 +109,7 @@ namespace Ginger.ALM
                 AlmCore.SetALMConfigurations(   CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
                                                 CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
                                                 CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
-                                                CurrentAlmConfigurations.JiraTestingALM);
+                                                CurrentAlmConfigurations.ZepherEntToken, CurrentAlmConfigurations.JiraTestingALM);
             }
         }
 
@@ -295,7 +299,7 @@ namespace Ginger.ALM
         {
             return ((JiraCore)AlmCore).GetZephyrCyclesWithFolders(getFolders);
         }
-
+        
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -700,7 +704,10 @@ namespace Ginger.ALM
         public void OpenALMItemsFieldsPage()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
-            UpdateALMType(AlmConfig.AlmType);
+            if (AlmRepo == null)
+            {
+                UpdateALMType(AlmConfig.AlmType);
+            }
             AlmRepo.OpenALMItemsFieldsPage();
         }
 

@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Run;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
@@ -421,10 +422,19 @@ namespace GingerCore
                             }
                         }
                         //if STA we need to start it on seperate thread, so UI/Window can be refreshed: Like IB, Mobile, Unix
-                        if (Driver.IsSTAThread())
+                        if (Driver is IDriverWindow && ((IDriverWindow)Driver).ShowWindow)
+                        {
+                            DriversWindowUtils.OnDriverWindowEvent(DriverWindowEventArgs.eEventType.ShowDriverWindow, Driver, this);
+                            Driver.StartDriver();
+                        }
+                        else if (Driver.IsSTAThread())
                         {
                             CTS = new CancellationTokenSource();
-                            MSTATask = new Task(() => { Driver.StartDriver(); }, CTS.Token, TaskCreationOptions.LongRunning);
+                            MSTATask = new Task(() => 
+                            {
+                                Driver.StartDriver(); 
+                            }
+                            , CTS.Token, TaskCreationOptions.LongRunning);
                             MSTATask.Start();
                         }
                         else
@@ -450,7 +460,7 @@ namespace GingerCore
                             // Give the driver time to start            
                             Thread.Sleep(500);
                             Driver.IsDriverRunning = true;
-                            Driver.driverMessageEventHandler += driverMessageEventHandler;
+                            Driver.DriverMessageEvent += driverMessageEventHandler;
                         }
 
                         mIsStarting = false;
@@ -965,21 +975,24 @@ namespace GingerCore
                 }
                 if (Driver == null) return;
 
-                Driver.IsDriverRunning = false;                
-                if (Driver.Dispatcher != null)
+                Driver.IsDriverRunning = false;
+                if (Driver is IDriverWindow && ((IDriverWindow)Driver).ShowWindow)
                 {
-
+                    DriversWindowUtils.OnDriverWindowEvent(DriverWindowEventArgs.eEventType.CloseDriverWindow, Driver, this);
+                    Driver.CloseDriver();
+                }
+                else if (Driver.Dispatcher != null)
+                {
                     Driver.Dispatcher.Invoke(() =>
                    {
                        Driver.CloseDriver();
                        Thread.Sleep(1000);
                    });
                 }
-                else
+                else 
                 {
                     Driver.CloseDriver();
                 }
-
                 if (MSTATask != null)
                 {
                     // Using cancellation token source to cancel 
