@@ -104,7 +104,9 @@ namespace GingerCore
 
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
-        private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
+
+        private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((.*)([^\\)}])*\\)}", RegexOptions.Compiled | RegexOptions.Singleline);
+
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
         // Can simpliy do: ValueExpression VE = "{Var Name=V1}"
@@ -1156,7 +1158,9 @@ namespace GingerCore
                     else mValueCalculated = mValueCalculated.Replace(p, vb.Value);
                 }
                 else
-                 mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                {
+                    mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                }
             }
             else
             {
@@ -1359,18 +1363,26 @@ namespace GingerCore
                             break;
                         }
                         
-                        string functionPattern = @"\b[^()]+\((.*)\)$";
-                        string paramPattern = @"([^,]+\\(.+?\\))|([^,]+)";
-                        List<string> FuncSplit = Regex.Split(FunName, functionPattern).ToList<string>();
-                        FuncSplit.RemoveAll(x => x.Equals(""));
-                        List<string> parameters = Regex.Split(FuncSplit[0].ToString(), paramPattern).ToList<string>();
+                        Regex paramRegEx = new Regex("(.*{.*.}\\\")|([,]+)", RegexOptions.Compiled | RegexOptions.Singleline);
+
+                        //Remove Function name
+                        int firstStringPosition = FunName.IndexOf("(")+1;
+                        int secondStringPosition = FunName.IndexOf(")");
+                        string allParams = FunName.Substring(firstStringPosition, secondStringPosition - firstStringPosition);
+
+                        List<string> parameters = paramRegEx.Split(allParams.ToString()).ToList<string>();
                         parameters.RemoveAll(y => y.Equals(""));
-                        parameters = parameters.Where(z => z.Contains("\"")).Select(z => z.Replace("\"", "")).ToList<string>();
+
+                        parameters = parameters.Select(z => z.Length > 1 ? z.Trim('\"') : z).ToList<string>();
 
                         object[] listOfParams = new object[parameters.Count];
                         int index = 0;
                         foreach (var item in parameters)
                         {
+                            if (item.Equals(","))
+                            {
+                                continue;
+                            }
                             listOfParams[index++] = item;
                         }
                         string funcOut = mi.Invoke(classInstance, new object[] { listOfParams }).ToString();
