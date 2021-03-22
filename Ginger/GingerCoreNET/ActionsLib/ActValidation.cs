@@ -127,7 +127,7 @@ namespace GingerCore.Actions
                 this.ExInfo = ConditionCalculated;
             }
             else
-            {
+            { 
                 ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 this.Error = ConditionCalculated;
