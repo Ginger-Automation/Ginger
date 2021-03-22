@@ -1,0 +1,42 @@
+{
+  "almsDetails": [
+    {
+      "almType": "Jira",
+      "almSubType": "Xray",
+      "serverURL": "http:/Jira.CLI",
+      "user": "CLIUser",
+      "password": "2rBn8f86+w7nLTiEvnwj3jmU9Eeea98rkbKQxrujj3E8yddhcJYcIJF4UY3ltD3d",
+      "passwordEncrypted": true
+    },
+    {
+      "almType": "QC",
+      "serverURL": "http:/QC.CLI",
+      "user": "CLIUser",
+      "password": "CLIUPass",
+      "passwordEncrypted": false,
+      "domain": "domainCLI",
+      "project": "projectCLI",
+      "projectKey": "projectKeyCLI",
+      "useRest": true     
+    },
+    {
+      "almType": "Octane",
+      "serverURL": "https://Octane.com:47168",
+      "user": "AAA_j06lwznjzw8ny",
+      "password": "@205372322126A",
+      "passwordEncrypted": false,
+      "domain": "domainCLI",
+      "project": "projectCLI",
+      "isDefault": true,
+      "ConfigPackageFolderPath": "C:\\Temp\\Test Octane\\Octane Settings"
+    }
+  ],
+  "SolutionLocalPath": "SOLUTION_PATH",
+  "ShowAutoRunWindow": false,
+  "VerboseLevel": "normal",
+  "Runset": {
+    "Exist": true,
+    "Name": "Calc_Test",
+    "ID": "2056f2c3-6e8f-4da6-933d-2b0419c8fecb"
+  }
+}

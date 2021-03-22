@@ -258,8 +258,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             DSEE.ShowAsWindow();
 
             string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            string sExcelPath = DSEE.ExcelPath;
-            string sSheetName = DSEE.SheetName;
+            string sExcelPath = DSEE.mExcelConfig.ExcelPath;
+            string sSheetName = DSEE.mExcelConfig.ExcelSheetName;
 
             if (sExcelPath != "")
             {

@@ -480,6 +480,11 @@ namespace amdocs.ginger.GingerCoreNET
                 solution.SourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
                 solution.SourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
 
+                if (solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+                {
+                    solution.SourceControl.SourceControlBranch = Ginger.SourceControl.SourceControlIntegration.GetCurrentBranchForSolution(solution.SourceControl);
+                }
+
                 WorkSpace.Instance.SourceControl = solution.SourceControl;
                 RepositoryItemBase.SetSourceControl(solution.SourceControl);
                 RepositoryFolderBase.SetSourceControl(solution.SourceControl);
@@ -523,7 +528,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
-
+        public bool DoNotResetWorkspaceArgsOnClose { get; set; }
         public void CloseSolution()
         {
             //Do cleanup
@@ -540,10 +545,13 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             //Reset values
-            mPluginsManager = new PluginsManager();
-            SolutionRepository = null;
-            SourceControl = null;            
-            Solution = null;
+            if (!DoNotResetWorkspaceArgsOnClose)
+            {
+                mPluginsManager = new PluginsManager();
+                SolutionRepository = null;
+                SourceControl = null;
+                Solution = null;
+            }
 
             EventHandler.SolutionClosed();
         }
@@ -561,6 +569,14 @@ namespace amdocs.ginger.GingerCoreNET
             get
             {                
                 return mLocalGingerGrid;
+            }
+        }
+
+        public string CommonApplicationDataFolderPath
+        {
+            get
+            {
+                return General.CommonApplicationDataFolderPath;
             }
         }
 

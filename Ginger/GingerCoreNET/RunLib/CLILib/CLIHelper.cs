@@ -72,7 +72,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mDownloadUpgradeSolutionFromSourceControl = value;
                 OnPropertyChanged(nameof(DownloadUpgradeSolutionFromSourceControl));
             }
+        }
 
+        bool mSetAlmConnectionDetails;
+        public bool SetAlmConnectionDetails
+        {
+            get
+            {
+                return mSetAlmConnectionDetails;
+            }
+            set
+            {
+                mSetAlmConnectionDetails = value;
+                OnPropertyChanged(nameof(SetAlmConnectionDetails));
+            }
         }
 
         bool mRunAnalyzer;
@@ -295,6 +308,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Download/update Solution from source control");
                 }
             }
+        }
+
+        internal void SetSourceControlBranch(string value)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlBranch: '" + value + "'");
+            WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
         }
 
         internal void SetSourceControlPassword(string value)

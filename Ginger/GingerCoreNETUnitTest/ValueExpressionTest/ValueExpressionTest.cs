@@ -46,6 +46,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         ProjEnvironment mEnv;
         GingerCore.Activity mActivity;
         Act mAct;
+        SolutionRepository mSolutionRepository;
 
         [TestInitialize]
         public void TestInitialize()
@@ -54,12 +55,13 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
 
             // Init SR
-            SolutionRepository mSolutionRepository = WorkSpace.Instance.SolutionRepository;           
+            mSolutionRepository = WorkSpace.Instance.SolutionRepository;           
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
             sol.ContainingFolderFullPath = TempRepositoryFolder;
             WorkSpace.Instance.Solution = sol;
+            mSolutionRepository.StopAllRepositoryFolderWatchers();
 
             WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
            
@@ -112,7 +114,7 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [TestCleanup]
         public void TestCleanUp()
         {
-
+            mSolutionRepository.StopAllRepositoryFolderWatchers();
         }
 
 
@@ -518,5 +520,189 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
 
         #endregion Flow Details
 
+
+        #region GeneralFunctions
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GenerateHashCode()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GenerateHashCode(\"Hello\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "9/+ei3uy4Jtwk1pdeF4MxdnQq/A=");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GenerateHashCodeStringWithSpecialChar()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GenerateHashCode(\"He\"l\"lo\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "fjDK9jS31cZI2UYC/m/Fl4t/ibU=");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetEncryptedBase64String()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GetEncryptedBase64String(\"Hello\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "SGVsbG8=");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDecryptedBase64String()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GetDecryptedBase64String(\"SGVsbG8=\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "Hello");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetEncryptedBase64StringWithSpecialChar()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GetEncryptedBase64String(\"He\"l\"lo\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "SGUibCJsbw==");
+        }
+        
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDecryptedBase64StringWithSpecialChar()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GetDecryptedBase64String(\"SGUibCJsbw==\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "He\"l\"lo");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetEncryptedBase64StringWithJson()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GetEncryptedBase64String(\"{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "eyJuYW1lIjoiSm9obiIsICJhZ2UiOjMxLCAiY2l0eSI6Ik5ldyBZb3JrIn0=");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void GetDecryptedBase64StringWithJson()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=GetDecryptedBase64String(\"eyJuYW1lIjoiSm9obiIsICJhZ2UiOjMxLCAiY2l0eSI6Ik5ldyBZb3JrIn0=\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ReplaceSpecialCharsFromStringWithNoCharsInside()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=ReplaceSpecialChars(\"Hello\",\",_)}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "Hello");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ReplaceSpecialCharsFromString()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=ReplaceSpecialChars(\"He\"l\"lo\",\",_)}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "He_l_lo");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ReplaceSpecialCharsFromJson()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=ReplaceSpecialChars(\"{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}\",\",_)}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "{_name_:_John_, _age_:31, _city_:_New York_}");
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ReplaceSpecialCharsBackToJson()
+        {
+            //Arrange  
+            ValueExpression VE = new ValueExpression(mEnv, mBF);
+            VE.Value = "{Function Fun=ReplaceSpecialChars(\"{_name_:_John_, _age_:31, _city_:_New York_}\",_,\")}";
+
+            //Act     
+            string v = VE.ValueCalculated;
+
+            //Assert
+            Assert.AreEqual(v, "{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}");
+        }
+
+        #endregion GeneralFunctions
     }
 }

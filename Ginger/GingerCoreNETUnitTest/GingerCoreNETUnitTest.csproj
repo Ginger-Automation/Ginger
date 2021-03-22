@@ -83,6 +83,9 @@
     <None Update="TestResources\CLI\CLI-CheckExecutionIDSet.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TestResources\CLI\CLIDynamicJSON_Existing_ALM_Details.Ginger.AutoRunConfigs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TestResources\CLI\CLIDynamicJSON_Existing_StopRunnersOnFailure_StopOff.Ginger.AutoRunConfigs.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

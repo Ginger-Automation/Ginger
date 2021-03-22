@@ -22,7 +22,9 @@ using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
+using GingerCore;
 using GingerCore.Environments;
+using GingerCoreNET.ALMLib;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -102,6 +104,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     {
                         cliHelper.UndoSolutionLocalChanges = (bool)exeConfiguration.SolutionScmDetails.UndoSolutionLocalChanges;
                     }
+                    cliHelper.SetSourceControlBranch(exeConfiguration.SolutionScmDetails.Branch);
+
                 }
                 if (!string.IsNullOrEmpty(exeConfiguration.SolutionLocalPath))
                 {
@@ -166,6 +170,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 //Dynamic JSON
                 GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
                 RunsetExecConfig runset = exeConfiguration.Runset;
+                if (exeConfiguration.AlmsDetails != null && exeConfiguration.AlmsDetails.Count > 0)
+                {
+                    LoadALMDetailsFromJSON(exeConfiguration);
+                }
                 if (runset.EnvironmentName != null || runset.EnvironmentID != null)
                 {
                     ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
@@ -176,7 +184,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     {
                         cliHelper.Env = env.Name;
                     }
-                }                
+                }
                 if (runset.RunAnalyzer != null)
                 {
                     cliHelper.RunAnalyzer = (bool)runset.RunAnalyzer;
@@ -197,6 +205,101 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public async Task Execute(RunsetExecutor runsetExecutor)
         {
             await runsetExecutor.RunRunset();
+        }
+
+        private void LoadALMDetailsFromJSON(GingerExecConfig gingerExecConfig)
+        {
+            foreach (AlmDetails almDetails in gingerExecConfig.AlmsDetails)
+            {
+                ALMIntegration.eALMType almTypeToConfigure;
+                if (Enum.TryParse<ALMIntegration.eALMType>(almDetails.ALMType, out almTypeToConfigure))
+                {
+                    try
+                    {
+                        ALMConfig solutionAlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.AlmType == almTypeToConfigure);
+                        if (solutionAlmConfig == null)
+                        {
+                            //ADD
+                            solutionAlmConfig = new ALMConfig() { AlmType = almTypeToConfigure };
+                            WorkSpace.Instance.Solution.ALMConfigs.Add(solutionAlmConfig);
+                        }
+                        ALMUserConfig userProfileAlmConfig = WorkSpace.Instance.UserProfile.ALMUserConfigs.FirstOrDefault(x => x.AlmType == almTypeToConfigure);
+                        if (userProfileAlmConfig == null)
+                        {
+                            //ADD
+                            userProfileAlmConfig = new ALMUserConfig() { AlmType = almTypeToConfigure };                           
+                            WorkSpace.Instance.UserProfile.ALMUserConfigs.Add(userProfileAlmConfig);
+                        }
+                        if (almDetails.ALMSubType != null)
+                        {
+                            solutionAlmConfig.JiraTestingALM = (ALMIntegration.eTestingALMType)Enum.Parse(typeof(ALMIntegration.eTestingALMType), almDetails.ALMSubType);
+                        }
+                        if (almDetails.ServerURL != null)
+                        {
+                            solutionAlmConfig.ALMServerURL = almDetails.ServerURL;
+                            userProfileAlmConfig.ALMServerURL = almDetails.ServerURL;
+                        }
+                        if (almDetails.User != null)
+                        {
+                            solutionAlmConfig.ALMUserName = almDetails.User;
+                            userProfileAlmConfig.ALMUserName = almDetails.User;
+                        }
+                        if (almDetails.Password != null)
+                        {
+                            if (almDetails.PasswordEncrypted)
+                            {
+                                string pass = EncryptionHandler.DecryptwithKey(almDetails.Password);
+                                solutionAlmConfig.ALMPassword = pass;
+                                userProfileAlmConfig.ALMPassword = pass;
+                            }
+                            else
+                            {
+                                solutionAlmConfig.ALMPassword = almDetails.Password;
+                                userProfileAlmConfig.ALMPassword = almDetails.Password;
+                            }
+                        }
+                        if (almDetails.Domain != null)
+                        {
+                            solutionAlmConfig.ALMDomain = almDetails.Domain;
+                        }
+                        if (almDetails.Project != null)
+                        {
+                            solutionAlmConfig.ALMProjectName = almDetails.Project;
+                        }
+                        if (almDetails.ProjectKey != null)
+                        {
+                            solutionAlmConfig.ALMProjectKey = almDetails.ProjectKey;
+                        }
+                        if (almDetails.ConfigPackageFolderPath != null)
+                        {
+                            solutionAlmConfig.ALMConfigPackageFolderPath = almDetails.ConfigPackageFolderPath;
+                            userProfileAlmConfig.ALMConfigPackageFolderPath = almDetails.ConfigPackageFolderPath;
+                        }
+                        if (almDetails.UseRest != null)
+                        {
+                            solutionAlmConfig.UseRest = (bool)almDetails.UseRest;
+                        }
+                        if (almDetails.IsDefault != null)
+                        {
+                            if (almDetails.IsDefault == true)
+                            {
+                                //clear previous default
+                                ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
+                                currentDefAlm.DefaultAlm = false;
+                            }
+                            solutionAlmConfig.DefaultAlm = (bool)almDetails.IsDefault;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(string.Format("Failed to load the ALM type: '{0}' details, due to error: '{1}'", almDetails.ALMType, ex.Message), ex);
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("Failed to find the ALM type: '{0}'", almDetails.ALMType));
+                }
+            }
         }
     }
 }

@@ -80,10 +80,20 @@ namespace Ginger.ALM
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
-                    AlmCore = new OctaneCore();
-                    AlmRepo = new OctaneRepository();
+
+                    if(!(AlmCore is OctaneCore && AlmRepo is OctaneRepository))
+                    {
+                        AlmCore = new OctaneCore();
+                        AlmRepo = new OctaneRepository(AlmCore);
+                    }
+                 
+                  
                     break;
 
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                    AlmCore = new ZephyrEntCore();
+                    AlmRepo = new ZephyrEnt_Repository(AlmCore);
+                    break;
             }
             AlmCore.GetCurrentAlmConfig();
             SetALMCoreConfigurations(AlmType);
@@ -99,7 +109,7 @@ namespace Ginger.ALM
                 AlmCore.SetALMConfigurations(   CurrentAlmConfigurations.ALMServerURL, CurrentAlmConfigurations.UseRest, CurrentAlmConfigurations.ALMUserName,
                                                 CurrentAlmConfigurations.ALMPassword, CurrentAlmConfigurations.ALMDomain, CurrentAlmConfigurations.ALMProjectName,
                                                 CurrentAlmConfigurations.ALMProjectKey, CurrentAlmConfigurations.AlmType, CurrentAlmConfigurations.ALMConfigPackageFolderPath,
-                                                CurrentAlmConfigurations.JiraTestingALM);
+                                                CurrentAlmConfigurations.ZepherEntToken, CurrentAlmConfigurations.JiraTestingALM);
             }
         }
 
@@ -199,6 +209,23 @@ namespace Ginger.ALM
             return connResult;
         }
 
+
+        public Dictionary<string, string> GetSSOTokens()
+        {
+            return AlmCore.GetSSOTokens();
+        }
+
+
+        public Dictionary<string, string> GetConnectionInfo()
+        {
+            return AlmCore.GetConnectionInfo();
+        }
+
+        public bool IsServerConnected()
+        {
+            return AlmCore.IsServerConnected();
+        }
+
         public bool TestALMProjectConn(eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -272,7 +299,7 @@ namespace Ginger.ALM
         {
             return ((JiraCore)AlmCore).GetZephyrCyclesWithFolders(getFolders);
         }
-
+        
         public Dictionary<string, string> GetALMDomainProjects(string ALMDomain, eALMConnectType almConectStyle)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
@@ -590,9 +617,9 @@ namespace Ginger.ALM
         internal ObservableList<ExternalItemFieldBase> GetUpdatedFields(ObservableList<ExternalItemFieldBase> mItemsFields, bool online, BackgroundWorker bw = null)
         {
             ObservableList<ExternalItemFieldBase> updatedFields = new ObservableList<ExternalItemFieldBase>();
-            if (AlmCore.AlmItemFields != null)
+            if (ALMCore.AlmItemFields != null)
             {
-                foreach (ExternalItemFieldBase defaultField in AlmCore.AlmItemFields)
+                foreach (ExternalItemFieldBase defaultField in ALMCore.AlmItemFields)
                 {
                     ExternalItemFieldBase currentField = mItemsFields.Where(x => x.ID == defaultField.ID && x.ItemType == defaultField.ItemType).FirstOrDefault();
                     if (currentField != null)
@@ -644,6 +671,11 @@ namespace Ginger.ALM
 
         public bool AutoALMProjectConnect(eALMConnectType almConnectStyle = eALMConnectType.Silence, bool showConnWin = true, bool asConnWin = false)
         {
+            if (AlmCore == null)//added because when running from CLI the AlmCore is Null on connection
+            {
+                UpdateALMType(ALMIntegration.Instance.GetDefaultAlmConfig().AlmType);
+            }
+
             int retryConnect = 0;
             bool isConnected = false;
             while (!isConnected && retryConnect < 2)
@@ -672,7 +704,10 @@ namespace Ginger.ALM
         public void OpenALMItemsFieldsPage()
         {
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = GetDefaultAlmConfig();
-            UpdateALMType(AlmConfig.AlmType);
+            if (AlmRepo == null)
+            {
+                UpdateALMType(AlmConfig.AlmType);
+            }
             AlmRepo.OpenALMItemsFieldsPage();
         }
 

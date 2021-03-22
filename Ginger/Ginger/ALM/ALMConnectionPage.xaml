@@ -37,8 +37,10 @@
                             <RadioButton x:Name="OctaneRadioButton" Content="Octane" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="4" Margin="15,0,0,0"></RadioButton>
                             <usercontrols:ImageMakerControl x:Name="xDefualtImageOctane" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
 
-
-                            <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="5" Margin="15,0,0,0"></RadioButton>
+                            <RadioButton x:Name="ZephyrEntRadioButton" Content="Zephyr" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="5" Margin="15,0,0,0"></RadioButton>
+                            <usercontrols:ImageMakerControl x:Name="xDefualtImageZephyrEnt" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
+                            
+                            <RadioButton x:Name="RallyRadioButton" Content="Rally" Checked="ALMRadioButton_Checked_Changed" GroupName="ALMTypeRadioButton" Grid.Column="6" Margin="15,0,0,0"></RadioButton>
                             <usercontrols:ImageMakerControl x:Name="xDefualtImageRally" SetAsFontImageWithSize="20" ImageType="Check" ToolTip="Default ALM Type" Foreground="Orange" Width="20" Height="20" HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="5,0,0,0" Visibility="Collapsed" Padding="0,0,0,5" />
                            
                         </StackPanel>
@@ -74,13 +76,14 @@
                                 <Label Style="{StaticResource @InputFieldLabelStyle}">User Name:</Label>
                                 <TextBox x:Name="UserNameTextBox" TextChanged="UserNameTextBox_TextChanged" Style="{StaticResource @TextBoxStyle}" Height="25"></TextBox>
                             </StackPanel>
-                            <StackPanel>
-                                <Label Style="{StaticResource @InputFieldLabelStyle}">Password:</Label>
+                            <StackPanel x:Name="xPasswordPanel">
+                                <Label x:Name="PasswordLabel" Style="{StaticResource @InputFieldLabelStyle}">Password:</Label>
                                 <PasswordBox x:Name="PasswordTextBox" Style="{StaticResource @PasswordBoxStyle}" Height="25" PasswordChanged="PasswordTextBox_PasswordChanged" ></PasswordBox>
                             </StackPanel>
                         </StackPanel>
                         <CheckBox x:Name="RestAPICheckBox" IsChecked="True" Content="Use Rest API" Checked="RestAPICheckBox_Checked" Unchecked="RestAPICheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="RestApi should be Checked for QC12 and above"/>
-                        <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked" Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
+                        <CheckBox x:Name="ZephyrEntTokenCheckBox" IsChecked="True" Content="Connect With Token" Visibility="Collapsed"  Checked="ZephyrEntTokenCheckBox_Checked" Unchecked="ZephyrEntTokenCheckBox_Unchecked" Style="{StaticResource @CheckBoxStyle}" Grid.Column="0" Grid.Row ="1" Margin="5,10,0,0" ToolTip="Select connect with token or password "/>
+                        <Button x:Name="LoginServerButton" Click="GetProjectsDetails_Clicked"  Style="{StaticResource @WindowButtonStyle}" Margin="0,10,0,10" HorizontalAlignment="Center">Get Projects Details</Button>
                     </StackPanel>
 
                     <StackPanel x:Name="ALMProjectDetailsPanel"  Visibility="Visible">
