@@ -7,6 +7,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Drivers;
 using Ginger.Reports;
@@ -186,6 +187,7 @@ namespace Ginger.WindowExplorer
 
                 InitOutputValuesGrid();
 
+                mContext.Runner.PropertyChanged += Runner_PropertyChanged;
                 BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xErrorTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.Error));
                 BindingHandler.ObjFieldBinding(xExecInfoTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.ExInfo));
@@ -205,6 +207,17 @@ namespace Ginger.WindowExplorer
             }
 
             InitDataPage();
+        }
+
+        private void Runner_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Run.GingerRunner.IsRunning))
+            {
+                if (mContext.Runner.IsRunning == false)
+                {
+                    WindowExplorerCommon.IsTestActionRunning = mContext.Runner.IsRunning;
+                }
+            }
         }
 
         private void InitDataPage()
@@ -382,6 +395,8 @@ namespace Ginger.WindowExplorer
             }
 
             SetActionDetails(mAction);
+
+            WindowExplorerCommon.IsTestActionRunning = true;
 
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, mAction, true));
 

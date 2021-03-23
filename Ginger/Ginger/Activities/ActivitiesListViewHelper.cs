@@ -677,7 +677,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(sender);
            
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act>(mActivity, (Act)mActivity.Acts.CurrentItem));
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentActionAndMoveOn, new Tuple<Activity, Act, bool>(mActivity, (Act)mActivity.Acts.CurrentItem, false));
         }
 
         private void RunHandler(object sender, RoutedEventArgs e)

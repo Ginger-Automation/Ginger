@@ -679,8 +679,7 @@ namespace GingerWPF.BusinessFlowsLib
                         mApplicationAgentsMapPage.MappingList.IsEnabled = false;
                     }
 
-                    bool RunActionFromExplorer = mAddActionMainPage.xSelectedItemFrame.Content.GetType() == typeof(LiveSpyNavPage) || mAddActionMainPage.xSelectedItemFrame.Content.GetType() == typeof(WindowsExplorerNavPage);
-                    if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add && !RunActionFromExplorer)
+                    if (xAddActionsBtn.ButtonImageType != Amdocs.Ginger.Common.Enums.eImageType.Add && !WindowExplorerCommon.IsTestActionRunning)
                     {
                         CollapseAddActionsPnl();
                     }

@@ -40,6 +40,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
     class WindowExplorerCommon
     {
+        static public bool IsTestActionRunning { get; set; } = false;
+
         public static ITreeViewItem GetTreeViewItemForElementInfo(Amdocs.Ginger.Common.UIElement.ElementInfo EI)
         {
             if (EI == null) return null; // can happen when grid is filtered
