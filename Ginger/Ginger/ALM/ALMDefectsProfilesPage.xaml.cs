@@ -285,7 +285,7 @@ namespace Ginger.ALM
                 int numeric = 0;
                 ExternalItemFieldBase wrongNonNumberValueField = _ALMDefectProfile.ALMDefectProfileFields.Where(x => (string.Equals(x.Type, "Number", StringComparison.OrdinalIgnoreCase)) &&
                                                                                                                       x.SelectedValue != null && x.SelectedValue != string.Empty && 
-                                                                                                                      !(int.TryParse(x.SelectedValue, out numeric))).FirstOrDefault();
+                                                                                                                      !(int.TryParse(x.SelectedValue, out numeric) || x.ID != string.Empty)).FirstOrDefault();
                 if (wrongNonNumberValueField != null)
                 {
                     Reporter.ToUser(eUserMsgKey.WrongNonNumberValueInserted, wrongNonNumberValueField.Name, _ALMDefectProfile.Name);
