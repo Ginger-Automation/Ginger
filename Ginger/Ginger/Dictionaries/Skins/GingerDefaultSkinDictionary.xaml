@@ -1055,8 +1055,8 @@
 
     <Style TargetType="Expander" x:Key="$ExpanderStyle" >
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <!--<Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="1"/>-->
     </Style>
     
     <Style TargetType="ComboBox" x:Key="$FlatEditInputComboBoxStyle" >

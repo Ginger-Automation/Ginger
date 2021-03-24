@@ -53,19 +53,19 @@
                 </StackPanel>
 
                 <DockPanel HorizontalAlignment="Stretch" Margin="10" SnapsToDevicePixels="True">
-                    <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run Action" ButtonImageHeight="16" 
-                                           DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0,0,0,0" Click="xRunActBtn_Click" />
+                    <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run" ButtonImageHeight="16" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                             ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Left" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0,0,0,0" Click="xRunActBtn_Click" />
 
                     <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusIcon" StatusViewMode="Image" 
-                                           DockPanel.Dock="Left" StatusSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10"/>
+                                           DockPanel.Dock="Left" StatusSize="23" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10"/>
 
-                    <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Upload" ButtonText="Add Action" ButtonImageHeight="16" HorizontalAlignment="Right"
-                                           DockPanel.Dock="Right" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xAddActBtn_Click" />
+                    <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Add" ButtonText="Add" ButtonImageHeight="16" HorizontalAlignment="Right" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" 
+                             ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Right" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xAddActBtn_Click" />
                 </DockPanel>
 
                 <Expander x:Name="xActExecutionDetails" Margin="0,1,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" BorderBrush="{StaticResource $Color_DarkBlue}">
                     <Expander.Header>
-                        <Label x:Name="xExecDetailsExpanderLbl" Style="{StaticResource $InputLabelStyle_NoFill}" Content="Action Execution Details"/>
+                        <Label x:Name="xExecDetailsExpanderLbl" Style="{StaticResource $InputLabelStyle_NoFill}" Content="Execution Details"/>
                     </Expander.Header>
                     <Expander.Content>
                         <ScrollViewer>

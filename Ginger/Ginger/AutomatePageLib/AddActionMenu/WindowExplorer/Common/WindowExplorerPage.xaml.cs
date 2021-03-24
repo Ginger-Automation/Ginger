@@ -925,8 +925,8 @@ namespace Ginger.WindowExplorer
                             }
                         }
                     }
-                    */
                     ShowControlActions(mCurrentControlTreeViewItem);
+                    */
                 }
                 else
                 {
