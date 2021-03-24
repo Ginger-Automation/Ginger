@@ -29,7 +29,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
         [TestMethod]
         [Timeout(60000)]
-        public void TextFileWriteReadTest()
+        public void TextFileWriteTest()
         {
             //Arrange      
             actReadTextFile.TextToWrite = txt;
@@ -39,14 +39,31 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             //Act
             actReadTextFile.TextFileEncoding = ActReadTextFile.eTextFileEncodings.UTF8;
             ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Write, false,true);
-            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Read, true,false);
+            string textWriteToFile = System.IO.File.ReadAllText(actReadTextFile.TextFilePath);
 
             //Assert
-            ActReturnValue returnValue = (ActReturnValue)actReadTextFile.ActReturnValues.ListItems.Find(x => (x as ActReturnValue).ItemName.Equals("File Content"));
-            Assert.AreEqual(returnValue.Actual, txt);
+            Assert.AreEqual(textWriteToFile, txt);
         }
 
-        
+        [TestMethod]
+        [Timeout(60000)]
+        public void TextFileReadTest()
+        {
+            //Arrange      
+            actReadTextFile.TextToWrite = txt;
+            actReadTextFile.TextFilePath = TestResources.GetTestResourcesFile(@"TextFiles" + Path.DirectorySeparatorChar + "textFileOperations.txt");
+            actReadTextFile.ValueExpression = new ValueExpression(actReadTextFile, "");
+
+            //Act
+            actReadTextFile.TextFileEncoding = ActReadTextFile.eTextFileEncodings.UTF8;
+            File.WriteAllText(actReadTextFile.TextFilePath, txt);
+            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Read, true, true);
+            ActReturnValue returnValue = (ActReturnValue)actReadTextFile.ActReturnValues.ListItems.Find(x => (x as ActReturnValue).ItemName.Equals("File Content"));
+
+            //Assert
+            Assert.AreEqual(returnValue.Actual, txt);
+        } 
+
         [TestMethod]
         [Timeout(60000)]
         public void TextAppendTest()
@@ -61,11 +78,10 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Write, false,true);
             actReadTextFile.TextToWrite = "Appended Text";
             ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Append, false, true, ActReadTextFile.eAppendAt.End);
-            ExecuteActionOperation(actReadTextFile, ActReadTextFile.eTextFileActionMode.Read, true,false);
+            string textAppendedToFile = System.IO.File.ReadAllText(actReadTextFile.TextFilePath);
 
             //Assert
-            ActReturnValue returnValue = (ActReturnValue)actReadTextFile.ActReturnValues.ListItems.Find(x => (x as ActReturnValue).ItemName.Equals("File Content"));
-            Assert.AreEqual(returnValue.Actual, txt + actReadTextFile.TextToWrite);
+            Assert.AreEqual(textAppendedToFile, txt + actReadTextFile.TextToWrite);
         }
         private void ExecuteActionOperation(ActReadTextFile textFileOperation, ActReadTextFile.eTextFileActionMode actionMode, bool addNewReturnParams
             , bool isValueForDriver, ActReadTextFile.eAppendAt appendAt = ActReadTextFile.eAppendAt.End)
