@@ -1001,6 +1001,10 @@ namespace GingerCore
                                 liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
                                 mValueCalculated = "";
                             }
+                            else
+                            {
+                                liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
+                            }
                         }
                     }
                     else
