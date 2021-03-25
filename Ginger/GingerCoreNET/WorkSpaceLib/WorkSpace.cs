@@ -273,23 +273,66 @@ namespace amdocs.ginger.GingerCoreNET
 
         private void CheckWebReportFolder()
         {
-            try
+            string GingerVersion = ApplicationInfo.ApplicationVersion;
+            string ConfigFileContent = string.Empty;
+            //create/modify GingerVerison in 'Ginger directory' config
+            string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client", "Ginger-Web-Client.config");
+            if (File.Exists(ConfigFilePath))
             {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: "+ clientAppFolderPath);
-                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
-                if (Directory.Exists(clientAppFolderPath))
+                ConfigFileContent = File.ReadAllText(ConfigFilePath);
+                if (!ConfigFileContent.Trim().Replace(" ", "").Contains("GingerVersion=" + GingerVersion))
                 {
-                    string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
-                    if (Directory.Exists(rootUserFolder))
-                        TryFolderDelete(rootUserFolder);
-                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                    ConfigFileContent = "GingerVersion=" + GingerVersion + Environment.NewLine;
+                    File.WriteAllText(ConfigFilePath, ConfigFileContent);
                 }
             }
-            catch(Exception ex)
+            else
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
+                //create new file with GingerVersion
+                ConfigFileContent = "GingerVersion=" + GingerVersion + Environment.NewLine;
+                File.WriteAllText(ConfigFilePath, ConfigFileContent);
+            }
+
+            //check GingerVerison in 'user directory' config
+            bool doCopy = false;
+            ConfigFilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "Ginger-Web-Client.config");
+            if (File.Exists(ConfigFilePath))
+            {
+                ConfigFileContent = File.ReadAllText(ConfigFilePath);
+                if (!ConfigFileContent.Trim().Replace(" ", "").Contains("GingerVersion=" + GingerVersion))
+                {
+                    doCopy = true;
+                }
+            }
+            else
+            {
+                doCopy = true;
+            }
+
+            if (doCopy)
+            {
+                try
+                {
+                    string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client");
+                    Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: " + clientAppFolderPath);
+                    string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
+                    Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
+                    if (Directory.Exists(clientAppFolderPath))
+                    {
+                        string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
+                        if (Directory.Exists(rootUserFolder))
+                            TryFolderDelete(rootUserFolder);
+                        IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
+                }
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Ginger-Web-Client is up to date.");
             }
         }
 
