@@ -745,9 +745,9 @@ namespace GingerCoreNET.DataSource
             string rowValue = Convert.ToString(row["GINGER_ID"]);
 
             //Rownumber
-            if (!query.Contains("where"))
+            if (!query.Contains("where") && !NextAvai)
             {
-                GetQueryOutput(query + " where GINGER_ID = " + rowValue);
+                GetQueryOutput(query + " where GINGER_ID= " + rowValue);
             }
             //Nextavailable
             else if (NextAvai)
