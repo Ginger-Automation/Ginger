@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
 using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
@@ -165,7 +166,24 @@ namespace Amdocs.Ginger.Common
                 }
             }
         }
-               
+
+        private RunSetActionBase mRunsetAction;
+        public RunSetActionBase RunsetAction
+        {
+            get
+            {
+                return mRunsetAction;
+            }
+            set
+            {
+                if (mRunsetAction != value)
+                {
+                    mRunsetAction = value;
+                    OnPropertyChanged(nameof(RunsetAction));
+                }
+            }
+        }
+
         public static Context GetAsContext(object contextObj)
         {
             if (contextObj != null && contextObj is Context)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -245,21 +245,19 @@ namespace Ginger
 
             bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
             WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
-
-            // add additional classes from Ginger and GingerCore
-            InitClassTypesDictionary();
-
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());            
-
             if (e.Args.Length != 0)
             {
                 WorkSpace.Instance.RunningInExecutionMode = true;
                 Reporter.ReportAllAlsoToConsole = true;  //needed so all reporting will be added to Console      
             }
-
+            // add additional classes from Ginger and GingerCore
+            InitClassTypesDictionary();
+           
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new RepositoryItemFactory());            
+            
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();            
 
-            if (e.Args.Length == 0)
+            if (!WorkSpace.Instance.RunningInExecutionMode)
             {
                 HideConsoleWindow();                
                 StartGingerUI();// start regular Ginger UI

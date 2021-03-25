@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -466,6 +466,10 @@ namespace Ginger
                 {
                     continue;//skipping because specific flow details is required
                 }
+                if (VER.RequiresRunsetOperation && (mContext == null || mContext.RunsetAction == null))
+                {
+                    continue;
+                }
 
                 TreeViewItem Parent = AddOrGetCategory(VER.Category);
                 TreeViewItem child = AddOrGetSubCategory(VER.SubCategory, Parent);
@@ -922,7 +926,7 @@ namespace Ginger
                 {
                     mContext.Environment = mEnvs[0];
                 }
-                mVE = new ValueExpression(mContext.Environment, mContext.BusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
+                mVE = new ValueExpression(mContext.Environment, mContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
                 
             }
             mVE.Value = this.xExpressionUCTextEditor.textEditor.Text;

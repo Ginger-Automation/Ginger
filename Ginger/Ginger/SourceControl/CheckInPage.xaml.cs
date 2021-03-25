@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,15 @@ namespace Ginger.SourceControl
             SourceControlIntegration.BusyInProcessWhileDownloading = false;
             mPath = path;
             lblAnalyzedPath.Content = mPath;
-
+            if (WorkSpace.Instance.Solution.SourceControl.GetSourceControlType == SourceControlBase.eSourceControlType.GIT)
+            {
+                xSourceControlBranchPanel.Visibility = Visibility.Visible;
+                xSourceControlBranchLabel.Content = WorkSpace.Instance.Solution.SourceControl.SourceControlBranch;
+            }
+            else
+            {
+                xSourceControlBranchPanel.Visibility = Visibility.Collapsed;
+            }
             Init();
 
             SetCheckinGridView();

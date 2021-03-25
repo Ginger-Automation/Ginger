@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1372,7 +1372,19 @@ namespace Ginger.Run
                             mColList.Remove("GINGER_USED");
                         act.AddOrUpdateOutDataSourceParam(act.OutDataSourceName, act.OutDataSourceTableName, item.Param, item.Param, "", mColList, act.OutDSParamMapType);
                     }
+
+                    if (act.ConfigOutDSParamAutoCheck)
+                    {
+                        foreach (var item in act.DSOutputConfigParams)
+                        {
+                            item.Active = true;
+                        }
+                    }
+
                     mADCS = (from arc in act.DSOutputConfigParams where arc.DSName == act.OutDataSourceName && arc.DSTable == act.OutDataSourceTableName && arc.Active == true && arc.OutParamMap == act.OutDSParamMapType select arc).ToList();
+
+                   
+                    
                     if (mADCS.Count == 0)
                         return;
                 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,14 +44,20 @@ namespace Ginger.ALM.Repository
         OctaneCore octaneCore;
 
         QCTestCase matchingTC = null;
-        public OctaneRepository()
+        public OctaneRepository(ALMCore almCore)
         {
-            octaneCore = new OctaneCore();
+            octaneCore = (OctaneCore)almCore;
         }
-        public override bool ConnectALMServer(ALMIntegration.eALMConnectType userMsgStyle)
+        public override bool ConnectALMServer(ALMIntegration.eALMConnectType almConnectType)
         {
             try
             {
+
+                if (almConnectType == ALMIntegration.eALMConnectType.SettingsPage || almConnectType == ALMIntegration.eALMConnectType.Manual)
+                {
+                    HandleSSO();
+                }
+
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Octane server");
                 if (ALMIntegration.Instance.AlmCore.ConnectALMServer())
                 {
@@ -61,20 +67,37 @@ namespace Ginger.ALM.Repository
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, "Bad credentials");
                     return false;
-                }
+                }   
             }
             catch (Exception e)
             {
-                if (userMsgStyle == ALMIntegration.eALMConnectType.Manual)
+                if (almConnectType == ALMIntegration.eALMConnectType.Manual)
                 {
                     Reporter.ToUser(eUserMsgKey.QcConnectFailure, e.Message); //TODO: Fix message
                 }
-                else if (userMsgStyle == ALMIntegration.eALMConnectType.Auto)
+                else if (almConnectType == ALMIntegration.eALMConnectType.Auto)
                 {
                     Reporter.ToUser(eUserMsgKey.ALMConnectFailureWithCurrSettings, e.Message);
                 }
-                Reporter.ToLog(eLogLevel.WARN, "Error connecting to QTest server", e);
+                Reporter.ToLog(eLogLevel.WARN, "Error connecting to Octane server", e);
                 return false;
+            }
+        }
+
+        internal void HandleSSO()
+        {
+            var ssoConnectionInfo = ALMIntegration.Instance.GetConnectionInfo();
+
+            if (ssoConnectionInfo["access_token"] == null || !string.IsNullOrEmpty(ssoConnectionInfo["Error"]) || ssoConnectionInfo["userName"] != octaneCore.GetCurrentAlmConfig().ALMUserName)
+            {
+                var ssoTokenInfo = ALMIntegration.Instance.GetSSOTokens();
+
+                if (string.IsNullOrEmpty(ssoTokenInfo["Error"]))
+                {
+                    SSOPage ssoPage = new SSOPage(ssoTokenInfo["authentication_url"]);
+                    ssoPage.ShowAsWindow();
+
+                }
             }
         }
 

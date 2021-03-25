@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,6 +49,9 @@ namespace GingerCoreNET.SourceControl
 
         string mSourceControlUser;
         public string SourceControlUser { get { return mSourceControlUser; } set { mSourceControlUser = value; OnPropertyChanged(nameof(SourceControlUser)); } }
+
+        string mSourceControlBranch;
+        public string SourceControlBranch { get { return mSourceControlBranch; } set { mSourceControlBranch = value; OnPropertyChanged(nameof(SourceControlBranch)); } }
 
         string mSourceControlPass;
         public string SourceControlPass { get { return mSourceControlPass; } set { mSourceControlPass = value; OnPropertyChanged(nameof(SourceControlPass)); } }
@@ -118,6 +121,10 @@ namespace GingerCoreNET.SourceControl
         public abstract void Init();
 
         public abstract bool TestConnection(ref string error);
+
+        public abstract List<string> GetBranches();
+
+        public abstract string GetCurrentBranchForSolution();
 
         public abstract void Disconnect();
 

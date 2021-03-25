@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -263,6 +263,11 @@ namespace Ginger
         public string SolutionSourceControlUser { get; set; }
 
         [IsSerializedForLocalRepository]
+        public string SourceControlBranch { get; set; }
+
+        public string SolutionSourceControlBranch { get; set; }
+
+        [IsSerializedForLocalRepository]
         public bool SolutionSourceControlConfigureProxy { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -401,20 +406,43 @@ namespace Ginger
 
         public UserTypeHelper UserTypeHelper { get; set; }
 
+        static private bool mSharedUserProfileBeenUsed;
+        static string mUserProfileFilePath;
         public static string UserProfileFilePath
         {
             get
             {
-                return Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                if (mUserProfileFilePath == null)
+                {
+                    string userProfileFileName = "Ginger.UserProfile.xml";
+                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, userProfileFileName);
+                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, userProfileFileName);
+                    if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
+                    {
+                        mUserProfileFilePath = sharedUserProfilePath;
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile is been used, path:'{0}'", sharedUserProfilePath));
+                        mSharedUserProfileBeenUsed = true;
+                    }
+                    else
+                    {
+                        mUserProfileFilePath = specificUserProfilePath;
+                    }
+                }
+                return mUserProfileFilePath;
             }
         }
 
         public void SaveUserProfile()
-        {
+        {            
+            if (mSharedUserProfileBeenUsed)
+            {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Not performing User Profile Save because Shared User Profile is been used"));
+                return;
+            }
+
             try
             {
                 SaveRecentAppAgentsMapping();
-
             }
             catch (Exception ex)
             {

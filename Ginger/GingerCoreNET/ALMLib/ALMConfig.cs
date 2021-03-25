@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -65,6 +65,21 @@ namespace GingerCoreNET.ALMLib
                 {
                     mUseRest = value;
                     OnPropertyChanged(nameof(UseRest));
+                }
+            }
+        }
+
+        private bool mZepherEntToken;
+        [IsSerializedForLocalRepository]
+        public bool ZepherEntToken
+        {
+            get { return mZepherEntToken; }
+            set
+            {
+                if (mZepherEntToken != value)
+                {
+                    mZepherEntToken = value;
+                    OnPropertyChanged(nameof(ZepherEntToken));
                 }
             }
         }

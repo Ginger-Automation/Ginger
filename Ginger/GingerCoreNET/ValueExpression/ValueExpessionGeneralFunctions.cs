@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -116,6 +116,26 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
 
             }
         }
+
+        [ValueExpressionFunctionAttribute]
+        [ValueExpressionFunctionDescription("Replace special chars by another")]
+        [ValueExpressionFunctionExpression("{Function Fun=ReplaceSpecialChars(\"Hello\",\",_)}")]
+        [ValueExpressionFunctionCategory("Data Operations")]
+        [ValueExpressionFunctionSubCategory("Functions")]
+        public string ReplaceSpecialChars(object[] obj)
+        {
+            try
+            {
+                return obj[0].ToString().Replace(obj[1].ToString(), obj[2].ToString());
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "User provided invalid number of string arguments");
+                return "Invalid string with arguments. "+ex.Message;
+
+            }
+        }
+
 
         #endregion PlaceHolders
 

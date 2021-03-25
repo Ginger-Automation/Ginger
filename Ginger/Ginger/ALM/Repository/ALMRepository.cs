@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -55,12 +55,18 @@ namespace Ginger.ALM.Repository
         public abstract bool LoadALMConfigurations();
         public abstract void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs);
         public abstract void UpdateBusinessFlow(ref BusinessFlow businessFlow);
+
         public void OpenALMItemsFieldsPage()
         {
             if (mALMFieldsPage == null)
+            {
                 mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
-
-            mALMFieldsPage.ShowAsWindow();
+                mALMFieldsPage.ShowAsWindow(false);
+            }
+            else 
+            {
+                mALMFieldsPage.ShowAsWindow(true);
+            }
         }
         public void ALMDefectsProfilesPage()
         {

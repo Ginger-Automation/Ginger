@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -147,6 +147,7 @@ namespace Amdocs.Ginger.Common.Enums
         Invisible,
         View,
         GetLatest,
+        Upload,
         CheckIn,
         Download,
         Fix,
@@ -266,6 +267,8 @@ namespace Amdocs.Ginger.Common.Enums
         RegularExpression,
         DataManipulation,
         General,
+        SignIn,
+        SignOut,
         #endregion
 
         #region Source control Images     

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -258,8 +258,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             DSEE.ShowAsWindow();
 
             string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            string sExcelPath = DSEE.ExcelPath;
-            string sSheetName = DSEE.SheetName;
+            string sExcelPath = DSEE.mExcelConfig.ExcelPath;
+            string sSheetName = DSEE.mExcelConfig.ExcelSheetName;
 
             if (sExcelPath != "")
             {

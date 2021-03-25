@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,6 +26,34 @@ namespace GingerCoreNET.ALMLib
 {
     public class ALMUserConfig : RepositoryItemBase
     {
+        private string mALMConfigPackageFolderPath;
+        public string ALMConfigPackageFolderPath
+        {
+            get { return mALMConfigPackageFolderPath; }
+            set
+            {
+                if (mALMConfigPackageFolderPath != value)
+                {
+                    mALMConfigPackageFolderPath = value;
+                    OnPropertyChanged(nameof(ALMConfigPackageFolderPath));
+                }
+            }
+        }
+
+        private string mALMServerURL;
+        public string ALMServerURL
+        {
+            get { return mALMServerURL; }
+            set
+            {
+                if (mALMServerURL != value)
+                {
+                    mALMServerURL = value;
+                    OnPropertyChanged(nameof(ALMServerURL));
+                }
+            }
+        }
+
         private string mALMUserName;
         [IsSerializedForLocalRepository]
         public string ALMUserName
@@ -43,6 +71,7 @@ namespace GingerCoreNET.ALMLib
 
         [IsSerializedForLocalRepository]
         public string EncryptedALMPassword { get; set; }
+
         public string ALMPassword
         {
             get
