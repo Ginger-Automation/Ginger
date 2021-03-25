@@ -268,7 +268,6 @@ namespace GingerCore.Variables
             {
                 mInitialNumberValue = GetFloatWithPrecisionValue(mInitialNumberValue);
             }
-            Value = mInitialNumberValue;
             return "Initial Value=" + mInitialNumberValue;
         }
 
@@ -301,7 +300,7 @@ namespace GingerCore.Variables
 
             if (isValidationPass)
             {
-                mInitialNumberValue = value;
+                this.Value = value;
             }
             return isValidationPass;
         }
