@@ -198,13 +198,18 @@ namespace GingerCore.ALM
         {
             return zephyrEntRepository.GetTestRepositoryFolderType(treeId);
         }
+        public TreeNode GetTestRepositoryFolderById(int treeId)
+        {
+            return zephyrEntRepository.GetTestRepositoryFolderById(treeId);
+        }
         public override bool IsServerConnected()
         {
             throw new NotImplementedException();
         }
         public List<BaseResponseItem> GetTreeByCretiria(string type, int releaseId, int revisionId, int parentId)
         {
-            return zephyrEntRepository.GetTreeByCretiria(type, releaseId, revisionId, parentId);
+            TreeNode treeNode = zephyrEntRepository.GetTestRepositoryFolderById(parentId);
+            return zephyrEntRepository.GetTreeByCretiria(type, releaseId, Convert.ToInt32(treeNode.revision), parentId);
         }
 
         public List<BaseResponseItem> GetZephyrEntTreeData(int releaseId, string entityType, bool v2)

@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
+using ZephyrEntSDK.Models;
 using ZephyrEntSDK.Models.Base;
 
 namespace Ginger.ALM.ZephyrEnt.TreeViewItems
@@ -36,6 +37,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
         public bool FolderOnly { get; set; }
         public int CycleId { get; set; }
         public int ParentId { get; set; }
+        public int RevisionId { get; set; }
 
         private new ContextMenu mContextMenu = new ContextMenu();
 
@@ -91,7 +93,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
             else
             {
                 CurrentChildrens = new List<ITreeViewItem>();
-                List<BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));   
+                List <BaseResponseItem> module = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTreeByCretiria(entityType.ToString(), Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), 180, Convert.ToInt32(Id));   
                 module.ForEach(p =>
                 {
 
@@ -103,6 +105,7 @@ namespace Ginger.ALM.ZephyrEnt.TreeViewItems
                     zeFolder.CycleId = CycleId;
                     zeFolder.ParentId = Convert.ToInt32(p.TryGetItem("parentId"));
                     zeFolder.CurrentChildrens = new List<ITreeViewItem>();
+                    zeFolder.RevisionId = Convert.ToInt32(p.TryGetItem("revision"));
                     foreach (var item in (JArray)p.TryGetItem("categories"))
                     {
                         dynamic d = JObject.Parse(item.ToString());
