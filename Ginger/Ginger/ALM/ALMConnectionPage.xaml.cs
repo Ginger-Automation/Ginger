@@ -92,7 +92,7 @@ namespace Ginger.ALM
         
         private void SetControls()
         {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && (!string.IsNullOrEmpty(PasswordTextBox.Password) || xPasswordPanel.Visibility != Visibility.Visible))
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !(string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility == Visibility.Visible))
             {
                 LoginServerButton.IsEnabled = true;
             }
