@@ -326,7 +326,7 @@ namespace GingerCore.ALM
                     newDefect.SetValue("severity", new BaseEntity()
                     {
                         TypeName = "list_node",
-                        Id = "list_node.severity." + defectForOpening.Value["severity"].ToLower()
+                        Id = defectForOpening.Value["severity"].Split('*')[1]
                     });
                 }
                 else
@@ -1669,7 +1669,7 @@ namespace GingerCore.ALM
                                     test.SetValue(field.ExternalID, new BaseEntity()
                                     {
                                         TypeName = "list_node",
-                                        Id = "list_node.severity." + field.SelectedValue.ToLower()
+                                        Id = field.SelectedValue.Split('*')[1]
                                     });
                                 }
                                 else if (field.ExternalID == "detected_by")
@@ -1700,7 +1700,7 @@ namespace GingerCore.ALM
                                                 new BaseEntity()
                                                 {
                                                     TypeName = "list_node",
-                                                    Id = "list_node."+field.ExternalID +"."+field.SelectedValue.ToLower()
+                                                    Id = field.SelectedValue.Split('*')[1]
                                                 }
                                             }
                                         });
@@ -1710,7 +1710,7 @@ namespace GingerCore.ALM
                                         test.SetValue(field.ExternalID, new BaseEntity()
                                         {
                                             TypeName = "list_node",
-                                            Id = "list_node." + field.ExternalID + "." + field.SelectedValue
+                                            Id = field.SelectedValue.Split('*')[1]
                                         });
                                     }
                                 }
