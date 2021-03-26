@@ -56,6 +56,7 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace 
     {        
         private static WorkSpace mWorkSpace;
+        private static Mutex mutex = new Mutex(false, "CheckWebReportFolderMutex");
         public static WorkSpace Instance
         {
             get
@@ -275,21 +276,90 @@ namespace amdocs.ginger.GingerCoreNET
         {
             try
             {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: "+ clientAppFolderPath);
-                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
-                if (Directory.Exists(clientAppFolderPath))
+                //For Parallel execution (also between diffrent Ginger processes), we want copy WebReportFolder to be synchronized.
+                try
                 {
-                    string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
-                    if (Directory.Exists(rootUserFolder))
-                        TryFolderDelete(rootUserFolder);
-                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                    // acquire the mutex (or timeout), will return false if it timed out
+                    Reporter.ToLog(eLogLevel.INFO, "CheckWebReportFolder - Waiting for Mutex Release");
+                    if (!mutex.WaitOne(60 * 1000))
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, "CheckWebReportFolder - Mutex Wait Timeout Reached");
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "CheckWebReportFolder - Mutex was Released");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "CheckWebReportFolder - Mutex Wait Threw Exception", ex); ;
+                }
+
+                string GingerVersion = ApplicationInfo.ApplicationVersion;
+                string ConfigFileContent = string.Empty;
+                //create/modify GingerVerison in 'Ginger directory' config
+                string ConfigFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client", "Ginger-Web-Client.config");
+                if (File.Exists(ConfigFilePath))
+                {
+                    ConfigFileContent = File.ReadAllText(ConfigFilePath);
+                    if (!ConfigFileContent.Trim().Replace(" ", "").Contains("GingerVersion=" + GingerVersion))
+                    {
+                        ConfigFileContent = "GingerVersion=" + GingerVersion + Environment.NewLine;
+                        File.WriteAllText(ConfigFilePath, ConfigFileContent);
+                    }
+                }
+                else
+                {
+                    //create new file with GingerVersion
+                    ConfigFileContent = "GingerVersion=" + GingerVersion + Environment.NewLine;
+                    File.WriteAllText(ConfigFilePath, ConfigFileContent);
+                }
+
+                //check GingerVerison in 'user directory' config
+                bool doCopy = false;
+                ConfigFilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client", "Ginger-Web-Client.config");
+                if (File.Exists(ConfigFilePath))
+                {
+                    ConfigFileContent = File.ReadAllText(ConfigFilePath);
+                    if (!ConfigFileContent.Trim().Replace(" ", "").Contains("GingerVersion=" + GingerVersion))
+                    {
+                        doCopy = true;
+                    }
+                }
+                else
+                {
+                    doCopy = true;
+                }
+
+                if (doCopy)
+                {
+                    try
+                    {
+                        string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client");
+                        Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: " + clientAppFolderPath);
+                        string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
+                        Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
+                        if (Directory.Exists(clientAppFolderPath))
+                        {
+                            string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
+                            if (Directory.Exists(rootUserFolder))
+                                TryFolderDelete(rootUserFolder);
+                            IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
+                    }
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, "Ginger-Web-Client is up to date.");
                 }
             }
-            catch(Exception ex)
+            finally
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
+                mutex.ReleaseMutex();
             }
         }
 
