@@ -1271,7 +1271,7 @@ namespace Ginger.Actions
                                         }
 
                                     }
-                                    else
+                                    else if (ControlActionComboBox.SelectedValue.ToString() != "MarkAsDone")
                                     {
                                         TBH.AddBoldText(" GINGER_USED =\"False\"");
                                     }
