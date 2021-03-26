@@ -43,8 +43,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;   Excludes: "Oracle.ManagedDataAccess.dll"
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
+NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
 [Icons]
