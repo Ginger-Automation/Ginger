@@ -55,6 +55,8 @@ namespace Ginger.Drivers.DriversWindows
                     case DriverBase.eDriverMessageType.DriverStatusChanged:
                         if (mDriver.IsDeviceConnected)
                         {
+                            xLoadingPnl.Visibility = Visibility.Collapsed;
+                            xDeviceScreenshotCanvas.Visibility = Visibility.Visible;                            
                             RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                         }
@@ -259,7 +261,6 @@ namespace Ginger.Drivers.DriversWindows
         {
             try
             {
-
                 //General
                 if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
                 {
@@ -270,17 +271,26 @@ namespace Ginger.Drivers.DriversWindows
                     this.Icon = ImageMakerControl.GetImageSource(eImageType.IosOutline);
                 }
                 this.Title = string.Format("{0} Device View", mAgent.Name);
-                this.Width = 300;
+                this.Width = 320;
 
                 //Main tool bar
                 xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPortraiteBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;                
+                xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
 
-                //Screenshot
-                xDeviceScreenshotImage.Source = ImageMakerControl.GetImageSource(eImageType.Processing, width: 50, toolTip:"Loading Device...", foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_WhiteSmoke"));
+                //Loading Pnl
+                xDeviceScreenshotCanvas.Visibility = Visibility.Collapsed;
+                xLoadingPnl.Visibility = Visibility.Visible;
+                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
+                {
+                    xLoadingImage.ImageType = eImageType.AndroidWhite;// ImageMakerControl.GetImageSource(eImageType.Processing, width: 50, toolTip:"Loading Device...", foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_WhiteSmoke"));
+                }
+                else
+                {
+                    xLoadingImage.ImageType = eImageType.IosWhite;
+                }
 
                 //Configurations
                 SetConfigurationsPanelView(false);
@@ -368,6 +378,7 @@ namespace Ginger.Drivers.DriversWindows
                 this.Dispatcher.Invoke(() =>
                 {
                     xRefreshButton.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+                    xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                     xRefreshButton.ToolTip = "Refreshing...";
                     waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text.ToString());
                 });
@@ -419,6 +430,7 @@ namespace Ginger.Drivers.DriversWindows
                 this.Dispatcher.Invoke(() =>
                 {
                     xRefreshButton.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Refresh;
+                    xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                     xRefreshButton.ToolTip = "Refresh Device View";
                 });
             }                
@@ -518,8 +530,12 @@ namespace Ginger.Drivers.DriversWindows
             }
             mConfigIsOn = show;
         }
+
         #endregion Functions
 
-
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            xPinBtn_Click(null, null);
+        }
     }
 }

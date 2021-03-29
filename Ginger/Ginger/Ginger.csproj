@@ -3218,6 +3218,8 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

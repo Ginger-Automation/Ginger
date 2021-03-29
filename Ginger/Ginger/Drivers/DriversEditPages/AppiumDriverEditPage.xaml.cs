@@ -36,7 +36,8 @@ namespace Ginger.Drivers
         private void BindConfigurationsFields()
         {
             mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer));
-            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, nameof(DriverConfigParam.Value));
+            //BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, nameof(DriverConfigParam.Value));
+            xServerURLTextBox.Init(null, mAppiumServer, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.ToolTipProperty, mAppiumServer, nameof(DriverConfigParam.Description));
 
             BindingHandler.ObjFieldBinding(xLoadDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.LoadDeviceWindow)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());

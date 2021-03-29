@@ -701,22 +701,23 @@ namespace Amdocs.Ginger.CoreNET
         {
             try
             {
-                ActScreenShot actss = (ActScreenShot)act;
-                if (actss.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow && actss.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                {
-                    CreateScreenShot(act);
-                }
-                else
-                {
-                    String currentWindow;
-                    currentWindow = Driver.CurrentWindowHandle;
-                    ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
-                    foreach (String winHandle in openWindows)
-                    {
-                        CreateScreenShot(act);
-                        Driver.SwitchTo().Window(currentWindow);
-                    }
-                }
+                //ActScreenShot actss = (ActScreenShot)act;
+                //if (actss.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow && actss.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                //{
+                //    CreateScreenShot(act);
+                //}
+                //else
+                //{
+                //    String currentWindow;
+                //    currentWindow = Driver.CurrentWindowHandle;
+                //    ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
+                //    foreach (String winHandle in openWindows)
+                //    {
+                //        CreateScreenShot(act);
+                //        Driver.SwitchTo().Window(currentWindow);
+                //    }
+                //}
+                CreateScreenShot(act);
                 return;
             }
             catch (Exception ex)
@@ -730,16 +731,15 @@ namespace Amdocs.Ginger.CoreNET
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
             string filename = Path.GetTempFileName();
             ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-
             Bitmap tmp = new System.Drawing.Bitmap(filename);
-            try
-            {
-                //if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error happend during Create Screenshot", ex);
-            }
+            //try
+            //{
+            //    //if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Error happend during Create Screenshot", ex);
+            //}
             act.AddScreenShot(tmp);
         }
 

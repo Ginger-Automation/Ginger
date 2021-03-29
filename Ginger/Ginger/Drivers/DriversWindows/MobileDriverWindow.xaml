@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="UpdatedAppiumDriverWindow" Height="600" Width="800"
         MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
-        WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged"
+        WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
         Topmost="False" >
 
     <Grid x:Name="xWindowGrid">
@@ -45,16 +45,23 @@
                 <ColumnDefinition  Width="10"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-            <Canvas x:Name="xDeviceScreenshotCanvas" Grid.Column="1" Grid.Row="0" Background="#424242" >
-                <Image x:Name="xDeviceScreenshotImage" Height="{Binding ActualHeight, ElementName=xDeviceScreenshotCanvas}" Width="{Binding ActualWidth, ElementName=xDeviceScreenshotCanvas}"  
+            <DockPanel Grid.Column="1" Grid.Row="0" Background="#424242">
+                <StackPanel x:Name="xLoadingPnl" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,100,0,0" DockPanel.Dock="Top">
+                    <UserControls:ImageMakerControl x:Name="xLoadingImage" ImageType="AndroidWhite" Width="200" Height="200"/>
+                    <Label  Content="Loading..." Foreground="WhiteSmoke" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" FontWeight="Bold"/>
+                </StackPanel>
+                <Canvas x:Name="xDeviceScreenshotCanvas" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" DockPanel.Dock="Top">
+                    <Image x:Name="xDeviceScreenshotImage" Height="{Binding ActualHeight, ElementName=xDeviceScreenshotCanvas}" Width="{Binding ActualWidth, ElementName=xDeviceScreenshotCanvas}"  
                    MouseLeftButtonDown="xDeviceScreenshotImage_MouseLeftButtonDown" 
                    MouseMove="xDeviceScreenshotImage_MouseMove" 
                    MouseLeftButtonUp="xDeviceScreenshotImage_MouseLeftButtonUp" 
                    MouseEnter="xDeviceScreenshotImage_MouseEnter" 
                    MouseLeave="xDeviceScreenshotImage_MouseLeave"  
                    SizeChanged="xDeviceScreenshotImage_SizeChanged">
-                </Image>
-            </Canvas>
+                    </Image>
+                </Canvas>
+            </DockPanel>
+            
             <StackPanel Grid.Column="2" Background="Black" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
         </Grid>
 

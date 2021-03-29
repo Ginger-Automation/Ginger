@@ -920,11 +920,17 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.IosOutline:
                     SetAsStaticImage("iosOutline.png");
                     break;
+                case eImageType.IosWhite:
+                    SetAsStaticImage("iosWhite.png");
+                    break;
                 case eImageType.Android:
                     SetAsStaticImage("android.png");
                     break;
                 case eImageType.AndroidOutline:
                     SetAsStaticImage("androidOutline.png");
+                    break;
+                case eImageType.AndroidWhite:
+                    SetAsStaticImage("androidWhite.png");
                     break;
                 #endregion
 
