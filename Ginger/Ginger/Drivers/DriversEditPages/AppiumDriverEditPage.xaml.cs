@@ -24,7 +24,8 @@ namespace Ginger.Drivers
         DriverConfigParam mDevicePlatformType;
         DriverConfigParam mAppType;
         DriverConfigParam mAppiumCapabilities;
-        
+        DriverConfigParam mDeviceAutoScreenshotRefreshMode;
+
         public AppiumDriverEditPage(Agent appiumAgent)
         {
             InitializeComponent();
@@ -41,8 +42,11 @@ namespace Ginger.Drivers
             BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.ToolTipProperty, mAppiumServer, nameof(DriverConfigParam.Description));
 
             BindingHandler.ObjFieldBinding(xLoadDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.LoadDeviceWindow)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-            BindingHandler.ObjFieldBinding(xAutoRefreshDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoRefreshDeviceWindowScreenshot)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-           
+            mDeviceAutoScreenshotRefreshMode = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceAutoScreenshotRefreshMode));
+            BindingHandler.ObjFieldBinding(xContinualRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Continual.ToString());
+            BindingHandler.ObjFieldBinding(xPostOperationRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.PostOperation.ToString());
+            BindingHandler.ObjFieldBinding(xDisabledRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Disabled.ToString());
+
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.TextProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 
@@ -253,18 +257,18 @@ namespace Ginger.Drivers
 
         private void xLoadDeviceWindow_Checked(object sender, RoutedEventArgs e)
         {
-            if (xAutoRefreshDeviceWindow == null)
+            if (xAutoRefreshModePnl == null)
             {
                 return;
             }
 
             if (xLoadDeviceWindow.IsChecked == true)
             {
-                xAutoRefreshDeviceWindow.Visibility = Visibility.Visible;
+                xAutoRefreshModePnl.Visibility = Visibility.Visible;
             }
             else
             {
-                xAutoRefreshDeviceWindow.Visibility = Visibility.Hidden;
+                xAutoRefreshModePnl.Visibility = Visibility.Hidden;
             }
         }
 

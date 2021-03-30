@@ -22,7 +22,7 @@
 
         <!--Main area top buttons-->
         <Frame x:Name="xMainTopFrame" Grid.Row="0" Grid.Column="0" Margin="0,0,0,0" Background="Black"/>
-        <UserControls:ucButton x:Name="xRefreshButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device View" Margin="0,0,0,0"/>
+        <UserControls:ucButton x:Name="xRefreshButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device View" Margin="0,0,0,0" Visibility="Collapsed"/>
         <UserControls:ucButton x:Name="xConfigurationsBtn" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="20" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,5,0" />
         <UserControls:ucButton x:Name="xPinBtn" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="20" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,0,30,0" />
         <UserControls:ucButton x:Name="xPortraiteBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="23" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="10,0,0,0" Visibility="Collapsed"/>
@@ -77,17 +77,26 @@
         <!--<Label Grid.Column="2" Grid.Row="0" Content="Configurations" Style="{StaticResource $HeaderStyle}" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16"/>-->
         <ScrollViewer Grid.Column="1" Grid.Row="1">
             <StackPanel >
-                <Label Content="Device View:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,10,0,0"></Label>
-                <CheckBox x:Name="xTrackActionsChK"  Content="Auto refresh after Action run" IsChecked="True"  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,0,0,0" Style="{StaticResource $CeckBoxStyle}"/>
-                <StackPanel Orientation="Horizontal">
-                    <Label Content="Refresh waiting rate:" Style="{StaticResource $LabelStyle}" Margin="0,5,10,0"></Label>
-                    <ComboBox x:Name="xRefreshWaitingRateCombo" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="35">
+                <Label Content="Auto refresh device view mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
+                <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Vertical" Margin="5,0,0,0">
+                    <RadioButton x:Name="xContinualRdBtn" Content="Continual" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
+                    <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xPostOperationRdBtn_Checked" />
+                    <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xDisabledRdBtn_Checked" />
+                </StackPanel>
+                <StackPanel x:Name="xRefreshWaitingRatePnl" Orientation="Horizontal" Margin="5,0,0,0">
+                    <Label Content="Refresh waiting rate:" Style="{StaticResource $LabelStyle}"/>
+                    <ComboBox x:Name="xRefreshWaitingRateCombo" Style="{StaticResource $FlatEditInputComboBoxStyle}" Width="45">
                         <ComboBoxItem>0</ComboBoxItem>
                         <ComboBoxItem IsSelected="True">1</ComboBoxItem>
                         <ComboBoxItem>2</ComboBoxItem>
                         <ComboBoxItem>3</ComboBoxItem>
                         <ComboBoxItem>4</ComboBoxItem>
                         <ComboBoxItem>5</ComboBoxItem>
+                        <ComboBoxItem>6</ComboBoxItem>
+                        <ComboBoxItem>7</ComboBoxItem>
+                        <ComboBoxItem>8</ComboBoxItem>
+                        <ComboBoxItem>9</ComboBoxItem>
+                        <ComboBoxItem>10</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
             </StackPanel>

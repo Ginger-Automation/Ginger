@@ -26,7 +26,12 @@
                         <Label Content="Appium server:" Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top"/>
                         <Actions:UCValueExpression x:Name="xServerURLTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Top"  DockPanel.Dock="Top"/>
                         <CheckBox x:Name="xLoadDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Load device window" Margin="0,5,0,0" IsChecked="True" Checked="xLoadDeviceWindow_Checked" Unchecked="xLoadDeviceWindow_Checked"/>
-                        <CheckBox x:Name="xAutoRefreshDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Auto refresh device window screenshot" Margin="0,5,0,0" IsChecked="True" />
+                        <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label  Content="Auto refresh device view mode:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
+                            <RadioButton x:Name="xContinualRdBtn" Content="Continual" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" />
+                            <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="5,0,0,0" />
+                            <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="5,0,0,0" />
+                        </StackPanel>
                         <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down"  IsExpanded="False"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,10,0,0" BorderThickness="0">
                             <Expander.Header>
                                 <Label  Content="Advanced" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal" />
@@ -55,12 +60,6 @@
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel>
-                        <!--<StackPanel Orientation="Horizontal">
-                            <Label Content="Device Name:" Style="{StaticResource $LabelStyle}"/>
-                            <TextBox x:Name="xDeviceNameTextBox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="200" ToolTip="The kind of mobile device to use, e.g. 'Galaxy S4' or 'iPhone 6'" TextChanged="DeviceDetailsChanged" />
-                            <Label Content="Device ID:" Style="{StaticResource $LabelStyle}" Margin="10,0,0,0"/>
-                            <TextBox x:Name="xDeviceIDTextBox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="300" ToolTip="Unique device identifier of the connected physical device, e.g. '1ae203187fc012g'" TextChanged="DeviceDetailsChanged" />
-                        </StackPanel>-->
                         <StackPanel Orientation="Horizontal">
                             <Label  Content="Platform:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xAndroidRdBtn" Content="Android" Style="{StaticResource $InputRadioButtonStyle}" GroupName="PlatformType" VerticalAlignment="Center" IsChecked="True" Checked="PlatformSelectionChanged"/>
@@ -71,7 +70,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                             <Label  Content="Application type:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
                             <RadioButton x:Name="xNativeHybRdBtn" Content="Native/Hybrid" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AppType" VerticalAlignment="Center" IsChecked="True" Checked="ActivityTypeSelectionChanged"/>
-                            <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="10,0,0,0" Checked="ActivityTypeSelectionChanged"/>
+                            <RadioButton x:Name="xWebRdBtn" Content="Web" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AppType" VerticalAlignment="Center" Margin="7,0,0,0" Checked="ActivityTypeSelectionChanged"/>
                         </StackPanel>
                         <StackPanel Orientation="Vertical"  Margin="0,5,0,0">
                             <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True" Checked="xAutoUpdateCapabiltiies_Checked"/>

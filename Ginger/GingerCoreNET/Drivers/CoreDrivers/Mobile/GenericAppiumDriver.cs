@@ -35,7 +35,6 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -69,15 +68,16 @@ namespace Amdocs.Ginger.CoreNET
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
-        [UserConfiguredDescription("Set to 'Yes' or 'No', determine if the Ginger device window will be loaded with the Agent")]
+        [UserConfiguredDescription("Determine if the Ginger device window will be loaded with the Agent")]
         public bool LoadDeviceWindow { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("true")]
-        [UserConfiguredDescription("Set to 'Yes' or 'No', determine if the Ginger device window will refresh the device screenshot after each action been performed")]
-        public bool AutoRefreshDeviceWindowScreenshot { get; set; }
+        [UserConfiguredEnumType(typeof(eAutoScreenshotRefreshMode))]
+        [UserConfiguredDefault("Continual")]
+        [UserConfiguredDescription("Determine if the Ginger device screen image will be refresh automatically during use")]
+        public eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
 
-        [UserConfigured]
+        [UserConfigured]        
         [UserConfiguredMultiValues]
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
@@ -1277,11 +1277,6 @@ namespace Amdocs.Ginger.CoreNET
         public eAppType GetAppType()
         {
             return AppType;
-        }
-
-        public bool GetAutoRefreshDeviceWindowScreenshot()
-        {
-            return AutoRefreshDeviceWindowScreenshot;
         }
 
         public Byte[] GetScreenshotImage()
