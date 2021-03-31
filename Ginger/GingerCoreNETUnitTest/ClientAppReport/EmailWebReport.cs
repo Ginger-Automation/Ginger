@@ -114,19 +114,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             //Assert.AreEqual(....
         }
 
-        [TestMethod]
-        public void TestNewReportFolderCreation()
-        {
-            // Arrange
-
-
-            //Act
-
-            // Which method are we testing here Path.Combine ??? the creation of the folder?
-
-            //Assert
-        }
-
+        
         [TestMethod]
         public void CopyWebRep()
         {

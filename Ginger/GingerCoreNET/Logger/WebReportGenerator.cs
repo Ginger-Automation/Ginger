@@ -51,11 +51,15 @@ namespace Amdocs.Ginger.CoreNET.Logger
         public LiteDbRunSet RunNewHtmlReport(string reportResultsFolderPath = "", string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
             //Copy folder to reportResultsFolderPath or Execution logger
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            string reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
+            string reportsResultFolder = string.Empty;
             if (!string.IsNullOrEmpty(reportResultsFolderPath))
             {
                 reportsResultFolder = reportResultsFolderPath;
+            }
+            else 
+            {
+                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
             }
             try
             {
