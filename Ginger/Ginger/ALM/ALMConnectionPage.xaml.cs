@@ -599,12 +599,14 @@ namespace Ginger.ALM
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)
         {
+            string prevAlmType = string.Empty;
             if (sender == null || ALMSettingsPannel == null)
             {
                 return;
             }
             if (CurrentAlmConfigurations != null)
             {
+                prevAlmType = CurrentAlmConfigurations.AlmType.ToString();
                 ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
             }
             GingerCoreNET.ALMLib.ALMIntegration.eALMType almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
@@ -663,8 +665,10 @@ namespace Ginger.ALM
 
                 //Select domain and project based on new AlmConfig
                 LoginServerButton.Content = "Get Projects Details";
-                GetProjectsDetails();
-
+                if (!prevAlmType.Equals(CurrentAlmConfigurations.AlmType.ToString()))
+                {
+                    GetProjectsDetails();
+                }
                 StyleRadioButtons();
                 SetControls();
             }
