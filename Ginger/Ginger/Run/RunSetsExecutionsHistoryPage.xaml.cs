@@ -299,7 +299,7 @@ namespace Ginger.Run
             {
                 var selectedGuid = ((RunSetReport)grdExecutionsHistory.CurrentItem).GUID;
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
-                webReporterRunner.RunNewHtmlReport(selectedGuid);
+                webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid);
             }
             else
             {
