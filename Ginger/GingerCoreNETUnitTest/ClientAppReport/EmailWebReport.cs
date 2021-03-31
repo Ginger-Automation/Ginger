@@ -123,10 +123,8 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             //Act
 
             // Which method are we testing here Path.Combine ??? the creation of the folder?
-            string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
 
             //Assert
-            Assert.IsTrue(Directory.Exists(clientAppFolderPath));
         }
 
         [TestMethod]
