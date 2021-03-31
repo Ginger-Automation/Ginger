@@ -391,7 +391,7 @@ namespace Ginger.Run
 
 
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
-                webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
+                webReporterRunner.RunNewHtmlReport(string.Empty, runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
 
                 //var newRSData = dbManager.GetRunSetLiteData();
                 //newRSData.Delete(runSetLast._id);

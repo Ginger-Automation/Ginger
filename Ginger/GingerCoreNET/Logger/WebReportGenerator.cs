@@ -28,6 +28,8 @@ using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Ginger.Reports;
+using Ginger.Reports.GingerExecutionReport;
+using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Amdocs.Ginger.CoreNET.Logger
 {
@@ -46,22 +48,52 @@ namespace Amdocs.Ginger.CoreNET.Logger
         }
 
         // TODO: Make this function to just generate the report folder !!!
-        public LiteDbRunSet RunNewHtmlReport(string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
+        public LiteDbRunSet RunNewHtmlReport(string reportResultsFolderPath = "", string runSetGuid = null, WebReportFilter openObject = null, bool shouldDisplayReport = true)
         {
+            //Copy folder to reportResultsFolderPath or Execution logger
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            string reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports", "Ginger-Web-Client");
+            if (!string.IsNullOrEmpty(reportResultsFolderPath))
+            {
+                reportsResultFolder = reportResultsFolderPath;
+            }
+            try
+            {
+                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "Ginger-Web-Client");
+                Reporter.ToLog(eLogLevel.INFO, "Copying web report folder from: " + clientAppFolderPath);
+                
+                Reporter.ToLog(eLogLevel.INFO, "Copying web report folder to: " + reportsResultFolder);
+                if (Directory.Exists(clientAppFolderPath))
+                {
+                    string rootFolder = Path.Combine(reportsResultFolder);
+                    if (Directory.Exists(rootFolder))
+                    {
+                        IoHandler.Instance.TryFolderDelete(rootFolder);
+                    }
+                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, reportsResultFolder, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
+            }
+
+            //get exeution data and replace
             LiteDbRunSet lightDbRunSet = new LiteDbRunSet();
             bool response = false;
             try
             {
-                string clientAppFolderPath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
-                if (!Directory.Exists(clientAppFolderPath))
+                if (!Directory.Exists(reportsResultFolder))
+                {
                     return lightDbRunSet;
-                DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "Execution_Data"));
-                DeleteFoldersData(Path.Combine(clientAppFolderPath, "assets", "screenshots"));
+                }
+                IoHandler.Instance.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "Execution_Data"));
+                IoHandler.Instance.DeleteFoldersData(Path.Combine(reportsResultFolder, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));              
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
-                PopulateMissingFields(lightDbRunSet, clientAppFolderPath);
+                PopulateMissingFields(lightDbRunSet, reportsResultFolder);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
-                response = RunClientApp(json, clientAppFolderPath, openObject, shouldDisplayReport);
+                response = RunClientApp(json, reportsResultFolder, openObject, shouldDisplayReport);
             }
             catch (Exception ex)
             {
@@ -105,18 +137,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
             return response;
         }
 
-        // param name clientAppFolderPath ??
-        // have method to delete assets - it is called from 2 places 
-        // call the method DeleteReportAssetsFolder and delete Execution_Data and screenshot 
-        public void DeleteFoldersData(string clientAppFolderPath)
-        {
-            DirectoryInfo dir = new DirectoryInfo(clientAppFolderPath);
-            foreach (FileInfo fi in dir.GetFiles())
-            {
-                fi.Delete();
-            }
-        }
-
+        
         //TODO move it to utils class
         // Create test class
 

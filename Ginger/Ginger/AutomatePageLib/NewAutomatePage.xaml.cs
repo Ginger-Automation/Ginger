@@ -1445,7 +1445,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 var selectedGuid = mRunSetLiteDbId;
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
-                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
+                webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid.ToString());
             }            
         }
 

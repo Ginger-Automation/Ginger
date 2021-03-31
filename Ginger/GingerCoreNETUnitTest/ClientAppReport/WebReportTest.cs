@@ -36,7 +36,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             // a selected browser from unix can be run ,with his path
             string browserPath = "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe";  // Will not work on Linux
             WebReportGenerator webReporterRunner = new WebReportGenerator(browserPath);
-            Assert.IsTrue(webReporterRunner.RunNewHtmlReport(null, null, false).RunnersColl.Count>0);
+            Assert.IsTrue(webReporterRunner.RunNewHtmlReport(string.Empty, null, null, false).RunnersColl.Count>0);
         }
 
         [Ignore]  // TODO: create a test which run a runset with runset operation which includes CreateReport - see other runset execution examples
