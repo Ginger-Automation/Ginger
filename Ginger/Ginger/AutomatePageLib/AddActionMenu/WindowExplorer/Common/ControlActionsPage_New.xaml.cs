@@ -116,7 +116,7 @@ namespace Ginger.WindowExplorer
                 {
                     xExecutionStatusIcon.Status = mAction.Status.Value;
 
-                    if(mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                    if (mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
                     {
                         xRunActBtn.IsEnabled = false;
                         xRunActBtn.Opacity = 0.4;
@@ -377,6 +377,18 @@ namespace Ginger.WindowExplorer
                 actUI.AddOrUpdateInputParamValue(ActUIElement.Fields.ElementType, actUI.ElementType.ToString());
 
                 act = actUI;
+            }
+            else if (mAction.GetType() == typeof(ActBrowserElement))
+            {
+                //Set UIElement action locator
+                ActBrowserElement actBrowser = (ActBrowserElement)act;
+
+                if (EL != null && actBrowser.LocateBy != eLocateBy.POMElement)
+                {
+                    actBrowser.LocateBy = EL.LocateBy;
+                    actBrowser.LocateValue = EL.LocateValue;
+                }
+
             }
             else
             {
