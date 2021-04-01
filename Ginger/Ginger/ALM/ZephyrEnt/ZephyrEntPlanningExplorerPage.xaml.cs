@@ -87,7 +87,7 @@ namespace Ginger.ALM.ZephyrEnt
                     dynamic d = JObject.Parse(item.ToString());
                     tvv.CurrentChildrens.Add(new TestPlanningFolderTreeItem()
                     { Id = d.id.ToString(), CycleId = d.id,  Name = d.name.ToString(), entityType = EntityFolderType.Phase
-                    , Folder = d.name.ToString(), Path = tvv.Path +  @"\" + d.name.ToString(), FolderOnly = tvv.FolderOnly });
+                    , Folder = d.name.ToString(), Path = tvv.Path +  @"\" + d.name.ToString(), FolderOnly = tvv.FolderOnly, RevisionId = Convert.ToInt32(folder.TryGetItem("revision")) });
                 }
                 TestPlanningExplorerTreeView.Tree.AddItem(tvv);
             });

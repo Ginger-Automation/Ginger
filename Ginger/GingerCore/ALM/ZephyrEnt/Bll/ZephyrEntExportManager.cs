@@ -24,6 +24,7 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -149,13 +150,26 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             try
             {
                 //get the BF matching test set
-                List<BaseResponseItem> eportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
-                BaseResponseItem item = eportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
+                List<BaseResponseItem> exportedPhase = zephyrEntRepository.GetPhaseById(Convert.ToInt32(bizFlow.ExternalID2));
+                BaseResponseItem item = exportedPhase.FirstOrDefault(md => md.id.ToString().Equals(bizFlow.ExternalID));
+                if (item == null)
+                {
+                    BaseResponseItem firstItem = exportedPhase.FirstOrDefault();
+                    foreach (var category in (JArray)firstItem.TryGetItem("categories"))
+                    {
+                        BaseResponseItem treeNode = category.ToObject<BaseResponseItem>();
+                        if(treeNode.id.ToString().Equals(bizFlow.ExternalID))
+                        {
+                            item = treeNode;
+                            break;
+                        }
+                    }
+                }
                 if (item != null)
                 {
                     long scheduleId = 0;
                     //get the Test set TC's
-                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.TryGetItem("id")));
+                    List<TestCaseResource> testCaseResources = zephyrEntRepository.GetTestCasesByAssignmentTree(Convert.ToInt32(item.id));
                     //get phase execution list
                     List<Execution> executions = zephyrEntRepository.GetExecutionsByPhaseId(Convert.ToInt64(bizFlow.ExternalID2));
                     //get all BF Activities groups
