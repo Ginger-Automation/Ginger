@@ -43,11 +43,16 @@ namespace Ginger.Drivers
 
             BindingHandler.ObjFieldBinding(xLoadDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.LoadDeviceWindow)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
             mDeviceAutoScreenshotRefreshMode = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceAutoScreenshotRefreshMode));
-            BindingHandler.ObjFieldBinding(xContinualRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Continual.ToString());
+            BindingHandler.ObjFieldBinding(xLiveRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Live.ToString());
             BindingHandler.ObjFieldBinding(xPostOperationRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.PostOperation.ToString());
             BindingHandler.ObjFieldBinding(xDisabledRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Disabled.ToString());
 
-            BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.TextProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
+            DriverConfigParam proxy = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.Proxy));
+            xProxyTextBox.Init(null, proxy, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
+            xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
+
+            xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
@@ -302,6 +307,23 @@ namespace Ginger.Drivers
             if (this.IsLoaded)
             {
                 AutoSetCapabilities();
+            }
+        }
+
+        private void xUseProxyChkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xProxyTextBox != null)
+            {
+                xProxyTextBox.IsEnabled = true;
+            }
+        }
+
+        private void xUseProxyChkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (xProxyTextBox != null)
+            {
+                xProxyTextBox.IsEnabled = false;
+                xProxyTextBox.ValueTextBox.Text = string.Empty;
             }
         }
     }

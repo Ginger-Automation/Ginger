@@ -19,7 +19,7 @@
         <DockPanel >
             <Expander x:Name="xSettingsExpander" ExpandDirection="Down"  IsExpanded="True"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
                 <Expander.Header>
-                    <Label  Content="General" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                    <Label  Content="Connection Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel>
@@ -28,25 +28,25 @@
                         <CheckBox x:Name="xLoadDeviceWindow" Style="{StaticResource $CeckBoxStyle}" Content="Load device window" Margin="0,5,0,0" IsChecked="True" Checked="xLoadDeviceWindow_Checked" Unchecked="xLoadDeviceWindow_Checked"/>
                         <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Horizontal" Margin="0,5,0,0">
                             <Label  Content="Auto refresh device view mode:" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" />
-                            <RadioButton x:Name="xContinualRdBtn" Content="Continual" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" />
+                            <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" />
                             <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="5,0,0,0" />
                             <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="5,0,0,0" />
                         </StackPanel>
-                        <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down"  IsExpanded="False"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,10,0,0" BorderThickness="0">
+                        <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down"  IsExpanded="False"  Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,10" BorderThickness="0">
                             <Expander.Header>
                                 <Label  Content="Advanced" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal" />
                             </Expander.Header>
                             <Expander.Content>
                                 <StackPanel Margin="10,0,0,0">
-                                    <CheckBox x:Name="xSSLChkBox" Content="Use SSL" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>
-                                    <CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow unauthorized certificates" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>
+                                    <!--<CheckBox x:Name="xSSLChkBox" Content="Use SSL" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
+                                    <!--<CheckBox x:Name="xAllowUnahutCertChkBox" Content="Allow unauthorized certificates" Style="{StaticResource $CeckBoxStyle}" Margin="0,5,0,0"/>-->
                                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                        <CheckBox x:Name="xUseProxyChkBox" Content="Use proxy" Style="{StaticResource $CeckBoxStyle}"/>
-                                        <TextBox x:Name="xUseProxyTextBox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="50" Margin="10,0,0,0" IsEnabled="False"/>
+                                        <CheckBox x:Name="xUseProxyChkBox" Content="Use proxy" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="xUseProxyChkBox_Checked" Unchecked="xUseProxyChkBox_Unchecked"/>
+                                        <Actions:UCValueExpression x:Name="xProxyTextBox" Width="180" Margin="10,0,0,0" IsEnabled="False"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
                                         <Label Content="Load timeout (seconds):" Style="{StaticResource $LabelStyle}"/>
-                                        <TextBox x:Name="xLoadTimeoutTxtbox" Style="{StaticResource $TextBoxStyle}" Height="20" Width="50" Margin="10,0,0,0"/>
+                                        <Actions:UCValueExpression x:Name="xLoadTimeoutTxtbox" Width="120" Margin="10,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Expander.Content>
@@ -56,7 +56,7 @@
             </Expander>
             <Expander x:Name="xDesiredCapabilitiesExpander" ExpandDirection="Down"  IsExpanded="True"  Style="{StaticResource $ExpanderStyle}"  DockPanel.Dock="Top" BorderThickness="0">
                 <Expander.Header>
-                    <Label  Content="Appium Desired Capabilities" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                    <Label  Content="Desired Capabilities" Style="{StaticResource $HorizontalExpanderLabelStyle}" />
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel>

@@ -28,7 +28,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
 
     public enum eAutoScreenshotRefreshMode
     {
-        Continual, PostOperation, Disabled
+        Live, PostOperation, Disabled
     }
 
     public class MobileDriverCommon

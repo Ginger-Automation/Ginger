@@ -33,11 +33,13 @@ using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Interfaces;
 using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
+using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -53,6 +55,10 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDefault(@"http://127.0.0.1:4723/wd/hub")] 
         [UserConfiguredDescription("Full Appium server address including port if needed, default address is: 'https://ServerIP:Port/wd/hub'")]
         public String AppiumServer { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDescription("Proxy to be used for Appium server connection, need to include the server and port")]
+        public String Proxy { get; set; }
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eDevicePlatformType))]
@@ -73,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET
 
         [UserConfigured]
         [UserConfiguredEnumType(typeof(eAutoScreenshotRefreshMode))]
-        [UserConfiguredDefault("Continual")]
+        [UserConfiguredDefault("Live")]
         [UserConfiguredDescription("Determine if the Ginger device screen image will be refresh automatically during use")]
         public eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
 
@@ -98,71 +104,22 @@ namespace Amdocs.Ginger.CoreNET
         private SeleniumDriver mSeleniumDriver;//selenium 
         public eDevicePlatformType DriverPlatformType;
 
-        //public override bool IsSTAThread()
-        //{
-        //    return LoadDeviceWindow;
-        //}
-
         public GenericAppiumDriver(BusinessFlow BF)
         {
             BusinessFlow = BF;
         }
 
-        
         public override void StartDriver()
         {
-            //if (LoadDeviceWindow)
-            //{
-            //    CreateSTA(ShowDriverWindow);
-
-            //}
-            //else
-            //{
-            //    ConnectedToDevice = ConnectToAppium();
-            //}
             mIsDeviceConnected = ConnectToAppium();
-            //if (mIsDeviceConnected)
-            //{
-                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            //}
-        }
-
-        //public void ShowDriverWindow()
-        //{
-        //    //show mobile window
-        //    DriverWindow = new AppiumDriverWindow();
-        //    DriverWindow.BF = BusinessFlow;
-        //    DriverWindow.AppiumDriver = this;
-        //    DriverWindow.DesignWindowInitialLook();
-        //    DriverWindow.Show();
-        //    for (int i = 0; i < 100; i++)
-        //    {
-        //        Thread.Sleep(100);
-        //    }
-
-        //    ConnectedToDevice = ConnectToAppium();
-        //    if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
-        //    {
-        //        OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-        //        Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
-        //        System.Windows.Threading.Dispatcher.Run();
-        //    }
-        //    else
-        //    {
-        //        if (DriverWindow != null)
-        //        {
-        //            DriverWindow.Close();
-        //            DriverWindow = null;
-        //        }
-        //    }
-        //}
+            OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+        }        
 
         public bool ConnectToAppium()
         {
-            try//Adding back the Try-Catch because without it in case of connection issue Ginger crash
+            try
             {
                 Uri serverUri = null;
-
                 try
                 {
                     serverUri = new Uri(AppiumServer);
@@ -172,13 +129,6 @@ namespace Amdocs.Ginger.CoreNET
                     throw new Exception("In-Valid Appium Server configuration");
                 }
 
-                ////set timeout
-                //if (NewCommandTimeout < 0)
-                //{
-                //    NewCommandTimeout = 120;
-                //}
-                //TimeSpan commandTimeoutAsTimeSpan = TimeSpan.FromSeconds(NewCommandTimeout);
-
                 //Setting capabilities                                
                 DriverOptions driverOptions = this.GetCapabilities();
 
@@ -186,25 +136,27 @@ namespace Amdocs.Ginger.CoreNET
                 switch (DriverPlatformType)
                 {
                     case eDevicePlatformType.Android:
-                        //Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions);
+                        if (string.IsNullOrEmpty(Proxy))
+                        {
+                            Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions);
+                        }
+                        else
+                        {
+                            Driver = new AndroidDriver<AppiumWebElement>(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
+                        }
                         break;
                     case eDevicePlatformType.iOS:
-                        //Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions);
+                        if (string.IsNullOrEmpty(Proxy))
+                        {
+                            Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions);
+                        }
+                        else
+                        {
+                            Driver = new IOSDriver<AppiumWebElement>(new HttpCommandExecutor(serverUri, TimeSpan.FromSeconds(DriverLoadWaitingTime)) { Proxy = new WebProxy(this.Proxy) }, driverOptions);
+                        }
                         break;
-                        //case eDevicePlatformType.AndroidBrowser:
-                        //    Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                        //    Driver.Navigate().GoToUrl("http://www.google.com");
-                        //    break;
-                        //case eDevicePlatformType.iOSBrowser:
-                        //    //TODO: start ios-web-proxy automatically
-                        //    Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                        //    break;
                 }
-
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-               
+                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions               
                 return true;
             }
             catch (Exception ex)
@@ -213,6 +165,25 @@ namespace Amdocs.Ginger.CoreNET
                 return false;
             }
         }
+
+        //private static ICommandExecutor CreateRealExecutor(Uri remoteAddress, TimeSpan commandTimeout, IWebProxy proxy)
+        //{
+        //    var seleniumAssembly = Assembly.Load("WebDriver");
+        //    var commandType = seleniumAssembly.GetType("OpenQA.Selenium.Remote.HttpCommandExecutor");
+        //    ICommandExecutor commandExecutor = null;
+            
+        //    if (null != commandType)
+        //    {
+        //        commandExecutor =
+        //            Activator.CreateInstance(commandType, new object[] { remoteAddress, commandTimeout }) as
+        //                ICommandExecutor;              
+        //    }
+
+        //    commandExecutor = new HttpCommandExecutor(remoteAddress, commandTimeout);
+        //    ((HttpCommandExecutor)commandExecutor).Proxy = proxy;
+
+        //    return commandExecutor;
+        //}
 
         private DriverOptions GetCapabilities()
         {
@@ -257,67 +228,60 @@ namespace Amdocs.Ginger.CoreNET
 
         public override void CloseDriver()
         {
-            //try { 
-            //    if (DriverWindow != null){
-            //        DriverWindow.Close();
-            //        DriverWindow = null;
-            //    }
-            //} catch (InvalidOperationException e) {
-            //    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
-            //}
-
             if (Driver != null)
             {
                 Driver.Quit();
             }
-
             mIsDeviceConnected = false;
+            OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
-        
-        public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
-        {
-            if (AppType == eAppType.Web)
-                return mSeleniumDriver.LocateElements(LocatorType, LocValue);
 
-                IReadOnlyCollection<IWebElement> elem = null;
+        //public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
+        //{
+        //    if (AppType == eAppType.Web)
+        //        return mSeleniumDriver.LocateElements(LocatorType, LocValue);
 
-            switch (LocatorType)
-            {
-                //need to override regular selenium driver locator if needed, 
-                //if not then to run the regular selenium driver locator for it to avoid duplication
+        //        IReadOnlyCollection<IWebElement> elem = null;
 
-                default:
-                    elem = mSeleniumDriver.LocateElements(LocatorType, LocValue);
-                    break;
-            }
+        //    switch (LocatorType)
+        //    {
+        //        //need to override regular selenium driver locator if needed, 
+        //        //if not then to run the regular selenium driver locator for it to avoid duplication
 
-            return elem.ToList();           
-        }
+        //        default:
+        //            elem = mSeleniumDriver.LocateElements(LocatorType, LocValue);
+        //            break;
+        //    }
+
+        //    return elem.ToList();           
+        //}
 
         public IWebElement LocateElement(Act act)
         {
-                if (AppType == eAppType.Web)
-                    return mSeleniumDriver.LocateElement(act);
+            //need to override regular selenium driver locator if needed, 
+            //if not then to run the regular selenium driver locator for it to avoid duplication   
 
-            eLocateBy LocatorType = act.LocateBy;
-                IWebElement elem = null;
+            if (AppType == eAppType.Web)
+            {
+                return mSeleniumDriver.LocateElement(act);
+            }
 
-                switch (LocatorType)
-                {
-                    case eLocateBy.ByResourceID:
+            eLocateBy locateBy = act.LocateBy;
+            IWebElement elem = null;
+
+            switch (locateBy)
+            {
+                case eLocateBy.ByResourceID:
                     {
                         elem = Driver.FindElementById(act.LocateValue);
                         break;
-                    }
-                    //need to override regular selenium driver locator if needed, 
-                    //if not then to run the regular selenium driver locator for it to avoid duplication                
+                    }             
+                default:
+                    elem = mSeleniumDriver.LocateElement(act);
+                    break;
+            }
 
-                    default:
-                        elem = mSeleniumDriver.LocateElement(act);
-                        break;
-                }
-
-                return elem;
+            return elem;
         }
 
         public override Act GetCurrentElement()
@@ -330,41 +294,42 @@ namespace Amdocs.Ginger.CoreNET
             try
             {
                 if (AppType == eAppType.Web)
-                {                   
-                    mSeleniumDriver.RunAction(act);              
+                {
+                    mSeleniumDriver.RunAction(act);
                     return;
                 }
 
-                Type ActType = act.GetType();
+                Type actionType = act.GetType();
 
-                if (ActType == typeof(ActMobileDevice))
+                if (actionType == typeof(ActMobileDevice))
                 {
                     MobileDeviceActionHandler((ActMobileDevice)act);
                     return;
                 }
-                if (ActType == typeof(ActGenElement))
+
+                if (actionType == typeof(ActGenElement))
                 {
                     GenElementHandler((ActGenElement)act);
                     return;
                 }
 
-                if (ActType == typeof(ActSmartSync))
+                if (actionType == typeof(ActSmartSync))
                 {
                     mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
                     return;
                 }
-                if (ActType == typeof(ActScreenShot))
+                if (actionType == typeof(ActScreenShot))
                 {
                     TakeScreenShot(act);
                     return;
                 }
 
-                act.Error = "Run Action Failed due to unrecognized action type: '" + ActType.ToString() + "'";
+                act.Error = "Run Action failed due to unrecognized action type: '" + actionType.ToString() + "'";
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                act.Error = "Run Action Failed, Error details: " + ex.Message;
+                act.Error = ex.Message;
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
             finally
@@ -519,7 +484,6 @@ namespace Amdocs.Ginger.CoreNET
                                     case "source":
                                         act.AddOrUpdateReturnParamActual("source", this.GetPageSource().Result);
                                         return;
-
                                     case "x":
                                     case "X":
                                         ActGenElement tempact = new ActGenElement();
@@ -558,12 +522,6 @@ namespace Amdocs.Ginger.CoreNET
                             return;
                         }
                         break;
-
-                    //case ActGenElement.eGenElementAction.ApplitoolsCheckPoint:
-                    //    //TODO: add dynamic name for checkpoint
-                    //    //eyes.CheckWindow(TimeSpan.FromSeconds(5),"Checkpoint name");
-                    //break;
-
                     default:
                         mSeleniumDriver.GenElementHandler(act);
                         break;
@@ -571,7 +529,7 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                act.Error = ex.Message;
             }
         }
 
@@ -884,7 +842,6 @@ namespace Amdocs.Ginger.CoreNET
             return "TBD";
         }
 
-        
 
         public override bool IsRunning()
         {
@@ -904,9 +861,7 @@ namespace Amdocs.Ginger.CoreNET
             AW.WindowType = AppWindow.eWindowType.Appium;
             AW.Title = "Device";   // TODO: add device name and info
             
-
-            list.Add(AW);
-            
+            list.Add(AW);            
             return list;
         }
 

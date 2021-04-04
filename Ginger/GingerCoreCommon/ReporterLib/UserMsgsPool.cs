@@ -480,8 +480,8 @@ namespace Amdocs.Ginger.Common
 
             #region Mobile
             Reporter.UserMsgsPool.Add(eUserMsgKey.MobileConnectionFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Connection", "Failed to connect to the mobile device." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileRefreshScreenShotFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Screen Image", "Failed to refresh the mobile device screen image." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileShowElementDetailsFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Elements Inspector", "Failed to locate the details of the selected element." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileRefreshScreenShotFailed, new UserMsg(eUserMsgType.WARN, "Mobile Screen Image", "Failed to refresh the mobile device screen image." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileShowElementDetailsFailed, new UserMsg(eUserMsgType.WARN, "Mobile Elements Inspector", "Failed to locate the details of the selected element." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MobileActionWasAdded, new UserMsg(eUserMsgType.INFO, "Add Action", "Action was added.", eUserMsgOption.OK, eUserMsgSelection.None));
             //Reporter.UserMessagesPool.Add(eUserMsgKey.MobileActionWasAdded, new UserMessage(eMessageType.INFO, "Add Action", "Action was added." + System.Environment.NewLine + System.Environment.NewLine + "Do you want to run the Action?", MessageBoxButton.YesNo, MessageBoxResult.No));
             #endregion Mobile

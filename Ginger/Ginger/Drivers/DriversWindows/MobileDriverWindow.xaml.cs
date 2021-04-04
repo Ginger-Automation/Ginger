@@ -63,8 +63,7 @@ namespace Ginger.Drivers.DriversWindows
                         }
                         else
                         {
-                            mSelfClosing = true;
-                            this.Close();
+                            DoSelfClose();
                         }
                         break;
 
@@ -77,6 +76,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
             });
         }
+
        
         private void xDeviceScreenshotImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -91,11 +91,11 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web)//TODO: why not working for Web?
-            {
-                e.Handled = true;
-                return;
-            }
+            //if (mDriver.GetAppType() == eAppType.Web)//TODO: why not working for Web?
+            //{
+            //    e.Handled = true;
+            //    return;
+            //}
             try
             {
                 mMouseStartPoint = e.GetPosition((System.Windows.Controls.Image)sender);
@@ -112,11 +112,11 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web)
-            {
-                e.Handled = true;
-                return;
-            }
+            //if (mDriver.GetAppType() == eAppType.Web)
+            //{
+            //    e.Handled = true;
+            //    return;
+            //}
             if (mIsMousePressed == true)
             {
                 //it's a drag
@@ -126,11 +126,11 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web)
-            {
-                e.Handled = true;
-                return;
-            }
+            //if (mDriver.GetAppType() == eAppType.Web)
+            //{
+            //    e.Handled = true;
+            //    return;
+            //}
 
             try
             {
@@ -160,22 +160,22 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xDeviceScreenshotImage_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web)
-            {
-                e.Handled = true;
-                return;
-            }
+            //if (mDriver.GetAppType() == eAppType.Web)
+            //{
+            //    e.Handled = true;
+            //    return;
+            //}
 
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Hand;
         }
 
         private void xDeviceScreenshotImage_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (mDriver.GetAppType() == eAppType.Web)
-            {
-                e.Handled = true;
-                return;
-            }
+            //if (mDriver.GetAppType() == eAppType.Web)
+            //{
+            //    e.Handled = true;
+            //    return;
+            //}
 
             Mouse.OverrideCursor = null;
         }
@@ -240,6 +240,12 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xHomeBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mDriver.GetAppType() == eAppType.Web)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Operation not supported in device browser mode");
+                return;
+            }
+
             mDriver.PerformHomeButtonPress();
             if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
             {
@@ -249,6 +255,12 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xMenuBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mDriver.GetAppType() == eAppType.Web)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Operation not supported in device browser mode");
+                return;
+            }
+
             mDriver.PerformMenuButtonPress();
             if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.PostOperation)
             {
@@ -275,7 +287,7 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xTrackActionsChK_Unchecked(object sender, RoutedEventArgs e)
         {
-            mDeviceAutoScreenshotRefreshMode = eAutoScreenshotRefreshMode.Continual;
+            mDeviceAutoScreenshotRefreshMode = eAutoScreenshotRefreshMode.Live;
             if (this.IsLoaded)
             {
                 xRefreshButton.Visibility = Visibility.Collapsed;
@@ -284,7 +296,7 @@ namespace Ginger.Drivers.DriversWindows
 
         private void xContinualRdBtn_Checked(object sender, RoutedEventArgs e)
         {
-            mDeviceAutoScreenshotRefreshMode = eAutoScreenshotRefreshMode.Continual;
+            mDeviceAutoScreenshotRefreshMode = eAutoScreenshotRefreshMode.Live;
             if (this.IsLoaded)
             {
                 xRefreshWaitingRatePnl.Visibility = Visibility.Visible;
@@ -337,8 +349,8 @@ namespace Ginger.Drivers.DriversWindows
                 mDeviceAutoScreenshotRefreshMode = mDriver.DeviceAutoScreenshotRefreshMode;
                 switch (mDeviceAutoScreenshotRefreshMode)
                 {
-                    case eAutoScreenshotRefreshMode.Continual:
-                        xContinualRdBtn.IsChecked = true;
+                    case eAutoScreenshotRefreshMode.Live:
+                        xLiveRdBtn.IsChecked = true;
                         break;
                     case eAutoScreenshotRefreshMode.PostOperation:
                         xPostOperationRdBtn.IsChecked = true;
@@ -378,22 +390,22 @@ namespace Ginger.Drivers.DriversWindows
                 switch (mDriver.GetDevicePlatformType())
                 {
                     case eDevicePlatformType.Android:
-                        if (mDriver.GetAppType() == eAppType.Web)
-                        {
-                            //browser mode- show buttons but disabled
-                            xBackButton.IsEnabled = false;
-                            xMenuBtn.IsEnabled = false;
-                            xHomeBtn.IsEnabled = false;
-                        }
+                        //if (mDriver.GetAppType() == eAppType.Web)
+                        //{
+                        //    //browser mode- show buttons but disabled
+                        //    xBackButton.IsEnabled = false;
+                        //    xMenuBtn.IsEnabled = false;
+                        //    xHomeBtn.IsEnabled = false;
+                        //}
                         break;
                     case eDevicePlatformType.iOS:
                         //only middle button 
                         xBackButton.Visibility = Visibility.Collapsed;
                         xMenuBtn.Visibility = Visibility.Collapsed;
-                        if (mDriver.GetAppType() == eAppType.Web)
-                        {
-                            xHomeBtn.IsEnabled = false;
-                        }
+                        //if (mDriver.GetAppType() == eAppType.Web)
+                        //{
+                        //    xHomeBtn.IsEnabled = false;
+                        //}
                         break;
                 }
                 //fliping the back icon to fit look on mobile
@@ -447,7 +459,7 @@ namespace Ginger.Drivers.DriversWindows
             {
                 while(mWindowIsOpen && mDriver.IsDeviceConnected)
                 {
-                    if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Continual)
+                    if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
                     {
                         RefreshDeviceScreenshotAsync(200).Wait();
                     }
@@ -465,7 +477,7 @@ namespace Ginger.Drivers.DriversWindows
                 }
 
                 int waitingRatio = 1;
-                if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Continual)
+                if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Live)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -517,6 +529,17 @@ namespace Ginger.Drivers.DriversWindows
                     catch (Exception ex)
                     {
                         Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            if (!mDriver.IsDeviceConnected)
+                            {
+                                DoSelfClose();
+                            }
+                            else if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
+                            {
+                                xPostOperationRdBtn.IsChecked = true;
+                            }
+                        });
                         return false;
                     }
                 });
@@ -525,7 +548,7 @@ namespace Ginger.Drivers.DriversWindows
             }
             finally
             {
-                if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Continual)
+                if (mDeviceAutoScreenshotRefreshMode != eAutoScreenshotRefreshMode.Live)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -630,6 +653,11 @@ namespace Ginger.Drivers.DriversWindows
             mConfigIsOn = show;
         }
 
+        private void DoSelfClose()
+        {
+            mSelfClosing = true;
+            this.Close();
+        }
         #endregion Functions
 
 

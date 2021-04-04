@@ -79,7 +79,7 @@
             <StackPanel >
                 <Label Content="Auto refresh device view mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
                 <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Vertical" Margin="5,0,0,0">
-                    <RadioButton x:Name="xContinualRdBtn" Content="Continual" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
+                    <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
                     <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xPostOperationRdBtn_Checked" />
                     <RadioButton x:Name="xDisabledRdBtn" Content="Disabled" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xDisabledRdBtn_Checked" />
                 </StackPanel>
