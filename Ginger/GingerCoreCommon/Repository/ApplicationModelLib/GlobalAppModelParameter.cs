@@ -97,7 +97,10 @@ namespace Amdocs.Ginger.Repository
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "item: " + item.ToString() + "\nPI: " + PI.Name);
                         value = PI.GetValue(item);
+                    }
                     else if (mi.MemberType == MemberTypes.Field)
                     {
                         value = item.GetType().GetField(mi.Name).GetValue(item);

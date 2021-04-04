@@ -84,7 +84,8 @@ namespace Amdocs.Ginger.Repository
         public string Expected { get { return mExpected; } set { mExpected = value; OnPropertyChanged(Fields.Expected); } }
 
         private string mExpectedCalculated;
-        public string ExpectedCalculated { get { return OperatingSystemBase.GetOperatingSystem().AdjustOSChars(mExpectedCalculated); } set { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } }
+        //public string ExpectedCalculated { get { return OperatingSystemBase.GetOperatingSystem().AdjustOSChars(mExpectedCalculated); } set { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } }
+        public string ExpectedCalculated { get { return mExpectedCalculated; } set { mExpectedCalculated = value; OnPropertyChanged(Fields.ExpectedCalculated); } }
 
         public string ExpectedCalculatedValue { get; set; }
         private eStatus mStatus { get; set; }
