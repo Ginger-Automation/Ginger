@@ -89,11 +89,25 @@ namespace Amdocs.Ginger.Common.OS
         }
         public override string AdjustFilePath(string path)
         {
-            return path.Replace("\\", "/");
+            if (!string.IsNullOrEmpty(path))
+            {
+                return path.Replace("\\", "/");
+            }
+            else
+            {
+                return path;
+            }
         }
         public override string AdjustOSChars(String content) 
         {
-            return content.Replace("\r\n", System.Environment.NewLine);
+            if (!string.IsNullOrEmpty(content))
+            {
+                return content.Replace("\r\n", System.Environment.NewLine);
+            }
+            else
+            {
+                return content;
+            }
         }
     }
 } 

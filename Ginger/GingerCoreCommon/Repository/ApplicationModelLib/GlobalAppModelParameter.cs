@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.Repository
             return globalParam;
         }
 
-        public static void GetListOfUsedGlobalParameters(object item, ref List<string> usedGlobalParam)
+        public static void GetListOfUsedAppModelGlobalParameters(object item, ref List<string> usedGlobalParam)
         {
             //FIXME !!! use nameof and more - do not use refelction
 
@@ -97,8 +97,7 @@ namespace Amdocs.Ginger.Repository
                 try
                 {
                     if (mi.MemberType == MemberTypes.Property)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "item: " + item.ToString() + "\nPI: " + PI.Name);
+                    {                        
                         value = PI.GetValue(item);
                     }
                     else if (mi.MemberType == MemberTypes.Field)
@@ -108,16 +107,17 @@ namespace Amdocs.Ginger.Repository
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
                     value = null;
                 }
-
 
                 if (value is IObservableList)
                 {
                     List<dynamic> list = new List<dynamic>();
                     foreach (object o in value)
-                        GetListOfUsedGlobalParameters(o, ref usedGlobalParam);
+                    {
+                        GetListOfUsedAppModelGlobalParameters(o, ref usedGlobalParam);
+                    }
                 }
                 else
                 {
@@ -136,13 +136,17 @@ namespace Amdocs.Ginger.Repository
                                         string val = match.Value.Substring(28);
                                         val = val.Replace("}}", "}");
                                         if (!usedGlobalParam.Contains(val))
+                                        {
                                             usedGlobalParam.Add(val);
+                                        }
                                     }
-
                                 }
                             }
                         }
-                        catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                        catch (Exception ex) 
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of App Model global Params, object='{0}', field='{1}'", item, mi.Name), ex);
+                        }
                     }
                 }
             }

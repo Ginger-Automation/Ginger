@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 
         private static void SetLocalHostIP()
         {
-            LocalHostIP = OperatingSystemBase.GetOperatingSystem().GetFirstLocalHostIPAddress();
+            LocalHostIP = OperatingSystemBase.CurrentOperatingSystem.GetFirstLocalHostIPAddress();
         }
 
         

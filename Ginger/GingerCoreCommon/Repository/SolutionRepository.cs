@@ -399,7 +399,7 @@ namespace Amdocs.Ginger.Repository
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
 
-            return OperatingSystemBase.GetOperatingSystem().AdjustFilePath(relativePath);
+            return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
         }
 
         /// <summary>

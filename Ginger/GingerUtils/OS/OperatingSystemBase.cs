@@ -49,7 +49,17 @@ namespace Amdocs.Ginger.Common.OS
             //not required on windows
             return content;
         }
-    public static OperatingSystemBase GetOperatingSystem()
+
+        static OperatingSystemBase mCurrentOperatingSystem = GetOperatingSystem();
+        public static OperatingSystemBase CurrentOperatingSystem
+        {
+            get
+            {
+                return mCurrentOperatingSystem;
+            }
+        }
+
+        private static OperatingSystemBase GetOperatingSystem()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
