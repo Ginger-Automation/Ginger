@@ -25,6 +25,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
 using Ginger.Help;
 using Ginger.Repository;
@@ -1787,6 +1788,7 @@ namespace Ginger.Actions
 
         private void xRunActBtn_Click(object sender, RoutedEventArgs e)
         {
+            WindowExplorerCommon.IsTestActionRunning = true;
             App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(null, mAction, true));
 
             xActionTabs.SelectedItem = xExecutionReportTab;

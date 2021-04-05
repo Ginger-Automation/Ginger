@@ -13,7 +13,7 @@
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
 
-        <Expander x:Name="xDataFrameExpander" Grid.Row="0" Margin="0,0,0,2" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" 
+        <Expander x:Name="xDataFrameExpander" Grid.Row="0" Margin="0,0,0,2" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" 
                   Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed">
             <Expander.Header>
                 <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource $InputLabelStyle_NoFill}" Content="Window Elements"/>
@@ -63,16 +63,19 @@
                              ButtonImageForground="{StaticResource $SelectionColor_Pink}" DockPanel.Dock="Right" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="0" Click="xAddActBtn_Click" />
                 </DockPanel>
 
-                <Expander x:Name="xActExecutionDetails" Margin="0,1,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" BorderBrush="{StaticResource $Color_DarkBlue}">
+                <Expander x:Name="xActExecutionDetails" Margin="0,1,0,0" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}">
                     <Expander.Header>
                         <Label x:Name="xExecDetailsExpanderLbl" Style="{StaticResource $InputLabelStyle_NoFill}" Content="Execution Details"/>
                     </Expander.Header>
                     <Expander.Content>
                         <ScrollViewer>
                             <StackPanel Orientation="Vertical"  Margin="5">
-                                <TextBlock x:Name="xErrorTxtBlock" Foreground="Red" FontWeight="Bold" Padding="0" Text="Error : " HorizontalAlignment="Left" Margin="5" TextWrapping="WrapWithOverflow" />
-                                <TextBlock x:Name="xExecInfoTxtBlock" FontWeight="Bold" Padding="0" Text="Execution Info : " HorizontalAlignment="Left" Margin="5" TextWrapping="WrapWithOverflow" />
-                                <TextBlock x:Name="xReturnValsTxtBlock" Foreground="DarkBlue" FontWeight="Bold" Padding="0" Text="Return Values : " HorizontalAlignment="Left" Margin="5" TextWrapping="WrapWithOverflow" />
+                                <Label Content="Error" Foreground="Red" FontWeight="Bold" HorizontalAlignment="Left" Padding="0" Margin="5,5,5,0"/>
+                                <TextBlock x:Name="xErrorTxtBlock" Foreground="Red" FontWeight="Bold" Padding="0" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="WrapWithOverflow" />
+                                <Label Content="Execution Info" FontWeight="Bold" HorizontalAlignment="Left" Padding="0" Margin="5,5,5,0"/>
+                                <TextBlock x:Name="xExecInfoTxtBlock" FontWeight="Bold" Padding="0" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="WrapWithOverflow" />
+                                <Label Content="Return Values" FontWeight="Bold" HorizontalAlignment="Left" Padding="0" Margin="5,5,5,0"/>
+                                <TextBlock x:Name="xReturnValsTxtBlock" FontWeight="Bold" Padding="0" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="WrapWithOverflow" />
 
                                 <Ginger:ucGrid x:Name="xOutputValuesGrid" Margin="5,5,5,20" ShowTitle="Collapsed" ShowRefresh="Visible" />
                             </StackPanel>
@@ -80,56 +83,7 @@
                     </Expander.Content>
                 </Expander>
             </StackPanel>
-
-            <!--<Grid x:Name="xOperationsGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="0" x:Name="xErrorRow" />
-                    <RowDefinition Height="0" x:Name="xExecInfoRow" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="50*" />
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
-                    <Label Content="Locate By" Grid.Row="0" Grid.Column="0" Style="{StaticResource $LabelStyle}" />
-                    <ComboBox x:Name="xDDLocateBy" Grid.Row="0" Grid.Column="2" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Width="250" Height="30" SelectionChanged="xDDLocateBy_SelectionChanged" />
-                </StackPanel>
-
-                <Label Content="Locate Value" Grid.Row="1" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
-                <TextBox x:Name="xLocateValueTxtBox" Grid.Row="1" Grid.Column="2" Width="250" Style="{StaticResource @MultiRowsTextBoxStyle}" Height="Auto" IsEnabled="False" Margin="2"></TextBox>
-
-                <Label Content="Action" Grid.Row="2" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
-                <ComboBox x:Name="xDDActions" Grid.Row="2" Grid.Column="2" Style="{StaticResource $FlatInputComboBoxInGridCellStyle}" Width="250" Height="30" SelectionChanged="xDDActions_SelectionChanged" />
-
-                <Label Content="Value" Grid.Row="3" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
-                <TextBox x:Name="xValueTextBox" Grid.Row="3" Grid.Column="2" Width="250" Style="{StaticResource @MultiRowsTextBoxStyle}" Height="30"></TextBox>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
-                    <UserControls:ucButton x:Name="xRunActBtn" ButtonImageType="Run" ButtonText="Run Action" ButtonImageHeight="16" HorizontalAlignment="Center"
-                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="25,0,0,0" Click="xRunActBtn_Click" />
-
-                    <uclistview:UcItemExecutionStatus x:Name="xExecutionStatusIcon" StatusViewMode="Image" 
-                                                      StatusSize="20" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10"/>
-
-                    <UserControls:ucButton x:Name="xAddActBtn" ButtonImageType="Upload" ButtonText="Add Action" ButtonImageHeight="16" HorizontalAlignment="Center"
-                                   ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Margin="100,9,0,10" Click="xAddActBtn_Click" Height="41" />
-                </StackPanel>
-
-                <Label x:Name="xErrorLbl" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Foreground="Red" FontWeight="Bold" Padding="0" Content="Error : " HorizontalAlignment="Left" />
-                <Label x:Name="xExecInfoLbl" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" Padding="0" Content="Execution Info : " HorizontalAlignment="Left"/>
-            </Grid>-->
-
         </ScrollViewer>
         <Frame x:Name="xActEditPageFrame" Grid.Row="1" Margin="0" Padding="0" Visibility="Collapsed" />
-
-        <!--<GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="1" HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>-->
-        <!--<Ginger:ucGrid x:Name="AvailableLocatorsGrid" Title="Locators:" Grid.Row="1" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed" Grid.Column="1" IsSupportDragDrop="False" />-->
     </Grid>
 </Page>

@@ -69,6 +69,37 @@ using GingerCoreNET.Application_Models;
 
 namespace Ginger.WindowExplorer
 {
+    public class PageSrcParser
+    {
+        //public PageSrcParser(TreeView tView, HtmlAgilityPack.HtmlDocument htmlDoc)
+        //{
+        //    htmlDoc.LoadHtml(PageSrcTxt);
+
+            
+        //}
+
+
+
+        //System.Windows.Forms.TreeView tView;
+        //public System.Windows.Forms.TreeView GetSrcTree(System.Windows.Forms.HtmlDocument htmlDoc)
+        //{
+        //    tView.Nodes.Add(LoadTreeNodes(htmlDoc.Body));
+
+        //    return tView;
+        //}
+
+        //public TreeNode LoadTreeNodes(HtmlElement htmlElement)
+        //{
+        //    TreeNode tNode = new TreeNode(htmlElement.TagName);
+        //    for(int i = 0; i < htmlElement.Children.Count; i++)
+        //    {
+        //        tNode.Nodes.Add(LoadTreeNodes(htmlElement.Children[i]));
+        //    }
+
+        //    return tNode;
+        //}
+    }
+
     //Generic Class for Window Explorer to be used by different drivers and explore the window of the Application Under Testing, 
     // for PBDriver, ASCF, Windows and Selenium etc...
 
@@ -340,6 +371,11 @@ namespace Ginger.WindowExplorer
 
             mTreeRootItem = xWindowControlsTreeView.Tree.AddItem(RootItem);
             mTreeRootItem.IsExpanded = false;
+        }
+
+        private void RefreshPageSrcContent()
+        {
+            //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
         }
 
         private void RefreshTreeContent()
@@ -1566,12 +1602,13 @@ namespace Ginger.WindowExplorer
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
             mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
 
-            if (IsWebMobJavaPlatform)
+            if (mPlatform.PlatformType() == ePlatformType.Web)
             {
                 mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
-                mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
             }
-
+            
+            mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
+            
             xScreenShotFrame.Content = mScreenShotViewPage;
             //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
 
@@ -1579,7 +1616,7 @@ namespace Ginger.WindowExplorer
             xScreenShotFrame.Visibility = Visibility.Visible;
         }
 
-        private void XMainImage_MouseMove(object sender, MouseEventArgs e)
+        private void XMainImage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             RemoveElemntRectangle();
 
@@ -1599,6 +1636,15 @@ namespace Ginger.WindowExplorer
                 if (xUCElementDetails.SelectedElement != null)
                 {
                     mWindowExplorerDriver.UnHighLightElements();
+                }
+
+                if(currentHighlightedElement == null)
+                {
+                    RemoveElemntRectangle();
+
+                    System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
+
+                    HighlightSelectedElement(pointOnImg);
                 }
 
                 xUCElementDetails.SelectedElement = currentHighlightedElement;
@@ -1966,44 +2012,10 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void xSSCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
-        private void DeviceImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void DeviceImage_MouseMove(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void DeviceImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void DeviceImage_MouseEnter(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void DeviceImage_MouseLeave(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void DeviceImage_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
         bool RefreshGrid = false;
         bool RefreshTree = false;
         bool RefreshScreenshot = false;
+        bool RefreshPageSrc = false;
 
         private void xRefreshCurrentTabContentBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -2015,6 +2027,7 @@ namespace Ginger.WindowExplorer
             RefreshGrid = true;
             RefreshTree = true;
             RefreshScreenshot = true;
+            RefreshPageSrc = true;
 
             if (xViewsTabs.SelectedItem == xScreenShotViewTab)       /// Screenshot View
             {
@@ -2032,6 +2045,12 @@ namespace Ginger.WindowExplorer
                 RefreshTreeContent();
 
                 RefreshTree = false;
+            }
+            else if(xViewsTabs.SelectedItem == xPageSrcTab)
+            {
+                RefreshPageSrcContent();
+
+                RefreshPageSrc = false;
             }
         }
 

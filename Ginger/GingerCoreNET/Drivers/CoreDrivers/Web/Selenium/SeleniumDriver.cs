@@ -7083,7 +7083,15 @@ namespace GingerCore.Drivers
             return false;
         }
 
-        HtmlDocument SSPageDoc = null;
+        public HtmlDocument SSPageDoc = null;
+
+        public HtmlDocument GetPageHTML()
+        {
+            SSPageDoc = new HtmlDocument();
+            SSPageDoc.LoadHtml(Driver.PageSource);
+
+            return SSPageDoc;
+        }
 
         public Bitmap GetScreenShot()
         {

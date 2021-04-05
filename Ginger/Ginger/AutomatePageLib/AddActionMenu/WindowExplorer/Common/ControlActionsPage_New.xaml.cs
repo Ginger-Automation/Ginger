@@ -78,6 +78,7 @@ namespace Ginger.WindowExplorer
 
             IsLegacyPlatform = mAction == null;
 
+            mContext.Runner.PropertyChanged += Runner_PropertyChanged;
             SetPlatformBasedUIUpdates();
 
             //mAction.PropertyChanged -= Action_PropertyChanged;
@@ -187,11 +188,11 @@ namespace Ginger.WindowExplorer
 
                 InitOutputValuesGrid();
 
-                mContext.Runner.PropertyChanged += Runner_PropertyChanged;
                 BindingHandler.ObjFieldBinding(xExecutionStatusIcon, UcItemExecutionStatus.StatusProperty, mAction, nameof(Act.Status));
                 BindingHandler.ObjFieldBinding(xErrorTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.Error));
                 BindingHandler.ObjFieldBinding(xExecInfoTxtBlock, TextBlock.TextProperty, mAction, nameof(Act.ExInfo));
                 BindingHandler.ObjFieldBinding(xOutputValuesGrid, DataGrid.ItemsSourceProperty, mAction, nameof(Act.ReturnValues));
+                BindingHandler.ObjFieldBinding(xOutputValuesGrid, IsVisibleProperty, mAction, nameof(Act.ReturnValues), new OutPutValuesCountConverter());
                 //BindingHandler.ObjFieldBinding(xActExecutionDetails, Expander.IsExpandedProperty, mAction, Convert.ToString(mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed || mAction.Status.Value == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed), new CheckboxConfigConverter());
             }
             else

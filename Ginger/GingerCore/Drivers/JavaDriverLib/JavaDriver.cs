@@ -131,7 +131,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             LocateElement,
             UnHighlight,
             GetWindowAllFrames,
-            GetFrameControls
+            GetFrameControls,
+            GetElementAtPoint
         }
         public override void StartDriver()
         {
@@ -3921,7 +3922,8 @@ namespace GingerCore.Drivers.JavaDriverLib
         public ElementInfo GetElementAtPoint(long ptX, long ptY)
         {
             PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-            Request.AddEnumValue(WindowExplorerOperationType.GetVisibleElements);
+            Request.AddEnumValue(WindowExplorerOperationType.GetElementAtPoint);
+            Request.AddValue(ptX + "_" + ptY);
             Request.ClosePackage();
             General.DoEvents();
 

@@ -166,7 +166,8 @@ public class JavaDriver {
 		GetComponentFromCursor,
 		UnHighlight,
 		GetWindowAllFrames,
-		GetFrameControls
+		GetFrameControls,
+		GetElementAtPoint
 	}
 	
 
@@ -896,6 +897,23 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 			return HandleGetEditorChildrens(containerXPath);
 		}
 		
+		else if (WindowExplorerOperationType.GetElementAtPoint.toString().equals(operationType))
+		{
+	        Point pt = new Point(-1, -1);
+	        
+	        String str = PL.GetValueString();
+
+            String[] ptArr = str.split("_");
+
+            if (ptArr.length == 2)
+            {
+                pt.x = Integer.parseInt(ptArr[0]);
+                pt.y = Integer.parseInt(ptArr[1]);
+            }
+
+			return GetElementAtPoint(pt);
+		}
+
 		else if (WindowExplorerOperationType.GetComponentFromCursor.toString().equals(operationType))
 		{						
 			return GetComponentFromCursor();
@@ -4107,6 +4125,57 @@ private PayLoad SetComponentFocus(Component c)
 		return CompValue;
 	}
 	
+	private PayLoad GetElementAtPoint(Point point)
+	{
+		Window CurrentWindow= mSwingHelper.getCurrentWindow();
+		if (CurrentWindow != null) {
+			CurrentWindow.requestFocus();
+
+			Component c = SwingUtilities.getDeepestComponentAt(CurrentWindow,
+					point.x, point.y);
+
+			if (c.getName()!=null && c.getName().contains("canvas") || 
+					c.getClass().toString().contains("com.jniwrapper.win32.ie.aw")||
+					(c.getName()!=null && c.getName().contains("LightWeightWidget"))|| //  added to support live spy in JxBrowserBrowserComponent
+					c.getClass().toString().contains("LightWeightWidget"))
+			{
+				Component browserComponent=mSwingHelper.GetParentBrowser(c);
+				String cXpath=mSwingHelper.GetComponentXPath(browserComponent);
+				mBrowserHelper = GetInitializedBrowser(cXpath);
+				if (mBrowserHelper != null)//exists and valid
+				{
+					PayLoad PL = new PayLoad("GetElementAtPoint");
+					GingerAgent.WriteLog("I am C.X :" + point.x);
+					GingerAgent.WriteLog("I am C.Y :" + point.y);
+					PL.ClosePackage();
+					PayLoad response = mBrowserHelper.ExceuteJavaScriptPayLoad(PL);
+					GingerAgent.WriteLog("I am the Response: " +response.toString());
+					return response;
+				}
+				else
+				{
+					//New\Invalid -Require Initialize Browser
+					return RequireInitializeBrowser(cXpath);
+				}
+			}
+			else	
+			{
+				// change component to parent for internal frame.
+				if(c.getParent() != null && c.getParent() instanceof JInternalFrame)
+				{
+					c = c.getParent();
+				}
+				return GetCompInfo(c);
+			}
+
+			//return c;
+		}
+		else
+		{
+			return PayLoad.Error(PayLoad.ErrorCode.Unknown.GetErrorCode(),"Element Search failed as the Current Window is NULL");
+		}
+	}
+
 	private PayLoad GetComponentFromCursor() {
 		
 		Window CurrentWindow= mSwingHelper.getCurrentWindow();
