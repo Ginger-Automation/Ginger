@@ -452,7 +452,7 @@ namespace UnitTests.NonUITests
 
             ActSoapUI actSoapUi = new ActSoapUI();
 
-            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML"+Path.PathSeparator+"calculator_soapui_project.xml");
             actSoapUi.AddNewReturnParams=true;
             actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
             
@@ -471,7 +471,7 @@ namespace UnitTests.NonUITests
             ActSoapUI actSoapUI = new ActSoapUI();
             actSoapUI.Description = "Soap Wrapper acttion test ";
             
-            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML"+ Path.PathSeparator + "calculator_soapui_project.xml");
             
             actSoapUI.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
             actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated, "False");
@@ -506,7 +506,7 @@ namespace UnitTests.NonUITests
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"");
 
-            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML\stock.xml");
+            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML"+ Path.PathSeparator + "stock.xml");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.XMLfileName, xmlFileNamePath);
             
             actLegacyWebService.FileName = "Web Service Action";
