@@ -238,7 +238,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-
+        [Ignore]
         [TestMethod]  
         [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
@@ -490,7 +490,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(actSoapUI.ActInputValues[1].Value.ToString(), duplicateAct.ActInputValues[1].Value.ToString());
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void LegacyWebServiceToNewWebApiSoap_Converter_Test()
