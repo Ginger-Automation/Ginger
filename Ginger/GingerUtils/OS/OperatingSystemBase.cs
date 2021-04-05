@@ -39,8 +39,12 @@ namespace Amdocs.Ginger.Common.OS
         {
             //not required on windows
         }
-
-        public static  OperatingSystemBase GetOperatingSystem()
+        public virtual string AdjustFilePath(string path)
+        {
+            //not required on windows
+            return path;
+        }
+    public static  OperatingSystemBase GetOperatingSystem()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

@@ -86,14 +86,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     try
                     {
                         screenShotCountPerAction++;
+                        var screenShotPath = Path.Combine(executionLogFolder, action.ExecutionLogFolder, string.Concat("ScreenShot_", AR.Seq , "_" , screenShotCountPerAction.ToString() , ".png"));
                         if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                         {
-                            System.IO.File.Copy(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"), true);
+                            System.IO.File.Copy(action.ScreenShots[s], screenShotPath, true);
                         }
                         else
                         {
-                            System.IO.File.Move(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"));
-                            action.ScreenShots[s] = Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
+                            System.IO.File.Move(action.ScreenShots[s], screenShotPath);
+                            action.ScreenShots[s] = screenShotPath;
                         }
                     }
                     catch (Exception ex)

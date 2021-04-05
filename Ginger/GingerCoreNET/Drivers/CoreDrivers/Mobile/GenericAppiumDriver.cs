@@ -18,6 +18,8 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
@@ -33,41 +35,23 @@ using OpenQA.Selenium.Appium.iOS;
 using OpenQA.Selenium.Appium.MultiTouch;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow
     {
-        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
-
-        public enum eDevicePlatformType
-        {
-            Android = 0,
-            iOS = 1
-        }
-
-        public enum eAppType
-        {
-            NativeHybride = 0,
-            Web = 1,
-        }
-
-        public enum eSwipeSide
-        {
-            Up, Down, Left, Right
-        }
+        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }       
 
         //Mobile Driver Configurations
         [UserConfigured]
-        [UserConfiguredDefault(@"https://127.0.0.1:4723/wd/hub")]
+        [UserConfiguredDefault(@"http://127.0.0.1:4723/wd/hub")] 
         [UserConfiguredDescription("Full Appium server address including port if needed, default address is: 'https://ServerIP:Port/wd/hub'")]
         public String AppiumServer { get; set; }
 
@@ -83,30 +67,6 @@ namespace Amdocs.Ginger.CoreNET
         [UserConfiguredDescription("The tested application type 'NativeHybride' or 'Web'")]
         public eAppType AppType { get; set; }
 
-        //[UserConfigured]
-        //[UserConfiguredDescription("The device OS version- e.g.: 4.4.4, 5.0. Keep empty if not needed")]
-        //public String DevicePlatformVersion { get; set; }
-
-        //[UserConfigured]
-        //[UserConfiguredDescription("The absolute local path or remote http URL to an .ipa (iOS) or .apk (Android) file, or a .zip containing one of these. Appium will attempt to install this app on the appropriate device first")]
-        //public String AppInstallerPath { get; set; }
-
-        //[UserConfigured]
-        //[UserConfiguredDescription("Android Only | Only if 'AppInstallerPath' is empty. Java package of the Android app you want to run, e.g. \"com.example.android.myApp\" or \"com.android.dialer\"")]
-        //public String InstalledAppPackage { get; set; }
-
-        //[UserConfigured]
-        //[UserConfiguredDescription("Android Only | Only if 'InstalledAppPackage' was populated. The Android activity you want to launch from your package. This often needs to be preceded by a '.' (e.g., .MainActivity instead of MainActivity)")]
-        //public String InstalledAppActivity { get; set; }
-
-        //[UserConfigured]
-        //[UserConfiguredDescription("iOS Only | Only if 'AppInstallerPath' is empty. Bundle ID of the app under test. Useful for starting an installed app on a real device or for using other caps which require the bundle ID during test startup.")]
-        //public String InstalledAppBundleID { get; set; }
-
-        //[UserConfigured]
-        //[UserConfiguredDescription("Which automation engine to use, 'Appium' or 'UiAutomator2' or 'Espresso' for Android or 'XCUITest' for iOS or 'YouiEngine' for application built with You.i Engine. Keep empty to use default")]
-        //public String AutomationName { get; set; }
-
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Set to 'Yes' or 'No', determine if the Ginger device window will be loaded with the Agent")]
@@ -118,42 +78,53 @@ namespace Amdocs.Ginger.CoreNET
         public bool AutoRefreshDeviceWindowScreenshot { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("120")]
-        [UserConfiguredDescription("How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session")]
-        public int NewCommandTimeout { get; set; }
-
-        [UserConfigured]
         [UserConfiguredMultiValues]
         [UserConfiguredDescription("Appium capabilities")]
         public ObservableList<DriverConfigParam> AppiumCapabilities { get; set; }
 
-        private AppiumDriver<AppiumWebElement> Driver;//appium on top selenium
-        private SeleniumDriver mSeleniumDriver;//selenium base
-        public eDevicePlatformType DriverPlatformType;
-        //public eMobileDeviceType DriverDeviceType;
+        bool mIsDeviceConnected = false;
+        public bool IsDeviceConnected 
+        { 
+            get => mIsDeviceConnected; 
+            set => mIsDeviceConnected=value; 
+        }
 
-        //public GenericAppiumDriver(eMobilePlatformType platformType, BusinessFlow BF)
+        public bool ShowWindow
+        {
+            get => LoadDeviceWindow;
+        }
+
+        private AppiumDriver<AppiumWebElement> Driver;//appium 
+        private SeleniumDriver mSeleniumDriver;//selenium 
+        public eDevicePlatformType DriverPlatformType;
+
+        //public override bool IsSTAThread()
+        //{
+        //    return LoadDeviceWindow;
+        //}
+
         public GenericAppiumDriver(BusinessFlow BF)
         {
-            //DriverPlatformType = platformType;
             BusinessFlow = BF;
         }
 
-        private static List<int> reservedPorts = new List<int>();
-        private int bootstrapPort = 0;
-        private int chromeDriverPort = 0;
-        public bool mConnectedToDevice = false;
+        
         public override void StartDriver()
         {
-            //if (LoadGingerDeviceWindow != null && LoadGingerDeviceWindow.Trim().ToUpper() == "YES")
+            //if (LoadDeviceWindow)
             //{
             //    CreateSTA(ShowDriverWindow);
+
             //}
             //else
             //{
             //    ConnectedToDevice = ConnectToAppium();
             //}
-            mConnectedToDevice = ConnectToAppium();
+            mIsDeviceConnected = ConnectToAppium();
+            //if (mIsDeviceConnected)
+            //{
+                OnDriverMessage(eDriverMessageType.DriverStatusChanged);
+            //}
         }
 
         //public void ShowDriverWindow()
@@ -168,13 +139,13 @@ namespace Amdocs.Ginger.CoreNET
         //    {
         //        Thread.Sleep(100);
         //    }
-      
+
         //    ConnectedToDevice = ConnectToAppium();
         //    if (ConnectedToDevice && DriverWindow.LoadMobileScreenImage(false, 0))
-        //    {               
+        //    {
         //        OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         //        Dispatcher = new DriverWindowDispatcher(DriverWindow.Dispatcher);
-        //        System.Windows.Threading.Dispatcher.Run();            
+        //        System.Windows.Threading.Dispatcher.Run();
         //    }
         //    else
         //    {
@@ -191,26 +162,23 @@ namespace Amdocs.Ginger.CoreNET
             try//Adding back the Try-Catch because without it in case of connection issue Ginger crash
             {
                 Uri serverUri = null;
-               
-                    try
-                    {
-                        serverUri = new Uri(AppiumServer);
-                    }
-                    catch (Exception)
-                    {
-                        throw new Exception("In-Valid AppiumServer configuration");
-                    }
-              
 
-               
-
-                //set timeout
-                if (NewCommandTimeout < 0)
+                try
                 {
-                    NewCommandTimeout = 120;
+                    serverUri = new Uri(AppiumServer);
                 }
-                TimeSpan commandTimeoutAsTimeSpan = TimeSpan.FromSeconds(NewCommandTimeout);
-                
+                catch (Exception)
+                {
+                    throw new Exception("In-Valid Appium Server configuration");
+                }
+
+                ////set timeout
+                //if (NewCommandTimeout < 0)
+                //{
+                //    NewCommandTimeout = 120;
+                //}
+                //TimeSpan commandTimeoutAsTimeSpan = TimeSpan.FromSeconds(NewCommandTimeout);
+
                 //Setting capabilities                                
                 DriverOptions driverOptions = this.GetCapabilities();
 
@@ -218,23 +186,25 @@ namespace Amdocs.Ginger.CoreNET
                 switch (DriverPlatformType)
                 {
                     case eDevicePlatformType.Android:
-                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                        //Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                        Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions);
                         break;
                     case eDevicePlatformType.iOS:
-                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                        //Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                        Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions);
                         break;
-                    //case eDevicePlatformType.AndroidBrowser:
-                    //    Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                    //    Driver.Navigate().GoToUrl("http://www.google.com");
-                    //    break;
-                    //case eDevicePlatformType.iOSBrowser:
-                    //    //TODO: start ios-web-proxy automatically
-                    //    Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
-                    //    break;
+                        //case eDevicePlatformType.AndroidBrowser:
+                        //    Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                        //    Driver.Navigate().GoToUrl("http://www.google.com");
+                        //    break;
+                        //case eDevicePlatformType.iOSBrowser:
+                        //    //TODO: start ios-web-proxy automatically
+                        //    Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, commandTimeoutAsTimeSpan);
+                        //    break;
                 }
 
                 mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-
+               
                 return true;
             }
             catch (Exception ex)
@@ -246,77 +216,9 @@ namespace Amdocs.Ginger.CoreNET
 
         private DriverOptions GetCapabilities()
         {
-            DriverOptions driverOptions = new AppiumOptions();
-
             //see http://appium.io/slate/en/master/?csharp#appium-server-capabilities for full list of capabilities values
 
-            ////Device capabilities
-            //if (string.IsNullOrEmpty(DeviceID) == false)
-            //{
-            //    driverOptions.AddAdditionalCapability("udid", DeviceID);
-            //}
-            //if (string.IsNullOrEmpty(DeviceName) == false)
-            //{
-            //    driverOptions.AddAdditionalCapability("deviceName", DeviceName);
-            //}
-
-            ////Capabilities per platform type
-            //if (string.IsNullOrEmpty(DevicePlatformName) == false)
-            //{
-            //    driverOptions.AddAdditionalCapability("platformName", DevicePlatformName);
-            //}
-            //if (string.IsNullOrEmpty(DevicePlatformVersion) == false)
-            //{
-            //    driverOptions.AddAdditionalCapability("platformVersion", DevicePlatformVersion);//Mobile OS version  
-            //}
-            //switch (DriverPlatformType)
-            //{
-            //    case eDevicePlatformType.Android:                      
-            //        if (!string.IsNullOrEmpty(AppInstallerPath))
-            //        {
-            //            driverOptions.AddAdditionalCapability("app", AppInstallerPath);
-            //            driverOptions.AddAdditionalCapability("browserName", "");
-            //        }
-            //        else
-            //        {
-            //            if (!string.IsNullOrEmpty(InstalledAppPackage))
-            //            {
-            //                driverOptions.AddAdditionalCapability("appPackage", InstalledAppPackage);
-            //                driverOptions.AddAdditionalCapability("appActivity", InstalledAppActivity);
-            //                driverOptions.AddAdditionalCapability("appWaitPackage", InstalledAppPackage);
-            //                driverOptions.AddAdditionalCapability("appWaitActivity", InstalledAppActivity);
-            //            }
-            //        }
-            //        break;
-
-            //    case eDevicePlatformType.iOS:                    
-            //        if (!string.IsNullOrEmpty(AppInstallerPath))
-            //        {
-            //            driverOptions.AddAdditionalCapability("app", AppInstallerPath);
-            //            driverOptions.AddAdditionalCapability("browserName", "");
-            //        }
-            //        if (!string.IsNullOrEmpty(InstalledAppBundleID))
-            //        {
-            //            driverOptions.AddAdditionalCapability("bundleId", InstalledAppBundleID);
-            //        }
-            //        break;
-
-            //    case eDevicePlatformType.AndroidBrowser:
-            //        driverOptions.AddAdditionalCapability("browserName", "chrome");
-            //        break;
-
-            //    case eDevicePlatformType.iOSBrowser:
-            //        //Tested application capabilities 
-            //        driverOptions.AddAdditionalCapability("browserName", "safari");
-            //        driverOptions.AddAdditionalCapability("safariAllowPopups", false);  //(Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.
-            //        break;
-            //}
-
-       
-            //if (string.IsNullOrEmpty(AutomationName) == false)
-            //{
-            //    driverOptions.AddAdditionalCapability("automationName", AutomationName);
-            //}
+            DriverOptions driverOptions = new AppiumOptions();
 
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
@@ -349,18 +251,12 @@ namespace Amdocs.Ginger.CoreNET
                 }                
             }
 
-            //Generic capabilities
-            driverOptions.AddAdditionalCapability("newCommandTimeout", NewCommandTimeout.ToString());     //needed??
-
             return driverOptions;                        
         }
 
 
         public override void CloseDriver()
         {
-            //reservedPorts.Remove(chromeDriverPort);
-            //reservedPorts.Remove(bootstrapPort);
-
             //try { 
             //    if (DriverWindow != null){
             //        DriverWindow.Close();
@@ -370,35 +266,13 @@ namespace Amdocs.Ginger.CoreNET
             //    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e);
             //}
 
-            if (Driver != null){
+            if (Driver != null)
+            {
                 Driver.Quit();
-
-                //Check if needed also to close Appium server
-                //if (StartAppiumServerAutomatically) {
-                //    //Close Appium connection
-                //    CloseAppiumConnection();
-                //}
             }
 
-            mConnectedToDevice = false;
+            mIsDeviceConnected = false;
         }
-        
-        //Close Appium connection
-        //private Boolean CloseAppiumConnection() {
-        //    System.Diagnostics.Process process = new System.Diagnostics.Process();
-        //    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-        //    startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-        //    startInfo.FileName = "CMD.exe";
-        //    String[] stopServerCommand = new String[]{"cmd", "/c",
-        //            "echo off & FOR /F \"usebackq tokens=5\" %a in (`netstat -nao ^| findstr /R /C:\""
-        //            + AppiumServerPort
-        //            + " \"`) do (FOR /F \"usebackq\" %b in (`TASKLIST /FI \"PID eq %a\" ^| findstr /I node.exe`) do taskkill /F /PID %a)"};
-        //    startInfo.Arguments = string.Join("", stopServerCommand);
-        //    process.StartInfo = startInfo;
-        //    process.Start();
-
-        //    return true;
-        //}
         
         public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
         {
@@ -449,7 +323,6 @@ namespace Amdocs.Ginger.CoreNET
         public override Act GetCurrentElement()
         {
             return mSeleniumDriver.GetCurrentElement();
-            return null;
         }
 
         public override void RunAction(Act act)
@@ -464,28 +337,28 @@ namespace Amdocs.Ginger.CoreNET
 
                 Type ActType = act.GetType();
 
-                //if (ActType == typeof(ActMobileDevice))
-                //{
-                //    MobileDeviceActionHandler((ActMobileDevice)act);
-                //    return;
-                //}
-                //if (ActType == typeof(ActGenElement))
-                //{
-                //    GenElementHandler((ActGenElement)act);
-                //    return;
-                //}
+                if (ActType == typeof(ActMobileDevice))
+                {
+                    MobileDeviceActionHandler((ActMobileDevice)act);
+                    return;
+                }
+                if (ActType == typeof(ActGenElement))
+                {
+                    GenElementHandler((ActGenElement)act);
+                    return;
+                }
 
-                //if (ActType == typeof(ActSmartSync))
-                //{
-                //    mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
-                //    return;
-                //}
-                //if (ActType == typeof(ActScreenShot))
-                //{
-                //    TakeScreenShot(act);
-                //    return;
-                //}
-     
+                if (ActType == typeof(ActSmartSync))
+                {
+                    mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
+                    return;
+                }
+                if (ActType == typeof(ActScreenShot))
+                {
+                    TakeScreenShot(act);
+                    return;
+                }
+
                 act.Error = "Run Action Failed due to unrecognized action type: '" + ActType.ToString() + "'";
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
@@ -494,377 +367,382 @@ namespace Amdocs.Ginger.CoreNET
                 act.Error = "Run Action Failed, Error details: " + ex.Message;
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
+            finally
+            {
+                OnDriverMessage(eDriverMessageType.ActionPerformed);
+            }
         }
-        //private void GenElementHandler(ActGenElement act)
-        //{
-        //try
-        //{
-        //    IWebElement e;
-        //    long x = 0, y = 0;
 
-        //    switch (act.GenElementAction)
-        //    {
-        //        //need to override regular selenium driver actions only if needed, 
-        //        //if not then to run the regular selenium driver actions handler for it to avoid duplication
+        private void GenElementHandler(ActGenElement act)
+        {
+            try
+            {
+                IWebElement e;
+                long x = 0, y = 0;
 
-        //        case ActGenElement.eGenElementAction.Click:                                               
-        //            e = LocateElement(act);
-        //            if (e != null)
-        //            {
-        //                e.Click();
-        //            }
-        //            else if (act.LocateBy == eLocateBy.ByXY)
-        //            {
-        //                try
-        //                {
-        //                    x = Convert.ToInt64(act.LocateValueCalculated.Split(',')[0]);
-        //                    y = Convert.ToInt64(act.LocateValueCalculated.Split(',')[1]);
-        //                }
-        //                catch { x = 0; y = 0; }
-        //                TapXY(x, y);
-        //            }
-        //            else
-        //            {
-        //                act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-        //            }                        
-        //            break;
+                switch (act.GenElementAction)
+                {
+                    //need to override regular selenium driver actions only if needed, 
+                    //if not then to run the regular selenium driver actions handler for it to avoid duplication
 
-        //        case ActGenElement.eGenElementAction.TapElement:
-        //            try
-        //            {
-        //                e = LocateElement(act);
-        //                TouchAction t = new TouchAction(Driver);
-        //                t.Tap(e, 1, 1);
-        //                Driver.PerformTouchAction(t);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-        //            }
-        //            break;
+                    case ActGenElement.eGenElementAction.Click:
+                        e = LocateElement(act);
+                        if (e != null)
+                        {
+                            e.Click();
+                        }
+                        else if (act.LocateBy == eLocateBy.ByXY)
+                        {
+                            try
+                            {
+                                x = Convert.ToInt64(act.LocateValueCalculated.Split(',')[0]);
+                                y = Convert.ToInt64(act.LocateValueCalculated.Split(',')[1]);
+                            }
+                            catch { x = 0; y = 0; }
+                            TapXY(x, y);
+                        }
+                        else
+                        {
+                            act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+                        }
+                        break;
 
-        //        case ActGenElement.eGenElementAction.SetValue:                       
-//        e = LocateElement(act);                                                
-//                        if (e != null)
-//                        {
-//                            e.Clear();
-//                            //make sure value was cleared- trying to handle clear issue in WebViews
-//                            try
-//                            {
-//                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
-//                                //Wasting time when not needed
-//                                string elemntContent = e.Text; //.GetAttribute("name");
-//                                if (string.IsNullOrEmpty(elemntContent) == false)
-//                                {
-//                                    for (int indx = 1; indx <= elemntContent.Length; indx++)
-//                                    {
-//                                        //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
-//                                        ((AndroidDriver<AppiumWebElement>) Driver).PressKeyCode(22);
-//        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
-//        ((AndroidDriver<AppiumWebElement>) Driver).PressKeyCode(67);
-//    }
-//}
-//                            }
-//                            catch (Exception ex)
-//                            {
-//                                Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
-//                            }
-//                            switch (DriverPlatformType)
-//                            {
-//                                case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-//                                    //e.Clear();
-//                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));                                    
-//                                    break;
-//                                case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-//                                    //e.Clear();
-//                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));
-//                                    //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
-//                                    break;
-//                            }
-//                            if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
-//                        }
-//                        else
-//                        {
-//                            act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-//                        }
-//                        break;                   
+                    case ActGenElement.eGenElementAction.TapElement:
+                        try
+                        {
+                            e = LocateElement(act);
+                            TouchAction t = new TouchAction(Driver);
+                            t.Tap(e, 1, 1);
+                            Driver.PerformTouchAction(t);
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
 
-            //        case ActGenElement.eGenElementAction.GetValue:
-            //        case ActGenElement.eGenElementAction.GetInnerText:
-            //            e = LocateElement(act);
-            //            if (e != null)
-            //            {
-            //                act.AddOrUpdateReturnParamActual("Actual", e.Text);
-            //            }
-            //            else
-            //            {
-            //                act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
-            //                return;
-            //            }
-            //            break;
+                    case ActGenElement.eGenElementAction.SetValue:
+                        e = LocateElement(act);
+                        if (e != null)
+                        {
+                            e.Clear();
+                            //make sure value was cleared- trying to handle clear issue in WebViews
+                            try
+                            {
+                                //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
+                                //Wasting time when not needed
+                                string elemntContent = e.Text; //.GetAttribute("name");
+                                if (string.IsNullOrEmpty(elemntContent) == false)
+                                {
+                                    for (int indx = 1; indx <= elemntContent.Length; indx++)
+                                    {
+                                        //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
+                                        ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
+                                        //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
+                                        ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
+                            }
+                            switch (DriverPlatformType)
+                            {
+                                case eDevicePlatformType.Android:
+                                    //e.Clear();
+                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                                    break;
+                                case eDevicePlatformType.iOS:
+                                    //e.Clear();
+                                    e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                                    //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
+                                    break;
+                            }
+                            //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
+                        }
+                        else
+                        {
+                            act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+                        }
+                        break;
 
-            //        case ActGenElement.eGenElementAction.GetContexts:
-            //            int i = 0;
-            //            foreach (var c in Driver.Contexts)
-            //            {
-            //                act.AddOrUpdateReturnParamActual("Actual " + i, c.ToString());
-            //            }
-            //            break;
+                    case ActGenElement.eGenElementAction.GetValue:
+                    case ActGenElement.eGenElementAction.GetInnerText:
+                        e = LocateElement(act);
+                        if (e != null)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.Text);
+                        }
+                        else
+                        {
+                            act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+                            return;
+                        }
+                        break;
 
-            //        case ActGenElement.eGenElementAction.SetContext:                        
-            //            Driver.Context = act.GetInputParamCalculatedValue("Value");
-            //            break;
+                    case ActGenElement.eGenElementAction.GetContexts:
+                        int i = 0;
+                        foreach (var c in Driver.Contexts)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual " + i, c.ToString());
+                        }
+                        break;
 
-            //        case ActGenElement.eGenElementAction.GetCustomAttribute:
-            //            e = LocateElement(act);
-            //            if (e != null)
-            //            {
-            //                string attribute = string.Empty;
-            //                try
-            //                {
-            //                    attribute = e.GetAttribute(act.Value);
-            //                }
-            //                catch (Exception ex)
-            //                {
-            //                    string value = act.Value.ToLower();
-            //                    switch (value)
-            //                    {
-            //                        case "content-desc":
-            //                            value = "name";
-            //                            break;
-            //                        case "resource-id":
-            //                            value = "resourceId";
-            //                            break;
-            //                        case "class":
-            //                            act.AddOrUpdateReturnParamActual("Actual", e.TagName);
-            //                            return;
-            //                        case "source":
-            //                            act.AddOrUpdateReturnParamActual ("source", this.GetPageSource ().Result);
-            //                            return;
+                    case ActGenElement.eGenElementAction.SetContext:
+                        Driver.Context = act.GetInputParamCalculatedValue("Value");
+                        break;
 
-            //                        case "x":
-            //                        case "X":
-            //                            ActGenElement tempact = new ActGenElement ();                                      
-            //                            act.AddOrUpdateReturnParamActual ("X", e.Location.X.ToString());
-            //                            return;
-            //                        case "y":
-            //                        case "Y":
-            //                            act.AddOrUpdateReturnParamActual ("Y", e.Location.Y.ToString ());
-            //                            return; 
-            //                        default:
-            //                            if (act.LocateBy == eLocateBy.ByXPath)
-            //                            {
-            //                                XmlDocument PageSourceXml = new XmlDocument ();
-            //                                PageSourceXml.LoadXml (this.GetPageSource ().Result);
-            //                                XmlNode node = PageSourceXml.SelectSingleNode (act.LocateValueCalculated);
+                    case ActGenElement.eGenElementAction.GetCustomAttribute:
+                        e = LocateElement(act);
+                        if (e != null)
+                        {
+                            string attribute = string.Empty;
+                            try
+                            {
+                                attribute = e.GetAttribute(act.Value);
+                            }
+                            catch (Exception ex)
+                            {
+                                string value = act.Value.ToLower();
+                                switch (value)
+                                {
+                                    case "content-desc":
+                                        value = "name";
+                                        break;
+                                    case "resource-id":
+                                        value = "resourceId";
+                                        break;
+                                    case "class":
+                                        act.AddOrUpdateReturnParamActual("Actual", e.TagName);
+                                        return;
+                                    case "source":
+                                        act.AddOrUpdateReturnParamActual("source", this.GetPageSource().Result);
+                                        return;
 
-            //                                foreach(XmlAttribute XA in node.Attributes)
-            //                                {
-            //                                    if(XA.Name==act.ValueForDriver)
-            //                                    {
-            //                                        act.AddOrUpdateReturnParamActual ("Actual", XA.Value);
-            //                                        break;
-            //                                    }
-            //                                }
-            //                            }
-            //                            return;
-            //                    }                               
-            //                    attribute = e.GetAttribute(value);
-            //                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-            //                }
-            //                act.AddOrUpdateReturnParamActual("Actual", attribute);
-            //            }
-            //            else
-            //            {
-            //                act.Error = "Error: Element not found - " + act.LocateBy + "- '" + act.LocateValueCalculated + "'";
-            //                return;
-            //            }
-            //            break;
+                                    case "x":
+                                    case "X":
+                                        ActGenElement tempact = new ActGenElement();
+                                        act.AddOrUpdateReturnParamActual("X", e.Location.X.ToString());
+                                        return;
+                                    case "y":
+                                    case "Y":
+                                        act.AddOrUpdateReturnParamActual("Y", e.Location.Y.ToString());
+                                        return;
+                                    default:
+                                        if (act.LocateBy == eLocateBy.ByXPath)
+                                        {
+                                            XmlDocument PageSourceXml = new XmlDocument();
+                                            PageSourceXml.LoadXml(this.GetPageSource().Result);
+                                            XmlNode node = PageSourceXml.SelectSingleNode(act.LocateValueCalculated);
 
-            //        //case ActGenElement.eGenElementAction.ApplitoolsCheckPoint:
-            //        //    //TODO: add dynamic name for checkpoint
-            //        //    //eyes.CheckWindow(TimeSpan.FromSeconds(5),"Checkpoint name");
-            //        //break;
+                                            foreach (XmlAttribute XA in node.Attributes)
+                                            {
+                                                if (XA.Name == act.ValueForDriver)
+                                                {
+                                                    act.AddOrUpdateReturnParamActual("Actual", XA.Value);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        return;
+                                }
+                                attribute = e.GetAttribute(value);
+                                Reporter.ToLog(eLogLevel.ERROR, "Error happend", ex);
+                            }
+                            act.AddOrUpdateReturnParamActual("Actual", attribute);
+                        }
+                        else
+                        {
+                            act.Error = "Error: Element not found - " + act.LocateBy + "- '" + act.LocateValueCalculated + "'";
+                            return;
+                        }
+                        break;
 
-            //        default:
-            //            mSeleniumDriver.GenElementHandler(act);
-            //            break;
-            //    }
-            //}
-            //catch(Exception ex)
-            //{
-            //    act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-            //}
-        //}
+                    //case ActGenElement.eGenElementAction.ApplitoolsCheckPoint:
+                    //    //TODO: add dynamic name for checkpoint
+                    //    //eyes.CheckWindow(TimeSpan.FromSeconds(5),"Checkpoint name");
+                    //break;
 
-        //private void MobileDeviceActionHandler(ActMobileDevice act)
-        //{
-        //    ITouchAction tc;
-        //    try
-        //    {
-        //        switch (act.MobileDeviceAction)
-        //        {
-        //            case ActMobileDevice.eMobileDeviceAction.PressXY:
-        //                tc = new TouchAction(Driver);
-        //                try
-        //                {
-        //                    tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-        //                }
-        //                break;
+                    default:
+                        mSeleniumDriver.GenElementHandler(act);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+            }
+        }
 
-        //            case ActMobileDevice.eMobileDeviceAction.LongPressXY:
-        //                tc = new TouchAction(Driver);
-        //                try
-        //                {
-        //                    tc.LongPress(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-        //                }
-        //                break;
+        private void MobileDeviceActionHandler(ActMobileDevice act)
+        {
+            ITouchAction tc;
+            try
+            {
+                switch (act.MobileDeviceAction)
+                {
+                    case ActMobileDevice.eMobileDeviceAction.PressXY:
+                        tc = new TouchAction(Driver);
+                        try
+                        {
+                            tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.TapXY:
-        //                try
-        //                {
-        //                    TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-        //                }
-        //                break;                   
+                    case ActMobileDevice.eMobileDeviceAction.LongPressXY:
+                        tc = new TouchAction(Driver);
+                        try
+                        {
+                            tc.LongPress(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.PressBackButton:
-        //                PressBackBtn();
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.TapXY:
+                        try
+                        {
+                            TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
-        //                PressHomebtn();
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.PressBackButton:
+                        PerformBackButtonPress();
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.PressMenuButton:
-        //                PressMenubtn();
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
+                        PerformHomeButtonPress();
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-        //                SwipeScreen(eSwipeSide.Down);
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.PressMenuButton:
+                        PerformMenuButtonPress();
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-        //                SwipeScreen(eSwipeSide.Up);
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.SwipeDown:
+                        SwipeScreen(eSwipeSide.Down);
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
-        //                SwipeScreen(eSwipeSide.Left);
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.SwipeUp:
+                        SwipeScreen(eSwipeSide.Up);
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.SwipeRight:
-        //                SwipeScreen(eSwipeSide.Right);
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
+                        SwipeScreen(eSwipeSide.Left);
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.Wait:
-        //                Thread.Sleep(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")) * 1000);
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.SwipeRight:
+                        SwipeScreen(eSwipeSide.Right);
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
-        //                TakeScreenShot(act);
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.Wait:
+                        Thread.Sleep(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")) * 1000);
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.RefreshDeviceScreenImage:
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
+                        TakeScreenShot(act);
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.DragXYXY:                                             
-        //                try
-        //                {
-        //                    DoDrag(     Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]),
-        //                                Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]),
-        //                                Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[2]),
-        //                                Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[3]));
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-        //                }
-        //                break;
-        //            case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
-        //                Driver.LaunchApp();
-        //                break;
+                    case ActMobileDevice.eMobileDeviceAction.RefreshDeviceScreenImage:
+                        break;
 
-        //            case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:                       
-        //                string[] arr = act.ValueForDriver.Split(',');
-        //                int x1 = Int32.Parse(arr[0]);
-        //                int y1 = Int32.Parse( arr[1]);
-        //                int x2 = Int32.Parse( arr[2]);
-        //                int y2 = Int32.Parse( arr[3]);
-        //                ITouchAction swipe;
-        //                swipe = BuildDragAction(Driver, x1, y1,x2,y2, 1000);
-        //                swipe.Perform();
-        //                break;
-        //            default:
-        //                throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-        //    }
-        //}
+                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
+                        try
+                        {
+                            DoDrag(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]),
+                                        Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]),
+                                        Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[2]),
+                                        Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[3]));
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                        }
+                        break;
+                    case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
+                        Driver.LaunchApp();
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+                        string[] arr = act.ValueForDriver.Split(',');
+                        int x1 = Int32.Parse(arr[0]);
+                        int y1 = Int32.Parse(arr[1]);
+                        int x2 = Int32.Parse(arr[2]);
+                        int y2 = Int32.Parse(arr[3]);
+                        ITouchAction swipe;
+                        swipe = BuildDragAction(Driver, x1, y1, x2, y2, 1000);
+                        swipe.Perform();
+                        break;
+                    default:
+                        throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+            }
+        }
 
         public override void HighlightActElement(Act act)
         {
-        }        
+        }
 
-        //private void TakeScreenShot(Act act)
-        //{
-        //    try
-        //    {
-        //        ActScreenShot actss = (ActScreenShot)act;
-        //        if (actss.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow && actss.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-        //        {
-        //            createScreenShot(act);
-        //        }
-        //        else
-        //        {
-        //            String currentWindow;
-        //            currentWindow = Driver.CurrentWindowHandle;
-        //            ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
-        //            foreach (String winHandle in openWindows)
-        //            {  
-        //                createScreenShot(act);
-        //                Driver.SwitchTo().Window(currentWindow);
-        //            }
-        //        }
-        //        return;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        act.Error = "Screen shot Error: Action failed to be performed, Details: " + ex.Message;
-        //    }
-        //}
+        private void TakeScreenShot(Act act)
+        {
+            try
+            {
+                ActScreenShot actss = (ActScreenShot)act;
+                if (actss.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow && actss.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                {
+                    CreateScreenShot(act);
+                }
+                else
+                {
+                    String currentWindow;
+                    currentWindow = Driver.CurrentWindowHandle;
+                    ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
+                    foreach (String winHandle in openWindows)
+                    {
+                        CreateScreenShot(act);
+                        Driver.SwitchTo().Window(currentWindow);
+                    }
+                }
+                return;
+            }
+            catch (Exception ex)
+            {
+                act.Error = "Screen shot Error: Action failed to be performed, Details: " + ex.Message;
+            }
+        }
 
-        //private void createScreenShot(Act act)
-        //{
-        //    Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-        //    string filename = Path.GetTempFileName();
-        //    ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+        private void CreateScreenShot(Act act)
+        {
+            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            string filename = Path.GetTempFileName();
+            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
 
-        //    Bitmap tmp = new System.Drawing.Bitmap(filename);
-        //    try
-        //    {
-        //        if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-        //    }
-        //    act.AddScreenShot(tmp);
-        //}
-        
+            Bitmap tmp = new System.Drawing.Bitmap(filename);
+            try
+            {
+                //if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error happend during Create Screenshot", ex);
+            }
+            act.AddScreenShot(tmp);
+        }
+
         public Screenshot GetScreenShot()
         {
             Screenshot ss=null;
@@ -876,14 +754,10 @@ namespace Amdocs.Ginger.CoreNET
             catch
             {
                 Bitmap bmp = new Bitmap (1024, 768);
-
                 var ms = new MemoryStream ();
-
-
                 bmp.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
                 var byteImage = ms.ToArray ();
                 ss = new Screenshot (Convert.ToBase64String (byteImage));
-
             }
              return ss;
         }
@@ -900,7 +774,7 @@ namespace Amdocs.Ginger.CoreNET
             Driver.PerformTouchAction(t);
         }
 
-        public void PressBackBtn()
+        public void PerformBackButtonPress()
         {
             switch (DriverPlatformType)
             {
@@ -913,7 +787,7 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
-        public void PressHomebtn()
+        public void PerformHomeButtonPress()
         {               
             switch (DriverPlatformType)
             {
@@ -922,12 +796,12 @@ namespace Amdocs.Ginger.CoreNET
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
+                    Driver.ExecuteScript("mobile: pressButton", "name", "home");
                     break;
             }
         }
 
-        public void PressMenubtn()
+        public void PerformMenuButtonPress()
         {
             switch (DriverPlatformType)
             {
@@ -1014,7 +888,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override bool IsRunning()
         {
-            return mConnectedToDevice;           
+            return mIsDeviceConnected;           
         }
         
         public override bool IsWindowExplorerSupportReady()
@@ -1393,6 +1267,51 @@ namespace Amdocs.Ginger.CoreNET
         List<AppWindow> IWindowExplorer.GetWindowAllFrames()
         {
             throw new NotImplementedException();
+        }
+
+        public eDevicePlatformType GetDevicePlatformType()
+        {
+            return DevicePlatformType;
+        }
+
+        public eAppType GetAppType()
+        {
+            return AppType;
+        }
+
+        public bool GetAutoRefreshDeviceWindowScreenshot()
+        {
+            return AutoRefreshDeviceWindowScreenshot;
+        }
+
+        public Byte[] GetScreenshotImage()
+        {
+            return Driver.GetScreenshot().AsByteArray;
+        }
+
+        public void PerformTap(long x, long y)
+        {
+            TapXY(x, y);
+        }
+
+        public void PerformDrag(Point start, Point end)
+        {
+           DoDrag(start.X, start.Y, end.X, end.Y);
+        }
+
+        public void SwitchToLandscape()
+        {
+            Driver.Orientation = ScreenOrientation.Landscape;
+        }
+
+        public void SwitchToPortrait()
+        {
+            Driver.Orientation = ScreenOrientation.Portrait;
+        }
+
+        public eDeviceOrientation GetOrientation()
+        {
+            return (eDeviceOrientation)Enum.Parse(typeof(eDeviceOrientation), Driver.Orientation.ToString());
         }
     }
 }

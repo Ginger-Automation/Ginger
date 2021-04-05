@@ -362,7 +362,7 @@ namespace GingerCore.GeneralLib
                 {
                     if (String.IsNullOrEmpty(AttachmentFileName) == false)
                     {
-                        Attachment a = new Attachment(AttachmentFileName);
+                        Attachment a = new Attachment(WorkSpace.Instance.OSHelper.AdjustFilePath(AttachmentFileName));
                         myMail.Attachments.Add(a);
                     }
                 }

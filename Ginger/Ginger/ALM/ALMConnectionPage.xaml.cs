@@ -47,6 +47,7 @@ namespace Ginger.ALM
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ServerURLTextBox, TextBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMServerURL));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RestAPICheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.UseRest));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ZephyrEntTokenCheckBox, CheckBox.IsCheckedProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ZepherEntToken));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMUserName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
@@ -91,7 +92,7 @@ namespace Ginger.ALM
         
         private void SetControls()
         {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !(string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility==Visibility.Visible))
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && (!string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility == Visibility.Visible))
             {
                 LoginServerButton.IsEnabled = true;
             }
@@ -113,6 +114,7 @@ namespace Ginger.ALM
             UserNameTextBox.IsEnabled = true;
             PasswordTextBox.IsEnabled = true;
             RestAPICheckBox.IsEnabled = true;
+            ZephyrEntTokenCheckBox.IsEnabled = true;
             if (isConnWin)
             {
                 LoginServerButton.Content = "Connect ALM Server";
@@ -129,6 +131,7 @@ namespace Ginger.ALM
             {
                 ALMDomainSelectionPanel.Visibility = Visibility.Collapsed;
                 RestAPICheckBox.IsEnabled = false;
+                ZephyrEntTokenCheckBox.IsEnabled = false;
             }
             else
             {
@@ -141,6 +144,7 @@ namespace Ginger.ALM
                 UserNameTextBox.IsEnabled = false;
                 PasswordTextBox.IsEnabled = false;
                 RestAPICheckBox.IsEnabled = false;
+                ZephyrEntTokenCheckBox.IsEnabled = false;
                 LoginServerButton.Content = "Change Server Details";
             }
 
@@ -189,6 +193,10 @@ namespace Ginger.ALM
             else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane && !(bool)qTestRadioButton.IsChecked)
             {
                 OctaneRadioButton.IsChecked = true;
+            }
+            else if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise && !(bool)ZephyrEntRadioButton.IsChecked)
+            {
+                ZephyrEntRadioButton.IsChecked = true;
             }
 
         }
@@ -436,6 +444,7 @@ namespace Ginger.ALM
             xDefualtImageJIRA.Visibility = Visibility.Collapsed;
             xDefualtImageQTest.Visibility = Visibility.Collapsed;
             xDefualtImageOctane.Visibility = Visibility.Collapsed;
+            xDefualtImageZephyrEnt.Visibility = Visibility.Collapsed;
             if (!isServerDetailsCorrect)
             {
                 ServerURLTextBox.IsEnabled = true;
@@ -446,7 +455,36 @@ namespace Ginger.ALM
                 ServerURLTextBox.IsEnabled = false;
                 ServerURLTextBox.IsReadOnly = true;
             }
+            RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+            JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
+            DownloadPackageLink.Visibility = Visibility.Collapsed;
+            Grid.SetColumnSpan(ServerURLTextBox, 2);
+            ExampleURLHint.Content = "Example: http://server:port ";
+            ServerURLTextBox.Cursor = null;
+            
+            RestAPICheckBox.Visibility = Visibility.Collapsed;
+            RestAPICheckBox.IsChecked = true;
+            RestAPICheckBox.IsEnabled = false;
 
+            ZephyrEntTokenCheckBox.Visibility = Visibility.Collapsed;
+            ZephyrEntTokenCheckBox.IsChecked = false;
+            ZephyrEntTokenCheckBox.IsEnabled = false;
+
+            QCRadioButton.FontWeight = FontWeights.Regular;
+            QCRadioButton.Foreground = Brushes.Black;
+            RQMRadioButton.FontWeight = FontWeights.Regular;
+            RQMRadioButton.Foreground = Brushes.Black;
+            RallyRadioButton.FontWeight = FontWeights.Regular;
+            RallyRadioButton.Foreground = Brushes.Black;
+            JiraRadioButton.FontWeight = FontWeights.Regular;
+            JiraRadioButton.Foreground = Brushes.Black;
+            qTestRadioButton.FontWeight = FontWeights.Regular;
+            qTestRadioButton.Foreground = Brushes.Black;
+            OctaneRadioButton.FontWeight = FontWeights.Regular;
+            OctaneRadioButton.Foreground = Brushes.Black;
+            ZephyrEntRadioButton.FontWeight = FontWeights.Regular;
+            ZephyrEntRadioButton.Foreground = Brushes.Black;
+            xPasswordPanel.Visibility = Visibility.Visible;
             switch (CurrentAlmConfigurations.AlmType)
             {
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC:
@@ -458,21 +496,9 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
-                    ServerURLTextBox.Cursor = null;
-                    RQMRadioButton.FontWeight = FontWeights.Regular;
-                    RQMRadioButton.Foreground = Brushes.Black;
-                    RallyRadioButton.FontWeight = FontWeights.Regular;
-                    RallyRadioButton.Foreground = Brushes.Black;                  
+                    ServerURLTextBox.Cursor = null;                 
                     RestAPICheckBox.Visibility = Visibility.Visible;
                     RestAPICheckBox.IsEnabled = true;
-                    JiraRadioButton.FontWeight = FontWeights.Regular;
-                    JiraRadioButton.Foreground = Brushes.Black;
-                    qTestRadioButton.FontWeight = FontWeights.Regular;
-                    qTestRadioButton.Foreground = Brushes.Black;
-                    OctaneRadioButton.FontWeight = FontWeights.Regular;
-                    OctaneRadioButton.Foreground = Brushes.Black;
-                    xPasswordPanel.Visibility = Visibility.Visible;
-
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RQM:
@@ -487,18 +513,6 @@ namespace Ginger.ALM
                     ServerURLTextBox.IsEnabled = false;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     ServerURLTextBox.Cursor = Cursors.Arrow;
-                    QCRadioButton.FontWeight = FontWeights.Regular;
-                    QCRadioButton.Foreground = Brushes.Black;
-                    RallyRadioButton.FontWeight = FontWeights.Regular;
-                    RallyRadioButton.Foreground = Brushes.Black;
-                    RestAPICheckBox.Visibility = Visibility.Hidden;
-                    JiraRadioButton.FontWeight = FontWeights.Regular;
-                    JiraRadioButton.Foreground = Brushes.Black;
-                    qTestRadioButton.FontWeight = FontWeights.Regular;
-                    qTestRadioButton.Foreground = Brushes.Black;
-                    OctaneRadioButton.FontWeight = FontWeights.Regular;
-                    OctaneRadioButton.Foreground = Brushes.Black;
-                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.RALLY:
@@ -511,18 +525,6 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";                    
                     ServerURLTextBox.Cursor = null;
-                    QCRadioButton.FontWeight = FontWeights.Regular;
-                    QCRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.FontWeight = FontWeights.Regular;
-                    RQMRadioButton.Foreground = Brushes.Black;
-                    RestAPICheckBox.Visibility = Visibility.Hidden;
-                    JiraRadioButton.FontWeight = FontWeights.Regular;
-                    JiraRadioButton.Foreground = Brushes.Black;
-                    qTestRadioButton.FontWeight = FontWeights.Regular;
-                    qTestRadioButton.Foreground = Brushes.Black;
-                    OctaneRadioButton.FontWeight = FontWeights.Regular;
-                    OctaneRadioButton.Foreground = Brushes.Black;
-                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira:
@@ -535,18 +537,6 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();                 
                     ServerURLTextBox.Cursor = null;
-                    QCRadioButton.FontWeight = FontWeights.Regular;
-                    QCRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.FontWeight = FontWeights.Regular;
-                    RQMRadioButton.Foreground = Brushes.Black;
-                    RestAPICheckBox.Visibility = Visibility.Hidden;
-                    RallyRadioButton.FontWeight = FontWeights.Regular;
-                    RallyRadioButton.Foreground = Brushes.Black;
-                    qTestRadioButton.FontWeight = FontWeights.Regular;
-                    qTestRadioButton.Foreground = Brushes.Black;
-                    OctaneRadioButton.FontWeight = FontWeights.Regular;
-                    OctaneRadioButton.Foreground = Brushes.Black;
-                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Qtest:
@@ -559,20 +549,8 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: https://qtest-url.com/ ";                    
                     ServerURLTextBox.Cursor = null;
-                    QCRadioButton.FontWeight = FontWeights.Regular;
-                    QCRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.FontWeight = FontWeights.Regular;
-                    RQMRadioButton.Foreground = Brushes.Black;
-                    RestAPICheckBox.Visibility = Visibility.Visible;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
-                    RallyRadioButton.FontWeight = FontWeights.Regular;
-                    RallyRadioButton.Foreground = Brushes.Black;
-                    JiraRadioButton.FontWeight = FontWeights.Regular;
-                    JiraRadioButton.Foreground = Brushes.Black;
-                    OctaneRadioButton.FontWeight = FontWeights.Regular;
-                    OctaneRadioButton.Foreground = Brushes.Black;
-                    xPasswordPanel.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane:
@@ -585,23 +563,26 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:port ";
                     ServerURLTextBox.Cursor = null;
-                    QCRadioButton.FontWeight = FontWeights.Regular;
-                    QCRadioButton.Foreground = Brushes.Black;
-                    RQMRadioButton.FontWeight = FontWeights.Regular;
-                    RQMRadioButton.Foreground = Brushes.Black;
-                    RestAPICheckBox.Visibility = Visibility.Collapsed;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
-                    RallyRadioButton.FontWeight = FontWeights.Regular;
-                    RallyRadioButton.Foreground = Brushes.Black;
-                    JiraRadioButton.FontWeight = FontWeights.Regular;
-                    JiraRadioButton.Foreground = Brushes.Black;
-                    qTestRadioButton.FontWeight = FontWeights.Regular;
-                    qTestRadioButton.Foreground = Brushes.Black;
-
                     xPasswordPanel.Visibility = Visibility.Collapsed;
+                    break;
 
-
+                case GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise:
+                    xDefualtImageZephyrEnt.Visibility = Visibility.Visible;
+                    ZephyrEntRadioButton.FontWeight = FontWeights.ExtraBold;
+                    ZephyrEntRadioButton.Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                    RQMLoadConfigPackageButton.Visibility = Visibility.Hidden;
+                    JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
+                    DownloadPackageLink.Visibility = Visibility.Collapsed;
+                    Grid.SetColumnSpan(ServerURLTextBox, 2);
+                    ExampleURLHint.Content = "Example: http://server:port ";
+                    ServerURLTextBox.Cursor = null;
+                    RestAPICheckBox.IsChecked = true;
+                    RestAPICheckBox.IsEnabled = false;
+                    ZephyrEntTokenCheckBox.Visibility = Visibility.Visible;
+                    ZephyrEntTokenCheckBox.IsChecked = true;
+                    ZephyrEntTokenCheckBox.IsEnabled = true;
                     break;
 
                 default:
@@ -653,6 +634,10 @@ namespace Ginger.ALM
                         almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.Octane;
                         break;
 
+                    case "ZephyrEntRadioButton":
+                        almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.ZephyrEnterprise;
+                        break;
+
                     default:
                         //Not used
                         break;
@@ -661,6 +646,7 @@ namespace Ginger.ALM
                 BindingOperations.ClearAllBindings(ServerURLTextBox);
                 BindingOperations.ClearAllBindings(RestAPICheckBox);
                 BindingOperations.ClearAllBindings(UserNameTextBox);
+                BindingOperations.ClearAllBindings(ZephyrEntTokenCheckBox);
                 BindingOperations.ClearAllBindings(PasswordTextBox);
                 BindingOperations.ClearAllBindings(DomainComboBox);
                 BindingOperations.ClearAllBindings(ProjectComboBox);
@@ -727,7 +713,6 @@ namespace Ginger.ALM
             CurrentAlmUserConfigurations.ALMPassword = PasswordTextBox.Password;
             SetControls();
         }
-
         private void ProjectComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ProjectComboBox != null && ProjectComboBox.SelectedItem != null)
@@ -773,6 +758,16 @@ namespace Ginger.ALM
         private void RestAPICheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             ExampleURLHint.Content = "Example: http://server:8080/almbin";
+        }
+        private void ZephyrEntTokenCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+            PasswordLabel.Content = "Token";
+        }
+
+        private void ZephyrEntTokenCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            PasswordLabel.Content = "Password";
         }
         private void ShowToolTip(object sender, MouseEventArgs e)
         {

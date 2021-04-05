@@ -72,9 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">      
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="ALM_Common, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -169,6 +169,14 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\ZephyrEntSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Zepyhr_Ent_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\Zepyhr_Ent_Repository.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Actions\ScreenCapture\LocatorImageCaptureWindow.xaml">
@@ -198,10 +206,6 @@
     <Page Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Drivers\Appium\AppiumDriverWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Drivers\Common\DeviceViewPage.xaml">
       <SubType>Designer</SubType>
@@ -269,7 +273,6 @@
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActReadTextFile.cs" />
-    <Compile Include="Actions\ActValidation.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
@@ -294,7 +297,6 @@
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
-    <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
@@ -386,6 +388,10 @@
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
+    <Compile Include="ALM\ZephyrEntCore.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ExportEntity.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntExportManager.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntImportManager.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
@@ -447,9 +453,6 @@
     <Compile Include="Animations\Animations.cs" />
     <Compile Include="DragDrop\VisualDrag.xaml.cs">
       <DependentUpon>VisualDrag.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Drivers\Appium\AppiumDriverWindow.xaml.cs">
-      <DependentUpon>AppiumDriverWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\ConsoleDriverLib\ConsoleNewActionPage.xaml.cs">
       <DependentUpon>ConsoleNewActionPage.xaml</DependentUpon>

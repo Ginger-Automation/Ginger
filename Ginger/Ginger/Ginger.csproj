@@ -169,6 +169,10 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\GingerCore\DLLs\ZephyrEntSDK.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -214,6 +218,9 @@
     </Compile>
     <Compile Include="Actions\ActionConversion\SelectActivityWzardPage.xaml.cs">
       <DependentUpon>SelectActivityWzardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Actions\ActionEditPages\ActValidationEditPage.xaml.cs">
+      <DependentUpon>ActValidationEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\ActionLogConfigPage.xaml.cs">
       <DependentUpon>ActionLogConfigPage.xaml</DependentUpon>
@@ -277,6 +284,18 @@
     <Compile Include="ALM\Qtest\TreeViewItems\QtestCycleTreeItem.cs" />
     <Compile Include="ALM\Qtest\TreeViewItems\QtestSuiteTreeItem.cs" />
     <Compile Include="ALM\Repository\QtestRepository.cs" />
+    <Compile Include="ALM\Repository\ZephyrEnt_Repository.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\TestPlanningFolderTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\TestRepositoryFolderTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\ZephyrEntPhaseTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\ZephyrEntFolderTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\ZephyrEntRepositoryExplorerPage.xaml.cs">
+      <DependentUpon>ZephyrEntRepositoryExplorerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ALM\ZephyrEnt\TreeViewItems\ZephyrEntTreeItem.cs" />
+    <Compile Include="ALM\ZephyrEnt\ZephyrEntPlanningExplorerPage.xaml.cs">
+      <DependentUpon>ZephyrEntPlanningExplorerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ALM\SSOPage.xaml.cs">
       <DependentUpon>SSOPage.xaml</DependentUpon>
     </Compile>
@@ -455,8 +474,15 @@
     <Compile Include="Activities\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\AppiumDriverEditPage.xaml.cs">
+    <Compile Include="Drivers\DriversEditPages\AppiumDriverEditPage.xaml.cs">
       <DependentUpon>AppiumDriverEditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\DriversWindows\OLD_AppiumDriverWindow.xaml.cs">
+      <DependentUpon>OLD_AppiumDriverWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Drivers\DriversWindows\DriverWindowHandler.cs" />
+    <Compile Include="Drivers\DriversWindows\MobileDriverWindow.xaml.cs">
+      <DependentUpon>MobileDriverWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GeneralWindows\HelpLayout\DrawArrow.cs" />
     <Compile Include="GeneralWindows\HelpLayout\HelpLayoutArgs.cs" />
@@ -1396,7 +1422,7 @@
     <Compile Include="Drivers\Common\DeviceEditorPage.xaml.cs">
       <DependentUpon>DeviceEditorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\SeleniumRemoteWebDriverEditPage.xaml.cs">
+    <Compile Include="Drivers\DriversEditPages\SeleniumRemoteWebDriverEditPage.xaml.cs">
       <DependentUpon>SeleniumRemoteWebDriverEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exports\GingerToCSV.cs" />
@@ -2506,6 +2532,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Actions\ActionEditPages\ActValidationEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ALM\JIRA\JiraZephyrCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2517,6 +2547,14 @@
     <Page Include="ALM\Qtest\QtestCyclesExplorerPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ALM\ZephyrEnt\ZephyrEntRepositoryExplorerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ALM\ZephyrEnt\ZephyrEntPlanningExplorerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ALM\SSOPage.xaml">
       <SubType>Designer</SubType>
@@ -2822,7 +2860,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\AppiumDriverEditPage.xaml">
+    <Page Include="Drivers\DriversEditPages\AppiumDriverEditPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Drivers\DriversWindows\OLD_AppiumDriverWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Drivers\DriversWindows\MobileDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3175,6 +3221,10 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\android.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\ios.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <Content Include="UserTypeConfiguration.XML">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -3875,7 +3925,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\SeleniumRemoteWebDriverEditPage.xaml">
+    <Page Include="Drivers\DriversEditPages\SeleniumRemoteWebDriverEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -90,5 +90,9 @@ namespace Amdocs.Ginger.Common.OS
             removeModules.ForEach(m => modules.Remove(m));
 
         }
+        public override string AdjustFilePath(string path)
+        {
+            return path.Replace("\\", "/");
+        }
     }
 }

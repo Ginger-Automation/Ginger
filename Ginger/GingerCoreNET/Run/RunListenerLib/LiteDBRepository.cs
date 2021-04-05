@@ -72,14 +72,46 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public override object SetReportAction(GingerCore.Actions.Act action, Context context, Amdocs.Ginger.Common.eExecutedFrom executedFrom, bool offlineMode = false)
         {
-            //return new LiteDbAction();
+            //save screenshots
+            string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+
+            int screenShotCountPerAction = 0;
+            for (var s = 0; s < action.ScreenShots.Count; s++)
+            {
+                try
+                {
+                    screenShotCountPerAction++;
+                    string imagesFolderName = Path.Combine(executionLogFolder, "LiteDBImages");
+                    var screenShotName = string.Concat( @"ScreenShot_" ,action.Guid , "_" , action.StartTimeStamp.ToString("hhmmss") , "_" + screenShotCountPerAction.ToString() , ".png");
+
+                    var completeSSPath = Path.Combine(imagesFolderName, screenShotName);
+                    if (!System.IO.Directory.Exists(imagesFolderName))
+                    {
+                        System.IO.Directory.CreateDirectory(imagesFolderName);
+                    }
+                    if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
+                    {
+                        System.IO.File.Copy(action.ScreenShots[s], completeSSPath, true);
+                    }
+                    else
+                    {
+                        System.IO.File.Move(action.ScreenShots[s], completeSSPath);
+                        action.ScreenShots[s] = completeSSPath;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
+                    screenShotCountPerAction--;
+                }
+            }
+
             return GetActionReportData(action, context, executedFrom);//Returning ActionReport so we will get execution info on the console
         }
 
         private object MapActionToLiteDb(GingerCore.Actions.Act action, Context context, eExecutedFrom executedFrom)
         {
             bool isActExsits = false;
-            string executionLogFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
             LiteDbAction liteDbAction = new LiteDbAction();
             liteDbAction.SetReportData(GetActionReportData(action, context, executedFrom));
             liteDbAction.Seq = ++this.actionSeq;
@@ -89,34 +121,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 liteDbAction._id = action.LiteDbId;
             }
-            // Save screenShots
-            int screenShotCountPerAction = 0;
-            for (var s = 0; s < action.ScreenShots.Count; s++)
-            {
-                try
-                {
-                    screenShotCountPerAction++;
-                    string imagesFolderName = Path.Combine(executionLogFolder,"LiteDBImages");
-                    if (!System.IO.Directory.Exists(imagesFolderName))
-                    {
-                        System.IO.Directory.CreateDirectory(imagesFolderName);
-                    }
-                    if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
-                    {
-                        System.IO.File.Copy(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png", true);
-                    }
-                    else
-                    {
-                        System.IO.File.Move(action.ScreenShots[s], imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png");
-                        action.ScreenShots[s] = imagesFolderName + @"\ScreenShot_" + liteDbAction.GUID + "_" + liteDbAction.StartTimeStamp.ToString("hhmmss") + "_" + screenShotCountPerAction.ToString() + ".png";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to move screen shot of the action:'" + action.Description + "' to the Execution Logger folder", ex);
-                    screenShotCountPerAction--;
-                }
-            }
+
             //change the paths to Defect suggestion list
             var defectSuggestion = WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.FirstOrDefault(z => z.FailedActionGuid == action.Guid);
             if (defectSuggestion != null)
