@@ -12,12 +12,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver
 
         public void Close()
         {
-            
+            //not required for console
         }
 
         public void ShowDriverWindow()
-        {
-            
+        {//not required for console
+
         }
 
         public void UpdateRequestParams(string uRL, string value, string mRequest)
