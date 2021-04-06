@@ -110,6 +110,7 @@ namespace GingerCoreNET.ALMLib
             set
             {
                 mJiraTestingALM = value;
+                OnPropertyChanged(nameof(JiraTestingALM));
             }
         }
 
