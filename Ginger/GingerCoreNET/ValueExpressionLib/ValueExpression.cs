@@ -139,7 +139,7 @@ namespace GingerCore
             get
             {
                 Calculate();
-                return WorkSpace.Instance.OSHelper.AdjustOSChars(mValueCalculated);
+                return mValueCalculated;
             }
         }
 

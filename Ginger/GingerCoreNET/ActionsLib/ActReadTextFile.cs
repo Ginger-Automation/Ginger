@@ -23,6 +23,7 @@ using System.IO;
 using System.Text;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using System.Runtime.InteropServices;
 // This class is for dummy act - good for agile, and to be replace later on when real
 //  act is available, so tester can write the step to be.
 namespace GingerCore.Actions
@@ -180,8 +181,14 @@ namespace GingerCore.Actions
                     {
                         LinesfromFile.Add(GetInputParamCalculatedValue(Fields.TextToWrite));
                     }
-
-                    WriteLinesWithEncoding(calculatedFilePath, (IEnumerable<string>)LinesfromFile);
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        WriteLinesWithEncoding(calculatedFilePath, (IEnumerable<string>)LinesfromFile);
+                    }
+                    else
+                    {
+                        WriteTextWithEncoding(calculatedFilePath, String.Join("\r\n", LinesfromFile) + "\r\n");
+                    }
                 }
             }
             else
