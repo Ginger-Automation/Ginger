@@ -30,10 +30,18 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         if (args.Driver is IDriverWindow)//TODO: think if better to do it with reflection using DriverWindowPath
                         {
-                            MobileDriverWindow mobileDriverWindow = new MobileDriverWindow((IMobileDriverWindow)args.Driver, (Agent)args.DataObject);
-                            mOpenWindowsDic.Add(args.Driver, mobileDriverWindow);
-                            mobileDriverWindow.Show();
-                            System.Windows.Threading.Dispatcher.Run();
+                            try
+                            {
+                                MobileDriverWindow mobileDriverWindow = new MobileDriverWindow((IMobileDriverWindow)args.Driver, (Agent)args.DataObject);
+                                mOpenWindowsDic.Add(args.Driver, mobileDriverWindow);
+                                mobileDriverWindow.Show();
+                                System.Windows.Threading.Dispatcher.Run();
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error occured while loading/showing Agent windows, error: '{0}'", ex.Message));
+                                Reporter.ToLog(eLogLevel.ERROR, "Error occured while loading/showing Agent windows", ex);
+                            }
                         }
                     }));
                     staThread.SetApartmentState(ApartmentState.STA);
@@ -47,10 +55,10 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         try
                         {
-                            mOpenWindowsDic[args.Driver].Close();
+                            //mOpenWindowsDic[args.Driver].Close();
                             mOpenWindowsDic.Remove(args.Driver);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.WARN, "Exception while trying to close Driver Window", ex);
                         }

@@ -27,6 +27,7 @@ namespace Ginger.Drivers.DriversWindows
         bool mIsMousePressed;
         bool mIsItDragAction;
         bool mSelfClosing;
+        bool mUserClosing;
         long mRectangleStartPoint_X;
         long mRectangleStartPoint_Y;
         System.Windows.Point mMouseStartPoint;
@@ -57,13 +58,17 @@ namespace Ginger.Drivers.DriversWindows
                         {
                             xLoadingPnl.Visibility = Visibility.Collapsed;
                             xDeviceScreenshotCanvas.Visibility = Visibility.Visible;
+                            xLoadingLbl.Content = "Loading Device Screenshot...";
                             RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
                             DoContinualDeviceScreenshotRefresh();
                         }
                         else
                         {
-                            DoSelfClose();
+                            if (!mSelfClosing)
+                            {
+                                DoSelfClose();
+                            }
                         }
                         break;
 
@@ -268,8 +273,10 @@ namespace Ginger.Drivers.DriversWindows
             }
         }
 
+        
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            mUserClosing = true;
             if (!mSelfClosing)
             {
                 if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
@@ -342,6 +349,8 @@ namespace Ginger.Drivers.DriversWindows
                 }
                 this.Title = string.Format("{0} Device View", mAgent.Name);
                 this.Width = 320;
+                this.Height = 650;
+                xLoadingLbl.Content = "Connecting to Device...";
 
                 //Configurations
                 SetConfigurationsPanelView(false);
@@ -527,17 +536,23 @@ namespace Ginger.Drivers.DriversWindows
                         return true;
                     }
                     catch (Exception ex)
-                    {
-                        Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
+                    {                       
                         this.Dispatcher.Invoke(() =>
                         {
                             if (!mDriver.IsDeviceConnected)
                             {
-                                DoSelfClose();
+                                if (!mSelfClosing)
+                                {
+                                    DoSelfClose();
+                                }
                             }
-                            else if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
+                            else
                             {
-                                xPostOperationRdBtn.IsChecked = true;
+                                Reporter.ToUser(eUserMsgKey.MobileRefreshScreenShotFailed, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
+                                if (mDeviceAutoScreenshotRefreshMode == eAutoScreenshotRefreshMode.Live)
+                                {
+                                    xPostOperationRdBtn.IsChecked = true;
+                                }
                             }
                         });
                         return false;
@@ -554,7 +569,7 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         xRefreshButton.ButtonImageType = Amdocs.Ginger.Common.Enums.eImageType.Refresh;
                         xRefreshButton.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
-                        xRefreshButton.ToolTip = "Refresh Device View";
+                        xRefreshButton.ToolTip = "Refresh Device Screenshot";
                     });
                 }
             }                
@@ -636,7 +651,7 @@ namespace Ginger.Drivers.DriversWindows
             {
                 xConfigurationsFrame.Visibility = System.Windows.Visibility.Visible;
                 xConfigurationsSplitter.Visibility = System.Windows.Visibility.Visible;
-                xConfigurationsCol.Width = new GridLength(250);
+                xConfigurationsCol.Width = new GridLength(220);
                 this.Width = this.Width + Convert.ToDouble(xConfigurationsCol.Width.ToString());
                 xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
                 xConfigurationsBtn.ToolTip = "Hide Configurations";
@@ -656,7 +671,10 @@ namespace Ginger.Drivers.DriversWindows
         private void DoSelfClose()
         {
             mSelfClosing = true;
-            this.Close();
+            if (!mUserClosing)
+            {
+                this.Close();
+            }
         }
         #endregion Functions
 
