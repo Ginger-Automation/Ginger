@@ -302,6 +302,10 @@ namespace Ginger.ALM
             {
                 CurrentAlmConfigurations.JiraTestingALM = (GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType)Enum.Parse(typeof(GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType), JiraTestingALMComboBox.SelectedItem.ToString());
             }
+            if (JiraTestingALMComboBox != null && JiraTestingALMComboBox.SelectedItem == null)
+            {
+                SelectJiraTestingType();
+            }
         }
 
         private void RefreshProjectsList()
@@ -362,12 +366,17 @@ namespace Ginger.ALM
             {
                 JiraTestingALMComboBox.Items.Add(jiraTestingALM);
             }
+            
+            SelectJiraTestingType();
+        }
 
+        private void SelectJiraTestingType()
+        {
             if (JiraTestingALMComboBox.Items.Count > 0)
             {
-                if (JiraTestingALMComboBox.Items.Contains(currJiraTestingALM.ToString()))
+                if (JiraTestingALMComboBox.Items.Contains(CurrentAlmConfigurations.JiraTestingALM.ToString()))
                 {
-                    CurrentAlmConfigurations.JiraTestingALM = currJiraTestingALM;
+                    CurrentAlmConfigurations.JiraTestingALM = CurrentAlmConfigurations.JiraTestingALM;
                     JiraTestingALMComboBox.SelectedIndex = JiraTestingALMComboBox.Items.IndexOf(CurrentAlmConfigurations.JiraTestingALM.ToString());
                 }
                 if (JiraTestingALMComboBox.SelectedIndex == -1)
@@ -376,7 +385,6 @@ namespace Ginger.ALM
                 }
             }
         }
-
         private void ConnectProject()
         {
             if (ConnectProjectButton.Content.ToString() == "Save Project Mapping" || ConnectProjectButton.Content.ToString() == "Connect")
