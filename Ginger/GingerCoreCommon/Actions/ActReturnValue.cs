@@ -132,8 +132,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-       
-
         private string mStoreToValue;
         [IsSerializedForLocalRepository]
         public string StoreToValue
