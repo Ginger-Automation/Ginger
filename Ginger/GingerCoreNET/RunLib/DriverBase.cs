@@ -206,5 +206,13 @@ namespace GingerCore.Drivers
         public virtual void InitDriver(Agent agent)
         {
         }
+
+        /// <summary>
+        /// Name of customized edit page for the driver to load on Agent edit page
+        /// </summary>
+        public virtual string GetDriverEditPage(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            return null;
+        }
     }
 }

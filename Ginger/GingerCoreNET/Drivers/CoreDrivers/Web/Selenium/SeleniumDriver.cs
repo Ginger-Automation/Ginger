@@ -69,6 +69,19 @@ namespace GingerCore.Drivers
             Edge,
             RemoteWebDriver,
         }
+
+        public override string GetDriverEditPage(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            if (driverSubType == Agent.eDriverType.SeleniumRemoteWebDriver)
+            {
+                return "SeleniumRemoteWebDriverEditPage";
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         [UserConfigured]
         [UserConfiguredDescription("Proxy Server:Port")]
         public string Proxy { get; set; }

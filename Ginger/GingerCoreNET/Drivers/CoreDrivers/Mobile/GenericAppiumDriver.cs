@@ -48,7 +48,12 @@ namespace Amdocs.Ginger.CoreNET
 {
     public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow
     {
-        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }       
+        public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
+
+        public override string GetDriverEditPage(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            return "AppiumDriverEditPage";
+        }
 
         //Mobile Driver Configurations
         [UserConfigured]

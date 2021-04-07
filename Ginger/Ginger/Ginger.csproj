@@ -1410,10 +1410,10 @@
       <DependentUpon>QCManagerReportPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\QC\QCManagerReport\QCManagerReportTestCaseDetails.cs" />
-    <Compile Include="Drivers\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml.cs">
+    <Compile Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml.cs">
       <DependentUpon>AndroidADBDriverEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml.cs">
+    <Compile Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml.cs">
       <DependentUpon>AndroidDeviceSelectPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\Common\DeviceEditorPage.xaml.cs">
@@ -3908,11 +3908,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml">
+    <Page Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml">
+    <Page Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
