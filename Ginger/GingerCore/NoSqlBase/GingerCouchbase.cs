@@ -128,10 +128,11 @@ namespace GingerCore.NoSqlBase
 
         private void Disconnect()
         {
-            clusterCB.Dispose();            
+            clusterCB.Dispose();
+            clusterCB = null;
         }
 
-        public bool ConnecttoBucket(string bucketName)
+        public bool ConnectToBucket(string bucketName)
         {
             try
             {
@@ -145,7 +146,7 @@ namespace GingerCore.NoSqlBase
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed To Connect ConnectToBucket Method In GingerCouchBase DB", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                 return false;
             }
         }
@@ -161,8 +162,17 @@ namespace GingerCore.NoSqlBase
             }
             else
             {
-                bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ") + 6);
-                bucketName = bucketName.Substring(0, bucketName.IndexOf(" ")).Replace("`", "");
+                bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf(" from ") + 6);
+                bucketName = bucketName.Trim();
+                int index = bucketName.IndexOf(" ");
+                if (index != -1)
+                {
+                    bucketName = bucketName.Substring(0, index).Replace("`", "");
+                }
+                else
+                {
+                    bucketName = bucketName.Substring(0, bucketName.Length-1).Replace("`", "");
+                }
             }
             return bucketName;
         }
@@ -176,9 +186,9 @@ namespace GingerCore.NoSqlBase
             string SQLCalculated = VE.ValueCalculated;
             string bucketName = GetBucketName(SQLCalculated);
 
-            if(!ConnecttoBucket(bucketName))
+            if(!ConnectToBucket(bucketName))
             {
-                Act.Error = "failed to connect to bucket "+bucketName;
+                Act.Error = "failed to connect bucket "+bucketName;
                 return;
             }
             else
@@ -200,11 +210,15 @@ namespace GingerCore.NoSqlBase
                             Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
                             break;
                         case Actions.ActDBValidation.eDBValidationType.UpdateDB:
-                            var RS1 = clusterCB.Query<dynamic>(SQLCalculated);
+                            result = clusterCB.Query<dynamic>(SQLCalculated);
                             break;
 
                         default:
-                            throw new Exception("Action Not SUpported");
+                            throw new Exception("Action Not Supported");
+                    }
+                    if (result.Errors.Count > 0)
+                    {
+                        Act.Error = "Failed to execute." + Environment.NewLine + " HttpStatusCode : " + ((QueryResult<object>)result).HttpStatusCode + Environment.NewLine + "ErrorMessage : " + result.Errors[0].Message;
                     }
                 }
                 catch (Exception e)
