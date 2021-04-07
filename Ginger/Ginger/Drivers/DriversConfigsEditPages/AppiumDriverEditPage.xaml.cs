@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Ginger.Drivers
+namespace Ginger.Drivers.DriversConfigsEditPages
 {
     /// <summary>
     /// Interaction logic for AppiumDriverEditPage.xaml

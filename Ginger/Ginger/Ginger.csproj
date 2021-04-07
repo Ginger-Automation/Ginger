@@ -471,7 +471,7 @@
     <Compile Include="Activities\ActivitiesListViewPage.xaml.cs">
       <DependentUpon>ActivitiesListViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\DriversEditPages\AppiumDriverEditPage.xaml.cs">
+    <Compile Include="Drivers\DriversConfigsEditPages\AppiumDriverEditPage.xaml.cs">
       <DependentUpon>AppiumDriverEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\DriversWindows\OLD_AppiumDriverWindow.xaml.cs">
@@ -1410,16 +1410,16 @@
       <DependentUpon>QCManagerReportPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ALM\QC\QCManagerReport\QCManagerReportTestCaseDetails.cs" />
-    <Compile Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml.cs">
+    <Compile Include="Drivers\DriversConfigsEditPages\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml.cs">
       <DependentUpon>AndroidADBDriverEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml.cs">
+    <Compile Include="Drivers\DriversConfigsEditPages\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml.cs">
       <DependentUpon>AndroidDeviceSelectPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Drivers\Common\DeviceEditorPage.xaml.cs">
       <DependentUpon>DeviceEditorPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\DriversEditPages\SeleniumRemoteWebDriverEditPage.xaml.cs">
+    <Compile Include="Drivers\DriversConfigsEditPages\SeleniumRemoteWebDriverEditPage.xaml.cs">
       <DependentUpon>SeleniumRemoteWebDriverEditPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Exports\GingerToCSV.cs" />
@@ -2853,7 +2853,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\DriversEditPages\AppiumDriverEditPage.xaml">
+    <Page Include="Drivers\DriversConfigsEditPages\AppiumDriverEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3908,11 +3908,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml">
+    <Page Include="Drivers\DriversConfigsEditPages\AndroidDeviceADBLib\AndroidADBDriverEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\DriversEditPages\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml">
+    <Page Include="Drivers\DriversConfigsEditPages\AndroidDeviceADBLib\AndroidDeviceSelectPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -3920,7 +3920,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Drivers\DriversEditPages\SeleniumRemoteWebDriverEditPage.xaml">
+    <Page Include="Drivers\DriversConfigsEditPages\SeleniumRemoteWebDriverEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

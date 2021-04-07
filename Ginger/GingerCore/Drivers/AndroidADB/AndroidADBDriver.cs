@@ -42,7 +42,7 @@ namespace GingerCore.Drivers.AndroidADB
 
     public class AndroidADBDriver  //DriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
     {
-        //public override string GetDriverEditPage(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        //public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
         //{
         //    return "AndroidADBDriverEditPage";
         //}

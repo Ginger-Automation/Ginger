@@ -36,11 +36,11 @@ namespace Ginger.Drivers.DriversWindows
         eAutoScreenshotRefreshMode mDeviceAutoScreenshotRefreshMode;
         bool mWindowIsOpen = true;
 
-        public MobileDriverWindow(IMobileDriverWindow driver, Agent agent)
+        public MobileDriverWindow(DriverBase driver, Agent agent)
         {
             InitializeComponent();
 
-            mDriver = driver;
+            mDriver = (IMobileDriverWindow)driver;
             mAgent = agent;
 
             ((DriverBase)mDriver).DriverMessageEvent += MobileDriverWindow_DriverMessageEvent;           

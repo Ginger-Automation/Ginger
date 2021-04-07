@@ -76,13 +76,13 @@ namespace Ginger.Agents
         {
             DriverBase driver = (DriverBase)RepositoryItemHelper.RepositoryItemFactory.GetDriverObject(mAgent);
 
-            if (driver.GetDriverEditPage(mAgent.DriverType) != null)
+            if (driver.GetDriverConfigsEditPageName(mAgent.DriverType) != null)
             {
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
                 DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
 
                 //Custome edit page
-                string classname = "Ginger.Drivers." + driver.GetDriverEditPage(mAgent.DriverType);
+                string classname = "Ginger.Drivers.DriversConfigsEditPages." + driver.GetDriverConfigsEditPageName(mAgent.DriverType);
                 Type t = Assembly.GetExecutingAssembly().GetType(classname);
                 if (t == null)
                 {

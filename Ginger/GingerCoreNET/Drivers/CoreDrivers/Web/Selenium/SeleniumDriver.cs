@@ -70,7 +70,7 @@ namespace GingerCore.Drivers
             RemoteWebDriver,
         }
 
-        public override string GetDriverEditPage(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
         {
             if (driverSubType == Agent.eDriverType.SeleniumRemoteWebDriver)
             {

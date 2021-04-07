@@ -50,9 +50,14 @@ namespace Amdocs.Ginger.CoreNET
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
-        public override string GetDriverEditPage(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
         {
             return "AppiumDriverEditPage";
+        }
+
+        public string GetDriverWindowName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            return "MobileDriverWindow";
         }
 
         //Mobile Driver Configurations
