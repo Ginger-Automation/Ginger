@@ -5828,39 +5828,43 @@ namespace GingerCore.Drivers
         {
             taskFinished = false;
             // Convert mouse position from System.Drawing.Point to System.Windows.Point.
-            System.Windows.Point point = new System.Windows.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);            
+            System.Windows.Point point = new System.Windows.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+
+            return GetElementAtPoint(point);
+        }
+
+        public override object GetElementAtPoint(System.Windows.Point point)
+        {
             object element = AutomationElement.FromPoint(point);
-            
+
             // check it is in current window - CurrentWindow if not return null
             // go to parent until CurrentWindow found then inside our window else return null
-            AutomationElement ParentElement = (AutomationElement)element;            
+            AutomationElement ParentElement = (AutomationElement)element;
             while (ParentElement != null && !taskFinished)
             {
                 // Currently we support widgets only for PB. below condition to be removed once we support it for windows
-                
-                
-                    if (ParentElement.Current.ClassName == "Internet Explorer_Server")
-                    {
-                        point.X = point.X - ParentElement.Current.BoundingRectangle.X;
-                        point.Y = point.Y - ParentElement.Current.BoundingRectangle.Y;
-                        if (HTMLhelperObj == null)
-                            InitializeBrowser(ParentElement);
 
 
-                        element = HTMLhelperObj.GetHTMLElementFromPoint(Convert.ToInt32(point.X), Convert.ToInt32(point.Y));
-                    }
-                               
+                if (ParentElement.Current.ClassName == "Internet Explorer_Server")
+                {
+                    point.X = point.X - ParentElement.Current.BoundingRectangle.X;
+                    point.Y = point.Y - ParentElement.Current.BoundingRectangle.Y;
+                    if (HTMLhelperObj == null)
+                        InitializeBrowser(ParentElement);
+
+
+                    element = HTMLhelperObj.GetHTMLElementFromPoint(Convert.ToInt32(point.X), Convert.ToInt32(point.Y));
+                }
+
                 if (ParentElement == CurrentWindow)
-                {       
+                {
                     return element;
                 }
-                ParentElement = TreeWalker.RawViewWalker.GetParent(ParentElement);                
+                ParentElement = TreeWalker.RawViewWalker.GetParent(ParentElement);
             }
-            
+
             //not found in our current window
             return null;
-
-
         }
 
         public Bitmap WindowToBitmap(AutomationElement tempWindow)

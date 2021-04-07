@@ -1633,7 +1633,7 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                if (xUCElementDetails.SelectedElement != null)
+                if (xUCElementDetails.SelectedElement != null && IsWebMobJavaPlatform)
                 {
                     mWindowExplorerDriver.UnHighLightElements();
                 }

@@ -146,6 +146,8 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
+        public abstract object GetElementAtPoint(System.Windows.Point point);
+
         public abstract List<ElementInfo> GetVisibleControls();
                 
         public  ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)

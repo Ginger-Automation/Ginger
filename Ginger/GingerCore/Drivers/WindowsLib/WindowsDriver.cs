@@ -1005,7 +1005,20 @@ namespace GingerCore.Drivers.WindowsLib
 
         public ElementInfo GetElementAtPoint(long ptX, long ptY)
         {
-            throw new NotImplementedException();
+            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
+
+            if (elem == null) return null;
+            ElementInfo EI = null;
+
+            if (elem.GetType().Equals(typeof(AutomationElement)))
+            {
+                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)elem);
+            }
+            else
+            {
+                EI = mUIAutomationHelper.GetHTMLHelper().GetHtmlElementInfo((IHTMLElement)elem);
+            }
+            return EI;
         }
     }
 }
