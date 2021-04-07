@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Common.GeneralLib;
 using System.Reflection;
+using Amdocs.Ginger.Common.OS;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -391,15 +392,14 @@ namespace Amdocs.Ginger.Repository
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
                     fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                    return fullPath;
+                    return OperatingSystemBase.GetOperatingSystem().AdjustFilePath(fullPath); ;
                 }
             }
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to replace relative path sign '~' with Solution path for the path: '" + relativePath + "'", ex);
             }
-
-            return relativePath;
+            return OperatingSystemBase.GetOperatingSystem().AdjustFilePath(relativePath);
         }
 
         /// <summary>
