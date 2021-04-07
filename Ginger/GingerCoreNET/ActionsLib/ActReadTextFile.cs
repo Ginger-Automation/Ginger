@@ -46,7 +46,6 @@ namespace GingerCore.Actions
             public static string TextFileEncoding = "TextFileEncoding";
             public static readonly string AppendAt = "AppendAt";
             public static readonly string AppendLineNumber = "AppendLineNumber";
-
         }
 
         public override string ActionEditPage { get { return "ActReadTextFileEditPage"; } }
