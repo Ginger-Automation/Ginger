@@ -24,6 +24,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
@@ -45,7 +46,7 @@ using System.Xml;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }       
 
@@ -727,11 +728,11 @@ namespace Amdocs.Ginger.CoreNET
 
         private void CreateScreenShot(Act act)
         {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+            //Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            //string filename = Path.GetTempFileName();
+            //ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
 
-            Bitmap tmp = new System.Drawing.Bitmap(filename);
+            Bitmap tmp = ((IVisualTestingDriver)this).GetScreenShot();        // new System.Drawing.Bitmap(filename);
             try
             {
                 //if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
@@ -1312,6 +1313,32 @@ namespace Amdocs.Ginger.CoreNET
         public eDeviceOrientation GetOrientation()
         {
             return (eDeviceOrientation)Enum.Parse(typeof(eDeviceOrientation), Driver.Orientation.ToString());
+        }
+
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        {
+            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            string filename = Path.GetTempFileName();
+            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+
+            Bitmap tmp = new System.Drawing.Bitmap(filename);
+
+            return tmp;
+        }
+
+        public VisualElementsInfo GetVisualElementsInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ChangeAppWindowSize(int Width, int Height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ElementInfo GetElementAtPoint(long ptX, long ptY)
+        {
+            throw new NotImplementedException();
         }
     }
 }
