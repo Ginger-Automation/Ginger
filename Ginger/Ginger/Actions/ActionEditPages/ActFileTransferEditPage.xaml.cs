@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -71,15 +72,15 @@ namespace Ginger.Actions
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.*";
             dlg.Filter = "Any Data Files (*.*)|*.*";
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            string SolutionFolder =  WorkSpace.Instance.Solution.Folder;
 
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
+                string FileName = dlg.FileName;
+                if (FileName.ToUpper().Contains(SolutionFolder.ToUpper()))
                 {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
+                    FileName = @"~\" + FileName.Remove(0, SolutionFolder.Length);
                 }
 
                 PCPath.ValueTextBox.Text = FileName;
