@@ -29,7 +29,7 @@
         </StackPanel>
         <StackPanel Grid.Row="2">
             <Label x:Name="xVBSWarnHelpLabel" Style="{StaticResource @InputFieldLabelStyle}" Foreground="Red">
-                "VBS operations are slow and works only on Windows OS, please consider changing it to CS."
+                Note: VBS operations are slow and works only on Windows OS, please consider changing it to CS.
             </Label>
         </StackPanel>
     </Grid>

@@ -103,7 +103,7 @@ namespace amdocs.ginger.GingerCoreNET
             mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-            mWorkSpace.OSHelper = OperatingSystemBase.GetOperatingSystem();
+            mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
@@ -243,7 +243,7 @@ namespace amdocs.ginger.GingerCoreNET
             string phase = string.Empty;
 
             Amdocs.Ginger.Common.TargetFrameworkHelper.Helper = FrameworkHelper;
-            mWorkSpace.OSHelper = OperatingSystemBase.GetOperatingSystem();
+            mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
 
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;

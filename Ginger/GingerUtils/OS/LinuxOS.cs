@@ -18,14 +18,11 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
-using Amdocs.Ginger.Common.Helpers;
 
 namespace Amdocs.Ginger.Common.OS
 {
@@ -92,7 +89,25 @@ namespace Amdocs.Ginger.Common.OS
         }
         public override string AdjustFilePath(string path)
         {
-            return path.Replace("\\", "/");
+            if (!string.IsNullOrEmpty(path))
+            {
+                return path.Replace("\\", "/");
+            }
+            else
+            {
+                return path;
+            }
+        }
+        public override string AdjustOSChars(String content) 
+        {
+            if (!string.IsNullOrEmpty(content))
+            {
+                return content.Replace("\r\n", System.Environment.NewLine);
+            }
+            else
+            {
+                return content;
+            }
         }
     }
-}
+} 
