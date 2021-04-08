@@ -274,10 +274,10 @@ namespace GingerCore.Drivers.Common
 
         public void UpdateDeviceScreenShot(Bitmap bmp)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                DeviceImage.Source = General.ToBitmapSource(bmp);
-            });
+            //this.Dispatcher.Invoke(() =>
+            //{
+            //    DeviceImage.Source = General.ToBitmapSource(bmp);
+            //});
         }
 
         public void UpdateDeviceScreenShot(BitmapImage BI)
@@ -429,7 +429,7 @@ namespace GingerCore.Drivers.Common
             rect.Margin = new Thickness(left, top, 0, 0);      
         }
 
-        internal System.Windows.Point GetMousePosition()
+        public System.Windows.Point GetMousePosition()
         {
             System.Windows.Point p = new System.Windows.Point();
             this.Dispatcher.Invoke(() =>

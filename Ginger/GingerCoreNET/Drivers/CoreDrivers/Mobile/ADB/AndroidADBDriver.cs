@@ -32,7 +32,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+//using System.Windows.Media.Imaging;
 using System.Xml;
 
 namespace GingerCore.Drivers.AndroidADB
