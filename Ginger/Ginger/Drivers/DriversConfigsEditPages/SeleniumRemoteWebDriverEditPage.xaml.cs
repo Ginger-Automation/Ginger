@@ -28,7 +28,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Diagnostics;
 
-namespace Ginger.Drivers
+namespace Ginger.Drivers.DriversConfigsEditPages
 {
     /// <summary>
     /// Interaction logic for SeleniumDriverEditPage.xaml

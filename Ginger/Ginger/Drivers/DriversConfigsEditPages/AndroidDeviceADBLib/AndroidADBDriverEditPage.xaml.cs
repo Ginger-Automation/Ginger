@@ -32,7 +32,7 @@ using GingerCore.Drivers.Common;
 using SharpAdbClient;
 using amdocs.ginger.GingerCoreNET;
 
-namespace Ginger.Drivers
+namespace Ginger.Drivers.DriversConfigsEditPages
 {
     /// <summary>
     /// Interaction logic for SeleniumDriverEditPage.xaml

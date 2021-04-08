@@ -275,8 +275,10 @@ namespace Amdocs.Ginger.Common.Enums
         Circle,
         Ios,
         IosOutline,
+        IosWhite,
         Android,
         AndroidOutline,
+        AndroidWhite,
         #endregion
 
         #region Source control Images     

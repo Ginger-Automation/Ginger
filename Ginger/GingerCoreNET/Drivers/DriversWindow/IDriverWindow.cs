@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GingerCore;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,6 +9,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         bool ShowWindow { get; }
 
-       // string DriverWindowPath { get; }
+        string GetDriverWindowName(Agent.eDriverType driverSubType = Agent.eDriverType.NA);
     }
 }

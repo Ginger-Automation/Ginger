@@ -26,6 +26,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
         Portrait, Landscape
     }
 
+    public enum eAutoScreenshotRefreshMode
+    {
+        Live, PostOperation, Disabled
+    }
+
     public class MobileDriverCommon
     {
 
