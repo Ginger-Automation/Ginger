@@ -129,15 +129,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else if (platformType == ePlatformType.Mobile)
             {
-                DI.services.Add(Agent.eDriverType.Appium);
-                DI.services.Add(Agent.eDriverType.MobileAppiumAndroid);                
-                DI.services.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
-                DI.services.Add(Agent.eDriverType.MobileAppiumIOS);
-                DI.services.Add(Agent.eDriverType.MobileAppiumIOSBrowser);
-                DI.services.Add(Agent.eDriverType.PerfectoMobileAndroid);
-                DI.services.Add(Agent.eDriverType.PerfectoMobileAndroidWeb);
-                DI.services.Add(Agent.eDriverType.PerfectoMobileIOS);
-                DI.services.Add(Agent.eDriverType.PerfectoMobileIOSWeb);          
+                DI.services.Add(Agent.eDriverType.Appium);      
             }
             else if (platformType == ePlatformType.Windows)
             {

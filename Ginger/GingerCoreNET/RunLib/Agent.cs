@@ -106,24 +106,8 @@ namespace GingerCore
             [Description("Power Builder")]
             PowerBuilder,
 
-            //Mobile
-            [Description("Mobile Appium Android")]
-            MobileAppiumAndroid,
-            [Description("Mobile Appium IOS")]
-            MobileAppiumIOS,
-            [Description("Mobile Appium Android Browser")]
-            MobileAppiumAndroidBrowser,
-            [Description("Mobile Appium IOS Browser")]
-            MobileAppiumIOSBrowser,
-            [Description("Mobile Perfecto Android")]
-            PerfectoMobileAndroid,
-            [Description("Mobile Perfecto Android Browser")]
-            PerfectoMobileAndroidWeb,
-            [Description("Mobile Perfecto IOS")]
-            PerfectoMobileIOS,
-            [Description("Mobile Perfecto IOS Browser")]
-            PerfectoMobileIOSWeb,
-            [Description("Generic Appium")]
+            //Mobile           
+            [Description("Appium")]
             Appium,
 
             //MF
@@ -309,10 +293,7 @@ namespace GingerCore
                 case eDriverType.SeleniumRemoteWebDriver:
                 case eDriverType.SeleniumEdge:
                 case eDriverType.ASCF:
-                case eDriverType.MobileAppiumAndroid:
-                case eDriverType.MobileAppiumIOS:
-                case eDriverType.MobileAppiumAndroidBrowser:
-                case eDriverType.MobileAppiumIOSBrowser:
+                case eDriverType.Appium:
                 case eDriverType.JavaDriver:
                     isSupport = true;
                     break;
@@ -1090,14 +1071,6 @@ namespace GingerCore
                     return ePlatformType.WebServices;
                 case eDriverType.WindowsAutomation:
                     return ePlatformType.Windows;             
-                case eDriverType.MobileAppiumAndroid:
-                case eDriverType.MobileAppiumIOS:
-                case eDriverType.PerfectoMobileAndroid:
-                case eDriverType.PerfectoMobileAndroidWeb:
-                case eDriverType.PerfectoMobileIOS:
-                case eDriverType.PerfectoMobileIOSWeb:
-                case eDriverType.MobileAppiumAndroidBrowser:
-                case eDriverType.MobileAppiumIOSBrowser:
                 case eDriverType.Appium:
                     return ePlatformType.Mobile;
                 case eDriverType.PowerBuilder:
@@ -1124,26 +1097,15 @@ namespace GingerCore
                 driverTypes.Add(Agent.eDriverType.SeleniumFireFox);
                 driverTypes.Add(Agent.eDriverType.SeleniumIE);
                 driverTypes.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
-                driverTypes.Add(Agent.eDriverType.SeleniumEdge);      
-                
-
-
+                driverTypes.Add(Agent.eDriverType.SeleniumEdge);                     
             }
             else if (platformType == ePlatformType.Java.ToString())
             {
                 driverTypes.Add(Agent.eDriverType.JavaDriver);
-
             }
             else if (platformType == ePlatformType.Mobile.ToString())
             {
-                driverTypes.Add(Agent.eDriverType.MobileAppiumAndroid);
-                driverTypes.Add(Agent.eDriverType.MobileAppiumIOS);
-                driverTypes.Add(Agent.eDriverType.PerfectoMobileAndroid);
-                driverTypes.Add(Agent.eDriverType.PerfectoMobileAndroidWeb);
-                driverTypes.Add(Agent.eDriverType.PerfectoMobileIOS);
-                driverTypes.Add(Agent.eDriverType.PerfectoMobileIOSWeb);
-                driverTypes.Add(Agent.eDriverType.MobileAppiumAndroidBrowser);
-                driverTypes.Add(Agent.eDriverType.MobileAppiumIOSBrowser);
+                driverTypes.Add(Agent.eDriverType.Appium);
             }
             else if (platformType == ePlatformType.Windows.ToString())
             {

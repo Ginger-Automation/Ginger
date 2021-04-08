@@ -474,9 +474,6 @@
     <Compile Include="Drivers\DriversConfigsEditPages\AppiumDriverEditPage.xaml.cs">
       <DependentUpon>AppiumDriverEditPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\DriversWindows\OLD_AppiumDriverWindow.xaml.cs">
-      <DependentUpon>OLD_AppiumDriverWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Drivers\DriversWindows\DriverWindowHandler.cs" />
     <Compile Include="Drivers\DriversWindows\MobileDriverWindow.xaml.cs">
       <DependentUpon>MobileDriverWindow.xaml</DependentUpon>
@@ -2856,10 +2853,6 @@
     <Page Include="Drivers\DriversConfigsEditPages\AppiumDriverEditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Drivers\DriversWindows\OLD_AppiumDriverWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Drivers\DriversWindows\MobileDriverWindow.xaml">
       <SubType>Designer</SubType>
