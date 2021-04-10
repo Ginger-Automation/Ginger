@@ -412,7 +412,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
         {
             List<T> ObservableList = new List<T>();
             foreach (T o in List)
+            {
                 ObservableList.Add(o);
+            }
             return ObservableList;
         }
     }
