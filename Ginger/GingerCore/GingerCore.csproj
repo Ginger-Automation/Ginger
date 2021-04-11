@@ -72,7 +72,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
-    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">      
+    <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -272,7 +272,6 @@
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
     <Compile Include="Actions\WebServices\ActSoapUI.cs" />
-    <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -118,7 +118,7 @@ namespace GingerCore.Actions
 
 
             calculatedSourceFilePath = GetInputParamCalculatedValue(Fields.SourceFilePath);
-                      
+
             bool IsSorcePathRelative = false;
             if (calculatedSourceFilePath.StartsWith(@"~"))
             {
@@ -131,7 +131,7 @@ namespace GingerCore.Actions
             {
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
 
-                if (FileNameList.Count()>0)
+                if (FileNameList.Count() > 0)
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
             }
             switch (FileOperationMode)
@@ -172,13 +172,14 @@ namespace GingerCore.Actions
                     {
                         if (System.IO.Directory.Exists(DestinationFolder))
                         {
-                            if (DestinationFile.Length > 0) 
+                            if (DestinationFile.Length > 0)
                             {
                                 System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, DestinationFile));
                             }
-                            else                            {
+                            else
+                            {
                                 System.IO.File.Copy(calculatedSourceFilePath, Path.Combine(DestinationFolder, Path.GetFileName(calculatedSourceFilePath)));
-                            }                            
+                            }
                         }
                         else
                         {
@@ -244,7 +245,7 @@ namespace GingerCore.Actions
                         {
                             fileName = Path.GetFileName(calculatedSourceFilePath);
                         }
-                        System.IO.File.Move(calculatedSourceFilePath, Path.Combine(DestinationFolder, fileName));                      
+                        System.IO.File.Move(calculatedSourceFilePath, Path.Combine(DestinationFolder, fileName));
                     }
                     else
                     {
@@ -264,15 +265,15 @@ namespace GingerCore.Actions
                     {
                         int spaceIndex = calculatedSourceFilePath.IndexOf(' ');
                         //For Backward Support - Providing structure like: file Path + ' ' + arguments
-                            if (spaceIndex != -1 && System.IO.File.Exists(calculatedSourceFilePath.Substring(0, spaceIndex + 1)))
-                                ProcessStart(calculatedSourceFilePath.Substring(0, spaceIndex + 1), calculatedSourceFilePath.Substring(spaceIndex));
+                        if (spaceIndex != -1 && System.IO.File.Exists(calculatedSourceFilePath.Substring(0, spaceIndex + 1)))
+                            ProcessStart(calculatedSourceFilePath.Substring(0, spaceIndex + 1), calculatedSourceFilePath.Substring(spaceIndex));
                         else
                             ProcessStart(calculatedSourceFilePath);
                     }
                     break;
                 case eFileoperations.UnZip:
                     SetupDestinationfolders();
-                    if(!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
+                    if (!calculatedSourceFilePath.ToLower().EndsWith(".zip"))
                     {
                         base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                         base.ExInfo = "Not a valid Zip File";
@@ -285,7 +286,7 @@ namespace GingerCore.Actions
                         {
                             System.IO.Directory.CreateDirectory(DestinationFolder);
                         }
-                        System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath,DestinationFolder);                        
+                        System.IO.Compression.ZipFile.ExtractToDirectory(calculatedSourceFilePath, DestinationFolder);
                     }
                     else
                     {
@@ -311,7 +312,8 @@ namespace GingerCore.Actions
                 else
                     System.Diagnostics.Process.Start(fileName);
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 if (e.Message == "The system cannot find the file specified")
@@ -338,13 +340,13 @@ namespace GingerCore.Actions
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {
-                if(System.IO.Directory.Exists(calculatedDestinationPath))
+                if (System.IO.Directory.Exists(calculatedDestinationPath))
                 {
                     DestinationFolder = calculatedDestinationPath;
-                    if(!DestinationFolder.EndsWith(@"\"))
+                    if (!DestinationFolder.EndsWith(@"\"))
                     {
                         DestinationFolder = DestinationFolder + @"\";
-                    }                    
+                    }
                 }
             }
             DestinationFile = System.IO.Path.GetFileName(calculatedDestinationPath);
@@ -352,7 +354,7 @@ namespace GingerCore.Actions
         }
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
-            if(errorType==SerializationErrorType.PropertyNotFound && (name==Fields.SourceFilePath || name == Fields.DestinationFolder))
+            if (errorType == SerializationErrorType.PropertyNotFound && (name == Fields.SourceFilePath || name == Fields.DestinationFolder))
             {
                 return true;
             }

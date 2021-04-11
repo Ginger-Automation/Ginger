@@ -391,7 +391,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
                     fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
+                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(fullPath);
                 }
             }
             catch(Exception ex)
