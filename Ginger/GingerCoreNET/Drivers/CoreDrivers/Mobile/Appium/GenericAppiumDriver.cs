@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
@@ -134,9 +135,12 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     serverUri = new Uri(AppiumServer);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new Exception("In-Valid Appium Server configuration");
+                    string error = string.Format("Appium URL configured is not valid, URL: '{0}', Error: '{1}'", AppiumServer, ex.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
 
                 //Setting capabilities                                
@@ -171,7 +175,14 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
+                string error = string.Format("Failed to start Appium session.{0}Error: '{1}'", System.Environment.NewLine, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                ErrorMessageFromDriver = error;
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
+                }
                 return false;
             }
         }

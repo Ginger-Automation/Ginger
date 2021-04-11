@@ -1223,38 +1223,36 @@ namespace GingerCore
 
         public void Test()
         {
-            if (Status == Agent.eStatus.Running) Close();
+            if (Status == Agent.eStatus.Running)
+            {
+                Close();
+            }
 
-            //ProjEnvironment = App.AutomateTabEnvironment;
-            //BusinessFlow = App.BusinessFlow; ;
-            //SolutionFolder =  WorkSpace.Instance.Solution.Folder;
-            //DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            SolutionFolder =WorkSpace.Instance.SolutionRepository.SolutionFolder;
+            SolutionFolder = WorkSpace.Instance.SolutionRepository.SolutionFolder;
             try
             {
                 StartDriver();
-                if (Driver != null)
+                if (Driver != null && String.IsNullOrEmpty(Driver.ErrorMessageFromDriver))
                 {
                     WaitForAgentToBeReady();
                 }
 
                 if (Status == Agent.eStatus.Running)
                 {                    
-                    Reporter.ToUser(eUserMsgKey.SuccessfullyConnectedToAgent);
+                    Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Invalid Agent Configurations");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Please confirm Agent configurations are valid");
                 }
             }
             catch (Exception AgentStartException)
             {                
-                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, "Agent Test failed due to: " + AgentStartException.Message);
+                Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Name, AgentStartException.Message);
             }
             finally
             {
                 Close();
-
             }
         }
 

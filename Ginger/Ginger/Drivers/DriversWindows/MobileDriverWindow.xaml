@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
-        mc:Ignorable="d"
+        mc:Ignorable="d" 
         Title="UpdatedAppiumDriverWindow" Height="650" Width="800"
         MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
@@ -93,8 +93,8 @@
         <GridSplitter x:Name="xConfigurationsSplitter" Grid.Column="0" Grid.Row="0" ResizeDirection="Columns"  HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="{StaticResource $BackgroundColor_DarkGray}"/>
 
         <!--Configurations area-->
-        <ScrollViewer x:Name="xConfigurationsFrame" Grid.Column="1" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,36,10,32">
-            <StackPanel >
+        <ScrollViewer x:Name="xConfigurationsFrame" Grid.Column="1" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <StackPanel Margin="0,2,0,0" >
                 <Label Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
                 <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Vertical" Margin="5,0,0,0">
                     <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
