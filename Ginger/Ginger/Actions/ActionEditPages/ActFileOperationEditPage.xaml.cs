@@ -51,12 +51,9 @@ namespace Ginger.Actions
             string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-                TextFileNameTextBox.ValueTextBox.Text = FileName;
+                string fileName = dlg.FileName.ToUpper();
+                fileName = General.ConvertSolutionRelativePath(fileName);
+                TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
         }
         
