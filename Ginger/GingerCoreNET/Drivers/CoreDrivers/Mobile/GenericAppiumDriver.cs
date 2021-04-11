@@ -277,9 +277,7 @@ namespace Amdocs.Ginger.CoreNET
         public List<IWebElement> LocateElements(eLocateBy LocatorType, string LocValue)
         {
             if (AppType == eAppType.Web)
-            {
                 return mSeleniumDriver.LocateElements(LocatorType, LocValue);
-            }
 
                 IReadOnlyCollection<IWebElement> elem = null;
 
@@ -1084,18 +1082,9 @@ namespace Amdocs.Ginger.CoreNET
 
         string GetAttrValue(XmlNode xmlNode, string attr)
         {
-            if (xmlNode.Attributes == null)
-            {
-                return null;
-            }
-            if (xmlNode.Attributes[attr] == null)
-            {
-                return null;
-            }
-            if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value))
-            {
-                return null;
-            }
+            if (xmlNode.Attributes == null) return null;
+            if (xmlNode.Attributes[attr] == null) return null;
+            if (string.IsNullOrEmpty(xmlNode.Attributes[attr].Value)) return null;
             return xmlNode.Attributes[attr].Value;
         }
         
