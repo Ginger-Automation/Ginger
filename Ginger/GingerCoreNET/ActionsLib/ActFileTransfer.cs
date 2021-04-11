@@ -395,7 +395,7 @@ namespace GingerCore.Actions
                 File.Delete(localPath);
                 filename = localPath;
             }
-            else if (IsDir(localPath) == false)
+            else if (!IsDir(localPath))
             {
                 filename = localPath;
             }
