@@ -391,7 +391,7 @@ namespace Amdocs.Ginger.Repository
                 {
                     string fullPath = relativePath.TrimStart(new char[] { '~', '\\', '/' });
                     fullPath = Path.Combine(mSolutionFolderPath, fullPath);
-                    return fullPath;
+                    return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
                 }
             }
             catch(Exception ex)
@@ -409,7 +409,11 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public string ConvertFullPathToBeRelative(string fullPath)
         {
-            string relative = fullPath.ToLower().Replace(mSolutionFolderPath.ToLower(), cSolutionRootFolderSign);
+            string relative = fullPath;
+            if (fullPath.ToUpper().Contains(SolutionFolder.ToUpper()))
+            {
+                relative = cSolutionRootFolderSign + fullPath.Remove(0, SolutionFolder.Length);
+            }
             return relative;
         }
 
