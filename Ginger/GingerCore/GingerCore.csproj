@@ -277,7 +277,6 @@
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
-    <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
@@ -884,7 +883,7 @@
       <Version>1.8019.4006.503</Version>
     </PackageReference>
     <PackageReference Include="SSH.NET">
-      <Version>2016.1.0</Version>
+      <Version>2020.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Collections">
       <Version>4.3.0</Version>

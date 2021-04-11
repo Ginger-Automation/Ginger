@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2020 European Support Limited
 
@@ -16,23 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Renci.SshNet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GingerCore.Properties;
-using GingerCore.Repository;
-using Renci.SshNet;
 using System.IO;
-using GingerCore.Platforms;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -47,7 +39,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("To transfer any file first select the file transfer action Put file or get file, then select the PC path by clicking Browse button.Then fill all the values to Unix Path,Host,Port,UserName,Password,PrivateKeyFile and KeyPassPhrase");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActFileTransferEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
@@ -67,16 +59,16 @@ namespace GingerCore.Actions
         }
 
         public enum eFileTransferAction
-        {   
+        {
             PutFile = 0,
-            GetFile = 1,            
+            GetFile = 1,
         }
         private SftpClient UnixFTPClient;
         private string workdir;
         [IsSerializedForLocalRepository]
         public eFileTransferAction FileTransferAction { get; set; }
 
-       
+
         public string Host
         {
             get
@@ -89,8 +81,8 @@ namespace GingerCore.Actions
             }
         }
         private string drvHost { get { return GetInputParamCalculatedValue("Host"); } }
-       
-              
+
+
         public string Port//public int Port
         {
             get
@@ -105,8 +97,8 @@ namespace GingerCore.Actions
             }
         }
         private int drvPort { get { return Convert.ToInt32(GetInputParamCalculatedValue("Port")); } }
-        
-        
+
+
         public string UserName
         {
             get
@@ -120,7 +112,7 @@ namespace GingerCore.Actions
         }
         private string drvUserName { get { return GetInputParamCalculatedValue("UserName"); } }
 
-        
+
         public string Password
         {
             get
@@ -134,7 +126,7 @@ namespace GingerCore.Actions
         }
         private string drvPassword { get { return GetInputParamCalculatedValue("Password"); } }
 
-       
+
         public string PrivateKey
         {
             get
@@ -148,7 +140,7 @@ namespace GingerCore.Actions
         }
         private string drvPrivateKey { get { return GetInputParamCalculatedValue("PrivateKey"); } }
 
-        
+
         public string PrivateKeyPassPhrase
         {
             get
@@ -162,7 +154,7 @@ namespace GingerCore.Actions
         }
         private string drvPrivateKeyPassPhrase { get { return GetInputParamCalculatedValue("PrivateKeyPassPhrase"); } }
 
-        
+
         public string PCPath
         {
             get
@@ -171,20 +163,20 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue("PCPath", value);               
+                AddOrUpdateInputParamValue("PCPath", value);
             }
         }
-        private string mPCPathCalculated=string.Empty;
+        private string mPCPathCalculated = string.Empty;
 
         private string PCPathCalculated
         {
             get
             {
-                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");                           
+                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(GetInputParamCalculatedValue("PCPath")).Replace(Environment.NewLine, "");
             }
         }
 
-    
+
         public string UnixPath
         {
             get
@@ -193,10 +185,10 @@ namespace GingerCore.Actions
             }
             set
             {
-                AddOrUpdateInputParamValue("UnixPath", value);             
+                AddOrUpdateInputParamValue("UnixPath", value);
             }
         }
-               
+
         private string UnixPathCalculated
         {
             get
@@ -231,7 +223,7 @@ namespace GingerCore.Actions
             public static string UnixPath = "UnixPath";
 
             public static string PCPath = "PCPath";
-            
+
         }
 
         public override eImageType Image { get { return eImageType.CodeFile; } }
@@ -239,14 +231,14 @@ namespace GingerCore.Actions
         private bool ConnectFTPClient()
         {
             try
-            {                  
+            {
                 UnixFTPClient = new SftpClient(GetConnectionInfo());
                 UnixFTPClient.Connect();
                 workdir = UnixFTPClient.WorkingDirectory;
 
-                return UnixFTPClient.IsConnected;  
+                return UnixFTPClient.IsConnected;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Connecting FTP Client", ex);
                 this.Error = ex.Message;
@@ -301,7 +293,7 @@ namespace GingerCore.Actions
                             return;
                         }
 
-                        DownloadFileAndValidate(UnixTargetFilePath, PCPathCalculated);                        
+                        DownloadFileAndValidate(UnixTargetFilePath, PCPathCalculated);
                     }
                     catch (Exception e)
                     {
@@ -359,11 +351,11 @@ namespace GingerCore.Actions
 
         private string CalculateTargetFolder()
         {
-            string targetFolder=UnixPathCalculated;
+            string targetFolder = UnixPathCalculated;
             if (UnixFTPClient.Exists(UnixPathCalculated) == false)
             {
                 //if path given by user does not exist upload it to /Ginger/Upload
-                targetFolder = Path.Combine(workdir, "Ginger/Uploaded").Replace("\\","/");                
+                targetFolder = Path.Combine(workdir, "Ginger/Uploaded").Replace("\\", "/");
 
                 if (UnixFTPClient.Exists(targetFolder) == false)
                 {
@@ -373,11 +365,11 @@ namespace GingerCore.Actions
             return targetFolder;
         }
 
-        private void UploadFileAndValidate(string filePath,string targetFolder)
+        private void UploadFileAndValidate(string filePath, string targetFolder)
         {
             using (var fileToUpload = File.OpenRead(filePath))
             {
-                string targetFilePath= Path.Combine(targetFolder, Path.GetFileName(filePath)).Replace("\\","/");
+                string targetFilePath = Path.Combine(targetFolder, Path.GetFileName(filePath)).Replace("\\", "/");
                 UnixFTPClient.UploadFile(fileToUpload, targetFilePath);
 
                 if (UnixFTPClient.Exists(targetFilePath))
@@ -389,12 +381,12 @@ namespace GingerCore.Actions
                 }
                 else
                 {
-                    this.Error += "Failed to upload '" + Path.GetFileName(filePath) + "' to " + targetFolder + "\n";                    
+                    this.Error += "Failed to upload '" + Path.GetFileName(filePath) + "' to " + targetFolder + "\n";
                 }
             }
         }
 
-      
+
         private void DownloadFileAndValidate(string remoteFile, string localPath)
         {
             string filename;
@@ -403,14 +395,14 @@ namespace GingerCore.Actions
                 File.Delete(localPath);
                 filename = localPath;
             }
-            else if (IsDir(localPath)==false)
+            else if (!IsDir(localPath))
             {
                 filename = localPath;
-            }               
+            }
             else
             {
-                filename =  Path.Combine(localPath,Path.GetFileName(remoteFile));
-            }                
+                filename = Path.Combine(localPath, Path.GetFileName(remoteFile));
+            }
 
             using (var f = File.OpenWrite(filename))
             {
