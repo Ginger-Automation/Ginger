@@ -47,13 +47,9 @@ namespace Ginger.Actions
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                string fileName = dlg.FileName.ToUpper();
-                fileName = General.ConvertSolutionRelativePath(fileName);
-                TextFileNameTextBox.ValueTextBox.Text = fileName;
+                TextFileNameTextBox.ValueTextBox.Text = General.ConvertSolutionRelativePath(dlg.FileName);
             }
         }
         

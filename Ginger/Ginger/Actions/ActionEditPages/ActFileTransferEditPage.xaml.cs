@@ -71,19 +71,9 @@ namespace Ginger.Actions
             System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
             dlg.DefaultExt = "*.*";
             dlg.Filter = "Any Data Files (*.*)|*.*";
-            string SolutionFolder = WorkSpace.Instance.Solution.Folder;
-
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName;
-                if (FileName.ToUpper().Contains(SolutionFolder.ToUpper()))
-                {
-                    FileName = @"~\" + FileName.Remove(0, SolutionFolder.Length);
-                }
-
-                PCPath.ValueTextBox.Text = FileName;
-                //Move code to ExcelFunction no in Act...
+                PCPath.ValueTextBox.Text = General.ConvertSolutionRelativePath(dlg.FileName);
             }
         }
 
