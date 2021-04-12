@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -51,7 +51,13 @@ namespace Ginger.ALM
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(UserNameTextBox, TextBox.TextProperty, CurrentAlmUserConfigurations, nameof(CurrentAlmUserConfigurations.ALMUserName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DomainComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMDomain));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ProjectComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.ALMProjectKey));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(JiraTestingALMComboBox, ComboBox.SelectedValueProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.JiraTestingALM));
+
+            if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
+            {
+                List<string> jiraTestingALMs = ALMIntegration.Instance.GetJiraTestingALMs();
+                GingerCore.General.FillComboFromList(JiraTestingALMComboBox, jiraTestingALMs);
+                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(JiraTestingALMComboBox, ComboBox.TextProperty, CurrentAlmConfigurations, nameof(CurrentAlmConfigurations.JiraTestingALM));
+            }
             PasswordTextBox.Password = CurrentAlmUserConfigurations.ALMPassword; //can't do regular binding with PasswordTextBox control for security reasons
         }
         public ALMConnectionPage(ALMIntegration.eALMConnectType almConnectStyle, bool isConnWin = false)
@@ -92,7 +98,7 @@ namespace Ginger.ALM
         
         private void SetControls()
         {
-            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && (!string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility == Visibility.Visible))
+            if (!string.IsNullOrEmpty(ServerURLTextBox.Text) && !string.IsNullOrEmpty(UserNameTextBox.Text) && !(string.IsNullOrEmpty(PasswordTextBox.Password) && xPasswordPanel.Visibility == Visibility.Visible))
             {
                 LoginServerButton.IsEnabled = true;
             }
@@ -224,10 +230,6 @@ namespace Ginger.ALM
                 {
                     RefreshDomainList(almConectStyle);
                     RefreshProjectsList();
-                    if (CurrentAlmConfigurations.AlmType == GingerCoreNET.ALMLib.ALMIntegration.eALMType.Jira)
-                    {
-                        RefreshJiraTestingALMList();
-                    }
                 }
                 else
                 {
@@ -347,32 +349,6 @@ namespace Ginger.ALM
                         CurrentAlmConfigurations.ALMProjectName = ProjectComboBox.Text;
                         CurrentAlmConfigurations.ALMProjectKey = ProjectComboBox.SelectedValue.ToString();
                     }
-                }
-            }
-        }
-
-        private void RefreshJiraTestingALMList()
-        {
-            List<string> jiraTestingALMs = ALMIntegration.Instance.GetJiraTestingALMs();
-
-            GingerCoreNET.ALMLib.ALMIntegration.eTestingALMType currJiraTestingALM = CurrentAlmConfigurations.JiraTestingALM;
-
-            JiraTestingALMComboBox.Items.Clear();
-            foreach (string jiraTestingALM in jiraTestingALMs)
-            {
-                JiraTestingALMComboBox.Items.Add(jiraTestingALM);
-            }
-
-            if (JiraTestingALMComboBox.Items.Count > 0)
-            {
-                if (JiraTestingALMComboBox.Items.Contains(currJiraTestingALM.ToString()))
-                {
-                    CurrentAlmConfigurations.JiraTestingALM = currJiraTestingALM;
-                    JiraTestingALMComboBox.SelectedIndex = JiraTestingALMComboBox.Items.IndexOf(CurrentAlmConfigurations.JiraTestingALM.ToString());
-                }
-                if (JiraTestingALMComboBox.SelectedIndex == -1)
-                {
-                    JiraTestingALMComboBox.SelectedIndex = 0;
                 }
             }
         }
@@ -599,12 +575,14 @@ namespace Ginger.ALM
 
         private void ALMRadioButton_Checked_Changed(object sender, RoutedEventArgs e)
         {
+            string prevAlmType = string.Empty;
             if (sender == null || ALMSettingsPannel == null)
             {
                 return;
             }
             if (CurrentAlmConfigurations != null)
             {
+                prevAlmType = CurrentAlmConfigurations.AlmType.ToString();
                 ALMIntegration.Instance.SetALMCoreConfigurations(CurrentAlmConfigurations.AlmType);
             }
             GingerCoreNET.ALMLib.ALMIntegration.eALMType almType = GingerCoreNET.ALMLib.ALMIntegration.eALMType.QC;
@@ -651,20 +629,22 @@ namespace Ginger.ALM
                 BindingOperations.ClearAllBindings(DomainComboBox);
                 BindingOperations.ClearAllBindings(ProjectComboBox);
                 BindingOperations.ClearAllBindings(JiraTestingALMComboBox);
-
+               
                 ALMIntegration.Instance.SetDefaultAlmConfig(almType);
                 ALMIntegration.Instance.UpdateALMType(almType);
                 CurrentAlmConfigurations = ALMIntegration.Instance.GetCurrentAlmConfig(almType);
                 CurrentAlmUserConfigurations = ALMIntegration.Instance.GetCurrentAlmUserConfig(almType);
 
-                
+
                 //Bind again as we changed the AlmConfig object
                 Bind();
 
                 //Select domain and project based on new AlmConfig
                 LoginServerButton.Content = "Get Projects Details";
-                GetProjectsDetails();
-
+                if (!prevAlmType.Equals(CurrentAlmConfigurations.AlmType.ToString()))
+                {
+                    GetProjectsDetails();
+                }
                 StyleRadioButtons();
                 SetControls();
             }

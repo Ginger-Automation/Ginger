@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -3992,10 +3992,10 @@ namespace GingerCore.Drivers
                 EI.ElementTypeEnum = elementTypeEnum.Item2;
             }
 
-
-            if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
+            if (!string.IsNullOrWhiteSpace(EI.Path) && (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/"))
             {
-                if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+                if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") 
+                    || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
                 {
                     EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
                 }
