@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -421,14 +421,6 @@ namespace GingerWPF.BusinessFlowsLib
 
                         Ginger.General.DoEvents();//so UI will refresh
 
-                        //LiteDB updates
-                        if (SetOrClearPreviousAutoRunSetDocumentLiteDB(false) && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                        {
-                            SetOrClearPreviousAutoRunSetDocumentLiteDB(true);
-                            ClearAutomatedId(businessFlowToLoad);
-                            mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
-                        }                       
-                            SetRunSetDBLite(mBusinessFlow);//TODO: check if we must do it per BF change
                                                 
                         mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
@@ -476,6 +468,16 @@ namespace GingerWPF.BusinessFlowsLib
                                 UpdateContextWithActivityDependencies();
                             }
                         }
+
+                        //LiteDB updates
+                        if (SetOrClearPreviousAutoRunSetDocumentLiteDB(false) && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                        {
+                            SetOrClearPreviousAutoRunSetDocumentLiteDB(true);
+                            ClearAutomatedId(businessFlowToLoad);
+                            mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                        }
+                        SetRunSetDBLite(mBusinessFlow);//TODO: check if we must do it per BF change
+
                         SetActivityEditPage();//Validate we don't do twice
                     }
                     finally
@@ -1443,7 +1445,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 var selectedGuid = mRunSetLiteDbId;
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
-                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
+                webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid.ToString());
             }            
         }
 
