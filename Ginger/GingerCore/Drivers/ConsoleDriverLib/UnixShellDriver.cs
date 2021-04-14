@@ -147,7 +147,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     KeyboardInteractiveAuthenticationMethod keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
                     PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
 
-                    keyboardIntractiveAuth.AuthenticationPrompt += new EventHandler<Renci.SshNet.Common.AuthenticationPromptEventArgs>(HandleIntractiveKeyBoardEvent);
+                    keyboardIntractiveAuth.AuthenticationPrompt +=HandleIntractiveKeyBoardEvent;
 
                     connectionInfo = new ConnectionInfo(Host, Port, UserName, pauth, keyboardIntractiveAuth);
                 }
@@ -159,7 +159,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
 
 
-                if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))
+                if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))    
                     passPhrase = PrivateKeyPassPhrase;
 
                 if (File.Exists(PrivateKey))
