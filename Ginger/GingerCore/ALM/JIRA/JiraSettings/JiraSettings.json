@@ -198,5 +198,9 @@
       "Status": [ "New", "Allocated" ],
       "Operator": "in"
     }
-  ]
+  ],
+  "ProxySetting": {
+    "IsProxyByPass": true,
+    "Address": "http://genproxy.amdocs.com:8080"
+  }
 }

@@ -43,6 +43,7 @@ namespace GingerCore.ALM
         private JIRA.Bll.JiraExportManager exportMananger;
         private JiraConnectManager jiraConnectObj;
         private JiraImportManager jiraImportObj;
+        private JiraManagerZephyr jmz;
         private JiraRepository.JiraRepository jiraRepObj;
         public static string ALMProjectGroupName { get; set; }
         public static string ALMProjectGuid { get; set; }
@@ -62,6 +63,7 @@ namespace GingerCore.ALM
             exportMananger = new JIRA.Bll.JiraExportManager(jiraRepObj);
             jiraConnectObj = new JiraConnectManager(jiraRepObj);
             jiraImportObj = new JiraImportManager(jiraRepObj);
+            jmz = new JiraManagerZephyr();
         }
         public override bool ConnectALMProject()
         {
@@ -182,26 +184,26 @@ namespace GingerCore.ALM
 
         public JiraZephyrCyclesCollection GetZephyrCyclesWithFolders(bool getFolders = false)
         {
-            JiraZephyrCyclesCollection jiraZephyrCyclesCollection = ((JiraManagerZephyr)jiraImportObj.JiraRepObj().TestAlmManager()).GetZephyrCyclesList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
-                                                                                                                                                            DefaultAlmConfig.ALMProjectKey, string.Empty, string.Empty, string.Empty, string.Empty).DataResult;
+            JiraZephyrCyclesCollection jiraZephyrCyclesCollection = jmz.GetZephyrCyclesList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
+                                                                                            DefaultAlmConfig.ALMProjectKey, string.Empty, string.Empty, string.Empty, string.Empty).DataResult;
             if (getFolders)
             {
-                jiraZephyrCyclesCollection.projectsReleasesList.ForEach(z => z.releasesCycles.ForEach(y => y.FoldersList = ((JiraManagerZephyr)jiraImportObj.JiraRepObj().TestAlmManager()).GetCycleFoldersList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
-                                                                                                                              DefaultAlmConfig.ALMProjectKey, y.versionId.ToString(), y.id.ToString(), string.Empty, string.Empty).DataResult));
+                jiraZephyrCyclesCollection.projectsReleasesList.ForEach(z => z.releasesCycles.ForEach(y => y.FoldersList = jmz.GetCycleFoldersList( DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
+                                                                                                                                                    DefaultAlmConfig.ALMProjectKey, y.versionId.ToString(), y.id.ToString(), string.Empty, string.Empty).DataResult));
             }
             return jiraZephyrCyclesCollection;
         }
 
         public JiraZephyrCycle GetZephyrCycleOrFolderWithIssuesAndStepsAsCycle(string versionId, string cycleId, string folderId = "-1")
         {
-            JiraZephyrCycle cycle = ((JiraManagerZephyr)jiraImportObj.JiraRepObj().TestAlmManager()).GetZephyrCycle(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword,
-                                                                                                                        DefaultAlmConfig.ALMServerURL, Convert.ToInt32(cycleId)).DataResult;
+            JiraZephyrCycle cycle = jmz.GetZephyrCycle( DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword,
+                                                        DefaultAlmConfig.ALMServerURL, Convert.ToInt32(cycleId)).DataResult;
             if (cycle != null)
             {
                 cycle.IssuesList = new List<JiraZephyrIssue>();
-                List<JiraZephyrExecution> issuesAsExecutionList = ((JiraManagerZephyr)jiraImportObj.JiraRepObj().TestAlmManager()).GetZephyrExecutionList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
-                                                                                                                                                            string.Empty, versionId, DefaultAlmConfig.ALMProjectKey, cycleId, string.Empty, string.Empty,
-                                                                                                                                                            string.Empty, string.Empty, folderId).DataResult;
+                List<JiraZephyrExecution> issuesAsExecutionList = jmz.GetZephyrExecutionList(   DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
+                                                                                                string.Empty, versionId, DefaultAlmConfig.ALMProjectKey, cycleId, string.Empty, string.Empty,
+                                                                                                string.Empty, string.Empty, folderId).DataResult;
                 if (issuesAsExecutionList != null)
                 {
                     foreach (JiraZephyrExecution issuesAsExecution in issuesAsExecutionList.OrderBy(z => z.OrderId))
@@ -210,8 +212,8 @@ namespace GingerCore.ALM
                         jiraZephyrIssue.name = issuesAsExecution.Summary;
                         jiraZephyrIssue.key = issuesAsExecution.IssueKey;
                         jiraZephyrIssue.id = issuesAsExecution.IssueId;
-                        jiraZephyrIssue.Steps = ((JiraManagerZephyr)jiraImportObj.JiraRepObj().TestAlmManager()).GetZephyrTestStepsList(DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
-                                                                                                                                                                    issuesAsExecution.IssueId).DataResult.stepBeanCollection;
+                        jiraZephyrIssue.Steps = jmz.GetZephyrTestStepsList( DefaultAlmConfig.ALMUserName, DefaultAlmConfig.ALMPassword, DefaultAlmConfig.ALMServerURL,
+                                                                            issuesAsExecution.IssueId).DataResult.stepBeanCollection;
                         cycle.IssuesList.Add(jiraZephyrIssue);
                     }
                 }

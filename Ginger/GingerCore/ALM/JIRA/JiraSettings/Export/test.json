@@ -19,7 +19,7 @@
           "name": "Project",
           "key": "project",
           "type": "object",
-          "data": "{ \"key\": \"{{value}}\" }"
+          "data": "{ \"id\": \"{{value}}\" }"
         },
         {
           "name": "Automation_Status",
