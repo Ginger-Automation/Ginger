@@ -18,7 +18,7 @@ jobs:
   variables:
     solution: '**/*.sln'     # = D:\a\1\s\Ginger\Ginger.sln
     buildPlatform: 'Any CPU' 
-    buildConfiguration: 'Release'	
+    buildConfiguration: 'Debug'	
     solutionDirectory:  'Ginger-Automation/Ginger'    
     testDLLs: |
       **\GingerUtilsTest\bin\$(buildConfiguration)\netcoreapp3.1\GingerUtilsTest.dll

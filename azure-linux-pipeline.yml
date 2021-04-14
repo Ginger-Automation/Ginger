@@ -13,7 +13,7 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
   variables:  
     solution: '**/*.sln'     # = /home/vsts/work/1/s/Ginger
-    buildConfiguration: 'Release'     
+    buildConfiguration: 'Debug'     
     # artifactsFolder: 'D:\a\1\a' 
   
   steps:
