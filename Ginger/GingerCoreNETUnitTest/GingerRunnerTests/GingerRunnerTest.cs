@@ -423,7 +423,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             cLIProcessor.ExecuteArgs(args).Wait();
 
             //Assert
-            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports" + Path.DirectorySeparatorChar + "Reports");
+            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports";
             Assert.IsTrue(Directory.Exists(path));
         }
 
