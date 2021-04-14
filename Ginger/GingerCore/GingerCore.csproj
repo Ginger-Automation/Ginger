@@ -221,7 +221,7 @@
       <HintPath>..\packages\Npgsql.4.0.7\lib\net451\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="OctaneSdkStandard">
-      <HintPath>..\..\..\..\..\..\..\..\AmdocsTestingStudio2012\Version 8.0.0\In House Components\ALMRestAPI\OctaneSdkStandard\bin\Debug\netstandard2.0\OctaneSdkStandard.dll</HintPath>
+      <HintPath>DLLs\OctaneSdkStandard.dll</HintPath>
     </Reference>
     <Reference Include="Octane_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
