@@ -49,6 +49,7 @@
 
   <ItemGroup>
     <None Remove="DLLS\LibGit2Sharp.dll" />
+    <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\assets\demo\css\codehighlight.css" />
     <None Remove="Reports\Ginger-Web-Client\assets\Execution_Data\executiondata.js" />
@@ -394,6 +395,10 @@
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>

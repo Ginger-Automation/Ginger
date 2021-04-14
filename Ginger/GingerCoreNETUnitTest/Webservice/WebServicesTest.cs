@@ -32,8 +32,9 @@ using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
-using GingerWPF.WorkSpaceLib;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
@@ -61,7 +62,7 @@ namespace UnitTests.NonUITests
 
             // Init SR
             SolutionRepository  mSolutionRepository = WorkSpace.Instance.SolutionRepository;
-            Ginger.App.InitClassTypesDictionary();
+     
             string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
             mSolutionRepository.Open(TempRepositoryFolder);
             Ginger.SolutionGeneral.Solution sol = new Ginger.SolutionGeneral.Solution();
@@ -237,7 +238,7 @@ namespace UnitTests.NonUITests
 
         //}
 
-
+        [Ignore]
         [TestMethod]  
         [Timeout(60000)]
         public void WebServices_WebServiceSendXML()
@@ -451,7 +452,7 @@ namespace UnitTests.NonUITests
 
             ActSoapUI actSoapUi = new ActSoapUI();
 
-            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML"+Path.DirectorySeparatorChar+"calculator_soapui_project.xml");
             actSoapUi.AddNewReturnParams=true;
             actSoapUi.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
             
@@ -470,7 +471,7 @@ namespace UnitTests.NonUITests
             ActSoapUI actSoapUI = new ActSoapUI();
             actSoapUI.Description = "Soap Wrapper acttion test ";
             
-            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML\calculator_soapui_project.xml");
+            var xmlFilePath = TestResources.GetTestResourcesFile(@"XML"+ Path.DirectorySeparatorChar + "calculator_soapui_project.xml");
             
             actSoapUI.AddOrUpdateInputParamValue(ActSoapUI.Fields.ImportFile, xmlFilePath);
             actSoapUI.GetOrCreateInputParam(ActSoapUI.Fields.UIrelated, "False");
@@ -489,7 +490,7 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(actSoapUI.ActInputValues[1].Value.ToString(), duplicateAct.ActInputValues[1].Value.ToString());
 
         }
-
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void LegacyWebServiceToNewWebApiSoap_Converter_Test()
@@ -505,7 +506,7 @@ namespace UnitTests.NonUITests
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"");
 
-            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML\stock.xml");
+            var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML"+ Path.DirectorySeparatorChar + "stock.xml");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.XMLfileName, xmlFileNamePath);
             
             actLegacyWebService.FileName = "Web Service Action";
@@ -608,7 +609,7 @@ namespace UnitTests.NonUITests
         [Timeout(600000)]
         public void EnhanceSecurityProtocalOnVersionUpgradeCheck()
         {
-            var targetFrameworkAttribute = typeof(Ginger.MainWindow).Assembly.GetCustomAttributes(typeof(System.Runtime.Versioning.TargetFrameworkAttribute), false)
+            var targetFrameworkAttribute = typeof(WebServicesDriver).Assembly.GetCustomAttributes(typeof(System.Runtime.Versioning.TargetFrameworkAttribute), false)
                                            .SingleOrDefault();
             var versionName = ((System.Runtime.Versioning.TargetFrameworkAttribute)targetFrameworkAttribute).FrameworkName;
             string versionStr = string.Empty;

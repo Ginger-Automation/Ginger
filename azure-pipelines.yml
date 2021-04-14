@@ -129,17 +129,18 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Package Ginger EXE
 # ------------------------------------------------------------------------------------------------------
-
-  - task: PowerShell@2
-    displayName: Package Ginger EXE
-    inputs:
-      filePath: PackageGingerEXE.ps1
-    condition: succeededOrFailed()
+#
+#  - task: PowerShell@2
+#    displayName: Package Ginger EXE
+#    inputs:
+#      filePath: PackageGingerEXE.ps1
+#    condition: succeededOrFailed()
+#
 
 
 # ------------------------------------------------------------------------------------------------------
 # PublishBuildArtifacts
 # ------------------------------------------------------------------------------------------------------
 
-  - task: PublishBuildArtifacts@1
-    condition: succeededOrFailed()
+#  - task: PublishBuildArtifacts@1
+#    condition: succeededOrFailed()

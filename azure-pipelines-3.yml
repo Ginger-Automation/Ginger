@@ -40,5 +40,5 @@ steps:
 # Publish Test Artifacts
 # ------------------------------------------------------------------------------------------------------
 
-- task: PublishBuildArtifacts@1
-  condition: succeededOrFailed()
+#- task: PublishBuildArtifacts@1
+#  condition: succeededOrFailed()

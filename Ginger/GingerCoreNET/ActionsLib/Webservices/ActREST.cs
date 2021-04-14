@@ -33,6 +33,7 @@ using System.Xml;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.Actions.WebServices;
+using Amdocs.Ginger.Common.GeneralLib;
 
 namespace GingerCore.Actions.REST
 {

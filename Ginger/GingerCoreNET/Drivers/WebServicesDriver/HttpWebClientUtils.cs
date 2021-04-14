@@ -201,8 +201,12 @@ namespace GingerCore.Actions.WebAPI
             switch (secutityType)
             {
                 case ApplicationAPIUtils.eSercurityType.None:
-#warning this should be SystemDefault but this supporting on .netframework 4.8 onwards, so for now setting all types for none
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                    //if platform support system defalut don't do anything
+                    if (ServicePointManager.SecurityProtocol.ToString() != "SystemDefault")
+                    {
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+                    }
+                    
                     break;
                 case ApplicationAPIUtils.eSercurityType.Ssl3:
                     ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3;

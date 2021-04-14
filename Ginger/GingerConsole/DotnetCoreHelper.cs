@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -242,6 +243,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         public DbConnection GetMSAccessConnection()
         {
             throw new NotImplementedException("MS Acess is not supported on Ginger Console");
+        }
+
+        public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
+        {
+            return new WebserviceDriverConsoleReporter();
         }
     }
 }

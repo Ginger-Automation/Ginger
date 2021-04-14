@@ -271,7 +271,6 @@
     <Compile Include="Actions\ActDemoPage.cs" />
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
-    <Compile Include="Actions\WebServices\ActSoapUI.cs" />
     <Compile Include="Actions\ActFileOperations.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
@@ -292,7 +291,6 @@
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActScript.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
-    <Compile Include="Actions\ActWebService.cs" />
     <Compile Include="Actions\ActWindow.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\Android\ActShell.cs" />
@@ -308,7 +306,6 @@
     </Compile>
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
-    <Compile Include="Actions\REST\ActREST.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
       <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -428,8 +425,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
@@ -473,12 +468,9 @@
     <Compile Include="Drivers\PBDriver\PBDriver.cs" />
     <Compile Include="Drivers\ScriptDriverLib\ScriptDriverBase.cs" />
     <Compile Include="Drivers\ScriptDriverLib\VBScriptDriver.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\Utils.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\WebServicesDriver.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\WebServicesDriverWindow.xaml.cs">
       <DependentUpon>WebServicesDriverWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
     <Compile Include="GeneralLib\General.cs" />
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
@@ -631,6 +623,8 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\REST\" />
+    <Folder Include="Actions\WebServices\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />

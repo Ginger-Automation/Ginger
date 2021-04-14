@@ -19,6 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
+using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -129,7 +131,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
         }
 
-        WebServicesDriverWindow mDriverWindow;
+        IWebserviceDriverWindow mDriverWindow;
         private ActWebService mActWebService;
         public ActWebAPIBase mActWebAPI;
 
@@ -167,22 +169,22 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void StartDriver()
         {
             if (ShowDriverWindowOnLaunch)
-                CreateSTA(ShowDriverWindow);
+                CreateSTA(mDriverWindow.ShowDriverWindow);
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
         public void LauncDriverWindow()
         {
-            CreateSTA(ShowDriverWindow);
+            CreateSTA(mDriverWindow.ShowDriverWindow);
         }
+
+
         private void ShowDriverWindow()
         {
-            mDriverWindow = new WebServicesDriverWindow(BusinessFlow);
-            mDriverWindow.Show();
-            OnDriverMessage(eDriverMessageType.DriverStatusChanged);
-            Dispatcher = new DriverWindowDispatcher(mDriverWindow.Dispatcher);
+            mDriverWindow.ShowDriverWindow();
 
-            System.Windows.Threading.Dispatcher.Run();
+            Dispatcher = mDriverWindow.GingerDispatcher;
+
         }
 
         public override void CloseDriver()
@@ -484,10 +486,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
                 if (mIsDriverWindowLaunched)
                 {
-                    mDriverWindow.URLTextBox.Text = URL;
-                    mDriverWindow.SOAPActionTextBox.Text = mActWebService.SOAPAction.Value;
-                    mDriverWindow.ReqBox.Text = mRequest;
-                    General.DoEvents();
+
+
+                    mDriverWindow.UpdateRequestParams(URL, mActWebService.SOAPAction.Value, mRequest);
                 }
 
                 SetStatus("Preparing new Web Service data");
@@ -555,7 +556,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (mIsDriverWindowLaunched)
                 {
                     SetStatus("Received response, Length=" + resp.Length + ", Elapsed (ms)= " + st.ElapsedMilliseconds);
-                    mDriverWindow.ResponseTextBox.Text = ResponseCode;
+                    mDriverWindow.UpdateResponseTextBox(ResponseCode);
+              
+                    mDriverWindow.UpdateResponseTextBox(ResponseCode);
                 }
 
                 mActWebService.AddOrUpdateReturnParamActual("FullReponseXML", resp);
@@ -564,7 +567,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 xmlReqDoc.LoadXml(resp);
                 if (mIsDriverWindowLaunched)
                 {
-                    mDriverWindow.RespXML.Text = ConvertHTMLTags(resp);
+                    mDriverWindow.updateResponseXMLText(ConvertHTMLTags(resp));
+                  
                 }
 
                 if (SaveResponseXML)
@@ -625,8 +629,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             if (mIsDriverWindowLaunched)
             {
-                mDriverWindow.StatusLabel.Content = Status;
-                General.DoEvents();
+                mDriverWindow.UpdateStatusLabel(Status);
+               
             }
         }
 
