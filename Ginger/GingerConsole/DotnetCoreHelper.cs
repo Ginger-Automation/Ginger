@@ -35,6 +35,7 @@ using GingerCore.Drivers.Mobile.Perfecto;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -56,6 +57,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
         public void CreateCustomerLogo(object a, string tempFolder)
         {
+        }
+
+        public DbConnection GetOracleConnection(string ConnectionString)
+        {
+            return new OracleConnection(ConnectionString);
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
@@ -249,5 +255,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             return new WebserviceDriverConsoleReporter();
         }
+
+  
     }
 }
