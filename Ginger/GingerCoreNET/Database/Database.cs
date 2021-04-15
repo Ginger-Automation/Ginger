@@ -365,12 +365,8 @@ namespace GingerCore.Environments
                         //Try Catch for Connecting DB Which having Oracle Version Less then 10.2                         
                         try
                         {
-                            var DLL = Assembly.LoadFile(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll");
-                            var class1Type = DLL.GetType("Oracle.ManagedDataAccess.Client.OracleConnection");
-                            object[] param = new object[1];
-                            param[0] = connectConnectionString;
-                            dynamic c = Activator.CreateInstance(class1Type, param);
-                            oConn = (DbConnection)c;
+                      
+                            oConn = WorkSpace.Instance.TargetFrameworkHelper.GetOracleConnection(connectConnectionString);
                             oConn.Open();
                             break;
                         }
@@ -386,16 +382,7 @@ namespace GingerCore.Environments
                                 oConn.ConnectionString = "Provider=msdaora;" + connectConnectionString;
                                 oConn.Open();
                                 break;
-                            }
-                            else if (Temp.Contains("ORA-01017"))
-                            {
-                                throw e;
-                            }
-                            else if (!System.IO.File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Oracle.ManagedDataAccess.dll"))
-                            {
-
-                                throw new Exception(GetMissingDLLErrorDescription());
-                            }
+                            }                          
                             else
                             {
                                 throw e;

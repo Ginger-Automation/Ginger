@@ -166,5 +166,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             return new WebserviceDriverConsoleReporter();
         }
+
+        public DbConnection GetOracleConnection(string ConnectionString)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
