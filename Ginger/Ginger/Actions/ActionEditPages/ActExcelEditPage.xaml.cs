@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -102,16 +102,24 @@ namespace Ginger.Actions
 
         private void FillSheetCombo()
         {
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            ContextProcessInputValueForDriver();
             //Move code to ExcelFunction no in Act...
             List<string> SheetsList = mAct.GetSheets();
             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
         }
 
+        private void ContextProcessInputValueForDriver()
+        {
+            var context = Context.GetAsContext(mAct.Context);
+            if (context != null)
+            {
+                context.Runner.ProcessInputValueForDriver(mAct);
+            }
+        }
 
         private void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            ContextProcessInputValueForDriver();
 
             DataTable dt = mAct.GetExcelSheetData(null);
             if (dt != null)
@@ -120,7 +128,7 @@ namespace Ginger.Actions
 
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            ContextProcessInputValueForDriver();
 
             DataTable dt = mAct.GetExcelSheetDataWithWhere();
             if(dt!=null)
@@ -129,7 +137,7 @@ namespace Ginger.Actions
 
         private void ExcelActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            ContextProcessInputValueForDriver();
 
             if (ExcelActionComboBox.SelectedValue.ToString() == "ReadData")
             {
@@ -148,7 +156,7 @@ namespace Ginger.Actions
         private void SheetNamComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mAct.SheetName = SheetNamComboBox.Text;
-            Context.GetAsContext(mAct.Context).Runner.ProcessInputValueForDriver(mAct);
+            ContextProcessInputValueForDriver();
         }
 
         private void SheetNamComboBox_DropDownOpened(object sender, EventArgs e)

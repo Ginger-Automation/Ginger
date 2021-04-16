@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
         private Page GetPageFor(SelectedContentArgs SelectedContentArgs)
         {            
             string txt = SelectedContentArgs.TextEditor.Text.Substring(SelectedContentArgs.StartPos, SelectedContentArgs.Length);
-
+            p = null;
             if (txt.StartsWith("{Var Name="))
             {
                 p= new ValueExpressionVariableEditorPage(mContext, SelectedContentArgs);
@@ -170,6 +170,15 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             if (txt.StartsWith("{DS Name="))
             {
                p= new ActDataSourcePage(SelectedContentArgs);
+            }
+
+            if (txt.StartsWith("{FD Object="))
+            {
+                Tuple<GingerCore.ValueExpression.eFlowDetailsObjects, string> expParams = GingerCore.ValueExpression.GetFlowDetailsParams(txt);
+                if (expParams != null)
+                {
+                    p = new ValueExpressionFlowDetailsEditorPage(mContext, SelectedContentArgs, expParams.Item1, expParams.Item2);
+                }               
             }
 
             if (txt.StartsWith("{EnvURL App="))
@@ -191,6 +200,10 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             else if(p.GetType() == typeof(ActDataSourcePage))
             {
                 ((ActDataSourcePage)p).UpdateContent();
+            }
+            else if (p.GetType() == typeof(ValueExpressionFlowDetailsEditorPage))
+            {
+                ((ValueExpressionFlowDetailsEditorPage)p).UpdateContent();
             }
         }
 

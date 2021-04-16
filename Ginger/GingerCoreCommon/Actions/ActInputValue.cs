@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -107,11 +107,25 @@ namespace Amdocs.Ginger.Repository
                     }
                     else
                     {
-                        dynamic dynList = JsonConvert.DeserializeObject(mValue);
-                        mDynamicListWrapper = new DynamicListWrapper(ParamTypeEX);                        
-                        foreach (dynamic item in dynList)
+                        dynamic dynList;
+
+                        try
                         {
-                            mDynamicListWrapper.Items.Add(item);
+                            dynList = JsonConvert.DeserializeObject(mValue);
+                        }
+                        catch(Exception exc)
+                        {
+                            Reporter.ToLog(eLogLevel.WARN, "An error occured while Deserializing JSON object", exc);
+                            dynList = JsonConvert.DeserializeObject(string.Format("{0}{1}{0}", "\"", mValue));
+                        }
+
+                        mDynamicListWrapper = new DynamicListWrapper(ParamTypeEX);
+                        if (dynList != null)
+                        {
+                            foreach (dynamic item in dynList)
+                            {
+                                mDynamicListWrapper.Items.Add(item);
+                            }
                         }
                     }
                 }

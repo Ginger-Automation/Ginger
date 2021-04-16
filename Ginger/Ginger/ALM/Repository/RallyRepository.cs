@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ namespace Ginger.ALM.Repository
                         }
 
                         //save bf
-                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(tsBusFlow);
+                        AddTestSetFlowToFolder(tsBusFlow, importDestinationPath);
                         Reporter.HideStatusMessage();
                     }
                     catch (Exception ex)
@@ -258,11 +258,7 @@ namespace Ginger.ALM.Repository
         {
             throw new NotImplementedException();
         }
-
-        public override void ImportALMTestsById(string importDestinationFolderPath)
-        {
-            throw new NotImplementedException();
-        }
+         
 
         public override List<string> GetTestLabExplorer(string path)
         {

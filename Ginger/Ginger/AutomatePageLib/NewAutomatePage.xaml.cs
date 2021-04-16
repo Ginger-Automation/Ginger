@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Run;
 using Amdocs.Ginger.UserControls;
 using Ginger;
@@ -126,16 +127,19 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mRunSetReport == null)
                 {
-                    mRunSetReport = new RunSetReport();
+                    mRunSetReport = new RunSetReport();                    
                     mRunSetReport.SetDataForAutomateTab();
-                    if (!ClearPreviousAutoRunSetDocumentLiteDB())
+                    ExecutionLoggerManager.RunSetReport = mRunSetReport;
+                    bool isAutoRunSetExists = SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
+                    if (!isAutoRunSetExists)
                     {
                         mRunner.ExecutionLoggerManager.BusinessFlowEnd(0, businessFlowToLoad, true);
                         mRunner.ExecutionLoggerManager.RunnerRunEnd(0, mRunner, offlineMode:true);
                         mRunner.ExecutionLoggerManager.mExecutionLogger.SetReportRunSet(mRunSetReport, "");
+                        SetOrClearPreviousAutoRunSetDocumentLiteDB(false);
                         return;
                     }
-                    ExecutionLoggerManager.RunSetReport = mRunSetReport;
+                    SetOrClearPreviousAutoRunSetDocumentLiteDB(true);                  
                 }
             }
         }
@@ -158,25 +162,31 @@ namespace GingerWPF.BusinessFlowsLib
             businessFlowToLoad.LiteDbId = null;
         }
 
-        private bool ClearPreviousAutoRunSetDocumentLiteDB()
+        private bool SetOrClearPreviousAutoRunSetDocumentLiteDB(bool isClear = true)
         {
             LiteDbManager dbManager = new LiteDbManager(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder);
             var result = dbManager.GetRunSetLiteData();
             var filterData = result.FindOne(a => a.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Automated.ToString());
             if (filterData != null)
-            {
-                mRunSetLiteDbId = filterData._id;
-                mRunnerLiteDbId = filterData.RunnersColl[0]._id;
-                LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
-                dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
+            {               
+                if(isClear)
+                {
+                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunner.ExecutionLoggerManager.Configuration.CalculatedLoggerFolder, "GingerExecutionResults.db"));
+                    dbConnector.DeleteDocumentByLiteDbRunSet(filterData, eExecutedFrom.Automation);
+                }      
+                else
+                {
+                    mRunSetLiteDbId = filterData._id;
+                    mRunnerLiteDbId = filterData.RunnersColl[0]._id;
+                }
                 return true;
-            }
+            }            
             return false;
         }
         #endregion LiteDB
 
         private void SetUIControls()
-        {
+        {            
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Activities));
             xBusinessFlowItemComboBox.Items.Add(GingerDicser.GetTermResValue(eTermResKey.Variables));
             xBusinessFlowItemComboBox.Items.Add("Details");
@@ -339,7 +349,7 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.Context = mContext;
             mContext.Runner = mRunner;
         }
-
+      
         private void MRunner_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(GingerRunner.SpecificEnvironmentName))
@@ -381,7 +391,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 RemoveCurrentBusinessFlow();
                 ResetPageUI();
-
+                
                 mBusinessFlow = businessFlowToLoad;
                 if (mBusinessFlow != null)
                 {
@@ -405,20 +415,13 @@ namespace GingerWPF.BusinessFlowsLib
                         }
                         UpdateApplicationsAgentsMapping();
 
-                        SetBusinessFlowTargetAppIfNeeded();
+                        SetBusinessFlowTargetAppIfNeeded();                        
                         mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
                         UpdateRunnerAgentsUsedBusinessFlow();
 
                         Ginger.General.DoEvents();//so UI will refresh
 
-                        //LiteDB updates
-                        if (ClearPreviousAutoRunSetDocumentLiteDB() && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                        {
-                            ClearAutomatedId(businessFlowToLoad);
-                            mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
-                        }
-                        SetRunSetDBLite(mBusinessFlow);//TODO: check if we must do it per BF change
-
+                                                
                         mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
 
                         //--BF sections updates
@@ -465,6 +468,16 @@ namespace GingerWPF.BusinessFlowsLib
                                 UpdateContextWithActivityDependencies();
                             }
                         }
+
+                        //LiteDB updates
+                        if (SetOrClearPreviousAutoRunSetDocumentLiteDB(false) && mRunSetReport != null && mRunner.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                        {
+                            SetOrClearPreviousAutoRunSetDocumentLiteDB(true);
+                            ClearAutomatedId(businessFlowToLoad);
+                            mRunner.ExecutionLoggerManager.mExecutionLogger.RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mRunner);
+                        }
+                        SetRunSetDBLite(mBusinessFlow);//TODO: check if we must do it per BF change
+
                         SetActivityEditPage();//Validate we don't do twice
                     }
                     finally
@@ -787,11 +800,28 @@ namespace GingerWPF.BusinessFlowsLib
                     break;
                 case AutomateEventArgs.eEventType.GenerateLastExecutedItemReport:
                     GenerateLastExecutedItemReport();
-                    break;
+                    break;               
                 default:
                     //Avoid other operations
                     break;
             }
+        }
+        private void InitLiteDBItems()
+        {
+            mRunSetReport = null;
+            mRunSetLiteDbId = null;
+            mRunnerLiteDbId = null;
+            ExecutionLoggerConfiguration.DataRepositoryMethod dataRepositoryMethod = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList[0].SelectedDataRepositoryMethod;
+            if (dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                mRunner.ExecutionLoggerManager.mExecutionLogger = new LiteDBRepository();
+            }
+            else if(dataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+            {
+                mRunner.ExecutionLoggerManager.mExecutionLogger = new TextFileRepository();
+            }
+            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
+            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
         }
 
         private void UpdateAutomatePageRunner()
@@ -801,9 +831,7 @@ namespace GingerWPF.BusinessFlowsLib
             mRunner.SolutionAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
             mRunner.SolutionApplications = WorkSpace.Instance.Solution.ApplicationPlatforms;
             mRunner.DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-
-            mRunner.ExecutionLoggerManager.ExecutionLogfolder = string.Empty;
-            mRunner.ExecutionLoggerManager.Configuration = WorkSpace.Instance.Solution.LoggerConfigurations;
+            InitLiteDBItems();
         }
 
 
@@ -1028,7 +1056,7 @@ namespace GingerWPF.BusinessFlowsLib
                     return;
                 }
 
-                UpdateToNewSolution();
+                UpdateToNewSolution();                
             }
         }
 
@@ -1040,7 +1068,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void UpdateToNewSolution()
         {
             SetEnvsCombo();
-            UpdateAutomatePageRunner();
+            UpdateAutomatePageRunner();            
         }
 
         private void SetEnvsCombo()
@@ -1417,8 +1445,8 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 var selectedGuid = mRunSetLiteDbId;
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
-                webReporterRunner.RunNewHtmlReport(selectedGuid.ToString());
-            }
+                webReporterRunner.RunNewHtmlReport(string.Empty, selectedGuid.ToString());
+            }            
         }
 
         private void ShowExecutionSummaryPage()

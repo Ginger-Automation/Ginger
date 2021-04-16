@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -63,9 +63,12 @@ namespace Ginger.Run
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
 
+            RunSetActionsGrid.AddSeparator();
+            RunSetActionsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.SignOut, "Add Send Execution JSON Data To External Source Operation", AddSendExecutionDataToExternalSourceAction);
 
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@Run_16x16.png", "Run Selected", RunSelected);
+            RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@RunAll_16x16.png", "Run All", RunAll);
             RunSetActionsGrid.AddSeparator();
             SetContentAndEventsListeners();
@@ -90,12 +93,29 @@ namespace Ginger.Run
             SetContentAndEventsListeners();
         }
 
+        RunSetActionEditPage runSetActionEditPage;
         private void RunSetActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
             RunSetActionEditFrame.Content = null;
             if (RunSetActionsGrid.CurrentItem != null)
             {
-                RunSetActionEditPage RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
+                RunSetActionEditPage RSAEP = null;
+                if (((Amdocs.Ginger.Repository.RepositoryItemBase)RunSetActionsGrid.CurrentItem).ItemName == "Open ALM Defects")
+                {
+                    if (runSetActionEditPage == null)
+                    {
+                        runSetActionEditPage = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
+                        RSAEP = runSetActionEditPage;
+                    }
+                    else
+                    {
+                        RSAEP = runSetActionEditPage;
+                    }
+                }
+                else
+                {
+                    RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
+                }
                 RunSetActionEditFrame.Content = RSAEP;
             }
         }
@@ -242,7 +262,14 @@ namespace Ginger.Run
             mRunSetConfig.RunSetActions.Add(runSetActionJSONSummary);
             RunSetActionsGrid.Grid.SelectedItem = runSetActionJSONSummary;
         }
-
+        private void AddSendExecutionDataToExternalSourceAction(object sender, RoutedEventArgs e)
+        {
+            RunSetActionSendDataToExternalSource runSetActionSendDataToExternalSource = new RunSetActionSendDataToExternalSource();
+            runSetActionSendDataToExternalSource.Name = runSetActionSendDataToExternalSource.Type;
+            runSetActionSendDataToExternalSource.RunAt = RunSetActionBase.eRunAt.ExecutionEnd;
+            mRunSetConfig.RunSetActions.Add(runSetActionSendDataToExternalSource);
+            RunSetActionsGrid.Grid.SelectedItem = runSetActionSendDataToExternalSource;
+        }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -463,6 +463,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.CheckIn:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.CloudUpload);
                     break;
+                case eImageType.Upload:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Upload);
+                    break;
                 case eImageType.Expand:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.ChevronDown);
                     break;
@@ -826,6 +829,21 @@ namespace Amdocs.Ginger.UserControls
                     break;
                 case eImageType.ID:
                     SetAsFontAwesomeIcon(FontAwesomeIcon.IdCardOutline);
+                    break;
+                case eImageType.RegularExpression:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Registered);
+                    break;
+                case eImageType.DataManipulation:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Th);
+                    break;
+                case eImageType.General:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.Gg);
+                    break;
+                case eImageType.SignIn:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignIn);
+                    break;
+                case eImageType.SignOut:
+                    SetAsFontAwesomeIcon(FontAwesomeIcon.SignOut);
                     break;
                 #endregion
 

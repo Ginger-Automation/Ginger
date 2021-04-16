@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ namespace Ginger.Variables
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR,$"Minimum date :[{dpMinDate.Value}], sholud be <= Maximum Date:[{dtpInitialDate.MaxDate}]");
+                Reporter.ToLog(eLogLevel.ERROR,$"Minimum date :[{dpMinDate.Value}], should be <= Maximum Date:[{dtpInitialDate.MaxDate}]");
                 dpMinDate.Focus();
                 return;
             }
@@ -86,7 +86,7 @@ namespace Ginger.Variables
             }
             else
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Maximum date :[{dpMaxDate.Value}], sholud be >= Minimum Date:[{dtpInitialDate.MinDate}]");
+                Reporter.ToLog(eLogLevel.ERROR, $"Maximum date :[{dpMaxDate.Value}], should be >= Minimum Date:[{dtpInitialDate.MinDate}]");
                 dpMaxDate.Focus();
                 return;
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ namespace Ginger.MenusLib
                 twoLevelMenu.Add(DataSourceMenu);
 
             TopMenuItem DocumentsMenu = new TopMenuItem(eImageType.File, "Documents", ConsoleKey.D, "Documents AID", "Solution documents like: text, excel, js scripts and any type of file");
-            DocumentsMenu.Add(eImageType.File, "", Documents, ConsoleKey.D, "", "Dcouments AID");
+            DocumentsMenu.Add(eImageType.File, "", Documents, ConsoleKey.D, "", "Documents AID");
             twoLevelMenu.Add(DocumentsMenu);
 
             TopMenuItem PluginsMenu = new TopMenuItem(eImageType.PluginPackage, "Plugins", ConsoleKey.P, "Plugins AID", "Ginger extension Add-ons");

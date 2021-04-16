@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -70,6 +70,29 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             get { return xGrid; }
         }
+        public string EnableRightClick
+        {
+            get
+            {
+                return Tree.EnableRightClick.ToString();
+            }
+            set
+            {
+                Tree.EnableRightClick = Convert.ToBoolean(value);
+            }
+        }
+
+        public string EnableDragDrop
+        {
+            get
+            {
+                return Tree.EnableDragDrop.ToString();
+            }
+            set
+            {
+                Tree.EnableDragDrop = Convert.ToBoolean(value);
+            }
+        }
 
         public string TreeTitle
         {
@@ -95,6 +118,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             set { xTreeTitle.Style = value; }
         }
 
+        public eImageType AddButtonIcon
+        {            
+            get { return xAddButton.ButtonImageType; }
+            set { xAddButton.ButtonImageType = value; }          
+        }
+      
         bool mAllowTreeTools = true;
         public bool AllowTreeTools { get { return mAllowTreeTools; } set { mAllowTreeTools = value; } }
 
@@ -161,7 +190,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 xRefreshButton.Visibility = Visibility.Collapsed;
-            }
+            }         
         }
 
         private void xTreeViewTree_ItemSelected(object sender, EventArgs e)
@@ -172,12 +201,13 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
         
-        public void SetTitleSection(double margin, double GridLength, double TitleFontSize, FontWeight TitleFontWeight)
+        public void SetTitleSection(double margin, double GridLength, double TitleFontSize, FontWeight TitleFontWeight, Visibility titleSectionVisibility = Visibility.Visible)
         {
             xTreeItemHeaderPnl.Margin = new Thickness(margin);
             xTreeTitle.FontSize = TitleFontSize;
             xTreeTitle.FontWeight = TitleFontWeight;
             xTitleSection.HorizontalAlignment = HorizontalAlignment.Center;
+            xTitleSection.Visibility = titleSectionVisibility;
             TreeGrid.RowDefinitions[0].Height = new GridLength(GridLength);
             xTreeActionsIconsPnl.Visibility = Visibility.Collapsed;
         }

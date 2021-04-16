@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,9 +52,19 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                         xDownloadsolutionCheckBox.IsEnabled = true;
                         mAutoRunWizard.CliHelper.DownloadUpgradeSolutionFromSourceControl = true;
                     }
+                    if (WorkSpace.Instance.Solution.ALMConfigs != null && WorkSpace.Instance.Solution.ALMConfigs.Count > 0)
+                    {
+                        xALMConfigCheckBox.IsEnabled = true;
+                    }
+                    else
+                    {
+                        xALMConfigCheckBox.IsEnabled = false;
+                        mAutoRunWizard.CliHelper.SetAlmConnectionDetails = false;
+                    }
                     mAutoRunWizard.CliHelper.ShowAutoRunWindow = false;
                     mAutoRunWizard.CliHelper.RunAnalyzer = mAutoRunWizard.RunsetConfig.RunWithAnalyzer;
                     BindingHandler.ObjFieldBinding(xDownloadsolutionCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.DownloadUpgradeSolutionFromSourceControl));
+                    BindingHandler.ObjFieldBinding(xALMConfigCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.SetAlmConnectionDetails));
                     BindingHandler.ObjFieldBinding(xGingerRunEXEWindowShow, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.ShowAutoRunWindow));
                     BindingHandler.ObjFieldBinding(xRunAnalyzerCheckBox, CheckBox.IsCheckedProperty, mAutoRunWizard.CliHelper, nameof(CLIHelper.RunAnalyzer));
                     xArtifactsPathTextBox.Init(mAutoRunWizard.mContext, mAutoRunWizard.AutoRunConfiguration, nameof(RunSetAutoRunConfiguration.ArtifactsPath), isVENeeded: false, isBrowseNeeded: true, browserType: Activities.UCValueExpression.eBrowserType.Folder);

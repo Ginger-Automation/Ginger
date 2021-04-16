@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -137,8 +137,8 @@ namespace Ginger.Run
                         try
                         {
                             currentALMDefectFieldsValues = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.Where(z => (z.SelectedValue != null && z.SelectedValue != string.Empty) ||
-                                                                                                                                                                               z.ExternalID == "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
-                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key == "description" ? defectSuggestion.Description : w.Value)
+                                                                                                                                                                               z.ExternalID== "description" || z.ExternalID == "Summary" || z.ExternalID == "name").ToDictionary(x => x.ExternalID, x => x.SelectedValue != null ? x.SelectedValue.Replace("&", "&amp;") : x.SelectedValue = string.Empty)
+                                                                                                                                         .ToDictionary(w => w.Key, w => w.Key== "description" ? defectSuggestion.ErrorDetails : w.Value)
                                                                                                                                          .ToDictionary(w => w.Key, w => w.Key == "Summary" ? defectSuggestion.Summary : w.Value)
                                                                                                                                          .ToDictionary(w => w.Key, w => w.Key == "name" ? defectSuggestion.Summary : w.Value);
                         }
@@ -147,10 +147,15 @@ namespace Ginger.Run
                             currentALMDefectFieldsValues.Add("Summary", defectSuggestion.Summary);
                             currentALMDefectFieldsValues.Add("description", defectSuggestion.ErrorDetails != null ? defectSuggestion.ErrorDetails : "There is no error description");
                         }
+
+                        currentALMDefectFieldsValues.Add("screenshots", String.Join(",", defectSuggestion.ScreenshotFileNames));
+
+
                         currentALMDefectFieldsValues.Add("ActivityGroupExternalID", defectSuggestion.ActivityGroupExternalID);
                         currentALMDefectFieldsValues.Add("ActivityExternalID", defectSuggestion.ActivityExternalID);
                         currentALMDefectFieldsValues.Add("BFExternalID1", defectSuggestion.BFExternalID.Item1);
                         currentALMDefectFieldsValues.Add("BFExternalID2", defectSuggestion.BFExternalID.Item2);
+
                         defectsForOpening.Add(defectSuggestion.DefectSuggestionGuid, currentALMDefectFieldsValues);
                     }
                     var defectFields = ((ALMDefectProfile)DefectProfiles_cbx.SelectedItem).ALMDefectProfileFields.ToList();

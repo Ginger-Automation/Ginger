@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -2870,7 +2870,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 string exec_folder = string.Empty;
                 Context context = new Context();
                 context.BusinessFlow = BF;
-                context.Runner = new Run.GingerRunner();
+                context.Runner = new Run.GingerRunner(); //Why to create new runner ? 
                 context.Environment = environment;
                 Run.ExecutionLoggerManager executionLoggerManager = new Run.ExecutionLoggerManager(context);
                 exec_folder = executionLoggerManager.GenerateBusinessflowOfflineExecutionLogger(context);

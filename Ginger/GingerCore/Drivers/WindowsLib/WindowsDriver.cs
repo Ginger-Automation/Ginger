@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -283,7 +283,7 @@ namespace GingerCore.Drivers.WindowsLib
                     actWBE.ExInfo = "Switched to Default Frame";
                     break;
                 default:
-                    actWBE.Error = "Unable to perform operation";
+                    actWBE.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actWBE.ControlAction.ToString());
                     break;
             }
         }
@@ -325,7 +325,7 @@ namespace GingerCore.Drivers.WindowsLib
                     break;
 
                 default:
-                    actUIElement.Error = "Unable to perform operation";
+                    actUIElement.Error = string.Format("Selected '{0}' Operation not supported for 'WindowsDriver'", actUIElement.ElementAction.ToString());
                     break;
             }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -249,7 +249,7 @@ namespace GingerCore.Actions
 
         private string mWaitForWindowTitle = "Login";
         string mWaitForWindowTitle_Calc = string.Empty;
-        
+
         [IsSerializedForLocalRepository]
         public string WaitForWindowTitle //the title of the Java application to wait for
         {
@@ -350,7 +350,7 @@ namespace GingerCore.Actions
                     try
                     {
                         // acquire the mutex (or timeout), will return false if it timed out
-                        Reporter.ToLog(eLogLevel.INFO, "Attach Java Agent- Waiting for Mutex Release");                      
+                        Reporter.ToLog(eLogLevel.INFO, "Attach Java Agent- Waiting for Mutex Release");
                         if (!mutex.WaitOne(mAttachAgentProcessSyncTime_Calc_int * 1000))
                         {
                             Reporter.ToLog(eLogLevel.WARN, "Attach Java Agent- Mutex Wait Timeout Reached");
@@ -540,7 +540,7 @@ namespace GingerCore.Actions
                     {
                         return ValidatePort();
                     }
-                   
+
                 }
 
                 return true;
@@ -744,45 +744,21 @@ namespace GingerCore.Actions
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-
-                // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
-                if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
+                while (!bFound)
                 {
-                    while (!bFound)
+                    // If Application Launch is done by Ginger then we already know the process id. No need to iterate.
+                    if (mJavaApplicationProcessID != -1 && ProcessExists(mJavaApplicationProcessID) && !IsInstrumentationModuleLoaded(mJavaApplicationProcessID))
                     {
+
                         mAttachAgentCancellationToken?.Token.ThrowIfCancellationRequested();
-                        Process process = Process.GetProcessById(mJavaApplicationProcessID);
 
-                        if (!IsInstrumentationModuleLoaded(process.Id))
-                        {
-                            if (BlockingJavaWindow)
-                            {
-                                bFound = CheckForBlockWindow(process);
-                            }
-                            else
-                            {
-                                bFound = MatchProcessTitle(process.MainWindowTitle.ToLower());
-                            }
-                            if (bFound)
-                            {
-                                mProcessIDForAttach = process.Id;
-                            }
-                        }
+                        bFound = CheckWindowTitleByProcessId(mJavaApplicationProcessID);
 
-                        // Go out after max seconds
-                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                            break;
-
-                        Thread.Sleep(1000);
                     }
-                }
-                // If Application is not launched from Ginger then we go over the process to find the target Process ID
-                else
-                {
-                    while (!bFound)
+                    // If Application is not launched from Ginger then we go over the process to find the target Process ID
+                    else
                     {
                         Process[] processlist = Process.GetProcesses();
-
                         List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
@@ -799,7 +775,6 @@ namespace GingerCore.Actions
                                     matchingProcessList.Add(process);
                                 }
                             }
-
                             else if (MatchProcessTitle(process.MainWindowTitle.ToLower()))
                             {
                                 matchingProcessList.Add(process);
@@ -831,13 +806,12 @@ namespace GingerCore.Actions
                                 }
                             }
                         }
-
-                        // Go out after max seconds
-                        if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
-                            break;
-
-                        Thread.Sleep(1000);
                     }
+                    // Go out after max seconds
+                    if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
+                        break;
+
+                    Thread.Sleep(1000);
                 }
             }
             catch (OperationCanceledException ex)
@@ -848,6 +822,38 @@ namespace GingerCore.Actions
             return bFound;
 
         }
+
+        private bool CheckWindowTitleByProcessId(int processId)
+        {
+            bool bFound = false;
+            try
+            {
+                Process process = Process.GetProcessById(processId);
+
+                if (!IsInstrumentationModuleLoaded(process.Id))
+                {
+                    if (BlockingJavaWindow)
+                    {
+                        bFound = CheckForBlockWindow(process);
+                    }
+                    else
+                    {
+                        bFound = MatchProcessTitle(process.MainWindowTitle.ToLower());
+                    }
+                    if (bFound)
+                    {
+                        mProcessIDForAttach = process.Id;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Erroe when checcking window with processId: ", processId), ex);
+            }
+
+            return bFound;
+        }
+
         private bool CheckForBlockWindow(Process p)
         {
             bool bFound = false;
@@ -998,7 +1004,7 @@ namespace GingerCore.Actions
             //if yes that means java agent is already attached to this process
             try
             {
-                if(id == -1)
+                if (id == -1)
                 {
                     return false;
                 }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ namespace Ginger.Run.RunSetActions
                 bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
             }
             
-            if (!RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, result, PublishToALMConfig))
+            if (!RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs,ref result, PublishToALMConfig))
             {
                 Errors= result;
                 Status = eRunSetActionStatus.Failed;

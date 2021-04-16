@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerCore.DataSource;
@@ -181,8 +182,16 @@ namespace Ginger.Actions
 
         public void SetDataSourceVEParams(string p)
         {
-            if (p == "")
+            if (ControlActionComboBox.HasItems  && ControlActionComboBox.SelectedValue !=null && ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+            {
                 return;
+            }
+           
+            if (p == "")
+            {
+                return;
+            }
+
             string bMarkAsDone = "";
             string bMultiRow = "";
             string iColVal = "";
@@ -213,7 +222,11 @@ namespace Ginger.Actions
                 p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
                 if (p.IndexOf("ACT=") != -1)
                 {
-                    p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                    if (p.TrimStart().IndexOf(" ") != -1)
+                    {
+                        p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                    }
+                    
                 }
                 if(p.IndexOf("EP=") == 0)
                 {                    
@@ -276,7 +289,10 @@ namespace Ginger.Actions
                         {                         
                             RowNum.IsChecked = true;
                             p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
-                            rowNum = p.Substring(p.IndexOf("ROWNUM=") + 7, p.LastIndexOf("}") - 7);
+                            int startIndex = p.IndexOf("ROWNUM=") + 7;
+                            int endIndex = p.IndexOf(" ");
+                            int charCount = endIndex > startIndex ? endIndex - startIndex : startIndex - endIndex;
+                            rowNum = p.Substring(startIndex, charCount);
                             RowSelectorValue.Text = rowNum;
                         }
                         else if (IRow == "Where")
@@ -449,13 +465,8 @@ namespace Ginger.Actions
             GingerCore.General.FillComboFromEnumType(ControlActionComboBox, typeof(ActDSTableElement.eControlAction));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mActDSTblElem, ActJavaElement.Fields.ControlAction);
 
-            ExcelFilePath.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelPath, true, true, UCValueExpression.eBrowserType.File, "xlsx");
-            ExcelSheetName.Init(Context.GetAsContext(mActDSTblElem.Context), mActDSTblElem, ActDSTableElement.Fields.ExcelSheetName, true);
-            ExcelFilePath.ValueTextBox.TextChanged += ExcelFilePathTextBox_TextChanged;
-            ExcelSheetName.ValueTextBox.TextChanged += ExcelSheetNameTextBox_TextChanged;
-            ExcelFilePath.ValueTextBox.LostFocus += ExcelFilePathTextBox_LostFocus;
-            ExcelSheetName.ValueTextBox.LostFocus += ExcelSheetNameTextBox_LostFocus; 
-            
+
+
             UpdateValueExpression();
             //NextAvailable.IsChecked = mActDSTblElem.ByNextAvailable;
             SetComponents();
@@ -473,26 +484,23 @@ namespace Ginger.Actions
             grdCondition.Grid.LostFocus += Grid_LostFocus;
         }
 
-        private void ExcelSheetNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        private void ShowContolActionSpecificPage()
         {
-            UpdateValueExpression();
+            if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+            {
+                mActDSTblElem.DSTableName = mDSTable.Name;
+                mActDSTblElem.DSName = mDSTable.DSC.Name;
+                Page  pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
+                ExcelSpecificFrame.Content = pageContent;
+                ExcelSpecificFrame.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ExcelSpecificFrame.Visibility = Visibility.Collapsed;
+            }
         }
 
-        private void ExcelFilePathTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateValueExpression();
-        }
         
-        private void ExcelSheetNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateValueExpression();
-        }
-
-        private void ExcelFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            UpdateValueExpression();
-        }
-
         private void Grid_LostFocus(object sender, RoutedEventArgs e)
         {
             UpdateValueExpression();
@@ -796,14 +804,7 @@ namespace Ginger.Actions
                 else
                     TBH.AddBoldText("MASD");
 
-                if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
-                {
-                    TBH.AddBoldText(" EP=");
-                    TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim());
-                    TBH.AddBoldText(" ES=");
-                    TBH.AddBoldText(ExcelSheetName.ValueTextBox.Text.Trim());
-                }
-                else
+                if (ControlActionComboBox.SelectedValue.ToString() != "ExportToExcel")
                 {
                     if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
                     {
@@ -984,7 +985,9 @@ namespace Ginger.Actions
                 {
                     if (ValueUC != null)
                     {
-                        mActDSTblElem.ValueUC = mActDSTblElem.GetInputParamCalculatedValue("Value");
+                        ValueExpression mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mActDSTblElem.RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+                        mValueExpression.Value = mActDSTblElem.GetInputParamValue("Value");
+                        mActDSTblElem.ValueUC = mValueExpression.ValueCalculated;
                     }
                     ErrorLabel.Content = "";
                     txtValueExpression.Text = string.Empty;
@@ -1001,10 +1004,18 @@ namespace Ginger.Actions
                         TBH.AddBoldText("N");
                     if (ControlActionComboBox.SelectedValue != null)
                     {
-                        if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
+                        if (ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel" && (DataSource.DSType.ToString().Equals("LiteDataBase")))
                         {
                             TBH.AddText(" Query QUERY=");
-                            TBH.AddBoldText(ExcelFilePath.ValueTextBox.Text.Trim() + "," + ExcelSheetName.ValueTextBox.Text.Trim());
+                            if (mActDSTblElem.ExcelConfig == null)
+                            {
+                                TBH.AddBoldText(mActDSTblElem.ExcelPath + "," + mActDSTblElem.ExcelSheetName);
+                            }
+                            else
+                            {
+                                TBH.AddBoldText(mActDSTblElem.ExcelConfig.ExcelPath + "," + mActDSTblElem.ExcelConfig.ExcelSheetName);
+                            }
+
                             TBH.AddText("}");
                             mActDSTblElem.ValueExp = TBH.GetText();
                             return;
@@ -1260,7 +1271,7 @@ namespace Ginger.Actions
                                         }
 
                                     }
-                                    else
+                                    else if (ControlActionComboBox.SelectedValue.ToString() != "MarkAsDone")
                                     {
                                         TBH.AddBoldText(" GINGER_USED =\"False\"");
                                     }
@@ -1657,7 +1668,7 @@ namespace Ginger.Actions
             }
             if(ControlActionComboBox.SelectedValue.ToString() == "ExportToExcel")
             {               
-                IdentifierRow.Height = new GridLength(130);
+                IdentifierRow.Height = new GridLength(510,GridUnitType.Star);
                 return;   
             }           
                 
@@ -1960,7 +1971,8 @@ namespace Ginger.Actions
                 MarkRowPanel.Visibility = Visibility.Collapsed;
             }
             else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.ExportToExcel.ToString())
-            {                
+            {
+                ShowContolActionSpecificPage();
             }
             else
             {   
@@ -1970,14 +1982,15 @@ namespace Ginger.Actions
             }
 
             //Handle Multi Row for GetValue
-            if(ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.GetValue.ToString())
+            if(ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.GetValue.ToString() || ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.ExportToExcel.ToString())
             {
                 MultiRows.IsChecked = false;
                 MultiRows.Visibility = Visibility.Collapsed;
             }
             else
+            {
                 MultiRows.Visibility = Visibility.Visible;
-
+            }
             //Show Value Panel only for Set Value
             if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.SetValue.ToString())
             {
@@ -2006,7 +2019,12 @@ namespace Ginger.Actions
                     SetGridView();
                 }
             }
-            UpdateValueExpression();
+
+            if (ControlActionComboBox.SelectedValue != null && ControlActionComboBox.SelectedValue.ToString() != ActDSTableElement.eControlAction.ExportToExcel.ToString())
+            {
+                UpdateValueExpression();
+            }
+           
         }
         private void ControlActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {            

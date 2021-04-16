@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -326,22 +327,25 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
-                mFileWatcher = new FileSystemWatcher();
-                mFileWatcher.Path = base.FolderFullPath;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+                {
+                    mFileWatcher = new FileSystemWatcher();
+                    mFileWatcher.Path = base.FolderFullPath;
 
-                //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
-                // for now we do all xml
-                // mFileWatcher.Filter = "*.xml";
+                    //TODO: for documents or other need to have all !!!! or get from SRII the extension to watch not all...
+                    // for now we do all xml
+                    // mFileWatcher.Filter = "*.xml";
 
-                mFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                mFileWatcher.IncludeSubdirectories = false;
+                    mFileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                    mFileWatcher.IncludeSubdirectories = false;
 
-                mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
-                mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
-                mFileWatcher.Created += new FileSystemEventHandler(FileWatcher_Changed);
-                mFileWatcher.Renamed += new RenamedEventHandler(FileWatcher_Renamed);
+                    mFileWatcher.Changed += new FileSystemEventHandler(FileWatcher_Changed);
+                    mFileWatcher.Deleted += new FileSystemEventHandler(FileWatcher_Changed);
+                    mFileWatcher.Created += new FileSystemEventHandler(FileWatcher_Changed);
+                    mFileWatcher.Renamed += new RenamedEventHandler(FileWatcher_Renamed);
 
-                mFileWatcher.EnableRaisingEvents = true;
+                    mFileWatcher.EnableRaisingEvents = true;
+                }
             }
             catch(Exception ex)
             {
@@ -399,10 +403,15 @@ namespace Amdocs.Ginger.Repository
                 if (Directory.Exists(PathHelper.GetLongPath(e.FullPath)))
                 {
                     string fn = Path.GetFileName(PathHelper.GetLongPath(e.OldFullPath));
-                    RepositoryFolder<T> sf = GetSubFolder(fn);
-                    sf.DisplayName = e.Name;
-                    sf.FolderRelativePath = ReplaceLastOccurrence(sf.FolderRelativePath, fn, e.Name);
-                    sf.RefreshFolderSourceControlStatus();
+                    RepositoryFolder<T> repositoryFolder = GetSubFolder(fn);
+
+                    if (repositoryFolder != null)
+                    {
+                        repositoryFolder.DisplayName = e.Name;
+                        repositoryFolder.FolderRelativePath = ReplaceLastOccurrence(repositoryFolder.FolderRelativePath, fn, e.Name);
+                        repositoryFolder.RefreshFolderSourceControlStatus();
+                    }
+
                     return;
                 }
 
@@ -556,23 +565,31 @@ namespace Amdocs.Ginger.Repository
 
                     //if the folder is deleted(shift + del) by the user from the file system and not from Ginger
                     //it comes as changed first then goes to deledted so need to stop/pause file watcher so that the folder should get deleted from the file system
-                    RepositoryFolder<T> rf = GetSubFolder(fn);
-                    rf.PauseFileWatcher();
-                    if (Directory.Exists(e.FullPath))
+                    RepositoryFolder<T> repositoryFolder = GetSubFolder(fn);
+
+                    if (repositoryFolder != null)
                     {
-                        rf.ResumeFileWatcher();
+                        repositoryFolder.PauseFileWatcher();
+                        if (Directory.Exists(e.FullPath))
+                        {
+                            repositoryFolder.ResumeFileWatcher();
+                        }
                     }
+                    
                     break;
                 case WatcherChangeTypes.Deleted:
-                    RepositoryFolder<T> sf2 = GetSubFolder(fn);
-                    sf2.DeleteFolderCacheItemsRecursive();
-
-                    //delete the folder from folders cache  
-                    if (mSubFoldersCache != null)
+                    RepositoryFolder<T> repositoryFolder1 = GetSubFolder(fn);
+                    if (repositoryFolder1 != null)
                     {
-                        mSubFoldersCache.Remove(sf2);
-                    }
+                        repositoryFolder1.DeleteFolderCacheItemsRecursive();
 
+                        //delete the folder from folders cache  
+                        if (mSubFoldersCache != null)
+                        {
+                            mSubFoldersCache.Remove(repositoryFolder1);
+                        }
+                    }
+                    
                     break;
             }
             SolutionRepository.RefreshParentFoldersSoucerControlStatus(e.FullPath);

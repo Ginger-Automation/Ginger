@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -66,16 +66,17 @@ namespace Ginger.SourceControl
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlUser));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlPassTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlPass));
+            
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSourceControlBranchTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlBranch));
+            
             if (SourceControlClassTextBox.Text == SourceControlBase.eSourceControlType.GIT.ToString())
             {
-                xTimeoutPanel.Visibility = Visibility.Hidden;
+                xTimeoutRow.Height = new GridLength(0);
             }
             else
             {
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xTextSourceControlConnectionTimeout, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SourceControlTimeout));
-                xTimeoutPanel.Visibility = Visibility.Visible;
-               
-              
+                xBranchRow.Height = new GridLength(0);
             }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlUserAuthorNameTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SourceControlAuthorEmailTextBox, TextBox.TextProperty,  WorkSpace.Instance.Solution.SourceControl, nameof(SourceControlBase.SolutionSourceControlAuthorEmail));

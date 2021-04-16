@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2019 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ namespace GingerCore.ALM
 
         public override bool ConnectALMProject()
         {
-            ALMCore.DefaultAlmConfig.ALMProjectName = ALMCore.DefaultAlmConfig.ALMProjectKey;
+            // ALMCore.DefaultAlmConfig.ALMProjectName = ALMCore.DefaultAlmConfig.ALMProjectKey;
             if (!string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMServerURL) &&
                 !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMUserName) &&
                 !string.IsNullOrEmpty(ALMCore.DefaultAlmConfig.ALMPassword) &&
@@ -135,7 +135,7 @@ namespace GingerCore.ALM
 
             if (resourceType == ALM_Common.DataContracts.ResourceType.ALL)
             {
-                return GetALMItemFields();
+                fields = GetALMItemFields();
             }
             else
             {
@@ -348,7 +348,8 @@ namespace GingerCore.ALM
                                         {
                                             testCaseStatus = statuses.Where(z => z.Name == "Unexecuted").FirstOrDefault();
                                         }
-                                        QTestApiModel.ManualTestLogResource automationTestLog = new QTestApiModel.ManualTestLogResource(null, null, bizFlow.StartTimeStamp, bizFlow.EndTimeStamp,
+
+                                        QTestApiModel.ManualTestLogResource automationTestLog = new QTestApiModel.ManualTestLogResource(null, null, DateTime.Parse(bizFlow.StartTimeStamp.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:sszz:00")), DateTime.Parse(bizFlow.EndTimeStamp.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:sszz:00")),
                                                                                                                                                 null, null, tsTest.TestName + " - execution", null, null,
                                                                                                                                                 null, null, null, testCaseStatus, null, testStepLogs);
 
@@ -464,8 +465,10 @@ namespace GingerCore.ALM
                         QTestApiModel.TestStepResource stepResource = new QTestApiModel.TestStepResource(   null, null, 
                                                                                                             ((Activity)actIdent.IdentifiedActivity).Description == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Description,
                                                                                                             ((Activity)actIdent.IdentifiedActivity).Expected == null ? string.Empty : ((Activity)actIdent.IdentifiedActivity).Expected);
-                        stepResource.PlainValueText = ((Activity)actIdent.IdentifiedActivity).ActivityName;                                                                   
-                        testcaseApi.AddTestStep((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase.Id, stepResource);
+                        stepResource.PlainValueText = ((Activity)actIdent.IdentifiedActivity).ActivityName;
+                        stepResource = testcaseApi.AddTestStep((long)Convert.ToInt32(ALMCore.DefaultAlmConfig.ALMProjectKey), testCase.Id, stepResource);
+                        ((Activity)actIdent.IdentifiedActivity).ExternalID = stepResource.Id.ToString();
+                        ((Activity)actIdent.IdentifiedActivity).ExternalID2 = stepResource.Id.ToString();
                     }
                     activitiesGroup.ExternalID = testCase.Id.ToString();
                     activitiesGroup.ExternalID2 = testCase.Id.ToString();
@@ -583,11 +586,10 @@ namespace GingerCore.ALM
                 else
                 {
                     QtestTestStep newStep = new QtestTestStep(testStep.Id.ToString(), testStep.Description, testStep.Expected);
-                    if ((testStep.ParameterValues != null) && (testStep.ParameterValues.Count > 0))
+                    if ((testStep.ParameterValues != null) && (testStep.ParameterValues.Count > 0) && (testStep.ParameterValues[0] != null))
                     {
                         if (existedParameters != null)
                         {
-
                             if (testStep.RootCalledTestCaseId != null)
                             {
                                 QTestApiModel.ParameterModel currentParameter = existedParameters.Items.Where(z => z.TcIds.Contains(testStep.RootCalledTestCaseId) && z.Values.Contains(testStep.ParameterValues[0])).FirstOrDefault();
@@ -661,15 +663,7 @@ namespace GingerCore.ALM
 
         public override Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST)
         {
-            if (!useREST)
-            {
-                // do nothing
-                return new Dictionary<Guid, string>();
-            }
-            else
-            {
-                return ImportFromQC.CreateNewDefectQCREST(defectsForOpening);
-            }
+            return new Dictionary<Guid, string>();     
         }
 
         public static string StripHTML(string HTMLText, bool toDecodeHTML = true)

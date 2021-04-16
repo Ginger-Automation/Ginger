@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using GingerCore.Variables;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -97,7 +98,7 @@ namespace GingerCore.ALM.QCRestAPI
                 {
                     //Regular TC
                     newTSTest.TestID = testInstance.Id;
-                    newTSTest.TestName = testInstance.Name;
+                    newTSTest.TestName = testInstance.Name ?? testCase.Name;
                     newTSTest.LinkedTestID = testInstance.TestId;
                 }
             }
@@ -649,6 +650,61 @@ namespace GingerCore.ALM.QCRestAPI
 
             return fields;
         }
+
+
+        public static Dictionary<Guid, string> CreateNewDefectQCREST(Dictionary<Guid, Dictionary<string, string>> defectsForOpening)
+        {
+            Dictionary<Guid, string> defectsOpeningResults = new Dictionary<Guid, string>();
+            string qcbin = "qcbin";
+            QCRestClient.QCClient qcClientREST = new QCClient(ALMCore.DefaultAlmConfig.ALMServerURL.TrimEnd(qcbin.ToCharArray()), ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMDomain, ALMCore.DefaultAlmConfig.ALMProjectName, 12);
+
+            if (qcClientREST.Login())
+            {
+                foreach (KeyValuePair<Guid, Dictionary<string, string>> defectForOpening in defectsForOpening)
+                {
+                    // set Summary and Defect Description
+                    string newDefectID = qcClientREST.CreateNewDefectQCTest(defectForOpening.Value);
+                    if (newDefectID == "0")
+                    {
+                        Reporter.ToUser(eUserMsgKey.IssuesInSelectedDefectProfile);
+                        break;
+                    }
+                    defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
+                    // Add screen shot as a attachment to defect
+                    if (defectForOpening.Value.ContainsKey("screenshots") && !string.IsNullOrEmpty(defectForOpening.Value["screenshots"]))
+                    {
+                        AddAttachmentToDefect(qcClientREST, newDefectID, defectForOpening.Value["screenshots"]);
+                    }
+                }
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.ALMConnectFailure);
+            }
+
+            return defectsOpeningResults;
+        }
+
+        private static bool AddAttachmentToDefect(QCRestClient.QCClient qcClientREST,string defectId, string filePath)
+        {
+            try
+            {
+                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                BinaryReader br = new BinaryReader(fs);
+                byte[] fileData = br.ReadBytes((Int32)fs.Length);
+
+                qcClientREST.CreateAttachmentForEntitiyId(ALM_Common.DataContracts.ResourceType.DEFECT, defectId, Path.GetFileName(filePath), fileData);
+
+                fs.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect", ex);
+                return false;
+            }
+        }
+
 
         #endregion Public Functions
 

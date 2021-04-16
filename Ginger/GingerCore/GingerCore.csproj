@@ -77,8 +77,8 @@
       <HintPath>DLLs\ALMRepository.dll</HintPath>
     </Reference>
     <Reference Include="ALMRestClient, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\ALMRestClient.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="ALM_Common, Version=7.7.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -155,6 +155,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL's\LibGit2Sharp.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=2.0.12.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.12\lib\net45\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="LZ4, Version=1.0.15.93, Culture=neutral, PublicKeyToken=62e1b5ec1eec9bdd, processorArchitecture=MSIL">
       <HintPath>..\packages\lz4net.1.0.15.93\lib\net4-client\LZ4.dll</HintPath>
     </Reference>
@@ -223,7 +226,7 @@
     <Reference Include="OctaneSdkStandard">
       <HintPath>DLLs\OctaneSdkStandard.dll</HintPath>
     </Reference>
-    <Reference Include="Octane_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Octane_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\Octane_Repository.dll</HintPath>
     </Reference>
@@ -409,6 +412,14 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsInput">
       <HintPath>..\packages\InputSimulator.1.0.4.0\lib\net20\WindowsInput.dll</HintPath>
+    </Reference>
+    <Reference Include="ZephyrEntSDK, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\ZephyrEntSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Zepyhr_Ent_Repository, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLLs\Zepyhr_Ent_Repository.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -610,6 +621,7 @@
     <Compile Include="ALM\JIRA\JiraTestParameter.cs" />
     <Compile Include="ALM\JIRA\JiraTestStep.cs" />
     <Compile Include="ALM\OctaneCore.cs" />
+    <Compile Include="ALM\Octane\OctaneSettings.cs" />
     <Compile Include="ALM\QtestCore.cs" />
     <Compile Include="ALM\Qtest\ImportFromQtest.cs" />
     <Compile Include="ALM\QCRestAPICore.cs" />
@@ -654,6 +666,10 @@
     <Compile Include="ALM\RQM\RQMTestPlan.cs" />
     <Compile Include="ALM\RQM\RQMConnect.cs" />
     <Compile Include="ALM\JIRA\Bll\JiraConnectManager.cs" />
+    <Compile Include="ALM\ZephyrEntCore.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ExportEntity.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntExportManager.cs" />
+    <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntImportManager.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
     <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
@@ -855,12 +871,16 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DLLs\Interop.TDAPIOLELib.dll" />
-    <Content Include="DLLs\LibGit2Sharp.dll" />
+    <Content Include="DLLs\LibGit2Sharp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="DLLs\ObjectsUtils.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DLLs\OctaneSDK.dll" />
-    <Content Include="DLLs\Octane_Repository.dll" />
+    <Content Include="DLLs\OctaneSdkStandard.dll" />
+    <Content Include="DLLs\Octane_Repository.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="DLLs\QCRestClient.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -873,12 +893,6 @@
     <Content Include="DLLs\RQM_Repository.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="ALM\JIRA\JiraSettings\Export\test.json" />
-    <None Include="ALM\JIRA\JiraSettings\Export\testexecution.json" />
-    <None Include="ALM\JIRA\JiraSettings\Export\testset.json" />
-    <None Include="ALM\JIRA\JiraSettings\JiraSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="GingerCore.ruleset" />
     <None Include="RallyRestAPI.NET.shfbproj" />
     <None Include="Resources\%40EmptyStart_16x16.gif" />

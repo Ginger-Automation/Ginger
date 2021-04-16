@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ namespace Ginger.Agents
                 xVirtualAgentsPanel.Visibility = Visibility.Visible;
                 xAgentVirtualSupported.Content = "Yes";
 
-                VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
+                //VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
             }
             else
             {
@@ -166,9 +166,9 @@ namespace Ginger.Agents
             }
         }
 
-        private void RefreshVirtualAgentCount_Click(object sender, RoutedEventArgs e)
-        {
-            VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
-        }
+        //private void RefreshVirtualAgentCount_Click(object sender, RoutedEventArgs e)
+        //{
+        //    VirtualAgentCount.Content = mAgent.VirtualAgentsStarted().Count;
+        //}
     }
 }

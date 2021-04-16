@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using GingerCore.ALM.QC;
 using Amdocs.Ginger.Common.InterfacesLib;
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.ALM.Repository
 {
@@ -39,7 +40,10 @@ namespace Ginger.ALM.Repository
         public abstract void ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups);
         public abstract bool ExportActivitiesGroupToALM(ActivitiesGroup activtiesGroup, string uploadPath = null, bool performSaveAfterExport = false, BusinessFlow businessFlow = null);
         public abstract void ImportALMTests(string importDestinationFolderPath);
-        public abstract void ImportALMTestsById(string importDestinationFolderPath);
+        public virtual void ImportALMTestsById(string importDestinationFolderPath)
+        {
+            Reporter.ToUser(eUserMsgKey.OperationNotSupported, "Import by Id is not supported for configured ALM Type");
+        }
         public abstract eUserMsgKey GetDownloadPossibleValuesMessage();
         public abstract IEnumerable<Object> SelectALMTestSets();
         public abstract bool ImportSelectedTests(string importDestinationPath, IEnumerable<Object> selectedTests);
@@ -51,12 +55,18 @@ namespace Ginger.ALM.Repository
         public abstract bool LoadALMConfigurations();
         public abstract void UpdateActivitiesGroup(ref BusinessFlow businessFlow, List<Tuple<string, string>> TCsIDs);
         public abstract void UpdateBusinessFlow(ref BusinessFlow businessFlow);
+
         public void OpenALMItemsFieldsPage()
         {
             if (mALMFieldsPage == null)
+            {
                 mALMFieldsPage = new ALMItemsFieldsConfigurationPage();
-
-            mALMFieldsPage.ShowAsWindow();
+                mALMFieldsPage.ShowAsWindow(false);
+            }
+            else 
+            {
+                mALMFieldsPage.ShowAsWindow(true);
+            }
         }
         public void ALMDefectsProfilesPage()
         {
@@ -64,6 +74,25 @@ namespace Ginger.ALM.Repository
                 mALMDefectsProfilesPage = new ALMDefectsProfilesPage();
 
             mALMDefectsProfilesPage.ShowAsWindow();
+        }
+
+
+        public void AddTestSetFlowToFolder(BusinessFlow businessFlow, string folderPath)
+        {
+            bool addItemToRootFolder = true;
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                RepositoryFolderBase repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryFolderByPath(folderPath);
+                if (repositoryFolder != null)
+                {
+                    repositoryFolder.AddRepositoryItem(businessFlow);
+                    addItemToRootFolder = false;
+                }
+            }
+            if (addItemToRootFolder)
+            {
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(businessFlow);
+            }
         }
 
     }

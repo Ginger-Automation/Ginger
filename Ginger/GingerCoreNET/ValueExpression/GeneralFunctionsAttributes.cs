@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,6 +41,26 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         public string DefaultValue { get; set; }
 
         public ValueExpressionFunctionExpression(string DefaultValue)
+        {
+            this.DefaultValue = DefaultValue;
+        }
+    }
+
+    public class ValueExpressionFunctionCategory : Attribute
+    {
+        public string DefaultValue { get; set; }
+
+        public ValueExpressionFunctionCategory(string DefaultValue)
+        {
+            this.DefaultValue = DefaultValue;
+        }
+    }
+
+    public class ValueExpressionFunctionSubCategory : Attribute
+    {
+        public string DefaultValue { get; set; }
+
+        public ValueExpressionFunctionSubCategory(string DefaultValue)
         {
             this.DefaultValue = DefaultValue;
         }

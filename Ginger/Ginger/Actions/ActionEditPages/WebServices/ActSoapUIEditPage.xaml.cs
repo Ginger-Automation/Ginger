@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -395,14 +395,14 @@ namespace Ginger.Actions.WebServices
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestSuite, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            TestSuiteComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
+            TestSuiteComboBox.Text = w.xExpressionUCTextEditor.textEditor.Text;
         }
 
         private void TestCaseVEButton_Click(object sender, RoutedEventArgs e)
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActSoapUI.Fields.TestCase, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            TestCaseComboBox.Text = w.ValueUCTextEditor.textEditor.Text;
+            TestCaseComboBox.Text = w.xExpressionUCTextEditor.textEditor.Text;
         }
 
 

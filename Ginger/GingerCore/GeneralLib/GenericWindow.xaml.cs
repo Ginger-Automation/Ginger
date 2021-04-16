@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ namespace Ginger
                     if (margin.Right < 10)
                         margin.Right = 10;
                     btn.Margin = margin;
-                    btn.Style = this.FindResource("$WindowButtonStyle") as Style;
+                    btn.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }

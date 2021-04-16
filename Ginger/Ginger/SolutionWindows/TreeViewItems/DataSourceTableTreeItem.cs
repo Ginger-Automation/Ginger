@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -161,13 +161,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ExportToExcel(object sender, RoutedEventArgs e)
         {                      
-            Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails.Name);
+            Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel(DSTableDetails);
             DSEE.ShowAsWindow();
 
             string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-            string sExcelPath = DSEE.ExcelPath;
-            string sSheetName = DSEE.SheetName;
-            
+            string sExcelPath = DSEE.mExcelConfig.ExcelPath;
+            string sSheetName = DSEE.mExcelConfig.ExcelSheetName;
+            string sTableQueryValue =  DSEE.mExcelConfig.ExportQueryValue;
+
             if(sExcelPath !="")
             {
                 if (sExcelPath.Contains(SolutionFolder))
@@ -184,7 +185,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 sSheetName= DSTableDetails.Name;
             }
             Reporter.ToStatus(eStatusMsgKey.ExportItem, null, DSTableDetails.Name, "Data Source Table");
-            DSTableDetails.DSC.ExporttoExcel(DSTableDetails.Name, sExcelPath, sSheetName);            
+            DSTableDetails.DSC.ExporttoExcel(DSTableDetails.Name, sExcelPath, sSheetName,sTableQueryValue);            
             Reporter.HideStatusMessage();
         }
 

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -261,8 +261,10 @@ namespace GingerCore.ALM.JIRA
 
                         //pull TC-Step parameters and add them to the Activity level
                         List<string> stepParamsList = new List<string>();
-                        GetStepParameters(StripHTML(step.Variables), ref stepParamsList);
-                        //GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        if ((step.Expected != null) && ((step.Expected == string.Empty)))
+                        {
+                            GetStepParameters(StripHTML(step.Expected), ref stepParamsList);
+                        }
                         foreach (string param in stepParamsList)
                         {
                             ConvertJiraParameters(tc, stepActivity, param);

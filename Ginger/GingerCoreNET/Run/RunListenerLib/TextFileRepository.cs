@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
-    class TextFileRepository: ExecutionLogger
+    public class TextFileRepository: ExecutionLogger
     {
         static Newtonsoft.Json.JsonSerializer mJsonSerializer;
         public TextFileRepository()
@@ -86,14 +86,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     try
                     {
                         screenShotCountPerAction++;
+                        var screenShotPath = Path.Combine(executionLogFolder, action.ExecutionLogFolder, string.Concat("ScreenShot_", AR.Seq , "_" , screenShotCountPerAction.ToString() , ".png"));
                         if (executedFrom == Amdocs.Ginger.Common.eExecutedFrom.Automation)
                         {
-                            System.IO.File.Copy(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"), true);
+                            System.IO.File.Copy(action.ScreenShots[s], screenShotPath, true);
                         }
                         else
                         {
-                            System.IO.File.Move(action.ScreenShots[s], Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png"));
-                            action.ScreenShots[s] = Path.Combine(executionLogFolder,action.ExecutionLogFolder,"ScreenShot_" + AR.Seq + "_" + screenShotCountPerAction.ToString() + ".png");
+                            System.IO.File.Move(action.ScreenShots[s], screenShotPath);
+                            action.ScreenShots[s] = screenShotPath;
                         }
                     }
                     catch (Exception ex)
@@ -255,6 +256,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        {
+            throw new NotImplementedException();
+        }
+        public override string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
         {
             throw new NotImplementedException();
         }

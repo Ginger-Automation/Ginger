@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -245,7 +245,7 @@ namespace GingerCore.Variables
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetValidInteger..", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetValidInteger..", ex);
                 return mInitialNumberValue;
             }
 
@@ -268,7 +268,6 @@ namespace GingerCore.Variables
             {
                 mInitialNumberValue = GetFloatWithPrecisionValue(mInitialNumberValue);
             }
-            Value = mInitialNumberValue;
             return "Initial Value=" + mInitialNumberValue;
         }
 
@@ -301,7 +300,7 @@ namespace GingerCore.Variables
 
             if (isValidationPass)
             {
-                mInitialNumberValue = value;
+                this.Value = value;
             }
             return isValidationPass;
         }

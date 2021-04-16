@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,8 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.ValueExpression;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using Ginger.Run;
+using Ginger.Run.RunSetActions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -94,10 +99,14 @@ namespace GingerCore
         private static Regex rxDSPattern = new Regex(@"{(\bDS Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvParamPattern = new Regex(@"{(\bEnvParam App=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static Regex rxEnvUrlPattern = new Regex(@"{(\bEnvURL App=)\w+\b[^{}]*}", RegexOptions.Compiled);
-        
+        private static Regex rxFDPattern = new Regex(@"{(\bFD Object=)\w+\b[^{}]*}", RegexOptions.Compiled);
+        private static Regex rxExecutionJsonDataPattern = new Regex(@"{ExecutionJsonData}", RegexOptions.Compiled);
+
         private static Regex VBSRegex = new Regex(@"{[V|E|VBS]" + rxVar + "[^{}]*}", RegexOptions.Compiled);
         private static Regex rxe = new Regex(@"{RegEx" + rxVare + ".*}", RegexOptions.Compiled | RegexOptions.Singleline);
-        private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((\")*([^\\)}\\({])*(\")*\\)}", RegexOptions.Compiled);
+
+        private static Regex rfunc = new Regex("{Function(\\s)*Fun(\\s)*=(\\s)*([a-zA-Z]|\\d)*\\((.*)([^\\)}])*\\)}", RegexOptions.Compiled | RegexOptions.Singleline);
+
         // Enable setting value simply by assigned string, 
         // so no need to create new VE class everywhere in code
         // Can simpliy do: ValueExpression VE = "{Var Name=V1}"
@@ -111,7 +120,7 @@ namespace GingerCore
         }
 
         ObservableList<DataSourceBase> DSList;
-
+        Context mContext;
         BusinessFlow BF;
         ProjEnvironment Env;
         bool bUpdate;
@@ -156,7 +165,16 @@ namespace GingerCore
             this.bDone = bDone;
             
         }
-
+        public ValueExpression(ProjEnvironment Env, Context ObjContext, ObservableList<DataSourceBase> DSList)
+        {
+            this.Env = Env;
+            this.mContext = ObjContext;
+            if (ObjContext != null)
+            {
+                this.BF = ObjContext.BusinessFlow;
+            }
+            this.DSList = DSList;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -198,29 +216,311 @@ namespace GingerCore
             ReplaceDataSources();
 
             CalculateFunctions();
+            EvaluateFlowDetails();
             EvaluateCSharpFunctions();
             if (!string.IsNullOrEmpty(SolutionFolder))
-
-            if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
             {
-                mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
-            }
-            else if (!string.IsNullOrWhiteSpace(SolutionFolder))
+
+                if (WorkSpace.Instance != null && WorkSpace.Instance.SolutionRepository != null)
+                {
+                    mValueCalculated = WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(mValueCalculated);
+                }
+                else if (!string.IsNullOrWhiteSpace(SolutionFolder))
                 {
                     if (mValueCalculated.StartsWith("~"))
                     {
                         mValueCalculated = mValueCalculated.TrimStart(new char[] { '~', '\\', '/' });
                         mValueCalculated = Path.Combine(SolutionFolder, mValueCalculated);
                     }
+             
                 }
+            }
+            if (mValueCalculated.StartsWith(@"\~"))
+            {
+                mValueCalculated = "~" + mValueCalculated.Substring(2);
 
+            }
         }
+
+#region Flow Details
+
+        private void EvaluateFlowDetails()
+        {
+            MatchCollection matches = rxFDPattern.Matches(mValueCalculated);
+            MatchCollection matchesExecutionJsonData = rxExecutionJsonDataPattern.Matches(mValueCalculated);
+            if (matches.Count == 0 && matchesExecutionJsonData.Count == 0)
+            {
+                return;
+            }
+
+            foreach (Match match in matches)
+            {
+                try
+                {
+                    ReplaceFlowDetails(match.Value);
+                }
+                catch (Exception ex)
+                {
+                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                }
+            }
+
+            foreach (Match match in matchesExecutionJsonData)
+            {
+                try
+                {
+                    ReplaceExecutionJsonDataDetails(match.Value);
+                }
+                catch (Exception ex)
+                {
+                    mValueCalculated = mValueCalculated.Replace(match.Value, string.Format("['{0}' Expression is not valid, Error:'{1}']", match.Value, ex.Message));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}'", match.Value), ex);
+                }
+            }
+        }
+        
+        private void ReplaceExecutionJsonDataDetails(string josnExpression)
+        {
+            //Select fields from selected template configuration
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            HTMLReportConfiguration defaultTemplate = null;
+            if (mContext.RunsetAction != null)
+            {
+                RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
+                defaultTemplate = HTMLReportConfigurations.Where(x => (x.ID == runSetAction.selectedHTMLReportTemplateID)).FirstOrDefault();
+                if (defaultTemplate == null && runSetAction.selectedHTMLReportTemplateID == 100)
+                {
+                    defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+                }
+            }
+            else 
+            {
+                defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+            }
+
+            //Get Last Execution details
+            LiteDbRunSet liteDbRunSet = null;
+            var loggerMode = WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod;
+            if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+            {
+                LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
+                liteDbRunSet = dbManager.GetLatestExecutionRunsetData("");
+            }
+            else
+            {
+                mValueCalculated = mValueCalculated.Replace(josnExpression, string.Format("['{0}' Expression Supported only in case the selected Execution Logger type is DB.]", josnExpression));
+                return;
+            }
+
+            string json = WorkSpace.Instance.RunsetExecutor.Runners[0].ExecutionLoggerManager.mExecutionLogger.CalculateExecutionJsonData(liteDbRunSet, defaultTemplate);
+
+            mValueCalculated = mValueCalculated.Replace(josnExpression, json);
+        }
+        public enum eFlowDetailsObjects
+        {
+            Environment, Runset, Runner, BusinessFlow, ActivitiesGroup, Activity, Action, PreviousBusinessFlow, PreviousActivity, PreviousAction, LastFailedAction, ErrorHandlerOriginActivitiesGroup, ErrorHandlerOriginActivity, ErrorHandlerOriginAction, LastFailedBusinessFlow, LastFailedActivity, Solution
+        }
+
+        public static Tuple<eFlowDetailsObjects, string> GetFlowDetailsParams(string flowDetailsExpression)
+        {
+            try
+            {
+                string objStr = string.Empty;
+                string field = string.Empty;
+                int FieldStartIndex = flowDetailsExpression.IndexOf("Field");
+                int ObjIndex = flowDetailsExpression.IndexOf("Object");
+                int LastIndex = flowDetailsExpression.IndexOf("}");
+                objStr = flowDetailsExpression.Substring(11, FieldStartIndex - 12);
+                field = flowDetailsExpression.Substring(FieldStartIndex + 6, flowDetailsExpression.Length - (FieldStartIndex + 7)).Replace("\"", "").Trim();
+
+                //convert string object to enum
+                if (Enum.TryParse(objStr, out eFlowDetailsObjects objEnum) == false)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to invalid 'Object'", flowDetailsExpression));
+                    return null;
+                }
+                return new Tuple<eFlowDetailsObjects, string>(objEnum, field);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to wrong format", flowDetailsExpression));
+                return null;
+            }
+        }
+
+        private void ReplaceFlowDetails(string flowDetailsExpression)
+        {
+            eFlowDetailsObjects obj;
+            string field = string.Empty;
+            string value = string.Empty;
+            Tuple<eFlowDetailsObjects, string> expParams = GetFlowDetailsParams(flowDetailsExpression);
+            if (expParams == null)
+            {
+                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Format("['{0}' Expression is not valid]", flowDetailsExpression));
+                return;
+            }
+            obj = expParams.Item1;
+            field = expParams.Item2;
+
+            RunSetConfig runset = null;
+            GingerRunner runner = null;
+            if (WorkSpace.Instance.RunsetExecutor!=null)
+            {
+                runset = WorkSpace.Instance.RunsetExecutor.RunSetConfig;                
+            }    
+            if(runset!=null)
+            {
+                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.BusinessFlows.Contains(this.BF)).FirstOrDefault();
+            }
+            
+            RepositoryItemBase objtoEval = null;
+            switch (obj)
+            {
+                case eFlowDetailsObjects.Environment:
+                    objtoEval = this.Env;
+                    break;
+                case eFlowDetailsObjects.Runset:
+                    objtoEval = runset;                                   
+                    break;
+                case eFlowDetailsObjects.Runner:
+                    objtoEval = runner;
+                    break;
+                case eFlowDetailsObjects.LastFailedBusinessFlow:
+                    if (runner != null)
+                    {
+                        objtoEval = runner.LastFailedBusinessFlow;
+                    }
+                    break;
+                case eFlowDetailsObjects.BusinessFlow:
+                    objtoEval = this.BF;                                    
+                    break;
+                case eFlowDetailsObjects.ActivitiesGroup:
+                    objtoEval = this.BF.CurrentActivitiesGroup;
+                    break;
+                case eFlowDetailsObjects.Activity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.CurrentActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.Action:
+                    objtoEval = (RepositoryItemBase)this.BF.CurrentActivity.Acts.CurrentItem;                   
+                    break;
+                case eFlowDetailsObjects.PreviousBusinessFlow:
+                    if (runner != null)
+                    {
+                        objtoEval = runner.PreviousBusinessFlow;
+                    }
+                   break;           
+                case eFlowDetailsObjects.PreviousActivity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.PreviousActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.PreviousAction:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.PreviousAction;
+                    }
+                    break;
+                case eFlowDetailsObjects.LastFailedAction:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.LastFailedAction;
+                    }
+                    break;
+                case eFlowDetailsObjects.ErrorHandlerOriginActivitiesGroup:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.ErrorHandlerOriginActivitiesGroup;
+                    }
+                    break;
+                case eFlowDetailsObjects.ErrorHandlerOriginActivity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.ErrorHandlerOriginActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.ErrorHandlerOriginAction:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.ErrorHandlerOriginAction;
+                    }
+                    break;
+                case eFlowDetailsObjects.LastFailedActivity:
+                    if (this.BF != null)
+                    {
+                        objtoEval = this.BF.LastFailedActivity;
+                    }
+                    break;
+                case eFlowDetailsObjects.Solution:
+                    if (WorkSpace.Instance != null)
+                    {
+                        objtoEval = WorkSpace.Instance.Solution;
+                    }
+                    break;
+            }
+            if(objtoEval != null)
+            {
+                value = GetValueFromReflection(objtoEval, field);
+                if (value != null)
+                {
+                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, value);
+                    return;
+                }
+                else
+                {
+                    mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, string.Format("['{0}' Expression is not valid]", flowDetailsExpression));
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to evaluate flow details expression '{0}' due to invalid 'Field'", flowDetailsExpression));
+                    return;
+                }
+            }
+            else
+            {
+                mValueCalculated = mValueCalculated.Replace(flowDetailsExpression, "N/A");//obj is null so representing as empty field
+            }           
+        }
+
+        private string GetValueFromReflection(object obj, string field)
+        {
+            object value = null;
+            PropertyInfo prop = obj.GetType().GetProperty(field);
+            FieldInfo fieldInfo = null;
+            if (prop != null)
+            {
+                value = prop.GetValue(obj);
+            }
+            else
+            {
+                fieldInfo = obj.GetType().GetField(field);
+                if (fieldInfo != null)
+                {
+                    value = fieldInfo.GetValue(obj);
+                }
+            }
+            if (prop != null || fieldInfo != null)
+            {
+                if (value != null)
+                {
+                    return value.ToString();
+                }
+                else
+                {
+                    return "N/A";
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+#endregion Flow Details
 
         private void EvaluateCSharpFunctions()
         {
             mValueCalculated = CodeProcessor.GetResult(mValueCalculated);
-
-
         }
 
         private void ReplaceGlobalParameters()
@@ -695,7 +995,13 @@ namespace GingerCore
                             {
                                 nextavail = true;
                             }
-                            liteDB.RunQuery(litedbquery, 0, tableName[0], Markasdone, nextavail);
+
+                            if (litedbquery != "" )
+                            {
+                                liteDB.RunQuery(litedbquery, rowNumber, tableName[0], Markasdone, nextavail);
+                                mValueCalculated = "";
+                            }
+
                         }
                     }
                     else
@@ -853,7 +1159,9 @@ namespace GingerCore
                     else mValueCalculated = mValueCalculated.Replace(p, vb.Value);
                 }
                 else
-                 mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                {
+                    mValueCalculated = mValueCalculated.Replace(p, vb.Value);
+                }
             }
             else
             {
@@ -1056,18 +1364,26 @@ namespace GingerCore
                             break;
                         }
                         
-                        string functionPattern = @"\b[^()]+\((.*)\)$";
-                        string paramPattern = @"([^,]+\\(.+?\\))|([^,]+)";
-                        List<string> FuncSplit = Regex.Split(FunName, functionPattern).ToList<string>();
-                        FuncSplit.RemoveAll(x => x.Equals(""));
-                        List<string> parameters = Regex.Split(FuncSplit[0].ToString(), paramPattern).ToList<string>();
+                        Regex paramRegEx = new Regex("(.*{.*.}\\\")|([,]+)", RegexOptions.Compiled | RegexOptions.Singleline);
+
+                        //Remove Function name
+                        int firstStringPosition = FunName.IndexOf("(")+1;
+                        int secondStringPosition = FunName.IndexOf(")");
+                        string allParams = FunName.Substring(firstStringPosition, secondStringPosition - firstStringPosition);
+
+                        List<string> parameters = paramRegEx.Split(allParams.ToString()).ToList<string>();
                         parameters.RemoveAll(y => y.Equals(""));
-                        parameters = parameters.Where(z => z.Contains("\"")).Select(z => z.Replace("\"", "")).ToList<string>();
+
+                        parameters = parameters.Select(z => z.Length > 1 ? z.Trim('\"') : z).ToList<string>();
 
                         object[] listOfParams = new object[parameters.Count];
                         int index = 0;
                         foreach (var item in parameters)
                         {
+                            if (item.Equals(","))
+                            {
+                                continue;
+                            }
                             listOfParams[index++] = item;
                         }
                         string funcOut = mi.Invoke(classInstance, new object[] { listOfParams }).ToString();

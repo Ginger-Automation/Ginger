@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace GingerCoreCommonTest.Repository
@@ -582,8 +583,12 @@ namespace GingerCoreCommonTest.Repository
         [TestMethod]
         public void FileWatcherChangeExisitingMRIOnDisk()
         {
-            //Arrange
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+            {
+                return;
+            }
 
+            //Arrange
             ObservableList<MyRepositoryItem> allMRIs = mSolutionRepository.GetAllRepositoryItems<MyRepositoryItem>();
 
             string name = "BF MRI file v0";

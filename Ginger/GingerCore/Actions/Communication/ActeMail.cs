@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -216,7 +216,17 @@ namespace GingerCore.Actions.Communication
             e.MailFrom = this.GetInputParamCalculatedValue(nameof(MailFrom));
             e.MailTo = this.GetInputParamCalculatedValue(nameof(Mailto));
             e.MailCC = this.GetInputParamCalculatedValue(nameof(Mailcc));
-            e.Attachments.Add(this.GetInputParamCalculatedValue(nameof(AttachmentFileName)));
+
+            //add multi attachment files
+            if (!string.IsNullOrEmpty(this.GetInputParamCalculatedValue(nameof(AttachmentFileName))))
+            {
+                String[] fileslist = this.GetInputParamCalculatedValue(nameof(AttachmentFileName)).Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (String filePath in fileslist)
+                {
+                    e.Attachments.Add(filePath);
+                }
+            }
+
             e.EnableSSL = (bool)this.GetInputParamValue<bool>(Fields.EnableSSL);
             e.ConfigureCredential = (bool)this.GetInputParamValue<bool>(Fields.ConfigureCredential);
             e.SMTPUser = this.GetInputParamCalculatedValue(nameof(User));

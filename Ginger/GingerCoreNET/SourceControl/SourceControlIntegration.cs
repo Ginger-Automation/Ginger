@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ namespace Ginger.SourceControl
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during resolving conflicts..",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during resolving conflicts..",ex);
                 return false;
             }
 
@@ -373,6 +373,8 @@ namespace Ginger.SourceControl
                     mSourceControl.SourceControlProxyPort = WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort;
                     mSourceControl.SourceControlTimeout = WorkSpace.Instance.UserProfile.SolutionSourceControlTimeout;
                     mSourceControl.supressMessage = true;
+
+                    mSourceControl.SourceControlBranch = WorkSpace.Instance.UserProfile.SolutionSourceControlBranch;
                 }
 
                 if (WorkSpace.Instance.UserProfile.SourceControlLocalFolder == string.Empty)
@@ -452,5 +454,24 @@ namespace Ginger.SourceControl
                 return false;
             }
         }
+
+        public static List<string> GetBranches(SourceControlBase SourceControl)
+        {
+            return SourceControl.GetBranches();
+        }
+
+        public static string GetCurrentBranchForSolution(SourceControlBase SourceControl)
+        {
+            try
+            {
+                return SourceControl.GetCurrentBranchForSolution();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Fetching Branches..", ex);
+                return null;
+            }
+        }
+        
     }
 }

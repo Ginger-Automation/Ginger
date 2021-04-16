@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ namespace Ginger.ALM
         public ALMItemsFieldsConfigurationPage()
         {
             InitializeComponent();
-
+            ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
             mItemsFields =  WorkSpace.Instance.Solution.ExternalItemsFields;
             if (mItemsFields.Count == 0 && Reporter.ToUser(ALMIntegration.Instance.GetDownloadPossibleValuesMessage()) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
@@ -76,12 +76,16 @@ namespace Ginger.ALM
                 RunWorker(true);
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        public void ShowAsWindow(bool refreshFields = true, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button saveButton = new Button();
             saveButton.Content = "Save";
             saveButton.ToolTip = "Save 'To Update' fields";
             saveButton.Click += new RoutedEventHandler(Save);
+            if (refreshFields)
+            {
+                ALMIntegration.Instance.RefreshALMItemFields(WorkSpace.Instance.Solution.ExternalItemsFields, true, null);
+            }
             grdQCFields.DataSourceList = WorkSpace.Instance.Solution.ExternalItemsFields;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { saveButton });
         }
@@ -92,9 +96,7 @@ namespace Ginger.ALM
             ObservableList<ExternalItemFieldBase> tempItemList = new ObservableList<ExternalItemFieldBase>();
             WorkSpace.Instance.Solution.ExternalItemsFields = ALMIntegration.Instance.GetUpdatedFields(mItemsFields, false);
             WorkSpace.Instance.Solution.SaveSolution(true, SolutionGeneral.Solution.eSolutionItemToSave.ALMSettings);
-            WorkSpace.Instance.Solution.ExternalItemsFields = mItemsFields;
             genWin.Close();
-
         }
 
         #region BackgroundWorker Thread

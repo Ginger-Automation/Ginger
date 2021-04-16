@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -329,7 +329,7 @@ namespace GingerCore.Drivers.PBDriver
                     mUIAutomationHelper.ActUISwitchWindow(actUIPBC);
                     break;
                 default:
-                    actUIPBC.Error = "Unable to perform operation";
+                    actUIPBC.Error = string.Format("Selected '{0}' Operation not supported for 'PBDriver'", actUIPBC.ElementAction.ToString());
                     break;
             }
         }
@@ -400,7 +400,7 @@ namespace GingerCore.Drivers.PBDriver
                     actBE.ExInfo = "Switched to Default Frame";
                     break;
                 default:
-                    actBE.Error = "Unable to perform operation";
+                    actBE.Error = string.Format("Selected '{0}' Operation not supported for 'PBDriver'", actBE.ControlAction.ToString());
                     break;
             }
         }

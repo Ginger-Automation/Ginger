@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -275,12 +275,45 @@ namespace GingerCoreNET.DataSource
             }
         }
 
-        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName)
+        public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName,string sTableQueryValue="")
         {
-            DataTable table = GetTable(TableName);
-            table.Columns.Remove("_id");
+            var dataTable = GetTable(TableName);
 
-            return GingerCoreNET.GeneralLib.General.ExportToExcel(table, sExcelPath, sSheetName);
+            if (!string.IsNullOrEmpty(sTableQueryValue))
+            {
+                dataTable = GetQueryOutput(TableName);
+                var whereCond = string.Empty;
+                var selectedColumn = string.Empty;
+                if (sTableQueryValue.ToLower().Contains(" where "))
+                {
+                    var index = sTableQueryValue.ToLower().IndexOf(" where ");
+                    whereCond = sTableQueryValue.Substring(index);
+
+                    selectedColumn = sTableQueryValue.Substring(0, index);
+
+                    var filter = whereCond.Remove(0,6).Trim();
+                    if (filter.Contains("\""))
+                    {
+                      filter =  filter.Replace("\"", "'");
+                    }
+                    DataView dv = new DataView(dataTable);
+                    dv.RowFilter = filter;
+                    dataTable = dv.ToTable();
+
+                    dataTable = dataTable.DefaultView.ToTable(false, selectedColumn.Split(','));
+                }
+                else
+                {
+                    dataTable = dataTable.DefaultView.ToTable(false, sTableQueryValue.Trim().Split(','));
+                }
+                
+            }
+            else
+            {
+                dataTable.Columns.Remove("_id");
+            }
+
+            return GingerCoreNET.GeneralLib.General.ExportToExcel(dataTable, sExcelPath, sSheetName);
         }
 
         public override List<string> GetColumnList(string tableName)
@@ -530,38 +563,38 @@ namespace GingerCoreNET.DataSource
                             }
                             // JSON to Datatable
                             dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
-                            DataTable dt = dataTable;
-                            bool dosort = true;
-                            DataTable dt2 = dataTable.Clone();
-                            dt2.Columns["GINGER_ID"].DataType = Type.GetType("System.Int32");
-
-                            foreach (DataRow dr in dataTable.Rows)
+                            if (dataTable != null && dataTable.Columns.Count > 0)
                             {
-                                if (Convert.ToString(dr["GINGER_ID"]) == "")
+                                DataTable dt = dataTable;
+                                bool dosort = true;
+                                DataTable dt2 = dataTable.Clone();
+                                foreach (DataRow dr in dataTable.Rows)
                                 {
-                                    dosort = false;
+                                    if (Convert.ToString(dr["GINGER_ID"]) == "")
+                                    {
+                                        dosort = false;
+                                    }
+                                    else
+                                    {
+                                        dt2.ImportRow(dr);
+                                    }
+                                }
+                                if (dosort)
+                                {
+                                    dt2.AcceptChanges();
+                                    DataView dv = dt2.DefaultView;
+                                    dv.Sort = "GINGER_ID ASC";
+
+                                    dt = dv.ToTable();
                                 }
                                 else
                                 {
-                                    dt2.ImportRow(dr);
+                                    dt.Rows.RemoveAt(0);
                                 }
+                                dt.TableName = query;
+                                dataTable = dt;
+                                var json = JsonConvert.SerializeObject(array);
                             }
-                            if (dosort)
-                            {
-                                dt2.AcceptChanges();
-                                DataView dv = dt2.DefaultView;
-                                dv.Sort = "GINGER_ID ASC";
-
-                                dt = dv.ToTable();
-                            }
-                            else
-                            {
-                                dt.Rows.RemoveAt(0);
-                            }
-
-                            dt.TableName = query;
-                            dataTable = dt;
-                            var json = JsonConvert.SerializeObject(array);
                         }
                         catch (Exception ex)
                         {
@@ -712,24 +745,27 @@ namespace GingerCoreNET.DataSource
             string rowValue = Convert.ToString(row["GINGER_ID"]);
 
             //Rownumber
-            if (!query.Contains("where"))
+            if (!query.Contains("where") && !NextAvai)
             {
-                GetQueryOutput(query + " where GINGER_ID = " + rowValue);
+                GetQueryOutput(query + " where GINGER_ID= " + rowValue);
             }
             //Nextavailable
             else if (NextAvai)
             {
                 DataTable datatble = GetQueryOutput("db." + DSTableName + ".find GINGER_USED = \"False\" limit 1");
-                row = datatble.Rows[LocateRowValue];
-                string rowID = Convert.ToString(row["GINGER_ID"]);
-
-                string[] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
-                query = Stringsplit[0] + " where GINGER_ID = " + rowID;
-                GetQueryOutput(query);
-
-                if (MarkUpdate)
+                if (datatble != null && datatble.Columns.Count > 0)
                 {
-                    GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_USED =\"False\" and GINGER_ID= " + rowID);
+                    row = datatble.Rows[LocateRowValue];
+                    string rowID = Convert.ToString(row["GINGER_ID"]);
+
+                    string[] Stringsplit = query.Split(new[] { "where " }, StringSplitOptions.None);
+                    query = Stringsplit[0] + " where GINGER_ID = " + rowID;
+                    GetQueryOutput(query);
+
+                    if (MarkUpdate)
+                    {
+                        GetQueryOutput("db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_USED =\"False\" and GINGER_ID= " + rowID);
+                    }
                 }
                 return;
             }
@@ -738,7 +774,7 @@ namespace GingerCoreNET.DataSource
             {
                 if (query.Contains("where") && query.Contains("GINGER_ID ="))
                 {
-                     RunQuery(query);
+                    RunQuery(query);
                     string[] querysplit = query.Split(new[] { "GINGER_ID =" }, StringSplitOptions.None);
 
                     dt = GetQueryOutput("db." + DSTableName + ".find GINGER_ID=" + querysplit[1]);
@@ -837,8 +873,12 @@ namespace GingerCoreNET.DataSource
                     {
                         if (dr.RowState != DataRowState.Deleted)//Commit after row is deleted 
                         {
-                            dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
-                            dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
+                            if (dr.RowState.Equals(DataRowState.Added) || dr.RowState.Equals(DataRowState.Modified))
+                            {
+                                dr["GINGER_LAST_UPDATED_BY"] = System.Environment.UserName;
+                                dr["GINGER_LAST_UPDATE_DATETIME"] = DateTime.Now.ToString();
+                            }
+                            
                             if (dr["GINGER_ID"] != null || string.IsNullOrWhiteSpace((Convert.ToString(dr["GINGER_ID"]))))
                             {
                                 dr["GINGER_ID"] = dtChange.Rows.IndexOf(dr) + 1;
@@ -1074,8 +1114,16 @@ namespace GingerCoreNET.DataSource
                     actDSTable.AddOrUpdateReturnParamActual("Count", dt.Rows.Count.ToString());
                     break;
                 case eControlAction.ExportToExcel:
-                    string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
-                    ExporttoExcel(actDSTable.DSTableName, token[0], token[1]);
+                    if (actDSTable.ExcelConfig != null)
+                    {
+                        ExporttoExcel(actDSTable.DSTableName,actDSTable.ExcelConfig.ExcelPath, actDSTable.ExcelConfig.ExcelSheetName, actDSTable.ExcelConfig.ExportQueryValue);
+                    }
+                    else
+                    {
+                        string[] token = Query.Split(new[] { "," }, StringSplitOptions.None);
+                        ExporttoExcel(actDSTable.DSTableName, token[0], token[1]);
+                    }
+                    
                     break;
                 case eControlAction.DeleteRow:
                     if (actDSTable.IsKeyValueTable)
@@ -1262,7 +1310,7 @@ namespace GingerCoreNET.DataSource
                     }
                 }
             }
-            query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName 
+            query = "db." + Name + ".insert {" + colvalues + "GINGER_LAST_UPDATED_BY:\"" + System.Environment.UserName
                                  + "\"" + ",GINGER_LAST_UPDATE_DATETIME:\"" + DateTime.Now.ToString() + "\"" + "}";
 
             return query;
