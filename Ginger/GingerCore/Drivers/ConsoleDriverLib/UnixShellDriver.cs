@@ -144,12 +144,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 ConnectionInfo connectionInfo = null;
                 if (KeyboardIntractiveAuthentication)
                 {
-                    KeyboardInteractiveAuthenticationMethod keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
-                    PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
-
-                    keyboardIntractiveAuth.AuthenticationPrompt +=HandleIntractiveKeyBoardEvent;
-
-                    connectionInfo = new ConnectionInfo(Host, Port, UserName, pauth, keyboardIntractiveAuth);
+                    connectionInfo = KeyboardInteractiveAuthConnectionInfo();
                 }
                 else
                 {
@@ -220,6 +215,18 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 ErrorMessageFromDriver = e.Message;
                 return false;
             }
+        }
+
+        private ConnectionInfo KeyboardInteractiveAuthConnectionInfo()
+        {
+            ConnectionInfo connectionInfo;
+            KeyboardInteractiveAuthenticationMethod keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
+            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
+
+            keyboardIntractiveAuth.AuthenticationPrompt += HandleIntractiveKeyBoardEvent;
+
+            connectionInfo = new ConnectionInfo(Host, Port, UserName, pauth, keyboardIntractiveAuth);
+            return connectionInfo;
         }
 
         void HandleIntractiveKeyBoardEvent(Object sender, Renci.SshNet.Common.AuthenticationPromptEventArgs e)
@@ -400,9 +407,19 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         private void VerifyFTPConnected()
         {
             string passPhrase = null;
-            var connectionInfo = new ConnectionInfo(Host, Port, UserName,
+
+            ConnectionInfo connectionInfo = null;
+            if (KeyboardIntractiveAuthentication)
+            {
+                connectionInfo = KeyboardInteractiveAuthConnectionInfo();
+            }
+            else
+            {
+                connectionInfo = new ConnectionInfo(Host, Port, UserName,
                             new PasswordAuthenticationMethod(UserName, Password)
                         );
+            }
+             
 
             if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))
                 passPhrase = PrivateKeyPassPhrase;

@@ -64,6 +64,8 @@ namespace Ginger.Actions
             
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(Host, TextBox.TextProperty, mAct, ActFileTransfer.Fields.Host);
             Host.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileTransfer.Fields.Host), nameof(ActInputValue.Value));
+
+            GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(xChkBoxKeyboardInteractiveAuth, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActFileTransfer.Fields.KeyboardIntractiveAuthentication));
         }
 
         private void BrowsePCPathButton_Click(object sender, RoutedEventArgs e)
