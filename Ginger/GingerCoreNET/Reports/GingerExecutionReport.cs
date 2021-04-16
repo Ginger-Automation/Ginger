@@ -2639,8 +2639,8 @@ namespace Ginger.Reports.GingerExecutionReport
         public static string CreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0)
         {
             GingerExecutionReport gingerExecutionReport = new GingerExecutionReport();
-            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!! use path combine
-            gingerExecutionReport.TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
+         
+            gingerExecutionReport.TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),"Reports","GingerExecutionReport");
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2854,7 +2854,7 @@ namespace Ginger.Reports.GingerExecutionReport
         public static string CreateActivitiesGroupReportsOfBusinessFlow(ProjEnvironment environment, BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
         {
             Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
-            l.TemplatesFolder = (ExtensionMethods.getGingerEXEFileName() + @"Reports\GingerExecutionReport\").Replace("Ginger.exe", "");
+            l.TemplatesFolder =Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports","GingerExecutionReport");
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2902,14 +2902,6 @@ namespace Ginger.Reports.GingerExecutionReport
             return l.HTMLReportMainFolder;
         }
 
-        public static string getGingerEXEFileName()
-        {
-            //TODO: Currently we return the Ginger EXE in GingerUnitTest, later on need to be the deployed one
-            string GingerEXEFileName = Assembly.GetExecutingAssembly().Location;
-
-            GingerEXEFileName = GingerEXEFileName.Replace(Path.GetFileName(GingerEXEFileName), "Ginger.exe");
-            return GingerEXEFileName;
-        }
 
         public static string GetHTMLTemplate(string HTMLFileName, string TemplatesFolder)
         {

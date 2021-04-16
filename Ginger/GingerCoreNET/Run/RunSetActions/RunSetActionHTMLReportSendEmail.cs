@@ -182,7 +182,7 @@ namespace Ginger.Run.RunSetActions
 
                 tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
 
-                TemplatesFolder = Path.Combine(ExtensionMethods.getGingerEXEFileName(), "Reports", "GingerExecutionReport").Replace("Ginger.exe", "");
+                TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport");
 
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
 
@@ -532,6 +532,7 @@ namespace Ginger.Run.RunSetActions
             }
 
             string ReportHTML;
+         
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
