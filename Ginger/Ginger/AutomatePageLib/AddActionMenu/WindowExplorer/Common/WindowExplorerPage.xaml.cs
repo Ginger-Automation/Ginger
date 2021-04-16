@@ -436,19 +436,19 @@ namespace Ginger.WindowExplorer
                 case AppWindow.eWindowType.Appium:
                     AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
 
-                    AppiumElementInfo AEI = new AppiumElementInfo();
+                    //AppiumElementInfo AEI = new AppiumElementInfo();
+                    ElementInfo AEI = new ElementInfo();
                     AEI.WindowExplorer = mWindowExplorerDriver;
                     AEI.XPath = "/";
-                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
+                    GenericAppiumDriver GAD = ((GenericAppiumDriver)mWindowExplorerDriver);
 
-
-                    string pageSourceString = SAD.GetPageSource().Result;
+                    string pageSourceString = GAD.GetPageSource().Result;
                     XmlDocument pageSourceXml = new XmlDocument();
                     pageSourceXml.LoadXml(pageSourceString);
-                    AEI.XmlDoc = pageSourceXml;
-                    AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
+                    //AEI.XmlDoc = pageSourceXml;
+                    AEI.ElementObject = pageSourceXml.SelectSingleNode("/");
 
-                    AWTI.AppiumElementInfo = AEI;
+                    AWTI.ElementInfo = AEI;
 
                     // AWTI.UIAElementInfo = AEI;
                     InitTree(AWTI);
@@ -1594,8 +1594,9 @@ namespace Ginger.WindowExplorer
             xLoadingScreenShotBanner.Visibility = Visibility.Visible;
             xScreenShotFrame.Visibility = Visibility.Collapsed;
 
-            if(IsWebMobJavaPlatform)
-                mWindowExplorerDriver.UnHighLightElements();
+            /// UnComment later after complete Implementation of functionalities over all platforms.
+            //if(IsWebMobJavaPlatform)
+            //    mWindowExplorerDriver.UnHighLightElements();
 
             //Bitmap ScreenShotBitmap = ((UIAutomationDriverBase)mApplicationAgent.Agent.Driver).mUIAutomationHelper.GetAppWindowAsBitmap((AppWindow)xWindowSelection.WindowsComboBox.SelectedItem);  // GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
@@ -1616,16 +1617,16 @@ namespace Ginger.WindowExplorer
             xScreenShotFrame.Visibility = Visibility.Visible;
         }
 
-        private void XMainImage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private async void XMainImage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             RemoveElemntRectangle();
 
             System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
 
-            HighlightSelectedElement(pointOnImg);
+            await HighlightSelectedElement(pointOnImg);
         }
 
-        private void XMainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void XMainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (mContext.Runner.IsRunning)
             {
@@ -1633,19 +1634,28 @@ namespace Ginger.WindowExplorer
             }
             else
             {
-                if (xUCElementDetails.SelectedElement != null && IsWebMobJavaPlatform)
-                {
-                    mWindowExplorerDriver.UnHighLightElements();
-                }
+                /// Uncomment this logic post successfull implementation of highlight on screenshot image functionality for every platform
+                /// Uncomment before final check-in
+                //if (xUCElementDetails.SelectedElement != null 
+                //    && IsWebMobJavaPlatform)    // this check untill unhilight functionality support isn't implemented for platforms other than Web and Java
+                //{
+                //    mWindowExplorerDriver.UnHighLightElements();
+                //}
 
-                if(currentHighlightedElement == null)
-                {
-                    RemoveElemntRectangle();
+                //if(currentHighlightedElement == null)
+                //{
+                //    RemoveElemntRectangle();
 
-                    System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
+                //    System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
 
-                    HighlightSelectedElement(pointOnImg);
-                }
+                //    HighlightSelectedElement(pointOnImg);
+                //}
+
+                RemoveElemntRectangle();
+
+                System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
+
+                await HighlightSelectedElement(pointOnImg);
 
                 xUCElementDetails.SelectedElement = currentHighlightedElement;
 
@@ -1707,7 +1717,7 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void HighlightSelectedElement(System.Windows.Point pointOnImg)
+        private async Task HighlightSelectedElement(System.Windows.Point pointOnImg)
         {
             try
             {
@@ -1717,7 +1727,7 @@ namespace Ginger.WindowExplorer
                 long pointOnMobile_Y = (long)pointOnAppScreen.Y;
 
                 //get the clicked element
-                ElementInfo inspectElementInfo = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetElementAtPoint(pointOnMobile_X, pointOnMobile_Y);
+                ElementInfo inspectElementInfo = await ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetElementAtPoint(pointOnMobile_X, pointOnMobile_Y);
                 if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
                 {
                     //show panel
@@ -1762,13 +1772,67 @@ namespace Ginger.WindowExplorer
 
                 //draw the rectangle
                 //mHighightRectangle = new System.Windows.Shapes.Rectangle();
+                double rectangleWidth = -1, rectangleHeight = -1;
+
+                /// Mobile specific calculations
+                if (mWindowExplorerDriver is GenericAppiumDriver)
+                {
+                    XmlNode rectangleXmlNode = clickedElementNode.ElementObject as XmlNode;
+                    switch (((GenericAppiumDriver)mWindowExplorerDriver).DevicePlatformType)
+                    {
+                        case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.Android:
+                            ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
+                            ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
+                            string bounds = rectangleXmlNode.Attributes["bounds"].Value;
+                            bounds = bounds.Replace("[", ",");
+                            bounds = bounds.Replace("]", ",");
+                            string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (boundsXY.Count() == 4)
+                            {
+                                element_Start_X = (Convert.ToInt64(boundsXY[0])) / ratio_X;
+                                //rectangleStartPoint_X = (long)element_Start_X;
+                                element_Start_Y = (Convert.ToInt64(boundsXY[1])) / ratio_Y;
+                                //rectangleStartPoint_Y = (long)element_Start_Y;
+                                element_Max_X = (Convert.ToInt64(boundsXY[2])) / ratio_X;
+                                element_Max_Y = (Convert.ToInt64(boundsXY[3])) / ratio_Y;
+                            }
+                            break;
+
+                        case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.iOS:
+                            //if ( AppiumDriver.DriverDeviceType == SeleniumAppiumDriver.eDeviceType.Phone)
+                            //{
+                            //    ratio_X = (mScreenShotViewPage.xMainImage.Source.Width / 2) / mScreenShotViewPage.xMainImage.ActualWidth;
+                            //    ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height / 2) / mScreenShotViewPage.xMainImage.ActualHeight;
+                            //}
+                            //else
+                            //{
+                                ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
+                                ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
+                            //}
+                            element_Start_X = (Convert.ToInt64(rectangleXmlNode.Attributes["x"].Value)) / ratio_X;
+                            //rectangleStartPoint_X = (long)element_Start_X;
+                            element_Start_Y = (Convert.ToInt64(rectangleXmlNode.Attributes["y"].Value)) / ratio_Y;
+                            //rectangleStartPoint_Y = (long)element_Start_Y;
+                            element_Max_X = element_Start_X + ((Convert.ToInt64(rectangleXmlNode.Attributes["width"].Value)) / ratio_X);
+                            element_Max_Y = element_Start_Y + ((Convert.ToInt64(rectangleXmlNode.Attributes["height"].Value)) / ratio_Y);
+                            break;
+                    }
+
+                    rectangleWidth = element_Max_X - element_Start_X;
+                    rectangleHeight = element_Max_Y - element_Start_Y;
+                }
+                else
+                {
+                    rectangleWidth = clickedElementNode.Width;
+                    rectangleHeight = clickedElementNode.Height;
+                }
 
                 mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, element_Start_X + ((mScreenShotViewPage.xMainCanvas.ActualWidth - mScreenShotViewPage.xMainImage.ActualWidth) / 2));
                 mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, element_Start_Y + ((mScreenShotViewPage.xMainCanvas.ActualHeight - mScreenShotViewPage.xMainImage.ActualHeight) / 2));
                 mScreenShotViewPage.xHighlighterBorder.Margin = new Thickness(0);
 
-                mScreenShotViewPage.xHighlighterBorder.Width = clickedElementNode.Width;
-                mScreenShotViewPage.xHighlighterBorder.Height = clickedElementNode.Height;
+                mScreenShotViewPage.xHighlighterBorder.Width = rectangleWidth;
+                mScreenShotViewPage.xHighlighterBorder.Height = rectangleHeight;
                 //mScreenShotViewPage.xHighLighterRectangle.Fill = new SolidColorBrush() { Color = Colors.Red, Opacity = 0.5f };
                 mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Visible;
 

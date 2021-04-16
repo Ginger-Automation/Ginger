@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -72,6 +73,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             else if (EI is HTMLElementInfo)
             {
                 TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(((HTMLElementInfo)EI));
+            }
+            else if(EI.ElementObject is XmlNode)
+            {
+                TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);
             }
             else
             {

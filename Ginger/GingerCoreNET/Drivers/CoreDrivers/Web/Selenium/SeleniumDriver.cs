@@ -5183,6 +5183,43 @@ namespace GingerCore.Drivers
             return "";
         }
 
+        public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)
+        {
+            if (IWE.TagName == "html")
+                return "/" + IWE.TagName + "[1]" + current;
+
+            IWebElement parentElement = IWE.FindElement(By.XPath(".."));
+            ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
+            int count = 1;
+            foreach (IWebElement childElement in childrenElements)
+            {
+                try
+                {
+                    if (IWE.Equals(childElement))
+                    {
+                        return await GenerateXpathForIWebElementAsync(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
+                    }
+                    else
+                    {
+                        count++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (mBrowserTpe == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+
+            }
+            return "";
+        }
+
         AppWindow IWindowExplorer.GetActiveWindow()
         {
             if (Driver != null)
@@ -7139,7 +7176,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        ElementInfo IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
+        async Task<ElementInfo> IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
         {
             HTMLElementInfo elemInfo = null;
 
@@ -7150,7 +7187,8 @@ namespace GingerCore.Drivers
             {
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                //RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteAsyncScript(s_Script, ptX, ptY);
 
                 if (ele == null)
                 {

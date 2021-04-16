@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
@@ -1003,7 +1004,7 @@ namespace GingerCore.Drivers.WindowsLib
             throw new NotImplementedException();
         }
 
-        public ElementInfo GetElementAtPoint(long ptX, long ptY)
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
         {
             object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
 

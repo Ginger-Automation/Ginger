@@ -3919,7 +3919,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             return optionalValues;
         }
 
-        public ElementInfo GetElementAtPoint(long ptX, long ptY)
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
         {
             PayLoad Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
             Request.AddEnumValue(WindowExplorerOperationType.GetElementAtPoint);

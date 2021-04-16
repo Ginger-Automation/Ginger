@@ -136,19 +136,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent.Driver is IWindowExplorer)
                     {
-                        xWindowExplorerItemBtn.xButton.IsEnabled = true;
-                        xLiveSpyItemBtn.xButton.IsEnabled = true;
+                        xWindowExplorerItemBtn.xButton.IsEnabled = mContext.Agent.Driver.IsRunning();
+                        xLiveSpyItemBtn.xButton.IsEnabled = mContext.Agent.Driver.IsRunning();
 
-                        xWindowExplorerItemBtn.IsEnabled = true;
-                        xLiveSpyItemBtn.IsEnabled = true;
+                        xWindowExplorerItemBtn.IsEnabled = mContext.Agent.Driver.IsRunning();
+                        xLiveSpyItemBtn.IsEnabled = mContext.Agent.Driver.IsRunning();
 
                         //xWindowExplorerItemBtn.Visibility = Visibility.Visible;
                         //xLiveSpyItemBtn.Visibility = Visibility.Visible;
                     }
                     if (mContext.Agent.Driver is IRecord)
                     {
-                        xRecordItemBtn.xButton.IsEnabled = true;
-                        xRecordItemBtn.IsEnabled = true;
+                        xRecordItemBtn.xButton.IsEnabled = mContext.Agent.Driver.IsRunning();
+                        xRecordItemBtn.IsEnabled = mContext.Agent.Driver.IsRunning();
                         //xRecordItemBtn.Visibility = Visibility.Visible;
                     }
                 }

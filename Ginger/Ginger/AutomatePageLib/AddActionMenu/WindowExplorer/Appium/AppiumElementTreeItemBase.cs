@@ -28,6 +28,7 @@ using GingerCore.Drivers.Common;
 using GingerWPF.UserControlsLib.UCTreeView;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using System.Xml;
 
 namespace Ginger.WindowExplorer.Appium
 {
@@ -39,13 +40,13 @@ namespace Ginger.WindowExplorer.Appium
             set;
         }
 
-        public AppiumElementInfo AppiumElementInfo { get; set; }
+        public ElementInfo ElementInfo { get; set; }
 
-        public string Name { get { return AppiumElementInfo.ElementTitle; } }
+        public string Name { get { return ElementInfo.ElementTitle; } }
 
         Object ITreeViewItem.NodeObject()
         {
-            return AppiumElementInfo;
+            return ElementInfo;
         }
 
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
@@ -70,14 +71,14 @@ namespace Ginger.WindowExplorer.Appium
         {
             //TODO: Put better icon for generic control
             string ImageFileName = "@Agent_16x16.png";
-            string Title = AppiumElementInfo.ElementTitle;
+            string Title = ElementInfo.ElementTitle;
             return TreeViewUtils.CreateItemHeader(Title, ImageFileName);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             List<ITreeViewItem> list = new List<ITreeViewItem>();
-            List<ElementInfo> Childrens = AppiumElementInfo.WindowExplorer.GetElementChildren(AppiumElementInfo);
+            List<ElementInfo> Childrens = ElementInfo.WindowExplorer.GetElementChildren(ElementInfo);
 
             foreach (ElementInfo EI in Childrens)
             {
@@ -92,7 +93,7 @@ namespace Ginger.WindowExplorer.Appium
 
         bool ITreeViewItem.IsExpandable()
         {
-            return AppiumElementInfo.XmlNode.HasChildNodes;            
+            return (ElementInfo.ElementObject as XmlNode).HasChildNodes;            
         }
 
 
@@ -100,7 +101,7 @@ namespace Ginger.WindowExplorer.Appium
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
         {
             //TODO: currently return the default generic page, later on create for Appium elem
-            return new ElementInfoPage(AppiumElementInfo);
+            return new ElementInfoPage(ElementInfo);
         }
 
 
@@ -130,7 +131,7 @@ namespace Ginger.WindowExplorer.Appium
         {
 
 
-            return AppiumElementInfo.WindowExplorer.GetElementProperties(AppiumElementInfo);
+            return ElementInfo.WindowExplorer.GetElementProperties(ElementInfo);
             
         }
 
