@@ -244,7 +244,7 @@ namespace GingerCore.Actions
 
             public static string PCPath = "PCPath";
 
-            public static string KeyboardIntractiveAuthentication = "KeyboardIntractiveAuthentication";
+            public const string KeyboardIntractiveAuthentication = "KeyboardIntractiveAuthentication";
         }
 
         public override eImageType Image { get { return eImageType.CodeFile; } }
