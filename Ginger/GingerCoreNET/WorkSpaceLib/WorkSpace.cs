@@ -179,9 +179,9 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         private void InitLocalGrid()
-        {            
-          // mLocalGingerGrid = new GingerGrid();
-           //mLocalGingerGrid.Start();
+        {
+            mLocalGingerGrid = new GingerGrid();
+            mLocalGingerGrid.Start();
         }
 
         public SolutionRepository SolutionRepository;
