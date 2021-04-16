@@ -32,6 +32,7 @@ using GingerCore.ALM;
 using GingerCore.Drivers;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Mobile.Perfecto;
+using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
@@ -179,7 +180,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case Agent.eDriverType.PerfectoMobileIOSWeb:
                     return new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, zAgent.BusinessFlow);
                 case Agent.eDriverType.Appium:
-                    return new GenericAppiumDriver(zAgent.BusinessFlow);                           
+                    return new GenericAppiumDriver(zAgent.BusinessFlow);
+                case Agent.eDriverType.WebServices:
+                    return new WebServicesDriver(zAgent.BusinessFlow);
                 default:
                     {
                         throw new Exception("Matching Driver was not found.");
