@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
@@ -31,9 +32,11 @@ using GingerCore.ALM;
 using GingerCore.Drivers;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Mobile.Perfecto;
+using GingerCore.Drivers.WebServicesDriverLib;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -55,6 +58,11 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
         public void CreateCustomerLogo(object a, string tempFolder)
         {
+        }
+
+        public DbConnection GetOracleConnection(string ConnectionString)
+        {
+            return new OracleConnection(ConnectionString);
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, ALMIntegration.eALMType almType)
@@ -172,7 +180,9 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
                 case Agent.eDriverType.PerfectoMobileIOSWeb:
                     return new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, zAgent.BusinessFlow);
                 case Agent.eDriverType.Appium:
-                    return new GenericAppiumDriver(zAgent.BusinessFlow);                           
+                    return new GenericAppiumDriver(zAgent.BusinessFlow);
+                case Agent.eDriverType.WebServices:
+                    return new WebServicesDriver(zAgent.BusinessFlow);
                 default:
                     {
                         throw new Exception("Matching Driver was not found.");
@@ -243,5 +253,12 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             throw new NotImplementedException("MS Acess is not supported on Ginger Console");
         }
+
+        public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
+        {
+            return new WebserviceDriverConsoleReporter();
+        }
+
+  
     }
 }

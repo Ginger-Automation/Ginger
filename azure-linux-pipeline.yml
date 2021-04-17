@@ -83,12 +83,12 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Package Test Artifacts
 # ------------------------------------------------------------------------------------------------------
-
-  - task: PowerShell@2
-    displayName: Package test artifacts
-    inputs:
-      filePath: PackageTestArtifacts.ps1
-    condition: succeededOrFailed()
+#
+# - task: PowerShell@2
+#    displayName: Package test artifacts
+#    inputs:
+#      filePath: PackageTestArtifacts.ps1
+#    condition: succeededOrFailed()
 
 
 

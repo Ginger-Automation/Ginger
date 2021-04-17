@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Common;
+using Amdocs.Ginger.CoreNET.Drivers.WebServicesDriver;
+
 namespace GingerCoreNETUnitTest.RunTestslib
 {
     public class UnitTestRepositoryItemFactory : ITargetFrameworkHelper
@@ -158,6 +160,16 @@ namespace GingerCoreNETUnitTest.RunTestslib
         public DbConnection GetMSAccessConnection()
         {
             throw new NotImplementedException("MS Acess is not supported on Ginger Console");
+        }
+
+        public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
+        {
+            return new WebserviceDriverConsoleReporter();
+        }
+
+        public DbConnection GetOracleConnection(string ConnectionString)
+        {
+            throw new NotImplementedException();
         }
     }
 }

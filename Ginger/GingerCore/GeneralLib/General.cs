@@ -246,37 +246,7 @@ namespace GingerCore
 
         public static string GetEnumValueDescription(Type EnumType, object EnumValue)
         {
-            try
-            {
-                EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
-                string s;
-                if (attributes.Length > 0)
-                {
-                    s = attributes[0].ValueDescription;
-                    //for supporting multi Terminology types
-                    s = s.Replace("Business Flow", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    s = s.Replace("Business Flows", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
-                    s = s.Replace("Activities Group", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
-                    s = s.Replace("Activities Groups", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
-                    s = s.Replace("Activity", GingerDicser.GetTermResValue(eTermResKey.Activity));
-                    s = s.Replace("Conversion Mechanism", GingerDicser.GetTermResValue(eTermResKey.ConversionMechanism));
-                    s = s.Replace("Activities", GingerDicser.GetTermResValue(eTermResKey.Activities));
-                    s = s.Replace("Variable", GingerDicser.GetTermResValue(eTermResKey.Variable));
-                    s = s.Replace("Variables", GingerDicser.GetTermResValue(eTermResKey.Variables));
-                    s = s.Replace("Run Set", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                    s = s.Replace("Run Sets", GingerDicser.GetTermResValue(eTermResKey.RunSets));
-                }
-                else
-                {
-                    s = EnumValue.ToString();
-                }
-                return s;
-            }
-            catch
-            {
-                //TODO: fixme ugly catch - check why we come here and fix it, todo later
-                return EnumValue.ToString();
-            }
+            return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(EnumType, EnumValue);
         }
 
         public static string GetEnumDescription(Type EnumType, object EnumValue)
@@ -639,11 +609,7 @@ namespace GingerCore
             }
         }
 
-        public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
-        {
-            return Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(xmlDoc, DisableProhibitDtd);
-        }
-
+     
         public static void ClearDirectoryContent(string DirPath)
         {
             Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);

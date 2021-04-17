@@ -85,5 +85,10 @@ namespace Amdocs.Ginger.Common
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();
         DbConnection GetMSAccessConnection();
+
+        IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow);
+
+
+        DbConnection GetOracleConnection(string ConnectionString);
     }
 }

@@ -420,10 +420,10 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             string[] args = new string[]{ autoRunConfiguration1.SelectedCLI.Verb, "--" + CLIOptionClassHelper.FILENAME, autoRunConfiguration1.ConfigFileFullPath};
            
             //Act
-            cLIProcessor.ExecuteArgs(args);
+            cLIProcessor.ExecuteArgs(args).Wait();
 
             //Assert
-            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports" + Path.DirectorySeparatorChar + "Reports");
+            string path = TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "Reports");
             Assert.IsTrue(Directory.Exists(path));
         }
 

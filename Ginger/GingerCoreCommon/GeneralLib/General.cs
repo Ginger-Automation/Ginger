@@ -24,6 +24,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using GingerCore;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
@@ -398,6 +399,41 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 }
             }
             return returnDict;
+        }
+
+        public static string GetEnumValueDescription(Type EnumType, object EnumValue)
+        {
+            try
+            {
+                EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
+                string s;
+                if (attributes.Length > 0)
+                {
+                    s = attributes[0].ValueDescription;
+                    //for supporting multi Terminology types
+                    s = s.Replace("Business Flow", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                    s = s.Replace("Business Flows", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
+                    s = s.Replace("Activities Group", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+                    s = s.Replace("Activities Groups", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
+                    s = s.Replace("Activity", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                    s = s.Replace("Conversion Mechanism", GingerDicser.GetTermResValue(eTermResKey.ConversionMechanism));
+                    s = s.Replace("Activities", GingerDicser.GetTermResValue(eTermResKey.Activities));
+                    s = s.Replace("Variable", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                    s = s.Replace("Variables", GingerDicser.GetTermResValue(eTermResKey.Variables));
+                    s = s.Replace("Run Set", GingerDicser.GetTermResValue(eTermResKey.RunSet));
+                    s = s.Replace("Run Sets", GingerDicser.GetTermResValue(eTermResKey.RunSets));
+                }
+                else
+                {
+                    s = EnumValue.ToString();
+                }
+                return s;
+            }
+            catch
+            {
+                //TODO: fixme ugly catch - check why we come here and fix it, todo later
+                return EnumValue.ToString();
+            }
         }
 
         public static string CorrectJSON(string WrongJson)

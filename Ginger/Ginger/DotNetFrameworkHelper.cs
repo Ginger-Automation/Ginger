@@ -65,6 +65,8 @@ using System.Windows.Threading;
 using static GingerCore.Agent;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using System.Data.Common;
+using Oracle.ManagedDataAccess.Client;
+
 namespace Ginger
 {
     public class DotNetFrameworkHelper : ITargetFrameworkHelper
@@ -629,6 +631,15 @@ namespace Ginger
             return factory.CreateConnection();
         }
 
+        public IWebserviceDriverWindow GetWebserviceDriverWindow(BusinessFlow businessFlow)
+        {
+            return new WebServicesDriverWindow(businessFlow);
+        }
+
+        public DbConnection GetOracleConnection(string ConnectionString)
+        {
+            return new OracleConnection(ConnectionString);
+        }
     }
     
 }
