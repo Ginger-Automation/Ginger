@@ -180,14 +180,13 @@ namespace GingerCore.Actions
                     {
                         LinesfromFile.Add(GetInputParamCalculatedValue(Fields.TextToWrite));
                     }
+                    /* Old code using WriteAllLines function - remove condition same code running all OS's.
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         WriteLinesWithEncoding(calculatedFilePath, (IEnumerable<string>)LinesfromFile);
                     }
-                    else
-                    {
-                        WriteTextWithEncoding(calculatedFilePath, String.Join("\r\n", LinesfromFile) + "\r\n");
-                    }
+                    */
+                    WriteTextWithEncoding(calculatedFilePath, String.Join("\r\n", LinesfromFile) + "\r\n");
                 }
             }
             else

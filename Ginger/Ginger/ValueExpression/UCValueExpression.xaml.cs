@@ -100,16 +100,14 @@ namespace Ginger.BusinessFlowWindows
             switch (mBrowserType)
             {
                 case eBrowserType.File:
-
                     string upperFileType = fileType.ToUpper();
-                    System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-                    dlg.Filter = upperFileType + " Files (*." + fileType + ")|*." + fileType + "|All Files (*.*)|*.*";
-                    dlg.FilterIndex = 1;
-                    System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-                    if (result == System.Windows.Forms.DialogResult.OK)
-                    {                        
-                        string FileName = General.ConvertSolutionRelativePath(dlg.FileName);
-                        ValueTextBox.Text = FileName;
+                    if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+                    {
+                        Filter = upperFileType + " Files (*." + fileType + ")|*." + fileType + "|All Files (*.*)|*.*",
+                        FilterIndex = 1
+                    }) is string fileName)
+                    {
+                        ValueTextBox.Text = fileName;
                     }
                     break;
                 case eBrowserType.Folder:
