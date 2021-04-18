@@ -132,6 +132,15 @@ namespace Ginger
             mGingerHelpWindow.Show();            
         }
 
+        internal static string SetupBrowseFile(OpenFileDialog dlg, bool isRelativePath = true)
+        {
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return isRelativePath ? ConvertSolutionRelativePath(dlg.FileName) : dlg.FileName;
+            }
+            return null;
+        }
+
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)
         {
             if (source == null) return null;

@@ -68,12 +68,13 @@ namespace Ginger.Actions
 
         private void BrowsePCPathButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.DefaultExt = "*.*";
-            dlg.Filter = "Any Data Files (*.*)|*.*";
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                PCPath.ValueTextBox.Text = General.ConvertSolutionRelativePath(dlg.FileName);
+                DefaultExt = "*.*",
+                Filter = "Any Data Files (*.*)|*.*"
+            }) is string fileName)
+            {
+                PCPath.ValueTextBox.Text = fileName;
             }
         }
 
