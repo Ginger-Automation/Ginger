@@ -122,7 +122,6 @@ namespace GingerCore.Actions
             bool IsSorcePathRelative = false;
             if (calculatedSourceFilePath.StartsWith(@"~"))
             {
-                //calculatedSourceFilePath = calculatedSourceFilePath.Replace(@"~\", SolutionFolder);
                 calculatedSourceFilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedSourceFilePath);
                 IsSorcePathRelative = true;
             }
@@ -333,10 +332,7 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
 
-            //if (calculatedDestinationPath.StartsWith(@"~\"))
-            //    calculatedDestinationPath = calculatedDestinationPath.Replace(@"~\", SolutionFolder);
             calculatedDestinationPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(calculatedDestinationPath);
-
             DestinationFolder = System.IO.Path.GetDirectoryName(calculatedDestinationPath);
             if (String.IsNullOrEmpty(DestinationFolder))
             {
