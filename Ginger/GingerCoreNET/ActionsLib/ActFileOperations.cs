@@ -131,7 +131,9 @@ namespace GingerCore.Actions
                 string[] FileNameList = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath));
 
                 if (FileNameList.Count() > 0)
+                {
                     calculatedSourceFilePath = System.IO.Directory.GetFiles(Path.GetDirectoryName(calculatedSourceFilePath), Path.GetFileName(calculatedSourceFilePath))[0];
+                }
             }
             switch (FileOperationMode)
             {
@@ -265,9 +267,13 @@ namespace GingerCore.Actions
                         int spaceIndex = calculatedSourceFilePath.IndexOf(' ');
                         //For Backward Support - Providing structure like: file Path + ' ' + arguments
                         if (spaceIndex != -1 && System.IO.File.Exists(calculatedSourceFilePath.Substring(0, spaceIndex + 1)))
+                        {
                             ProcessStart(calculatedSourceFilePath.Substring(0, spaceIndex + 1), calculatedSourceFilePath.Substring(spaceIndex));
+                        }
                         else
+                        {
                             ProcessStart(calculatedSourceFilePath);
+                        }
                     }
                     break;
                 case eFileoperations.UnZip:
