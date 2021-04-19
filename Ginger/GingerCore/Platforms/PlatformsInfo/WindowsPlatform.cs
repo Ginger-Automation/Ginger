@@ -59,20 +59,33 @@ namespace GingerCore.Platforms.PlatformsInfo
         }
         public override List<ActUIElement.eElementAction> GetPlatformUIElementActionsList(eElementType ElementType)
         {
-            List<ActUIElement.eElementAction> pbTableControlActionlist = base.GetPlatformUIElementActionsList(ElementType);
+            List<ActUIElement.eElementAction> windowsPlatformElementActionslist = base.GetPlatformUIElementActionsList(ElementType);
             
             switch (ElementType)
             {
                 case eElementType.Unknown:
                     break;
                 case eElementType.Button:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickAndValidate);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     break;
                 case eElementType.Window:
-                    pbTableControlActionlist.Add(ActUIElement.eElementAction.Switch);
+                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Minimize);
+                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Repaint);
+                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Resize);
+                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Restore);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Switch);
+                    break;
+                case eElementType.MenuItem:
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Collapse);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Expand);
                     break;
             }
-            return pbTableControlActionlist;
+            return windowsPlatformElementActionslist;
         }
 
         public override string GetPlatformGenericElementEditControls()
@@ -167,6 +180,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementsTypeList.Add(eElementType.List);
                 mElementsTypeList.Add(eElementType.Table);
                 mElementsTypeList.Add(eElementType.Window);
+                mElementsTypeList.Add(eElementType.MenuItem);
             }
             return mElementsTypeList;
         }
