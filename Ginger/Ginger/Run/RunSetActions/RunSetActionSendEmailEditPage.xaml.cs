@@ -88,12 +88,13 @@ namespace Ginger.Run.RunSetActions
 
         private void AddFile(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog(); ;
-            dlg.DefaultExt = ".*";
-            dlg.Filter = "All Files (*.*)|*.*";
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                runSetActionEmailReport.EmailAttachments.Add(new EmailAttachment() { Name = dlg.FileName, AttachmentType = EmailAttachment.eAttachmentType.File });
+                DefaultExt = ".*",
+                Filter = "All Files (*.*)|*.*"
+            },false) is string fileName)
+            {
+                runSetActionEmailReport.EmailAttachments.Add(new EmailAttachment() { Name = fileName, AttachmentType = EmailAttachment.eAttachmentType.File });
             }
         }
 

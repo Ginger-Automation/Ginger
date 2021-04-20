@@ -82,17 +82,17 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
 
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow)
         {
-            throw new NotImplementedException();
+            return new GingerCore.ValueExpression(mProjEnvironment, mBusinessFlow);
         }
 
         public IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList)
         {
-            throw new NotImplementedException();
+            return new GingerCore.ValueExpression(mProjEnvironment, mBusinessFlow, (ObservableList<GingerCore.DataSource.DataSourceBase>)DSList);
         }
 
         public IValueExpression CreateValueExpression(object obj, string attr)
         {
-            throw new NotImplementedException();
+            return new GingerCore.ValueExpression(obj, attr);
         }
 
         public void DisplayAsOutlookMail()

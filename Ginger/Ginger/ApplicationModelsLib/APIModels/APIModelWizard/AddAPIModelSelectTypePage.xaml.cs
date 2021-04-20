@@ -322,16 +322,13 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     if (string.IsNullOrEmpty(xURLTextBox.Text))
                     {
-                        System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-                        dlg.Filter = "WSDL Files (*.wsdl)|*.wsdl" + "|XML Files (*.xml)|*.xml" + "|All Files (*.*)|*.*";
-
-                        System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-
-                        if (result == System.Windows.Forms.DialogResult.OK)
+                        if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                         {
-                           xURLTextBox.Text = dlg.FileName;
-                            LoadFileValidation();
+                            Filter = "WSDL Files (*.wsdl)|*.wsdl" + "|XML Files (*.xml)|*.xml" + "|All Files (*.*)|*.*"
+                        }, false) is string fileName)
+                        {
+                           xURLTextBox.Text = fileName;
+                           LoadFileValidation();
                         }
                     }
                     else
@@ -457,15 +454,13 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void MatchingResponseBrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.Filter = GetRelevantFilter();
-            System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            {
+                Filter = GetRelevantFilter()
+            }, false) is string fileName)
             {
                 TemplateFile selectedTampleteFile = (TemplateFile)XMLTemplatesGrid.CurrentItem;
-                selectedTampleteFile.MatchingResponseFilePath = dlg.FileName;
+                selectedTampleteFile.MatchingResponseFilePath = fileName;
             }
         }
 

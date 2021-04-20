@@ -57,27 +57,18 @@ namespace Ginger.Actions
 
         private void BrowseFileButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.Filter = string.Empty;
+            string filter = string.Empty;
             foreach (string extension in FileExtensions)
             {
-                dlg.Filter = extension.Substring(1).ToUpper() + " Files (*" + extension + ")|*" + extension;
+                filter = extension.Substring(1).ToUpper() + " Files (*" + extension + ")|*" + extension;
             }
-            dlg.Filter = dlg.Filter + "|All Files (*.*)|*.*";
-
-            System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-
-            if (result == System.Windows.Forms.DialogResult.OK)
+            filter += "|All Files (*.*)|*.*";
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                if (MakePathsRelative &&dlg.FileName.StartsWith(WorkSpace.Instance.Solution.Folder))
-                {
-                    FilePathTextBox.Text= dlg.FileName.Replace(WorkSpace.Instance.Solution.Folder, @"~\");
-                }
-                else
-                {
-                    FilePathTextBox.Text = dlg.FileName;
-                }
+                Filter = filter
+            }, MakePathsRelative) is string fileName)
+            {
+                FilePathTextBox.Text = fileName;
             }
         }
     }

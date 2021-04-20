@@ -154,24 +154,24 @@ namespace Ginger.Actions
             switch (mBrowserType)
             {
                 case eBrowserType.File:
+                    String filePath = string.Empty;
                     string upperFileType = fileType.ToUpper();
-                    System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-                    dlg.Filter = upperFileType + " Files (*." + fileType + ")|*." + fileType + "|All Files (*.*)|*.*";
-                    dlg.FilterIndex = 1;
-                    if (string.IsNullOrEmpty(initialDirectory)==false)
+                    if (string.IsNullOrEmpty(initialDirectory) == false)
                     {
-                        String filePath = System.IO.Path.Combine(initialDirectory, @"Documents\SQL");
+                        filePath = System.IO.Path.Combine(initialDirectory, @"Documents\SQL");
                         if (!System.IO.Directory.Exists(filePath))
                         {
                             System.IO.Directory.CreateDirectory(filePath);
                         }
-                        dlg.InitialDirectory = filePath;
                     }
-                    System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-                    if (result == System.Windows.Forms.DialogResult.OK)
+                    if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                     {
-                        string FileName = General.ConvertSolutionRelativePath(dlg.FileName);
-                        ValueTextBox.Text = FileName;
+                        Filter = upperFileType + " Files (*." + fileType + ")|*." + fileType + "|All Files (*.*)|*.*",
+                        FilterIndex = 1,
+                        InitialDirectory = filePath
+                    }) is string fileName)
+                    {
+                        ValueTextBox.Text = fileName;
                     }
                     break;
                 case eBrowserType.Folder:

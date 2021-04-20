@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
@@ -46,10 +47,9 @@ namespace Ginger.Actions
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                TextFileNameTextBox.ValueTextBox.Text = General.ConvertSolutionRelativePath(dlg.FileName);
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
+            { 
+                TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
         }
         
