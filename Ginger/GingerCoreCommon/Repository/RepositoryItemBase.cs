@@ -678,7 +678,7 @@ namespace Amdocs.Ginger.Repository
             var objMembers = repoItemToCopy.GetType().GetMembers().Where(x => (x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field));
 
             repoItemToCopy.PrepareItemToBeCopied();
-            targetObj.PreDeserialization();
+            //targetObj.PreDeserialization();
             Parallel.ForEach(objMembers, mi =>
             {
                 try
@@ -728,7 +728,13 @@ namespace Amdocs.Ginger.Repository
                 {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Error occured during object copy of the item: '{0}', type: '{1}', property/field: '{2}'", this.ItemName, this.GetType(), mi.Name), ex);
                 }
-            });           
+            });
+            //targetObj.PostDeserialization();
+            if(setNewGUID)
+            {
+                targetObj = targetObj.ReplaceOldGuidUsages(guidMappingList);
+            }
+            
             targetObj.UpdateCopiedItem();            
 
             return targetObj;
@@ -776,14 +782,9 @@ namespace Amdocs.Ginger.Repository
                         duplicatedItem.ParentGuid = Guid.Empty;   // TODO: why we don't keep parent GUID?
                         duplicatedItem.ExternalID = string.Empty;
                         duplicatedItem.Guid = Guid.NewGuid();
-
-
-                        duplicatedItem = duplicatedItem.GetUpdatedRepoItem(guidMappingList);
                     }
-
                     duplicatedItem.DirtyStatus = eDirtyStatus.Modified;
                 }
-
                 return duplicatedItem;
             }
             finally
@@ -799,7 +800,7 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         /// <param name="list">mapping of old and new guids</param>
         /// <returns></returns>
-        private RepositoryItemBase GetUpdatedRepoItem(List<GuidMapper> list)
+        private RepositoryItemBase ReplaceOldGuidUsages(List<GuidMapper> list)
         {
             string s = RepositorySerializer.SerializeToString(this);
 
@@ -1350,7 +1351,7 @@ namespace Amdocs.Ginger.Repository
         /// Overrid this method if you need to modify some object member after it been copied
         /// </summary>
         public virtual void UpdateCopiedItem()
-        {
+        {           
         }
 
         bool mPublish = false;

@@ -1310,6 +1310,7 @@ namespace UnitTests.NonUITests
 
             //Assert
             Assert.IsNotNull(copiedItem);
+            Assert.AreEqual(copiedItem.ActivitiesGroups.Count,1);
             Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
             Assert.AreNotEqual(bf.Guid, copiedItem.Guid);
             Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
