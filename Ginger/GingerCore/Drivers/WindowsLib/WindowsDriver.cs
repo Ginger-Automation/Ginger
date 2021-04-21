@@ -502,7 +502,6 @@ namespace GingerCore.Drivers.WindowsLib
                         break;
                     case ActUIElement.eElementAction.Maximize:                       
                     case ActUIElement.eElementAction.Minimize:                        
-                    case ActUIElement.eElementAction.Restore:
                         string status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
                         if (!status.Contains("State set successfully"))
                         {
@@ -513,20 +512,7 @@ namespace GingerCore.Drivers.WindowsLib
                             actUIElement.ExInfo += status;
                         }
                         break;
-                    case ActUIElement.eElementAction.Repaint:
-                        mUIAutomationHelper.HandlePaintWindow(AE);
-                        break;
-                    case ActUIElement.eElementAction.Resize:
-                        status = mUIAutomationHelper.SetElementSize(AE, actUIElement.ValueForDriver);
-                        if (!status.Contains("Element resize Successfully"))
-                        {
-                            actUIElement.Error = status;
-                        }
-                        else
-                        {
-                            actUIElement.ExInfo += status;
-                        }
-                        break;
+                    
                     default:
                         actUIElement.Error = "Unknown Action  - " + actUIElement.ActionType;
                         break;

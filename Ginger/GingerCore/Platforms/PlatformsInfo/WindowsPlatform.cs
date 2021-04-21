@@ -71,12 +71,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     break;
                 case eElementType.Window:
-                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetWindowTitle);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Maximize);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Minimize);
-                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Repaint);
-                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Resize);
-                    //windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Restore);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.CloseWindow);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Switch);
                     break;
                 case eElementType.MenuItem:
@@ -122,24 +121,49 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {
-            List<ActUIElement.eTableAction> pbTableControlActionlist = base.GetTableControlActions(tableAction);
+            List<ActUIElement.eTableAction> windowsTableControlActionlist = base.GetTableControlActions(tableAction);
             switch (tableAction)
             {
                 case ActUIElement.eElementAction.TableCellAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.Type);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.DoubleClick);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsVisible);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetValue);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetValue);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Click);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Toggle);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.DoubleClick);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Type);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.MousePressAndRelease);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsChecked);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.RightClick);
                     break;
                 case ActUIElement.eElementAction.TableRowAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetSelectedRow);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.ActivateRow);
                     break;
                 case ActUIElement.eElementAction.TableAction:
-                    pbTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetRowCount);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SelectAllRows);
+                    //list.Add(ActUIElement.eTableAction.RightClick);
+                    break;
+                case ActUIElement.eElementAction.Unknown:
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsCellEnabled);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.IsVisible);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetValue);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetValue);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.SetFocus);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Click);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.AsyncClick);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.WinClick);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.Toggle);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetRowCount);
+                    windowsTableControlActionlist.Add(ActUIElement.eTableAction.GetSelectedRow);
                     break;
             }
-            return pbTableControlActionlist;
+            return windowsTableControlActionlist;
         }
 
         public override List<ActUIElement.eElementAction> GetPlatformUIValidationTypesList()

@@ -394,15 +394,6 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Minimize")]
             Minimize,
             [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Restore")]
-            Restore,
-            [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Repaint")]
-            Repaint,
-            [Description(EElementActionTypeGeneric)]
-            [EnumValueDescription("Resize")]
-            Resize,
-            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Control Property")]
             GetControlProperty,
             [Description(EElementActionTypeGeneric)]
