@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ using Amdocs.Ginger.Common;
 using Ginger.Drivers;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,18 +45,63 @@ namespace Ginger.Agents
     public partial class AgentDriverConfigPage : Page
     {
         Agent mAgent;
+
+        enum eConfigsViewType { Grid,Page};
+        eConfigsViewType mConfigsViewType;
+
         public AgentDriverConfigPage(Agent agent)
         {
             InitializeComponent();
+
             mAgent = agent;
-
-            SetGridView();
-
-            InitConfigGrid();
-            ShowAgentConfig();
-
             mAgent.PropertyChanged += Agent_PropertyChanged;
 
+            InitAgentDriverConfigs();
+            SetDriverConfigsPageContent();
+        }
+
+        private void InitAgentDriverConfigs()
+        {
+            if (mAgent.DriverConfiguration == null)
+            {
+                mAgent.InitDriverConfigs();
+                if (mAgent.DriverConfiguration == null)
+                {
+                    Reporter.ToUser(eUserMsgKey.DriverConfigUnknownDriverType, mAgent.DriverType);
+                }
+            }
+        }
+
+        private void SetDriverConfigsPageContent()
+        {
+            DriverBase driver = (DriverBase)RepositoryItemHelper.RepositoryItemFactory.GetDriverObject(mAgent);
+
+            if (driver.GetDriverConfigsEditPageName(mAgent.DriverType) != null)
+            {
+                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
+                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
+
+                //Custome edit page
+                string classname = "Ginger.Drivers.DriversConfigsEditPages." + driver.GetDriverConfigsEditPageName(mAgent.DriverType);
+                Type t = Assembly.GetExecutingAssembly().GetType(classname);
+                if (t == null)
+                {
+                    throw new Exception(string.Format("The Driver edit page was not found '{0}'", classname));
+                }
+                Page p = (Page)Activator.CreateInstance(t, mAgent);
+                if (p != null)
+                {
+
+                    DriverConfigurationFrame.Content = p;
+                }
+            }
+            else
+            {
+                //Grid 
+                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Visible;
+                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Collapsed;
+                SetGridView();
+            }            
         }
 
         private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -62,7 +109,7 @@ namespace Ginger.Agents
             if (e.PropertyName == nameof(Agent.DriverType))
             {
                 mAgent.InitDriverConfigs();
-                ShowAgentConfig();
+                SetDriverConfigsPageContent();
             }
         }
 
@@ -81,25 +128,15 @@ namespace Ginger.Agents
             DriverConfigurationGrid.SetAllColumnsDefaultView(view);
             DriverConfigurationGrid.InitViewItems();
             
-            DriverConfigurationGrid.AddToolbarTool("@Reset_16x16.png", "Reset Parameters", new RoutedEventHandler(ResetParamsConfig));
+            DriverConfigurationGrid.AddToolbarTool("@Reset_16x16.png", "Reset Parameters", new RoutedEventHandler(ResetAgentDriverConfigs));
+
+            DriverConfigurationGrid.DataSourceList = mAgent.DriverConfiguration;
         }
 
-        private void ResetParamsConfig(object sender, RoutedEventArgs e)
+        private void ResetAgentDriverConfigs(object sender, RoutedEventArgs e)
         {
             mAgent.InitDriverConfigs();
-            InitConfigGrid();
-        }
-
-
-        private void InitConfigGrid()
-        {
-            if (mAgent.DriverConfiguration == null)
-            {
-                mAgent.InitDriverConfigs();
-                if (mAgent.DriverConfiguration == null)
-                    Reporter.ToUser(eUserMsgKey.DriverConfigUnknownDriverType, mAgent.DriverType);
-            }
-            DriverConfigurationGrid.DataSourceList = mAgent.DriverConfiguration;
+            InitAgentDriverConfigs();
         }
 
 
@@ -110,81 +147,34 @@ namespace Ginger.Agents
             VEEW.ShowAsWindow();
         }
 
+        //public void SetAdvanceConfig()
+        //{
+        //    switch (mAgent.DriverType)
+        //    {
+        //        case Agent.eDriverType.MobileAppiumAndroid:
+        //        case Agent.eDriverType.MobileAppiumAndroidBrowser:
+        //        case Agent.eDriverType.MobileAppiumIOS:
+        //        case Agent.eDriverType.MobileAppiumIOSBrowser:
+        //            AdvancedConfigurationTab.Visibility = Visibility.Visible;
+        //            break;
+        //    }
 
-        private void ShowAgentConfig()
-        {
-            //TODO: FIXME temp solution to enable config for Selenium Grid Remote Web Driver, or Android driver which have their own edit page
-            // Need to make it OO style - 
+        //    GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+        //    view.GridColsView = new ObservableList<GridColView>();
 
-            //Selenium Remote Web Driver Edit Page
+        //    view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header = "Parameter", WidthWeight = 150 });
+        //    view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, Header = "Value", WidthWeight = 150 });
 
-            if (mAgent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
-            {
-                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
-                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
-
-                Page p = new SeleniumRemoteWebDriverEditPage(mAgent);
-                DriverConfigurationFrame.Content = p;
-            }
-            else if (mAgent.DriverType == Agent.eDriverType.Appium)
-            {
-                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
-                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
-
-                Page p = new AppiumDriverEditPage(mAgent);
-                DriverConfigurationFrame.Content = p;
-            }
-            // Android Edit Page
-            //else if (mAgent.DriverType == Agent.eDriverType.AndroidADB)
-            //{
-            //    DriverConfigurationGrid.Visibility = System.Windows.Visibility.Collapsed;
-            //    DriverConfigurationFrame.Visibility = System.Windows.Visibility.Visible;
-
-            //    Page p = new AndroidADBDriverEditPage(mAgent);
-            //    DriverConfigurationFrame.Content = p;
-            //}
-            //Default Edit Page
-            else
-            {
-                DriverConfigurationGrid.Visibility = System.Windows.Visibility.Visible;
-                DriverConfigurationFrame.Visibility = System.Windows.Visibility.Collapsed;                
-                InitConfigGrid();
-                SetAdvanceConfig();
-            }
-        }
-
-        public void SetAdvanceConfig()
-        {
-            switch (mAgent.DriverType)
-            {
-                case Agent.eDriverType.MobileAppiumAndroid:
-                case Agent.eDriverType.MobileAppiumAndroidBrowser:
-                case Agent.eDriverType.MobileAppiumIOS:
-                case Agent.eDriverType.MobileAppiumIOSBrowser:
-                    AdvancedConfigurationTab.Visibility = Visibility.Visible;
-                    break;
-            }
-
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Parameter, Header = "Parameter", WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = DriverConfigParam.Fields.Value, Header = "Value", WidthWeight = 150 });
-
-            AdvancedConfigurationGrid.SetAllColumnsDefaultView(view);
-            AdvancedConfigurationGrid.InitViewItems();
-            AdvancedConfigurationGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddAdvanceconfiguration));
-            AdvancedConfigurationGrid.DataSourceList = mAgent.AdvanceAgentConfigurations;
-        }
+        //    AdvancedConfigurationGrid.SetAllColumnsDefaultView(view);
+        //    AdvancedConfigurationGrid.InitViewItems();
+        //    AdvancedConfigurationGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddAdvanceconfiguration));
+        //    AdvancedConfigurationGrid.DataSourceList = mAgent.AdvanceAgentConfigurations;
+        //}
 
 
-        private void AddAdvanceconfiguration(object sender, RoutedEventArgs e)
-        {
-            mAgent.AdvanceAgentConfigurations.Add(new DriverConfigParam());
-        }
-
-
-
-
+        //private void AddAdvanceconfiguration(object sender, RoutedEventArgs e)
+        //{
+        //    mAgent.AdvanceAgentConfigurations.Add(new DriverConfigParam());
+        //}
     }
 }

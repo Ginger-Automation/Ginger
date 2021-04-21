@@ -203,14 +203,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Drivers\Common\DeviceViewPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Drivers\ConsoleDriverLib\ConsoleDriverWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -292,7 +284,6 @@
     <Compile Include="Actions\ActTextSpeech.cs" />
     <Compile Include="Actions\ActWindow.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
-    <Compile Include="Actions\Android\ActShell.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
@@ -390,20 +381,12 @@
     <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntExportManager.cs" />
     <Compile Include="ALM\ZephyrEnt\Bll\ZephyrEntImportManager.cs" />
     <Compile Include="DataSource\DataSourceTableColumn.cs" />
-    <Compile Include="Drivers\AndroidADB\AndroidADBDriver.cs" />
-    <Compile Include="Drivers\AndroidADB\AndroidADBDriverWindow.xaml.cs">
-      <DependentUpon>AndroidADBDriverWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Common\Devices\DeviceConfig.cs" />
-    <Compile Include="Drivers\AndroidADB\AndroidElementInfo.cs" />
     <Compile Include="Common\Devices\DeviceButton.cs" />
     <Compile Include="Common\Devices\DeviceControllerConfig.cs" />
     <Compile Include="Drivers\ASCF\ASCFBrowserElementInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFControlInfo.cs" />
     <Compile Include="Drivers\ASCF\ASCFElementInfo.cs" />
-    <Compile Include="Drivers\Common\DeviceViewPage.xaml.cs">
-      <DependentUpon>DeviceViewPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Drivers\Common\ComboElementInfo.cs" />
     <Compile Include="Drivers\Common\UIAutomationHelperBase.cs" />
     <Compile Include="Drivers\Common\UIAutomationDriverBase.cs" />
@@ -869,9 +852,6 @@
     </PackageReference>
     <PackageReference Include="RestSharp">
       <Version>106.11.4</Version>
-    </PackageReference>
-    <PackageReference Include="SharpAdbClient">
-      <Version>2.2.27</Version>
     </PackageReference>
     <PackageReference Include="SharpSvn.1.8-x86">
       <Version>1.8019.4006.503</Version>

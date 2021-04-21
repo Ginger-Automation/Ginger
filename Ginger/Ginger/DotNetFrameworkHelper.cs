@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -112,25 +112,11 @@ namespace Ginger
                 case Agent.eDriverType.SeleniumRemoteWebDriver:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
                 case Agent.eDriverType.SeleniumEdge:
-                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
-                case Agent.eDriverType.MobileAppiumAndroid:
-                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.Android, zAgent.BusinessFlow);
-                case Agent.eDriverType.MobileAppiumIOS:
-                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOS, zAgent.BusinessFlow);
-                case Agent.eDriverType.MobileAppiumAndroidBrowser:
-                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser, zAgent.BusinessFlow);
-                case Agent.eDriverType.MobileAppiumIOSBrowser:
-                    return new SeleniumAppiumDriver(SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser, zAgent.BusinessFlow);
-                case Agent.eDriverType.PerfectoMobileAndroid:
-                    return new PerfectoDriver(PerfectoDriver.eContextType.NativeAndroid, zAgent.BusinessFlow);
-                case Agent.eDriverType.PerfectoMobileAndroidWeb:
-                    return new PerfectoDriver(PerfectoDriver.eContextType.WebAndroid, zAgent.BusinessFlow);
-                case Agent.eDriverType.PerfectoMobileIOS:
-                    return new PerfectoDriver(PerfectoDriver.eContextType.NativeIOS, zAgent.BusinessFlow);
-                case Agent.eDriverType.PerfectoMobileIOSWeb:
-                    return new PerfectoDriver(PerfectoDriver.eContextType.WebIOS, zAgent.BusinessFlow);
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);               
+                    
                 case Agent.eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
+
                 case eDriverType.InternalBrowser:
                     return new InternalBrowser(zAgent.BusinessFlow);
                 case eDriverType.ASCF:
@@ -176,12 +162,7 @@ namespace Ginger
                 case Agent.eDriverType.DOSConsole:
                     return (typeof(DOSConsoleDriver));                    
                 case Agent.eDriverType.UnixShell:
-                    return (typeof(UnixShellDriver));                    
-                case Agent.eDriverType.MobileAppiumAndroid:                  
-                case Agent.eDriverType.MobileAppiumIOS:                 
-                case Agent.eDriverType.MobileAppiumAndroidBrowser:
-                case Agent.eDriverType.MobileAppiumIOSBrowser:
-                    return (typeof(SeleniumAppiumDriver));                    
+                    return (typeof(UnixShellDriver));                                      
                 case Agent.eDriverType.PowerBuilder:
                     return (typeof(PBDriver));                    
                 case Agent.eDriverType.WindowsAutomation:
@@ -191,14 +172,11 @@ namespace Ginger
                 case Agent.eDriverType.JavaDriver:
                     return (typeof(JavaDriver));                    
                 case Agent.eDriverType.MainFrame3270:
-                    return (typeof(MainFrameDriver));                    
+                    return (typeof(MainFrameDriver));     
+                    
                 //case Agent.eDriverType.AndroidADB:
                 //    return (typeof(AndroidADBDriver));                    
-                case Agent.eDriverType.PerfectoMobileAndroid:
-                case Agent.eDriverType.PerfectoMobileAndroidWeb:
-                case Agent.eDriverType.PerfectoMobileIOS:
-                case Agent.eDriverType.PerfectoMobileIOSWeb:
-                    return (typeof(PerfectoDriver));
+              
                 case Agent.eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
 

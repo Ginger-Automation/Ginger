@@ -5,6 +5,7 @@ using GingerCore.Drivers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,16 +31,34 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         if (args.Driver is IDriverWindow)//TODO: think if better to do it with reflection using DriverWindowPath
                         {
-                            MobileDriverWindow mobileDriverWindow = new MobileDriverWindow((IMobileDriverWindow)args.Driver, (Agent)args.DataObject);
-                            mOpenWindowsDic.Add(args.Driver, mobileDriverWindow);
-                            mobileDriverWindow.Show();
-                            System.Windows.Threading.Dispatcher.Run();
+                            try
+                            {
+                                DriverBase driver = args.Driver;
+                                Agent agent = (Agent)args.DataObject;                                
+                                string classname = "Ginger.Drivers.DriversWindows." + ((IDriverWindow)driver).GetDriverWindowName(agent.DriverType);
+                                Type t = Assembly.GetExecutingAssembly().GetType(classname);
+                                if (t == null)
+                                {
+                                    throw new Exception(string.Format("The Driver Window was not found '{0}'", classname));
+                                }
+                                Window window = (Window)Activator.CreateInstance(t, driver, agent);
+                                if (window != null)
+                                {
+                                    mOpenWindowsDic.Add(args.Driver, window);
+                                    window.Show();
+                                    System.Windows.Threading.Dispatcher.Run();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, string.Format("Error occured while loading/showing Agent windows, error: '{0}'", ex.Message));
+                                Reporter.ToLog(eLogLevel.ERROR, "Error occured while loading/showing Agent windows", ex);
+                            }
                         }
                     }));
                     staThread.SetApartmentState(ApartmentState.STA);
                     staThread.IsBackground = true;
                     staThread.Start();
-                    //System.Windows.Threading.Dispatcher.Run();
                     break;
 
                 case DriverWindowEventArgs.eEventType.CloseDriverWindow:
@@ -47,10 +66,10 @@ namespace Ginger.Drivers.DriversWindows
                     {
                         try
                         {
-                            mOpenWindowsDic[args.Driver].Close();
+                            //mOpenWindowsDic[args.Driver].Close();
                             mOpenWindowsDic.Remove(args.Driver);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.WARN, "Exception while trying to close Driver Window", ex);
                         }

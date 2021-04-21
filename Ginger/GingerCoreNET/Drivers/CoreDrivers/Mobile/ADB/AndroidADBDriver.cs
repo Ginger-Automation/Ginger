@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at 
@@ -32,7 +32,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+//using System.Windows.Media.Imaging;
 using System.Xml;
 
 namespace GingerCore.Drivers.AndroidADB
@@ -42,6 +42,10 @@ namespace GingerCore.Drivers.AndroidADB
 
     public class AndroidADBDriver  //DriverBase, IWindowExplorer, IVisualTestingDriver, Amdocs.Ginger.Plugin.Core.IRecord
     {
+        //public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        //{
+        //    return "AndroidADBDriverEditPage";
+        //}
 
         //public string mGingerPackageName = "amdocs.ginger.android";
 
