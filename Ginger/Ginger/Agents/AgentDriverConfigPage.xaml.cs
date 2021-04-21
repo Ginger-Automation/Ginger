@@ -74,7 +74,7 @@ namespace Ginger.Agents
 
         private void SetDriverConfigsPageContent()
         {
-            DriverBase driver = (DriverBase)RepositoryItemHelper.RepositoryItemFactory.GetDriverObject(mAgent);
+            DriverBase driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(mAgent);
 
             if (driver.GetDriverConfigsEditPageName(mAgent.DriverType) != null)
             {
