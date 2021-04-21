@@ -10,6 +10,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
     {
         bool IsDeviceConnected { get; set; }
 
+        eAutoScreenshotRefreshMode DeviceAutoScreenshotRefreshMode { get; set; }
+
         eDevicePlatformType GetDevicePlatformType();
 
         eAppType GetAppType();        
@@ -19,8 +21,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.DriversWindow
         void PerformHomeButtonPress();
 
         void PerformMenuButtonPress();
-
-        bool GetAutoRefreshDeviceWindowScreenshot();
 
         Byte[] GetScreenshotImage();
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -274,10 +274,10 @@ namespace GingerCore.Drivers.Common
 
         public void UpdateDeviceScreenShot(Bitmap bmp)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                DeviceImage.Source = General.ToBitmapSource(bmp);
-            });
+            //this.Dispatcher.Invoke(() =>
+            //{
+            //    DeviceImage.Source = General.ToBitmapSource(bmp);
+            //});
         }
 
         public void UpdateDeviceScreenShot(BitmapImage BI)
@@ -429,7 +429,7 @@ namespace GingerCore.Drivers.Common
             rect.Margin = new Thickness(left, top, 0, 0);      
         }
 
-        internal System.Windows.Point GetMousePosition()
+        public System.Windows.Point GetMousePosition()
         {
             System.Windows.Point p = new System.Windows.Point();
             this.Dispatcher.Invoke(() =>

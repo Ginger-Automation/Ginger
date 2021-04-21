@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -166,7 +166,19 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("PCPath", value);
             }
         }
-        private string mPCPathCalculated = string.Empty;
+
+        public bool KeyboardIntractiveAuthentication 
+        {
+            get 
+            {
+                return Convert.ToBoolean(GetInputParamValue("KeyboardIntractiveAuthentication"));
+            }
+            set 
+            {
+                AddOrUpdateInputParamValue("KeyboardIntractiveAuthentication",Convert.ToString(value));
+            }
+        }
+        private string mPCPathCalculated=string.Empty;
 
         private string PCPathCalculated
         {
@@ -224,6 +236,7 @@ namespace GingerCore.Actions
 
             public static string PCPath = "PCPath";
 
+            public static string KeyboardIntractiveAuthentication = "KeyboardIntractiveAuthentication";
         }
 
         public override eImageType Image { get { return eImageType.CodeFile; } }
@@ -249,14 +262,22 @@ namespace GingerCore.Actions
         private ConnectionInfo GetConnectionInfo()
         {
             string passPhrase = null;
-            string pw = null;
-            if (string.IsNullOrEmpty(drvPassword))
-                pw = "";
-            else
+            var pw = "";
+            if (!string.IsNullOrEmpty(drvPassword))
+            {
                 pw = drvPassword;
-            var connectionInfo = new ConnectionInfo(drvHost, drvPort, drvUserName,
+            }
+            ConnectionInfo connectionInfo = null;
+            if (this.KeyboardIntractiveAuthentication)
+            {
+                connectionInfo = KeyboardInteractiveAuthConnectionInfo();
+            }
+            else
+            {
+                connectionInfo = new ConnectionInfo(drvHost, drvPort, drvUserName,
                             new PasswordAuthenticationMethod(drvUserName, pw)
                         );
+            }
 
             if (!string.IsNullOrEmpty(drvPrivateKeyPassPhrase))
                 passPhrase = drvPrivateKeyPassPhrase;
@@ -273,6 +294,28 @@ namespace GingerCore.Actions
             }
 
             return connectionInfo;
+        }
+
+        private ConnectionInfo KeyboardInteractiveAuthConnectionInfo()
+        {
+            ConnectionInfo connectionInfo;
+            KeyboardInteractiveAuthenticationMethod keyboardIntractiveAuth = new KeyboardInteractiveAuthenticationMethod(UserName);
+            PasswordAuthenticationMethod pauth = new PasswordAuthenticationMethod(UserName, Password);
+            keyboardIntractiveAuth.AuthenticationPrompt += HandleIntractiveKeyBoardEvent;
+
+            connectionInfo = new ConnectionInfo(Host, drvPort, drvUserName,pauth, keyboardIntractiveAuth);
+            return connectionInfo;
+        }
+
+        void HandleIntractiveKeyBoardEvent(Object sender, Renci.SshNet.Common.AuthenticationPromptEventArgs e)
+        {
+            foreach (Renci.SshNet.Common.AuthenticationPrompt prompt in e.Prompts)
+            {
+                if (prompt.Request.IndexOf("Password:", StringComparison.InvariantCultureIgnoreCase) != -1)
+                {
+                    prompt.Response = drvPassword;
+                }
+            }
         }
 
         public override void Execute()

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GingerCore.Agent;
@@ -153,15 +154,20 @@ namespace Ginger.Agents
             }
         }
                 
-        private void xTestBtn_Click(object sender, RoutedEventArgs e)
+        private async void xTestBtn_Click(object sender, RoutedEventArgs e)
         {
-            xTestBtn.IsEnabled = false;                        
+            xTestBtn.IsEnabled = false;
+            Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Testing '{0}' Agent start...", mAgent.Name));
             try
             {
-                mAgent.Test();
+                await Task.Run(() =>
+                {
+                    mAgent.Test();
+                });
             }
             finally
             {
+                Reporter.HideStatusMessage();
                 xTestBtn.IsEnabled = true;
             }
         }

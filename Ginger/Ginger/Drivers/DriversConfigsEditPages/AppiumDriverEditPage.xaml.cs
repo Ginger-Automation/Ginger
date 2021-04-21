@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Ginger.Drivers
+namespace Ginger.Drivers.DriversConfigsEditPages
 {
     /// <summary>
     /// Interaction logic for AppiumDriverEditPage.xaml
@@ -24,7 +24,8 @@ namespace Ginger.Drivers
         DriverConfigParam mDevicePlatformType;
         DriverConfigParam mAppType;
         DriverConfigParam mAppiumCapabilities;
-        
+        DriverConfigParam mDeviceAutoScreenshotRefreshMode;
+
         public AppiumDriverEditPage(Agent appiumAgent)
         {
             InitializeComponent();
@@ -36,13 +37,22 @@ namespace Ginger.Drivers
         private void BindConfigurationsFields()
         {
             mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer));
-            BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, nameof(DriverConfigParam.Value));
+            //BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, nameof(DriverConfigParam.Value));
+            xServerURLTextBox.Init(null, mAppiumServer, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.ToolTipProperty, mAppiumServer, nameof(DriverConfigParam.Description));
 
             BindingHandler.ObjFieldBinding(xLoadDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.LoadDeviceWindow)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-            BindingHandler.ObjFieldBinding(xAutoRefreshDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoRefreshDeviceWindowScreenshot)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-           
-            BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.TextProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
+            mDeviceAutoScreenshotRefreshMode = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DeviceAutoScreenshotRefreshMode));
+            BindingHandler.ObjFieldBinding(xLiveRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Live.ToString());
+            BindingHandler.ObjFieldBinding(xPostOperationRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.PostOperation.ToString());
+            BindingHandler.ObjFieldBinding(xDisabledRdBtn, RadioButton.IsCheckedProperty, mDeviceAutoScreenshotRefreshMode, nameof(DriverConfigParam.Value), bindingConvertor: new RadioBtnEnumConfigConverter(), converterParameter: eAutoScreenshotRefreshMode.Disabled.ToString());
+
+            DriverConfigParam proxy = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.Proxy));
+            xProxyTextBox.Init(null, proxy, nameof(DriverConfigParam.Value));
+            BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
+            xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
+
+            xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
 
             mDevicePlatformType = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DevicePlatformType));
@@ -252,18 +262,18 @@ namespace Ginger.Drivers
 
         private void xLoadDeviceWindow_Checked(object sender, RoutedEventArgs e)
         {
-            if (xAutoRefreshDeviceWindow == null)
+            if (xAutoRefreshModePnl == null)
             {
                 return;
             }
 
             if (xLoadDeviceWindow.IsChecked == true)
             {
-                xAutoRefreshDeviceWindow.Visibility = Visibility.Visible;
+                xAutoRefreshModePnl.Visibility = Visibility.Visible;
             }
             else
             {
-                xAutoRefreshDeviceWindow.Visibility = Visibility.Hidden;
+                xAutoRefreshModePnl.Visibility = Visibility.Hidden;
             }
         }
 
@@ -297,6 +307,23 @@ namespace Ginger.Drivers
             if (this.IsLoaded)
             {
                 AutoSetCapabilities();
+            }
+        }
+
+        private void xUseProxyChkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (xProxyTextBox != null)
+            {
+                xProxyTextBox.IsEnabled = true;
+            }
+        }
+
+        private void xUseProxyChkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (xProxyTextBox != null)
+            {
+                xProxyTextBox.IsEnabled = false;
+                xProxyTextBox.ValueTextBox.Text = string.Empty;
             }
         }
     }
