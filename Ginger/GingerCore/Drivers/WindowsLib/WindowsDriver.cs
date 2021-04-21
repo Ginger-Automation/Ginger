@@ -378,21 +378,16 @@ namespace GingerCore.Drivers.WindowsLib
                         actWC.AddOrUpdateReturnParamActual("Actual", propValue);
                         actWC.ExInfo = propValue;
                         break;
-                    //case ActUIElement.eElementAction.GetSelected:
-                    //    string selectedItem = mUIAutomationHelper.GetSelectedItem(AE);
-                    //    actWC.AddOrUpdateReturnParamActual("Selected Item", selectedItem);
-                    //    actWC.ExInfo = selectedItem;
-                    //    break;
                     case ActUIElement.eElementAction.GetText:
                         string valText = mUIAutomationHelper.GetControlText(AE, actWC.ValueForDriver);
                         actWC.AddOrUpdateReturnParamActual("Actual", valText);
                         actWC.ExInfo = valText;
                         break;
-                    //case ActUIElement.eElementAction.GetTitle:
-                    //    string title = mUIAutomationHelper.GetDialogTitle(AE);
-                    //    actWC.AddOrUpdateReturnParamActual("Dialog Title", title);
-                    //    actWC.ExInfo = title;
-                    //    break;
+                    case ActUIElement.eElementAction.GetWindowTitle:
+                        string title = mUIAutomationHelper.GetDialogTitle(AE);
+                        actUIElement.AddOrUpdateReturnParamActual("Dialog Title", title);
+                        actUIElement.ExInfo = title;
+                        break;
                     case ActUIElement.eElementAction.GetValue:
                         string val = mUIAutomationHelper.GetControlValue(AE);
                         actWC.AddOrUpdateReturnParamActual("Actual", val);
@@ -409,38 +404,21 @@ namespace GingerCore.Drivers.WindowsLib
                         actWC.AddOrUpdateReturnParamActual("Actual", valueIsExist);
                         actWC.ExInfo = valueIsExist;
                         break;
-                    //case ActUIElement.eElementAction.IsSelected:
-                    //    string isSelected = mUIAutomationHelper.IsControlSelected(AE);
-                    //    actWC.AddOrUpdateReturnParamActual("Actual", isSelected);
-                    //    actWC.ExInfo = isSelected;
-                    //    break;
-                    //case ActUIElement.eElementAction.Maximize:
-                    //case ActUIElement.eElementAction.Minimize:
-                    //case ActUIElement.eElementAction.Restore:
-                    //    status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
-                    //    if (!status.Contains("State set successfully"))
-                    //    {
-                    //        actWC.Error = status;
-                    //    }
-                    //    else
-                    //    {
-                    //        actWC.ExInfo += status;
-                    //    }
-                    //    break;
-                    //case ActUIElement.eElementAction.Repaint:
-                    //    mUIAutomationHelper.HandlePaintWindow(AE);
-                    //    break;
-                    //case ActUIElement.eElementAction.Resize:
-                    //    status = mUIAutomationHelper.SetElementSize(AE, actWC.ValueForDriver);
-                    //    if (!status.Contains("Element resize Successfully"))
-                    //    {
-                    //        actWC.Error = status;
-                    //    }
-                    //    else
-                    //    {
-                    //        actWC.ExInfo += status;
-                    //    }
-                    //    break;
+                    case ActUIElement.eElementAction.Maximize:
+                    case ActUIElement.eElementAction.Minimize:
+                        status = mUIAutomationHelper.SetElementVisualState(AE, actUIElement.ElementAction.ToString());
+                        if (!status.Contains("State set successfully"))
+                        {
+                            actWC.Error = status;
+                        }
+                        else
+                        {
+                            actWC.ExInfo += status;
+                        }
+                        break;
+                    case ActUIElement.eElementAction.MouseRightClick:
+                        mUIAutomationHelper.DoRightClick(AE, actWC.ValueForDriver);
+                        break;
                     case ActUIElement.eElementAction.ScrollDown:
                         mUIAutomationHelper.ScrollDown(AE);
                         break;
