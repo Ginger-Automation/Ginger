@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace 
     {        
         private static WorkSpace mWorkSpace;
+        private static Mutex mutex = new Mutex(false, "CheckWebReportFolderMutex");
         public static WorkSpace Instance
         {
             get
@@ -263,45 +264,9 @@ namespace amdocs.ginger.GingerCoreNET
             Reporter.ToLog(eLogLevel.INFO, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
                         
-            CheckWebReportFolder();
-
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
                 Reporter.ToLog(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
-            }
-        }
-
-        private void CheckWebReportFolder()
-        {
-            try
-            {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: "+ clientAppFolderPath);
-                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
-                if (Directory.Exists(clientAppFolderPath))
-                {
-                    string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
-                    if (Directory.Exists(rootUserFolder))
-                        TryFolderDelete(rootUserFolder);
-                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
-            }
-        }
-
-        private void TryFolderDelete(string rootUserFolder)
-        {
-            try
-            {
-                Directory.Delete(rootUserFolder,true);
-            }
-            catch (Exception ex)
-            {
-               Reporter.ToLog(eLogLevel.DEBUG, "TryFolderDelete error - " + ex.Message, ex);
             }
         }
 
