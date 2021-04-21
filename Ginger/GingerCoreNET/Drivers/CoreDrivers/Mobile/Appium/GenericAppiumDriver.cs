@@ -113,7 +113,6 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-        public eDevicePlatformType DriverPlatformType;
 
         public GenericAppiumDriver(BusinessFlow BF)
         {
@@ -147,12 +146,12 @@ namespace Amdocs.Ginger.CoreNET
                 DriverOptions driverOptions = this.GetCapabilities();
 
                 //creating driver
-                switch (DriverPlatformType)
+                switch (DevicePlatformType)
                 {
                     case eDevicePlatformType.Android:
                         if (string.IsNullOrEmpty(Proxy))
                         {
-                            Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions);
+                            Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
                         }
                         else
                         {
@@ -162,7 +161,7 @@ namespace Amdocs.Ginger.CoreNET
                     case eDevicePlatformType.iOS:
                         if (string.IsNullOrEmpty(Proxy))
                         {
-                            Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions);
+                            Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
                         }
                         else
                         {
@@ -433,7 +432,7 @@ namespace Amdocs.Ginger.CoreNET
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
                             }
-                            switch (DriverPlatformType)
+                            switch (DevicePlatformType)
                             {
                                 case eDevicePlatformType.Android:
                                     //e.Clear();
@@ -755,7 +754,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformBackButtonPress()
         {
-            switch (DriverPlatformType)
+            switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
                     Driver.Navigate().Back();
@@ -768,7 +767,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformHomeButtonPress()
         {               
-            switch (DriverPlatformType)
+            switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Home);
@@ -782,7 +781,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformMenuButtonPress()
         {
-            switch (DriverPlatformType)
+            switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
