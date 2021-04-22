@@ -29,7 +29,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.Drivers.Common;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -270,29 +269,10 @@ namespace Ginger.BusinessFlowPages
 
             if (parentGroup != null)
             {
-               
                 foreach (Activity sharedActivity in sharedActivitiesToAdd)
                 {
-                    eUserMsgSelection userSelection = eUserMsgSelection.None;
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
-                    //map activities target application to BF if missing in BF
-                    if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
-                    {
-                        if (userSelection == eUserMsgSelection.None)
-                        {
-                            userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
-                        }
-
-                        if (userSelection == eUserMsgSelection.OK)
-                        { 
-                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
-                            if (appAgent != null)
-                            {
-                                businessFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                            }
-                        }                        
-                    }
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
                     //mBusinessFlow.CurrentActivity = droppedActivityIns;
@@ -309,30 +289,10 @@ namespace Ginger.BusinessFlowPages
         {
             foreach (ActivitiesGroup sharedGroup in sharedActivitiesGroupsToAdd)
             {
-                eUserMsgSelection userSelection = eUserMsgSelection.None;
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)sharedGroup.CreateInstance(true);
                 businessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                foreach (Activity activityIns in activities)
-                {
-                    if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
-                    {
-                        if (userSelection == eUserMsgSelection.None)
-                        {
-                            userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
-                        }
-
-                        if (userSelection == eUserMsgSelection.OK)
-                        {
-                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
-                            if (appAgent != null)
-                            {
-                                businessFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                            }
-                        }
-                    }
-                }
-                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, true);
+                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, false);
             }
             businessFlow.AttachActivitiesGroupsAndActivities();
         }
