@@ -312,12 +312,12 @@ namespace GingerCore.Drivers.WindowsLib
             //window
             else if (actUIElement.ElementType.Equals(eElementType.Window))
             {
-                HandleWindowAction(actUIElement, AE);
+                HandleWindowControlUIElementAction(actUIElement, AE);
             }
             //menu-item
             else if (actUIElement.ElementType.Equals(eElementType.MenuItem))
             {
-                HandleMenuControlAction(actUIElement);
+                HandleMenuControlUIElementAction(actUIElement);
             }
             else
             {
@@ -451,7 +451,7 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         //ActUIElement
-        private void HandleWindowAction(ActUIElement actUIElement, object AE)
+        private void HandleWindowControlUIElementAction(ActUIElement actUIElement, object AE)
         {
             try
             {
@@ -766,7 +766,7 @@ namespace GingerCore.Drivers.WindowsLib
         }
 
         //ActUIElement
-        private void HandleMenuControlAction(ActUIElement actUIElement)
+        private void HandleMenuControlUIElementAction(ActUIElement actUIElement)
         {
             object AE;
             try
