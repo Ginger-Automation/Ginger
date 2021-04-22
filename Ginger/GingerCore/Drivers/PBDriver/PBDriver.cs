@@ -34,6 +34,7 @@ using System.Threading;
 using Amdocs.Ginger.Repository;
 using Castle.Components.DictionaryAdapter;
 using Amdocs.Ginger.CoreNET.RunLib;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -975,7 +976,7 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.GetListOfDriverAppWindows();
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             return mUIAutomationHelper.GetVisibleControls();
         }

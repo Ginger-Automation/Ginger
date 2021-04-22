@@ -84,7 +84,7 @@
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock Text="Loading HTML . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TreeView x:Name="xHTMLTree" />
+                        <TreeView x:Name="xPageSrcTree" />
                     </Grid>
                 </TabItem>
 

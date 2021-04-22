@@ -916,8 +916,13 @@ namespace Amdocs.Ginger.CoreNET
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
+            if (AppType == eAppType.Web)
+            {
+                return await ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath);
+            }
+
             List<ElementInfo> list = new List<ElementInfo>();
 
             string pageSourceString = Driver.PageSource;
@@ -938,8 +943,8 @@ namespace Amdocs.Ginger.CoreNET
                         if (cattr.Value == "false") continue;
                     }
                 }
-                //AppiumElementInfo AEI = GetElementInfoforXmlNode(nodes[i]);                
-                //list.Add(AEI);
+                ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
+                list.Add(EI);
             }
 
             return list;
@@ -1444,6 +1449,11 @@ namespace Amdocs.Ginger.CoreNET
 
         public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
         {
+            if (AppType == eAppType.Web)
+            {
+                return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
+            }
+
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
             return await GetElementInfoforXmlNode(foundNode);
         }

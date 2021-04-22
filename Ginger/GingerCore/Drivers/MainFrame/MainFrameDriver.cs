@@ -31,6 +31,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
@@ -706,7 +707,7 @@ namespace GingerCore.Drivers.MainFrame
             throw new System.NotImplementedException();
         }
 
-        public System.Collections.Generic.List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        public async Task<System.Collections.Generic.List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 

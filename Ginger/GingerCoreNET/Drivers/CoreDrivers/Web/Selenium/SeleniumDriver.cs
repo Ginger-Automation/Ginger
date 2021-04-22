@@ -3776,7 +3776,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             mIsDriverBusy = true;
 
@@ -7188,7 +7188,7 @@ namespace GingerCore.Drivers
                 string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
                 //RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
-                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteAsyncScript(s_Script, ptX, ptY);
+                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
 
                 if (ele == null)
                 {

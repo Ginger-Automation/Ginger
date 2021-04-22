@@ -378,7 +378,7 @@ namespace Ginger.WindowExplorer
             //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
         }
 
-        private void RefreshTreeContent()
+        private async Task RefreshTreeContent()
         {
             xLoadingTreeViewBanner.Visibility = Visibility.Visible;
             xWindowControlsTreeView.Visibility = Visibility.Collapsed;
@@ -436,21 +436,20 @@ namespace Ginger.WindowExplorer
                 case AppWindow.eWindowType.Appium:
                     AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
 
-                    //AppiumElementInfo AEI = new AppiumElementInfo();
-                    ElementInfo AEI = new ElementInfo();
+                    AppiumElementInfo AEI = new AppiumElementInfo();
+                    //ElementInfo AEI = new ElementInfo();
                     AEI.WindowExplorer = mWindowExplorerDriver;
                     AEI.XPath = "/";
                     GenericAppiumDriver GAD = ((GenericAppiumDriver)mWindowExplorerDriver);
 
-                    string pageSourceString = GAD.GetPageSource().Result;
+                    string pageSourceString = await GAD.GetPageSource();
                     XmlDocument pageSourceXml = new XmlDocument();
                     pageSourceXml.LoadXml(pageSourceString);
-                    //AEI.XmlDoc = pageSourceXml;
+                    AEI.XmlDoc = pageSourceXml;
                     AEI.ElementObject = pageSourceXml.SelectSingleNode("/");
 
                     AWTI.ElementInfo = AEI;
 
-                    // AWTI.UIAElementInfo = AEI;
                     InitTree(AWTI);
                     break;
                 //case AppWindow.eWindowType.AndroidDevice:
@@ -1191,7 +1190,7 @@ namespace Ginger.WindowExplorer
                 try
                 {
                     //StatusTextBlock.Text = "Loading";
-                    List<ElementInfo> list = await Task.Run(() => mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList()));
+                    List<ElementInfo> list = await mWindowExplorerDriver.GetVisibleControls(CheckedFilteringCreteriaList.Select(x => x.ElementType).ToList());
 
                     // Convert to obserable for the grid
                     VisibleElementsInfoList.Clear();
@@ -1600,7 +1599,16 @@ namespace Ginger.WindowExplorer
 
             //Bitmap ScreenShotBitmap = ((UIAutomationDriverBase)mApplicationAgent.Agent.Driver).mUIAutomationHelper.GetAppWindowAsBitmap((AppWindow)xWindowSelection.WindowsComboBox.SelectedItem);  // GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
-            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            Bitmap ScreenShotBitmap;
+
+            if(mWindowExplorerDriver is GenericAppiumDriver)
+            {
+                ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();
+            }
+            else
+            {
+                ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+            }
             mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
 
             if (mPlatform.PlatformType() == ePlatformType.Web)
@@ -2086,7 +2094,7 @@ namespace Ginger.WindowExplorer
             RefreshTabsContent();
         }
 
-        public void RefreshTabsContent()
+        public async void RefreshTabsContent()
         {
             RefreshGrid = true;
             RefreshTree = true;
@@ -2106,7 +2114,7 @@ namespace Ginger.WindowExplorer
             }
             else if (xViewsTabs.SelectedItem == xTreeViewTab)        /// Tree View
             {
-                RefreshTreeContent();
+                await RefreshTreeContent();
 
                 RefreshTree = false;
             }
@@ -2213,11 +2221,11 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void xTreeViewTab_GotFocus(object sender, RoutedEventArgs e)
+        private async void xTreeViewTab_GotFocus(object sender, RoutedEventArgs e)
         {
             if (RefreshTree)
             {
-                RefreshTreeContent();
+                await RefreshTreeContent();
                 RefreshTree = false;
             }
         }
