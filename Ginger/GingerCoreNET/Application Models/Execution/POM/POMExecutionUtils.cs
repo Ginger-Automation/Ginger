@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
@@ -35,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
         ActUIElement mAct = null;
         public POMExecutionUtils(Act act)
         {
-            mAct = (ActUIElement) act;
+            mAct = (ActUIElement)act;
         }
 
         public POMExecutionUtils()
@@ -100,6 +101,23 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                     pElementType.SetValue(elementAction, ((ElementInfo)actConfig.LearnedElementInfo).ElementTypeEnum);
                 }
             }
+        }
+
+        public void PriotizeLocatorPosition()
+        {
+            try
+            {
+                var locatorIndex = GetCurrentPOMElementInfo().Locators.ToList().FindIndex(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed);
+                if (locatorIndex > 0)
+                {
+                    GetCurrentPOMElementInfo().Locators.Move(locatorIndex, 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Error occured during self healing locator position", ex);
+            }
+
         }
     }
 }
