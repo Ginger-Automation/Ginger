@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -487,42 +487,52 @@ namespace UnitTests.NonUITests
         }
 
 
-        private BusinessFlow GetBizFlow(string Name, string Description)
-        {            
-            BusinessFlow BF = new BusinessFlow();
-            //BF.Name = "Biz flow 1";
-            //BF.Description = "Desc 1";
-            ////BF.Status = BusinessFlow.eBusinessFlowStatus.Active; //TODOL do NOT write to XML if null or empty
-            //BF.Activities = new ObservableList<Activity>();
+        private BusinessFlow GetBizFlow()
+        {
+            
+            BusinessFlow bf = new BusinessFlow("Test");
 
-            //for (int i = 1; i <= ActivitiesToCreate; i++)
-            //{
-            //    Activity a = new Activity();
-            //    a.ActivityName = "Activity number " + i;
-            //    a.Description = "Desc - " + i;
-            //    BF.Activities.Add(a);
-            //    a.Status = GingerCore.Activity.eActivityStatus.Pass;
-            //    for (int j = 1; j <= 2; j++)
-            //    {
-            //        ActTextBox t = new ActTextBox();
-            //        t.Description = "Set text box " + j;
-            //        t.LocateBy = Act.eLocatorType.ByID;
-            //        t.LocateValue = "ID" + j;
-            //        a.Acts.Add(t);
+            Activity activity = new Activity();
+            activity.ActivityName = "Login";
 
-            //        ActGotoURL g = new ActGotoURL();
-            //        g.Description = "goto URL " + j;
-            //        g.LocateValue = "ID" + j;
-            //        a.Acts.Add(g);
-            //    }
-            //}
-            //VariableString v = new VariableString();
-            //v.Name = "Var1";
-            //v.Description = "VDesc 1";
-            //BF.AddVariable(v);
+            ActUIElement actGotoURL = new ActUIElement();
+            actGotoURL.Description = "Launch";
+
+            activity.Acts.Add(actGotoURL);
+
+            Activity activity2 = new Activity();
+            activity2.ActivityName = "Test";
+
+            ActDummy act2 = new ActDummy();
+            act2.Description = "WaitForApp";
+
+            activity.Acts.Add(act2);
+
+            FlowControl flowControl = new FlowControl();
+            flowControl.Active = true;
+            flowControl.Condition = "1=1";
+            flowControl.FlowControlAction = eFlowControlAction.GoToActivity;
+            flowControl.Value = activity2.Guid + flowControl.GUID_NAME_SEPERATOR + activity2.ItemName;
+
+            FlowControl flowControl2 = new FlowControl();
+            flowControl2.Active = true;
+            flowControl2.Condition = "2=2";
+            flowControl2.FlowControlAction = eFlowControlAction.GoToAction;
+            flowControl2.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
 
 
-            return BF;
+            actGotoURL.FlowControls.Add(flowControl);
+            actGotoURL.FlowControls.Add(flowControl2);
+
+            bf.Activities.RemoveAt(0);
+            bf.Activities.Add(activity);
+            bf.Activities.Add(activity2);
+
+            activity2.ActivityName = "Test_New";
+            string tempFile = TestResources.GetTempFile("BF.xml");
+            bf.RepositorySerializer.SaveToFile(bf, tempFile);
+            bf.FilePath = tempFile;
+            return bf;
         }
 
 
@@ -899,7 +909,26 @@ namespace UnitTests.NonUITests
             ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy();
 
             //Assert
-            Assert.AreEqual(actGotoURL.Description, a2.Description);            
+            Assert.AreEqual(actGotoURL.Description, a2.Description, "Action description should match");
+            Assert.AreNotEqual(actGotoURL.Guid, a2.Guid,"Action should have a new GUID");
+
+        }
+        [TestMethod]
+        [Timeout(60000)]
+        public void CopyActionWithSetNewGUIDFalse()
+        {
+
+            //Arrange
+            ActUIElement actGotoURL = new ActUIElement();
+            actGotoURL.Description = "www.google.com";
+
+            //Act
+            ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy(false);
+
+            //Assert
+            Assert.AreEqual(actGotoURL.Description, a2.Description);
+            Assert.AreEqual(actGotoURL.Guid, a2.Guid, "Action should have a same GUID");
+
         }
 
         [TestMethod]
@@ -919,26 +948,13 @@ namespace UnitTests.NonUITests
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy();
 
             //Assert
-            Assert.AreEqual(bfCopy.Activities.Count, 2);
-            Assert.AreEqual(bfCopy.Activities[1].ActivityName, "Activiy2");
+            Assert.AreEqual(bfCopy.Activities.Count, 2,"Activities count should match");
+            Assert.AreEqual(bfCopy.Activities[1].ActivityName, "Activiy2","Activities name validation");
+            Assert.AreNotEqual(bfCopy.Activities[0].Guid, activity1.Guid ,"Activity should have a new guid");
+            Assert.AreNotEqual(bfCopy.Activities[1].Guid, activity2.Guid, "Activity should have a new guid");
         }
 
-        [TestMethod]  [Timeout(60000)]
-        public void CreateDuplicationAction()
-        {
-
-            //Arrange
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "www.google.com";
-
-            //Act
-            ActUIElement a2 = (ActUIElement)actGotoURL.CreateCopy();
-
-            //Assert
-            Assert.AreEqual(actGotoURL.Description, a2.Description);
-
-
-        }
+  
 
 
                
@@ -946,51 +962,10 @@ namespace UnitTests.NonUITests
         public void FlowcontrolTest_WithBFCreateCopy()
         {
             //Arrange
-            BusinessFlow bf = new BusinessFlow("Test");            
-
-            Activity activity = new Activity();
-            activity.ActivityName = "Login";
-
-            ActUIElement actGotoURL = new ActUIElement();
-            actGotoURL.Description = "Launch";
-
-            activity.Acts.Add(actGotoURL);
-
-            Activity activity2 = new Activity();
-            activity2.ActivityName = "Test";
-
-            ActDummy act2 = new ActDummy();
-            act2.Description = "WaitForApp";
-
-            activity.Acts.Add(act2);
-
-            FlowControl flowControl = new FlowControl();
-            flowControl.Active = true;
-            flowControl.Condition = "1=1";
-            flowControl.FlowControlAction = eFlowControlAction.GoToActivity;
-            flowControl.Value = activity2.Guid + flowControl.GUID_NAME_SEPERATOR + activity2.ItemName;
-
-            FlowControl flowControl2 = new FlowControl();
-            flowControl2.Active = true;
-            flowControl2.Condition = "2=2";
-            flowControl2.FlowControlAction = eFlowControlAction.GoToAction;
-            flowControl2.Value = act2.Guid + flowControl.GUID_NAME_SEPERATOR + act2.ItemName;
-
-
-            actGotoURL.FlowControls.Add(flowControl);
-            actGotoURL.FlowControls.Add(flowControl2);
-
-            bf.Activities.RemoveAt(0);
-            bf.Activities.Add(activity);
-            bf.Activities.Add(activity2);
-
-            activity2.ActivityName = "Test_New";
-            string tempFile = TestResources.GetTempFile("BF.xml");
-            bf.RepositorySerializer.SaveToFile(bf, tempFile);
-            bf.FilePath = tempFile;
+            BusinessFlow bf = GetBizFlow();
 
             //Act
-            BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();
+            BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy();
 
             Guid newGuidOfActivity2 = bfCopy.Activities.Where(x => x.ItemName == "Test_New").FirstOrDefault().Guid;
 
@@ -1000,10 +975,33 @@ namespace UnitTests.NonUITests
             //Assert
             Assert.AreEqual(bfCopy.Activities[0].Acts[0].FlowControls[1].GetGuidFromValue(), newGuidOfAct2);
             Assert.AreEqual(bfCopy.Activities[0].Acts[0].FlowControls[0].GetGuidFromValue(), newGuidOfActivity2);
-           
 
+            Assert.AreNotEqual(bfCopy.Activities[0].Guid, bf.Activities[0].Guid, "Activity should have a new guid");
+            Assert.AreNotEqual(bfCopy.Activities[0].Acts[0].Guid, bf.Activities[0].Acts[0].Guid, "Action should have a new guid");
         }
-        
+
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void FlowcontrolTest_WithSetNewGUIDFalse()
+        {   //Arrange
+            BusinessFlow bf = GetBizFlow();
+
+            //Act
+            BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy(false);
+
+            Guid newGuidOfActivity2 = bfCopy.Activities.Where(x => x.ItemName == "Test_New").FirstOrDefault().Guid;
+
+            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.Where(x => x.ItemName == "WaitForApp").FirstOrDefault().Guid;
+
+
+            //Assert
+            Assert.AreEqual(bfCopy.Activities[0].Acts[0].FlowControls[1].GetGuidFromValue(), newGuidOfAct2);
+            Assert.AreEqual(bfCopy.Activities[0].Acts[0].FlowControls[0].GetGuidFromValue(), newGuidOfActivity2);
+
+            Assert.AreEqual(bfCopy.Activities[0].Guid, bf.Activities[0].Guid, "Activity should have a same guid");
+            Assert.AreEqual(bfCopy.Activities[0].Acts[0].Guid, bf.Activities[0].Acts[0].Guid, "Action should have a new guid");
+        }
 
         [TestMethod]  [Timeout(60000)]
         public void FlowcontrolTest_WithActivityCreateInstance()
@@ -1039,7 +1037,8 @@ namespace UnitTests.NonUITests
 
             //Assert
             Assert.AreEqual(copyActivity.Acts[0].FlowControls[0].GetGuidFromValue(), newGuidOfAct2);
-
+            Assert.AreNotEqual(copyActivity.Guid, activity.Guid, "Activity should have a new guid");
+            Assert.AreNotEqual(copyActivity.Acts[0].Guid, activity.Acts[0].Guid, "Action should have a new guid");
 
         }
 
@@ -1311,13 +1310,14 @@ namespace UnitTests.NonUITests
 
             //Assert
             Assert.IsNotNull(copiedItem);
+            Assert.AreEqual(copiedItem.ActivitiesGroups.Count,1);
             Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
             Assert.AreNotEqual(bf.Guid, copiedItem.Guid);
             Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
-            //Assert.AreNotEqual(bf.Activities[0].Guid, copiedItem.Activities[0].Guid);//need to check why GUID still the same
-            //Assert.AreNotEqual(sampleFC.Guid, copiedItem.Activities[0].Acts[0].FlowControls[0].Guid);
-            //Assert.AreNotEqual(sampleFC.Value, copiedItem.Activities[0].Acts[0].FlowControls[0].Value);
-            //Assert.AreEqual(copiedItem.Activities[0].Acts[0].FlowControls[0].Value, copiedItem.Activities[1].Guid + "#GUID_NAME#" + copiedItem.Activities[1].ActivityName);
+            Assert.AreNotEqual(bf.Activities[0].Guid, copiedItem.Activities[0].Guid);
+            Assert.AreNotEqual(sampleFC.Guid, copiedItem.Activities[0].Acts[0].FlowControls[0].Guid);
+            Assert.AreNotEqual(sampleFC.Value, copiedItem.Activities[0].Acts[0].FlowControls[0].Value);
+            Assert.AreEqual(copiedItem.Activities[0].Acts[0].FlowControls[0].Value, copiedItem.Activities[1].Guid + "#GUID_NAME#" + copiedItem.Activities[1].ActivityName);
         }
 
         [TestMethod]
@@ -1385,7 +1385,7 @@ namespace UnitTests.NonUITests
             Assert.IsNotNull(copiedItemNew);
             Assert.AreNotSame(dumAct, copiedItemNew);
             Assert.AreNotEqual(dumAct.Guid, copiedItemNew.Guid);
-            //Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid); //need to check why is equal
+           Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid); 
         }
 
     }
