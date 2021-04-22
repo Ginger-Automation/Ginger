@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -100,11 +100,11 @@ namespace Ginger.Drivers.AndroidDeviceADBLib
             DeviceData DD = (DeviceData)DevicesGrid.SelectedItem;
             if (DD != null)
             {
-                //TODO: start on task so user don't wait
-                var img = AdbClient.Instance.GetFrameBufferAsync(DD, CancellationToken.None);
-                img.Wait(5000);
+                ////TODO: start on task so user don't wait
+                //var img = AdbClient.Instance.GetFrameBufferAsync(DD, CancellationToken.None);
+                //img.Wait(5000);
 
-                mDeviceViewPage.UpdateDeviceScreenShot((Bitmap)img.Result);
+                //mDeviceViewPage.UpdateDeviceScreenShot((Bitmap)img.Result);
             }
         }
     }

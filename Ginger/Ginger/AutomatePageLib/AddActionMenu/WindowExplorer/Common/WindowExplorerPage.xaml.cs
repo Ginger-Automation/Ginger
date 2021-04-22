@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -201,7 +201,7 @@ namespace Ginger.WindowExplorer
                     }
 
                     //TODO: If no selection then select the first if only one window exist in list
-                    if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                    if (!(mWindowExplorerDriver is GenericAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     {
                         if (WindowsComboBox.Items.Count == 1)
                         {
@@ -761,21 +761,16 @@ namespace Ginger.WindowExplorer
                     break;
                 case AppWindow.eWindowType.Appium:
                     AppiumWindowTreeItem AWTI = new AppiumWindowTreeItem();
-
                     AppiumElementInfo AEI = new AppiumElementInfo();
                     AEI.WindowExplorer = mWindowExplorerDriver;
                     AEI.XPath = "/";
-                    SeleniumAppiumDriver SAD = ((SeleniumAppiumDriver)mWindowExplorerDriver);
-
-
+                    GenericAppiumDriver SAD = ((GenericAppiumDriver)mWindowExplorerDriver);
                     string pageSourceString = SAD.GetPageSource().Result;
                     XmlDocument pageSourceXml = new XmlDocument();
                     pageSourceXml.LoadXml(pageSourceString);
                     AEI.XmlDoc = pageSourceXml;
                     AEI.XmlNode = pageSourceXml.SelectSingleNode("/");
-
-                    AWTI.AppiumElementInfo = AEI;                    
-                    
+                    AWTI.AppiumElementInfo = AEI;                                        
                     // AWTI.UIAElementInfo = AEI;
                     InitTree(AWTI);
                     break;

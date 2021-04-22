@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ using GingerCore.Drivers.Common;
 using SharpAdbClient;
 using amdocs.ginger.GingerCoreNET;
 
-namespace Ginger.Drivers
+namespace Ginger.Drivers.DriversConfigsEditPages
 {
     /// <summary>
     /// Interaction logic for SeleniumDriverEditPage.xaml
@@ -201,25 +201,25 @@ namespace Ginger.Drivers
 
         void InstallGingerAPK()
         {
-            List<DeviceData> list = AdbClient.Instance.GetDevices();           
-            DeviceData AndroidDevice = (from x in list where x.Serial == DeviceSerialTextBox.Text select x).FirstOrDefault();
+            //List<DeviceData> list = AdbClient.Instance.GetDevices();           
+            //DeviceData AndroidDevice = (from x in list where x.Serial == DeviceSerialTextBox.Text select x).FirstOrDefault();
 
-            // push the apk
+            //// push the apk
 
-            //TODO: removed hard coded path, use ginger folder
-            //  getting permission denied - fix me
+            ////TODO: removed hard coded path, use ginger folder
+            ////  getting permission denied - fix me
 
-            string GingerAPKPath = GingerCore.General.GetGingerEXEPath() + @"Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\";
+            //string GingerAPKPath = GingerCore.General.GetGingerEXEPath() + @"Drivers\AndroidADB\Java\GingerService\app\build\outputs\apk\";
 
-            //TODO: add in the driver config if to reinstall app
-            // Below is if we want to install test sample app - for unit test or play around
+            ////TODO: add in the driver config if to reinstall app
+            //// Below is if we want to install test sample app - for unit test or play around
 
-            string APKFile2 = GingerAPKPath + "com.amdocs.ginger.android-debug-androidTest.apk";
-            if (!File.Exists(APKFile2))
-            {
-                throw new Exception("Ginger apk file not found at: " + APKFile2);
-            }
-            InstallApplication(AndroidDevice.Serial, APKFile2, true);  // reinstall = true
+            //string APKFile2 = GingerAPKPath + "com.amdocs.ginger.android-debug-androidTest.apk";
+            //if (!File.Exists(APKFile2))
+            //{
+            //    throw new Exception("Ginger apk file not found at: " + APKFile2);
+            //}
+            //InstallApplication(AndroidDevice.Serial, APKFile2, true);  // reinstall = true
         }
 
         void InstallApplication(string DeviceSerial, string APKFileName, bool reinstall = false)

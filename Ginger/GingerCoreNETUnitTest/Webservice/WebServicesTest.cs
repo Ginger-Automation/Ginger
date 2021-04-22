@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -244,14 +244,14 @@ namespace UnitTests.NonUITests
         public void WebServices_WebServiceSendXML()
         {
             WebServiceXML webServiceCall = new WebServiceXML();
-            string URL = "http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL";
+            string URL = "http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso";
             string soapAction = "";
-            string xmlRequest= getXML();
+            string xmlRequest = @"<?xml version=""1.0"" encoding=""utf-8""?><soap12:Envelope xmlns:soap12=""http://www.w3.org/2003/05/soap-envelope""> <soap12:Body> <ListOfCountryNamesByName xmlns=""http://www.oorsprong.org/websamples.countryinfo""> </ListOfCountryNamesByName></soap12:Body></soap12:Envelope>";
             string Status = "test";
             bool failFlag = false;
             string webRespone = webServiceCall.SendXMLRequest(URL, soapAction, xmlRequest,ref Status,ref failFlag, null);
 
-            StringAssert.Contains(webRespone, "<m:NumberToWordsResult>ten thousand</m:NumberToWordsResult>");
+            StringAssert.Contains(webRespone, "<m:sName>Åland Islands</m:sName>");
             
             
         }
@@ -503,7 +503,7 @@ namespace UnitTests.NonUITests
 
             ActWebService actLegacyWebService = new ActWebService();
 
-            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL");
+            actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.URL, @"http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso");
             actLegacyWebService.AddOrUpdateInputParamValue(ActWebService.Fields.SOAPAction, @"");
 
             var xmlFileNamePath = TestResources.GetTestResourcesFile(@"XML"+ Path.DirectorySeparatorChar + "stock.xml");
@@ -519,7 +519,7 @@ namespace UnitTests.NonUITests
             mGR.RunRunner();
 
             Assert.AreNotEqual(0, actLegacyWebService.ReturnValues.Count);
-            Assert.AreEqual("ten thousand", actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"m:NumberToWordsResult").Actual);
+            Assert.AreEqual("Åland Islands", actLegacyWebService.ReturnValues.FirstOrDefault(x =>x.Param == @"m:sName").Actual);
 
             //Convert the legacy action
             Activity newActivity = new Activity() { Active = true };
@@ -536,14 +536,14 @@ namespace UnitTests.NonUITests
 
             //Assert converted action
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
-            Assert.AreEqual("ten thousand", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:NumberToWordsResult").Actual);
+            Assert.AreEqual("Åland Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
 
             //Run newAction
             mGR.RunRunner();
             
             //assert newaction
             Assert.AreNotEqual(0, newAction.ReturnValues.Count);
-            Assert.AreEqual("ten thousand", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:NumberToWordsResult").Actual);
+            Assert.AreEqual("Åland Islands", newAction.ReturnValues.FirstOrDefault(x => x.Param == @"m:sName").Actual);
         }
 
         [TestMethod]

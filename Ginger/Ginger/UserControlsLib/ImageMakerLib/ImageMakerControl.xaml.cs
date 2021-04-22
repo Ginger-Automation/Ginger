@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -920,11 +920,17 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.IosOutline:
                     SetAsStaticImage("iosOutline.png");
                     break;
+                case eImageType.IosWhite:
+                    SetAsStaticImage("iosWhite.png");
+                    break;
                 case eImageType.Android:
                     SetAsStaticImage("android.png");
                     break;
                 case eImageType.AndroidOutline:
                     SetAsStaticImage("androidOutline.png");
+                    break;
+                case eImageType.AndroidWhite:
+                    SetAsStaticImage("androidWhite.png");
                     break;
                 #endregion
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,6 +74,27 @@ namespace Amdocs.Ginger.CoreNET.Utility
                     string temppath = Path.Combine(destinationFolder, subdir.Name);
                     CopyFolderRec(subdir.FullName, temppath, copySubDirs);
                 }
+            }
+        }
+
+        public void DeleteFoldersData(string folderPath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(folderPath);
+            foreach (FileInfo fi in dir.GetFiles())
+            {
+                fi.Delete();
+            }
+        }
+
+        public void TryFolderDelete(string folderToDelete)
+        {
+            try
+            {
+                Directory.Delete(folderToDelete, true);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "TryFolderDelete error - " + ex.Message, ex);
             }
         }
     }
