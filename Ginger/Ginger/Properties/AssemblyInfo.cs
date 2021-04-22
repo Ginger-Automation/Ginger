@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Amdocs")]
 [assembly: AssemblyProduct("Ginger by Amdocs")]
-[assembly: AssemblyCopyright("Copyright © 2014-2020 European Support Limited")]
+[assembly: AssemblyCopyright("Copyright © 2014-2021 European Support Limited")]
 [assembly: AssemblyTrademark("Ginger")]
 [assembly: AssemblyCulture("")]
 

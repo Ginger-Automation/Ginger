@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -365,8 +365,9 @@ namespace Ginger.Run
         {
             try
             {
-                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                LiteDbManager dbManager = new LiteDbManager(WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 var result = dbManager.GetRunSetLiteData();
+
                 List<LiteDbRunSet> filterData = dbManager.FilterCollection(result, Query.All());
 
                 LiteDbRunSet runSetLast = filterData.Last();
@@ -391,7 +392,7 @@ namespace Ginger.Run
 
 
                 WebReportGenerator webReporterRunner = new WebReportGenerator();
-                webReporterRunner.RunNewHtmlReport(runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
+                webReporterRunner.RunNewHtmlReport(string.Empty, runSetLast._id.ToString(), new WebReportFilter() { Guid = bfFilter.GUID.ToString() });
 
                 //var newRSData = dbManager.GetRunSetLiteData();
                 //newRSData.Delete(runSetLast._id);

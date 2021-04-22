@@ -276,12 +276,16 @@ namespace Ginger.Drivers.DriversWindows
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            mUserClosing = true;
-            if (!mSelfClosing)
+            if (((Window)sender).IsKeyboardFocused)
             {
-                if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
+                mUserClosing = true;
+
+                if (!mSelfClosing)
                 {
-                    mAgent.Close();
+                    if (Reporter.ToUser(eUserMsgKey.StaticQuestionsMessage, "Close Mobile Agent?") == eUserMsgSelection.Yes)
+                    {
+                        mAgent.Close();
+                    }
                 }
             }
             mWindowIsOpen = false;

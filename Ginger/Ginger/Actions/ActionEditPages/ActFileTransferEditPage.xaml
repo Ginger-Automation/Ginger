@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d"
-	Title="ActFileTransferEditPage" Height="282.765" Width="484.941" >
+	Title="ActFileTransferEditPage" Height="300" Width="484.941" >
 
     <Grid Margin="0,0,53,0">
 
@@ -16,6 +16,7 @@
             <ColumnDefinition Width="56*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
@@ -91,7 +92,10 @@
             <Label Style="{StaticResource @InputFieldLabelStyle}">KeyPassPhrase</Label>
 
         </StackPanel>
-        <Button x:Name="BrowsePCPathButton" Style="{StaticResource @InputButtonStyle}" Content="Browse" Grid.Column="4" Grid.Row="1" Width="Auto" Click="BrowsePCPathButton_Click" HorizontalAlignment="Stretch" Margin="0,3,0,5" Height="22" />
+        <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2">
+            <CheckBox x:Name="xChkBoxKeyboardInteractiveAuth" Content="Keyboard Interactive Authentication" Style="{StaticResource $CeckBoxStyle}" ToolTip="Enable for keyboard interactive authentication" Margin="5,5,0,0"/>
+        </StackPanel>
+        <Button x:Name="BrowsePCPathButton" Style="{StaticResource @InputButtonStyle}" Content="Browse" Grid.Column="4" Grid.Row="1" Width="Auto" Click="BrowsePCPathButton_Click" HorizontalAlignment="Stretch" Margin="0,2,0,5" Height="22" />
 
     </Grid>
 </Page>

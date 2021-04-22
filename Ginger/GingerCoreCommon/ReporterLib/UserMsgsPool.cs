@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common
         PleaseStartAgent, AskToSelectValidation,
         EnvironmentItemLoadError, MissingUnixCredential,
         ErrorConnectingToDataBase, ErrorClosingConnectionToDataBase, DbTableError, DbTableNameError, DbQueryError, DbConnSucceed, DbConnFailed,
-        SuccessfullyConnectedToAgent, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
+        TestagentSucceed, FailedToConnectAgent, RecordingStopped, SshCommandError, GoToUrlFailure, HookLinkEventError, AskToStartAgent, RestartAgent,
         MissingActionPropertiesEditor, AskToSelectItem, AskToSelectAction, ImportSeleniumScriptError,
         AskToSelectVariable, VariablesAssignError, SetCycleNumError, VariablesParentNotFound, CantStoreToVariable,
         AskToSelectSolutionFolder, SolutionLoadError,
@@ -293,8 +293,8 @@ namespace Amdocs.Ginger.Common
             #endregion Environment Messages
 
             #region Agents/Drivers Messages
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SuccessfullyConnectedToAgent, new UserMsg(eUserMsgType.INFO, "Connect Agent Success", "Agent connection successful!", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to connect to the {0} agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.TestagentSucceed, new UserMsg(eUserMsgType.INFO, "Test Agent", "Agent starting test ended successfully!", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToConnectAgent, new UserMsg(eUserMsgType.ERROR, "Connect to Agent", "Failed to load '{0}' Agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SshCommandError, new UserMsg(eUserMsgType.ERROR, "Ssh Command Error", "The Ssh Run Command returns error, please double check the connection info and credentials." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GoToUrlFailure, new UserMsg(eUserMsgType.ERROR, "Go To URL Error", "Failed to go to the URL: '{0}'." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HookLinkEventError, new UserMsg(eUserMsgType.ERROR, "Hook Link Event Error", "The link type is unknown.", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -480,7 +480,7 @@ namespace Amdocs.Ginger.Common
             #endregion ActivitiesGroup
 
             #region Mobile
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileConnectionFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Connection", "Failed to connect to the mobile device." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MobileConnectionFailed, new UserMsg(eUserMsgType.ERROR, "Mobile Connection Failed", "Failed to connect to the mobile device." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MobileRefreshScreenShotFailed, new UserMsg(eUserMsgType.WARN, "Mobile Screen Image", "Failed to refresh the mobile device screen image." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MobileShowElementDetailsFailed, new UserMsg(eUserMsgType.WARN, "Mobile Elements Inspector", "Failed to locate the details of the selected element." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.MobileActionWasAdded, new UserMsg(eUserMsgType.INFO, "Add Action", "Action was added.", eUserMsgOption.OK, eUserMsgSelection.None));

@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
-        mc:Ignorable="d"
+        mc:Ignorable="d" 
         Title="UpdatedAppiumDriverWindow" Height="650" Width="800"
         MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
@@ -81,18 +81,21 @@
             </DockPanel>
 
             <!--bottom buttons-->
-            <Frame x:Name="xMainBottomFrame" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Background="Black"/>
-            <UserControls:ucButton x:Name="xBackButton"  Grid.Row="2" Grid.Column="1"  ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Triangle" Click="xBackBtn_Click" ToolTip="Back" Margin="0,0,10,0"/>
-            <UserControls:ucButton x:Name="xHomeBtn"  Grid.Row="2" Grid.Column="1"  ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Circle" Click="xHomeBtn_Click" ToolTip="Home" Margin="0,0,0,0"/>
-            <UserControls:ucButton x:Name="xMenuBtn"  Grid.Row="2" Grid.Column="1"  ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Square" Click="xMenuBtn_Click" ToolTip="Menu" Margin="10,0,0,0"/>
+            <DockPanel x:Name="xMainBottomFrame" Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Background="Black">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <UserControls:ucButton x:Name="xMenuBtn"   ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Square" Click="xMenuBtn_Click" ToolTip="Menu" Margin="0,0,55,0"/>
+                    <UserControls:ucButton x:Name="xHomeBtn"   ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="15" ButtonImageType="Circle" Click="xHomeBtn_Click" ToolTip="Home" Margin="0,0,0,0"/>
+                    <UserControls:ucButton x:Name="xBackButton" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonFontImageSize="14" ButtonImageType="Triangle" Click="xBackBtn_Click" ToolTip="Back" Margin="55,0,0,0"/>
+                </StackPanel>
+            </DockPanel>
         </Grid>
 
         <GridSplitter x:Name="xConfigurationsSplitter" Grid.Column="0" Grid.Row="0" ResizeDirection="Columns"  HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="1" Background="{StaticResource $BackgroundColor_DarkGray}"/>
 
         <!--Configurations area-->
-        <ScrollViewer x:Name="xConfigurationsFrame" Grid.Column="1" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,36,10,32">
-            <StackPanel >
-                <Label Content="Auto refresh device view mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
+        <ScrollViewer x:Name="xConfigurationsFrame" Grid.Column="1" Background="{StaticResource $BackgroundColor_LightGray}" >
+            <StackPanel Margin="0,2,0,0" >
+                <Label Content="Auto refresh mode:" Style="{StaticResource $LabelStyle}" FontWeight="Bold" Margin="0,0,0,0"/>
                 <StackPanel x:Name="xAutoRefreshModePnl" Orientation="Vertical" Margin="5,0,0,0">
                     <RadioButton x:Name="xLiveRdBtn" Content="Live" Style="{StaticResource $InputRadioButtonStyle}" GroupName="AutoRefreshMode" VerticalAlignment="Center" IsChecked="True" Checked="xContinualRdBtn_Checked" />
                     <RadioButton x:Name="xPostOperationRdBtn" Content="Post Operation" Style="{StaticResource $InputRadioButtonStyle}"  GroupName="AutoRefreshMode" VerticalAlignment="Center" Margin="0,0,0,0" Checked="xPostOperationRdBtn_Checked" />

@@ -16,6 +16,24 @@ limitations under the License.
 */
 #endregion
 
+#region License
+/*
+Copyright © 2014-2021 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
@@ -113,7 +131,6 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-        public eDevicePlatformType DriverPlatformType;
 
         public GenericAppiumDriver(BusinessFlow BF)
         {
@@ -135,21 +152,24 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     serverUri = new Uri(AppiumServer);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new Exception("In-Valid Appium Server configuration");
+                    string error = string.Format("Appium URL configured is not valid, URL: '{0}', Error: '{1}'", AppiumServer, ex.Message);
+                    Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
 
                 //Setting capabilities                                
                 DriverOptions driverOptions = this.GetCapabilities();
 
                 //creating driver
-                switch (DriverPlatformType)
+                switch (DevicePlatformType)
                 {
                     case eDevicePlatformType.Android:
                         if (string.IsNullOrEmpty(Proxy))
                         {
-                            Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions);
+                            Driver = new AndroidDriver<AppiumWebElement>(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
                         }
                         else
                         {
@@ -159,7 +179,7 @@ namespace Amdocs.Ginger.CoreNET
                     case eDevicePlatformType.iOS:
                         if (string.IsNullOrEmpty(Proxy))
                         {
-                            Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions);
+                            Driver = new IOSDriver<AppiumWebElement>(serverUri, driverOptions, TimeSpan.FromSeconds(DriverLoadWaitingTime));
                         }
                         else
                         {
@@ -172,7 +192,14 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
+                string error = string.Format("Failed to start Appium session.{0}Error: '{1}'", System.Environment.NewLine, ex.Message);
+                Reporter.ToLog(eLogLevel.ERROR, error, ex);
+                ErrorMessageFromDriver = error;
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    Reporter.ToUser(eUserMsgKey.MobileConnectionFailed, ex.Message);
+                }
                 return false;
             }
         }
@@ -423,7 +450,7 @@ namespace Amdocs.Ginger.CoreNET
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
                             }
-                            switch (DriverPlatformType)
+                            switch (DevicePlatformType)
                             {
                                 case eDevicePlatformType.Android:
                                     //e.Clear();
@@ -741,7 +768,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformBackButtonPress()
         {
-            switch (DriverPlatformType)
+            switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
                     Driver.Navigate().Back();
@@ -754,7 +781,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformHomeButtonPress()
         {               
-            switch (DriverPlatformType)
+            switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Home);
@@ -768,7 +795,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformMenuButtonPress()
         {
-            switch (DriverPlatformType)
+            switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
