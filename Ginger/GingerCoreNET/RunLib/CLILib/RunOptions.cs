@@ -63,6 +63,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option('g', "encrypted", Required = false, HelpText = "password is encrypted")]
         public bool PasswordEncrypted { get; set; }
 
+        [Option('c', "ignoreCertificate", Required = false, HelpText = "Ignore certificate errors while cloning solution")]
+        public bool ignoreCertificate { get; set; }
+
 
 
     }

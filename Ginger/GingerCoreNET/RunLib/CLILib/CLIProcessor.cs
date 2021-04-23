@@ -374,6 +374,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.UserProfile.SourceControlURL = runOptions.URL;
             WorkSpace.Instance.UserProfile.SourceControlUser = runOptions.User;
             WorkSpace.Instance.UserProfile.SourceControlType = runOptions.SCMType;
+            WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate = runOptions.ignoreCertificate;
+
             if (runOptions.PasswordEncrypted)
             {
                 WorkSpace.Instance.UserProfile.EncryptedSourceControlPass = runOptions.Pass;

@@ -366,6 +366,8 @@ namespace Ginger.SourceControl
                     mSourceControl.SourceControlUser = WorkSpace.Instance.UserProfile.SourceControlUser;
                     mSourceControl.SourceControlPass = WorkSpace.Instance.UserProfile.SourceControlPass;
                     mSourceControl.SourceControlLocalFolder = WorkSpace.Instance.UserProfile.SourceControlLocalFolder;
+                    mSourceControl.IgnoreCertificate = WorkSpace.Instance.UserProfile.SourceControlIgnoreCertificate;
+
                     mSourceControl.SolutionFolder = SolutionFolder;
 
                     mSourceControl.SourceControlConfigureProxy = WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy;
