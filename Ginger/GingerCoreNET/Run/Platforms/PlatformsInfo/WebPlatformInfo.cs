@@ -255,7 +255,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             return true;
         }
 
-        public List<ElementTypeData> GetPlatformElementTypesData()
+        public virtual List<ElementTypeData> GetPlatformElementTypesData()
         {
             if (mPlatformElementTypeOperations == null)
             {

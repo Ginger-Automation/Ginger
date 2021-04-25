@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
         mc:Ignorable="d" 
         Title="UpdatedAppiumDriverWindow" Height="650" Width="800"
-        MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
+        MinHeight="600" MinWidth="300" WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
         Topmost="False" >
 

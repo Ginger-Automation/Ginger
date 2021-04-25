@@ -42,6 +42,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
@@ -328,15 +329,16 @@ namespace Amdocs.Ginger.CoreNET
 
         public override void RunAction(Act act)
         {
+            Type actionType = act.GetType();
+
             try
             {
-                if (AppType == eAppType.Web)
+                //Generic
+                if (actionType == typeof(ActScreenShot))
                 {
-                    mSeleniumDriver.RunAction(act);
+                    ActScreenShotHandler(act);
                     return;
                 }
-
-                Type actionType = act.GetType();
 
                 if (actionType == typeof(ActMobileDevice))
                 {
@@ -344,9 +346,18 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
-                if (actionType == typeof(ActGenElement))
+                //Web
+                if (AppType == eAppType.Web)//Keep here to make sure Web handling will be done by Selenium driver
                 {
-                    GenElementHandler((ActGenElement)act);
+                    mSeleniumDriver.RunAction(act);
+                    return;
+                }
+
+
+                //Naitive/Hybrid
+                if (actionType == typeof(ActUIElement))
+                {
+                    UIElementActionHandler((ActUIElement)act);
                     return;
                 }
 
@@ -355,9 +366,12 @@ namespace Amdocs.Ginger.CoreNET
                     mSeleniumDriver.SmartSyncHandler((ActSmartSync)act);
                     return;
                 }
-                if (actionType == typeof(ActScreenShot))
+
+
+                //Legacy
+                if (actionType == typeof(ActGenElement))
                 {
-                    TakeScreenShot(act);
+                    GenElementHandler((ActGenElement)act);
                     return;
                 }
 
@@ -375,6 +389,178 @@ namespace Amdocs.Ginger.CoreNET
             }
         }
 
+        private void UIElementActionHandler(ActUIElement act)
+        {
+            try
+            {
+                //adjusting operations to fit native apps
+                if (act.ElementAction == ActUIElement.eElementAction.JavaScriptClick)
+                {
+                    act.ElementAction = ActUIElement.eElementAction.Click;
+                }
+                if (act.ElementAction == ActUIElement.eElementAction.SetValue)
+                {
+                    act.ElementAction = ActUIElement.eElementAction.SendKeys;
+                }
+                //IWebElement e;
+                //long x = 0, y = 0;
+
+                switch (act.ElementAction)
+                {
+                    //need to override regular selenium driver actions only if needed, 
+                    //if not then to run the regular selenium driver actions handler for it to avoid duplication
+
+                    //case ActUIElement.eElementAction.SetValue:
+                    //    e = LocateElement(act);
+                    //    if (e != null)
+                    //    {
+                    //        e.Clear();
+                    //        //make sure value was cleared- trying to handle clear issue in WebViews
+                    //        try
+                    //        {
+                    //            //TODO: Need to add a flag in the action for this case, as sometimes the value is clear but show text under like 'Searc, or say "OK Google".
+                    //            //Wasting time when not needed
+                    //            string elemntContent = e.Text; //.GetAttribute("name");
+                    //            if (string.IsNullOrEmpty(elemntContent) == false)
+                    //            {
+                    //                for (int indx = 1; indx <= elemntContent.Length; indx++)
+                    //                {
+                    //                    //Driver.KeyEvent(22);//"KEYCODE_DPAD_RIGHT"- move marker to right
+                    //                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(22);
+                    //                    //Driver.KeyEvent(67);//"KEYCODE_DEL"- delete 1 character
+                    //                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(67);
+                    //                }
+                    //            }
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            Reporter.ToLog(eLogLevel.DEBUG, "Failed to clear element value", ex);
+                    //        }
+                    //        switch (DevicePlatformType)
+                    //        {
+                    //            case eDevicePlatformType.Android:
+                    //                //e.Clear();
+                    //                e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                    //                break;
+                    //            case eDevicePlatformType.iOS:
+                    //                //e.Clear();
+                    //                e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                    //                //((IOSElement)e).SetImmediateValue(act.GetInputParamCalculatedValue("Value"));
+                    //                break;
+                    //        }
+                    //        //if (DriverWindow != null) DriverWindow.ShowActionEfect(true, 100);
+                    //    }
+                    //    else
+                    //    {
+                    //        act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+                    //    }
+                    //    break;
+
+                    //case ActGenElement.eGenElementAction.GetValue:
+                    //case ActGenElement.eGenElementAction.GetInnerText:
+                    //    e = LocateElement(act);
+                    //    if (e != null)
+                    //    {
+                    //        act.AddOrUpdateReturnParamActual("Actual", e.Text);
+                    //    }
+                    //    else
+                    //    {
+                    //        act.Error = "Error: Element not found: '" + act.LocateBy + "'- '" + act.LocateValueCalculated + "'";
+                    //        return;
+                    //    }
+                    //    break;
+
+                    //case ActGenElement.eGenElementAction.GetContexts:
+                    //    int i = 0;
+                    //    foreach (var c in Driver.Contexts)
+                    //    {
+                    //        act.AddOrUpdateReturnParamActual("Actual " + i, c.ToString());
+                    //    }
+                    //    break;
+
+                    //case ActGenElement.eGenElementAction.SetContext:
+                    //    Driver.Context = act.GetInputParamCalculatedValue("Value");
+                    //    break;
+
+                    //case ActGenElement.eGenElementAction.GetCustomAttribute:
+                    //    e = LocateElement(act);
+                    //    if (e != null)
+                    //    {
+                    //        string attribute = string.Empty;
+                    //        try
+                    //        {
+                    //            attribute = e.GetAttribute(act.Value);
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            string value = act.Value.ToLower();
+                    //            switch (value)
+                    //            {
+                    //                case "content-desc":
+                    //                    value = "name";
+                    //                    break;
+                    //                case "resource-id":
+                    //                    value = "resourceId";
+                    //                    break;
+                    //                case "class":
+                    //                    act.AddOrUpdateReturnParamActual("Actual", e.TagName);
+                    //                    return;
+                    //                case "source":
+                    //                    act.AddOrUpdateReturnParamActual("source", this.GetPageSource().Result);
+                    //                    return;
+                    //                case "x":
+                    //                case "X":
+                    //                    ActGenElement tempact = new ActGenElement();
+                    //                    act.AddOrUpdateReturnParamActual("X", e.Location.X.ToString());
+                    //                    return;
+                    //                case "y":
+                    //                case "Y":
+                    //                    act.AddOrUpdateReturnParamActual("Y", e.Location.Y.ToString());
+                    //                    return;
+                    //                default:
+                    //                    if (act.LocateBy == eLocateBy.ByXPath)
+                    //                    {
+                    //                        XmlDocument PageSourceXml = new XmlDocument();
+                    //                        PageSourceXml.LoadXml(this.GetPageSource().Result);
+                    //                        XmlNode node = PageSourceXml.SelectSingleNode(act.LocateValueCalculated);
+
+                    //                        foreach (XmlAttribute XA in node.Attributes)
+                    //                        {
+                    //                            if (XA.Name == act.ValueForDriver)
+                    //                            {
+                    //                                act.AddOrUpdateReturnParamActual("Actual", XA.Value);
+                    //                                break;
+                    //                            }
+                    //                        }
+                    //                    }
+                    //                    return;
+                    //            }
+                    //            attribute = e.GetAttribute(value);
+                    //            Reporter.ToLog(eLogLevel.ERROR, "Error happend", ex);
+                    //        }
+                    //        act.AddOrUpdateReturnParamActual("Actual", attribute);
+                    //    }
+                    //    else
+                    //    {
+                    //        act.Error = "Error: Element not found - " + act.LocateBy + "- '" + act.LocateValueCalculated + "'";
+                    //        return;
+                    //    }
+                    //    break;
+                    default:
+                        mSeleniumDriver.HandleActUIElement(act);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                act.Error = ex.Message;
+            }
+        }
+
+        /// <summary>
+        /// Legacy Support
+        /// </summary>
+        /// <param name="act"></param>
         private void GenElementHandler(ActGenElement act)
         {
             try
@@ -645,7 +831,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
-                        TakeScreenShot(act);
+                        ActScreenShotHandler(act);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.RefreshDeviceScreenImage:
@@ -678,6 +864,11 @@ namespace Amdocs.Ginger.CoreNET
                         swipe = BuildDragAction(Driver, x1, y1, x2, y2, 1000);
                         swipe.Perform();
                         break;
+
+                    case ActMobileDevice.eMobileDeviceAction.GetPageSource:
+                        act.AddOrUpdateReturnParamActual("Page Source", Driver.PageSource);
+                        break;
+
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: '" + this.GetType().ToString() + "'");
                 }
@@ -692,70 +883,51 @@ namespace Amdocs.Ginger.CoreNET
         {
         }
 
-        private void TakeScreenShot(Act act)
+        private void ActScreenShotHandler(Act act)
         {
             try
             {
-                //ActScreenShot actss = (ActScreenShot)act;
-                //if (actss.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow && actss.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                //{
-                //    CreateScreenShot(act);
-                //}
-                //else
-                //{
-                //    String currentWindow;
-                //    currentWindow = Driver.CurrentWindowHandle;
-                //    ReadOnlyCollection<string> openWindows = Driver.WindowHandles;
-                //    foreach (String winHandle in openWindows)
-                //    {
-                //        CreateScreenShot(act);
-                //        Driver.SwitchTo().Window(currentWindow);
-                //    }
-                //}
-                CreateScreenShot(act);
+                Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+                string filename = Path.GetTempFileName();
+                ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+                Bitmap tmp = new System.Drawing.Bitmap(filename);
+                act.AddScreenShot(tmp);
                 return;
             }
             catch (Exception ex)
             {
-                act.Error = "Screen shot Error: Action failed to be performed, Details: " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error occured while taking device screen shot", ex);
+                act.Error = "Error occured while taking device screen shot, Details: " + ex.Message;
             }
         }
 
-        private void CreateScreenShot(Act act)
-        {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
-            Bitmap tmp = new System.Drawing.Bitmap(filename);
-            //try
-            //{
-            //    //if (DriverWindow != null) DriverWindow.UpdateDriverImageFromScreenshot(ss);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Reporter.ToLog(eLogLevel.ERROR, "Error happend during Create Screenshot", ex);
-            //}
-            act.AddScreenShot(tmp);
-        }
+        //private void CreateScreenShot(Act act)
+        //{
+        //    Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+        //    string filename = Path.GetTempFileName();
+        //    ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+        //    Bitmap tmp = new System.Drawing.Bitmap(filename);
+        //    act.AddScreenShot(tmp);
+        //}
 
-        public Screenshot GetScreenShot()
-        {
-            Screenshot ss=null;
-            try
-            {
-                ss = Driver.GetScreenshot ();
+        //public Screenshot GetScreenShot()
+        //{
+        //    Screenshot ss=null;
+        //    try
+        //    {
+        //        ss = Driver.GetScreenshot ();
 
-            }
-            catch
-            {
-                Bitmap bmp = new Bitmap (1024, 768);
-                var ms = new MemoryStream ();
-                bmp.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
-                var byteImage = ms.ToArray ();
-                ss = new Screenshot (Convert.ToBase64String (byteImage));
-            }
-             return ss;
-        }
+        //    }
+        //    catch
+        //    {
+        //        Bitmap bmp = new Bitmap (1024, 768);
+        //        var ms = new MemoryStream ();
+        //        bmp.Save (ms, System.Drawing.Imaging.ImageFormat.Png);
+        //        var byteImage = ms.ToArray ();
+        //        ss = new Screenshot (Convert.ToBase64String (byteImage));
+        //    }
+        //     return ss;
+        //}
 
         public ICollection<IWebElement> GetAllElements()
         {

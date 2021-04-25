@@ -1407,11 +1407,8 @@ namespace GingerCore.Drivers
                 switch (act.SmartSyncAction)
                 {
                     case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-
-
                         st.Reset();
                         st.Start();
-
                         while (!(e != null && (e.Displayed || e.Enabled)))
                         {
                             Thread.Sleep(100);
@@ -1422,12 +1419,9 @@ namespace GingerCore.Drivers
                                 break;
                             }
                         }
-
-
                         break;
                     case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
                         st.Reset();
-
                         if (e == null)
                         {
                             return;

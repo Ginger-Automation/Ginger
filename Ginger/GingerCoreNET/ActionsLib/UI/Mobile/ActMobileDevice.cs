@@ -78,6 +78,7 @@ namespace GingerCore.Actions
             UnlockDevice,
             LockDevice,
             SwipeByCoordinates,
+            GetPageSource,
         }
 
         public enum ePressKey
