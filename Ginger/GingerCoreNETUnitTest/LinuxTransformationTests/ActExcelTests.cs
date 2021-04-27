@@ -48,5 +48,30 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 }
             }
         }
+        [TestMethod]
+        public void UpdateExcel()
+        {
+            XSSFWorkbook hssfwb;
+            using (FileStream file = new FileStream(@"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx", FileMode.Open, FileAccess.Read))
+            {
+                hssfwb = new XSSFWorkbook(file);
+            }
+
+            ISheet sheet = hssfwb.GetSheet("Data");
+            DataFormatter formatter = new DataFormatter();
+            for (int row = 0; row <= sheet.LastRowNum; row++)
+            {
+                if (sheet.GetRow(row) != null) //null is when the row only contains empty cells 
+                {
+                    Console.WriteLine(formatter.FormatCellValue(sheet.GetRow(row).GetCell(0)));
+                }
+            }
+            sheet.GetRow(1).GetCell(1).SetCellValue(1414);
+            using (FileStream out1 = new FileStream(@"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx", FileMode.Create))
+            {
+                hssfwb.Write(out1);
+                out1.Close();
+            }
+        }
     }
 }
