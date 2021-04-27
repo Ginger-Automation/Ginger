@@ -660,24 +660,6 @@
     <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_3.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_1_4.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_56a06d43-5b53-48b0-b22a-9d1ed3ff876c_104823_1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_56a06d43-5b53-48b0-b22a-9d1ed3ff876c_104823_2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Reports\Ginger-Web-Client\assets\screenshots\ScreenShot_56a06d43-5b53-48b0-b22a-9d1ed3ff876c_104823_3.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Reports\Ginger-Web-Client\assets\theme\theme-alive.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
