@@ -277,7 +277,7 @@ namespace Ginger.BusinessFlowPages
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
                     //map activities target application to BF if missing in BF
-                    userSelection = MapTargetApplicationToActivity(businessFlow, userSelection, activityIns);
+                    userSelection = MapTAToBF(businessFlow, userSelection, activityIns);
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
                     //mBusinessFlow.CurrentActivity = droppedActivityIns;
@@ -285,7 +285,37 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
-        private static eUserMsgSelection MapTargetApplicationToActivity(BusinessFlow businessFlow, eUserMsgSelection userSelection, Activity activityIns)
+
+        /// <summary>
+        /// Adding Activities Groups from Shared Repository to the Business Flow in Context
+        /// </summary>
+        /// <param name="sharedActivitiesGroupsToAdd">Shared Repository Activities Groups to Add Instances from</param>
+        /// <param name="businessFlow">Business Flow to add to</param>
+        public static void AddActivitiesGroupsFromSRHandler(List<ActivitiesGroup> sharedActivitiesGroupsToAdd, BusinessFlow businessFlow)
+        {
+            foreach (ActivitiesGroup sharedGroup in sharedActivitiesGroupsToAdd)
+            {
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
+                ActivitiesGroup droppedGroupIns = (ActivitiesGroup)sharedGroup.CreateInstance(true);
+                businessFlow.AddActivitiesGroup(droppedGroupIns);
+                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+                foreach (Activity activityIns in activities)
+                {
+                    userSelection = MapTAToBF(businessFlow, userSelection, activityIns);
+                }
+                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, true);
+            }
+            businessFlow.AttachActivitiesGroupsAndActivities();
+        }
+
+        /// <summary>
+        /// Check if mapping Activity Target Application is missing in BF, if missing, map it to BF
+        /// </summary>
+        /// <param name="businessFlow">BF to check it in</param>
+        /// <param name="userSelection">userselection to check if user need to be prompted or not</param>
+        /// <param name="activityIns">Activity from which TA to check</param>
+        /// <returns></returns>
+        private static eUserMsgSelection MapTAToBF(BusinessFlow businessFlow, eUserMsgSelection userSelection, Activity activityIns)
         {
             if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
             {
@@ -305,28 +335,6 @@ namespace Ginger.BusinessFlowPages
             }
 
             return userSelection;
-        }
-
-        /// <summary>
-        /// Adding Activities Groups from Shared Repository to the Business Flow in Context
-        /// </summary>
-        /// <param name="sharedActivitiesGroupsToAdd">Shared Repository Activities Groups to Add Instances from</param>
-        /// <param name="businessFlow">Business Flow to add to</param>
-        public static void AddActivitiesGroupsFromSRHandler(List<ActivitiesGroup> sharedActivitiesGroupsToAdd, BusinessFlow businessFlow)
-        {
-            foreach (ActivitiesGroup sharedGroup in sharedActivitiesGroupsToAdd)
-            {
-                eUserMsgSelection userSelection = eUserMsgSelection.None;
-                ActivitiesGroup droppedGroupIns = (ActivitiesGroup)sharedGroup.CreateInstance(true);
-                businessFlow.AddActivitiesGroup(droppedGroupIns);
-                ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                foreach (Activity activityIns in activities)
-                {
-                    userSelection = MapTargetApplicationToActivity(businessFlow, userSelection, activityIns);
-                }
-                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, true);
-            }
-            businessFlow.AttachActivitiesGroupsAndActivities();
         }
 
     }
