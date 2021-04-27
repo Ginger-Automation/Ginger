@@ -277,27 +277,34 @@ namespace Ginger.BusinessFlowPages
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
                     //map activities target application to BF if missing in BF
-                    if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
-                    {
-                        if (userSelection == eUserMsgSelection.None)
-                        {
-                            userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
-                        }
-
-                        if (userSelection == eUserMsgSelection.OK)
-                        {
-                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
-                            if (appAgent != null)
-                            {
-                                businessFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                            }
-                        }
-                    }
+                    userSelection = MapTargetApplicationToActivity(businessFlow, userSelection, activityIns);
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
                     //mBusinessFlow.CurrentActivity = droppedActivityIns;
                 }
             }
+        }
+
+        private static eUserMsgSelection MapTargetApplicationToActivity(BusinessFlow businessFlow, eUserMsgSelection userSelection, Activity activityIns)
+        {
+            if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
+            {
+                if (userSelection == eUserMsgSelection.None)
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
+                }
+
+                if (userSelection == eUserMsgSelection.OK)
+                {
+                    ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
+                    if (appAgent != null)
+                    {
+                        businessFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                    }
+                }
+            }
+
+            return userSelection;
         }
 
         /// <summary>
@@ -315,22 +322,7 @@ namespace Ginger.BusinessFlowPages
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                 foreach (Activity activityIns in activities)
                 {
-                    if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
-                    {
-                        if (userSelection == eUserMsgSelection.None)
-                        {
-                            userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
-                        }
-
-                        if (userSelection == eUserMsgSelection.OK)
-                        {
-                            ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
-                            if (appAgent != null)
-                            {
-                                businessFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                            }
-                        }
-                    }
+                    userSelection = MapTargetApplicationToActivity(businessFlow, userSelection, activityIns);
                 }
                 businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, true);
             }
