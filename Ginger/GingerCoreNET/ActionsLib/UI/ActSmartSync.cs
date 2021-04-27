@@ -50,6 +50,7 @@ namespace GingerCore.Actions
                 if (mPlatforms.Count == 0)
                 {
                     mPlatforms.Add(ePlatformType.Web);
+                    mPlatforms.Add(ePlatformType.Mobile);
                     mPlatforms.Add(ePlatformType.Java);
                     mPlatforms.Add(ePlatformType.Windows);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
