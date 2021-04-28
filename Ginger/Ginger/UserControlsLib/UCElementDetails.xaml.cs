@@ -24,6 +24,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace Ginger
     /// <summary>
     /// Interaction logic for UCElementDetails.xaml
     /// </summary>
-    public partial class UCElementDetails : UserControl
+    public partial class UCElementDetails : UserControl, INotifyPropertyChanged
     {
         public Agent mAgent { get; set; }
         public Context Context;
@@ -56,6 +57,8 @@ namespace Ginger
         public PlatformInfoBase Platform { get; set; }
 
         public bool ShowHelpColumn { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         bool mSelectedElementChanged = false;
         private ElementInfo mSelectedElement;
@@ -69,6 +72,11 @@ namespace Ginger
             {
                 if (value != mSelectedElement)
                 {
+                    if(PropertyChanged != null)
+                    {
+                        PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedElement)));
+                    }
+
                     mSelectedElement = value;
                     mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSelectedElement);
                     RefreshPropertiesAndLocators();
@@ -79,14 +87,11 @@ namespace Ginger
 
         public IWindowExplorer WindowExplorerDriver;
         ITreeViewItem mCurrentControlTreeViewItem;
-        private ObservableList<ActInputValue> mActInputValues;
 
         private void RefreshElementAction()
         {
             try
             {
-                mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
-
                 if (xElementDetailsTabs.SelectedItem == xAddActionTab)
                 {
                     UpdateElementActionTab();
@@ -539,7 +544,7 @@ namespace Ginger
             Page DataPage = mCurrentControlTreeViewItem.EditPage(Context);
             actInputValuelist = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
-            if (mSelectedElement.Locators.CurrentItem == null)
+            if (mSelectedElement.Locators.CurrentItem == null && mSelectedElement.Locators.Count > 0)
             {
                 mSelectedElement.Locators.CurrentItem = mSelectedElement.Locators[0];
             }

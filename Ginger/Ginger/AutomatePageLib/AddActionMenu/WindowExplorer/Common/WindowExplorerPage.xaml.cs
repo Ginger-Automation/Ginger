@@ -142,16 +142,8 @@ namespace Ginger.WindowExplorer
             InitializeComponent();
             xWindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
 
-            xWindowControlsTreeView.SearchStarted += WindowControlsTreeView_SearchStarted;
-            xWindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
-            xWindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
-
-            xWindowSelection.RefreshWindowsButton.Click += RefreshWindowsButton_Click;
-            xWindowSelection.AddSwitchWindowActionButton.Click += AddSwitchWindowActionButton_Click;
-
             mContext = context;
             mContext.PropertyChanged += MContext_PropertyChanged;
-            xWindowSelection.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
 
             IsWebMobJavaPlatform = (mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile || mPlatform.PlatformType() == ePlatformType.Java);
@@ -193,8 +185,17 @@ namespace Ginger.WindowExplorer
             //    //POMButton.Visibility = Visibility.Collapsed;
             //}
 
+            UpdateWindowsList();
+
+            xWindowControlsTreeView.SearchStarted += WindowControlsTreeView_SearchStarted;
+            xWindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
+            xWindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
             xWindowControlsTreeView.TreeTitleStyle = (Style)TryFindResource("@NoTitle");
             xWindowControlsTreeView.Tree.ItemSelected += WindowControlsTreeView_ItemSelected;
+
+            xWindowSelection.RefreshWindowsButton.Click += RefreshWindowsButton_Click;
+            xWindowSelection.AddSwitchWindowActionButton.Click += AddSwitchWindowActionButton_Click;
+            xWindowSelection.WindowsComboBox.SelectionChanged += WindowsComboBox_SelectionChanged;
 
             SetControlsGridView();
 
@@ -225,23 +226,57 @@ namespace Ginger.WindowExplorer
                 xUCElementDetails.InitLegacyLocatorsGridView();
             }
 
-            UpdateWindowsList();
-
-            SetDetailsExpanderDesign(false, null);
-            SetActionsTabDesign(false);
-
-            if (mAction == null)
-            {
-                //StepstoUpdateActionRow.Height = new GridLength(0);
-            }
-
             RefreshTabsContent();
-            //((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
+
+            xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
+        }
+
+        bool ElementDetailsNotNullHandled = false;
+        bool ElementDetailsNullHandled = false;
+        private void XUCElementDetails_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            HandleUCElementDetails();
+        }
+
+        public void HandleUCElementDetails()
+        {
+            if (xUCElementDetails.SelectedElement == null && !ElementDetailsNullHandled)
+            {
+                xElementDetailGridRow.Height = new GridLength(0);
+                xElementDetailGridRow.MinHeight = 0;
+                xElementDetailGridColumn.Width = new GridLength(0);
+
+                xRowSplitter.Visibility = Visibility.Collapsed;
+                xColumnSplitter.Visibility = Visibility.Collapsed;
+
+                ElementDetailsNullHandled = true;
+                ElementDetailsNotNullHandled = false;
+            }
+            else if (!ElementDetailsNotNullHandled)
+            {
+                xElementDetailGridRow.Height = new GridLength(200, GridUnitType.Star);
+                xElementDetailGridRow.MinHeight = 200;
+                xElementDetailGridColumn.Width = new GridLength(91, GridUnitType.Star);
+
+                if (ActualWidth > 700)
+                {
+                    xRowSplitter.Visibility = Visibility.Collapsed;
+                    xColumnSplitter.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xRowSplitter.Visibility = Visibility.Visible;
+                    xColumnSplitter.Visibility = Visibility.Collapsed;
+                }
+
+                ElementDetailsNotNullHandled = true;
+                ElementDetailsNullHandled = false;
+            }
         }
 
         private void SetPlatformBasedUIUpdates()
         {
-            if(mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile)
+            if (mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile)
             {
                 xPageSrcTab.Visibility = Visibility.Visible;
             }
@@ -304,18 +339,23 @@ namespace Ginger.WindowExplorer
                         {
                             if (w.Title == ActiveWindow.Title && w.Path == ActiveWindow.Path)
                             {
-                                xWindowSelection.WindowsComboBox.SelectedValue = w;
+                                //xWindowSelection.WindowsComboBox.SelectedValue = w;
+                                xWindowSelection.WindowsComboBox.SelectedItem = w;
+
+                                mWindowExplorerDriver.SwitchWindow(w.Title);
+
                                 return;
                             }
                         }
                     }
 
                     //TODO: If no selection then select the first if only one window exist in list
-                    if (!(mWindowExplorerDriver is GenericAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                    if (mWindowExplorerDriver is GenericAppiumDriver)//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     {
                         if (xWindowSelection.WindowsComboBox.Items.Count == 1)
                         {
-                            xWindowSelection.WindowsComboBox.SelectedValue = xWindowSelection.WindowsComboBox.Items[0];
+                            xWindowSelection.WindowsComboBox.SelectedItem = xWindowSelection.WindowsComboBox.Items[0];
+                            mWindowExplorerDriver.SwitchWindow((xWindowSelection.WindowsComboBox.SelectedItem as AppWindow).Title);
                         }
                     }
                 }
@@ -1023,7 +1063,7 @@ namespace Ginger.WindowExplorer
                     Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
                     actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
 
-                    if(EI.Locators.CurrentItem == null)
+                    if (EI.Locators.CurrentItem == null)
                     {
                         EI.Locators.CurrentItem = EI.Locators[0];
                     }
@@ -1102,7 +1142,8 @@ namespace Ginger.WindowExplorer
         //TODO: fix to be OO style
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RefreshTabsContent();
+            if ((sender as ComboBox).SelectedItem != null)
+                RefreshTabsContent();
         }
 
         private void ControlTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1173,11 +1214,11 @@ namespace Ginger.WindowExplorer
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTitle), Header = "Element Title", WidthWeight = 100, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Value), WidthWeight = 100, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementType), Header = "Element Type", WidthWeight = 60, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Path), WidthWeight = 100, ReadOnly = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.XPath), WidthWeight = 150, ReadOnly = true });
 
             xWindowControlsGridView.SetAllColumnsDefaultView(view);
             xWindowControlsGridView.InitViewItems();
@@ -1196,6 +1237,9 @@ namespace Ginger.WindowExplorer
                     VisibleElementsInfoList.Clear();
                     foreach (ElementInfo EI in list)
                     {
+                        if (EI.WindowExplorer == null)
+                            EI.WindowExplorer = mWindowExplorerDriver;
+
                         VisibleElementsInfoList.Add(EI);
                     }
                 }
@@ -1585,7 +1629,7 @@ namespace Ginger.WindowExplorer
 
         public void ShowScreenShot()
         {
-            if (mWindowExplorerDriver == null)
+            if (mWindowExplorerDriver == null || mContext.Agent.Driver.IsRunning() == false)
             {
                 return;
             }
@@ -1599,17 +1643,16 @@ namespace Ginger.WindowExplorer
 
             //Bitmap ScreenShotBitmap = ((UIAutomationDriverBase)mApplicationAgent.Agent.Driver).mUIAutomationHelper.GetAppWindowAsBitmap((AppWindow)xWindowSelection.WindowsComboBox.SelectedItem);  // GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
-            Bitmap ScreenShotBitmap;
+            Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
-            if(mWindowExplorerDriver is GenericAppiumDriver)
+            if (mWindowExplorerDriver is GenericAppiumDriver)
             {
-                ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();
+                mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.25);
             }
             else
             {
-                ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot(new Tuple<int, int>(1000, 1000));   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
+                mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
             }
-            mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
 
             if (mPlatform.PlatformType() == ePlatformType.Web)
             {
@@ -2140,42 +2183,6 @@ namespace Ginger.WindowExplorer
             xWindowControlsGridView.Visibility = Visibility.Visible;
         }
 
-        //private void xMainStack_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    if (ActualWidth > 700)
-        //    {
-        //        xMainStack.Orientation = Orientation.Horizontal;
-        //        xRowSplitter.Visibility = Visibility.Collapsed;
-        //        xColumnSplitter.Visibility = Visibility.Visible;
-        //    }
-        //    else
-        //    {
-        //        xMainStack.Orientation = Orientation.Vertical;
-        //        xRowSplitter.Visibility = Visibility.Visible;
-        //        xColumnSplitter.Visibility = Visibility.Collapsed;
-        //    }
-        //}
-
-        //private void xMainDock_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    if (ActualWidth > 700)
-        //    {
-        //        xRowSplitter.Visibility = Visibility.Collapsed;
-        //        xColumnSplitter.Visibility = Visibility.Visible;
-
-        //        xViewAndControlsSection.SetValue(DockPanel.DockProperty, Dock.Left);
-        //        xUCElementDetails.SetValue(DockPanel.DockProperty, Dock.Right);
-        //    }
-        //    else
-        //    {
-        //        xRowSplitter.Visibility = Visibility.Visible;
-        //        xColumnSplitter.Visibility = Visibility.Collapsed;
-
-        //        xViewAndControlsSection.SetValue(DockPanel.DockProperty, Dock.Top);
-        //        xUCElementDetails.SetValue(DockPanel.DockProperty, Dock.Bottom);
-        //    }
-        //}
-
         private void xMainGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (ActualWidth > 700)
@@ -2239,9 +2246,21 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void xPageSrcTab_GotFocus(object sender, RoutedEventArgs e)
+        private async void xPageSrcTab_GotFocus(object sender, RoutedEventArgs e)
         {
+            if(mWindowExplorerDriver is GenericAppiumDriver)
+            {
+                xXMLPageSrcViewer.Visibility = Visibility.Visible;
+                string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
+                XmlDocument pageSrcXmlDoc = new XmlDocument();
+                pageSrcXmlDoc.LoadXml(pageSrcXML);
+                xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
 
+                //xPageSrcTree.Visibility = Visibility.Collapsed;
+                //string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
+
+                //xUCPageSourceTree.GenerateTree(pageSrcXML);
+            }
         }
     }
 }

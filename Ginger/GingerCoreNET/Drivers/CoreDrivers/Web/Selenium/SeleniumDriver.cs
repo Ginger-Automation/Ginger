@@ -4040,9 +4040,9 @@ namespace GingerCore.Drivers
                 EI.ElementTypeEnum = elementTypeEnum.Item2;
             }
 
-            if (!string.IsNullOrWhiteSpace(EI.Path) && (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/"))
+            if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
-                if (!string.IsNullOrEmpty(EI.Path) && (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
+                if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
                     EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
                 }
@@ -7355,7 +7355,10 @@ namespace GingerCore.Drivers
                 {
                     //Driver.Manage().Window.Position = new System.Drawing.Point(0, 0);
                     //System.Drawing.Size originalSize = Driver.Manage().Window.Size;
-                    Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
+                    if (setScreenSize == null)
+                        Driver.Manage().Window.Maximize();
+                    else
+                        Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
                     //Bitmap screenShot = GetScreenShot();
                     //Driver.Manage().Window.Size = originalSize;
                     //return screenShot;

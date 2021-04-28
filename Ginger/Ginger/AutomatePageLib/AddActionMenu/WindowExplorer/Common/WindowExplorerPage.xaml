@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
     xmlns:Ginger="clr-namespace:Ginger"
-    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView" xmlns:usercontrols1="clr-namespace:GingerCore.UserControls;assembly=GingerCore"
     x:Class="Ginger.WindowExplorer.WindowExplorerPage"
     mc:Ignorable="d" 
 	Title="Ginger Window Explorer">
@@ -30,11 +30,13 @@
         <Grid x:Name="xSubGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="ControlsViewGridRow" Height="*" MinHeight="200"/>
-                <RowDefinition x:Name="xElementDetailGridRow" Height="*" MinHeight="200"/>
+                <!--<RowDefinition x:Name="xElementDetailGridRow" Height="*" MinHeight="200"/>-->
+                <RowDefinition x:Name="xElementDetailGridRow" Height="0" MinHeight="0"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="xControlsViewGridColumn" Width="97*"/>
-                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="91*"/>
+                <!--<ColumnDefinition x:Name="xElementDetailGridColumn" Width="91*"/>-->
+                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0"/>
                 <ColumnDefinition Width="6*"/>
             </Grid.ColumnDefinitions>
 
@@ -84,7 +86,8 @@
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock Text="Loading HTML . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
-                        <TreeView x:Name="xPageSrcTree" />
+                        <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
+                        <TreeView x:Name="xPageSrcTree" Visibility="Collapsed"/>
                     </Grid>
                 </TabItem>
 
