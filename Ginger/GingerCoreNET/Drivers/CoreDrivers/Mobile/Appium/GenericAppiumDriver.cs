@@ -1658,7 +1658,8 @@ namespace Amdocs.Ginger.CoreNET
             }
 
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
-            return await GetElementInfoforXmlNode(foundNode);
+
+            return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
         }
     }
 }

@@ -7189,6 +7189,12 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
+                    if(SSPageDoc == null)
+                    {
+                        SSPageDoc = new HtmlDocument();
+                        SSPageDoc.LoadHtml(Driver.PageSource);
+                    }
+
                     HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
 
                     elemInfo = new HTMLElementInfo();

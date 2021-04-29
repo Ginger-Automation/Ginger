@@ -284,6 +284,11 @@ namespace Ginger.WindowExplorer
             {
                 xPageSrcTab.Visibility = Visibility.Collapsed;
             }
+
+            if(mPlatform.PlatformType() == ePlatformType.Mobile)
+            {
+                xTreeViewTab.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -1645,7 +1650,7 @@ namespace Ginger.WindowExplorer
 
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
-            if (mWindowExplorerDriver is GenericAppiumDriver)
+            if (mWindowExplorerDriver is GenericAppiumDriver && (mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.NativeHybride)
             {
                 mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.25);
             }
@@ -1834,7 +1839,7 @@ namespace Ginger.WindowExplorer
                         case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.Android:
                             ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
                             ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
-                            string bounds = rectangleXmlNode.Attributes["bounds"].Value;
+                            string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
                             bounds = bounds.Replace("[", ",");
                             bounds = bounds.Replace("]", ",");
                             string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -1919,10 +1924,10 @@ namespace Ginger.WindowExplorer
             double ratio_X = 1;
             double ratio_Y = 1;
 
-            if (mApplicationAgent.Agent.Driver.Platform == ePlatformType.Mobile)
+            if (mApplicationAgent.Agent.Driver is GenericAppiumDriver && ((GenericAppiumDriver)mApplicationAgent.Agent.Driver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
             {
-                //ratio_X = (DeviceImage.Source.Width / 2) / DeviceImage.ActualWidth;
-                // ratio_Y = (DeviceImage.Source.Height / 2) / DeviceImage.ActualHeight;
+                ratio_X = (mScreenShotViewPage.xMainImage.Source.Width / 3) / mScreenShotViewPage.xMainImage.ActualWidth;
+                ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height / 3) / mScreenShotViewPage.xMainImage.ActualHeight;
             }
             else
             {
