@@ -111,7 +111,7 @@ Ginger is leveraging on a variety of great open source libraries, like: Selenium
 | .NET | 4.6.1 | 4.7.1 |
 
 
-# Execution Automation using Ginger Docker Image
+# <img src="https://www.docker.com/sites/default/files/d8/2019-07/horizontal-logo-monochromatic-white.png" width="100" />Execution Automation using Ginger Docker Image
 
 ### Repo at Docker Hub 
 at <a href=https://hub.docker.com/r/gingerautomation/ginger>https://hub.docker.com/r/gingerautomation/ginger</a>
