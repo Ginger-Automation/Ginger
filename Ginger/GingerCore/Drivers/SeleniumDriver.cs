@@ -3135,6 +3135,7 @@ namespace GingerCore.Drivers
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                        pomExcutionUtil.PriotizeLocatorPosition();
                     }
                     
                 }
@@ -3775,7 +3776,12 @@ namespace GingerCore.Drivers
                         {
                             return foundElementsList;
                         }
-
+                        //The <noscript> tag defines an alternate content to be displayed to users that have disabled scripts in their browser or have a browser that doesn't support script.
+                        //skip to learn to element which is inside noscript tag
+                        if (htmlElemNode.Name.ToLower().Equals("noscript") || htmlElemNode.XPath.ToLower().Contains("/noscript"))
+                        {
+                            continue;
+                        }
                         //get Element Type
                         Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
 
@@ -3992,10 +3998,9 @@ namespace GingerCore.Drivers
                 EI.ElementTypeEnum = elementTypeEnum.Item2;
             }
 
-            if (!string.IsNullOrWhiteSpace(EI.Path) && (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/"))
+            if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
-                if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") 
-                    || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
+                if (string.IsNullOrEmpty(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
                     EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
                 }
