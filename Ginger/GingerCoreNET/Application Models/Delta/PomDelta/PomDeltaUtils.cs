@@ -509,6 +509,8 @@ namespace GingerCoreNET.Application_Models
 
         public void UpdateOriginalPom()
         {
+            MapDeletedElementWithNewAddedElement();
+
             //Updating selected elements
             List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
@@ -557,9 +559,9 @@ namespace GingerCoreNET.Application_Models
                     {
                         selectedGroup = POM.UnMappedUIElements;
                     }
-                    
+
                     ElementInfo originalElementInfo = originalGroup.Where(x => x.Guid == elementToUpdate.ElementInfo.Guid).First();
-                    
+
                     //enter it to POM elements instead of existing one
                     int originalItemIndex = GetOriginalItemIndex(originalGroup, originalElementInfo);
                     originalGroup.RemoveAt(originalItemIndex);
@@ -570,6 +572,28 @@ namespace GingerCoreNET.Application_Models
                     else
                     {
                         selectedGroup.Add(elementToUpdate.ElementInfo);
+                    }
+                }
+            }
+        }
+
+        private void MapDeletedElementWithNewAddedElement()
+        {
+            List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
+            foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
+            {
+                if (elementToUpdate.MappedElementInfo != null && elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted))
+                {
+                    var deltaElementToUpdateProp = DeltaViewElements.Where(x => x.IsSelected == true && x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(elementToUpdate.MappedElementInfo)).FirstOrDefault();
+                    if (deltaElementToUpdateProp != null)
+                    {
+                        elementToUpdate.ElementInfo.Properties = deltaElementToUpdateProp.ElementInfo.Properties;
+                        elementToUpdate.ElementInfo.Locators = deltaElementToUpdateProp.ElementInfo.Locators;
+                        elementToUpdate.ElementInfo.ElementType = deltaElementToUpdateProp.ElementInfo.ElementType;
+                        elementToUpdate.DeltaStatus = eDeltaStatus.Changed;
+
+                        var index = DeltaViewElements.IndexOf(deltaElementToUpdateProp);
+                        DeltaViewElements.RemoveAt(index);
                     }
                 }
             }
