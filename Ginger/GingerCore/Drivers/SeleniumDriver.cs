@@ -3135,6 +3135,7 @@ namespace GingerCore.Drivers
                         }
                         elem = LocateElementByLocators(currentPOMElementInfo.Locators);
                         currentPOMElementInfo.Locators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Failed).ToList().ForEach(y => act.ExInfo += System.Environment.NewLine + string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", y.LocateBy, y.LocateValue, y.LocateStatus));
+                        pomExcutionUtil.PriotizeLocatorPosition();
                     }
                     
                 }
