@@ -60,7 +60,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 case EventType.Active:
 
                     SetDeletedElementsGridView();
-                    xDeletedElementsMappingGrid.DataSourceList = new ObservableList<DeltaElementInfo>( mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted)));
+                    xDeletedElementsMappingGrid.DataSourceList = new ObservableList<DeltaElementInfo>(mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted)));
                     break;
             }
         }
@@ -96,10 +96,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
         {
             foreach (var item in mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Deleted)))
             {
-                if (item.MappedElementInfo != null)
-                {
-                    item.MappedElementInfo = null;
-                }
+                item.MappedElementInfo = null;
             }
             NewAddedElementList.Clear();
             NewAddedElementList = GetNewAddedElementComboBoxItem();

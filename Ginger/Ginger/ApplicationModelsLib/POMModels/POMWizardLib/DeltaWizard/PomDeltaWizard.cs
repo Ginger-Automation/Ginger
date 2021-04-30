@@ -40,7 +40,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             AddPage(Name: "Elements Update Settings", Title: "Elements Update Settings", SubTitle: "Elements Update Settings", Page: new PomDeltaSettingsWizardPage());
             AddPage(Name: "Elements Compare", Title: "Elements Compare", SubTitle: "Elements Comparison with Latest Status", Page: new PomDeltaElementCompareWizardPage());
-            AddPage(Name: "Elements Mapping Settings", Title: "Elements Mapping Settings", SubTitle: "Map deleted element with new element", Page: new PomDeltaDeletedElementMappingWizardPage());
+            AddPage(Name: "Elements Mapping", Title: "Elements Mapping", SubTitle: "Map deleted element with new element", Page: new PomDeltaDeletedElementMappingWizardPage());
 
         }
 

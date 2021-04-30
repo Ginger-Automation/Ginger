@@ -509,10 +509,11 @@ namespace GingerCoreNET.Application_Models
 
         public void UpdateOriginalPom()
         {
-            MapDeletedElementWithNewAddedElement();
-
-            //Updating selected elements
+            //selected elements
             List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
+            
+            MapDeletedElementWithNewAddedElement(elementsToUpdate);
+
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
             {
                 //Add the New onces to the last of the list
@@ -577,9 +578,8 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
-        private void MapDeletedElementWithNewAddedElement()
+        private void MapDeletedElementWithNewAddedElement(List<DeltaElementInfo> elementsToUpdate)
         {
-            List<DeltaElementInfo> elementsToUpdate = DeltaViewElements.Where(x => x.IsSelected == true).ToList();
             foreach (DeltaElementInfo elementToUpdate in elementsToUpdate)
             {
                 if (elementToUpdate.MappedElementInfo != null && elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted))
