@@ -71,6 +71,24 @@ namespace GingerCoreNET.Application_Models
                     OnPropertyChanged(nameof(SelectedElementGroup));
                 }
             }
-        }        
+        }
+        /// <summary>
+        /// Map Deleted element with new added element
+        /// </summary>
+        /// 
+        private string mMappedElementInfo;
+        public string MappedElementInfo 
+        {
+            get 
+            {
+                return mMappedElementInfo;
+            } 
+            set 
+            {
+                mMappedElementInfo = value;
+                OnPropertyChanged(nameof(MappedElementInfo));
+            }
+        }
+
     }
 }
