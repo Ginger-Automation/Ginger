@@ -247,7 +247,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (mDriver.GetAppType() == eAppType.Web)
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Operation not supported in device browser mode");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
                 return;
             }
 
@@ -262,7 +262,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (mDriver.GetAppType() == eAppType.Web)
             {
-                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Operation not supported in device browser mode");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation not supported for this mobile OS or application type.");
                 return;
             }
 
