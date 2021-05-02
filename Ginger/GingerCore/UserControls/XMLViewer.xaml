@@ -76,11 +76,61 @@
                 </DataTrigger>
             </HierarchicalDataTemplate.Triggers>
         </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate x:Key="htmlTreeViewTemplate" 
+                                  ItemsSource="{Binding XPath=child::node()}">
+            <StackPanel Orientation="Horizontal" Margin="3,0,0,0" 
+                        HorizontalAlignment="Center">
+                <TextBlock Text="&lt;" HorizontalAlignment="Center" 
+                           Foreground="{StaticResource xmlMarkBrush}" 
+                           x:Name="startTag"/>
+
+                <TextBlock Text="{Binding Path=Name}"
+                    Margin="0"
+                    HorizontalAlignment="Center"
+                    x:Name="xmlTag"
+                    Foreground="{StaticResource xmlTagBrush}"/>
+
+                <ItemsControl
+                    ItemTemplate="{StaticResource attributeTemplate}"
+                    ItemsSource="{Binding Path=Attributes}"
+                    HorizontalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock Text="&gt;" HorizontalAlignment="Center" 
+                           Foreground="{StaticResource xmlMarkBrush}" 
+                           x:Name="endTag"/>
+            </StackPanel>
+
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding NodeType}">
+                    <Setter Property="Text" Value="{Binding InnerText}" 
+                            TargetName="xmlTag"/>
+                    <Setter Property="Foreground" Value="Blue" 
+                            TargetName="xmlTag"/>
+                    <Setter Property="Visibility" Value="Collapsed" 
+                            TargetName="startTag"/>
+                    <Setter Property="Visibility" Value="Collapsed" 
+                            TargetName="endTag"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding HasChildNodes}" Value="False">
+                    <Setter Property="Text" Value="/&gt;" TargetName="endTag"/>
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
     </UserControl.Resources>
 
     <Grid>
         <TreeView Grid.Row="2" Grid.ColumnSpan="2" Name="xmlTree" 
-                  ItemTemplate="{StaticResource treeViewTemplate}"/>
+                  ItemTemplate="{StaticResource treeViewTemplate}" Visibility="Collapsed"/>
+
+        <TreeView Grid.Row="2" Grid.ColumnSpan="2" Name="htmlTree" Visibility="Collapsed"/>
     </Grid>
 
 </UserControl>

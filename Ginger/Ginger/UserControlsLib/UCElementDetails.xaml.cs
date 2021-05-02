@@ -70,18 +70,21 @@ namespace Ginger
             }
             set
             {
-                if (value != mSelectedElement)
+                mSelectedElement = value;
+                if (PropertyChanged != null)
                 {
-                    if(PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedElement)));
-                    }
-
-                    mSelectedElement = value;
-                    mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSelectedElement);
-                    RefreshPropertiesAndLocators();
-                    RefreshElementAction();
+                    PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedElement)));
                 }
+
+                mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSelectedElement);
+
+                if (mCurrentControlTreeViewItem != null && mCurrentControlTreeViewItem.NodeObject() is GingerCore.Actions.UIAutomation.UIAElementInfo)
+                {
+                    (mCurrentControlTreeViewItem.NodeObject() as GingerCore.Actions.UIAutomation.UIAElementInfo).WindowExplorer = mSelectedElement.WindowExplorer;
+                }
+
+                RefreshPropertiesAndLocators();
+                RefreshElementAction();
             }
         }
 
@@ -511,39 +514,6 @@ namespace Ginger
 
             ControlActionsPage_New CAP = null;
 
-            ObservableList<Act> list = new ObservableList<Act>();
-            ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-
-            //var elmentPresentationinfo = mPlatform.GetElementPresentatnInfo(EI);//type A (ActionType to show) || type B
-
-            //if(Type A)
-            //        { }
-            //else if (Type b)
-            //        {
-            //    list = ((IWindowExplorerTreeItem)iv).GetElementActions(); 
-            //}
-
-            if (Platform.PlatformType().Equals(ePlatformType.Web) || (Platform.PlatformType().Equals(ePlatformType.Java) && !mSelectedElement.ElementType.Contains("JEditor")))
-            {
-                //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
-                list = Platform.GetPlatformElementActions(mSelectedElement);
-            }
-            else
-            {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                list = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementActions();   // case will be removed once all platforms will be overrided
-            }                                                               //
-
-            ////If no element actions returned then no need to get locator's. 
-            //if (list == null || list.Count == 0)
-            //{
-            //    SetActionsTabDesign(false);
-            //    return;
-            //}
-            //else
-            //{
-            Page DataPage = mCurrentControlTreeViewItem.EditPage(Context);
-            actInputValuelist = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
-
             if (mSelectedElement.Locators.CurrentItem == null && mSelectedElement.Locators.Count > 0)
             {
                 mSelectedElement.Locators.CurrentItem = mSelectedElement.Locators[0];
@@ -560,16 +530,6 @@ namespace Ginger
             ElementActionCongifuration actConfigurations;
             if (POMBasedAction)
             {
-                //ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
-                //{
-                //    LocateBy = eLocateBy.POMElement,
-                //    LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                //    ElementValue = elementVal,
-                //    AddPOMToAction = true,
-                //    POMGuid = elementInfo.ParentGuid.ToString(),
-                //    ElementGuid = elementInfo.Guid.ToString(),
-                //    LearnedElementInfo = elementInfo,
-                //};
                 //POMElement
                 actConfigurations = new ElementActionCongifuration
                 {
@@ -597,7 +557,7 @@ namespace Ginger
                 };
             }
 
-            CAP = new ControlActionsPage_New(WindowExplorerDriver, mSelectedElement, list, DataPage, actInputValuelist, Context, actConfigurations);
+            CAP = new ControlActionsPage_New(WindowExplorerDriver, mSelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem, Platform);
             //}
 
             if (CAP == null)
@@ -628,7 +588,8 @@ namespace Ginger
                 mSelectedPOM = value;
                 if (mSelectedPOM == null)
                 {
-                    xIntegratePOMChkBox_Unchecked(null, null);
+                    xIntegratePOMChkBox.IsChecked = false;
+                    //xIntegratePOMChkBox_Unchecked(null, null);
                 }
             }
         }
@@ -656,7 +617,7 @@ namespace Ginger
                 locateByPOMElementPage = new LocateByPOMElementPage(Context, act, nameof(ActUIElement.ElementType), act, nameof(ActUIElement.ElementLocateValue), true);
                 locateByPOMElementPage.SelectPOM_Click(this, null);
 
-                locateByPOMElementPage.POMChangedPageEvent += LocateByPOMElementPage_POMChangedPageEvent; ;
+                locateByPOMElementPage.POMChangedPageEvent += LocateByPOMElementPage_POMChangedPageEvent;
 
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
                 xPOMSelectionFrame.Content = locateByPOMElementPage;

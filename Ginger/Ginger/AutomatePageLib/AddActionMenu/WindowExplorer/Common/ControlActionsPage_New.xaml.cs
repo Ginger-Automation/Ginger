@@ -19,6 +19,8 @@ using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +54,9 @@ namespace Ginger.WindowExplorer
         public ObservableList<ElementLocator> mLocators;
         private IWindowExplorer mWindowExplorerDriver;
         private ObservableList<ActInputValue> mActInputValues;
+        PlatformInfoBase mPlatform { get; set; }
         ElementInfo mElementInfo = null;
+        ITreeViewItem mCurrentControlTreeViewItem;
         Page mDataPage = null;
         double mLastDataGridRowHeight = 50;
         Context mContext;
@@ -60,21 +64,18 @@ namespace Ginger.WindowExplorer
         bool IsLegacyPlatform = false;
 
         // when launching from Window explore we get also available actions to choose so user can add
-        public ControlActionsPage_New(IWindowExplorer driver, ElementInfo ElementInfo, ObservableList<Act> Actions, Page DataPage, ObservableList<ActInputValue> actInputValues, Context context, ElementActionCongifuration actionConfigurations)
+        public ControlActionsPage_New(IWindowExplorer driver, ElementInfo ElementInfo, Context context, ElementActionCongifuration actionConfigurations, ITreeViewItem CurrentControlTreeViewItem, PlatformInfoBase PlatformInfo)
         {
             InitializeComponent();
 
             mElementInfo = ElementInfo;
             mWindowExplorerDriver = driver;
-            mActInputValues = actInputValues;
-            mActions = Actions;
             mLocators = mElementInfo.Locators;  // mWindowExplorerDriver.GetElementLocators(mElementInfo);
-            mDataPage = DataPage;
             mContext = context;
+            mCurrentControlTreeViewItem = CurrentControlTreeViewItem;
+            mPlatform = PlatformInfo;
 
-            IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
-
-            mAction = mPlatform.GetPlatformAction(mElementInfo, actionConfigurations);
+            mAction = (mPlatform as IPlatformInfo).GetPlatformAction(mElementInfo, actionConfigurations);
 
             IsLegacyPlatform = mAction == null;
 
@@ -173,6 +174,20 @@ namespace Ginger.WindowExplorer
         {
             if (IsLegacyPlatform)
             {
+                if (mPlatform.PlatformType().Equals(ePlatformType.Web) || (mPlatform.PlatformType().Equals(ePlatformType.Java) && !mElementInfo.ElementType.Contains("JEditor")))
+                {
+                    //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
+                    mActions = mPlatform.GetPlatformElementActions(mElementInfo);
+                }
+                else
+                {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
+                    mActions = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementActions();   // case will be removed once all platforms will be overrided
+                }
+
+                mDataPage = mCurrentControlTreeViewItem.EditPage(mContext);
+
+                mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
+
                 if (mActions.CurrentItem == null && mActions.Count > 0)
                 {
                     mActions.CurrentItem = mActions[0];

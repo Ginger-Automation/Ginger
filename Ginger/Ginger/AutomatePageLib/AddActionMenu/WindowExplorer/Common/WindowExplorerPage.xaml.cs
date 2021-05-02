@@ -226,16 +226,20 @@ namespace Ginger.WindowExplorer
                 xUCElementDetails.InitLegacyLocatorsGridView();
             }
 
-            RefreshTabsContent();
+            //RefreshTabsContent();
 
             xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
+            xViewsTabs.SelectedItem = xTreeViewTab;
         }
 
         bool ElementDetailsNotNullHandled = false;
         bool ElementDetailsNullHandled = false;
         private void XUCElementDetails_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            HandleUCElementDetails();
+            if(e.PropertyName == nameof(xUCElementDetails.SelectedElement))
+            {
+                HandleUCElementDetails();
+            }
         }
 
         public void HandleUCElementDetails()
@@ -418,9 +422,24 @@ namespace Ginger.WindowExplorer
             mTreeRootItem.IsExpanded = false;
         }
 
-        private void RefreshPageSrcContent()
+        private async Task RefreshPageSrcContent()
         {
             //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
+            if (mWindowExplorerDriver is GenericAppiumDriver)
+            {
+                xXMLPageSrcViewer.Visibility = Visibility.Visible;
+                string pageSrcXML = await((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
+                XmlDocument pageSrcXmlDoc = new XmlDocument();
+                pageSrcXmlDoc.LoadXml(pageSrcXML);
+                xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
+            }
+            else if (mWindowExplorerDriver is SeleniumDriver)
+            {
+                xXMLPageSrcViewer.Visibility = Visibility.Visible;
+
+                HtmlDocument htmlDoc = ((SeleniumDriver)mWindowExplorerDriver).GetPageHTML();
+                xXMLPageSrcViewer.htmlDocument = htmlDoc;
+            }
         }
 
         private async Task RefreshTreeContent()
@@ -1020,130 +1039,6 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void ShowControlActions(ITreeViewItem iv)
-        {
-            //We show action if we didn't came from Edit page
-            if (iv is IWindowExplorerTreeItem)
-            {
-                ElementInfo EI = (ElementInfo)iv.NodeObject();
-
-                ControlActionsPage_New CAP = null;
-                // We came from Action EditPage
-                //if (mAction != null)
-                //{
-                //    CAP = new ControlActionsPage_New(mAction, EI);
-                //}
-                //else
-
-                ObservableList<Act> list = new ObservableList<Act>();
-                ObservableList<ActInputValue> actInputValuelist = new ObservableList<ActInputValue>();
-
-                //var elmentPresentationinfo = mPlatform.GetElementPresentatnInfo(EI);//type A (ActionType to show) || type B
-
-                //if(Type A)
-                //        { }
-                //else if (Type b)
-                //        {
-                //    list = ((IWindowExplorerTreeItem)iv).GetElementActions(); 
-                //}
-
-                if (mPlatform.PlatformType().Equals(ePlatformType.Web) || (mPlatform.PlatformType().Equals(ePlatformType.Java) && !EI.ElementType.Contains("JEditor")))
-                {
-                    //TODO: J.G: Remove check for element type editor and handle it in generic way in all places
-                    list = mPlatform.GetPlatformElementActions(EI);
-                }
-                else
-                {                                                               // this "else" is temporary. Currently only ePlatformType.Web is overided
-                    list = ((IWindowExplorerTreeItem)iv).GetElementActions();   // case will be removed once all platforms will be overrided
-                }                                                               //
-
-                //If no element actions returned then no need to get locator's. 
-                if (list == null || list.Count == 0)
-                {
-                    SetActionsTabDesign(false);
-                    return;
-                }
-                else
-                {
-                    Page DataPage = mCurrentControlTreeViewItem.EditPage(mContext);
-                    actInputValuelist = ((IWindowExplorerTreeItem)iv).GetItemSpecificActionInputValues();
-
-                    if (EI.Locators.CurrentItem == null)
-                    {
-                        EI.Locators.CurrentItem = EI.Locators[0];
-                    }
-
-                    ElementLocator eiLocator = EI.Locators.CurrentItem as ElementLocator;
-
-                    string elementVal = string.Empty;
-                    if (EI.OptionalValuesObjectsList.Count > 0)
-                    {
-                        elementVal = Convert.ToString(EI.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
-                    }
-
-                    ElementActionCongifuration actConfigurations;
-                    if (POMBasedAction)
-                    {
-                        //ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
-                        //{
-                        //    LocateBy = eLocateBy.POMElement,
-                        //    LocateValue = elementInfo.ParentGuid.ToString() + "_" + elementInfo.Guid.ToString(),
-                        //    ElementValue = elementVal,
-                        //    AddPOMToAction = true,
-                        //    POMGuid = elementInfo.ParentGuid.ToString(),
-                        //    ElementGuid = elementInfo.Guid.ToString(),
-                        //    LearnedElementInfo = elementInfo,
-                        //};
-                        //POMElement
-                        actConfigurations = new ElementActionCongifuration
-                        {
-                            LocateBy = eLocateBy.POMElement,
-                            LocateValue = POMElement.ParentGuid.ToString() + "_" + POMElement.Guid.ToString(),
-                            ElementValue = elementVal,
-                            AddPOMToAction = true,
-                            POMGuid = POMElement.ParentGuid.ToString(),
-                            ElementGuid = POMElement.Guid.ToString(),
-                            LearnedElementInfo = POMElement,
-                            Type = POMElement.ElementTypeEnum
-                        };
-                    }
-                    else
-                    {
-                        //check if we have POM in context if yes set the Locate by and value to the specific POM if not so set it to the first active Locator in the list of Locators
-                        actConfigurations = new ElementActionCongifuration
-                        {
-                            LocateBy = eiLocator.LocateBy,
-                            LocateValue = eiLocator.LocateValue,
-                            Type = EI.ElementTypeEnum,
-                            ElementValue = elementVal,
-                            ElementGuid = EI.Guid.ToString(),
-                            LearnedElementInfo = EI
-                        };
-                    }
-
-                    CAP = new ControlActionsPage_New(mWindowExplorerDriver, EI, list, DataPage, actInputValuelist, mContext, actConfigurations);
-                }
-
-                if (CAP == null)
-                {
-                    xUCElementDetails.xAddActionTab.Visibility = Visibility.Collapsed;
-                    xUCElementDetails.xActUIPageFrame.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    xUCElementDetails.xActUIPageFrame.Content = CAP;
-                    xUCElementDetails.xAddActionTab.Visibility = Visibility.Visible;
-                    xUCElementDetails.xActUIPageFrame.Visibility = Visibility.Visible;
-                }
-                //ControlActionsFrame.Content = CAP;
-                SetActionsTabDesign(true);
-            }
-            else
-            {
-                SetActionsTabDesign(false);
-            }
-        }
-
         //TODO: fix to be OO style
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -1650,7 +1545,7 @@ namespace Ginger.WindowExplorer
 
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
-            if (mWindowExplorerDriver is GenericAppiumDriver && (mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.NativeHybride)
+            if (mWindowExplorerDriver is GenericAppiumDriver)   // && (mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.NativeHybride)
             {
                 mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.25);
             }
@@ -1659,10 +1554,11 @@ namespace Ginger.WindowExplorer
                 mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, 0.5);
             }
 
-            if (mPlatform.PlatformType() == ePlatformType.Web)
-            {
-                mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
-            }
+            /// UnComment to allow Element detection on hover
+            //if (mPlatform.PlatformType() == ePlatformType.Web)
+            //{
+            //    mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
+            //}
             
             mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
             
@@ -1673,13 +1569,42 @@ namespace Ginger.WindowExplorer
             xScreenShotFrame.Visibility = Visibility.Visible;
         }
 
+        private bool mLastSearchFinished = true;
+        bool LastSearchFinished
+        {
+            get
+            {
+                return mLastSearchFinished;
+            }
+            set
+            {
+                if(value != mLastSearchFinished)
+                {
+                    mLastSearchFinished = value;
+
+                    if(mLastSearchFinished)
+                    {
+                        xLoadingFoundElementPnl.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        xLoadingFoundElementPnl.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
         private async void XMainImage_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            LastSearchFinished = false;
+
             RemoveElemntRectangle();
 
             System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
 
             await HighlightSelectedElement(pointOnImg);
+
+            LastSearchFinished = true;
         }
 
         private async void XMainImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1687,6 +1612,10 @@ namespace Ginger.WindowExplorer
             if (mContext.Runner.IsRunning)
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done during execution.");
+            }
+            else if(!LastSearchFinished)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Operation can't be done until previous request is finished.");
             }
             else
             {
@@ -1707,6 +1636,8 @@ namespace Ginger.WindowExplorer
                 //    HighlightSelectedElement(pointOnImg);
                 //}
 
+                LastSearchFinished = false;
+
                 RemoveElemntRectangle();
 
                 System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
@@ -1719,6 +1650,8 @@ namespace Ginger.WindowExplorer
                 //mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
                 ShowCurrentControlInfo();
+
+                LastSearchFinished = true;
             }
         }
 
@@ -1839,6 +1772,8 @@ namespace Ginger.WindowExplorer
                         case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.Android:
                             ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
                             ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
+                            ratio_X = (mScreenShotViewPage.xMainImage.Source.Width / 3) / mScreenShotViewPage.xMainImage.ActualWidth;
+                            ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height / 3) / mScreenShotViewPage.xMainImage.ActualHeight;
                             string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
                             bounds = bounds.Replace("[", ",");
                             bounds = bounds.Replace("]", ",");
@@ -1891,17 +1826,6 @@ namespace Ginger.WindowExplorer
                 mScreenShotViewPage.xHighlighterBorder.Height = rectangleHeight;
                 //mScreenShotViewPage.xHighLighterRectangle.Fill = new SolidColorBrush() { Color = Colors.Red, Opacity = 0.5f };
                 mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Visible;
-
-                //mScreenShotViewPage.xHighLighterRectangle.SetValue(Border.WidthProperty, 2);    // = new SolidColorBrush() { Color = Colors.Red, Opacity = 0.5f };
-
-                //DeviceImageCanvas.Children.Add(mHighightRectangle);
-
-                //bind events to device image events
-                //mScreenShotViewPage.xHighLighterRectangle.MouseMove += DeviceImage_MouseMove;
-                //mScreenShotViewPage.xHighLighterRectangle.MouseLeftButtonDown += DeviceImage_MouseLeftButtonDown;
-                //mScreenShotViewPage.xHighLighterRectangle.MouseLeftButtonUp += DeviceImage_MouseLeftButtonUp;
-                //mScreenShotViewPage.xHighLighterRectangle.MouseEnter += DeviceImage_MouseEnter;
-                //mScreenShotViewPage.xHighLighterRectangle.MouseLeave += DeviceImage_MouseLeave;
             }
             catch (Exception ex)
             {
@@ -1921,8 +1845,7 @@ namespace Ginger.WindowExplorer
         private System.Windows.Point GetPointOnAppWindow(System.Windows.Point clickedPoint)
         {
             System.Windows.Point pointOnAppScreen = new System.Windows.Point();
-            double ratio_X = 1;
-            double ratio_Y = 1;
+            double ratio_X, ratio_Y;
 
             if (mApplicationAgent.Agent.Driver is GenericAppiumDriver && ((GenericAppiumDriver)mApplicationAgent.Agent.Driver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
             {
@@ -2168,8 +2091,7 @@ namespace Ginger.WindowExplorer
             }
             else if(xViewsTabs.SelectedItem == xPageSrcTab)
             {
-                RefreshPageSrcContent();
-
+                await RefreshPageSrcContent();
                 RefreshPageSrc = false;
             }
         }
@@ -2253,18 +2175,10 @@ namespace Ginger.WindowExplorer
 
         private async void xPageSrcTab_GotFocus(object sender, RoutedEventArgs e)
         {
-            if(mWindowExplorerDriver is GenericAppiumDriver)
+            if(RefreshPageSrc)
             {
-                xXMLPageSrcViewer.Visibility = Visibility.Visible;
-                string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
-                XmlDocument pageSrcXmlDoc = new XmlDocument();
-                pageSrcXmlDoc.LoadXml(pageSrcXML);
-                xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
-
-                //xPageSrcTree.Visibility = Visibility.Collapsed;
-                //string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
-
-                //xUCPageSourceTree.GenerateTree(pageSrcXML);
+                await RefreshPageSrcContent();
+                RefreshPageSrc = false;
             }
         }
     }

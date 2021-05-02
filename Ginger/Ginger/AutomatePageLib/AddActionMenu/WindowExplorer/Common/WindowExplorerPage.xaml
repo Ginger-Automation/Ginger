@@ -15,6 +15,7 @@
         <Grid.RowDefinitions>
             <RowDefinition x:Name="WindowComboboxRow" Height="50" />
             <RowDefinition Height="*" MinHeight="500" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -37,7 +38,6 @@
                 <ColumnDefinition x:Name="xControlsViewGridColumn" Width="97*"/>
                 <!--<ColumnDefinition x:Name="xElementDetailGridColumn" Width="91*"/>-->
                 <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0"/>
-                <ColumnDefinition Width="6*"/>
             </Grid.ColumnDefinitions>
 
             <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
@@ -69,7 +69,7 @@
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock Text="Loading Screenshot . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
-                        <Frame x:Name="xScreenShotFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        <Frame x:Name="xScreenShotFrame" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     </Grid>
                 </TabItem>
 
@@ -131,6 +131,11 @@
 
             <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
+
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="xLoadingFoundElementPnl" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Visibility="Collapsed">
+            <usercontrols:ImageMakerControl DockPanel.Dock="Left" ImageType="Image" SetAsFontImageWithSize="12" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" Text="Please Wait.. Loading Element Details.." Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+        </DockPanel>
     </Grid>
 
     <!--</DockPanel>-->
