@@ -1021,5 +1021,35 @@ namespace GingerCore.Drivers.WindowsLib
             }
             return EI;
         }
+
+        public bool IsRecordingSupported()
+        {
+            return true;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
+        }
     }
 }

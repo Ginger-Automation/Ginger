@@ -74,6 +74,8 @@ namespace Ginger.WindowExplorer
             mContext = context;
             mCurrentControlTreeViewItem = CurrentControlTreeViewItem;
             mPlatform = PlatformInfo;
+            mDataPage = mCurrentControlTreeViewItem.EditPage(mContext);
+            mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
             mAction = (mPlatform as IPlatformInfo).GetPlatformAction(mElementInfo, actionConfigurations);
 
@@ -184,10 +186,6 @@ namespace Ginger.WindowExplorer
                     mActions = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementActions();   // case will be removed once all platforms will be overrided
                 }
 
-                mDataPage = mCurrentControlTreeViewItem.EditPage(mContext);
-
-                mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
-
                 if (mActions.CurrentItem == null && mActions.Count > 0)
                 {
                     mActions.CurrentItem = mActions[0];
@@ -238,7 +236,7 @@ namespace Ginger.WindowExplorer
 
         private void InitDataPage()
         {
-            if (mDataPage != null)
+            if (IsLegacyPlatform && mDataPage != null)
             {
                 DataFrame.Visibility = System.Windows.Visibility.Visible;
                 xDataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
@@ -374,6 +372,7 @@ namespace Ginger.WindowExplorer
                 {
                     actUI.ElementLocateBy = EL.LocateBy;
                     actUI.ElementLocateValue = EL.LocateValue;
+                    actUI.ElementType = mElementInfo.ElementTypeEnum;
                 }
 
                 //TODO: Remove below  if once one of the field from Value and Value to select is removed

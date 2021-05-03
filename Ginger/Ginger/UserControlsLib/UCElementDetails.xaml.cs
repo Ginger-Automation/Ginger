@@ -76,15 +76,18 @@ namespace Ginger
                     PropertyChanged(this, new PropertyChangedEventArgs(nameof(SelectedElement)));
                 }
 
-                mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSelectedElement);
-
-                if (mCurrentControlTreeViewItem != null && mCurrentControlTreeViewItem.NodeObject() is GingerCore.Actions.UIAutomation.UIAElementInfo)
+                if (mSelectedElement != null)
                 {
-                    (mCurrentControlTreeViewItem.NodeObject() as GingerCore.Actions.UIAutomation.UIAElementInfo).WindowExplorer = mSelectedElement.WindowExplorer;
-                }
+                    mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(mSelectedElement);
 
-                RefreshPropertiesAndLocators();
-                RefreshElementAction();
+                    if (mCurrentControlTreeViewItem != null && mCurrentControlTreeViewItem.NodeObject() is GingerCore.Actions.UIAutomation.UIAElementInfo)
+                    {
+                        (mCurrentControlTreeViewItem.NodeObject() as GingerCore.Actions.UIAutomation.UIAElementInfo).WindowExplorer = mSelectedElement.WindowExplorer;
+                    }
+
+                    RefreshPropertiesAndLocators();
+                    RefreshElementAction();
+                }
             }
         }
 
@@ -588,8 +591,14 @@ namespace Ginger
                 mSelectedPOM = value;
                 if (mSelectedPOM == null)
                 {
+                    POMSelectionPending = true;
                     xIntegratePOMChkBox.IsChecked = false;
-                    //xIntegratePOMChkBox_Unchecked(null, null);
+                    xIntegratePOMChkBox_Unchecked(null, null);
+                }
+                else
+                {
+                    xPOMSelectionFrame.Visibility = Visibility.Visible;
+                    POMSelectionPending = false;
                 }
             }
         }
@@ -598,19 +607,12 @@ namespace Ginger
 
         private void xIntegratePOMChkBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (xElementDetailsTabs.SelectedItem != xAddActionTab)
-            {
-                POMSelectionPending = true;
-            }
-            else
-            {
-                ShowPOMSelection();
-            }
+            ShowPOMSelection();
         }
 
         void ShowPOMSelection()
         {
-            if (locateByPOMElementPage == null)
+            if (POMSelectionPending || locateByPOMElementPage == null)
             {
                 ActUIElement act = new ActUIElement();
 
@@ -622,9 +624,6 @@ namespace Ginger
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
                 xPOMSelectionFrame.Content = locateByPOMElementPage;
             }
-
-            xPOMSelectionFrame.Visibility = Visibility.Visible;
-            POMSelectionPending = false;
         }
 
         private void LocateByPOMElementPage_POMChangedPageEvent()

@@ -1360,5 +1360,35 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             throw new NotImplementedException();
         }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return false;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView */ };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.none;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Page:";
+        }
     }
 }

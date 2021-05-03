@@ -87,7 +87,7 @@
                             <TextBlock Text="Loading HTML . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
                         <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
-                        <TreeView x:Name="xPageSrcTree" Visibility="Collapsed"/>
+                        <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed"/>
                     </Grid>
                 </TabItem>
 
@@ -132,9 +132,9 @@
             <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
 
-        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="xLoadingFoundElementPnl" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Visibility="Collapsed">
-            <usercontrols:ImageMakerControl DockPanel.Dock="Left" ImageType="Image" SetAsFontImageWithSize="12" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
-            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" Text="Please Wait.. Loading Element Details.." Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="xLoadingFoundElementPnl" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <usercontrols:ImageMakerControl DockPanel.Dock="Left" ImageType="Processing" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <TextBlock x:Name="xStatusBarText" VerticalAlignment="Center" DockPanel.Dock="Left" Text="Please Wait.. Loading Element Details.." Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
         </DockPanel>
     </Grid>
 

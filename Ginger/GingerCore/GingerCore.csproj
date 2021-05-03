@@ -243,6 +243,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\UCHtmlViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\ucTextDicResource.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -444,6 +448,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SourceControl\SVNSourceControl.cs" />
+    <Compile Include="UserControls\UCHtmlViewer.xaml.cs">
+      <DependentUpon>UCHtmlViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\ucTextDicResource.xaml.cs">
       <DependentUpon>ucTextDicResource.xaml</DependentUpon>
     </Compile>

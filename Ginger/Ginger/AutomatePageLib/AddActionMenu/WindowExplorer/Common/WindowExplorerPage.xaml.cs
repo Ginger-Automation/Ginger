@@ -69,40 +69,8 @@ using GingerCoreNET.Application_Models;
 
 namespace Ginger.WindowExplorer
 {
-    public class PageSrcParser
-    {
-        //public PageSrcParser(TreeView tView, HtmlAgilityPack.HtmlDocument htmlDoc)
-        //{
-        //    htmlDoc.LoadHtml(PageSrcTxt);
-
-            
-        //}
-
-
-
-        //System.Windows.Forms.TreeView tView;
-        //public System.Windows.Forms.TreeView GetSrcTree(System.Windows.Forms.HtmlDocument htmlDoc)
-        //{
-        //    tView.Nodes.Add(LoadTreeNodes(htmlDoc.Body));
-
-        //    return tView;
-        //}
-
-        //public TreeNode LoadTreeNodes(HtmlElement htmlElement)
-        //{
-        //    TreeNode tNode = new TreeNode(htmlElement.TagName);
-        //    for(int i = 0; i < htmlElement.Children.Count; i++)
-        //    {
-        //        tNode.Nodes.Add(LoadTreeNodes(htmlElement.Children[i]));
-        //    }
-
-        //    return tNode;
-        //}
-    }
-
     //Generic Class for Window Explorer to be used by different drivers and explore the window of the Application Under Testing, 
     // for PBDriver, ASCF, Windows and Selenium etc...
-
     public partial class WindowExplorerPage : Page
     {
         GenericWindow _GenWin;
@@ -131,7 +99,6 @@ namespace Ginger.WindowExplorer
         //Page mControlFrameContentPage = null;
         //WindowExplorerPOMPage mWindowExplorerPOMPage;
         //PomAllElementsPage pomAllElementsPage = null;
-        bool IsWebMobJavaPlatform = false;
 
         Context mContext;
 
@@ -143,10 +110,8 @@ namespace Ginger.WindowExplorer
             xWindowControlsTreeView.TreeGrid.RowDefinitions[0].Height = new GridLength(0);
 
             mContext = context;
-            mContext.PropertyChanged += MContext_PropertyChanged;
+            //mContext.PropertyChanged += MContext_PropertyChanged;
             mPlatform = PlatformInfoBase.GetPlatformImpl(((Agent)ApplicationAgent.Agent).Platform);
-
-            IsWebMobJavaPlatform = (mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile || mPlatform.PlatformType() == ePlatformType.Java);
 
             //Instead of check make it disabled ?
             if (((Agent)ApplicationAgent.Agent).Driver != null && (((Agent)ApplicationAgent.Agent).Driver is IWindowExplorer) == false)
@@ -199,8 +164,6 @@ namespace Ginger.WindowExplorer
 
             SetControlsGridView();
 
-            SetPlatformBasedUIUpdates();
-
             InitControlPropertiesGridView();
 
             //xUCElementDetails.AppAgent = mApplicationAgent;
@@ -210,7 +173,9 @@ namespace Ginger.WindowExplorer
             xUCElementDetails.Platform = mPlatform;
             xUCElementDetails.xPropertiesGrid.btnRefresh.AddHandler(System.Windows.Controls.Button.ClickEvent, new RoutedEventHandler(RefreshControlProperties));
 
-            if (mWindowExplorerDriver is IPOM)
+            //IsPOMSupportedPlatform = ApplicationPOMModel.PomSupportedPlatforms.Contains(mContext.Platform);
+
+            if (mWindowExplorerDriver.IsPOMSupported())
             {
                 xUCElementDetails.xIntegratePOMChkBox.Visibility = Visibility.Visible;
                 xUCElementDetails.xIntegratePOMChkBox.IsChecked = true;
@@ -229,7 +194,7 @@ namespace Ginger.WindowExplorer
             //RefreshTabsContent();
 
             xUCElementDetails.PropertyChanged += XUCElementDetails_PropertyChanged;
-            xViewsTabs.SelectedItem = xTreeViewTab;
+            SetPlatformBasedUpdates();
         }
 
         bool ElementDetailsNotNullHandled = false;
@@ -256,7 +221,7 @@ namespace Ginger.WindowExplorer
                 ElementDetailsNullHandled = true;
                 ElementDetailsNotNullHandled = false;
             }
-            else if (!ElementDetailsNotNullHandled)
+            else if (xUCElementDetails.SelectedElement != null && !ElementDetailsNotNullHandled)
             {
                 xElementDetailGridRow.Height = new GridLength(200, GridUnitType.Star);
                 xElementDetailGridRow.MinHeight = 200;
@@ -278,33 +243,40 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        private void SetPlatformBasedUIUpdates()
+        object DefaultSelectedTab()
         {
-            if (mPlatform.PlatformType() == ePlatformType.Web || mPlatform.PlatformType() == ePlatformType.Mobile)
+            switch(mWindowExplorerDriver.DefaultView())
             {
-                xPageSrcTab.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xPageSrcTab.Visibility = Visibility.Collapsed;
-            }
-
-            if(mPlatform.PlatformType() == ePlatformType.Mobile)
-            {
-                xTreeViewTab.Visibility = Visibility.Collapsed;
+                case eTabView.GridView: return xGridViewTab;
+                case eTabView.TreeView: return xTreeViewTab;
+                case eTabView.PageSource: return xPageSrcTab;
+                case eTabView.Screenshot: return xScreenShotViewTab;
+                default: return null;
             }
         }
 
-        private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void SetPlatformBasedUpdates()
         {
-            if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
-            {
-                if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
-                {
+            xWindowSelection.xWindowDropdownLbl.Content = mWindowExplorerDriver.SelectionWindowText();
 
-                }
-            }
+            xPageSrcTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource) ? Visibility.Visible : Visibility.Collapsed;
+            xTreeViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.TreeView) ? Visibility.Visible : Visibility.Collapsed;
+            xGridViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.GridView) ? Visibility.Visible : Visibility.Collapsed;
+            xScreenShotViewTab.Visibility = mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) ? Visibility.Visible : Visibility.Collapsed;
+
+            xViewsTabs.SelectedItem = DefaultSelectedTab();
         }
+
+        //private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
+        //    {
+        //        if (e.PropertyName is nameof(mContext.Activity) || e.PropertyName is nameof(mContext.Target))
+        //        {
+
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// This method will set the explorer page to be fit in new right panel
@@ -435,10 +407,10 @@ namespace Ginger.WindowExplorer
             }
             else if (mWindowExplorerDriver is SeleniumDriver)
             {
-                xXMLPageSrcViewer.Visibility = Visibility.Visible;
+                xHTMLPageSrcViewer.Visibility = Visibility.Visible;
 
                 HtmlDocument htmlDoc = ((SeleniumDriver)mWindowExplorerDriver).GetPageHTML();
-                xXMLPageSrcViewer.htmlDocument = htmlDoc;
+                xHTMLPageSrcViewer.htmlDocument = htmlDoc;
             }
         }
 
@@ -546,191 +518,13 @@ namespace Ginger.WindowExplorer
             xWindowControlsTreeView.Visibility = Visibility.Visible;
         }
 
-        private void LiveSpyHandler(object sender, RoutedEventArgs e)
-        {
-            //stop Recording
-            //if (RecordingButton.IsChecked == true)
-            //    StopRecording();
-
-            if (xWindowSelection.WindowsComboBox.SelectedValue != null)
-            {
-                //if (LiveSpyButton.IsChecked == true)
-                //{
-                //    if (mSyncControlsViewWithLiveSpy == false)
-                //        ControlsViewsExpander.IsExpanded = false;
-
-                //    SetPageFunctionalityEnableDisable(false,true,false,false,false,true,true,true,true,true,false);
-
-                //    if (dispatcherTimer == null)
-                //    {
-                //        dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-                //        dispatcherTimer.Tick += new EventHandler(timenow);
-                //        dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-                //    }
-
-                //    dispatcherTimer.IsEnabled = true;
-                //}
-                //else
-                //{
-                dispatcherTimer.IsEnabled = false;
-                SetPageFunctionalityEnableDisable(true, true, true, true, true, true, true, true, true, true, true);
-                //}               
-            }
-            else
-            {
-                //LiveSpyButton.IsChecked = false;
-                Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);
-            }
-        }
-
         private void SetPageFunctionalityEnableDisable(bool RecordingButtonFlag, bool ControlsRefreshButtonFlag, bool RefreshWindowsButtonFlag, bool AddSwitchWindowActionButtonFlag, bool WindowsComboBoxFlag, bool ControlsViewsExpanderFlag, bool SelectedControlDetailsExpanderFlag, bool LiveSpyButtonFlag, bool SyncWithLiveSpyButtonFlag, bool GridTreeViewButtonFlag, bool DORButtonFlag)
         {
-            //RecordingButton.IsEnabled = RecordingButtonFlag;
-            //if (RecordingButtonFlag)
-            //{
-            //    if (RecordingButton.IsChecked == true)
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Record_24x24.png"));
-            //        RecordingButton.Content = image;
-            //        RecordingButton.ToolTip = "Stop Recording";
-            //    }
-            //    else
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@RecordOff_24x24.png"));
-            //        RecordingButton.Content = image;
-            //        RecordingButton.ToolTip = "Start Recording";
-            //    }
-            //}
-            //else
-            //{
-            //System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@RecordDisable_24x24.png"));
-            //RecordingButton.Content = image;
-            //}
-
-            //ControlsRefreshButton.IsEnabled = ControlsRefreshButtonFlag;
-
-            //if (ControlsRefreshButtonFlag)
-            //    ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_White");
-            //else
-            //    ((ImageMakerControl)(ControlsRefreshButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
-
             xWindowSelection.RefreshWindowsButton.IsEnabled = RefreshWindowsButtonFlag;
 
-            //if (RefreshWindowsButtonFlag)
-            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");                            
-            //else
-            //    ((ImageMakerControl)(RefreshWindowsButton.Content)).ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Gray");
-
-
             xWindowSelection.AddSwitchWindowActionButton.IsEnabled = AddSwitchWindowActionButtonFlag;
-            //if (AddSwitchWindowActionButtonFlag)
-            //{
-            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_16x16.png"));
-            //    AddSwitchWindowActionButton.Content = image;
-            //}
-            //else
-            //{
-            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@AddToList_Gray_16x16.png"));
-            //    AddSwitchWindowActionButton.Content = image;
-            //}
 
             xWindowSelection.WindowsComboBox.IsEnabled = WindowsComboBoxFlag;
-            //if (WindowsComboBoxFlag)
-            //{
-            //    WindowsComboBox.Foreground = Brushes.Orange;
-            //}
-            //else
-            //{
-            //    WindowsComboBox.Foreground = Brushes.Gray;
-            //}
-
-            //ControlsViewsExpander.IsEnabled = ControlsViewsExpanderFlag;
-            //if (ControlsViewsExpanderFlag)
-            //    ControlsViewsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
-            //else
-            //    ControlsViewsExpanderLable.Foreground = Brushes.Gray;
-
-
-            //SelectedControlDetailsExpander.IsEnabled = SelectedControlDetailsExpanderFlag;
-            //if (SelectedControlDetailsExpanderFlag)
-            //    SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString());
-            //else
-            //    SelectedControlDetailsExpanderLable.Foreground = System.Windows.Media.Brushes.Gray;
-
-            //LiveSpyButton.IsEnabled = LiveSpyButtonFlag;
-            //if (LiveSpyButtonFlag)
-            //{
-            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Spy_24x24.png"));
-            //    LiveSpyButton.Content = image;
-            //}
-            //else
-            //{
-            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Spy_Gray_24x24.png"));
-            //    LiveSpyButton.Content = image;
-            //}
-
-            //SyncWithLiveSpyButton.IsEnabled = SyncWithLiveSpyButtonFlag;
-            //if (SyncWithLiveSpyButtonFlag)
-            //{
-            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@WithoutSpyWhite_24x24.png"));
-            //    SyncWithLiveSpyButton.Content = image;
-            //}
-            //else
-            //{
-            //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@WithoutSpyGray_24x24.png"));
-            //    SyncWithLiveSpyButton.Content = image;
-            //}
-
-            //GridTreeViewButton.IsEnabled = GridTreeViewButtonFlag;
-            //if (GridTreeViewButton.ToolTip.ToString().Contains("Tree") == true)
-            //{
-            //    if (GridTreeViewButtonFlag)
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
-            //        GridTreeViewButton.Content = image;
-            //    }
-            //    else
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_Gray_24x24.png"));
-            //        GridTreeViewButton.Content = image;
-            //    }
-            //}
-            //else
-            //{
-            //    if (GridTreeViewButtonFlag)
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
-            //        GridTreeViewButton.Content = image;
-            //    }
-            //    else
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_Gray_24x24.png"));
-            //        GridTreeViewButton.Content = image;
-            //    }
-
-            //}
-
-            //POMButton.IsEnabled = DORButtonFlag;
-            //if (DORButtonFlag)
-            //{
-            //    //TODO: change to gray icon
-            //}
-            //else
-            //{
-            //}
         }
 
         private void timenow(object sender, EventArgs e)
@@ -891,8 +685,6 @@ namespace Ginger.WindowExplorer
         {
             //StatusTextBlock.Text = "Ready";
         }
-        bool POMBasedAction = false;
-        ElementInfo POMElement = null;
 
         private void ShowCurrentControlInfo()
         {
@@ -914,7 +706,6 @@ namespace Ginger.WindowExplorer
                     //General tab will show the generic element info page, customized page will be in Data tab
                     //mControlFrameContentPage = new ElementInfoPage(EI);
                     //ControlFrame.Content = mControlFrameContentPage;
-                    SetDetailsExpanderDesign(true, EI);
                     if (mCurrentControlTreeViewItem is IWindowExplorerTreeItem)
                     {
                         EI.GetElementProperties();
@@ -924,108 +715,6 @@ namespace Ginger.WindowExplorer
                     {
                         xUCElementDetails.xPropertiesGrid.Visibility = System.Windows.Visibility.Collapsed;
                     }
-
-                    /*
-                    if(xWindowSelection.xIntegratePOMChkBox.IsChecked == true && xWindowSelection.SelectedPOM != null)
-                    {
-                        //pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
-                        ElementInfo matchingOriginalElement = (ElementInfo)mWindowExplorerDriver.GetMatchingElement(EI, xWindowSelection.SelectedPOM.GetUnifiedElementsList());
-
-                        if (matchingOriginalElement == null)
-                        {
-                            mWindowExplorerDriver.LearnElementInfoDetails(EI);
-                            matchingOriginalElement = (ElementInfo)mWindowExplorerDriver.GetMatchingElement(EI, xWindowSelection.SelectedPOM.GetUnifiedElementsList());
-                        }
-
-                        if (xWindowSelection.SelectedPOM.MappedUIElements.Contains(matchingOriginalElement) || xWindowSelection.SelectedPOM.UnMappedUIElements.Contains(matchingOriginalElement))
-                        {
-                            PomDeltaUtils pomDeltaUtils = new PomDeltaUtils(xWindowSelection.SelectedPOM, mContext.Agent);
-                            pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
-
-                            /// Not Required but 
-                            pomDeltaUtils.DeltaViewElements.Clear();
-
-                            /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
-                            pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, EI);
-
-                            int originalItemIndex = -1;
-                            if ((ApplicationPOMModel.eElementGroup)matchingOriginalElement.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
-                            {
-                                originalItemIndex = xWindowSelection.SelectedPOM.MappedUIElements.IndexOf(matchingOriginalElement);
-                            }
-
-                            if (pomDeltaUtils.DeltaViewElements[0].DeltaStatus == eDeltaStatus.Changed)
-                            {
-                                //enter it to POM elements instead of existing one
-                                if (Reporter.ToUser(eUserMsgKey.UpdateExistingPOMElement, matchingOriginalElement.ElementName) == eUserMsgSelection.Yes)
-                                {
-                                    /// Replace existing element with new one
-                                    /// Element exists in Mapped Elements list
-                                    if (originalItemIndex > -1)
-                                    {
-                                        xWindowSelection.SelectedPOM.MappedUIElements.RemoveAt(originalItemIndex);
-                                        xWindowSelection.SelectedPOM.MappedUIElements.Insert(originalItemIndex, pomDeltaUtils.DeltaViewElements[0].ElementInfo);
-                                    }
-                                    /// Element exists in Un-Mapped Elements list
-                                    /// We'll remove Element from Unmapped list and add it as new into Mapped Elements list
-                                    else
-                                    {
-                                        xWindowSelection.SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
-                                        xWindowSelection.SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
-                                    }
-
-                                    POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
-                                }
-                                else
-                                {
-                                    if(originalItemIndex == -1)
-                                    {
-                                        xWindowSelection.SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
-                                        xWindowSelection.SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
-
-                                        POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
-                                    }
-                                    else
-                                    {
-                                        POMElement = matchingOriginalElement;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                /// Element exist in UnMapped Elements List
-                                if (originalItemIndex == -1)
-                                {
-                                    //if (Reporter.ToUser(eUserMsgKey.POMMoveElementFromUnmappedToMapped, matchingOriginalElement.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
-                                    //{
-                                        xWindowSelection.SelectedPOM.MappedUIElements.Add(matchingOriginalElement);
-                                        xWindowSelection.SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
-                                    //}
-                                }
-
-                                POMElement = matchingOriginalElement;
-                            }
-                            POMBasedAction = true;
-                        }
-                        else
-                        {
-                            if (Reporter.ToUser(eUserMsgKey.POMElementNotExist, EI.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
-                            {
-                                POMBasedAction = true;
-                                xWindowSelection.SelectedPOM.MappedUIElements.Add(EI);
-
-                                POMElement = EI;
-                                POMElement.ParentGuid = xWindowSelection.SelectedPOM.Guid;
-                            }
-                            else
-                            {
-                                POMElement = null;
-                                POMBasedAction = false;
-                            }
-                        }
-                    }
-                    ShowControlActions(mCurrentControlTreeViewItem);
-                    */
                 }
                 else
                 {
@@ -1046,16 +735,6 @@ namespace Ginger.WindowExplorer
                 RefreshTabsContent();
         }
 
-        private void ControlTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //TODO: check tab and do it only on props, only once per control for speed - cache
-            // Add in Grid refresh button if needed
-            //if (e.Source  == ControlTabs)  // Handle selection change only from the tab, otherwise it might bubble up from grid or alike
-            //{
-            //    ShowCurrentControlInfo();
-            //}
-        }
-
         private void InitControlPropertiesGridView()
         {
             // Grid View
@@ -1072,26 +751,6 @@ namespace Ginger.WindowExplorer
         private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateWindowsList();
-        }
-
-        private void StartRecording()
-        {
-            SetPageFunctionalityEnableDisable(false, false, false, false, false, false, false, false, false, false, false);
-
-            mWindowExplorerDriver.SwitchWindow(((AppWindow)xWindowSelection.WindowsComboBox.SelectedValue).Title);
-
-            ((DriverBase)mWindowExplorerDriver).StartRecording();
-
-            SetPageFunctionalityEnableDisable(true, false, false, false, false, false, false, false, false, false, false);
-        }
-
-        private void StopRecording()
-        {
-            SetPageFunctionalityEnableDisable(false, false, false, false, false, false, false, false, false, false, false);
-
-            ((DriverBase)mWindowExplorerDriver).StopRecording();
-
-            SetPageFunctionalityEnableDisable(true, true, true, true, true, true, true, true, true, true, true);
         }
 
         private void SetControlsGridView()
@@ -1212,98 +871,6 @@ namespace Ginger.WindowExplorer
             return TVI;
         }
 
-        private void RecordingButton_Click(object sender, RoutedEventArgs e)
-        {
-            //stop Live Spy
-            //if (LiveSpyButton.IsChecked == true)
-            //    if (dispatcherTimer != null)
-            //        dispatcherTimer.IsEnabled = false;
-
-            //if (xWindowSelection.WindowsComboBox.SelectedValue!=null)
-            //{
-            //    if (RecordingButton.IsChecked == true)
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Record_24x24.png"));
-            //        RecordingButton.Content = image;
-
-            //        RecordingButton.ToolTip = "Stop Recording";
-
-            //        //collapse expanders & stop LiveSpy
-            //        ControlsViewsExpander.IsExpanded = false;
-            //        SelectedControlDetailsExpander.IsExpanded = false;
-            //        LiveSpyButton.IsChecked = false;
-
-            //        StartRecording();                    
-            //    }
-            //    else
-            //    {
-            //        System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-            //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@RecordOff_24x24.png"));
-            //        RecordingButton.Content = image;
-            //        RecordingButton.ToolTip = "Start Recording";                    
-            //        StopRecording();                    
-            //    }
-            //}
-            //else
-            //{
-            //    RecordingButton.IsChecked = false;
-            //    Reporter.ToUser(eUserMsgKey.TargetWindowNotSelected);                
-            //}
-        }
-
-        //private void GridTreeViewButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-
-        //    if (((Button)sender).ToolTip.ToString().Contains("Tree") == true)
-        //    {
-        //        //switch to tree view
-        //        WindowControlsTreeView.Visibility = System.Windows.Visibility.Visible;
-        //        WindowControlsGridView.Visibility = System.Windows.Visibility.Collapsed;
-
-        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@Grid_24x24.png"));
-        //        GridTreeViewButton.Content = image;
-        //        GridTreeViewButton.ToolTip = "Switch to Grid View";
-        //    }
-        //    else
-        //    {
-        //        //switch to grid view
-        //        WindowControlsTreeView.Visibility = System.Windows.Visibility.Collapsed;
-        //        WindowControlsGridView.Visibility = System.Windows.Visibility.Visible;
-        //        if (WindowControlsGridView.DataSourceList == null || WindowControlsGridView.DataSourceList.Count == 0)
-        //            ShowFilterElementsPage();
-
-        //        image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@TreeView_24x24.png"));
-        //        GridTreeViewButton.Content = image;
-        //        GridTreeViewButton.ToolTip = "Switch to Tree View";
-        //        RefreshControlsGrid();
-        //    }
-        //}
-
-        private void SyncWithLiveSpyButton_Click(object sender, RoutedEventArgs e)
-        {
-            //System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-
-            //if (((Button)sender).ToolTip.ToString().Contains("Cancel") == true)
-            //{
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@WithoutSpyWhite_24x24.png"));
-            //    SyncWithLiveSpyButton.Content = image;
-            //    SyncWithLiveSpyButton.ToolTip = "Click to Locate Live Spy Found Element";
-
-            //    mSyncControlsViewWithLiveSpy = false;
-            //}
-            //else
-            //{
-            //    image.Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/" + "@WithSpyWhite_24x24.png"));
-            //    SyncWithLiveSpyButton.Content = image;
-            //    SyncWithLiveSpyButton.ToolTip = "Click to Cancel Locate Live Spy Found Element";
-
-            //    mSyncControlsViewWithLiveSpy = true;
-            //    FocusSpyItemOnControlTree();//try to locate last find element by live spy
-            //}
-        }
-
         private bool RefreshFilteredElements()
         {
             if (FilteringCreteriaList.Count != 0)
@@ -1342,94 +909,11 @@ namespace Ginger.WindowExplorer
             }
         }
 
-        //private void ControlsRefreshButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //StatusTextBlock.Text = "Loading Elements...";
-        //    GingerCore.General.DoEvents();
-
-        //    if (WindowControlsTreeView.Visibility == System.Windows.Visibility.Visible)
-        //        RefreshTreeControls();
-        //    else
-        //        RefreshFilteredElements();
-        //    //StatusTextBlock.Text = "Ready";
-        //}
-
         private void AddSwitchWindowActionButton_Click(object sender, RoutedEventArgs e)
         {
             if (xWindowSelection.WindowsComboBox.SelectedValue != null)
             {
                 WindowExplorerCommon.CreateActUISwitchWindowAction(((AppWindow)xWindowSelection.WindowsComboBox.SelectedValue).Title, mContext);
-            }
-        }
-
-        //private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
-        //{
-        //    ControlsViewRow.Height = new GridLength(200, GridUnitType.Star);
-        //    ControlsViewRow.MaxHeight = Double.PositiveInfinity;
-        //    //if (Row2Splitter != null)
-        //    //    Row2Splitter.IsEnabled = true;
-        //}
-
-        //private void ControlsViewsExpander_Collapsed(object sender, RoutedEventArgs e)
-        //{
-        //    ControlsViewRow.Height = new GridLength(35);
-        //    ControlsViewRow.MaxHeight = 35;
-        //    //if (Row2Splitter != null)
-        //    //    Row2Splitter.IsEnabled = false;
-        //}
-
-        private void SelectedControlDetailsExpander_Expanded(object sender, RoutedEventArgs e)
-        {
-            //if (mControlFrameContentPage == null)
-            //{
-            //    SelectedControlDetailsExpander.IsExpanded = false;
-            //    return;
-            //}
-            //ControlDetailsRow.Height = new GridLength(200, GridUnitType.Star);
-            //ControlDetailsRow.MaxHeight = Double.PositiveInfinity;
-        }
-
-        private void SelectedControlDetailsExpander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            //ControlDetailsRow.Height = new GridLength(35);
-            //ControlDetailsRow.MaxHeight = 35;
-        }
-
-        private void SetDetailsExpanderDesign(bool detailsExist, ElementInfo selectedElementInfo)
-        {
-            if (detailsExist == false)
-            {
-                //SelectedControlDetailsExpanderLable.Content = "Selected Element Details & Actions";
-                //SelectedControlDetailsExpanderLable.Foreground = System.Windows.Media.Brushes.Gray;
-                //SelectedControlDetailsExpander.IsEnabled = false;
-                //SelectedControlDetailsExpander.IsExpanded = false;
-            }
-            else
-            {
-                //SelectedControlDetailsExpanderLable.Content = "'" + selectedElementInfo.ElementTitle + "' Element Details & Actions";
-                //SelectedControlDetailsExpanderLable.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$BackgroundColor_LightGray")).ToString()); ;
-                //SelectedControlDetailsExpander.IsEnabled = true;
-                if (mFirstElementSelectionDone == false)
-                {
-                    //SelectedControlDetailsExpander.IsExpanded = true;
-                    mFirstElementSelectionDone = true;
-                }
-            }
-        }
-
-        private void SetActionsTabDesign(bool actionsExist)
-        {
-            if (actionsExist == false)
-            {
-                //ActionsTab.IsEnabled = false;
-                //ControlActionsFrame.Visibility = System.Windows.Visibility.Collapsed;
-                //GeneralTab.IsSelected = true;
-            }
-            else
-            {
-                //ActionsTab.IsEnabled = true;
-                //ActionsTab.IsSelected = true;
-                //ControlActionsFrame.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -1470,6 +954,26 @@ namespace Ginger.WindowExplorer
                     WebPlatform webPlatformInfo = new WebPlatform();
                     UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
                     break;
+
+                case ePlatformType.Java:
+                    JavaPlatform javaPlatformInfo = new JavaPlatform();
+                    UIElementsTypeList = javaPlatformInfo.GetPlatformUIElementsType();
+                    break;
+
+                case ePlatformType.Windows:
+                    WindowsPlatform windowsPlatformInfo = new WindowsPlatform();
+                    UIElementsTypeList = windowsPlatformInfo.GetPlatformUIElementsType();
+                    break;
+
+                case ePlatformType.Mobile:
+                    MobilePlatform mobilePlatformInfo = new MobilePlatform();
+                    UIElementsTypeList = mobilePlatformInfo.GetPlatformUIElementsType();
+                    break;
+
+                case ePlatformType.PowerBuilder:
+                    PowerBuilderPlatform pbPlatformInfo = new PowerBuilderPlatform();
+                    UIElementsTypeList = pbPlatformInfo.GetPlatformUIElementsType();
+                    break;
             }
             if (UIElementsTypeList != null)
             {
@@ -1497,32 +1001,6 @@ namespace Ginger.WindowExplorer
                             CheckedFilteringCreteriaList.Add(filter);
                     }
             }
-        }
-
-
-
-        bool POMOn = false;
-
-        private void POMButton_Click(object sender, RoutedEventArgs e)
-        {
-            //POMOn = !POMOn;
-            //ShowPOMOrControlsViewsExpander();
-        }
-
-        private void ShowPOMOrControlsViewsExpander()
-        {
-            //if (POMOn)
-            //{
-            //    ControlsViewsExpander.Visibility = Visibility.Collapsed;
-            //    POMFrame.Visibility = Visibility.Visible;
-            //    ControlDetailsRow.Height = new GridLength(200, GridUnitType.Star);
-            //    ControlDetailsRow.MaxHeight = Double.PositiveInfinity;
-            //}
-            //else
-            //{
-            //    ControlsViewsExpander.Visibility = Visibility.Visible;
-            //    POMFrame.Visibility = Visibility.Collapsed;
-            //}
         }
 
         ScreenShotViewPage mScreenShotViewPage;
@@ -1578,18 +1056,15 @@ namespace Ginger.WindowExplorer
             }
             set
             {
-                if(value != mLastSearchFinished)
-                {
-                    mLastSearchFinished = value;
+                mLastSearchFinished = value;
 
-                    if(mLastSearchFinished)
-                    {
-                        xLoadingFoundElementPnl.Visibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        xLoadingFoundElementPnl.Visibility = Visibility.Visible;
-                    }
+                if (mLastSearchFinished)
+                {
+                    xStatusBarText.Text = "Please Wait..Loading Element Details..";
+                }
+                else
+                {
+                    xStatusBarText.Text = "Click on an element to see its details";
                 }
             }
         }
@@ -1627,15 +1102,6 @@ namespace Ginger.WindowExplorer
                 //    mWindowExplorerDriver.UnHighLightElements();
                 //}
 
-                //if(currentHighlightedElement == null)
-                //{
-                //    RemoveElemntRectangle();
-
-                //    System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
-
-                //    HighlightSelectedElement(pointOnImg);
-                //}
-
                 LastSearchFinished = false;
 
                 RemoveElemntRectangle();
@@ -1647,51 +1113,12 @@ namespace Ginger.WindowExplorer
                 xUCElementDetails.SelectedElement = currentHighlightedElement;
 
                 mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
-                //mActInputValues = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetItemSpecificActionInputValues();
 
                 ShowCurrentControlInfo();
 
                 LastSearchFinished = true;
             }
         }
-
-        //private async void StorePageSource()
-        //{
-        //    int step = 0;
-        //    try
-        //    {
-        //        step = 1;
-        //        pageSourceString = await mApplicationAgent.Agent.Driver .GetPageSource();
-        //        pageSourceTextViewer.Text = pageSourceString;
-        //        step = 2;
-        //        pageSourceXml = new XmlDocument();
-        //        pageSourceXml.LoadXml(pageSourceString);
-        //        pageSourceXMLViewer.xmlDocument = pageSourceXml;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        if (AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.AndroidBrowser ||
-        //                        AppiumDriver.DriverPlatformType == SeleniumAppiumDriver.eSeleniumPlatformType.iOSBrowser)
-        //            Reporter.ToLog(eLogLevel.ERROR, "Failed to get mobile page source or convert it to XML format", ex);
-        //        else
-        //            Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, ex.Message);
-
-        //        if (step == 1)
-        //        {
-        //            pageSourceXml = null;
-        //            pageSourceXMLViewer.xmlDocument = null;
-        //            pageSourceTextViewer.Text = string.Empty;
-        //        }
-        //        else
-        //        {
-        //            pageSourceXml = null;
-        //            pageSourceXMLViewer.xmlDocument = null;
-        //        }
-        //    }
-
-        //    LoadingLabel.Visibility = Visibility.Hidden;
-        //    inspectorElementTabsControl.Visibility = Visibility.Visible;
-        //}
 
         private ElementInfo mCurrentHighlightedElement;
         public ElementInfo currentHighlightedElement
@@ -1719,20 +1146,10 @@ namespace Ginger.WindowExplorer
                 ElementInfo inspectElementInfo = await ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetElementAtPoint(pointOnMobile_X, pointOnMobile_Y);
                 if (inspectElementInfo != null && inspectElementInfo != currentHighlightedElement)
                 {
-                    //show panel
-                    //SetAttributesActionsView(true);
-
-                    //update the attributes details
-                    //elementAttributesDetails.Text = string.Empty;
-                    //elementAttributesDetails.Text = inspectElementNode.LocalName + ":" + System.Environment.NewLine;
-                    //foreach (XmlAttribute attribute in inspectElementNode.Attributes)
-                    //    elementAttributesDetails.Text += attribute.Name + "=   '" + attribute.Value + "'" + System.Environment.NewLine;
-
                     //mark the element bounds on image
                     DrawElementRectangleAsync(inspectElementInfo);
 
                     //TODO: select the node in the xml
-
                     currentHighlightedElement = inspectElementInfo;
                 }
             }
@@ -1770,10 +1187,19 @@ namespace Ginger.WindowExplorer
                     switch (((GenericAppiumDriver)mWindowExplorerDriver).DevicePlatformType)
                     {
                         case Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eDevicePlatformType.Android:
-                            ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
-                            ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
-                            ratio_X = (mScreenShotViewPage.xMainImage.Source.Width / 3) / mScreenShotViewPage.xMainImage.ActualWidth;
-                            ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height / 3) / mScreenShotViewPage.xMainImage.ActualHeight;
+
+                            if (mApplicationAgent.Agent.Driver is GenericAppiumDriver && 
+                                ((GenericAppiumDriver)mApplicationAgent.Agent.Driver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
+                            {
+                                ratio_X = (mScreenShotViewPage.xMainImage.Source.Width * 3) / mScreenShotViewPage.xMainImage.ActualWidth;
+                                ratio_Y = (mScreenShotViewPage.xMainImage.Source.Height * 3) / mScreenShotViewPage.xMainImage.ActualHeight;
+                            }
+                            else
+                            {
+                                ratio_X = mScreenShotViewPage.xMainImage.Source.Width / mScreenShotViewPage.xMainImage.ActualWidth;
+                                ratio_Y = mScreenShotViewPage.xMainImage.Source.Height / mScreenShotViewPage.xMainImage.ActualHeight;
+                            }
+
                             string bounds = rectangleXmlNode != null ? rectangleXmlNode.Attributes["bounds"].Value : "";
                             bounds = bounds.Replace("[", ",");
                             bounds = bounds.Replace("]", ",");
@@ -1824,7 +1250,6 @@ namespace Ginger.WindowExplorer
 
                 mScreenShotViewPage.xHighlighterBorder.Width = rectangleWidth;
                 mScreenShotViewPage.xHighlighterBorder.Height = rectangleHeight;
-                //mScreenShotViewPage.xHighLighterRectangle.Fill = new SolidColorBrush() { Color = Colors.Red, Opacity = 0.5f };
                 mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Visible;
             }
             catch (Exception ex)
@@ -1837,7 +1262,6 @@ namespace Ginger.WindowExplorer
         {
             if (mScreenShotViewPage != null)
             {
-                //mScreenShotViewPage.xHighLighterRectangle.Visibility = Visibility.Collapsed;
                 mScreenShotViewPage.xHighlighterBorder.Visibility = Visibility.Collapsed;
             }
         }
@@ -1863,167 +1287,6 @@ namespace Ginger.WindowExplorer
 
             return pointOnAppScreen;
         }
-
-        //public ElementInfo FindElementXmlNodeByXY(long pointOnMobile_X, long pointOnMobile_Y)
-        //{
-        //    try
-        //    {
-        //        //get screen elements nodes
-
-        //        // Do once?
-        //        // if XMLSOurce changed we need to refresh
-        //        if (pageSourceXml == null)
-        //        {
-        //            //pageSourceString = (mContext.Agent.Driver as SeleniumDriver).GetPageSourceString();// ((SeleniumDriver)mWindowExplorerDriver).page.GetPageSource();
-        //            //pageSourceHtml = new HtmlDocument();
-        //            //pageSourceHtml.LoadHtml(pageSourceString);
-
-        //            //pageSourceXml = new XmlDocument();
-        //            //pageSourceXml.LoadXml(pageSourceString);
-        //            //pageSourceXMLViewer.xmlDocument = pageSourceXml;
-        //        }
-
-        //        IEnumerable<ElementInfo> ElmsNodes = (mContext.Agent.Driver as SeleniumDriver).GetAllElementsFromPage("", null);
-
-        //        //ElmsNodes = pageSourceHtml.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
-
-        //        ///get the selected element from screen
-        //        if (ElmsNodes != null && ElmsNodes.Count() > 0)
-        //        {
-        //            //move to collection for getting last node which fits to bounds
-        //            ObservableList<ElementInfo> ElmsNodesColc = new ObservableList<ElementInfo>();
-        //            foreach (ElementInfo elemNode in ElmsNodes)
-        //            {
-        //                //if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOS && elemNode.LocalName == "UIAWindow") continue;                        
-        //                //try { if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.Android && elemNode.Attributes["focusable"].Value == "false") continue; }catch (Exception ex) { }
-        //                bool skipElement = false;
-        //                //if (FilterElementsChK.IsChecked == true)
-        //                //{
-        //                //    string[] filterList = FilterElementsTxtbox.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-        //                //    try
-        //                //    {
-        //                //        for (int indx = 0; indx < filterList.Length; indx++)
-        //                //            if (elemNode.Name.Contains(filterList[indx].Trim()) ||
-        //                //                   elemNode.LocalName.Contains(filterList[indx].Trim()))
-        //                //            {
-        //                //                skipElement = true;
-        //                //                break;
-        //                //            }
-        //                //    }
-        //                //    catch (Exception ex)
-        //                //    {
-        //                //        //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); 
-        //                //    }
-        //                //}
-
-        //                if (!skipElement)
-        //                    ElmsNodesColc.Add(elemNode);
-        //            }
-
-        //            Dictionary<ElementInfo, long> foundElements = new Dictionary<ElementInfo, long>();
-        //            foreach (ElementInfo elementNode in ElmsNodesColc.Reverse())
-        //            {
-        //                //get the element location
-        //                long element_Start_X = -1;
-        //                long element_Start_Y = -1;
-        //                long element_Max_X = -1;
-        //                long element_Max_Y = -1;
-
-        //                //switch (AppiumDriver.DriverPlatformType)
-        //                //{
-        //                //    case SeleniumAppiumDriver.eSeleniumPlatformType.Android:
-        //                //        try
-        //                //        {
-        //                //            if (elementNode.Attributes["bounds"] != null)
-        //                //            {
-        //                //                string bounds = elementNode.Attributes["bounds"].Value;
-        //                //                bounds = bounds.Replace("[", ",");
-        //                //                bounds = bounds.Replace("]", ",");
-        //                //                string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        //                //                if (boundsXY.Count() == 4)
-        //                //                {
-        //                //                    element_Start_X = Convert.ToInt64(boundsXY[0]);
-        //                //                    element_Start_Y = Convert.ToInt64(boundsXY[1]);
-        //                //                    element_Max_X = Convert.ToInt64(boundsXY[2]);
-        //                //                    element_Max_Y = Convert.ToInt64(boundsXY[3]);
-        //                //                }
-        //                //            }
-        //                //            else
-        //                //            {
-        //                //                element_Start_X = -1;
-        //                //                element_Start_Y = -1;
-        //                //                element_Max_X = -1;
-        //                //                element_Max_Y = -1;
-        //                //            }
-        //                //        }
-        //                //        catch (Exception ex)
-        //                //        {
-        //                //            element_Start_X = -1;
-        //                //            element_Start_Y = -1;
-        //                //            element_Max_X = -1;
-        //                //            element_Max_Y = -1;
-        //                //            //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-        //                //        }
-        //                //        break;
-
-        //                //    case SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
-        //                //        try
-        //                //        {
-        //                //            element_Start_X = Convert.ToInt64(elementNode.Attributes["x"].Value);
-        //                //            element_Start_Y = Convert.ToInt64(elementNode.Attributes["y"].Value);
-        //                //            element_Max_X = element_Start_X + Convert.ToInt64(elementNode.Attributes["width"].Value);
-        //                //            element_Max_Y = element_Start_Y + Convert.ToInt64(elementNode.Attributes["height"].Value);
-        //                //        }
-        //                //        catch (Exception ex)
-        //                //        {
-        //                //            element_Start_X = -1;
-        //                //            element_Start_Y = -1;
-        //                //            element_Max_X = -1;
-        //                //            element_Max_Y = -1;
-        //                //            //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-        //                //        }
-        //                //        break;
-        //                //}
-
-
-        //                if (((pointOnMobile_X >= element_Start_X) && (pointOnMobile_X <= element_Max_X))
-        //                           && ((pointOnMobile_Y >= element_Start_Y) && (pointOnMobile_Y <= element_Max_Y)))
-        //                {
-        //                    //object found                                
-        //                    //return elementNode;
-        //                    foundElements.Add(elementNode, ((element_Max_X - element_Start_X) * (element_Max_Y - element_Start_Y)));
-        //                }
-        //            }
-
-        //            //getting the small node size found
-        //            ElementInfo foundNode = null;
-        //            long foundNodeSize = 0;
-        //            if (foundElements.Count > 0)
-        //            {
-        //                foundNode = foundElements.Keys.First();
-        //                foundNodeSize = foundElements.Values.First();
-        //            }
-        //            for (int indx = 0; indx < foundElements.Keys.Count; indx++)
-        //            {
-        //                if (foundElements.Values.ElementAt(indx) < foundNodeSize)
-        //                {
-        //                    foundNode = foundElements.Keys.First();
-        //                    foundNodeSize = foundElements.Values.ElementAt(indx);
-        //                }
-        //            }
-        //            if (foundNode != null)
-        //                return foundNode;
-        //        }
-
-        //        return null;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
-        //        return null;
-        //    }
-        //}
 
         private void ViewsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

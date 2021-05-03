@@ -1158,7 +1158,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             ElementInfo EI = new ElementInfo();
             EI.ElementTitle = GetNameFor(xmlNode);
-            EI.ElementType = GetAttrValue(xmlNode, "class");
+            Tuple<string, eElementType> Elementype = GetElementTypeEnum(xmlNode);
+            EI.ElementType = Elementype.Item1;           //GetAttrValue(xmlNode, "class");
+            EI.ElementTypeEnum = Elementype.Item2;
             EI.Value = GetAttrValue(xmlNode, "text");
             if (string.IsNullOrEmpty(EI.Value))
             {
@@ -1171,28 +1173,20 @@ namespace Amdocs.Ginger.CoreNET
             return EI;
         }
 
-        /*
-        public static Tuple<string, eElementType> GetElementTypeEnum(IWebElement el = null, XmlNode xmlNode = null)
+        public static Tuple<string, eElementType> GetElementTypeEnum(XmlNode xmlNode)
         {
             Tuple<string, eElementType> returnTuple;
             eElementType elementType = eElementType.Unknown;
             string elementTagName = string.Empty;
-            string elementTypeAtt = string.Empty;
-            
-            if (el != null)
-            {
-                if ((el.TagName != null) && (el.TagName != string.Empty))
-                    elementTagName = el.TagName.ToUpper();
-                else
-                    elementTagName = "INPUT";
-                elementTypeAtt = el.GetAttribute("type");
-            }
-            else if (xmlNode != null)
+            string elementTypeAtt;
+
+            if (xmlNode != null)
             {
                 elementTagName = xmlNode.Name;
-                if (xmlNode.Attributes.Where(x => x.Name == "type").FirstOrDefault() != null)
+                elementTypeAtt = GetAttrValue(xmlNode, "type");
+                if(string.IsNullOrEmpty(elementTypeAtt))
                 {
-                    elementTypeAtt = htmlNode.Attributes["type"].Value;
+                    elementTypeAtt = GetAttrValue(xmlNode, "class");
                 }
             }
             else
@@ -1295,7 +1289,6 @@ namespace Amdocs.Ginger.CoreNET
 
             return returnTuple;
         }
-        */
 
         private async Task<string> GetNodeXPath(XmlNode xmlNode)
         {
@@ -1376,7 +1369,7 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Name;
         }
 
-        string GetAttrValue(XmlNode xmlNode, string attr)
+        static string GetAttrValue(XmlNode xmlNode, string attr)
         {
             if (xmlNode.Attributes == null) return null;
             if (xmlNode.Attributes[attr] == null) return null;
@@ -1469,7 +1462,7 @@ namespace Amdocs.Ginger.CoreNET
 
             return list;
         }
-        
+
 
         public event RecordingEventHandler RecordingEvent;
 
@@ -1787,6 +1780,43 @@ namespace Amdocs.Ginger.CoreNET
             XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
 
             return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return false;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.Screenshot;
+        }
+
+        public string SelectionWindowText()
+        {
+            if (AppType == eAppType.Web)
+            {
+                return "Page:";
+            }
+            else
+            {
+                return "Window:";
+            }
         }
     }
 }

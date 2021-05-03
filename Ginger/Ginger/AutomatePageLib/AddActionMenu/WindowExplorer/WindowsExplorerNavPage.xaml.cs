@@ -35,7 +35,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
     public partial class WindowsExplorerNavPage : Page, INavPanelPage
     {
         Context mContext;
-        IWindowExplorer mDriver;
+        private IWindowExplorer mWindowExplorerDriver;
+        IWindowExplorer WindowExplorerDriver
+        {
+            get
+            {
+                return mWindowExplorerDriver;
+            }
+            set
+            {
+                mWindowExplorerDriver = value;
+            }
+        }
         List<AgentPageMappingHelper> mWinExplorerPageList = null;
         WindowExplorerPage mCurrentLoadedPage = null;
 
@@ -48,11 +59,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
             }
             else
             {
-                mDriver = null;
+                WindowExplorerDriver = null;
             }
 
             LoadWindowExplorerPage();            
@@ -71,11 +82,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     if (mContext.Agent != null)
                     {
-                        mDriver = mContext.Agent.Driver as IWindowExplorer;
+                        WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
                     }
                     else
                     {
-                        mDriver = null;
+                        WindowExplorerDriver = null;
                     }
 
                     if (e.PropertyName == nameof(Context.Agent) && mContext.Agent != null)
@@ -84,7 +95,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        mCurrentLoadedPage.SetDriver(mDriver);
+                        mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
                     }
                 }
             }
@@ -125,7 +136,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     if (appAgent != null)
                     {
                         mCurrentLoadedPage = new WindowExplorerPage(appAgent, mContext);
-                        mCurrentLoadedPage.SetDriver(mDriver);
+                        mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
                         if (mWinExplorerPageList == null)
                         {
                             mWinExplorerPageList = new List<AgentPageMappingHelper>();
@@ -142,15 +153,15 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Agent != null)
             {
-                mDriver = mContext.Agent.Driver as IWindowExplorer;
+                WindowExplorerDriver = mContext.Agent.Driver as IWindowExplorer;
                 LoadWindowExplorerPage();
             }
             else
             {
-                mDriver = null;
+                WindowExplorerDriver = null;
             }
 
-            mCurrentLoadedPage.SetDriver(mDriver);
+            mCurrentLoadedPage.SetDriver(WindowExplorerDriver);
         }
     }
 }

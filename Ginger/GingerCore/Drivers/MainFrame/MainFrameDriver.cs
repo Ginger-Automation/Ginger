@@ -805,5 +805,35 @@ namespace GingerCore.Drivers.MainFrame
         {
             throw new NotImplementedException();
         }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { /*eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView*/ };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.none;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
+        }
     }
 }

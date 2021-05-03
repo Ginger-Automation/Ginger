@@ -36,7 +36,6 @@ namespace GingerCore.UserControls
     public partial class XMLViewer : UserControl
     {
         private XmlDocument _xmldocument;
-        private HtmlDocument _htmldocument;
 
         public XMLViewer()
         {
@@ -53,16 +52,6 @@ namespace GingerCore.UserControls
             }
         }
 
-        public HtmlDocument htmlDocument
-        {
-            get { return _htmldocument; }
-            set
-            {
-                _htmldocument = value;
-                BindHTMLDocument();
-            }
-        }
-
         private void BindXMLDocument()
         {
             if (_xmldocument == null)
@@ -70,7 +59,7 @@ namespace GingerCore.UserControls
                 xmlTree.ItemsSource = null;
                 return;
             }
- 
+
             XmlDataProvider provider = new XmlDataProvider();
             provider.Document = _xmldocument;
             Binding binding = new Binding();
@@ -79,86 +68,5 @@ namespace GingerCore.UserControls
             xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
         }
 
-        private void BindHTMLDocument()
-        {
-            if (_htmldocument == null)
-            {
-                xmlTree.ItemsSource = null;
-                return;
-            }
-
-            IEnumerable<HtmlNode> htmlElements = _htmldocument.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
-
-            if (htmlElements.Count() != 0)
-            {
-                TreeViewItem TVRoot = new TreeViewItem();
-                TVRoot.Tag = _htmldocument.DocumentNode;
-                TVRoot.Name = "Document";
-                TVRoot.Header = "<" + _htmldocument.DocumentNode.Name + ">";
-
-                TreeViewItem childItem;
-
-                //foreach (HtmlNode htmlElemNode in htmlElements)
-                //{
-                    try
-                    {
-                        childItem = new TreeViewItem();
-                        TVRoot.Items.Add(childItem);
-                        bind(_htmldocument.DocumentNode, childItem);
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception while generating HTML Source Doc Tree", ex);
-                    }
-                //}
-
-                htmlTree.Items.Add(TVRoot);
-                htmlTree.Visibility = System.Windows.Visibility.Visible;
-            }
-
-            //Binding binding = new Binding();
-            //binding.Source = htmlElements;
-            //binding.XPath = "child::node()";
-            //xmlTree.SetBinding(TreeView.ItemsSourceProperty, binding);
-        }
-
-        public void bind(HtmlNode htmlN, TreeViewItem treeN)
-        {
-            StringBuilder result = new StringBuilder();
-            switch (htmlN.NodeType)
-            {
-                case HtmlNodeType.Comment:
-                    result.Append(htmlN.InnerText);
-                    break;
-                case HtmlNodeType.Document:
-                    result.Append("root");
-                    break;
-                case HtmlNodeType.Element:
-                    result.Append('<').Append(htmlN.Name).Append('>');
-                    break;
-                case HtmlNodeType.Text:
-                    result.Append(htmlN.InnerText);
-                    break;
-                default:
-                    result.Append("undefined element");
-                    break;
-            }
-
-            treeN.Header = result.ToString();
-            //treeN.Name = result.ToString();
-            treeN.Tag = htmlN;
-
-            TreeViewItem childTN;
-
-            foreach (HtmlNode node in htmlN.ChildNodes)
-            {
-                if (node.NodeType == HtmlNodeType.Element || node.InnerText.Trim().Length > 0)
-                {
-                    childTN = new TreeViewItem();
-                    treeN.Items.Add(childTN);
-                    bind(node, childTN);
-                }
-            }
-        }
     }
 }
