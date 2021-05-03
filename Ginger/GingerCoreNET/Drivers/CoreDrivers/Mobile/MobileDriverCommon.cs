@@ -48,6 +48,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
         Live, PostOperation, Disabled
     }
 
+    public enum eVolumeOperation
+    {
+        Up, Down
+    }
+
     public class MobileDriverCommon
     {
 

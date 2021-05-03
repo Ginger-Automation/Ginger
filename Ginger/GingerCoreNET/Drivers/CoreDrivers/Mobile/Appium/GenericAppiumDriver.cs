@@ -355,7 +355,6 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
-
                 //Naitive/Hybrid
                 if (actionType == typeof(ActUIElement))
                 {
@@ -369,7 +368,6 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
-
                 //Legacy
                 if (actionType == typeof(ActGenElement))
                 {
@@ -377,7 +375,7 @@ namespace Amdocs.Ginger.CoreNET
                     return;
                 }
 
-                act.Error = "Run Action failed due to unrecognized action type: '" + actionType.ToString() + "'";
+                act.Error = "Mobile Agent configuration do not support this Action.";
                 act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
             }
             catch (Exception ex)
@@ -766,50 +764,84 @@ namespace Amdocs.Ginger.CoreNET
                 switch (act.MobileDeviceAction)
                 {
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
-                        tc = new TouchAction(Driver);
-                        try
-                        {
-                            tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-                        }
-                        catch (Exception ex)
-                        {
-                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-                        }
+                        tc = new TouchAction(Driver);                        
+                        tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))));                        
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
-                        tc = new TouchAction(Driver);
-                        try
-                        {
-                            tc.LongPress(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-                        }
-                        catch (Exception ex)
-                        {
-                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-                        }
+                        tc = new TouchAction(Driver);                        
+                        tc.LongPress(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))));
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.TapXY:
-                        try
-                        {
-                            TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]), Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]));
-                        }
-                        catch (Exception ex)
-                        {
-                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
-                        }
+                    case ActMobileDevice.eMobileDeviceAction.TapXY:                        
+                        TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
                         PerformBackButtonPress();
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.PressHomeButton:
-                        PerformHomeButtonPress();
+                    case ActMobileDevice.eMobileDeviceAction.PressHomeButton:                        
+                        if (AppType == eAppType.NativeHybride)
+                        {
+                            PerformHomeButtonPress();
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressMenuButton:
-                        PerformMenuButtonPress();
+                        if (AppType == eAppType.NativeHybride && DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            PerformMenuButtonPress();
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.OpenCamera:
+                        if (AppType == eAppType.NativeHybride && DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            PerformOpenCamera();
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PressVolumeUp:
+                        PerformVolumeOperation(eVolumeOperation.Up);
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PressVolumeDown:
+                        PerformVolumeOperation(eVolumeOperation.Down);
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.PressKey:
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            PerformKeyPress(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.MobilePressKey)));
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }                        
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.LongPressKey:
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            PerformLongKeyPress(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.MobilePressKey)));
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
@@ -828,47 +860,71 @@ namespace Amdocs.Ginger.CoreNET
                         SwipeScreen(eSwipeSide.Right);
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.Wait:
-                        Thread.Sleep(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")) * 1000);
-                        break;
-
                     case ActMobileDevice.eMobileDeviceAction.TakeScreenShot:
                         ActScreenShotHandler(act);
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.RefreshDeviceScreenImage:
+                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
+                            DoDrag(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))),
+                                (Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X2)))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y2))));
                         break;
 
-                    case ActMobileDevice.eMobileDeviceAction.DragXYXY:
-                        try
+                    case ActMobileDevice.eMobileDeviceAction.OpenApp:                        
+                        if (AppType == eAppType.NativeHybride)
                         {
-                            DoDrag(Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[0]),
-                                        Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[1]),
-                                        Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[2]),
-                                        Convert.ToInt32(act.GetInputParamCalculatedValue("Value").Split(',')[3]));
+                            Driver.LaunchApp();
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            act.Error = "Error: Action failed to be performed, Details: " + ex.Message;
+                            act.Error = "Operation not supported for this mobile OS or application type.";
                         }
                         break;
-                    case ActMobileDevice.eMobileDeviceAction.OpenAppByName:
-                        Driver.LaunchApp();
+
+                    case ActMobileDevice.eMobileDeviceAction.CloseApp:
+                        if (AppType == eAppType.NativeHybride)
+                        {
+                            Driver.CloseApp();
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
-                        string[] arr = act.ValueForDriver.Split(',');
-                        int x1 = Int32.Parse(arr[0]);
-                        int y1 = Int32.Parse(arr[1]);
-                        int x2 = Int32.Parse(arr[2]);
-                        int y2 = Int32.Parse(arr[3]);
                         ITouchAction swipe;
-                        swipe = BuildDragAction(Driver, x1, y1, x2, y2, 1000);
+                        swipe = BuildDragAction(Driver, 
+                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), 
+                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))), 
+                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X2))), 
+                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y2))), 1000);
                         swipe.Perform();
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.GetPageSource:
                         act.AddOrUpdateReturnParamActual("Page Source", Driver.PageSource);
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.LockDevice:
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            ((AndroidDriver<AppiumWebElement>)Driver).Lock();
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
+                        break;
+
+                    case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
+                        if (DevicePlatformType == eDevicePlatformType.Android)
+                        {
+                            ((AndroidDriver<AppiumWebElement>)Driver).Unlock();
+                        }
+                        else
+                        {
+                            act.Error = "Operation not supported for this mobile OS or application type.";
+                        }
                         break;
 
                     default:
@@ -945,15 +1001,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void PerformBackButtonPress()
         {
-            switch (DevicePlatformType)
-            {
-                case eDevicePlatformType.Android:
-                    Driver.Navigate().Back();
-                    break;
-                case eDevicePlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
-                    break;
-            }
+            Driver.Navigate().Back();
         }
 
         public void PerformHomeButtonPress()
@@ -962,7 +1010,7 @@ namespace Amdocs.Ginger.CoreNET
             {
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Home);
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
+                    //((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(3);
                     break;
                 case eDevicePlatformType.iOS:
                     Driver.ExecuteScript("mobile: pressButton", "name", "home");
@@ -977,9 +1025,71 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.Android:
                     ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Menu);
                     break;
-                case eDevicePlatformType.iOS:
-                    Reporter.ToUser(eUserMsgKey.MissingImplementation2);
+            }
+        }
+
+        public void PerformOpenCamera()
+        {
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_CAMERA);
                     break;
+            }
+        }
+
+        public void PerformVolumeOperation(eVolumeOperation volumeOperation)
+        {
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    switch(volumeOperation)
+                    {
+                        case eVolumeOperation.Up:
+                            ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_UP);
+                            break;
+                        case eVolumeOperation.Down:
+                            ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(AndroidKeyCode.Keycode_VOLUME_DOWN);
+                            break;
+                    }
+                    break;
+                case eDevicePlatformType.iOS:
+                    switch (volumeOperation)
+                    {
+                        case eVolumeOperation.Up:
+                            Driver.ExecuteScript("mobile: pressButton", "name", "volumeup");
+                            break;
+                        case eVolumeOperation.Down:
+                            Driver.ExecuteScript("mobile: pressButton", "name", "volumedown");
+                            break;
+                    }                    
+                    break;
+            }
+        }
+
+        public void PerformKeyPress(string key)
+        {
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode((int)Enum.Parse(typeof(AndroidKeyCode), key));
+                    break;
+                //case eDevicePlatformType.iOS:
+                //    Driver.ExecuteScript("mobile: pressButton", "name", key);
+                //    break;
+            }
+        }
+
+        public void PerformLongKeyPress(string key)
+        {
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    ((AndroidDriver<AppiumWebElement>)Driver).LongPressKeyCode((int)Enum.Parse(typeof(AndroidKeyCode), key));
+                    break;
+                    //case eDevicePlatformType.iOS:
+                    //    Driver.ExecuteScript("mobile: pressButton", "name", key);
+                    //    break;
             }
         }
 

@@ -19,6 +19,7 @@ limitations under the License.
 using GingerCore.Actions;
 using System.Windows.Controls;
 using System.Windows;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.Actions
 {
@@ -36,32 +37,54 @@ namespace Ginger.Actions
 
             mAct = Act;
 
-
-            xActionNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction));
-            xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
-            xActionNameComboBox.ComboBox.SelectionChanged -= ActionNameComboBox_SelectionChanged;
-            xActionNameComboBox.ComboBox.SelectionChanged += ActionNameComboBox_SelectionChanged;
-
-            HideUnHideKeyPress();
+            BindControls();
+            SetControlsView();
         }
 
-        private void HideUnHideKeyPress()
+        private void BindControls()
         {
-            if (mAct != null && mAct.MobileDeviceAction == ActMobileDevice.eMobileDeviceAction.PressKey)
-            {
-                xKeyPressComboBox.Visibility = Visibility.Visible;
-                xKeyPressLable.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xKeyPressComboBox.Visibility = Visibility.Collapsed;
-                xKeyPressLable.Visibility = Visibility.Collapsed;
-            }
+            xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
+
+            xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
+
+            xX1TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.X1)), nameof(ActMobileDevice.X1));
+            xY1TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.Y1)), nameof(ActMobileDevice.Y1));
+            xX2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.X2)), nameof(ActMobileDevice.X2));
+            xY2TxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActMobileDevice.Y2)), nameof(ActMobileDevice.Y2));
         }
 
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            HideUnHideKeyPress();
+            SetControlsView();
         }
+
+        private void SetControlsView()
+        {
+            xKeyPressPnl.Visibility = Visibility.Collapsed;
+            xXY1Pnl.Visibility = Visibility.Collapsed;
+            xXY2Pnl.Visibility = Visibility.Collapsed;
+
+            switch (mAct.MobileDeviceAction)
+            {
+                case ActMobileDevice.eMobileDeviceAction.PressKey:
+                case ActMobileDevice.eMobileDeviceAction.LongPressKey:
+                    xKeyPressPnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.PressXY:
+                case ActMobileDevice.eMobileDeviceAction.LongPressXY:
+                case ActMobileDevice.eMobileDeviceAction.TapXY:
+                    xXY1Pnl.Visibility = Visibility.Visible;
+                    break;
+
+                case ActMobileDevice.eMobileDeviceAction.DragXYXY:
+                case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
+                    xXY1Pnl.Visibility = Visibility.Visible;
+                    xXY2Pnl.Visibility = Visibility.Visible;
+                    break;
+            }
+        }      
+
+
     }
 }
