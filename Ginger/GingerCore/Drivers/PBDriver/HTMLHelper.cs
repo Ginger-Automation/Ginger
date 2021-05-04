@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Automation;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -57,10 +58,11 @@ namespace GingerCore.Drivers.PBDriver
         List<ElementInfo> frameElementsList = new List<ElementInfo>();
         AutomationElement AEBrowser;
 
-        public List<ElementInfo> GetVisibleElement()
+        public async Task<List<ElementInfo>> GetVisibleElement()
         {
-            List<ElementInfo> list = GetElementList();
-            return list;
+            //List<ElementInfo> list = await GetElementList();
+            //return list;
+            return await GetElementList();
         }
 
         public HTMLHelper(InternetExplorer IE,AutomationElement AE)
@@ -591,17 +593,17 @@ namespace GingerCore.Drivers.PBDriver
             return xpath;
         }
 
-        public List<ElementInfo> GetElementList()
+        public async Task<List<ElementInfo>> GetElementList()
         {
             List<ElementInfo> list = new List<ElementInfo>();
             frameElementsList.Clear();
-            AddDocumentsAllElements(dispHtmlDocument);
+            await AddDocumentsAllElements(dispHtmlDocument);
             list.AddRange(frameElementsList);
             frameElementsList.Clear();
             return list;
         }
 
-        void AddDocumentsAllElements(DispHTMLDocument DispDoc)
+        async Task AddDocumentsAllElements(DispHTMLDocument DispDoc)
         {
             IHTMLElementCollection ElementCollection;
             HTMLElementInfo HTMLEI;
@@ -626,13 +628,13 @@ namespace GingerCore.Drivers.PBDriver
                         frameContent = (IHTMLDocument2)domNode2.document;
 
                         DispDoc = (DispHTMLDocument)frameContent;
-                        AddDocumentsAllElements(DispDoc);
+                        await AddDocumentsAllElements(DispDoc);
                     }
                     catch(Exception ex)
                     {
                         if (InitFrame(h1) == "true")
                         {
-                            AddDocumentsAllElements(currentFrameDocument);
+                            await AddDocumentsAllElements(currentFrameDocument);
                         }
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
                     }

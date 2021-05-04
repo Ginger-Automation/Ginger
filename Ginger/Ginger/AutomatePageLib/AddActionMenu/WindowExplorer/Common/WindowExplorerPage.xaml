@@ -65,10 +65,18 @@
                     </TabItem.Header>
 
                     <Grid>
+                        <!--Loading panel-->
                         <StackPanel x:Name="xLoadingScreenShotBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
                             <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
                             <TextBlock Text="Loading Screenshot . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </StackPanel>
+
+                        <!--Retry Button for error in taking screenshot-->
+                        <StackPanel x:Name="xRetrySSBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
+                            <usercontrols:ucButton x:Name="xRetryScreenshotBtn" ButtonType="PanelButton" ButtonFontImageSize="20" ButtonImageType="Retry" 
+                                       ButtonImageHeight="20" ButtonImageWidth="20" ButtonText="Retry" Click="xRetryScreenshotBtn_Click" />
+                        </StackPanel>
+
                         <Frame x:Name="xScreenShotFrame" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     </Grid>
                 </TabItem>
@@ -133,7 +141,7 @@
         </Grid>
 
         <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="xLoadingFoundElementPnl" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-            <usercontrols:ImageMakerControl DockPanel.Dock="Left" ImageType="Processing" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <usercontrols:ImageMakerControl x:Name="xStatusBarIcon" DockPanel.Dock="Left" ImageType="MousePointer" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
             <TextBlock x:Name="xStatusBarText" VerticalAlignment="Center" DockPanel.Dock="Left" Text="Please Wait.. Loading Element Details.." Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
         </DockPanel>
     </Grid>

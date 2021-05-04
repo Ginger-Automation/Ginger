@@ -60,7 +60,7 @@ namespace Ginger
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        bool mSelectedElementChanged = false;
+        bool SelectedElementChanged = false;
         private ElementInfo mSelectedElement;
         public ElementInfo SelectedElement
         {
@@ -85,6 +85,7 @@ namespace Ginger
                         (mCurrentControlTreeViewItem.NodeObject() as GingerCore.Actions.UIAutomation.UIAElementInfo).WindowExplorer = mSelectedElement.WindowExplorer;
                     }
 
+                    SelectedElementChanged = true;
                     RefreshPropertiesAndLocators();
                     RefreshElementAction();
                 }
@@ -101,10 +102,6 @@ namespace Ginger
                 if (xElementDetailsTabs.SelectedItem == xAddActionTab)
                 {
                     UpdateElementActionTab();
-                }
-                else
-                {
-                    mSelectedElementChanged = true;
                 }
             }
             catch (Exception exc)
@@ -255,9 +252,9 @@ namespace Ginger
                 return;
             }
 
-            if (mSelectedElement != null)
+            if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(mSelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement);
             }
         }
 
@@ -266,7 +263,7 @@ namespace Ginger
             xLocatorsGrid.Grid.CommitEdit();
 
             ElementLocator locator = new ElementLocator() { Active = true };
-            mSelectedElement.Locators.Add(locator);
+            SelectedElement.Locators.Add(locator);
 
             xLocatorsGrid.Grid.SelectedItem = locator;
             xLocatorsGrid.ScrollToViewCurrentItem();
@@ -288,7 +285,7 @@ namespace Ginger
                 }
                 else
                 {
-                    mSelectedElement.Locators.Remove(locator);
+                    SelectedElement.Locators.Remove(locator);
                 }
             }
         }
@@ -364,35 +361,47 @@ namespace Ginger
 
         public void RefreshPropertiesAndLocators()
         {
-            if (mSelectedElement != null)
+            if (SelectedElement != null)
             {
-                if (mSelectedElement.Properties == null || mSelectedElement.Properties.Count == 0)
-                    mSelectedElement.Properties = mSelectedElement.GetElementProperties();
+                if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
+                    SelectedElement.Properties = SelectedElement.GetElementProperties();
 
-                if (mSelectedElement.Properties == null || mSelectedElement.Properties.Count == 0)
-                    mSelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
+                if (SelectedElement.Properties == null || SelectedElement.Properties.Count == 0)
+                    SelectedElement.Properties = ((IWindowExplorerTreeItem)mCurrentControlTreeViewItem).GetElementProperties();
 
-                if (mSelectedElement.Locators == null || mSelectedElement.Locators.Count == 0)
-                    mSelectedElement.Locators = mSelectedElement.GetElementLocators();
+                if (SelectedElement.Locators == null || SelectedElement.Locators.Count == 0)
+                    SelectedElement.Locators = SelectedElement.GetElementLocators();
 
-                xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
-                xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
+                xPropertiesGrid.DataSourceList = SelectedElement.Properties;
+                xLocatorsGrid.DataSourceList = SelectedElement.Locators;
 
                 Dispatcher.Invoke(() =>
                 {
-                    xPropertiesTextBlock.Text = mSelectedElement.Properties == null ? "Properties" : string.Format("Properties ({0})", mSelectedElement.Properties.Count);
-                    xLocatorsTextBlock.Text = mSelectedElement.Locators == null ? "Locators" : string.Format("Locators ({0})", mSelectedElement.Locators.Count);
+                    xPropertiesTextBlock.Text = SelectedElement.Properties == null ? "Properties" : string.Format("Properties ({0})", SelectedElement.Properties.Count);
+                    xLocatorsTextBlock.Text = SelectedElement.Locators == null ? "Locators" : string.Format("Locators ({0})", SelectedElement.Locators.Count);
                 });
             }
         }
 
         private void xAddActionTab_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (mSelectedElementChanged)
+            if (WindowExplorerDriver.IsPOMSupported())
             {
-                UpdateElementActionTab();
+                xIntegratePOMChkBox.Visibility = Visibility.Visible;
+                if (xIntegratePOMChkBox.IsChecked != true)
+                {
+                    xIntegratePOMChkBox.IsChecked = true;
+                }
             }
+            else
+            {
+                xIntegratePOMChkBox.Visibility = Visibility.Collapsed;
+            }
+            
+            UpdateElementActionTab();
         }
+
+        bool? POMCheckBoxToggled = null;
 
         void SetPOMBasedChecks()
         {
@@ -405,103 +414,122 @@ namespace Ginger
             {
                 if (xIntegratePOMChkBox.IsChecked == true && SelectedPOM != null)
                 {
-                    //pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
-                    ElementInfo matchingOriginalElement = (ElementInfo)WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
-
-                    if (matchingOriginalElement == null)
+                    if (POMElement != null && POMCheckBoxToggled == true)
                     {
-                        WindowExplorerDriver.LearnElementInfoDetails(SelectedElement);
-                        matchingOriginalElement = (ElementInfo)WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
+                        POMBasedAction = true;
+                        POMCheckBoxToggled = false;
                     }
-
-                    if (matchingOriginalElement != null &&
-                            (SelectedPOM.MappedUIElements.Contains(matchingOriginalElement) || SelectedPOM.UnMappedUIElements.Contains(matchingOriginalElement)))
+                    else
                     {
-                        PomDeltaUtils pomDeltaUtils = new PomDeltaUtils(SelectedPOM, Context.Agent);
-                        pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
+                        //pomAllElementsPage = new PomAllElementsPage(xWindowSelection.SelectedPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
+                        ElementInfo matchingOriginalElement = (ElementInfo)WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
 
-                        /// Not Required but 
-                        pomDeltaUtils.DeltaViewElements.Clear();
-
-                        /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
-                        pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, SelectedElement);
-
-                        int originalItemIndex = -1;
-                        if ((ApplicationPOMModel.eElementGroup)matchingOriginalElement.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
+                        if (matchingOriginalElement == null)
                         {
-                            originalItemIndex = SelectedPOM.MappedUIElements.IndexOf(matchingOriginalElement);
+                            WindowExplorerDriver.LearnElementInfoDetails(SelectedElement);
+                            matchingOriginalElement = (ElementInfo)WindowExplorerDriver.GetMatchingElement(SelectedElement, SelectedPOM.GetUnifiedElementsList());
                         }
 
-                        if (pomDeltaUtils.DeltaViewElements[0].DeltaStatus == eDeltaStatus.Changed)
+                        if (matchingOriginalElement != null &&
+                                (SelectedPOM.MappedUIElements.Contains(matchingOriginalElement) || SelectedPOM.UnMappedUIElements.Contains(matchingOriginalElement)))
                         {
-                            //enter it to POM elements instead of existing one
-                            if (Reporter.ToUser(eUserMsgKey.UpdateExistingPOMElement, matchingOriginalElement.ElementName) == eUserMsgSelection.Yes)
-                            {
-                                /// Replace existing element with new one
-                                /// Element exists in Mapped Elements list
-                                if (originalItemIndex > -1)
-                                {
-                                    SelectedPOM.MappedUIElements.RemoveAt(originalItemIndex);
-                                    SelectedPOM.MappedUIElements.Insert(originalItemIndex, pomDeltaUtils.DeltaViewElements[0].ElementInfo);
-                                }
-                                /// Element exists in Un-Mapped Elements list
-                                /// We'll remove Element from Unmapped list and add it as new into Mapped Elements list
-                                else
-                                {
-                                    SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
-                                    SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
-                                }
+                            PomDeltaUtils pomDeltaUtils = new PomDeltaUtils(SelectedPOM, Context.Agent);
+                            pomDeltaUtils.KeepOriginalLocatorsOrderAndActivation = true;
 
-                                POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
-                            }
-                            else
+                            /// Not Required but 
+                            pomDeltaUtils.DeltaViewElements.Clear();
+
+                            if (matchingOriginalElement != SelectedElement)
                             {
-                                if (originalItemIndex == -1)
+                                /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
+                                pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, SelectedElement);
+                            }
+
+                            int originalItemIndex = -1;
+                            if ((ApplicationPOMModel.eElementGroup)matchingOriginalElement.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
+                            {
+                                originalItemIndex = SelectedPOM.MappedUIElements.IndexOf(matchingOriginalElement);
+                            }
+
+                            if (pomDeltaUtils.DeltaViewElements[0].DeltaStatus == eDeltaStatus.Changed)
+                            {
+                                //enter it to POM elements instead of existing one
+                                if (Reporter.ToUser(eUserMsgKey.UpdateExistingPOMElement, matchingOriginalElement.ElementName) == eUserMsgSelection.Yes)
                                 {
-                                    SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
-                                    SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+                                    /// Replace existing element with new one
+                                    /// Element exists in Mapped Elements list
+                                    if (originalItemIndex > -1)
+                                    {
+                                        SelectedPOM.MappedUIElements.RemoveAt(originalItemIndex);
+                                        SelectedPOM.MappedUIElements.Insert(originalItemIndex, pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                    }
+                                    /// Element exists in Un-Mapped Elements list
+                                    /// We'll remove Element from Unmapped list and add it as new into Mapped Elements list
+                                    else
+                                    {
+                                        SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                        SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+                                    }
 
                                     POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
                                 }
                                 else
                                 {
-                                    POMElement = matchingOriginalElement;
+                                    if (originalItemIndex == -1)
+                                    {
+                                        SelectedPOM.MappedUIElements.Add(pomDeltaUtils.DeltaViewElements[0].ElementInfo);
+                                        SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+
+                                        POMElement = pomDeltaUtils.DeltaViewElements[0].ElementInfo;
+                                    }
+                                    else
+                                    {
+                                        POMElement = matchingOriginalElement;
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            /// Element exist in UnMapped Elements List
-                            if (originalItemIndex == -1)
+                            else
                             {
-                                //if (Reporter.ToUser(eUserMsgKey.POMMoveElementFromUnmappedToMapped, matchingOriginalElement.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
-                                //{
-                                SelectedPOM.MappedUIElements.Add(matchingOriginalElement);
-                                SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
-                                //}
+                                /// Element exist in UnMapped Elements List
+                                if (originalItemIndex == -1)
+                                {
+                                    //if (Reporter.ToUser(eUserMsgKey.POMMoveElementFromUnmappedToMapped, matchingOriginalElement.ElementName, xWindowSelection.SelectedPOM.Name) == eUserMsgSelection.Yes)
+                                    //{
+                                    SelectedPOM.MappedUIElements.Add(matchingOriginalElement);
+                                    SelectedPOM.UnMappedUIElements.Remove(matchingOriginalElement);
+                                    //}
+                                }
+
+                                POMElement = matchingOriginalElement;
                             }
-
-                            POMElement = matchingOriginalElement;
-                        }
-                        POMBasedAction = true;
-                    }
-                    /// Element doesn't exist on POM, perform New Element related checks
-                    else
-                    {
-                        if (Reporter.ToUser(eUserMsgKey.POMElementNotExist, SelectedElement.ElementName, SelectedPOM.Name) == eUserMsgSelection.Yes)
-                        {
                             POMBasedAction = true;
-                            SelectedPOM.MappedUIElements.Add(SelectedElement);
-
-                            POMElement = SelectedElement;
-                            POMElement.ParentGuid = SelectedPOM.Guid;
                         }
+                        /// Element doesn't exist on POM, perform New Element related checks
                         else
                         {
-                            POMElement = null;
-                            POMBasedAction = false;
+                            if (Reporter.ToUser(eUserMsgKey.POMElementNotExist, SelectedElement.ElementName, SelectedPOM.Name) == eUserMsgSelection.Yes)
+                            {
+                                POMBasedAction = true;
+                                SelectedPOM.MappedUIElements.Add(SelectedElement);
+
+                                POMElement = SelectedElement;
+                                POMElement.ParentGuid = SelectedPOM.Guid;
+                            }
+                            else
+                            {
+                                POMElement = null;
+                                POMBasedAction = false;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    if(POMCheckBoxToggled == true)
+                    {
+                        POMCheckBoxToggled = false;
+                    }
+                    POMBasedAction = false;
                 }
             }
             catch (Exception ex)
@@ -513,21 +541,26 @@ namespace Ginger
 
         void UpdateElementActionTab()
         {
+            if (!SelectedElementChanged)
+            {
+                return;
+            }
+
             SetPOMBasedChecks();
 
             ControlActionsPage_New CAP = null;
 
-            if (mSelectedElement.Locators.CurrentItem == null && mSelectedElement.Locators.Count > 0)
+            if (SelectedElement.Locators.CurrentItem == null && SelectedElement.Locators.Count > 0)
             {
-                mSelectedElement.Locators.CurrentItem = mSelectedElement.Locators[0];
+                SelectedElement.Locators.CurrentItem = SelectedElement.Locators[0];
             }
 
-            ElementLocator eiLocator = mSelectedElement.Locators.CurrentItem as ElementLocator;
+            ElementLocator eiLocator = SelectedElement.Locators.CurrentItem as ElementLocator;
 
             string elementVal = string.Empty;
-            if (mSelectedElement.OptionalValuesObjectsList.Count > 0)
+            if (SelectedElement.OptionalValuesObjectsList.Count > 0)
             {
-                elementVal = Convert.ToString(mSelectedElement.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                elementVal = Convert.ToString(SelectedElement.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
             }
 
             ElementActionCongifuration actConfigurations;
@@ -553,14 +586,14 @@ namespace Ginger
                 {
                     LocateBy = eiLocator.LocateBy,
                     LocateValue = eiLocator.LocateValue,
-                    Type = mSelectedElement.ElementTypeEnum,
+                    Type = SelectedElement.ElementTypeEnum,
                     ElementValue = elementVal,
-                    ElementGuid = mSelectedElement.Guid.ToString(),
-                    LearnedElementInfo = mSelectedElement
+                    ElementGuid = SelectedElement.Guid.ToString(),
+                    LearnedElementInfo = SelectedElement
                 };
             }
 
-            CAP = new ControlActionsPage_New(WindowExplorerDriver, mSelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem, Platform);
+            CAP = new ControlActionsPage_New(WindowExplorerDriver, SelectedElement, Context, actConfigurations, mCurrentControlTreeViewItem, Platform);
             //}
 
             if (CAP == null)
@@ -575,7 +608,7 @@ namespace Ginger
                 xActUIPageFrame.Visibility = Visibility.Visible;
             }
 
-            mSelectedElementChanged = false;
+            SelectedElementChanged = false;
         }
 
         public LocateByPOMElementPage locateByPOMElementPage;
@@ -608,6 +641,10 @@ namespace Ginger
         private void xIntegratePOMChkBox_Checked(object sender, RoutedEventArgs e)
         {
             ShowPOMSelection();
+
+            SelectedElementChanged = true;
+            POMCheckBoxToggled = POMCheckBoxToggled == null ? false : true;
+            RefreshElementAction();
         }
 
         void ShowPOMSelection()
@@ -624,6 +661,9 @@ namespace Ginger
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
                 xPOMSelectionFrame.Content = locateByPOMElementPage;
             }
+
+            if(SelectedPOM != null)
+                xPOMSelectionFrame.Visibility = Visibility.Visible;
         }
 
         private void LocateByPOMElementPage_POMChangedPageEvent()
@@ -634,6 +674,13 @@ namespace Ginger
         private void xIntegratePOMChkBox_Unchecked(object sender, RoutedEventArgs e)
         {
             xPOMSelectionFrame.Visibility = Visibility.Collapsed;
+
+            if (sender != null)
+            {
+                SelectedElementChanged = true;
+                POMCheckBoxToggled = true;
+                RefreshElementAction();
+            }
         }
 
         private void XLocateValueVEButton_Click(object sender, RoutedEventArgs e)

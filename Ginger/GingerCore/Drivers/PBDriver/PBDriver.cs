@@ -979,7 +979,7 @@ namespace GingerCore.Drivers.PBDriver
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            return mUIAutomationHelper.GetVisibleControls();
+            return await mUIAutomationHelper.GetVisibleControls();
         }
 
         void IWindowExplorer.SwitchWindow(string Title)
@@ -1144,7 +1144,7 @@ namespace GingerCore.Drivers.PBDriver
         /// <returns>VisualElementInfo object</returns>
         public VisualElementsInfo GetVisualElementsInfo()
         {
-            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
+            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls().Result;
 
             VisualElementsInfo VEI = new VisualElementsInfo();
             foreach (ElementInfo EI in list)

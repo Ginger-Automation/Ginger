@@ -31,6 +31,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
 
@@ -4763,10 +4764,10 @@ namespace GingerCore.Drivers
         }
         
         //Will get all visible control including recursive drill down, for AE which have invoke method
-        public override List<ElementInfo> GetVisibleControls()
+        public override async Task<List<ElementInfo>> GetVisibleControls()
         {
             List<ElementInfo> list = new List<ElementInfo>();
-            List<ElementInfo> HTMLlist = new List<ElementInfo>();
+            List<ElementInfo> HTMLlist;
 
             //TODO: find a better property - since if the window is off screen controls will not show            
             System.Windows.Automation.Condition cond = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);                        
@@ -4778,15 +4779,19 @@ namespace GingerCore.Drivers
                 UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
                 if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
                 {
-                        ei = (UIAElementInfo)GetElementInfoFor(AE);
+                    ei = (UIAElementInfo)GetElementInfoFor(AE);
                     IEElementXpath = ei.XPath;
                     InitializeBrowser(AE);
-                    HTMLlist = HTMLhelperObj.GetVisibleElement();
+                    HTMLlist = await HTMLhelperObj.GetVisibleElement();
                     list.Add(ei);
-                    foreach(ElementInfo e1 in HTMLlist)
+                    if (HTMLlist != null && HTMLlist.Count > 0)
                     {
-                        list.Add(e1);
+                        list.AddRange(HTMLlist);
                     }
+                    //foreach(ElementInfo e1 in HTMLlist)
+                    //{
+                    //    list.Add(e1);
+                    //}
                 }
                 
 

@@ -25,6 +25,7 @@ using GingerCore.Platforms;
 using GingerCoreNET;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -105,9 +106,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         /// This method is used to do the search
         /// </summary>
         /// <returns></returns>
-        public bool DoSearchControls()
+        public async Task<bool> DoSearchControls()
         {            
-            return mCurrentLoadedPage.DoSearchControls();
+            return await mCurrentLoadedPage.DoSearchControls();
         }
 
         /// <summary>

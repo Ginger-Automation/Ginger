@@ -649,7 +649,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
+            List<ElementInfo> list = await mUIAutomationHelper.GetVisibleControls();
             return list;
         }
 
@@ -924,7 +924,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public VisualElementsInfo GetVisualElementsInfo()
         {
-            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
+            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls().Result;
 
             VisualElementsInfo VEI = new VisualElementsInfo();
             foreach(ElementInfo EI in list)
@@ -1019,12 +1019,15 @@ namespace GingerCore.Drivers.WindowsLib
             {
                 EI = mUIAutomationHelper.GetHTMLHelper().GetHtmlElementInfo((IHTMLElement)elem);
             }
+
+            EI.WindowExplorer = this;
+
             return EI;
         }
 
         public bool IsRecordingSupported()
         {
-            return true;
+            return false;
         }
 
         public bool IsPOMSupported()

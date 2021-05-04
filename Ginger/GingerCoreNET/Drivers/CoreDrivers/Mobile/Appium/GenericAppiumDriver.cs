@@ -188,8 +188,9 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
                 }
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions                                             
-                mSeleniumDriver.StartDriver();
+
+                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+
                 return true;
             }
             catch (Exception ex)
@@ -1305,93 +1306,53 @@ namespace Amdocs.Ginger.CoreNET
                 return returnTuple;
             }
 
-            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
-                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL"
-                                                        || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
+            if(elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
             {
                 elementType = eElementType.TextBox;
             }
-            else if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "IMAGE" || elementTypeAtt.ToUpper() == "SUBMIT" || elementTypeAtt.ToUpper() == "BUTTON")) ||
-                    elementTagName.ToUpper() == "BUTTON" || elementTagName.ToUpper() == "SUBMIT" || elementTagName.ToUpper() == "RESET")
+            else if (elementTagName.ToLower() == "android.widget.button" || elementTypeAtt.ToLower() == "android.widget.button")
             {
                 elementType = eElementType.Button;
             }
-            else if (elementTagName.ToUpper() == "TD" || elementTagName.ToUpper() == "TH" || elementTagName.ToUpper() == "TR")
-            {
-                elementType = eElementType.TableItem;
-            }
-            else if (elementTagName.ToUpper() == "LINK" || elementTagName.ToUpper() == "A" || elementTagName.ToUpper() == "LI")
+            else if (elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
             {
                 elementType = eElementType.HyperLink;
             }
-            else if (elementTagName.ToUpper() == "LABEL" || elementTagName.ToUpper() == "TITLE")
-            {
-                elementType = eElementType.Label;
-            }
-            else if (elementTagName.ToUpper() == "SELECT" || elementTagName.ToUpper() == "SELECT-ONE")
+            else if (elementTagName.ToLower() == "android.widget.checkbox" || elementTypeAtt.ToLower() == "android.widget.checkbox")
             {
                 elementType = eElementType.ComboBox;
             }
-            else if (elementTagName.ToUpper() == "TABLE" || elementTagName.ToUpper() == "CAPTION")
+            else if (elementTagName.ToLower() == "android.widget.view" || elementTypeAtt.ToLower() == "android.widget.view")
             {
-                elementType = eElementType.Table;
+                elementType = eElementType.Label;
             }
-            else if (elementTagName.ToUpper() == "JEDITOR.TABLE")
-            {
-                elementType = eElementType.EditorPane;
-            }
-            else if (elementTagName.ToUpper() == "DIV")
-            {
-                elementType = eElementType.Div;
-            }
-            else if (elementTagName.ToUpper() == "SPAN")
-            {
-                elementType = eElementType.Span;
-            }
-            else if (elementTagName.ToUpper() == "IMG" || elementTagName.ToUpper() == "MAP")
+            else if (elementTagName.ToLower() == "android.widget.image" || elementTypeAtt.ToLower() == "android.widget.image")
             {
                 elementType = eElementType.Image;
             }
-            else if ((elementTagName.ToUpper() == "INPUT" && elementTypeAtt.ToUpper() == "CHECKBOX") || (elementTagName.ToUpper() == "CHECKBOX"))
-            {
-                elementType = eElementType.CheckBox;
-            }
-            else if (elementTagName.ToUpper() == "OPTGROUP" || elementTagName.ToUpper() == "OPTION")
-            {
-
-                elementType = eElementType.ComboBoxOption;
-            }
-            else if ((elementTagName.ToUpper() == "INPUT" && elementTypeAtt.ToUpper() == "RADIO") || (elementTagName.ToUpper() == "RADIO"))
+            else if (elementTagName.ToLower() == "android.widget.radiobutton" || elementTypeAtt.ToLower() == "android.widget.radiobutton")
             {
                 elementType = eElementType.RadioButton;
             }
-            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME" || elementTagName.ToUpper() == "FRAMESET")
-            {
-                elementType = eElementType.Iframe;
-            }
-            else if (elementTagName.ToUpper() == "CANVAS")
+            else if (elementTagName.ToLower() == "android.widget.canvas" || elementTypeAtt.ToLower() == "android.widget.canvas")
             {
                 elementType = eElementType.Canvas;
             }
-            else if (elementTagName.ToUpper() == "FORM")
+            else if (elementTagName.ToLower() == "android.widget.form" || elementTypeAtt.ToLower() == "android.widget.form")
             {
                 elementType = eElementType.Form;
             }
-            else if (elementTagName.ToUpper() == "UL" || elementTagName.ToUpper() == "OL" || elementTagName.ToUpper() == "DL")
-            {
-                elementType = eElementType.List;
-            }
-            else if (elementTagName.ToUpper() == "LI" || elementTagName.ToUpper() == "DT" || elementTagName.ToUpper() == "DD")
+            else if (elementTagName.ToUpper() == "android.widget.checkedtextview" || elementTypeAtt.ToLower() == "android.widget.checkedtextview")
             {
                 elementType = eElementType.ListItem;
             }
-            else if (elementTagName.ToUpper() == "MENU")
+            else if (elementTagName.ToLower() == "android.view.view" || elementTypeAtt.ToLower() == "android.view.view")
             {
-                elementType = eElementType.MenuBar;
+                elementType = eElementType.Div;
             }
-            else if (elementTagName.ToUpper() == "H1" || elementTagName.ToUpper() == "H2" || elementTagName.ToUpper() == "H3" || elementTagName.ToUpper() == "H4" || elementTagName.ToUpper() == "H5" || elementTagName.ToUpper() == "H6" || elementTagName.ToUpper() == "P")
+            else if (elementTagName.ToLower() == "android.widget.framelayout" || elementTypeAtt.ToLower() == "android.widget.framelayout")
             {
-                elementType = eElementType.Text;
+                elementType = eElementType.Button;
             }
             else
                 elementType = eElementType.Unknown;

@@ -91,7 +91,12 @@ namespace GingerCore.UserControls
                     result.Append("root");
                     break;
                 case HtmlNodeType.Element:
-                    result.Append('<').Append(htmlN.Name).Append("   XPath=" + htmlN.XPath).Append('>');
+                    result.Append('<').Append(htmlN.Name).Append(' ');
+                    foreach (HtmlAttribute attr in htmlN.Attributes)
+                    {
+                        result.Append(string.Format(" {0}='{1}' ", attr.Name, attr.Value));
+                    }
+                    result.Append('>');
                     break;
                 case HtmlNodeType.Text:
                     result.Append(htmlN.InnerText);
