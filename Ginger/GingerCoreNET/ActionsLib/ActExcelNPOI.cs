@@ -14,6 +14,10 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using System.Linq;
+using GingerCore.Variables;
+using System.Data.OleDb;
+using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib
 {
@@ -401,122 +405,107 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         }
         public void ReadData()
         {
-            string ConnString = GetExcelFileNameForDriver();
-            string sql = "";
-            XSSFWorkbook hssfwb;
-            string fileName = @"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx";
-            DataTable dt = GetRequestsDataFromExcel(fileName);
-            
-            using (FileStream file = new FileStream(@"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx", FileMode.Open, FileAccess.Read))
+            string sql = ""; // to delete
+            string fileName = GetExcelFileNameForDriver();
+            string sheetName = SheetName;
+            string sSetDataUsed = GetInputParamCalculatedValue("SetDataUsed");
+            var workbook = GetExcelWorkbook(fileName);
+            var sheet = workbook.GetSheet(sheetName);
+            DataTable dt = ConvertSheetToDataTable(sheet);
+
+            dt.DefaultView.RowFilter = SelectRowsWhere ?? "";
+            DataTable dtFiltered = GetFilteredDataTable(dt, SelectAllRows);
+            List<Tuple<string, object>> setDataUsedList = GetSetDataUsed(sSetDataUsed);
+            try
             {
-                hssfwb = new XSSFWorkbook(file);
-            
-            string SheetName = GetInputParamCalculatedValue("SheetName").Trim();
-            
-                if (!SheetName.EndsWith("$")) SheetName += "$";
-                if (SelectAllRows == false)
-                    sql = "Select TOP 1 * from [" + SheetName + "]";
-                else
-                    sql = "Select * from [" + SheetName + "]";
-
-                string where = GetInputParamCalculatedValue("SelectRowsWhere");
-
-                if (!string.IsNullOrEmpty(where))
+                for (int j = 0; j < dtFiltered.Rows.Count; j++)
                 {
-                    sql += " WHERE " + where;
-                }
+                    DataRow r = dtFiltered.Rows[j];
 
-                //Cmd.CommandText = sql;
-                //DataTable dt = GetRequestsDataFromExcel(@"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx");
-
-                //OleDbDataAdapter da = new OleDbDataAdapter();
-                //da.SelectCommand = Cmd;
-                try
-                {
-                    //da.Fill(dt);
-
-                    // we expect only 1 record
-                    if (dt.Rows.Count == 1 && SelectAllRows == false)
+                    for (int i = 0; i < dtFiltered.Columns.Count; i++)
                     {
-                        DataRow r = dt.Rows[0];
-
-                        for (int i = 0; i < dt.Columns.Count; i++)
-                        {
-                            AddOrUpdateReturnParamActual(dt.Columns[i].ColumnName, ((object)r[i]).ToString());
-                        }
-
-                        if (!String.IsNullOrEmpty(GetInputParamCalculatedValue("SetDataUsed")))
-                        {
-                            string rowKey = r[GetInputParamCalculatedValue("PrimaryKeyColumn")].ToString();
-                            string updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET " + GetInputParamCalculatedValue("SetDataUsed") + " WHERE " + GetInputParamCalculatedValue("PrimaryKeyColumn") + "=" + rowKey + ";";
-                            //OleDbCommand myCommand = new OleDbCommand();
-                            //.Connection = Conn;
-                            //myCommand.CommandText = updateSQL;
-                            //myCommand.ExecuteNonQuery();
-                        }
+                        AddOrUpdateReturnParamActual(dtFiltered.Columns[i].ColumnName, ((object)r[i]).ToString());
                     }
-                    else if (dt.Rows.Count > 0 && SelectAllRows == true)
-                    {
-                        for (int j = 0; j < dt.Rows.Count; j++)
-                        {
-                            DataRow r = dt.Rows[j];
-                            for (int i = 0; i < dt.Columns.Count; i++)
-                            {
-                                AddOrUpdateReturnParamActualWithPath(dt.Columns[i].ColumnName, ((object)r[i]).ToString(), "" + (j + 1).ToString());
-                            }
-                        }
-                        if (!String.IsNullOrEmpty(GetInputParamCalculatedValue("SetDataUsed")))
-                        {
-                            string updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET " + GetInputParamCalculatedValue("SetDataUsed");
 
-                            if (!string.IsNullOrEmpty(where))
-                            {
-                                updateSQL += " WHERE " + where + ";";
-                            }
-
-                            //OleDbCommand myCommand = new OleDbCommand();
-                            //myCommand.Connection = Conn;
-                            //myCommand.CommandText = updateSQL;
-                            //myCommand.ExecuteNonQuery();
-                        }
-                    }
-                    else if (dt.Rows.Count != 1 && SelectAllRows == false)
+                    if (setDataUsedList.Count > 0)
                     {
-                        Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                        Error = "Excel Query should return only one row" + Environment.NewLine + sql + Environment.NewLine + "Returned: " + dt.Rows.Count + " Records";
+                        int rowKey = Convert.ToInt32(r[GetInputParamCalculatedValue("PrimaryKeyColumn")]);
+                        setDataUsedList.ForEach(x =>
+                        sheet.GetRow(dt.Rows.IndexOf(dt.Select(SelectRowsWhere)[j]) + 1).GetCell(dt.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2));
                     }
                 }
-                catch (Exception ex)
-                {
-                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = ex.Message;
-                }
-                finally
-                {
-                    //Conn.Close();
-                }
 
-                if (dt.Rows.Count == 0)
+                if (setDataUsedList.Count > 0)
                 {
-                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = "No rows found in excel file matching criteria - " + sql;
+                    using (FileStream fs = new FileStream(fileName, FileMode.Create))
+                    {
+                        workbook.Write(fs);
+                        fs.Close();
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                Error = ex.Message;
+            }
+            finally
+            {
+
+            }
+            if (dt.Rows.Count == 0)
+            {
+                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                Error = "No rows found in excel file matching criteria - " + sql;
+            }
         }
-        private DataTable GetRequestsDataFromExcel(string fullFilePath)
+
+        private List<Tuple<string, object>> GetSetDataUsed(string setDataUsed)
+        {
+            List<Tuple<string, object>> columnNameAndValue = new List<Tuple<string, object>>();
+            if (setDataUsed == null)
+            {
+                return columnNameAndValue;
+            }
+            bool isError = false;
+            string[] data = setDataUsed.Split(',');
+            data.ToList().ForEach(d =>
+            {
+                string[] setData = d.Split('=');
+                if (setData.Length == 2)
+                {
+                    string rowToSet = setData[0].Replace("[|]", "");
+                    object valueToSet = setData[1].Replace("'", "");
+                    columnNameAndValue.Add(new Tuple<string,object>(rowToSet, valueToSet));
+                }
+                else
+                {
+                    Error = "Invalid 'SetDataUsed' data";
+                    isError = true;
+                }
+
+            });
+            return isError ? null : columnNameAndValue;
+        }
+
+        private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
+        {
+            return selectAllRows ? dataTable.DefaultView.ToTable() : dataTable.DefaultView.ToTable().AsEnumerable().Take(1).CopyToDataTable();
+        }
+
+        private DataTable ConvertSheetToDataTable(ISheet sheet)
         {
             try
             {
-                var sh = GetFileStream(fullFilePath);
                 var dtExcelTable = new DataTable();
                 dtExcelTable.Rows.Clear();
                 dtExcelTable.Columns.Clear();
-                var headerRow = sh.GetRow(0);
+                var headerRow = sheet.GetRow(0);
                 int colCount = headerRow.LastCellNum;
                 for (var c = 0; c < colCount; c++)
                     dtExcelTable.Columns.Add(headerRow.GetCell(c).ToString());
                 var i = 1;
-                var currentRow = sh.GetRow(i);
+                var currentRow = sheet.GetRow(i);
                 while (currentRow != null)
                 {
                     var dr = dtExcelTable.NewRow();
@@ -542,7 +531,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     dtExcelTable.Rows.Add(dr);
                     i++;
-                    currentRow = sh.GetRow(i);
+                    currentRow = sheet.GetRow(i);
                 }
                 return dtExcelTable;
             }
@@ -551,32 +540,29 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 throw;
             }
         }
-        private ISheet GetFileStream(string fullFilePath)
+        private IWorkbook GetExcelWorkbook(string fullFilePath)
         {
             var fileExtension = Path.GetExtension(fullFilePath);
-            string sheetName;
-            ISheet sheet = null;
+            //ISheet sheet = null;
+            IWorkbook workbook = null;
             switch (fileExtension)
             {
                 case ".xlsx":
                     using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                     {
-                        var wb = new XSSFWorkbook(fs);
-                        sheetName = wb.GetSheetAt(0).SheetName;
-                        sheet = (XSSFSheet)wb.GetSheet(sheetName);
+                        workbook = new XSSFWorkbook(fs);
+                        //sheet = (XSSFSheet)wb.GetSheet(SheetName);
                     }
                     break;
                 case ".xls":
                     using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                     {
-                        var wb = new HSSFWorkbook(fs);
-                        sheetName = wb.GetSheetAt(0).SheetName;
-                        sheet = (HSSFSheet)wb.GetSheet(sheetName);
-                        
+                        workbook = new HSSFWorkbook(fs);
+                        //sheet = (HSSFSheet)wb.GetSheet(SheetName);
                     }
                     break;
             }
-            return sheet;
+            return workbook;
         }
 
         public bool check_file_open(String name)
@@ -593,13 +579,196 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 return false;
             }
         }
-
-
+        private string GetConnectionString()
+        {
+            string s = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + GetExcelFileNameForDriver() + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"";
+            return s;
+        }
         public void WriteData()
+        {
+            string sql = "";
+            string ConnString = GetConnectionString();
+            string result = System.Text.RegularExpressions.Regex.Replace(GetInputParamCalculatedValue("ColMappingRules"), @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
+            string[] varColMaps = result.Split(',');
+
+            string sSetDataUsed = "";
+
+            using (OleDbConnection Conn = new OleDbConnection(ConnString))
+            {
+                try
+                {
+                    Conn.Open();
+                }
+                catch (Exception ex)
+                {
+                    System.Threading.Thread.Sleep(3000);
+                    Conn.Open();
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.StackTrace}", ex);
+                }
+
+                OleDbCommand Cmd = new OleDbCommand();
+                Cmd.Connection = Conn;
+
+                string SheetName = GetInputParamCalculatedValue("SheetName").Trim();
+
+                if (String.IsNullOrEmpty(SheetName))
+                {
+                    this.Error += "Sheet Name is empty or not selected. Please Select correct sheet name on action configurations";
+                    Conn.Close();
+                    return;
+                }
+
+                if (!SheetName.EndsWith("$")) SheetName += "$";
+                if (SelectAllRows == false)
+                    sql = "Select TOP 1 * from [" + SheetName + "]";
+                else
+                    sql = "Select * from [" + SheetName + "]";
+
+                string where = GetInputParamCalculatedValue("SelectRowsWhere");
+                if (!string.IsNullOrEmpty(where))
+                {
+                    sql += " WHERE " + where;
+                }
+                Cmd.CommandText = sql;
+                DataTable dt = new DataTable();
+
+                OleDbDataAdapter da = new OleDbDataAdapter();
+                da.SelectCommand = Cmd;
+                string updateSQL = "";
+                try
+                {
+                    da.Fill(dt);
+
+                    if (!string.IsNullOrEmpty(GetInputParamCalculatedValue("SetDataUsed")))
+                        sSetDataUsed = @", " + GetInputParamCalculatedValue("SetDataUsed");
+
+                    // we expect only 1 record
+                    if (dt.Rows.Count == 1 && SelectAllRows == false)
+                    {
+                        DataRow r = dt.Rows[0];
+                        //Read data to variables
+                        foreach (string vc in varColMaps)
+                        {
+                            string strPrimaryKeyColumn = GetInputParamCalculatedValue("PrimaryKeyColumn");
+                            if (strPrimaryKeyColumn.Contains("`")) strPrimaryKeyColumn = strPrimaryKeyColumn.Replace("`", "");
+
+                            string rowKey = r[strPrimaryKeyColumn].ToString();
+
+                            int res;
+                            int.TryParse(rowKey, out res);
+
+                            if (res == 0 || r[strPrimaryKeyColumn].GetType() == typeof(System.String))
+                            {
+                                rowKey = "'" + rowKey + "'";
+                            }
+
+                            //TODO: fix me in OO Style
+
+                            //Do mapping
+                            string ColName = vc.Split('=')[0];
+                            string Value = vc.Split('=')[1];
+                            Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
+                            string txt = Value;
+
+                            //keeping the translation of vars to support previous implementation
+                            VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
+                            if (var != null)
+                            {
+                                var.Value = ValueExpression.Calculate(var.Value);
+                                txt = var.Value;
+                            }
+
+                            //remove '' from value
+                            txt = txt.TrimStart(new char[] { '\'' });
+                            txt = txt.TrimEnd(new char[] { '\'' });
+
+                            //TODO: create one long SQL to do the update in one time and not for each var
+                            updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET " +
+                                                    ColName + " = '" + txt + "'" + sSetDataUsed +
+                                                        " WHERE " + GetInputParamCalculatedValue("PrimaryKeyColumn") + "=" + rowKey + ";";
+
+                            this.ExInfo += updateSQL;
+
+                            OleDbCommand myCommand = new OleDbCommand();
+                            myCommand.Connection = Conn;
+                            myCommand.CommandText = updateSQL;
+                            myCommand.ExecuteNonQuery();
+                        }
+                        // Do the update that row is used                        
+                    }
+                    else if (dt.Rows.Count > 0 && SelectAllRows == true)
+                    {
+                        updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET ";
+                        foreach (string vc in varColMaps)
+                        {
+                            //TODO: fix me in OO Style
+
+                            //Do mapping
+                            string ColName = vc.Split('=')[0];
+                            string Value = vc.Split('=')[1];
+                            Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
+                            string txt = Value;
+
+                            //keeping the translation of vars to support previous implementation
+                            VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
+                            if (var != null)
+                            {
+
+                                var.Value = ValueExpression.Calculate(var.Value);
+                                if (var != null)
+                                    txt = var.Value;
+                                else
+                                    txt = Value;
+                            }
+
+                            //remove '' from value
+                            txt = txt.TrimStart(new char[] { '\'' });
+                            txt = txt.TrimEnd(new char[] { '\'' });
+
+                            //TODO: create one long SQL to do the update in one time and not for each var
+                            updateSQL = updateSQL + ColName + " = '" + txt + "',";
+                        }
+                        updateSQL = updateSQL.Substring(0, updateSQL.Length - 1);
+                        updateSQL = updateSQL + sSetDataUsed;
+                        if (!string.IsNullOrEmpty(where))
+                        {
+                            updateSQL += " WHERE " + where + ";";
+                        }
+                        this.ExInfo += updateSQL;
+
+                        OleDbCommand myCommand = new OleDbCommand();
+                        myCommand.Connection = Conn;
+                        myCommand.CommandText = updateSQL;
+                        myCommand.ExecuteNonQuery();
+                    }
+                    else if (dt.Rows.Count == 0)
+                        this.ExInfo = "No Rows updated with given criteria";
+                }
+                catch (Exception ex)
+                {
+                    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Writing into excel got error " + ex.Message);
+                    this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
+                }
+                finally
+                {
+                    Conn.Close();
+                }
+
+                // then show a message if needed
+                if (dt.Rows.Count == 0)
+                {
+                    //TODO: reporter
+                    // Reporter.ToUser("No rows found in excel file matching criteria - " + sql);                
+                    //  throw new Exception("No rows found in excel file matching criteria - " + sql);
+                }
+            }
+        }
+        public void WriteData2()
         {
             //string sql = "";
             //string ConnString = GetConnectionString();
-            //string result = System.Text.RegularExpressions.Regex.Replace(GetInputParamCalculatedValue("ColMappingRules"), @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
+
+            string result = System.Text.RegularExpressions.Regex.Replace(GetInputParamCalculatedValue("ColMappingRules"), @",(?=[^']*'(?:[^']*'[^']*')*[^']*$)", "~^GINGER-EXCEL-COMMA-REPLACE^~");
             //string[] varColMaps = result.Split(',');
 
             //string sSetDataUsed = "";
@@ -620,180 +789,192 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             //    OleDbCommand Cmd = new OleDbCommand();
             //    Cmd.Connection = Conn;
 
-            //    string SheetName = GetInputParamCalculatedValue("SheetName").Trim();
+            //string SheetName = GetInputParamCalculatedValue("SheetName").Trim();
 
-            //    if (String.IsNullOrEmpty(SheetName))
+            
+
+
+            string where = GetInputParamCalculatedValue("SelectRowsWhere");
+            string fileName = GetExcelFileNameForDriver();
+            string sheetName = SheetName.Trim();
+            if (String.IsNullOrEmpty(SheetName))
+            {
+                this.Error += "Sheet Name is empty or not selected. Please Select correct sheet name on action configurations";
+                return;
+            }
+            string sSetDataUsed = GetInputParamCalculatedValue("SetDataUsed");
+            var workbook = GetExcelWorkbook(fileName);
+            var sheet = workbook.GetSheet(sheetName);
+            DataTable dt = ConvertSheetToDataTable(sheet);
+
+            dt.DefaultView.RowFilter = SelectRowsWhere ?? "";
+            DataTable dtFiltered = GetFilteredDataTable(dt, SelectAllRows);
+            List<Tuple<string, object>> setDataUsedList = GetSetDataUsed(sSetDataUsed);
+            List<Tuple<string, object>> varColMapsList = GetSetDataUsed(result);
+            if (varColMapsList != null)
+            {
+                setDataUsedList.AddRange(varColMapsList);
+            }
+            try
+            {
+                for (int j = 0; j < dtFiltered.Rows.Count; j++)
+                {
+                    DataRow r = dtFiltered.Rows[j];
+                    if (setDataUsedList.Count > 0)
+                    {
+                        int rowKey = Convert.ToInt32(r[GetInputParamCalculatedValue("PrimaryKeyColumn")]);
+                        setDataUsedList.ForEach(x =>
+                        sheet.GetRow(dt.Rows.IndexOf(dt.Select(SelectRowsWhere)[j]) + 1).GetCell(dt.Columns[x.Item1].Ordinal).SetCellValue((string)x.Item2));
+                    }
+                }
+
+                if (setDataUsedList.Count > 0)
+                {
+                    using (FileStream fs = new FileStream(fileName, FileMode.Create))
+                    {
+                        workbook.Write(fs);
+                        fs.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                Error = ex.Message;
+            }
+            finally
+            {
+
+            }
+            //string updateSQL = "";
+
+            //try
+            //{
+
+            //    // we expect only 1 record
+            //    if (dt.Rows.Count == 1 && SelectAllRows == false)
             //    {
-            //        this.Error += "Sheet Name is empty or not selected. Please Select correct sheet name on action configurations";
-            //        Conn.Close();
-            //        return;
-            //    }
-
-            //    if (!SheetName.EndsWith("$")) SheetName += "$";
-            //    if (SelectAllRows == false)
-            //        sql = "Select TOP 1 * from [" + SheetName + "]";
-            //    else
-            //        sql = "Select * from [" + SheetName + "]";
-
-            //    string where = GetInputParamCalculatedValue("SelectRowsWhere");
-            //    if (!string.IsNullOrEmpty(where))
-            //    {
-            //        sql += " WHERE " + where;
-            //    }
-            //    Cmd.CommandText = sql;
-            //    DataTable dt = new DataTable();
-
-            //    OleDbDataAdapter da = new OleDbDataAdapter();
-            //    da.SelectCommand = Cmd;
-            //    string updateSQL = "";
-            //    try
-            //    {
-            //        da.Fill(dt);
-
-            //        if (!string.IsNullOrEmpty(GetInputParamCalculatedValue("SetDataUsed")))
-            //            sSetDataUsed = @", " + GetInputParamCalculatedValue("SetDataUsed");
-
-            //        // we expect only 1 record
-            //        if (dt.Rows.Count == 1 && SelectAllRows == false)
+            //        DataRow r = dt.Rows[0];
+            //        //Read data to variables
+            //        foreach (string vc in varColMaps)
             //        {
-            //            DataRow r = dt.Rows[0];
-            //            //Read data to variables
-            //            foreach (string vc in varColMaps)
+            //            //string strPrimaryKeyColumn = GetInputParamCalculatedValue("PrimaryKeyColumn");
+            //            //if (strPrimaryKeyColumn.Contains("`")) strPrimaryKeyColumn = strPrimaryKeyColumn.Replace("`", "");
+
+            //            //string rowKey = r[strPrimaryKeyColumn].ToString();
+
+            //            //int res;
+            //            //int.TryParse(rowKey, out res);
+
+            //            //if (res == 0 || r[strPrimaryKeyColumn].GetType() == typeof(System.String))
+            //            //{
+            //            //    rowKey = "'" + rowKey + "'";
+            //            //}
+
+            //            //TODO: fix me in OO Style
+
+            //            //Do mapping
+            //            string ColName = vc.Split('=')[0];
+            //            string Value = vc.Split('=')[1];
+            //            Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
+            //            string txt = Value;
+
+            //            //keeping the translation of vars to support previous implementation
+            //            VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
+            //            if (var != null)
             //            {
-            //                string strPrimaryKeyColumn = GetInputParamCalculatedValue("PrimaryKeyColumn");
-            //                if (strPrimaryKeyColumn.Contains("`")) strPrimaryKeyColumn = strPrimaryKeyColumn.Replace("`", "");
-
-            //                string rowKey = r[strPrimaryKeyColumn].ToString();
-
-            //                int res;
-            //                int.TryParse(rowKey, out res);
-
-            //                if (res == 0 || r[strPrimaryKeyColumn].GetType() == typeof(System.String))
-            //                {
-            //                    rowKey = "'" + rowKey + "'";
-            //                }
-
-            //                //TODO: fix me in OO Style
-
-            //                //Do mapping
-            //                string ColName = vc.Split('=')[0];
-            //                string Value = vc.Split('=')[1];
-            //                Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
-            //                string txt = Value;
-
-            //                //keeping the translation of vars to support previous implementation
-            //                VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
-            //                if (var != null)
-            //                {
-            //                    var.Value = ValueExpression.Calculate(var.Value);
-            //                    txt = var.Value;
-            //                }
-
-            //                //remove '' from value
-            //                txt = txt.TrimStart(new char[] { '\'' });
-            //                txt = txt.TrimEnd(new char[] { '\'' });
-
-            //                //TODO: create one long SQL to do the update in one time and not for each var
-            //                updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET " +
-            //                                        ColName + " = '" + txt + "'" + sSetDataUsed +
-            //                                            " WHERE " + GetInputParamCalculatedValue("PrimaryKeyColumn") + "=" + rowKey + ";";
-
-            //                this.ExInfo += updateSQL;
-
-            //                OleDbCommand myCommand = new OleDbCommand();
-            //                myCommand.Connection = Conn;
-            //                myCommand.CommandText = updateSQL;
-            //                myCommand.ExecuteNonQuery();
+            //                var.Value = ValueExpression.Calculate(var.Value);
+            //                txt = var.Value;
             //            }
-            //            // Do the update that row is used                        
-            //        }
-            //        else if (dt.Rows.Count > 0 && SelectAllRows == true)
-            //        {
-            //            updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET ";
-            //            foreach (string vc in varColMaps)
-            //            {
-            //                //TODO: fix me in OO Style
 
-            //                //Do mapping
-            //                string ColName = vc.Split('=')[0];
-            //                string Value = vc.Split('=')[1];
-            //                Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
-            //                string txt = Value;
+            //            //remove '' from value
+            //            txt = txt.TrimStart(new char[] { '\'' });
+            //            txt = txt.TrimEnd(new char[] { '\'' });
 
-            //                //keeping the translation of vars to support previous implementation
-            //                VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
-            //                if (var != null)
-            //                {
+            //            //TODO: create one long SQL to do the update in one time and not for each var
+            //            updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET " +
+            //                                    ColName + " = '" + txt + "'" + sSetDataUsed +
+            //                                        " WHERE " + GetInputParamCalculatedValue("PrimaryKeyColumn") + "=" + rowKey + ";";
 
-            //                    var.Value = ValueExpression.Calculate(var.Value);
-            //                    if (var != null)
-            //                        txt = var.Value;
-            //                    else
-            //                        txt = Value;
-            //                }
-
-            //                //remove '' from value
-            //                txt = txt.TrimStart(new char[] { '\'' });
-            //                txt = txt.TrimEnd(new char[] { '\'' });
-
-            //                //TODO: create one long SQL to do the update in one time and not for each var
-            //                updateSQL = updateSQL + ColName + " = '" + txt + "',";
-            //            }
-            //            updateSQL = updateSQL.Substring(0, updateSQL.Length - 1);
-            //            updateSQL = updateSQL + sSetDataUsed;
-            //            if (!string.IsNullOrEmpty(where))
-            //            {
-            //                updateSQL += " WHERE " + where + ";";
-            //            }
             //            this.ExInfo += updateSQL;
-
-            //            OleDbCommand myCommand = new OleDbCommand();
-            //            myCommand.Connection = Conn;
-            //            myCommand.CommandText = updateSQL;
-            //            myCommand.ExecuteNonQuery();
             //        }
-            //        else if (dt.Rows.Count == 0)
-            //            this.ExInfo = "No Rows updated with given criteria";
+            //        // Do the update that row is used                        
             //    }
-            //    catch (Exception ex)
+            //    else if (dt.Rows.Count > 0 && SelectAllRows == true)
             //    {
-            //        // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Writing into excel got error " + ex.Message);
-            //        this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
-            //    }
-            //    finally
-            //    {
-            //        Conn.Close();
-            //    }
+            //        updateSQL = @"UPDATE [" + GetInputParamCalculatedValue("SheetName") + "$] SET ";
+            //        foreach (string vc in varColMaps)
+            //        {
+            //            //TODO: fix me in OO Style
 
-            //    // then show a message if needed
-            //    if (dt.Rows.Count == 0)
-            //    {
-            //        //TODO: reporter
-            //        // Reporter.ToUser("No rows found in excel file matching criteria - " + sql);                
-            //        //  throw new Exception("No rows found in excel file matching criteria - " + sql);
+            //            //Do mapping
+            //            string ColName = vc.Split('=')[0];
+            //            string Value = vc.Split('=')[1];
+            //            Value = Value.Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",");
+            //            string txt = Value;
+
+            //            //keeping the translation of vars to support previous implementation
+            //            VariableBase var = RunOnBusinessFlow.GetHierarchyVariableByName(Value);
+            //            if (var != null)
+            //            {
+
+            //                var.Value = ValueExpression.Calculate(var.Value);
+            //                if (var != null)
+            //                    txt = var.Value;
+            //                else
+            //                    txt = Value;
+            //            }
+
+            //            //remove '' from value
+            //            txt = txt.TrimStart(new char[] { '\'' });
+            //            txt = txt.TrimEnd(new char[] { '\'' });
+
+            //            //TODO: create one long SQL to do the update in one time and not for each var
+            //            updateSQL = updateSQL + ColName + " = '" + txt + "',";
+            //        }
+            //        updateSQL = updateSQL.Substring(0, updateSQL.Length - 1);
+            //        updateSQL = updateSQL + sSetDataUsed;
+            //        if (!string.IsNullOrEmpty(where))
+            //        {
+            //            updateSQL += " WHERE " + where + ";";
+            //        }
+            //        this.ExInfo += updateSQL;
+
             //    }
+            //    else if (dt.Rows.Count == 0)
+            //        this.ExInfo = "No Rows updated with given criteria";
             //}
-        }
+            //catch (Exception ex)
+            //{
+            //    // Reporter.ToLog(eAppReporterLogLevel.ERROR, "Writing into excel got error " + ex.Message);
+            //    this.Error = "Error when trying to update the excel: " + ex.Message + Environment.NewLine + "UpdateSQL=" + updateSQL;
+            //}
+            //finally
+            //{
+            //}
 
-        public DataTable GetExcelSheetData(string Where)
+            //// then show a message if needed
+            //if (dt.Rows.Count == 0)
+            //{
+            //    //TODO: reporter
+            //    // Reporter.ToUser("No rows found in excel file matching criteria - " + sql);                
+            //    //  throw new Exception("No rows found in excel file matching criteria - " + sql);
+            //}
+        
+    }
+
+    public DataTable GetExcelSheetData(string Where)
         {
             try
             {
-                string sSheetName = "";
-
                 if (GetInputParamCalculatedValue("SheetName") == null)
-                    return new DataTable();
-                if (GetInputParamCalculatedValue("SheetName").Trim().IndexOf("$") == GetInputParamCalculatedValue("SheetName").Trim().Length - 1)
-                    sSheetName = GetInputParamCalculatedValue("SheetName");
-                else
-                    sSheetName = GetInputParamCalculatedValue("SheetName") + "$";
-                string sql = "Select * from [" + sSheetName + "]";
-                if (Where != null)
                 {
-                    sql = sql + " WHERE " + Where;
+                    return new DataTable();
                 }
-                DataTable dt = GetRequestsDataFromExcel(GetExcelFileNameForDriver());
-                dt.DefaultView.RowFilter = sql;
+                var workbook = GetExcelWorkbook(GetExcelFileNameForDriver());
+                var sheet = workbook.GetSheet(SheetName);
+                DataTable dt = ConvertSheetToDataTable(sheet);
+                dt.DefaultView.RowFilter = Where;
                 return dt.DefaultView.ToTable();
             }
             catch (Exception ex)

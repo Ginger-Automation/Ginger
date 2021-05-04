@@ -52,7 +52,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
         public void UpdateExcel()
         {
             XSSFWorkbook hssfwb;
-            using (FileStream file = new FileStream(@"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx", FileMode.Open, FileAccess.Read))
+            using (FileStream file = new FileStream(@"C:\Ginger\File Operations\Documents\WOEI\WOEIExcel.xlsx", FileMode.Open, FileAccess.Read))
             {
                 hssfwb = new XSSFWorkbook(file);
             }
@@ -66,8 +66,8 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                     Console.WriteLine(formatter.FormatCellValue(sheet.GetRow(row).GetCell(0)));
                 }
             }
-            sheet.GetRow(1).GetCell(1).SetCellValue(1414);
-            using (FileStream out1 = new FileStream(@"C:\Ginger\Ginger-Linux-Transformation-Testing\Documents\WOEI\WOEIExcel.xlsx", FileMode.Create))
+            sheet.GetRow(2).GetCell(3).SetCellValue(1414);
+            using (FileStream out1 = new FileStream(@"C:\Ginger\File Operations\Documents\WOEI\WOEIExcel.xlsx", FileMode.Create))
             {
                 hssfwb.Write(out1);
                 out1.Close();
