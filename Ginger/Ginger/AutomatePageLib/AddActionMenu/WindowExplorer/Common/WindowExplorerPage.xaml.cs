@@ -397,11 +397,21 @@ namespace Ginger.WindowExplorer
             //xHTMLTree.Items.Add(new PageSrcParser(((SeleniumDriver)mContext.Agent.Driver).GetPageHTML())
             if (mWindowExplorerDriver is GenericAppiumDriver)
             {
-                xXMLPageSrcViewer.Visibility = Visibility.Visible;
-                string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
-                XmlDocument pageSrcXmlDoc = new XmlDocument();
-                pageSrcXmlDoc.LoadXml(pageSrcXML);
-                xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
+                if ((mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.Web)
+                {
+                    xHTMLPageSrcViewer.Visibility = Visibility.Visible;
+
+                    HtmlDocument htmlDoc = (mWindowExplorerDriver as GenericAppiumDriver).AppiumSeleniumDriver.GetPageHTML();
+                    xHTMLPageSrcViewer.htmlDocument = htmlDoc;
+                }
+                else
+                {
+                    xXMLPageSrcViewer.Visibility = Visibility.Visible;
+                    string pageSrcXML = await ((GenericAppiumDriver)mWindowExplorerDriver).GetPageSource();
+                    XmlDocument pageSrcXmlDoc = new XmlDocument();
+                    pageSrcXmlDoc.LoadXml(pageSrcXML);
+                    xXMLPageSrcViewer.xmlDocument = pageSrcXmlDoc;
+                }
             }
             else if (mWindowExplorerDriver is SeleniumDriver)
             {
@@ -412,16 +422,24 @@ namespace Ginger.WindowExplorer
             }
         }
 
+        public AppWindow SwitchToCurrentWindow()
+        {
+            GingerCore.General.DoEvents();
+
+            AppWindow AW = (AppWindow)xWindowSelection.WindowsComboBox.SelectedItem;
+            if (AW == null) 
+                return null;
+            mWindowExplorerDriver.SwitchWindow(AW.Title);
+
+            return AW;
+        }
+
         private async Task RefreshTreeContent()
         {
             xLoadingTreeViewBanner.Visibility = Visibility.Visible;
             xWindowControlsTreeView.Visibility = Visibility.Collapsed;
 
-            GingerCore.General.DoEvents();
-
-            AppWindow AW = (AppWindow)xWindowSelection.WindowsComboBox.SelectedItem;
-            if (AW == null) return;
-            mWindowExplorerDriver.SwitchWindow(AW.Title);
+            AppWindow AW = SwitchToCurrentWindow();
 
             switch (AW.WindowType)
             {
@@ -942,29 +960,8 @@ namespace Ginger.WindowExplorer
 
         private void SetAutoMapElementTypes()
         {
-            List<eElementType> UIElementsTypeList = null;
-            switch (((Agent)mApplicationAgent.Agent).Platform)
-            {
-                case ePlatformType.Web:
-                    WebPlatform webPlatformInfo = new WebPlatform();
-                    UIElementsTypeList = webPlatformInfo.GetPlatformUIElementsType();
-                    break;
+            List<eElementType> UIElementsTypeList = mPlatform.GetPlatformUIElementsType();
 
-                case ePlatformType.Java:
-                    JavaPlatform javaPlatformInfo = new JavaPlatform();
-                    UIElementsTypeList = javaPlatformInfo.GetPlatformUIElementsType();
-                    break;
-
-                case ePlatformType.Mobile:
-                    MobilePlatform mobilePlatformInfo = new MobilePlatform();
-                    UIElementsTypeList = mobilePlatformInfo.GetPlatformUIElementsType();
-                    break;
-
-                case ePlatformType.PowerBuilder:
-                    PowerBuilderPlatform pbPlatformInfo = new PowerBuilderPlatform();
-                    UIElementsTypeList = pbPlatformInfo.GetPlatformUIElementsType();
-                    break;
-            }
             if (UIElementsTypeList != null)
             {
                 foreach (eElementType eET in UIElementsTypeList)
@@ -994,7 +991,7 @@ namespace Ginger.WindowExplorer
         }
 
         ScreenShotViewPage mScreenShotViewPage;
-        bool LoadingScreenshot = false;
+
         public void ShowScreenShot()
         {
             if (mWindowExplorerDriver == null || mContext.Agent.Driver.IsRunning() == false)
@@ -1004,7 +1001,6 @@ namespace Ginger.WindowExplorer
 
             xLoadingScreenShotBanner.Visibility = Visibility.Visible;
             xScreenShotFrame.Visibility = Visibility.Collapsed;
-            xRetrySSBanner.Visibility = Visibility.Collapsed;
 
             /// UnComment later after complete Implementation of functionalities over all platforms.
             //if(IsWebMobJavaPlatform)
@@ -1014,6 +1010,9 @@ namespace Ginger.WindowExplorer
 
             try
             {
+                if (SwitchToCurrentWindow() == null)
+                    return;
+
                 Bitmap ScreenShotBitmap = ((IVisualTestingDriver)mApplicationAgent.Agent.Driver).GetScreenShot();   // new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
 
                 if (mWindowExplorerDriver is GenericAppiumDriver)   // && (mWindowExplorerDriver as GenericAppiumDriver).AppType == Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile.eAppType.NativeHybride)
@@ -1036,13 +1035,16 @@ namespace Ginger.WindowExplorer
                 xScreenShotFrame.Content = mScreenShotViewPage;
                 //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
 
-                xLoadingScreenShotBanner.Visibility = Visibility.Collapsed;
                 xScreenShotFrame.Visibility = Visibility.Visible;
             }
             catch (Exception exc)
             {
                 Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
                 xRetrySSBanner.Visibility = Visibility.Visible;
+            }
+            finally
+            {
+                xLoadingScreenShotBanner.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -1065,7 +1067,7 @@ namespace Ginger.WindowExplorer
                 else
                 {
                     xStatusBarIcon.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
-                    xStatusBarText.Text = "Please Wait..Loading Element Details..";
+                    xStatusBarText.Text = "Loading element details. Please wait.";
                 }
             }
         }
@@ -1112,8 +1114,6 @@ namespace Ginger.WindowExplorer
                     System.Windows.Point pointOnImg = e.GetPosition((System.Windows.Controls.Image)sender);
 
                     await HighlightSelectedElement(pointOnImg);
-
-                    xUCElementDetails.SelectedElement = currentHighlightedElement;
 
                     mCurrentControlTreeViewItem = WindowExplorerCommon.GetTreeViewItemForElementInfo(currentHighlightedElement);
 
@@ -1457,7 +1457,30 @@ namespace Ginger.WindowExplorer
 
         private void xRetryScreenshotBtn_Click(object sender, RoutedEventArgs e)
         {
+            xRetrySSBanner.Visibility = Visibility.Collapsed;
             ShowScreenShot();
+        }
+
+        private void xScreenShotViewTab_MouseEnter(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void xScreenShotViewTab_MouseLeave(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void xViewsTabs_MouseEnter(object sender, MouseEventArgs e)
+        {
+            xStatusBarText.Visibility = Visibility.Visible;
+            xStatusBarIcon.Visibility = Visibility.Visible;
+        }
+
+        private void xViewsTabs_MouseLeave(object sender, MouseEventArgs e)
+        {
+            xStatusBarText.Visibility = Visibility.Collapsed;
+            xStatusBarIcon.Visibility = Visibility.Collapsed;
         }
     }
 }

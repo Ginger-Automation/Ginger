@@ -206,13 +206,12 @@ namespace Ginger.Actions
             xExplorerOperationsRow.Height = new GridLength(60);
             xHelpTab.Visibility = Visibility.Collapsed;
             xHelpButton.Visibility = Visibility.Collapsed;
-            xDetailsTabTextBlock.Visibility = Visibility.Collapsed;
-            xExecutionReportTabTextBlock.Visibility = Visibility.Collapsed;
-
             xFlowControlTab.Visibility = Visibility.Collapsed;
 
-            xOperationsTabTextBlock.Visibility = Visibility.Collapsed;
-            xOutputValuesTabHeaderTextBlock.Visibility = Visibility.Collapsed;
+            xOutputValuesTabHeaderTextBlock.FontSize = 10;
+            xDetailsTabTextBlock.FontSize = 10;
+            xExecutionReportTabTextBlock.FontSize = 10;
+            xOperationsTabTextBlock.FontSize = 10;
         }
 
         private void InitDetailsTabView()

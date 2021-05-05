@@ -397,7 +397,7 @@ namespace Ginger
             {
                 xIntegratePOMChkBox.Visibility = Visibility.Collapsed;
             }
-            
+
             UpdateElementActionTab();
         }
 
@@ -439,11 +439,8 @@ namespace Ginger
                             /// Not Required but 
                             pomDeltaUtils.DeltaViewElements.Clear();
 
-                            if (matchingOriginalElement != SelectedElement)
-                            {
-                                /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
-                                pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, SelectedElement);
-                            }
+                            /// To Do - POM Delta Run and if Updated Element is found then ask user if they would like to replace existing POM Element with New ?
+                            pomDeltaUtils.SetMatchingElementDeltaDetails(matchingOriginalElement, SelectedElement);
 
                             int originalItemIndex = -1;
                             if ((ApplicationPOMModel.eElementGroup)matchingOriginalElement.ElementGroup == ApplicationPOMModel.eElementGroup.Mapped)
@@ -525,7 +522,7 @@ namespace Ginger
                 }
                 else
                 {
-                    if(POMCheckBoxToggled == true)
+                    if (POMCheckBoxToggled == true)
                     {
                         POMCheckBoxToggled = false;
                     }
@@ -624,14 +621,19 @@ namespace Ginger
                 mSelectedPOM = value;
                 if (mSelectedPOM == null)
                 {
-                    POMSelectionPending = true;
+                    locateByPOMElementPage.xPomPathTextBox.Visibility = Visibility.Collapsed;
+
                     xIntegratePOMChkBox.IsChecked = false;
                     xIntegratePOMChkBox_Unchecked(null, null);
                 }
                 else
                 {
+                    locateByPOMElementPage.xPomPathTextBox.Visibility = Visibility.Visible;
+
                     xPOMSelectionFrame.Visibility = Visibility.Visible;
                     POMSelectionPending = false;
+                    SelectedElementChanged = true;
+                    UpdateElementActionTab();
                 }
             }
         }
@@ -640,8 +642,14 @@ namespace Ginger
 
         private void xIntegratePOMChkBox_Checked(object sender, RoutedEventArgs e)
         {
-            ShowPOMSelection();
-
+            if (xElementDetailsTabs.SelectedItem != xAddActionTab)
+            {
+                POMSelectionPending = true;
+            }
+            else
+            {
+                ShowPOMSelection();
+            }
             SelectedElementChanged = true;
             POMCheckBoxToggled = POMCheckBoxToggled == null ? false : true;
             RefreshElementAction();
@@ -649,7 +657,7 @@ namespace Ginger
 
         void ShowPOMSelection()
         {
-            if (POMSelectionPending || locateByPOMElementPage == null)
+            if (locateByPOMElementPage == null)
             {
                 ActUIElement act = new ActUIElement();
 
@@ -660,10 +668,11 @@ namespace Ginger
 
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
                 xPOMSelectionFrame.Content = locateByPOMElementPage;
+
+                POMSelectionPending = false;
             }
 
-            if(SelectedPOM != null)
-                xPOMSelectionFrame.Visibility = Visibility.Visible;
+            xPOMSelectionFrame.Visibility = Visibility.Visible;
         }
 
         private void LocateByPOMElementPage_POMChangedPageEvent()

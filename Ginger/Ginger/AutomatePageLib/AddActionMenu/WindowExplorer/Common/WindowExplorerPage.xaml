@@ -30,17 +30,16 @@
 
         <Grid x:Name="xSubGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition x:Name="ControlsViewGridRow" Height="*" MinHeight="200"/>
-                <!--<RowDefinition x:Name="xElementDetailGridRow" Height="*" MinHeight="200"/>-->
-                <RowDefinition x:Name="xElementDetailGridRow" Height="0" MinHeight="0"/>
+                <RowDefinition x:Name="ControlsViewGridRow" Height="*" MinHeight="200" />
+                <RowDefinition x:Name="xElementDetailGridRow" Height="0" MinHeight="0" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="97*"/>
-                <!--<ColumnDefinition x:Name="xElementDetailGridColumn" Width="91*"/>-->
-                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0"/>
+                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="*" MinWidth="200"/>
+                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0" MinWidth="0"/>
             </Grid.ColumnDefinitions>
 
-            <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                        MouseEnter="xViewsTabs_MouseEnter" MouseLeave="xViewsTabs_MouseLeave">
                 <TabControl.Resources>
                     <Style TargetType="{x:Type TabItem}">
                         <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
@@ -56,7 +55,7 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem x:Name="xScreenShotViewTab" GotFocus="ScreenShotViewTab_GotFocus">
+                <TabItem x:Name="xScreenShotViewTab" GotFocus="ScreenShotViewTab_GotFocus" >
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
@@ -140,9 +139,10 @@
             <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </Grid>
 
-        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="xLoadingFoundElementPnl" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-            <usercontrols:ImageMakerControl x:Name="xStatusBarIcon" DockPanel.Dock="Left" ImageType="MousePointer" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0"/>
-            <TextBlock x:Name="xStatusBarText" VerticalAlignment="Center" DockPanel.Dock="Left" Text="Please Wait.. Loading Element Details.." Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Top" />
+            <usercontrols:ImageMakerControl x:Name="xStatusBarIcon" DockPanel.Dock="Left" ImageType="MousePointer" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed" />
+            <TextBlock x:Name="xStatusBarText" Text="Click on an element to see its details" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" Visibility="Collapsed" />
         </DockPanel>
     </Grid>
 

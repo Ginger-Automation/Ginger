@@ -132,6 +132,17 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
+        public SeleniumDriver AppiumSeleniumDriver
+        {
+            get
+            {
+                return mSeleniumDriver;
+            }
+            set
+            {
+                mSeleniumDriver = value;
+            }
+        }
 
         public GenericAppiumDriver(BusinessFlow BF)
         {
@@ -1585,7 +1596,12 @@ namespace Amdocs.Ginger.CoreNET
 
         public bool IsElementObjectValid(object obj)
         {
-            return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
+            if (AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
+            }
+
+            return true;
         }
 
         public void UnHighLightElements()

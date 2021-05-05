@@ -4038,7 +4038,7 @@ namespace GingerCore.Drivers
             {
                 if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
-                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
                 }
                 else
                 {
@@ -4047,6 +4047,11 @@ namespace GingerCore.Drivers
             }
 
             EI.ElementName = GetElementName(EI as HTMLElementInfo);
+            if (mXPathHelper == null)
+            {
+                InitXpathHelper();
+            }
+
             ((HTMLElementInfo)EI).RelXpath = mXPathHelper.GetElementRelXPath(EI);
             EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
@@ -7203,7 +7208,7 @@ namespace GingerCore.Drivers
                     elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                     elemInfo.ElementObject = ele;
                     elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = GenerateXpathForIWebElement(ele, string.Empty);
+                    elemInfo.XPath = await GenerateXpathForIWebElementAsync(ele, string.Empty);
                     elemInfo.HTMLElementObject = elemNode;
 
                     ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);

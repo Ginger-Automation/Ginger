@@ -498,7 +498,7 @@ namespace Ginger.WindowExplorer
 
         private void ControlsViewsExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            xDataFrameRow.Height = new GridLength(200, GridUnitType.Star);
+            xDataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
             xDataFrameRow.MaxHeight = Double.PositiveInfinity;
         }
 

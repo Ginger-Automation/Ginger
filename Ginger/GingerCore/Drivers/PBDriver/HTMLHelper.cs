@@ -546,6 +546,10 @@ namespace GingerCore.Drivers.PBDriver
             EI.ElementObject = h1;
             EI.XPath = getXPath(h1);
             EI.RelXpath = "";
+            EI.Height = h1.offsetHeight;
+            EI.Width = h1.offsetWidth;
+            EI.X = h1.offsetLeft;
+            EI.Y = h1.offsetTop;
             return EI;
         }
 
