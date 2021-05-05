@@ -2424,11 +2424,11 @@ namespace Ginger.Run
                 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
-                if (!isFlowChange) 
+                if (!isFlowChange)
                 {
-                    if (!IsLastActionOfActivity())
+                    if (moveToNextAction)
                     {
-                        if (moveToNextAction )// if running single action we don't want to move to next action
+                        if (!IsLastActionOfActivity())// if running single action we don't want to move to next action
                         {
                             // if execution has been stopped externally, stop at current action
                             if (!mStopRun)

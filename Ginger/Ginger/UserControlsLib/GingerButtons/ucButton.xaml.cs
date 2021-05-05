@@ -189,8 +189,7 @@ namespace Amdocs.Ginger.UserControls
                         xButton.Style = FindResource("$CircleImageButtonStyle_Disabled") as Style;
                         break;
                     case (Core.eButtonType.PanelButton):
-                        xButton.Style = FindResource("$PanelButtonStyle") as Style;
-
+                        xButton.Style = FindResource("$PanelButtonStyle_Disabled") as Style;
                         break;
                 }
             }

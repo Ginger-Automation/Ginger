@@ -195,7 +195,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                         {
                             Description = string.IsNullOrWhiteSpace(actConfig.Description) ? "UI Element Action : " + actConfig.Operation + " - " + elementInfo.ItemName : actConfig.Description,
                             ElementAction = (ActUIElement.eElementAction)System.Enum.Parse(typeof(ActUIElement.eElementAction), actConfig.Operation),
+                            //LocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
+                            ElementLocateBy = (eLocateBy)System.Enum.Parse(typeof(eLocateBy), Convert.ToString(actConfig.LocateBy)),
                             ElementLocateValue = actConfig.LocateValue,
+                            //LocateValue = actConfig.LocateValue,
+                            ElementType = (eElementType)System.Enum.Parse(typeof(eElementType), Convert.ToString(actConfig.Type)),
                             Value = actConfig.ElementValue
                         };
 
@@ -255,7 +259,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             return true;
         }
 
-        public List<ElementTypeData> GetPlatformElementTypesData()
+        public virtual List<ElementTypeData> GetPlatformElementTypesData()
         {
             if (mPlatformElementTypeOperations == null)
             {
