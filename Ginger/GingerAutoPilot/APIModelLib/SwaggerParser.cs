@@ -16,20 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 using NSwag;
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Amdocs.Ginger.Common.GeneralLib;
-using Amdocs.Ginger.Common.APIModelLib;
-using YamlDotNet;
 using System.IO;
+using System.Linq;
 using YamlDotNet.Serialization;
-using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 {

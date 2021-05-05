@@ -27,6 +27,9 @@ using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.ALM;
+using GingerCore.Drivers;
+using GingerCore.Drivers.Appium;
+using GingerCore.Drivers.Mobile.Perfecto;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
@@ -87,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-       
+
 
         public void ExecuteActScriptAction(string ScriptFileName, string SolutionFolder)
         {
@@ -99,19 +102,61 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
             throw new NotImplementedException();
         }
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs,ref string refe, PublishToALMConfig PublishToALMConfig)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string refe, PublishToALMConfig PublishToALMConfig)
         {
             throw new NotImplementedException();
         }
 
         public Type GetDriverType(IAgent agent)
         {
-            throw new NotImplementedException();
+            Agent zAgent = (Agent)agent;
+
+            switch (zAgent.DriverType)
+            {
+                case Agent.eDriverType.SeleniumFireFox:                
+                case Agent.eDriverType.SeleniumChrome:                    
+                case Agent.eDriverType.SeleniumIE:                   
+                case Agent.eDriverType.SeleniumRemoteWebDriver:                    
+                case Agent.eDriverType.SeleniumEdge:
+                    return (typeof(SeleniumDriver));
+
+                case Agent.eDriverType.Appium:
+                    return (typeof(GenericAppiumDriver));
+
+                default:
+                    throw new Exception("GetDriverType: Unknown Driver type " + zAgent.DriverType);
+            }
+        }
+
+        public object GetDriverObject(IAgent agent)
+        {
+            Agent zAgent = (Agent)agent;
+
+            switch (zAgent.DriverType)
+            {
+                case Agent.eDriverType.SeleniumFireFox:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
+                case Agent.eDriverType.SeleniumChrome:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
+                case Agent.eDriverType.SeleniumIE:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
+                case Agent.eDriverType.SeleniumRemoteWebDriver:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
+                case Agent.eDriverType.SeleniumEdge:
+                    return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
+
+                case Agent.eDriverType.Appium:
+                    return new GenericAppiumDriver(zAgent.BusinessFlow);                           
+                default:
+                    {
+                        throw new Exception("Matching Driver was not found.");
+                    }
+            }        
         }
 
         public bool GetLatest(string path, SourceControlBase SourceControl)
         {
-          return  SourceControlIntegration.GetLatest(path, SourceControl);
+            return SourceControlIntegration.GetLatest(path, SourceControl);
         }
 
         public bool Revert(string path, SourceControlBase SourceControl)
@@ -128,14 +173,14 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         {
             EmailHtmlReportAttachment rReport = (EmailHtmlReportAttachment)Report;
             HTMLReportsConfiguration currentConf = (HTMLReportsConfiguration)conf;
-       
-                emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
-                ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
-                                                                                                                        false,
-                                                                                                                        HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
-                                                                                                                        extraInformationCalculated + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
-            
+
+            emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
+            ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
+            reportsResultFolder = ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                                                                                                                    false,
+                                                                                                                    HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                    extraInformationCalculated + System.IO.Path.DirectorySeparatorChar + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+
         }
 
         public bool Send_Outlook(bool actualSend = true, string MailTo = null, string Event = null, string Subject = null, string Body = null, string MailCC = null, List<string> Attachments = null, List<KeyValuePair<string, string>> EmbededAttachment = null)
@@ -144,7 +189,7 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
 
         public void ShowAutoRunWindow()
-        {            
+        {
             Reporter.ToLog(eLogLevel.WARN, "Show UI is set to true but not supported when running with GingerConsole");
         }
 
@@ -154,11 +199,6 @@ namespace Amdocs.Ginger.CoreNET.Reports.ReportHelper
         }
 
         public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void StartAgentDriver(IAgent IAgent)
         {
             throw new NotImplementedException();
         }

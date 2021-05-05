@@ -87,6 +87,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             this.BusinessFlow = BF;
             this.Environment = env;
         }
+
+        public override void InitDriver(Agent agent)
+        {
+            SetScriptsFolder(Path.Combine(agent.SolutionFolder, @"Documents\sh\"));
+        }
+
         public void SetScriptsFolder(string FolderPath)
         {
             mScriptsFolder = FolderPath;

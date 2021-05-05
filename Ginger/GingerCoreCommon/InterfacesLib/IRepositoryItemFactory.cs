@@ -40,9 +40,10 @@ namespace Amdocs.Ginger.Common
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow);
         IValueExpression CreateValueExpression(ProjEnvironment mProjEnvironment, BusinessFlow mBusinessFlow, object DSList);
         IValueExpression CreateValueExpression(Object obj, string attr);
-        void StartAgentDriver(IAgent IAgent);
 
         Type GetDriverType(IAgent agent);
+
+        object GetDriverObject(IAgent agent);
 
         void ShowAutoRunWindow();
 

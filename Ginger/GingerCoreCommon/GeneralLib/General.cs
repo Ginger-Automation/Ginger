@@ -407,5 +407,13 @@ namespace Amdocs.Ginger.Common.GeneralLib
             string CleanJson2 = CleanJson1.Substring(0, CleanJson1.LastIndexOf("}") + 1);
             return CleanJson2;
         }
+
+        public static List<T> ConvertObservableListToList<T>(ObservableList<T> List)
+        {
+            List<T> ObservableList = new List<T>();
+            foreach (T o in List)
+                ObservableList.Add(o);
+            return ObservableList;
+        }
     }
 }

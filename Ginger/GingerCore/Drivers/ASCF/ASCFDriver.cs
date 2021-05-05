@@ -34,6 +34,7 @@ using System.Reflection;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 
 namespace GingerCore.Drivers.ASCF
 {
@@ -1304,7 +1305,7 @@ namespace GingerCore.Drivers.ASCF
 
         public void InjectHTMLSpy(string BrowserControlLocator)
         {
-            string script = Properties.Resources.HTMLSpy;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.HTMLSpy);
             Send("InvokeScript", "ByName", BrowserControlLocator, NA, script, false);
         }
 
@@ -1318,7 +1319,7 @@ namespace GingerCore.Drivers.ASCF
         {            
             // TODO: if needed only!!! Jquery
 
-            string script0 = Properties.Resources.jquery_min ;
+            string script0 = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min);
             string RC0 = Send("InvokeScript", mBrowserLocateBy.ToString(), mBrowserLocateValue, NA, script0, false);
 
 
@@ -1326,8 +1327,8 @@ namespace GingerCore.Drivers.ASCF
             string script1 = GetXPathScript();
             string RC1 = Send("InvokeScript", mBrowserLocateBy.ToString(), mBrowserLocateValue, NA, script1, false);
             //TODO: check RC
-            
-            string script = Properties.Resources.GingerHTMLHelper ;
+
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper);// Properties.Resources.GingerHTMLHelper ;
 
             string RC2 = "";
 
@@ -1354,7 +1355,7 @@ namespace GingerCore.Drivers.ASCF
         //TODO: add check of broweser type, only IE need XPath
         private string GetXPathScript()
         {
-            string script = Properties.Resources.wgxpath_install;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install);
             script += "wgxpath.install();";
             script += "function getElementByXPath(xPath){";
             script += "var xPathRes = document.evaluate(xPath, document.body, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);";

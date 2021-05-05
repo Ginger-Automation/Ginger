@@ -217,11 +217,11 @@ namespace amdocs.ginger.GingerCoreNET
             bDone = true;
 
             // Add all RI classes from GingerCoreCommon
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
 
             // Add gingerCoreNET classes                        
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreNET);
+            //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
 

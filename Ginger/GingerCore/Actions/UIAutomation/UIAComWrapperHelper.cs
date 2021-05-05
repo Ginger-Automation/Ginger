@@ -17,23 +17,22 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.UIAutomation;
+using GingerCore.Drivers.Common;
+using GingerCore.Drivers.PBDriver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Automation;
-using GingerCore.Drivers.Common;
-using GingerCore.Actions.UIAutomation;
-using System.Windows;
-using System.Threading;
-using System.Diagnostics;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using GingerCore.Drivers.PBDriver;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Threading;
+using System.Windows;
+using System.Windows.Automation;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
