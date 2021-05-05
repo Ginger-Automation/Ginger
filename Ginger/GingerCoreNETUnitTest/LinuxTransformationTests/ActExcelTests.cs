@@ -1,4 +1,8 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.CoreNET.ActionsLib;
+using Amdocs.Ginger.CoreNET.Repository;
+using DocumentFormat.OpenXml.Spreadsheet;
+using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NPOI.HSSF.UserModel;
@@ -14,6 +18,12 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
     [TestClass]
     public class ActExcelTests
     {
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+        }
         [TestMethod]
         public void WriteExcel()
         {
@@ -72,6 +82,24 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
                 hssfwb.Write(out1);
                 out1.Close();
             }
+        }
+        [TestMethod]
+        public void ReadExcelFirstRowTest()
+        {
+            //Arrange            
+            ActExcelNPOI actExcel = new ActExcelNPOI();
+            //actFileOperation.AddOrUpdateInputParamValueAndCalculatedValue("SourceFilePath", TestResources.GetTestResourcesFile(@"TextFiles" + Path.DirectorySeparatorChar + "textFileToCopy.txt"));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue("ExcelFileName",
+                TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "Names.xlsx"));
+            actExcel.AddOrUpdateInputParamValueAndCalculatedValue("SheetName","Data");
+            actExcel.ExcelActionType = ActExcelNPOI.eExcelActionType.ReadData;
+
+            //Act
+            actExcel.Execute();
+
+            //Assert
+            Assert.AreNotEqual(actExcel.Status, Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);
+            //Assert.AreEqual(actExcel.ActReturnValues.)
         }
     }
 }
