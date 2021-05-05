@@ -518,6 +518,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 {
                     locateElement.LocateStatus = ElementLocator.eLocateStatus.Passed;
                     act.ExInfo += locateElement.LocateStatus;
+                    pomExcutionUtil.PriotizeLocatorPosition();
                     break;
                 }
 

@@ -395,6 +395,9 @@
     </Compile>
     <Compile Include="ApplicationModelsLib\APIModels\NodeToDelete.cs" />
     <Compile Include="ApplicationModelsLib\ModelOptionalValue\ParameterValues.cs" />
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaDeletedElementMappingWizardPage.xaml.cs">
+      <DependentUpon>PomDeltaDeletedElementMappingWizardPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml.cs">
       <DependentUpon>PomDeltaSettingsWizardPage.xaml</DependentUpon>
     </Compile>
@@ -2711,6 +2714,10 @@
     <Page Include="ApplicationModelsLib\ModelParams Pages\ModelsGlobalParamsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaDeletedElementMappingWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementCompareWizardPage.xaml">
       <SubType>Designer</SubType>
