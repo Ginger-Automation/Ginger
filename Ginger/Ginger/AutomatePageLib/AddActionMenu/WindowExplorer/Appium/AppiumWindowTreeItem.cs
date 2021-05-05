@@ -51,7 +51,7 @@ namespace Ginger.WindowExplorer.Appium
         {            
             if (mAppiumWindowPage == null)
             {
-                mAppiumWindowPage = new AppiumWindowPage(AppiumElementInfo);
+                mAppiumWindowPage = new AppiumWindowPage(ElementInfo);
             }
             return mAppiumWindowPage;
         }

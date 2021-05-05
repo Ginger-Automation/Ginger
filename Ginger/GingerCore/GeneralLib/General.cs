@@ -248,9 +248,9 @@ namespace GingerCore
         {
             try
             {
-                EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
+                EnumValueDescriptionAttribute[] attributes = EnumType.GetField(EnumValue.ToString()) != null ? EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false) as EnumValueDescriptionAttribute[] : null;
                 string s;
-                if (attributes.Length > 0)
+                if (attributes != null && attributes.Length > 0)
                 {
                     s = attributes[0].ValueDescription;
                     //for supporting multi Terminology types

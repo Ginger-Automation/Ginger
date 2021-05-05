@@ -1026,10 +1026,10 @@ namespace GingerCore.Drivers.AndroidADB
             // TODO: open device config page
         }
 
-        private void SetValueButton_Click(object sender, RoutedEventArgs e)
+        private async void SetValueButton_Click(object sender, RoutedEventArgs e)
         {
             // TODO: create an action to get the focusable control from the driver on the device
-            List<ElementInfo> list = ((IWindowExplorer)mAndroidADBDriver).GetVisibleControls(null);
+            List<ElementInfo> list = await ((IWindowExplorer)mAndroidADBDriver).GetVisibleControls(null);
             // get from the list only text Edit
             foreach (ElementInfo EI in list)
             {

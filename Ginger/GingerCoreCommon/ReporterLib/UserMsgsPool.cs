@@ -139,6 +139,7 @@ namespace Amdocs.Ginger.Common
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
+        POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped,
         AskIfToUndoChanges, AskIfToUndoItemChanges, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification,WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
@@ -689,6 +690,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.WizardSureWantToCancel, new UserMsg(eUserMsgType.QUESTION, "Cancel Wizard?", "Are you sure you want to cancel wizard and close?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ReportsTemplatesSaveWarn, new UserMsg(eUserMsgType.WARN, "Default Template Report Change", "Default change will cause all templates to be updated and saved, to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToLoadPlugIn, new UserMsg(eUserMsgType.ERROR, "Failed to Load Plug In", "Ginger could not load the plug in '{0}'" + Environment.NewLine + "Error Details: {1}", eUserMsgOption.OK, eUserMsgSelection.None));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.POMElementNotExist, new UserMsg(eUserMsgType.QUESTION, "Element Not Found", "'{0}' does not exist in selected Page Object Model - '{1}'" + Environment.NewLine + "Do you want to add this Element to POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateExistingPOMElement, new UserMsg(eUserMsgType.QUESTION, "Updated Element Found", "An updated version of Page Object Model Element '{0}' Found." + Environment.NewLine + "Do you want to update existing POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.POMMoveElementFromUnmappedToMapped, new UserMsg(eUserMsgType.QUESTION, "POM Element Found in Unmapped Elements", "Selected Element '{0}' Found in Unmapped Elements list of Page Object Model '{1}'." + Environment.NewLine + "Do you want to update POM & move element into Mapped Elements list ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.Failedtosaveitems, new UserMsg(eUserMsgType.ERROR, "Failed to Save", "Failed to do Save All", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AllItemsSaved, new UserMsg(eUserMsgType.INFO, "All Changes Saved", "All Changes Saved", eUserMsgOption.OK, eUserMsgSelection.None));

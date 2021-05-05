@@ -56,6 +56,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace GingerCore.Drivers
 {
@@ -3770,7 +3771,7 @@ namespace GingerCore.Drivers
             return null;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
             mIsDriverBusy = true;
 
@@ -3795,16 +3796,16 @@ namespace GingerCore.Drivers
             }
 
         }
-
-
+        
+        
         private ObservableList<ElementInfo> GetAllElementsFromPage(string path, List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null)
         {
             if (foundElementsList == null)
                 foundElementsList = new ObservableList<ElementInfo>();
 
-            string documentContents = Driver.PageSource;
-            HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(documentContents);
+                string documentContents = Driver.PageSource;
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(documentContents);
             IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
 
             if (htmlElements.Count() != 0)
@@ -4041,18 +4042,22 @@ namespace GingerCore.Drivers
 
             if (string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/")
             {
-                if (string.IsNullOrEmpty(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
+                if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
-                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject,string.Empty);
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
                 }
                 else
                 {
                     EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
                 }
-                    
             }
 
             EI.ElementName = GetElementName(EI as HTMLElementInfo);
+            if (mXPathHelper == null)
+            {
+                InitXpathHelper();
+            }
+
             ((HTMLElementInfo)EI).RelXpath = mXPathHelper.GetElementRelXPath(EI);
             EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
             EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);// improve code inside
@@ -4700,10 +4705,19 @@ namespace GingerCore.Drivers
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.RelativeXPath, Value = ((HTMLElementInfo)ElementInfo).RelXpath });
                 }
-                list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ((IWebElement)ElementInfo.ElementObject).Size.Height.ToString() });
-                list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ((IWebElement)ElementInfo.ElementObject).Size.Width.ToString() });
-                list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ((IWebElement)ElementInfo.ElementObject).Location.X.ToString() });
-                list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ((IWebElement)ElementInfo.ElementObject).Location.Y.ToString() });
+
+                ElementInfo.Height = ((IWebElement)ElementInfo.ElementObject).Size.Height;
+                list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
+
+                ElementInfo.Width = ((IWebElement)ElementInfo.ElementObject).Size.Width;
+                list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
+
+                ElementInfo.X = ((IWebElement)ElementInfo.ElementObject).Location.X;
+                list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
+
+                ElementInfo.Y = ((IWebElement)ElementInfo.ElementObject).Location.Y;
+                list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ElementInfo.Y.ToString() });
+
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Value))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
@@ -5151,6 +5165,43 @@ namespace GingerCore.Drivers
                     if (IWE.Equals(childElement))
                     {
                         return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
+                    }
+                    else
+                    {
+                        count++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (mBrowserTpe == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+
+            }
+            return "";
+        }
+
+        public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)
+        {
+            if (IWE.TagName == "html")
+                return "/" + IWE.TagName + "[1]" + current;
+
+            IWebElement parentElement = IWE.FindElement(By.XPath(".."));
+            ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
+            int count = 1;
+            foreach (IWebElement childElement in childrenElements)
+            {
+                try
+                {
+                    if (IWE.Equals(childElement))
+                    {
+                        return await GenerateXpathForIWebElementAsync(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
                     }
                     else
                     {
@@ -7086,11 +7137,28 @@ namespace GingerCore.Drivers
             return false;
         }
 
+        public HtmlDocument SSPageDoc = null;
+
+        public HtmlDocument GetPageHTML()
+        {
+            SSPageDoc = new HtmlDocument();
+            SSPageDoc.LoadHtml(Driver.PageSource);
+
+            return SSPageDoc;
+        }
+
         public Bitmap GetScreenShot()
         {
             try
             {
                 Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+
+                SSPageDoc = new HtmlDocument();
+                SSPageDoc.LoadHtml(Driver.PageSource);
+
+                //SSPageDocXML = new XmlDocument();
+                //SSPageDocXML.LoadXml(Driver.PageSource);
+
                 //using (var ms = new MemoryStream(ss.AsByteArray))
                 //{
                 //    using (MemoryStream outStream = new MemoryStream())
@@ -7112,6 +7180,184 @@ namespace GingerCore.Drivers
             }
         }
 
+        async Task<ElementInfo> IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
+        {
+            HTMLElementInfo elemInfo = null;
+
+            string iframeXPath = string.Empty;
+            Point parentElementLocation = new Point(0, 0);
+
+            while (true)
+            {
+                string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+
+                //RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                RemoteWebElement ele = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+
+                if (ele == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    if(SSPageDoc == null)
+                    {
+                        SSPageDoc = new HtmlDocument();
+                        SSPageDoc.LoadHtml(Driver.PageSource);
+                    }
+
+                    HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
+
+                    elemInfo = new HTMLElementInfo();
+                    var elemTypeEnum = GetElementTypeEnum(ele);
+                    elemInfo.ElementType = elemTypeEnum.Item1;
+                    elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
+                    elemInfo.ElementObject = ele;
+                    elemInfo.Path = iframeXPath;
+                    elemInfo.XPath = await GenerateXpathForIWebElementAsync(ele, string.Empty);
+                    elemInfo.HTMLElementObject = elemNode;
+
+                    ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
+                }
+
+                if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
+                {
+                    Driver.SwitchTo().DefaultContent();
+
+                    //elemInfo.X = ele.Coordinates.LocationInViewport.X;
+                    //elemInfo.Y = ele.Coordinates.LocationInViewport.Y;
+                    break;
+                }
+
+                if(string.IsNullOrEmpty(iframeXPath))
+                {
+                    iframeXPath = elemInfo.XPath;
+                }
+                else
+                {
+                    iframeXPath += "," + elemInfo.XPath;
+                }
+
+                parentElementLocation.X += elemInfo.X;
+                parentElementLocation.Y += elemInfo.Y;
+
+                Point p_Pos = GetElementPosition(ele);
+                ptX -= p_Pos.X;
+                ptY -= p_Pos.Y;
+
+                Driver.SwitchTo().Frame(ele);
+            }
+
+            elemInfo.X += parentElementLocation.X;
+            elemInfo.Y += parentElementLocation.Y;
+
+            return elemInfo;
+        }
+
+        //ElementInfo IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
+        //{
+        //    Driver.SwitchTo().DefaultContent();
+
+        //    var ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(arguments[0], arguments[1])", ptX, ptY);
+
+        //    HTMLElementInfo elemInfo = null;
+
+        //    if (ele != null)
+        //    {
+
+        //        string iframeElementPath = string.Empty;
+
+        //        if (ele.TagName == "frame" || ele.TagName == "iframe" || ele.TagName == "frameset")
+        //        {
+        //            Driver.SwitchTo().Frame(ele);
+        //            iframeElementPath = ele.GetProperty("xpath");
+        //            ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(arguments[0], arguments[1])", ptX, ptY);
+        //            Driver.SwitchTo().ParentFrame();
+        //        }
+
+        //        HtmlNode elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id == ele.GetProperty("id")).FirstOrDefault();
+
+        //        elemInfo = new HTMLElementInfo();
+        //        var elemTypeEnum = GetElementTypeEnum(ele);
+        //        elemInfo.ElementType = elemTypeEnum.Item1;
+        //        elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
+        //        elemInfo.ElementObject = ele;
+        //        elemInfo.Path = "";
+        //        elemInfo.XPath = string.IsNullOrEmpty(iframeElementPath) ? elemNode.XPath : iframeElementPath + "," + elemNode.XPath;
+        //        elemInfo.HTMLElementObject = elemNode;
+
+        //        ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
+        //    }
+
+        //    //if (elem == null)
+        //    //{
+        //    //    foreach (ElementInfo elemInfo in PageElements.Where(e => e.X <= ptX && e.Y <= ptY).OrderByDescending(e => e.Y))
+        //    //    {
+        //    //        if (elemInfo.X <= ptX)
+        //    //        {
+        //    //            if((elemInfo.X + elemInfo.Width) >= ptX)
+        //    //            {
+        //    //                if(elemInfo.Y == ptY || (elemInfo.Y < ptY && (elemInfo.Y + elemInfo.Height) >= ptY))
+        //    //                {
+        //    //                    elem = elemInfo;
+        //    //                    break;
+        //    //                }
+        //    //            }
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    return elemInfo;
+        //}
+
+        public RemoteWebElement GetElementFromPoint(long X, long Y)
+        {
+            while (true)
+            {
+                String s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+
+                RemoteWebElement i_Elem = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, X, Y);
+                if (i_Elem == null)
+                    return null;
+
+                if (i_Elem.TagName != "frame" && i_Elem.TagName != "iframe")
+                    return i_Elem;
+
+                Point p_Pos = GetElementPosition(i_Elem);
+                X -= p_Pos.X;
+                Y -= p_Pos.Y;
+
+                Driver.SwitchTo().Frame(i_Elem);
+            }
+        }
+
+        public Point GetElementPosition(RemoteWebElement i_Elem)
+        {
+            String s_Script = "var X, Y; "
+                            + "if (window.pageYOffset) " // supported by most browsers 
+                            + "{ "
+                            + "  X = window.pageXOffset; "
+                            + "  Y = window.pageYOffset; "
+                            + "} "
+                            + "else " // Internet Explorer 6, 7, 8
+                            + "{ "
+                            + "  var  Elem = document.documentElement; "         // <html> node (IE with DOCTYPE)
+                            + "  if (!Elem.clientHeight) Elem = document.body; " // <body> node (IE in quirks mode)
+                            + "  X = Elem.scrollLeft; "
+                            + "  Y = Elem.scrollTop; "
+                            + "} "
+                            + "return new Array(X, Y);";
+
+            RemoteWebDriver i_Driver = (RemoteWebDriver)i_Elem.WrappedDriver;
+            IList<Object> i_Coord = (IList<Object>)i_Driver.ExecuteScript(s_Script);
+
+            int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
+            int s32_ScrollY = Convert.ToInt32(i_Coord[1]);
+
+            return new Point(i_Elem.Location.X - s32_ScrollX,
+                             i_Elem.Location.Y - s32_ScrollY);
+        }
+
         Bitmap IVisualTestingDriver.GetScreenShot(Tuple<int, int> setScreenSize = null)
         {
             if (setScreenSize != null)
@@ -7120,7 +7366,10 @@ namespace GingerCore.Drivers
                 {
                     //Driver.Manage().Window.Position = new System.Drawing.Point(0, 0);
                     //System.Drawing.Size originalSize = Driver.Manage().Window.Size;
-                    Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
+                    if (setScreenSize == null)
+                        Driver.Manage().Window.Maximize();
+                    else
+                        Driver.Manage().Window.Size = new System.Drawing.Size(setScreenSize.Item1, setScreenSize.Item2);
                     //Bitmap screenShot = GetScreenShot();
                     //Driver.Manage().Window.Size = originalSize;
                     //return screenShot;
@@ -7197,7 +7446,6 @@ namespace GingerCore.Drivers
             }
             return txt;
         }
-
 
         void IVisualTestingDriver.ChangeAppWindowSize(int width, int height)
         {
@@ -7772,5 +8020,34 @@ namespace GingerCore.Drivers
             throw new NotImplementedException();
         }
 
+        public bool IsRecordingSupported()
+        {
+            return true;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return true;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Page:";
+        }
     }
 }

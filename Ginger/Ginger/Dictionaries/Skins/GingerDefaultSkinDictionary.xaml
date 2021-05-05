@@ -682,6 +682,7 @@
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="Opacity" Value="1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -701,6 +702,34 @@
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$PanelButtonStyle_Disabled">
+        <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontFamily" Value="Seoge UI" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="Opacity" Value="0.4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}"  CornerRadius="6,6,6,6" BorderThickness="2,2,2,2" >
+                        <ContentPresenter 
+                                TextElement.Foreground="White" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Opacity="40"
+                                RecognizesAccessKey="True"/>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1026,8 +1055,8 @@
 
     <Style TargetType="Expander" x:Key="$ExpanderStyle" >
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
-        <Setter Property="BorderThickness" Value="1"/>
+        <!--<Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="1"/>-->
     </Style>
     
     <Style TargetType="ComboBox" x:Key="$FlatEditInputComboBoxStyle" >
@@ -1981,7 +2010,8 @@
     <Style TargetType="{x:Type Button}" x:Key="DataGridCellButtonStyle">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />
+        <!--<Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />-->
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Template">
@@ -3089,26 +3119,26 @@
 
     <Style TargetType="DataGridColumnHeader" x:Key="@DataGridColumnHeader" >
         <Setter Property="Height" Value="20" />
-        <Setter Property="Background" Value="#CFD6E5"/>
-        <Setter Property="Foreground" Value="{DynamicResource $Color_DarkBlue}" />
-        <Setter Property="FontWeight"  Value="Bold"/>
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="BorderThickness" Value="0.6"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,3"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoRadialGradientBrush}"/>
     </Style>
 
     <Style TargetType="DataGridCell" x:Key="@DataGridCellStyle" >
-        <Setter Property="BorderThickness" Value="0.5"/>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{DynamicResource $SelectionColor_LightBlue}"/>
-                <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
-                <Setter Property="BorderThickness" Value="0.8"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="{DynamicResource $SelectionColor_Pink}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}"/>
+                <Setter Property="BorderThickness" Value="0,1,0,1"/>
+                <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
             <Trigger Property="IsEditing" Value="True">
                 <Setter Property="Background" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
-                <Setter Property="BorderBrush" Value="{DynamicResource $SelectionColor_VeryLightBlue}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource $amdocsLogoRadialGradientBrush}"/>
                 <Setter Property="VerticalAlignment" Value="Center"/>
 
             </Trigger>

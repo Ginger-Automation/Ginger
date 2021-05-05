@@ -43,6 +43,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
@@ -65,7 +66,7 @@ using System.Xml;
 
 namespace Amdocs.Ginger.CoreNET
 {
-    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow
+    public class GenericAppiumDriver : DriverBase, IWindowExplorer, IRecord, IDriverWindow, IMobileDriverWindow, IVisualTestingDriver
     {
         public override ePlatformType Platform { get { return ePlatformType.Mobile; } }
 
@@ -131,6 +132,17 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver<AppiumWebElement> Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
+        public SeleniumDriver AppiumSeleniumDriver
+        {
+            get
+            {
+                return mSeleniumDriver;
+            }
+            set
+            {
+                mSeleniumDriver = value;
+            }
+        }
 
         public GenericAppiumDriver(BusinessFlow BF)
         {
@@ -187,7 +199,9 @@ namespace Amdocs.Ginger.CoreNET
                         }
                         break;
                 }
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions               
+
+                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+
                 return true;
             }
             catch (Exception ex)
@@ -1229,8 +1243,13 @@ namespace Amdocs.Ginger.CoreNET
         {
             return null;
         }
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
+            if (AppType == eAppType.Web)
+            {
+                return await ((IWindowExplorer)mSeleniumDriver).GetVisibleControls(filteredElementType, foundElementsList, isPOMLearn, specificFramePath);
+            }
+
             List<ElementInfo> list = new List<ElementInfo>();
 
             string pageSourceString = Driver.PageSource;
@@ -1251,41 +1270,119 @@ namespace Amdocs.Ginger.CoreNET
                         if (cattr.Value == "false") continue;
                     }
                 }
-                //AppiumElementInfo AEI = GetElementInfoforXmlNode(nodes[i]);                
-                //list.Add(AEI);
+                ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
+                list.Add(EI);
             }
 
             return list;
         }
 
-        //private AppiumElementInfo GetElementInfoforXmlNode(XmlNode xmlNode)
-        //{
-        //    AppiumElementInfo AEI = new AppiumElementInfo();
-        //    AEI.ElementTitle = GetNameFor(xmlNode);            
-        //    AEI.ElementType = GetAttrValue(xmlNode, "class");
-        //    AEI.Value = GetAttrValue(xmlNode, "text");
-        //    if (string.IsNullOrEmpty(AEI.Value)) 
-        //        {
-        //            AEI.Value = GetAttrValue(xmlNode, "content-desc");
-        //        }
-        //    AEI.XmlNode = xmlNode;
-        //    AEI.XPath = GetNodeXPath(xmlNode);
-        //    AEI.WindowExplorer = this;
-
-        //    return AEI;
-        //}
-
-        private string GetNodeXPath(XmlNode xmlNode)
+        private async Task<ElementInfo> GetElementInfoforXmlNode(XmlNode xmlNode)
         {
-            string XPath = GetXPathToNode(xmlNode);
-            return XPath;
+            ElementInfo EI = new ElementInfo();
+            EI.ElementTitle = GetNameFor(xmlNode);
+            Tuple<string, eElementType> Elementype = GetElementTypeEnum(xmlNode);
+            EI.ElementType = Elementype.Item1;           //GetAttrValue(xmlNode, "class");
+            EI.ElementTypeEnum = Elementype.Item2;
+            EI.Value = GetAttrValue(xmlNode, "text");
+            if (string.IsNullOrEmpty(EI.Value))
+            {
+                EI.Value = GetAttrValue(xmlNode, "content-desc");
+            }
+            EI.ElementObject = xmlNode;
+            EI.XPath = await GetNodeXPath(xmlNode);
+            EI.WindowExplorer = this;
+
+            return EI;
+        }
+
+        public static Tuple<string, eElementType> GetElementTypeEnum(XmlNode xmlNode)
+        {
+            Tuple<string, eElementType> returnTuple;
+            eElementType elementType = eElementType.Unknown;
+            string elementTagName = string.Empty;
+            string elementTypeAtt;
+
+            if (xmlNode != null)
+            {
+                elementTagName = xmlNode.Name;
+                elementTypeAtt = GetAttrValue(xmlNode, "type");
+                if(string.IsNullOrEmpty(elementTypeAtt))
+                {
+                    elementTypeAtt = GetAttrValue(xmlNode, "class");
+                }
+            }
+            else
+            {
+                returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
+                return returnTuple;
+            }
+
+            if(elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
+            {
+                elementType = eElementType.TextBox;
+            }
+            else if (elementTagName.ToLower() == "android.widget.button" || elementTypeAtt.ToLower() == "android.widget.button")
+            {
+                elementType = eElementType.Button;
+            }
+            else if (elementTagName.ToLower() == "android.widget.edittext" || elementTypeAtt.ToLower() == "android.widget.edittext")
+            {
+                elementType = eElementType.HyperLink;
+            }
+            else if (elementTagName.ToLower() == "android.widget.checkbox" || elementTypeAtt.ToLower() == "android.widget.checkbox")
+            {
+                elementType = eElementType.ComboBox;
+            }
+            else if (elementTagName.ToLower() == "android.widget.view" || elementTypeAtt.ToLower() == "android.widget.view")
+            {
+                elementType = eElementType.Label;
+            }
+            else if (elementTagName.ToLower() == "android.widget.image" || elementTypeAtt.ToLower() == "android.widget.image")
+            {
+                elementType = eElementType.Image;
+            }
+            else if (elementTagName.ToLower() == "android.widget.radiobutton" || elementTypeAtt.ToLower() == "android.widget.radiobutton")
+            {
+                elementType = eElementType.RadioButton;
+            }
+            else if (elementTagName.ToLower() == "android.widget.canvas" || elementTypeAtt.ToLower() == "android.widget.canvas")
+            {
+                elementType = eElementType.Canvas;
+            }
+            else if (elementTagName.ToLower() == "android.widget.form" || elementTypeAtt.ToLower() == "android.widget.form")
+            {
+                elementType = eElementType.Form;
+            }
+            else if (elementTagName.ToUpper() == "android.widget.checkedtextview" || elementTypeAtt.ToLower() == "android.widget.checkedtextview")
+            {
+                elementType = eElementType.ListItem;
+            }
+            else if (elementTagName.ToLower() == "android.view.view" || elementTypeAtt.ToLower() == "android.view.view")
+            {
+                elementType = eElementType.Div;
+            }
+            else if (elementTagName.ToLower() == "android.widget.framelayout" || elementTypeAtt.ToLower() == "android.widget.framelayout")
+            {
+                elementType = eElementType.Button;
+            }
+            else
+                elementType = eElementType.Unknown;
+            returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
+
+            return returnTuple;
+        }
+
+        private async Task<string> GetNodeXPath(XmlNode xmlNode)
+        {
+            return await GetXPathToNode(xmlNode);
         }
 
         /// Gets the X-Path to a given Node
         /// </summary>
         /// <param name="node">The Node to get the X-Path from</param>
         /// <returns>The X-Path of the Node</returns>
-        public string GetXPathToNode(XmlNode node)
+        public async Task<string> GetXPathToNode(XmlNode node)
         {
             //TODO: verify XPath return 1 item back to same xmlnode.
 
@@ -1315,8 +1412,8 @@ namespace Amdocs.Ginger.CoreNET
                 siblingNode = siblingNode.PreviousSibling;
             }
 
-            // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.         
-            return String.Format("{0}/{1}[{2}]", GetXPathToNode(node.ParentNode), node.Name, indexInParent);
+            // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.
+            return String.Format("{0}/{1}[{2}]", await GetXPathToNode(node.ParentNode), node.Name, indexInParent);          //Testing Async
         }
 
         List<ElementInfo> IWindowExplorer.GetElementChildren(ElementInfo ElementInfo)
@@ -1355,7 +1452,7 @@ namespace Amdocs.Ginger.CoreNET
             return xmlNode.Name;
         }
 
-        string GetAttrValue(XmlNode xmlNode, string attr)
+        static string GetAttrValue(XmlNode xmlNode, string attr)
         {
             if (xmlNode.Attributes == null) return null;
             if (xmlNode.Attributes[attr] == null) return null;
@@ -1368,53 +1465,52 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ElementLocator> list = new ObservableList<ElementLocator>();
 
-            //AppiumElementInfo AEI = (AppiumElementInfo)ElementInfo;
+            // Show XPath, can have relative info
+            list.Add(new ElementLocator()
+            {
+                LocateBy = eLocateBy.ByXPath,
+                LocateValue = ElementInfo.XPath,
+                Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
+            });
 
-            //// Show XPath, can have relative info
-            //list.Add(new ElementLocator(){
-            //     LocateBy = eLocateBy.ByXPath,
-            //     LocateValue = AEI.XPath,
-            //     Help = "Highly Recommended when resourceid exist, long path with relative information is sensitive to screen changes"
-            //});
 
+            //Only by Resource ID
+            string resid = GetAttrValue(ElementInfo.ElementObject as XmlNode, "resource-id");
+            string residXpath = string.Format("//*[@resource-id='{0}']", resid);
+            if (residXpath != ElementInfo.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
+            {
+                list.Add(new ElementLocator()
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = residXpath,
+                    Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
+                });
+            }
 
-            ////Only by Resource ID
-            //string resid = GetAttrValue(AEI.XmlNode, "resource-id");
-            //string residXpath = string.Format("//*[@resource-id='{0}']", resid);
-            //if (residXpath != AEI.XPath) // We show by res id when it is different then the elem XPath, so not to show twice the same, the AE.Apath can include relative info
-            //{
-            //list.Add(new ElementLocator()
-            //{
-            //    LocateBy = eLocateBy.ByXPath,
-            //    LocateValue = residXpath,
-            //    Help = "Use Resource id only when you don't want XPath with relative info, but the resource-id is unique"
-            //});
-            //}
+            //By Content-desc
+            string contentdesc = GetAttrValue(ElementInfo.ElementObject as XmlNode, "content-desc");
+            if (!string.IsNullOrEmpty(contentdesc))
+            {
+                list.Add(new ElementLocator()
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
+                    Help = "content-desc is Recommended when resource-id not exist"
+                });
+            }
 
-            ////By Content-desc
-            //string contentdesc = GetAttrValue(AEI.XmlNode, "content-desc");
-            //if (!string.IsNullOrEmpty(contentdesc))
-            //{
-            //    list.Add(new ElementLocator()
-            //    {
-            //        LocateBy = eLocateBy.ByXPath,
-            //        LocateValue = string.Format("//*[@content-desc='{0}']", contentdesc),
-            //        Help = "content-desc is Recommended when resource-id not exist"
-            //    });
-            //}
-
-            //// By Class and text
-            //string eClass = GetAttrValue(AEI.XmlNode, "class");
-            //string eText = GetAttrValue(AEI.XmlNode, "text");
-            //if (!string.IsNullOrEmpty(eClass) && !string.IsNullOrEmpty(eText))
-            //{
-            //    list.Add(new ElementLocator()
-            //    {
-            //        LocateBy = eLocateBy.ByXPath,
-            //        LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
-            //        Help = "use class and text when you have list of items and no resource-id to use"
-            //    });
-            //}
+            // By Class and text
+            string eClass = GetAttrValue(ElementInfo.ElementObject as XmlNode, "class");
+            string eText = GetAttrValue(ElementInfo.ElementObject as XmlNode, "text");
+            if (!string.IsNullOrEmpty(eClass) && !string.IsNullOrEmpty(eText))
+            {
+                list.Add(new ElementLocator()
+                {
+                    LocateBy = eLocateBy.ByXPath,
+                    LocateValue = string.Format("//{0}[@text='{1}']", eClass, eText),    // like: //android.widget.RadioButton[@text='Ginger']" 
+                    Help = "use class and text when you have list of items and no resource-id to use"
+                });
+            }
 
             return list;
         }
@@ -1431,25 +1527,25 @@ namespace Amdocs.Ginger.CoreNET
         {
             ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
-            //XmlNode node = ((AppiumElementInfo)ElementInfo).XmlNode;
-           
-            //if (node == null) return list;
+            XmlNode node = ElementInfo.ElementObject as XmlNode;
 
-            //XmlAttributeCollection attrs = node.Attributes;
+            if (node == null) return list;
 
-            //if (attrs == null) return list;
+            XmlAttributeCollection attrs = node.Attributes;
 
-            //for (int i = 0; i < attrs.Count;i++ )
-            //{
-            //    ControlProperty CP = new ControlProperty();
-            //    CP.Name = attrs[i].Name;
-            //    CP.Value = attrs[i].Value;
-            //    list.Add(CP);
-            //}
+            if (attrs == null) return list;
+
+            for (int i = 0; i < attrs.Count; i++)
+            {
+                ControlProperty CP = new ControlProperty();
+                CP.Name = attrs[i].Name;
+                CP.Value = attrs[i].Value;
+                list.Add(CP);
+            }
 
             return list;
         }
-        
+
 
         public event RecordingEventHandler RecordingEvent;
 
@@ -1501,8 +1597,12 @@ namespace Amdocs.Ginger.CoreNET
 
         public bool IsElementObjectValid(object obj)
         {
-            //return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
-            return false;
+            if (AppType == eAppType.Web)
+            {
+                return ((IWindowExplorer)mSeleniumDriver).IsElementObjectValid(obj);
+            }
+
+            return true;
         }
 
         public void UnHighLightElements()
@@ -1582,6 +1682,229 @@ namespace Amdocs.Ginger.CoreNET
         public eDeviceOrientation GetOrientation()
         {
             return (eDeviceOrientation)Enum.Parse(typeof(eDeviceOrientation), Driver.Orientation.ToString());
+        }
+
+        public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null)
+        {
+            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            string filename = Path.GetTempFileName();
+            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+            return new System.Drawing.Bitmap(filename);
+        }
+
+        XmlDocument pageSourceXml = null;
+        string pageSourceString = null;
+
+        public async Task<XmlNode> FindElementXmlNodeByXY(long pointOnMobile_X, long pointOnMobile_Y)
+        {
+            try
+            {
+                //get screen elements nodes
+                XmlNodeList ElmsNodes;
+                // Do once?
+                // if XMLSOurce changed we need to refresh
+                pageSourceString = await GetPageSource();     // AppiumDriver.GetPageSource();
+                pageSourceXml = new XmlDocument();
+                pageSourceXml.LoadXml(pageSourceString);
+                //pageSourceXMLViewer.xmlDocument = pageSourceXml;
+
+                ElmsNodes = pageSourceXml.SelectNodes("//*");
+
+                ///get the selected element from screen
+                if (ElmsNodes != null && ElmsNodes.Count > 0)
+                {
+                    //move to collection for getting last node which fits to bounds
+                    ObservableList<XmlNode> ElmsNodesColc = new ObservableList<XmlNode>();
+                    foreach (XmlNode elemNode in ElmsNodes)
+                    {
+                        //if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.iOS && elemNode.LocalName == "UIAWindow") continue;                        
+                        //try { if (mDriver.DriverPlatformType == SeleniumAppiumDriver.ePlatformType.Android && elemNode.Attributes["focusable"].Value == "false") continue; }catch (Exception ex) { }
+                        bool skipElement = false;
+                        //if (FilterElementsChK.IsChecked == true)
+                        //{
+                        //    string[] filterList = FilterElementsTxtbox.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        //    try
+                        //    {
+                        //        for (int indx = 0; indx < filterList.Length; indx++)
+                        //            if (elemNode.Name.Contains(filterList[indx].Trim()) ||
+                        //                   elemNode.LocalName.Contains(filterList[indx].Trim()))
+                        //            {
+                        //                skipElement = true;
+                        //                break;
+                        //            }
+                        //    }
+                        //    catch (Exception ex)
+                        //    {
+                        //        //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); 
+                        //    }
+                        //}
+
+                        if (!skipElement)
+                            ElmsNodesColc.Add(elemNode);
+                    }
+
+                    Dictionary<XmlNode, long> foundElements = new Dictionary<XmlNode, long>();
+                    foreach (XmlNode elementNode in ElmsNodesColc.Reverse())
+                    {
+                        //get the element location
+                        long element_Start_X = -1;
+                        long element_Start_Y = -1;
+                        long element_Max_X = -1;
+                        long element_Max_Y = -1;
+
+                        switch (DevicePlatformType)
+                        {
+                            case eDevicePlatformType.Android:   // SeleniumAppiumDriver.eSeleniumPlatformType.Android:
+                                try
+                                {
+                                    if (elementNode.Attributes["bounds"] != null)
+                                    {
+                                        string bounds = elementNode.Attributes["bounds"].Value;
+                                        bounds = bounds.Replace("[", ",");
+                                        bounds = bounds.Replace("]", ",");
+                                        string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                                        if (boundsXY.Count() == 4)
+                                        {
+                                            element_Start_X = Convert.ToInt64(boundsXY[0]);
+                                            element_Start_Y = Convert.ToInt64(boundsXY[1]);
+                                            element_Max_X = Convert.ToInt64(boundsXY[2]);
+                                            element_Max_Y = Convert.ToInt64(boundsXY[3]);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        element_Start_X = -1;
+                                        element_Start_Y = -1;
+                                        element_Max_X = -1;
+                                        element_Max_Y = -1;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    element_Start_X = -1;
+                                    element_Start_Y = -1;
+                                    element_Max_X = -1;
+                                    element_Max_Y = -1;
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {System.Reflection.MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                }
+                                break;
+
+                            case eDevicePlatformType.iOS:    // SeleniumAppiumDriver.eSeleniumPlatformType.iOS:
+                                try
+                                {
+                                    element_Start_X = Convert.ToInt64(elementNode.Attributes["x"].Value);
+                                    element_Start_Y = Convert.ToInt64(elementNode.Attributes["y"].Value);
+                                    element_Max_X = element_Start_X + Convert.ToInt64(elementNode.Attributes["width"].Value);
+                                    element_Max_Y = element_Start_Y + Convert.ToInt64(elementNode.Attributes["height"].Value);
+                                }
+                                catch (Exception ex)
+                                {
+                                    element_Start_X = -1;
+                                    element_Start_Y = -1;
+                                    element_Max_X = -1;
+                                    element_Max_Y = -1;
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {System.Reflection.MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                }
+                                break;
+                        }
+
+
+                        if (((pointOnMobile_X >= element_Start_X) && (pointOnMobile_X <= element_Max_X))
+                                   && ((pointOnMobile_Y >= element_Start_Y) && (pointOnMobile_Y <= element_Max_Y)))
+                        {
+                            //object found                                
+                            //return elementNode;
+                            foundElements.Add(elementNode, ((element_Max_X - element_Start_X) * (element_Max_Y - element_Start_Y)));
+                        }
+                    }
+
+                    //getting the small node size found
+                    XmlNode foundNode = null;
+                    long foundNodeSize = 0;
+                    if (foundElements.Count > 0)
+                    {
+                        foundNode = foundElements.Keys.First();
+                        foundNodeSize = foundElements.Values.First();
+                    }
+                    for (int indx = 0; indx < foundElements.Keys.Count; indx++)
+                    {
+                        if (foundElements.Values.ElementAt(indx) < foundNodeSize)
+                        {
+                            foundNode = foundElements.Keys.ElementAt(indx);
+                            foundNodeSize = foundElements.Values.ElementAt(indx);
+                        }
+                    }
+                    if (foundNode != null)
+                        return foundNode;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                //Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                return null;
+            }
+        }
+
+        public VisualElementsInfo GetVisualElementsInfo()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ChangeAppWindowSize(int Width, int Height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        {
+            if (AppType == eAppType.Web)
+            {
+                return await ((IVisualTestingDriver)mSeleniumDriver).GetElementAtPoint(ptX, ptY);
+            }
+
+            XmlNode foundNode = await FindElementXmlNodeByXY(ptX, ptY);
+
+            return foundNode != null ? await GetElementInfoforXmlNode(foundNode) : null;
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return false;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.PageSource };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.Screenshot;
+        }
+
+        public string SelectionWindowText()
+        {
+            if (AppType == eAppType.Web)
+            {
+                return "Page:";
+            }
+            else
+            {
+                return "Window:";
+            }
         }
     }
 }
