@@ -140,6 +140,11 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                         mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
                         mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
                         break;
+                    case ePlatformType.Windows:
+                        var windowElementList = new WindowsPlatform().GetUIElementFilterList();
+                        mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = windowElementList["Basic"];
+                        mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = windowElementList["Advanced"];
+                        break;
                 }
             }
         }
@@ -269,15 +274,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mWizard.mPomLearnUtils.ElementLocatorsSettingsList.Count == 0)
             {
-                switch (mAppPlatform)
-                {
-                    case ePlatformType.Web:
-                        mWizard.mPomLearnUtils.ElementLocatorsSettingsList = new WebPlatform().GetLearningLocators();
-                        break;
-                    case ePlatformType.Java:
-                        mWizard.mPomLearnUtils.ElementLocatorsSettingsList = new JavaPlatform().GetLearningLocators();
-                        break;
-                }
+                mWizard.mPomLearnUtils.ElementLocatorsSettingsList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetLearningLocators();
             }
             xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
         }
