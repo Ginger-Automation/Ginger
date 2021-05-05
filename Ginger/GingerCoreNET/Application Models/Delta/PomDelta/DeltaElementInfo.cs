@@ -90,5 +90,27 @@ namespace GingerCoreNET.Application_Models
             }
         }
 
+
+        private eMappingStatus mMappingElementStatus;
+        public eMappingStatus MappingElementStatus
+        {
+            get
+            {
+                return mMappingElementStatus;
+            }
+            set
+            {
+                mMappingElementStatus = value;
+                OnPropertyChanged(nameof(MappingElementStatus));
+            }
+        }
+
+        public enum eMappingStatus
+        {
+            DeletedElement,
+            ReplaceExistingElement
+        }
+
+
     }
 }

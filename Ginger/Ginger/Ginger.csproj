@@ -652,6 +652,9 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaElementCompareWizardPage.xaml.cs">
       <DependentUpon>PomDeltaElementCompareWizardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomNewAddedElementSelectionPage.xaml.cs">
+      <DependentUpon>PomNewAddedElementSelectionPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\POMNameValidationRule.cs" />
     <Compile Include="ApplicationModelsLib\POMModels\ButtonToDisableConverter.cs" />
     <Compile Include="ApplicationModelsLib\APIModels\APIModelWizard\WSDLParser.cs" />
@@ -2959,6 +2962,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomNewAddedElementSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
