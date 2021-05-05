@@ -39,6 +39,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mPomDeltaViewPage = new PomDeltaViewPage(deltaElementInfos);
             mPomDeltaViewPage.SetAgent(mAgent);
             mPomDeltaViewPage.xMainElementsGrid.Grid.Columns[1].Visibility = Visibility.Collapsed;
+            mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
 
             mPomDeltaViewPage.xMainElementsGrid.txtSearch.Text = searchText;
             xNewPomElementsPageFrame.Content = mPomDeltaViewPage;
