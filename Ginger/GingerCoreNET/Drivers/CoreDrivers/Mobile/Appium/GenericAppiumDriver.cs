@@ -777,16 +777,16 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActMobileDevice.eMobileDeviceAction.PressXY:
                         tc = new TouchAction(Driver);                        
-                        tc.Press(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))));                        
+                        tc.Press(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));                        
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LongPressXY:
                         tc = new TouchAction(Driver);                        
-                        tc.LongPress(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))));
+                        tc.LongPress(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.TapXY:                        
-                        TapXY(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))));
+                        TapXY(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.PressBackButton:
@@ -877,8 +877,8 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.DragXYXY:
-                            DoDrag(Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))),
-                                (Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X2)))), Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y2))));
+                            DoDrag(Convert.ToInt32(act.X1.ValueForDriver), Convert.ToInt32(act.Y1.ValueForDriver),
+                                Convert.ToInt32(act.X2.ValueForDriver), Convert.ToInt32(act.Y2.ValueForDriver));
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.OpenApp:                        
@@ -906,10 +906,10 @@ namespace Amdocs.Ginger.CoreNET
                     case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
                         ITouchAction swipe;
                         swipe = BuildDragAction(Driver, 
-                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X1))), 
-                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y1))), 
-                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.X2))), 
-                            Convert.ToInt32(act.GetInputParamCalculatedValue(nameof(ActMobileDevice.Y2))), 1000);
+                            Convert.ToInt32(act.X1.ValueForDriver), 
+                            Convert.ToInt32(act.Y1.ValueForDriver), 
+                            Convert.ToInt32(act.X2.ValueForDriver), 
+                            Convert.ToInt32(act.Y2.ValueForDriver), 1000);
                         swipe.Perform();
                         break;
 
@@ -1083,8 +1083,9 @@ namespace Amdocs.Ginger.CoreNET
         {
             switch (DevicePlatformType)
             {
-                case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode((int)Enum.Parse(typeof(AndroidKeyCode), key));
+                case eDevicePlatformType.Android:                    
+                    ((AndroidDriver<AppiumWebElement>)Driver).PressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));                    
+
                     break;
                 //case eDevicePlatformType.iOS:
                 //    Driver.ExecuteScript("mobile: pressButton", "name", key);
@@ -1097,7 +1098,7 @@ namespace Amdocs.Ginger.CoreNET
             switch (DevicePlatformType)
             {
                 case eDevicePlatformType.Android:
-                    ((AndroidDriver<AppiumWebElement>)Driver).LongPressKeyCode((int)Enum.Parse(typeof(AndroidKeyCode), key));
+                    ((AndroidDriver<AppiumWebElement>)Driver).LongPressKeyCode(Convert.ToInt32(Enum.Parse(typeof(ActMobileDevice.ePressKey), key)));
                     break;
                     //case eDevicePlatformType.iOS:
                     //    Driver.ExecuteScript("mobile: pressButton", "name", key);
