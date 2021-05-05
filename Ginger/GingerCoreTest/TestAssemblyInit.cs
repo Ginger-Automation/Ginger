@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger;
 using Ginger.Repository;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,7 +38,7 @@ namespace GingerAutoPilotTest
             // We provide the assembly to GingerTestHelper.TestResources so it can locate the 'TestResources' folder path
             TestResources.Assembly = Assembly.GetExecutingAssembly();
 
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             // Init Reporter
             Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
 

@@ -372,7 +372,7 @@ namespace GingerCore
                         }
                         else
                         {
-                            Driver = (DriverBase)RepositoryItemHelper.RepositoryItemFactory.GetDriverObject(this);
+                            Driver = (DriverBase)TargetFrameworkHelper.Helper.GetDriverObject(this);
                         }
                     }
                     catch (Exception e)
@@ -549,7 +549,7 @@ namespace GingerCore
 
                 if (DriverClass == null)
             {
-                DriverClass = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
                     if (DriverClass == null)
                     {
                         return false;
@@ -593,7 +593,7 @@ namespace GingerCore
             }
             else
             {
-                DriverClass = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                DriverClass = TargetFrameworkHelper.Helper.GetDriverType(this);
 
                 SetDriverMissingParams(DriverClass);
 
@@ -699,7 +699,7 @@ namespace GingerCore
 
             if (AgentType == eAgentType.Driver)
             {
-                Type driverType = RepositoryItemHelper.RepositoryItemFactory.GetDriverType(this);
+                Type driverType = TargetFrameworkHelper.Helper.GetDriverType(this);
                 SetDriverDefualtParams(driverType);
             }
             else if (AgentType == eAgentType.Service)

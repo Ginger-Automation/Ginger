@@ -267,18 +267,12 @@
     <Compile Include="Actions\ActDemoPage.cs" />
     <Compile Include="Actions\Common\ElementConfigControl.cs" />
     <Compile Include="Actions\JSON\ActJSONTagValidation.cs" />
-    <Compile Include="Actions\WebServices\ActSoapUI.cs" />
-    <Compile Include="Actions\ActFileOperations.cs" />
-    <Compile Include="Actions\ActReadTextFile.cs" />
-    <Compile Include="Actions\ActValidation.cs" />
     <Compile Include="Actions\ActImage.cs" />
     <Compile Include="Actions\ActLowLevelClicks.cs" />
     <Compile Include="Actions\ActCreatePDFChart.cs" />
     <Compile Include="Actions\ActActivateRow.cs" />
     <Compile Include="Actions\ActGetMsgboxText.cs" />
-    <Compile Include="Actions\ActFileTransfer.cs" />
     <Compile Include="Actions\ActConsoleCommand.cs" />
-    <Compile Include="Actions\ActDBValidation.cs" />
     <Compile Include="Actions\ActExcel.cs" />
     <Compile Include="Actions\ActFunction.cs" />
     <Compile Include="Actions\ActASCFControl.cs" />
@@ -292,11 +286,9 @@
     <Compile Include="Actions\ActMenuItem.cs" />
     <Compile Include="Actions\ActScript.cs" />
     <Compile Include="Actions\ActTextSpeech.cs" />
-    <Compile Include="Actions\ActWebService.cs" />
     <Compile Include="Actions\ActWindow.cs" />
     <Compile Include="Actions\Common\ActDeviceButton.cs" />
     <Compile Include="Actions\ASCF\ActASCFBrowserElement.cs" />
-    <Compile Include="Actions\Communication\ActeMail.cs" />
     <Compile Include="Actions\Java\ActJavaElement.cs" />
     <Compile Include="Actions\Java\ActJavaEXE.cs" />
     <Compile Include="Actions\ActTableElement.cs" />
@@ -308,7 +300,6 @@
     </Compile>
     <Compile Include="Actions\UIAutomation\UIAElementInfo.cs" />
     <Compile Include="Actions\Windows\ActWindowsControl.cs" />
-    <Compile Include="Actions\REST\ActREST.cs" />
     <Compile Include="Actions\ScreenCapture\ScreenCaptureWindow.xaml.cs">
       <DependentUpon>ScreenCaptureWindow.xaml</DependentUpon>
     </Compile>
@@ -420,8 +411,6 @@
     <Compile Include="Drivers\MainFrame\MainFrameUIHelper.cs" />
     <Compile Include="Drivers\MainFrame\Terminal.cs" />
     <Compile Include="Drivers\PBDriver\HTMLHelper.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\HttpWebClientUtils.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\SoapUIUtils.cs" />
     <Compile Include="External\JsonExternalItemField.cs" />
     <Compile Include="GeneralLib\BindingHandler.cs" />
     <Compile Include="GeneralLib\ComboEnumItem.cs" />
@@ -435,12 +424,6 @@
       <DependentUpon>ComboBoxWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HTMLHelper.cs" />
-    <Compile Include="NoSqlBase\GingerMongoDb.cs" />
-    <Compile Include="NoSqlBase\GingerCouchbase.cs" />
-    <Compile Include="NoSqlBase\GingerUDTMap.cs" />
-    <Compile Include="NoSqlBase\GingerCassandra.cs" />
-    <Compile Include="NoSqlBase\MyClassBuilder.cs" />
-    <Compile Include="NoSqlBase\NoSqlBase.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -474,14 +457,10 @@
     <Compile Include="Drivers\PBDriver\PBDriver.cs" />
     <Compile Include="Drivers\ScriptDriverLib\ScriptDriverBase.cs" />
     <Compile Include="Drivers\ScriptDriverLib\VBScriptDriver.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\Utils.cs" />
-    <Compile Include="Drivers\WebServicesDriverLib\WebServicesDriver.cs" />
     <Compile Include="Drivers\WebServicesDriverLib\WebServicesDriverWindow.xaml.cs">
       <DependentUpon>WebServicesDriverWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Drivers\WebServicesDriverLib\WebServiceXML.cs" />
     <Compile Include="Drivers\WindowsLib\WindowsDriver.cs" />
-    <Compile Include="Environments\Database.cs" />
     <Compile Include="GeneralLib\General.cs" />
     <Compile Include="GeneralLib\GenericWindow.xaml.cs">
       <DependentUpon>GenericWindow.xaml</DependentUpon>
@@ -633,10 +612,13 @@
     <None Include="Resources\Pin32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Actions\REST\" />
+    <Folder Include="Actions\WebServices\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\CCM\fa1qm1\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Export\RM\" />
     <Folder Include="ALM\RQM\RQMServerConfigurationsPackage\RQM_Fields\" />
     <Folder Include="Drivers\JavaDriverLib\GingerJavaAgent\bin\com\amdocs\ginger\ASCFPack\" />
+    <Folder Include="Environments\" />
     <Folder Include="Plugins\Jenkins\" />
   </ItemGroup>
   <ItemGroup>
@@ -867,7 +849,7 @@
       <Version>4.0.7</Version>
     </PackageReference>
     <PackageReference Include="Oracle.ManagedDataAccess">
-      <Version>19.3.0</Version>
+      <Version>19.10.1</Version>
     </PackageReference>
     <PackageReference Include="PDFsharp">
       <Version>1.50.5147</Version>
@@ -882,7 +864,7 @@
       <Version>1.8019.4006.503</Version>
     </PackageReference>
     <PackageReference Include="SSH.NET">
-      <Version>2016.1.0</Version>
+      <Version>2020.0.1</Version>
     </PackageReference>
     <PackageReference Include="System.Collections">
       <Version>4.3.0</Version>

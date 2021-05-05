@@ -217,6 +217,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         {
                             a.Description = a.ActionDescription;
                             a.Active = true;
+                            a.DoNewActionSetup();
                             Acts.Add(a);
                         }
                     }

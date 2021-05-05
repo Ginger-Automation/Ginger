@@ -49,6 +49,7 @@
 
   <ItemGroup>
     <None Remove="DLLS\LibGit2Sharp.dll" />
+    <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js" />
     <None Remove="Reports\Ginger-Web-Client\styles.ec0b85177c760405ccbd.css" />
@@ -190,9 +191,13 @@
   
     <PackageReference Include="Appium.WebDriver" Version="4.2.1" />
   
+    <PackageReference Include="CassandraCSharpDriver" Version="3.10.0" />
+  
     <PackageReference Include="CommandLineParser" Version="2.6.0" />
   
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+  
+    <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
     <PackageReference Include="EPPlus" Version="4.5.3.1" />
   
@@ -214,6 +219,8 @@
   
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
   
+    <PackageReference Include="MedallionShell" Version="1.6.2" />
+  
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -223,7 +230,11 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
+    <PackageReference Include="MySql.Data" Version="8.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Npgsql" Version="4.0.7" />
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="Protractor" Version="0.13.0" />
     <PackageReference Include="RestSharp" Version="106.11.4" />
@@ -235,10 +246,16 @@
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1.2" />
     <PackageReference Include="Selenium.WebDriver.MicrosoftWebDriver" Version="10.0.17134" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
+    <PackageReference Include="SSH.NET" Version="2020.0.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
   </ItemGroup>
 
   <ItemGroup>

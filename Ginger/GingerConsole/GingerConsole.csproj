@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="1.0.8" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
     <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
   </ItemGroup>

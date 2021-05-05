@@ -602,7 +602,7 @@ namespace Ginger.Run
                         string result = string.Empty;
                         ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
                         bfs.Add(executedBusFlow);
-                        RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                        TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
                     }
                     //Call For Business Flow Control
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);
@@ -1864,7 +1864,7 @@ namespace Ginger.Run
             try
             {
                 Dictionary<string, String> screenShotsPaths = new Dictionary<string, String>();
-                screenShotsPaths = RepositoryItemHelper.RepositoryItemFactory.TakeDesktopScreenShot(true);
+                screenShotsPaths = TargetFrameworkHelper.Helper.TakeDesktopScreenShot(true);
                 if (screenShotsPaths == null)
                 {
                     if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
