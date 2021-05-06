@@ -15,7 +15,7 @@ namespace GingerCore.GeneralLib
             ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), bindingConvertor, BindingMode);
         }
 
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay)
+        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay, object converterParameter=null)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
@@ -26,7 +26,13 @@ namespace GingerCore.GeneralLib
                 b.Path = new PropertyPath(property);
                 b.Mode = BindingMode;
                 if (bindingConvertor != null)
+                {
                     b.Converter = bindingConvertor;
+                }
+                if (converterParameter != null)
+                {
+                    b.ConverterParameter = converterParameter;
+                }
                 b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 control.SetBinding(dependencyProperty, b);
             }
@@ -133,7 +139,7 @@ namespace GingerCore.GeneralLib
 
                 panelControl.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
-        }
+        }       
         #endregion Binding
     }
 

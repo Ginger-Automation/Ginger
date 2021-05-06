@@ -80,7 +80,12 @@ namespace Ginger
             /// <summary>
             /// List of items in Shared Repository to add
             /// </summary>
-            AddFromShardRepository = 7
+            AddFromShardRepository = 7,
+
+            /// <summary>
+            /// Item opened from Windows Explorer in the Side Panel
+            /// </summary>
+            Explorer
         }
 
         public static bool isDesignMode()
@@ -92,21 +97,12 @@ namespace Ginger
 
         public static string ConvertSolutionRelativePath(string fileName)
         {
-            //string s = fileName;
-            //s= s.ToUpper().Replace( WorkSpace.Instance.Solution.Folder.ToUpper(), @"~\");
-            //return s;
-            return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
+            return WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(fileName);
         }
 
         public static string GetFullFilePath(string filename)
         {
-            //string s = filename;
-            //if (s.StartsWith(@"~\"))
-            //{
-            //    s = s.Replace(@"~\",  WorkSpace.Instance.Solution.Folder);
-            //}
-            //return s;
-            return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
+            return WorkSpace.Instance.SolutionRepository.ConvertSolutionRelativePath(filename);
         }
 
         public static string OpenSelectFolderDialog(string Title)
@@ -139,6 +135,15 @@ namespace Ginger
             }
 
             mGingerHelpWindow.Show();            
+        }
+
+        internal static string SetupBrowseFile(OpenFileDialog dlg, bool isRelativePath = true)
+        {
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return isRelativePath ? ConvertSolutionRelativePath(dlg.FileName) : dlg.FileName;
+            }
+            return null;
         }
 
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)

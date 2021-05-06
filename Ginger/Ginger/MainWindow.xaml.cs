@@ -26,6 +26,7 @@ using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
+using Ginger.Drivers.DriversWindows;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
 using Ginger.GeneralWindows;
@@ -69,6 +70,9 @@ namespace Ginger
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
 
             Telemetry.eventHandler += TelemetryEventHandler;
+
+            DriverWindowHandler.Init();
+
             GingerCore.General.DoEvents();            
         }
 

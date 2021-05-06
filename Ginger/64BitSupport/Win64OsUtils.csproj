@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  
+    <PropertyGroup>   
+    <GeckoDriverPlatform>win64</GeckoDriverPlatform> 
+    <!--<PublishGeckoDriver>true</PublishGeckoDriver>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.28.0" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver64" Version="3.141.59" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(OutDir)IEDriverServer64.exe&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Win64&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)IEDriverServer64.exe&quot; &quot;$(SolutionDir)GingerConsole\bin\$(Configuration)\netcoreapp3.1\Win64&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.exe&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Win64&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.exe&quot; &quot;$(SolutionDir)GingerConsole\bin\$(Configuration)\netcoreapp3.1\Win64&quot; /Y /I" />
+  </Target>
+
+</Project>

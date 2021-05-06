@@ -57,7 +57,6 @@ namespace GingerCore.Actions
                 {
                     //Unable to use in web platform
                     mPlatforms.Add(ePlatformType.Windows);
-                    mPlatforms.Add(ePlatformType.Mobile);
                     mPlatforms.Add(ePlatformType.ASCF);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
                     mPlatforms.Add(ePlatformType.Java);

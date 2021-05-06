@@ -48,4 +48,22 @@ namespace GingerCore
             this.Description = UserConfiguredDescription;
         }
     }
+
+    public class UserConfiguredMultiValuesAttribute : Attribute
+    {
+        public override string ToString()
+        {
+            return "Multi Values";
+        }
+    }
+
+    public class UserConfiguredEnumTypeAttribute : Attribute
+    {
+        public Type EnumType { get; set; }
+
+        public UserConfiguredEnumTypeAttribute(Type UserConfiguredEnumType)
+        {
+            this.EnumType = UserConfiguredEnumType;
+        }
+    }
 }

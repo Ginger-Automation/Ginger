@@ -54,7 +54,7 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
-                RepositoryItemHelper.RepositoryItemFactory.ExecuteActScriptAction(ScriptFileName, SolutionFolder);
+                TargetFrameworkHelper.Helper.ExecuteActScriptAction(ScriptFileName, SolutionFolder);
             }
             catch(Exception ex)
             {

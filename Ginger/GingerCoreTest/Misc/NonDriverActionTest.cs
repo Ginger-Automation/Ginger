@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
@@ -48,7 +49,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
         {            
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
 
             mBF = new BusinessFlow();
             mBF.Activities = new ObservableList<Activity>();

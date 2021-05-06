@@ -127,7 +127,7 @@ namespace GingerCore
         /// <param name="comboBox"></param>
         /// <param name="EnumObj"></param>
         /// <param name="values"> leave values empty will take all possible vals, or pass a list to limit selection </param>
-        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null)
+        public static void FillComboFromEnumObj(ComboBox comboBox, Object EnumObj, List<object> values = null, bool sortValues = true, ListCollectionView valuesCollView = null, List<dynamic> excludeList= null)
         {
             comboBox.SelectedValuePath = "Value";
             Type Etype = EnumObj.GetType();
@@ -138,6 +138,10 @@ namespace GingerCore
                 // Get all possible enum vals
                 foreach (object item in Enum.GetValues(Etype))
                 {
+                    if (excludeList != null && excludeList.Contains(item))
+                    {
+                        continue;
+                    }
                     ComboEnumItem CEI = new ComboEnumItem();
                     CEI.text = GetEnumValueDescription(Etype, item);
                     CEI.Value = item;
@@ -156,6 +160,10 @@ namespace GingerCore
                     // get only subset from selected enum vals - used in Edit Action locate by to limit to valid values
                     foreach (object item in values)
                     {
+                        if (excludeList != null && excludeList.Contains(item))
+                        {
+                            continue;
+                        }
                         ComboEnumItem CEI = new ComboEnumItem();
                         CEI.text = GetEnumValueDescription(Etype, item);
                         CEI.Value = item;
@@ -238,37 +246,7 @@ namespace GingerCore
 
         public static string GetEnumValueDescription(Type EnumType, object EnumValue)
         {
-            try
-            {
-                    EnumValueDescriptionAttribute[] attributes = (EnumValueDescriptionAttribute[])EnumType.GetField(EnumValue.ToString()).GetCustomAttributes(typeof(EnumValueDescriptionAttribute), false);
-                string s;
-                if (attributes.Length > 0)
-                {
-                    s = attributes[0].ValueDescription;
-                    //for supporting multi Terminology types
-                    s = s.Replace("Business Flow", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
-                    s = s.Replace("Business Flows", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows));
-                    s = s.Replace("Activities Group", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
-                    s = s.Replace("Activities Groups", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups));
-                    s = s.Replace("Activity", GingerDicser.GetTermResValue(eTermResKey.Activity));
-                    s = s.Replace("Conversion Mechanism", GingerDicser.GetTermResValue(eTermResKey.ConversionMechanism));
-                    s = s.Replace("Activities", GingerDicser.GetTermResValue(eTermResKey.Activities));
-                    s = s.Replace("Variable", GingerDicser.GetTermResValue(eTermResKey.Variable));
-                    s = s.Replace("Variables", GingerDicser.GetTermResValue(eTermResKey.Variables));
-                    s = s.Replace("Run Set", GingerDicser.GetTermResValue(eTermResKey.RunSet));
-                    s = s.Replace("Run Sets", GingerDicser.GetTermResValue(eTermResKey.RunSets));
-                }
-                else
-                {
-                    s = EnumValue.ToString();
-                }
-                return s;
-            }
-            catch
-            {
-                //TODO: fixme ugly catch - check why we come here and fix it, todo later
-                return EnumValue.ToString();
-            }
+            return Amdocs.Ginger.Common.GeneralLib.General.GetEnumValueDescription(EnumType, EnumValue);
         }
 
         public static string GetEnumDescription(Type EnumType, object EnumValue)
@@ -631,11 +609,7 @@ namespace GingerCore
             }
         }
 
-        public static List<XmlNodeItem> GetXMLNodesItems(XmlDocument xmlDoc, bool DisableProhibitDtd = false)
-        {
-            return Amdocs.Ginger.Common.GeneralLib.General.GetXMLNodesItems(xmlDoc, DisableProhibitDtd);
-        }
-
+     
         public static void ClearDirectoryContent(string DirPath)
         {
             Amdocs.Ginger.Common.GeneralLib.General.ClearDirectoryContent(DirPath);

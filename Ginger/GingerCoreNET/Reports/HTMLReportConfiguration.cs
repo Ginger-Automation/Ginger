@@ -275,7 +275,7 @@ namespace Ginger.Reports
             reportConfiguraion.Description = string.Empty;
             using (var ms = new MemoryStream())
             {
-                string file = Ginger.Reports.GingerExecutionReport.ExtensionMethods.getGingerEXEFileName().Replace("Ginger.exe", @"Images\@amdocs_logo.jpg");
+                string file = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),"Images","amdocs_logo.jpg");
                 Bitmap bitmap = new Bitmap(file);
                 reportConfiguraion.LogoBase64Image = BitmapToBase64(bitmap);
             }
