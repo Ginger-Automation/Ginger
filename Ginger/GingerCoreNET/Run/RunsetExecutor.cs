@@ -142,6 +142,8 @@ namespace Ginger.Run
 
         public void InitRunners()
         {
+            //This is needed to handle updating the outputvariable mappedoutvalues to new style
+            RunSetConfig.UpdateOldOutputVariableMappedValues();
             foreach (GingerRunner gingerRunner in Runners)
             {
                 InitRunner(gingerRunner);

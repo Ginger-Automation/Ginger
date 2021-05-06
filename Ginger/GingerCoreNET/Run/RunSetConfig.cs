@@ -252,9 +252,9 @@ namespace Ginger.Run
             base.UpdateBeforeSave();
         }
 
-        public override void PostDeserialization()
-        {
 
+        public void UpdateOldOutputVariableMappedValues()
+        {
             //For BusinessFlowCustomizedRunVariables the output variable mappedvalue was storing only variable GUID
             //But if there 2 variables with same name then users were not able to map it to the desired instance 
             //So mappedValue for output variable type mapping was enhanced to store the BusinessFlowInstanceGUID_VariabledGuid
@@ -286,12 +286,13 @@ namespace Ginger.Run
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.WARN,"Exception occured during post serialize operation of runset", ex);
+                            Reporter.ToLog(eLogLevel.WARN, "Exception occured during post serialize operation of runset", ex);
                         }
                     }
                     previousBusinessFlowRuns.Add(businessFlowRun);
                 }
             }
         }
+
     }
 }

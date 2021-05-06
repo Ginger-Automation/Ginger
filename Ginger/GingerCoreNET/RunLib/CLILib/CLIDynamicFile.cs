@@ -200,8 +200,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 cliHelper.RunAnalyzer = addRunset.RunAnalyzer;
                 DynamicExecutionManager.CreateRunSetFromXML(runsetExecutor, addRunset);
             }
-            //This is needed to handle updating the outputvariable mappedoutvalues to new style
-            runsetExecutor.RunSetConfig.PostDeserialization();
         }
 
         public async Task Execute(RunsetExecutor runsetExecutor)
