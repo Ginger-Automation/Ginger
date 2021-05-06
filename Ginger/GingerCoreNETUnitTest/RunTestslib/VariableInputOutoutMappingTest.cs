@@ -86,7 +86,10 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
             //Act
             RunSetConfig runSetConfig = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Default Run Set" select x).SingleOrDefault();
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig = runSetConfig;
 
+            WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault();
+            WorkSpace.Instance.RunsetExecutor.InitRunners();
 
             //Assert
             Assert.AreEqual("2887671c-4f0c-4be8-9233-ca2f20ed1f04_b3ed569d-c99b-4a5e-8bb3-1462d83a837f", runSetConfig.GingerRunners[0].BusinessFlowsRunList[2].BusinessFlowCustomizedRunVariables[0].MappedOutputValue, "outputvariables with same name from different flow");
