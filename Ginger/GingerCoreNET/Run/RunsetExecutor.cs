@@ -63,7 +63,7 @@ namespace Ginger.Run
         private string _currentRunSetLogFolder = string.Empty;
         private string _currentHTMLReportFolder = string.Empty;
         ObservableList<DefectSuggestion> mDefectSuggestionsList = new ObservableList<DefectSuggestion>();
-
+        private List<BusinessFlowRun> AllPreviousBusinessFlowRuns = new List<BusinessFlowRun>();
         RunSetConfig mRunSetConfig = null;
         public RunSetConfig RunSetConfig
         {
@@ -142,8 +142,7 @@ namespace Ginger.Run
 
         public void InitRunners()
         {
-            //This is needed to handle updating the outputvariable mappedoutvalues to new style
-            RunSetConfig.UpdateOldOutputVariableMappedValues();
+            AllPreviousBusinessFlowRuns.Clear();
             foreach (GingerRunner gingerRunner in Runners)
             {
                 InitRunner(gingerRunner);
@@ -205,6 +204,9 @@ namespace Ginger.Run
                         ObservableList<VariableBase> allBfVars = BFCopy.GetBFandActivitiesVariabeles(true); 
                         Parallel.ForEach(businessFlowRun.BusinessFlowCustomizedRunVariables, customizedVar =>
                         {
+                            //This is needed to handle updating the outputvariable mappedoutvalues to new style
+                            UpdateOldOutputVariableMappedValues(customizedVar);
+
                             VariableBase originalVar = allBfVars.Where(v => v.ParentGuid == customizedVar.ParentGuid && v.Guid == customizedVar.Guid).FirstOrDefault();
                             if (originalVar == null)//for supporting dynamic run set XML in which we do not have GUID
                             {
@@ -220,6 +222,7 @@ namespace Ginger.Run
                             }
                         });
                     }
+                    AllPreviousBusinessFlowRuns.Add(businessFlowRun);
                     BFCopy.RunDescription = businessFlowRun.BusinessFlowRunDescription;
                     BFCopy.BFFlowControls = businessFlowRun.BFFlowControls;
                     runnerFlows.Add(BFCopy);
@@ -228,6 +231,39 @@ namespace Ginger.Run
 
             runner.IsUpdateBusinessFlowRunList = true;
             runner.BusinessFlows = runnerFlows;
+        }
+
+
+        private void UpdateOldOutputVariableMappedValues(VariableBase var)
+        {
+            //For BusinessFlowCustomizedRunVariables the output variable mappedvalue was storing only variable GUID
+            //But if there 2 variables with same name then users were not able to map it to the desired instance 
+            //So mappedValue for output variable type mapping was enhanced to store the BusinessFlowInstanceGUID_VariabledGuid
+            //Below code is for backward support for old runset with output variable mapping having only guid.
+
+            try
+            {
+                if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains("_"))
+                {
+                    for (int i = AllPreviousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
+                    {
+                        Guid guid = AllPreviousBusinessFlowRuns[i].BusinessFlowGuid;
+                        BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
+
+                        if (bf.GetBFandActivitiesVariabeles(false, false, true).Where(x => x.Guid.ToString() == var.MappedOutputValue).FirstOrDefault() != null)
+                        {
+                            var.MappedOutputValue = AllPreviousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Exception occured when trying to update outputvariable mapped value ", ex);
+            }
+
+
         }
 
         private void CopyCustomizedVariableConfigurations(VariableBase customizedVar, VariableBase originalVar)

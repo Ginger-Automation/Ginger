@@ -25,11 +25,8 @@ using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms;
-using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ginger.Run
 {
@@ -251,48 +248,6 @@ namespace Ginger.Run
             UpdateRunnersBusinessFlowRunsList();
             base.UpdateBeforeSave();
         }
-
-
-        public void UpdateOldOutputVariableMappedValues()
-        {
-            //For BusinessFlowCustomizedRunVariables the output variable mappedvalue was storing only variable GUID
-            //But if there 2 variables with same name then users were not able to map it to the desired instance 
-            //So mappedValue for output variable type mapping was enhanced to store the BusinessFlowInstanceGUID_VariabledGuid
-            //Below code is for backward support for old runset with output variable mapping having only guid.
-            List<BusinessFlowRun> previousBusinessFlowRuns = new List<BusinessFlowRun>();
-
-            foreach (GingerRunner gingerRunner in this.GingerRunners)
-            {
-                foreach (BusinessFlowRun businessFlowRun in gingerRunner.BusinessFlowsRunList)
-                {
-                    foreach (VariableBase var in businessFlowRun.BusinessFlowCustomizedRunVariables)
-                    {
-                        try
-                        {
-                            if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains("_"))
-                            {
-                                for (int i = previousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
-                                {
-                                    Guid guid = previousBusinessFlowRuns[i].BusinessFlowGuid;
-                                    BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
-
-                                    if (bf.GetBFandActivitiesVariabeles(false, false, true).Where(x => x.Guid.ToString() == var.MappedOutputValue).FirstOrDefault() != null)
-                                    {
-                                        var.MappedOutputValue = previousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.WARN, "Exception occured during post serialize operation of runset", ex);
-                        }
-                    }
-                    previousBusinessFlowRuns.Add(businessFlowRun);
-                }
-            }
-        }
-
+        
     }
 }
