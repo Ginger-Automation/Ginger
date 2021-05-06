@@ -364,7 +364,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             //Assert
             Assert.AreEqual(PLRC.Name, "LongActionDone", "PLRC.Name = LongActionDone");
         }
-
+        [Ignore]
         [TestMethod]  [Timeout(60000)]
         public void ServerSendMessagetoClient()
         {

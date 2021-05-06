@@ -899,7 +899,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mPlatformElementTypeOperations;
         }
 
-        public Dictionary<string,ObservableList<UIElementFilter>> GetUIElementFilterList()
+        public override Dictionary<string,ObservableList<UIElementFilter>> GetUIElementFilterList()
         {
             ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
             ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
