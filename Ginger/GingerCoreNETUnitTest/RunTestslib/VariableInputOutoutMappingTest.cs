@@ -28,9 +28,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             mTestHelper.ClassInitialize(TestContext);
             string path = Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions" + Path.DirectorySeparatorChar + "OutputVariableOldSolution"));
-           
-            //WorkspaceHelper.CreateWorkspaceWithTempSolution(path);
-            //WorkSpace.Instance.SolutionRepository=WorkspaceHelper.CreateWorkspaceAndOpenSolution(path);
+          
             WorkSpace.Instance.OpenSolution(path);
 
         }
@@ -55,7 +53,8 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.RelWS();
         }
 
-
+        //Enable once set variable and  condition validation action supported on linux
+        [Ignore]
         [TestMethod]
         [Timeout(60000)]
         public void OutputVariableOldMappingValueExecutionTest()
