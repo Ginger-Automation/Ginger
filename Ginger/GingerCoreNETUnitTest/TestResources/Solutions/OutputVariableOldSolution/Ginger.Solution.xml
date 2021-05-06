@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="717f75a9-0a26-427c-91bc-e26709efe86c" ItemType="Solution" CreatedBy="JGHODKE" Created="202105060451" GingerVersion="3.7.0.0" Version="4" LastUpdateBy="JGHODKE" LastUpdate="202105060902" />
+<Solution Guid="717f75a9-0a26-427c-91bc-e26709efe86c" Name="OutputVariableOldSolution" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ApplicationPlatforms>
+<ApplicationPlatform AppName="MyWindowsApp" Guid="1bcd3f3e-554c-4429-9532-aafe06420186" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="Windows" />
+</ApplicationPlatforms>
+
+<ExecutionLoggerConfigurationSetList>
+<ExecutionLoggerConfiguration DeleteLocalDataOnPublish="No" ExecutionLoggerConfigurationExecResultsFolder="~\ExecutionResults" ExecutionLoggerConfigurationIsEnabled="True" ExecutionLoggerConfigurationMaximalFolderSize="250" Guid="b54c5fc5-1db6-4df1-b4fd-ec490198f489" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" PublishLogToCentralDB="No" SelectedDataRepositoryMethod="LiteDB" Seq="0" />
+</ExecutionLoggerConfigurationSetList>
+
+<HTMLReportsConfigurationSetList>
+<HTMLReportsConfiguration Guid="c2732526-43a5-4b6a-b14a-ab24f5f5456c" HTMLReportConfigurationMaximalFolderSize="0" HTMLReportsFolder="~\HTMLReports" HTMLReportTemplatesSeq="1" IsSelected="True" ParentGuid="00000000-0000-0000-0000-000000000000" Seq="0" />
+</HTMLReportsConfigurationSetList>
+
+<Variables>
+<VariableRandomNumber Guid="046808ed-613c-49c6-a4f1-4f03e95410ce" Interval="1" IsInteger="True" MappedOutputType="None" Max="9999" Min="1" Name="ContactIDOfCreateContact" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
+<VariableRandomNumber Guid="d3783c30-f601-4758-a2be-000a5b0498eb" Interval="1" IsInteger="True" MappedOutputType="None" Max="9999999" Min="10000" Name="ContactIDOfCreateCustomer" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsInputValue="False" SetAsOutputValue="False" />
+</Variables>
+</Solution></GingerRepositoryItem>

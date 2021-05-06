@@ -267,19 +267,26 @@ namespace Ginger.Run
                 {
                     foreach (VariableBase var in businessFlowRun.BusinessFlowCustomizedRunVariables)
                     {
-                        if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains("_"))
+                        try
                         {
-                            for (int i = previousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
+                            if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains("_"))
                             {
-                                Guid guid = previousBusinessFlowRuns[i].BusinessFlowGuid;
-                               BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
-
-                                if(bf.GetBFandActivitiesVariabeles(false, false, true).Where(x => x.Guid.ToString() == var.MappedOutputValue).FirstOrDefault()!=null)
+                                for (int i = previousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
                                 {
-                                    var.MappedOutputValue = previousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
-                                    break;
+                                    Guid guid = previousBusinessFlowRuns[i].BusinessFlowGuid;
+                                    BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
+
+                                    if (bf.GetBFandActivitiesVariabeles(false, false, true).Where(x => x.Guid.ToString() == var.MappedOutputValue).FirstOrDefault() != null)
+                                    {
+                                        var.MappedOutputValue = previousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
+                                        break;
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.WARN,"Exception occured during post serialize operation of runset", ex);
                         }
                     }
                     previousBusinessFlowRuns.Add(businessFlowRun);

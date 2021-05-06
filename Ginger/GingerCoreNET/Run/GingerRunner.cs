@@ -873,12 +873,22 @@ namespace Ginger.Run
                 outputVariables = new List<VariableBase>();
             }
 
+            Dictionary<string, int> variablePaths = new Dictionary<string, int>();
             //Previous Business Flows output variabels
             for (int i = BusinessFlows.IndexOf(businessFlow) - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
             {
                 foreach (VariableBase var in BusinessFlows[i].GetBFandActivitiesVariabeles(false, false, true))
-                {                   
-                    var.Path = var.Name + "[" + BusinessFlows[i].Name + "("+ (i+1) +")"+ "]";
+                {
+                    var.Path = var.Name + " [" + BusinessFlows[i].Name + "]";
+                    if (variablePaths.ContainsKey(var.Path))
+                    {
+                        variablePaths[var.Path] += 1;                      
+                    }
+                    else
+                    {
+                        variablePaths.Add(var.Path, 1);
+                    }
+                  
                     var.VariableInstanceInfo = BusinessFlows[i].InstanceGuid.ToString() + "_" + var.Guid;                 
                     outputVariables.Add(var);
                 }
@@ -894,9 +904,18 @@ namespace Ginger.Run
                     {
                         foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
                         {
-                            var.VariableInstanceInfo = bf.InstanceGuid.ToString() + "_" + var.Guid;
-                            var.Path = var.Name + "[" + runSetConfig.GingerRunners[j].Name + ": " + bf.Name + "(" + (i + 1) + ")" + "]";
 
+                            var.Path = var.Name + " [" + runSetConfig.GingerRunners[j].Name + ": " + bf.Name + "]";
+                            if (variablePaths.ContainsKey(var.Path))
+                            {
+                                variablePaths[var.Path] += 1;
+                            }
+                            else
+                            {
+                                variablePaths.Add(var.Path, 1);
+                            }
+                            var.VariableInstanceInfo = bf.InstanceGuid.ToString() + "_" + var.Guid;
+                            
                             outputVariables.Add(var);
 
                         }
@@ -904,9 +923,22 @@ namespace Ginger.Run
                     }
                 }
             }
-                        
+                    
+            //Handle variables with duplicate path and add index
+            foreach(KeyValuePair<string, int> duplicatePath in variablePaths)
+            {
+                int count = duplicatePath.Value;
+                if (duplicatePath.Value>1)
+                {
+                    foreach(VariableBase var in outputVariables.Where(x=>x.Path==duplicatePath.Key))
+                    {
+                        var.Path = var.Path.Insert(var.Path.LastIndexOf("]"), " (" + count + ")");
+                        count--;
+                    }
+                }
+            }
             return outputVariables;                 
-        }      
+        }            
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
