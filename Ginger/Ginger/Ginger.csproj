@@ -404,6 +404,9 @@
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml.cs">
       <DependentUpon>PomDeltaSettingsWizardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaMappingElementsComparePage.xaml.cs">
+      <DependentUpon>PomDeltaMappingElementsComparePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaViewPage.xaml.cs">
       <DependentUpon>PomDeltaViewPage.xaml</DependentUpon>
     </Compile>
@@ -2743,6 +2746,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaSettingsWizardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ApplicationModelsLib\POMModels\POMWizardLib\DeltaWizard\PomDeltaMappingElementsComparePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

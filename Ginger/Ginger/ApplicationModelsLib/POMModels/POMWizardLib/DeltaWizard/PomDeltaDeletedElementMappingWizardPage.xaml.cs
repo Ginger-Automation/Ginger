@@ -80,7 +80,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappedElementInfo), Header = "New Added Element", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = NewAddedElementList, ComboboxDisplayMemberField = nameof(NewAddedComboboxItem.DisplayValue), ComboboxSelectedValueField = nameof(NewAddedComboboxItem.InternalValue), BindingMode = BindingMode.TwoWay });
 
             view.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementInfo.MappingElementStatus), Header = "Element Status", StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = GetElementStatusComoList() });
-            view.GridColsView.Add(new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = true, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
+            view.GridColsView.Add(new GridColView() { Field = "Compare", Header = "Compare", BindingMode = BindingMode.OneWay, StyleType = GridColView.eGridColStyleType.Template, ReadOnly = false, CellTemplate = (DataTemplate)this.MainGrid.Resources["xCompareElementPropTemplate"] });
 
 
             xDeletedElementsMappingGrid.SetAllColumnsDefaultView(view);
@@ -159,7 +159,10 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void xCompareElementPropButton_Click(object sender, RoutedEventArgs e)
         {
+            var currentItem = (DeltaElementInfo)xDeletedElementsMappingGrid.CurrentItem;
+            var newAddedElement = mPomWizard.mPomDeltaUtils.DeltaViewElements.Where(x => x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(currentItem.MappedElementInfo)).FirstOrDefault();
 
+            new PomDeltaMappingElementsComparePage(currentItem,newAddedElement).ShowAsWindow("Element Details Comparsion");
         }
     }
 
