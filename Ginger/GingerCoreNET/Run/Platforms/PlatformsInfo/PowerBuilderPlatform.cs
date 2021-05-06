@@ -195,5 +195,9 @@ namespace GingerCore.Platforms.PlatformsInfo
             return null;
         }
 
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
