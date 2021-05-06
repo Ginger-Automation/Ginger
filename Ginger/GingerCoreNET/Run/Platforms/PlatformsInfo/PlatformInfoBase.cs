@@ -252,6 +252,10 @@ namespace GingerCore.Platforms.PlatformsInfo
 
             return list;
         }
+
+        public abstract Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList();
+      
+
         public virtual List<ActUIElement.eTableAction> GetTableControlActions(ActUIElement.eElementAction tableAction)
         {
             return null;

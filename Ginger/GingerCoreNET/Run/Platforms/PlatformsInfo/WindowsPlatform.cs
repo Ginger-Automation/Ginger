@@ -237,12 +237,6 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
-                    ElementType = eElementType.Image,
-                    IsCommonElementType = false
-                });
-
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
                     ElementType = eElementType.Label,
                     IsCommonElementType = true
                 });
@@ -251,12 +245,6 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.List,
                     IsCommonElementType = true
-                });
-
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
-                    ElementType = eElementType.Table,
-                    IsCommonElementType = false
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -279,12 +267,6 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
-                    ElementType = eElementType.EditorPane,
-                    IsCommonElementType = false
-                });
-
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
                     ElementType = eElementType.TreeView,
                     IsCommonElementType = true
                 });
@@ -298,26 +280,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.Dialog,
                     IsCommonElementType = false
                 });
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
-                    ElementType = eElementType.Browser,
-                    IsCommonElementType = false
-                });
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
-                    ElementType = eElementType.Div,
-                    IsCommonElementType = false
-                });
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
-                    ElementType = eElementType.Span,
-                    IsCommonElementType = false
-                });
-                mPlatformElementTypeOperations.Add(new ElementTypeData()
-                {
-                    ElementType = eElementType.HyperLink,
-                    IsCommonElementType = false
-                });
+                
             }
             return mPlatformElementTypeOperations;
         }
@@ -338,7 +301,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
             return elementExtInfo;
         }
-        public Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
         {
             ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
             ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();

@@ -258,6 +258,29 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             return true;
         }
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
+        {
+            ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
+            ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
+
+            foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in GetPlatformElementTypesData())
+            {
+                if (elementTypeOperation.IsCommonElementType)
+                {
+                    uIBasicElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, true));
+                }
+                else
+                {
+                    uIAdvancedElementFilters.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, false));
+                }
+            }
+
+            Dictionary<string, ObservableList<UIElementFilter>> elementListDic = new Dictionary<string, ObservableList<UIElementFilter>>();
+            elementListDic.Add("Basic", new ObservableList<UIElementFilter>(uIBasicElementFilters));
+            elementListDic.Add("Advanced", new ObservableList<UIElementFilter>(uIAdvancedElementFilters));
+
+            return elementListDic;
+        }
 
         public virtual List<ElementTypeData> GetPlatformElementTypesData()
         {

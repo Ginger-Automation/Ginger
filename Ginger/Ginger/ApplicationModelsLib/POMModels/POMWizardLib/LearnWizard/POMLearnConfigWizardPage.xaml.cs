@@ -130,40 +130,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Count == 0 || mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Count == 0)
             {
-                switch (mAppPlatform)
-                {
-                    case ePlatformType.Web:
-                        SetAutoMapPlatformElements(new WebPlatform().GetPlatformElementTypesData().ToList());
-                        break;
-                    case ePlatformType.Java:
-                        var elementList = new JavaPlatform().GetUIElementFilterList();
-                        mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
-                        mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
-                        break;
-                    case ePlatformType.Windows:
-                        var windowElementList = new WindowsPlatform().GetUIElementFilterList();
-                        mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = windowElementList["Basic"];
-                        mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = windowElementList["Advanced"];
-                        break;
-                }
+                var elementList = PlatformInfoBase.GetPlatformImpl(mAppPlatform).GetUIElementFilterList();
+                mWizard.mPomLearnUtils.AutoMapBasicElementTypesList = elementList["Basic"];
+                mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList = elementList["Advanced"];
             }
         }
 
-        private void SetAutoMapPlatformElements(List<PlatformInfoBase.ElementTypeData> elementTypeDataList)
-        {
-            foreach (PlatformInfoBase.ElementTypeData elementTypeOperation in elementTypeDataList)
-            {
-                if (elementTypeOperation.IsCommonElementType)
-                {
-                    mWizard.mPomLearnUtils.AutoMapBasicElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
-                }
-                else
-                {
-                    mWizard.mPomLearnUtils.AutoMapAdvanceElementTypesList.Add(new UIElementFilter(elementTypeOperation.ElementType, string.Empty, elementTypeOperation.IsCommonElementType));
-                }
-            }
-        }
-
+        
 
         private void SetAutoMapElementTypesGridView()
         {
