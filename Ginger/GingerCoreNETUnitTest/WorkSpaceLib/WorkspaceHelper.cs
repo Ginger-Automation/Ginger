@@ -39,14 +39,13 @@ namespace GingerCoreNETUnitTest.WorkSpaceLib
        
 
         internal static SolutionRepository CreateWorkspaceAndOpenSolution(string path)
-        {         
-            SolutionRepository solutionRepository;            
+        {    
             WorkSpaceEventHandler WSEH = new WorkSpaceEventHandler();
             WorkSpace.Init(WSEH);
             WorkSpace.Instance.RunningFromUnitTest = true;
-            solutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-            solutionRepository.Open(path);
-            return solutionRepository;
+            WorkSpace.Instance.SolutionRepository  = GingerSolutionRepository.CreateGingerSolutionRepository();
+            WorkSpace.Instance.SolutionRepository.Open(path);
+            return WorkSpace.Instance.SolutionRepository;
         }
 
         internal static void CreateWorkspace2()
