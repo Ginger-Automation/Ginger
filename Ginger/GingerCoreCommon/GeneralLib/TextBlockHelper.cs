@@ -28,7 +28,7 @@ namespace GingerCore.Helpers
         private ITextBoxFormatter TBF;
         public TextBlockHelper(object ActionRecUseCaseTextBlock) // System.Windows.Controls.TextBlock
         {
-            TBF = RepositoryItemHelper.RepositoryItemFactory.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
+            TBF = TargetFrameworkHelper.Helper.CreateTextBoxFormatter(ActionRecUseCaseTextBlock);
         }
 
         public void AddText(string txt)

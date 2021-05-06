@@ -29,6 +29,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.Common
 {
@@ -146,7 +147,9 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
-        public abstract List<ElementInfo> GetVisibleControls();
+        public abstract object GetElementAtPoint(System.Windows.Point point);
+
+        public abstract Task<List<ElementInfo>> GetVisibleControls();
                 
         public  ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)
         {

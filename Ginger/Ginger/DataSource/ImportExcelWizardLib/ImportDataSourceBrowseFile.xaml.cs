@@ -107,14 +107,14 @@ namespace Ginger.DataSource.ImportExcelWizardLib
         {
             try
             {
-                System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-                dlg.Multiselect = false;
-                dlg.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
-                System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
+                if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
                 {
-                    xPathTextBox.Text = dlg.FileName;
-                    impParams.ExcelFileName = dlg.FileName;
+                    Multiselect = false,
+                    Filter = "Excel Files|*.xls;*.xlsx;*.xlsm"
+                }, false) is string fileName)
+                {
+                    xPathTextBox.Text = fileName;
+                    impParams.ExcelFileName = fileName;
                     List<string> SheetsList = impParams.GetSheets(false);
                 }
             }

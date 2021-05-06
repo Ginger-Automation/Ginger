@@ -352,11 +352,11 @@ namespace Ginger.SourceControl
                 }
                 else if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
                 else
                 {
-                    mSourceControl = RepositoryItemHelper.RepositoryItemFactory.GetNewSVnRepo();
+                    mSourceControl = TargetFrameworkHelper.Helper.GetNewSVnRepo();
                 }
 
                 if (mSourceControl != null)
@@ -434,14 +434,14 @@ namespace Ginger.SourceControl
                         Reporter.ToLog(eLogLevel.INFO, "Reverting local Solution changes");
                         try
                         {                            
-                            RepositoryItemHelper.RepositoryItemFactory.Revert(sol.LocalFolder, mSourceControl);
+                            TargetFrameworkHelper.Helper.Revert(sol.LocalFolder, mSourceControl);
                         }
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to revert local Solution changes, error: " + ex.Message);
                         }
                     }
-                    return RepositoryItemHelper.RepositoryItemFactory.GetLatest(sol.LocalFolder, mSourceControl);
+                    return TargetFrameworkHelper.Helper.GetLatest(sol.LocalFolder, mSourceControl);
                 }
                 else
                 {

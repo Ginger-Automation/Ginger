@@ -35,11 +35,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
     class WindowExplorerCommon
     {
+        static public bool IsTestActionRunning { get; set; } = false;
+
         public static ITreeViewItem GetTreeViewItemForElementInfo(Amdocs.Ginger.Common.UIElement.ElementInfo EI)
         {
             if (EI == null) return null; // can happen when grid is filtered
@@ -70,6 +73,10 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             else if (EI is HTMLElementInfo)
             {
                 TVI = HTMLElementInfoConverter.GetHTMLElementTreeItem(((HTMLElementInfo)EI));
+            }
+            else if(EI.ElementObject is XmlNode)
+            {
+                TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);
             }
             else
             {

@@ -84,11 +84,11 @@ namespace Ginger.WindowExplorer.Common
         {
             if (mWindowExlorerPage != null)
             {
-                mWindowExlorerPage.DoSearchControls();
+                await mWindowExlorerPage.DoSearchControls();
             }
             else if (mWindowsExplorerNavPage != null)
             {
-                mWindowsExplorerNavPage.DoSearchControls();
+                await mWindowsExplorerNavPage.DoSearchControls();
             }
             //bool isSearched = await Task.Run(() => mWindowExlorerPage.DoSearchControls());
             _GenWin.Close();

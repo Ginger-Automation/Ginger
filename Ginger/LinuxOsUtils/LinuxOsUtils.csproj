@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <WebDriverPlatform>linux64</WebDriverPlatform>    
+    <!--<PublishChromeDriver>true</PublishChromeDriver>-->
+  </PropertyGroup>
+  
+  <PropertyGroup>   
+    <GeckoDriverPlatform>linux64</GeckoDriverPlatform> 
+    <!--<PublishGeckoDriver>true</PublishGeckoDriver>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="86.0.4240.2200" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.28.0" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(OutDir)chromedriver.*&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Linux&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)chromedriver.*&quot; &quot;$(SolutionDir)GingerConsole\bin\$(Configuration)\netcoreapp3.1\Linux&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.*&quot; &quot;$(SolutionDir)Ginger\bin\$(Configuration)\Linux&quot; /Y /I&#xD;&#xA;xcopy &quot;$(OutDir)geckodriver.*&quot; &quot;$(SolutionDir)GingerConsole\bin\$(Configuration)\netcoreapp3.1\Linux&quot; /Y /I" />
+  </Target>
+
+</Project>
