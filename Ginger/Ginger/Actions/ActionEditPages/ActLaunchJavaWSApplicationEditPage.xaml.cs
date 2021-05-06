@@ -199,11 +199,9 @@ namespace Ginger.Actions
 
         private void BrowseJavaAppPath_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) 
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
             {
-                mAct.URL = dlg.FileName;
+                mAct.URL = fileName;
             }
         }
 

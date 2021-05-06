@@ -46,7 +46,7 @@ namespace GingerCoreNETUnitTest.AutoPilot
             WorkSpace.Instance.SolutionRepository.CreateRepository(TempSolutionFolder);
 
             NewRepositorySerializer RS = new NewRepositorySerializer();
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ApplicationAPIModel).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
             WorkSpace.Instance.SolutionRepository.Open(TempSolutionFolder);
 
             // Initialize ApplicationAPIModels XML file names to be fetched from TestResources

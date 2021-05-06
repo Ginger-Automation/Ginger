@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Automation;
 
 namespace GingerCore.Drivers.WindowsLib
@@ -646,9 +647,9 @@ namespace GingerCore.Drivers.WindowsLib
             return EI;
         }
 
-        List<ElementInfo> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
+        async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false, string specificFramePath = null)
         {
-            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
+            List<ElementInfo> list = await mUIAutomationHelper.GetVisibleControls();
             return list;
         }
 
@@ -923,7 +924,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public VisualElementsInfo GetVisualElementsInfo()
         {
-            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls();
+            List<ElementInfo> list = mUIAutomationHelper.GetVisibleControls().Result;
 
             VisualElementsInfo VEI = new VisualElementsInfo();
             foreach(ElementInfo EI in list)
@@ -1001,6 +1002,57 @@ namespace GingerCore.Drivers.WindowsLib
         public List<AppWindow> GetWindowAllFrames()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<ElementInfo> GetElementAtPoint(long ptX, long ptY)
+        {
+            object elem = mUIAutomationHelper.GetElementAtPoint(new System.Windows.Point(ptX, ptY));
+
+            if (elem == null) return null;
+            ElementInfo EI = null;
+
+            if (elem.GetType().Equals(typeof(AutomationElement)))
+            {
+                EI = mUIAutomationHelper.GetElementInfoFor((AutomationElement)elem);
+            }
+            else
+            {
+                EI = mUIAutomationHelper.GetHTMLHelper().GetHtmlElementInfo((IHTMLElement)elem);
+            }
+
+            EI.WindowExplorer = this;
+
+            return EI;
+        }
+
+        public bool IsRecordingSupported()
+        {
+            return false;
+        }
+
+        public bool IsPOMSupported()
+        {
+            return false;
+        }
+
+        public bool IsLiveSpySupported()
+        {
+            return true;
+        }
+
+        public List<eTabView> SupportedViews()
+        {
+            return new List<eTabView>() { eTabView.Screenshot, eTabView.GridView, eTabView.TreeView };
+        }
+
+        public eTabView DefaultView()
+        {
+            return eTabView.TreeView;
+        }
+
+        public string SelectionWindowText()
+        {
+            return "Window:";
         }
     }
 }

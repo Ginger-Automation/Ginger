@@ -18,6 +18,6 @@
         
         <Label Content="Automation Element Supported Patterns" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" VerticalAlignment="Center"/>        
         <DataGrid x:Name="SupportedPatternsGrid" Grid.Row="1" IsReadOnly="True"/>
-        <Button x:Name="TestButton" Content="Test Pattern" Click="TestButton_Click" Style="{StaticResource @WindowButtonStyle}" Grid.Row="2"  HorizontalAlignment="Left"/>        
+        <Button x:Name="TestButton" Content="Test Pattern" Click="TestButton_Click" Style="{StaticResource $InputButtonStyle}" Grid.Row="2"  HorizontalAlignment="Left"/>        
     </Grid>
 </Page>

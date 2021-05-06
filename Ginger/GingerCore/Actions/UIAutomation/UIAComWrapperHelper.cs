@@ -17,23 +17,23 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.UIAutomation;
+using GingerCore.Drivers.Common;
+using GingerCore.Drivers.PBDriver;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Automation;
-using GingerCore.Drivers.Common;
-using GingerCore.Actions.UIAutomation;
-using System.Windows;
-using System.Threading;
-using System.Diagnostics;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using GingerCore.Drivers.PBDriver;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Automation;
 
 // a lot of samples from Microsoft on UIA at: https://uiautomationverify.svn.codeplex.com/svn/UIAVerify/
 // DO NOT add any specific driver here, this is generic windows app driver helper 
@@ -4764,10 +4764,10 @@ namespace GingerCore.Drivers
         }
         
         //Will get all visible control including recursive drill down, for AE which have invoke method
-        public override List<ElementInfo> GetVisibleControls()
+        public override async Task<List<ElementInfo>> GetVisibleControls()
         {
             List<ElementInfo> list = new List<ElementInfo>();
-            List<ElementInfo> HTMLlist = new List<ElementInfo>();
+            List<ElementInfo> HTMLlist;
 
             //TODO: find a better property - since if the window is off screen controls will not show            
             System.Windows.Automation.Condition cond = new PropertyCondition(AutomationElement.IsOffscreenProperty, false);                        
@@ -4779,15 +4779,19 @@ namespace GingerCore.Drivers
                 UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
                 if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
                 {
-                        ei = (UIAElementInfo)GetElementInfoFor(AE);
+                    ei = (UIAElementInfo)GetElementInfoFor(AE);
                     IEElementXpath = ei.XPath;
                     InitializeBrowser(AE);
-                    HTMLlist = HTMLhelperObj.GetVisibleElement();
+                    HTMLlist = await HTMLhelperObj.GetVisibleElement();
                     list.Add(ei);
-                    foreach(ElementInfo e1 in HTMLlist)
+                    if (HTMLlist != null && HTMLlist.Count > 0)
                     {
-                        list.Add(e1);
+                        list.AddRange(HTMLlist);
                     }
+                    //foreach(ElementInfo e1 in HTMLlist)
+                    //{
+                    //    list.Add(e1);
+                    //}
                 }
                 
 
@@ -5829,39 +5833,43 @@ namespace GingerCore.Drivers
         {
             taskFinished = false;
             // Convert mouse position from System.Drawing.Point to System.Windows.Point.
-            System.Windows.Point point = new System.Windows.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);            
+            System.Windows.Point point = new System.Windows.Point(System.Windows.Forms.Cursor.Position.X, System.Windows.Forms.Cursor.Position.Y);
+
+            return GetElementAtPoint(point);
+        }
+
+        public override object GetElementAtPoint(System.Windows.Point point)
+        {
             object element = AutomationElement.FromPoint(point);
-            
+
             // check it is in current window - CurrentWindow if not return null
             // go to parent until CurrentWindow found then inside our window else return null
-            AutomationElement ParentElement = (AutomationElement)element;            
+            AutomationElement ParentElement = (AutomationElement)element;
             while (ParentElement != null && !taskFinished)
             {
                 // Currently we support widgets only for PB. below condition to be removed once we support it for windows
-                
-                
-                    if (ParentElement.Current.ClassName == "Internet Explorer_Server")
-                    {
-                        point.X = point.X - ParentElement.Current.BoundingRectangle.X;
-                        point.Y = point.Y - ParentElement.Current.BoundingRectangle.Y;
-                        if (HTMLhelperObj == null)
-                            InitializeBrowser(ParentElement);
 
 
-                        element = HTMLhelperObj.GetHTMLElementFromPoint(Convert.ToInt32(point.X), Convert.ToInt32(point.Y));
-                    }
-                               
+                if (ParentElement.Current.ClassName == "Internet Explorer_Server")
+                {
+                    point.X = point.X - ParentElement.Current.BoundingRectangle.X;
+                    point.Y = point.Y - ParentElement.Current.BoundingRectangle.Y;
+                    if (HTMLhelperObj == null)
+                        InitializeBrowser(ParentElement);
+
+
+                    element = HTMLhelperObj.GetHTMLElementFromPoint(Convert.ToInt32(point.X), Convert.ToInt32(point.Y));
+                }
+
                 if (ParentElement == CurrentWindow)
-                {       
+                {
                     return element;
                 }
-                ParentElement = TreeWalker.RawViewWalker.GetParent(ParentElement);                
+                ParentElement = TreeWalker.RawViewWalker.GetParent(ParentElement);
             }
-            
+
             //not found in our current window
             return null;
-
-
         }
 
         public Bitmap WindowToBitmap(AutomationElement tempWindow)

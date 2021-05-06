@@ -181,7 +181,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (ShowAutoRunWindow)
             {
-                RepositoryItemHelper.RepositoryItemFactory.WaitForAutoRunWindowClose();
+                TargetFrameworkHelper.Helper.WaitForAutoRunWindowClose();
             }
         }
 
@@ -235,7 +235,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (ShowAutoRunWindow)
             {
                 Reporter.ToLog(eLogLevel.INFO, "Showing Auto Run Window");
-                RepositoryItemHelper.RepositoryItemFactory.ShowAutoRunWindow();
+                TargetFrameworkHelper.Helper.ShowAutoRunWindow();
             }
             else
             {

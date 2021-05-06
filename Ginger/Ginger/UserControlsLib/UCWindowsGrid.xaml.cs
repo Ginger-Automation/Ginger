@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Ginger.Actions.Locators.ASCF;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.Drivers.PowerBuilder;
@@ -202,7 +203,7 @@ namespace Ginger.UserControlsLib
                     WindowsComboBox.DisplayMemberPath = "WinInfo";
 
                     //TODO: If no selection then select the first if only one window exist in list
-                    if (!(mWindowExplorerDriver is SeleniumAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
+                    if (!(mWindowExplorerDriver is GenericAppiumDriver))//FIXME: need to work for all drivers and from some reason failing for Appium!!
                     {
                         if (WindowsComboBox.Items.Count == 1)
                         {

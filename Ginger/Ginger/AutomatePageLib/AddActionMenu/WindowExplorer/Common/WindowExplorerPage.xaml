@@ -5,127 +5,147 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
     xmlns:Ginger="clr-namespace:Ginger"
-    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+    xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView" xmlns:usercontrols1="clr-namespace:GingerCore.UserControls;assembly=GingerCore"
     x:Class="Ginger.WindowExplorer.WindowExplorerPage"
     mc:Ignorable="d" 
 	Title="Ginger Window Explorer">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" >
+    <!--<DockPanel x:Name="xMaiDock" SizeChanged="xMainDock_SizeChanged">-->
+    <Grid x:Name="xViewAndControlsSection" Background="{StaticResource $BackgroundColor_LightGray}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" SizeChanged="xMainGrid_SizeChanged">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="WindowComboboxRow" Height="30" />
-            <RowDefinition Height="32"/>
-            <RowDefinition x:Name="ControlsViewRow" Height="35*" MinHeight="35"/>
-            <RowDefinition x:Name="ControlDetailsRow" Height="35" MinHeight="35" MaxHeight="35"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition x:Name="StepstoUpdateActionRow" Height="65"/>
-            <RowDefinition x:Name="POMFrameRow" Height="0"/>
+            <RowDefinition x:Name="WindowComboboxRow" Height="50" />
+            <RowDefinition Height="*" MinHeight="500" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+
         <!--Window Selection Area-->
-        <Grid Grid.Row="0" x:Name="xWindowGrid">
+        <usercontrols:UCExplorerWindowSelection Grid.Row="0" Grid.Column="0" x:Name="xWindowSelection" Width="Auto" />
+
+        <usercontrols:ucButton x:Name="xRefreshCurrentTabContent" Grid.Row="0" Grid.Column="1" ButtonImageType="Refresh" ButtonImageForground="{StaticResource $SelectionColor_Pink}"  ButtonImageHeight="16" HorizontalAlignment="Right"
+                                  ButtonText="Refresh Page" ButtonImageWidth="16" VerticalAlignment="Center" ButtonType="RoundTextAndImageButton" Click="xRefreshCurrentTabContentBtn_Click" />
+
+        <Grid x:Name="xSubGrid" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="ControlsViewGridRow" Height="*" MinHeight="200" />
+                <RowDefinition x:Name="xElementDetailGridRow" Height="0" MinHeight="0" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="28"/>
-                <ColumnDefinition Width="28"/>
+                <ColumnDefinition x:Name="xControlsViewGridColumn" Width="*" MinWidth="200"/>
+                <ColumnDefinition x:Name="xElementDetailGridColumn" Width="0" MinWidth="0"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Window:" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}"/>
-            
-            <ComboBox Grid.Column="1" x:Name="WindowsComboBox" Margin="0,0,0,0" SelectionChanged="WindowsComboBox_SelectionChanged" Width="290" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}"/>
-                        
-            <usercontrols:ucButton Grid.Column="2" x:Name="RefreshWindowsButton" ButtonType="ImageButton" ButtonImageType="Refresh"  
-                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="16"  
-                               Click="RefreshWindowsButton_Click" />
 
-            <usercontrols:ucButton Grid.Column="3" x:Name="AddSwitchWindowActionButton" ButtonType="ImageButton" ButtonImageType="Add"  
-                               HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Add Switch Window Action to Flow" ButtonFontImageSize="16"  
-                               Click="AddSwitchWindowActionButton_Click" />
-        </Grid>       
+            <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                        MouseEnter="xViewsTabs_MouseEnter" MouseLeave="xViewsTabs_MouseLeave">
+                <TabControl.Resources>
+                    <Style TargetType="{x:Type TabItem}">
+                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                        <Setter Property="Height" Value="25"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="False" >
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True" >
+                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.Resources>
 
-        <!--Window Operations Area-->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <ToggleButton x:Name="RecordingButton" Click="RecordingButton_Click"  IsEnabled="true" ToolTip="Start Recording" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Image Source="{StaticResource @RecordOff_24x24.png}"/>
-            </ToggleButton>
-            <ToggleButton x:Name="LiveSpyButton" Click="LiveSpyHandler" ToolTip="Live Spy- Hover with the mouse over the Element you want to spy and Click/Hold Down 'Ctrl' Key" Width="24" Height="24" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @Spy_24x24}"/>
-            </ToggleButton>
-            <StackPanel Orientation="Horizontal">
-                <Button x:Name="POMButton" Click="POMButton_Click"  ToolTip="Page Object Model" Width="24" Height="24">
-                    <Image Source="{StaticResource POM_32x32.png}"/>
-                </Button>
-            </StackPanel>
-            
-        </StackPanel>
+                <TabItem x:Name="xScreenShotViewTab" GotFocus="ScreenShotViewTab_GotFocus" >
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <usercontrols:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
+                            <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
 
-        <!--Controls Views Area-->
-        <Expander x:Name="ControlsViewsExpander" Grid.Row="2" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="True" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="ControlsViewsExpander_Expanded" Collapsed="ControlsViewsExpander_Collapsed" >
-            <Expander.Header>
-                <Label x:Name="ControlsViewsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Window Elements"/>                
-            </Expander.Header>
-            <Expander.Content>
-                    <Grid Background="{StaticResource $BackgroundColor_LightGray}">                      
-                        <UCTreeView:TreeView1 x:Name="WindowControlsTreeView" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                        <Ginger:ucGrid x:Name="WindowControlsGridView" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Collapsed"/>
+                    <Grid>
+                        <!--Loading panel-->
+                        <StackPanel x:Name="xLoadingScreenShotBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                            <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
+                            <TextBlock Text="Loading Screenshot . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <!--Retry Button for error in taking screenshot-->
+                        <StackPanel x:Name="xRetrySSBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
+                            <usercontrols:ucButton x:Name="xRetryScreenshotBtn" ButtonType="PanelButton" ButtonFontImageSize="20" ButtonImageType="Retry" 
+                                       ButtonImageHeight="20" ButtonImageWidth="20" ButtonText="Retry" Click="xRetryScreenshotBtn_Click" />
+                        </StackPanel>
+
+                        <Frame x:Name="xScreenShotFrame" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     </Grid>
-            </Expander.Content>
-        </Expander>
-        
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,5,0,0">
-            <Button x:Name="ControlsRefreshButton" usercontrols:ImageMaker.Content="Refresh" Click="ControlsRefreshButton_Click" ToolTip="Refresh Controls" Width="20" Height="20" Style="{StaticResource @InputImageButtonStyle_NoBorder}">            
-            </Button>
-            <Button x:Name="SyncWithLiveSpyButton" Click="SyncWithLiveSpyButton_Click" ToolTip="Click to Locate Live Spy Found Element" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @WithoutSpyWhite_24x24}"/>
-            </Button>
-            <Button x:Name="GridTreeViewButton" Click="GridTreeViewButton_Click" ToolTip="Switch to Grid View" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}">
-                <Image Source="{StaticResource @Grid_24x24.png}"/>
-            </Button>
-        </StackPanel>
+                </TabItem>
 
-        <!--Selected Control Details Area-->
-        <Expander x:Name="SelectedControlDetailsExpander" Grid.Row="3" Grid.Column="0" Margin="0,1,0,0"  ExpandDirection="Down" IsExpanded="False" Style="{StaticResource @MenuExpanderDarkStyle}" BorderBrush="{StaticResource $Color_DarkBlue}" Expanded="SelectedControlDetailsExpander_Expanded" Collapsed="SelectedControlDetailsExpander_Collapsed">
-            <Expander.Header>
-                <Label x:Name="SelectedControlDetailsExpanderLable" Style="{StaticResource @MenuHorizontalExpanderLabelStyle}" Foreground="{StaticResource $BackgroundColor_LightGray}" Content="Selected Element Details &amp; Actions"/>
-            </Expander.Header>
-            <Expander.Content>
-                    <TabControl x:Name="ControlTabs"  SelectionChanged="ControlTabs_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}">
-                        <TabItem x:Name="GeneralTab" Header="General">
-                                <Frame x:Name="ControlFrame"/>    
-                        </TabItem>
-                        <TabItem x:Name="PropertiesTab" Header="Properties">
-                                <Ginger:ucGrid x:Name="ControlPropertiesGrid" Title="Control Properties" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed"  />
-                        </TabItem>
-                        <TabItem x:Name="ActionsTab" Header="Actions">
-                            <Frame x:Name="ControlActionsFrame"/>
-                        </TabItem>
-                </TabControl>
-            </Expander.Content>
-        </Expander>
-        
-        <!--Status Row-->
-        <ScrollViewer Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}">
-                <TextBlock x:Name="StatusTextBlock" Text="Ready"
-                           TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}"/>
-            </Border>
-        </ScrollViewer>
+                <TabItem x:Name="xPageSrcTab" GotFocus="xPageSrcTab_GotFocus">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <usercontrols:ImageMakerControl ImageType="DataSource" SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                            <TextBlock x:Name="xPageSrcTabTextBlock" VerticalAlignment="Center" Text="Page Source"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
 
-        <!--used only when window loaded fron Edit Action Page-->
-        <StackPanel Grid.Row="5">
-                <TextBlock Text="Steps to update action element locator:" FontWeight="Bold"
-                               TextWrapping="Wrap" Style="{StaticResource @DetailsTextBlockStyle}"/>
-            <Label HorizontalAlignment="Left" FontSize="10" Margin="-5">1. Locate the element using Live Spy or selecting it in Window Elements</Label>
-            <Label HorizontalAlignment="Left" FontSize="10" Margin="-5">2. Select Locator in the grid</Label>
-            <StackPanel Orientation="Horizontal">
-                <Label HorizontalAlignment="Left" FontSize="10" Margin="-5,0,0,0">3. Click</Label>
-                <Image Source="{StaticResource @Target_24x24.png}" Width="16"/>
-                <Label HorizontalAlignment="Left" FontSize="10">to update the action with selected locator</Label>
-            </StackPanel>
-        </StackPanel>
+                    <Grid>
+                        <StackPanel x:Name="xLoadingHTMLBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                            <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
+                            <TextBlock Text="Loading HTML . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <usercontrols1:XMLViewer x:Name="xXMLPageSrcViewer" Visibility="Collapsed"/>
+                        <usercontrols1:UCHtmlViewer x:Name="xHTMLPageSrcViewer" Visibility="Collapsed"/>
+                    </Grid>
+                </TabItem>
 
-        <Frame x:Name="POMFrame" Grid.Row="6">
-        </Frame>
+                <TabItem x:Name="xTreeViewTab" GotFocus="xTreeViewTab_GotFocus">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <usercontrols:ImageMakerControl ImageType="TreeView"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                            <TextBlock x:Name="xTreeViewTabTextBlock" VerticalAlignment="Center" Text="Tree View"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
 
-        <GridSplitter x:Name="Row2Splitter" ResizeDirection="Rows" Grid.Row="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}"/>
+                    <Grid>
+                        <StackPanel x:Name="xLoadingTreeViewBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                            <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
+                            <TextBlock Text="Loading Page Controls Tree . . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <UCTreeView:TreeView1 x:Name="xWindowControlsTreeView"  Grid.Row="2" TreeTitle="Window Visible Controls" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    </Grid>
+                </TabItem>
+
+                <TabItem x:Name="xGridViewTab" GotFocus="xGridViewTab_GotFocus">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <usercontrols:ImageMakerControl ImageType="DataTable"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
+                            <TextBlock x:Name="xGridViewTabTextBlock" VerticalAlignment="Center" Text="Grid View"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        </StackPanel>
+                    </TabItem.Header>
+
+                    <Grid>
+                        <StackPanel x:Name="xLoadingControlsGridBanner" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                            <usercontrols:ImageMakerControl ImageType="Processing" HorizontalAlignment="Center" Height="50" Width="50" VerticalAlignment="Center"/>
+                            <TextBlock Text="Loading Page Controls Grid. . ." Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontWeight="Bold" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Ginger:ucGrid x:Name="xWindowControlsGridView" Grid.Row="2" Title="Window Visible Controls" RowChangedEvent="ControlsGrid_RowChangedEvent" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+
+            <GridSplitter x:Name="xRowSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ResizeDirection="Rows" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $Color_DarkBlue}"/>
+            <GridSplitter x:Name="xColumnSplitter" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" ResizeDirection="Columns" Height="Auto" Width="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" Visibility="Collapsed"/>
+
+            <Ginger:UCElementDetails x:Name="xUCElementDetails" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </Grid>
+
+        <DockPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <Border BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Top" />
+            <usercontrols:ImageMakerControl x:Name="xStatusBarIcon" DockPanel.Dock="Left" ImageType="MousePointer" Width="12" Height="12" VerticalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed" />
+            <TextBlock x:Name="xStatusBarText" Text="Click on an element to see its details" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="10,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" Visibility="Collapsed" />
+        </DockPanel>
     </Grid>
+
+    <!--</DockPanel>-->
+    <!--</StackPanel>-->
 </Page>

@@ -37,6 +37,10 @@ namespace Amdocs.Ginger.CoreNET.Utility
         }
         public void CopyFolderRec(string sourceFolder, string destinationFolder, bool copySubDirs)
         {
+            //ensuring the destination paths are as per od standards
+            destinationFolder = destinationFolder.Replace('/', Path.DirectorySeparatorChar);
+            destinationFolder = destinationFolder.Replace('\\', Path.DirectorySeparatorChar);
+
             // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceFolder);
 

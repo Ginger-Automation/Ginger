@@ -323,7 +323,7 @@ namespace GingerCore.Variables
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "GetListOfUsedVariables - " + ex.Message);
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
                     value = null;
                 } 
                 
@@ -398,7 +398,7 @@ namespace GingerCore.Variables
                         }
                         catch (Exception ex)
                         {
-                           Reporter.ToLog(eLogLevel.WARN, "Failed to get list of used " + GingerDicser.GetTermResValue(eTermResKey.Variables), ex); 
+                            Reporter.ToLog(eLogLevel.WARN, string.Format("Exception occured during Action Analyze of Used Variabels, object='{0}', field='{1}'", item, mi.Name), ex);
                         } 
                     }
                 }
