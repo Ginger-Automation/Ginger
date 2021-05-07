@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem><Header ItemGuid="95142161-23ba-4ebd-8410-9e3508a22606" ItemType="BusinessFlow" CreatedBy="JGHODKE" Created="202105060500" GingerVersion="3.7.0.0" Version="4" LastUpdateBy="JGHODKE" LastUpdate="202105060507" />
+<BusinessFlow Guid="95142161-23ba-4ebd-8410-9e3508a22606" Name="Provide" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+<Activities>
+<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="AllAvailableHandlers" Guid="6274074c-6122-46ab-b7b4-7e20aa6b72cf" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" TargetApplication="MyWindowsApp">
+<Acts>
+<ActValidation Active="True" Description="Validate Customer ID" Guid="bc22f42c-1ac5-4e46-b015-28cc3e780c5a" MaxNumberOfRetries="2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+<InputValues>
+<ActInputValue Guid="a265649e-3184-4cf6-8d37-f44150912b91" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" Value="{Var Name=CustomerIDForProvide}= {Var Name=ContactIDOfCreateContact}" />
+</InputValues>
+</ActValidation>
+</Acts>
+</Activity>
+</Activities>
+
+<ActivitiesGroups>
+<ActivitiesGroup Guid="a35feefd-d846-4bfa-b140-e24930d51709" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+<ActivitiesIdentifiers>
+<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="6274074c-6122-46ab-b7b4-7e20aa6b72cf" ActivityName="Activity 1" Guid="ccab6ec6-c3a7-4cfe-b59a-c7a4cf5a5431" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</ActivitiesIdentifiers>
+</ActivitiesGroup>
+</ActivitiesGroups>
+
+<TargetApplications>
+<TargetApplication AppName="MyWindowsApp" Guid="e68cc25c-d044-4a46-afda-1f8942a1cb87" LastExecutingAgentName="MyWindowsApp - Agent 1 Virtual" ParentGuid="00000000-0000-0000-0000-000000000000" />
+</TargetApplications>
+
+<Variables>
+<VariableString Guid="f4bf4d70-65d3-474b-bb01-3ae0570a3120" MappedOutputType="None" Name="CustomerIDForProvide" ParentGuid="00000000-0000-0000-0000-000000000000" SetAsOutputValue="False" />
+</Variables>
+</BusinessFlow></GingerRepositoryItem>
