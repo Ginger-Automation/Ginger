@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -147,7 +147,7 @@ namespace Ginger.SolutionWindows
                     agent.DriverType = Agent.eDriverType.DOSConsole;
                     break;
                 case ePlatformType.Mobile:
-                    agent.DriverType = Agent.eDriverType.MobileAppiumAndroid;
+                    agent.DriverType = Agent.eDriverType.Appium;
                     break;
                 case ePlatformType.PowerBuilder:
                     agent.DriverType = Agent.eDriverType.PowerBuilder;

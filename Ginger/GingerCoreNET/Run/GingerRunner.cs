@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -602,7 +602,7 @@ namespace Ginger.Run
                         string result = string.Empty;
                         ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
                         bfs.Add(executedBusFlow);
-                        RepositoryItemHelper.RepositoryItemFactory.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                        TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
                     }
                     //Call For Business Flow Control
                     flowControlIndx = DoBusinessFlowControl(executedBusFlow);
@@ -765,15 +765,11 @@ namespace Ginger.Run
                         {
                             outputVariables = GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, CurrentBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true);
                         }
-                        Guid mappedVarGuid = Guid.Empty;
-                        if (Guid.TryParse(inputVar.MappedOutputValue, out mappedVarGuid))
-                        {
-                            VariableBase outputVar = outputVariables.Where(x => x.Guid == mappedVarGuid).FirstOrDefault();
+                            VariableBase outputVar = outputVariables.Where(x => x.VariableInstanceInfo == inputVar.MappedOutputValue).FirstOrDefault();
                             if (outputVar != null)
                             {
                                 mappedValue = string.IsNullOrEmpty(outputVar.Value) ? string.Empty : outputVar.Value; 
                             }
-                        }
                     }
                     else if (inputVar.MappedOutputType == VariableBase.eOutputType.GlobalVariable)
                     {
@@ -864,7 +860,7 @@ namespace Ginger.Run
         }
 
         public List<VariableBase> GetPossibleOutputVariables(RunSetConfig runSetConfig, BusinessFlow businessFlow, bool includeGlobalVars= false, bool includePrevRunnersVars= true)
-        {
+        {          
             List<VariableBase> outputVariables;
 
             //Global Variabels
@@ -877,11 +873,23 @@ namespace Ginger.Run
                 outputVariables = new List<VariableBase>();
             }
 
+            Dictionary<string, int> variablePaths = new Dictionary<string, int>();
             //Previous Business Flows output variabels
             for (int i = BusinessFlows.IndexOf(businessFlow) - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
             {
                 foreach (VariableBase var in BusinessFlows[i].GetBFandActivitiesVariabeles(false, false, true))
                 {
+                    var.Path = var.Name + " [" + BusinessFlows[i].Name + "]";
+                    if (variablePaths.ContainsKey(var.Path))
+                    {
+                        variablePaths[var.Path] += 1;                      
+                    }
+                    else
+                    {
+                        variablePaths.Add(var.Path, 1);
+                    }
+                  
+                    var.VariableInstanceInfo = BusinessFlows[i].InstanceGuid.ToString() + "_" + var.Guid;                 
                     outputVariables.Add(var);
                 }
             }
@@ -891,21 +899,46 @@ namespace Ginger.Run
             {
                 for (int j = runSetConfig.GingerRunners.IndexOf(this) - 1; j >= 0; j--)//doing in reverse for sorting by latest value in case having the same var more than once
                 {
+                    int i = runSetConfig.GingerRunners[j].BusinessFlows.Count - 1;
                     foreach(BusinessFlow bf in runSetConfig.GingerRunners[j].BusinessFlows.Reverse())
                     {
                         foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(false, false, true))
                         {
-                            if (outputVariables.Where(x=>x.Guid == var.Guid).FirstOrDefault() == null)
+
+                            var.Path = var.Name + " [" + runSetConfig.GingerRunners[j].Name + ": " + bf.Name + "]";
+                            if (variablePaths.ContainsKey(var.Path))
                             {
-                                outputVariables.Add(var);
+                                variablePaths[var.Path] += 1;
                             }
+                            else
+                            {
+                                variablePaths.Add(var.Path, 1);
+                            }
+                            var.VariableInstanceInfo = bf.InstanceGuid.ToString() + "_" + var.Guid;
+                            
+                            outputVariables.Add(var);
+
                         }
+                        i--;
                     }
                 }
             }
-                        
+                    
+            //Handle variables with duplicate path and add index
+            foreach(KeyValuePair<string, int> duplicatePath in variablePaths)
+            {
+                int count = duplicatePath.Value;
+                if (duplicatePath.Value>1)
+                {
+                    foreach(VariableBase var in outputVariables.Where(x=>x.Path==duplicatePath.Key))
+                    {
+                        var.Path = var.Path.Insert(var.Path.LastIndexOf("]"), " (" + count + ")");
+                        count--;
+                    }
+                }
+            }
             return outputVariables;                 
-        }      
+        }            
 
         private BusinessFlowRun GetCurrenrtBusinessFlowRun()
         {
@@ -1864,7 +1897,7 @@ namespace Ginger.Run
             try
             {
                 Dictionary<string, String> screenShotsPaths = new Dictionary<string, String>();
-                screenShotsPaths = RepositoryItemHelper.RepositoryItemFactory.TakeDesktopScreenShot(true);
+                screenShotsPaths = TargetFrameworkHelper.Helper.TakeDesktopScreenShot(true);
                 if (screenShotsPaths == null)
                 {
                     if (act.WindowsToCapture == Act.eWindowsToCapture.DesktopScreen)//log the error only if user asked for desktop screen shot to avoid confusion 
@@ -2424,11 +2457,11 @@ namespace Ginger.Run
                 
 
                 // If all above completed and no change on flow then move to next in the activity unless it is the last one
-                if (!isFlowChange) 
+                if (!isFlowChange)
                 {
-                    if (!IsLastActionOfActivity())
+                    if (moveToNextAction)
                     {
-                        if (moveToNextAction )// if running single action we don't want to move to next action
+                        if (!IsLastActionOfActivity())// if running single action we don't want to move to next action
                         {
                             // if execution has been stopped externally, stop at current action
                             if (!mStopRun)

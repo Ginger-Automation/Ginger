@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,18 +44,23 @@ namespace Ginger.Actions._Common.ActUIElementLib
     public partial class LocateByPOMElementPage : Page
     {
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
-        ApplicationPOMModel mSelectedPOM = null;
+        public ApplicationPOMModel SelectedPOM = null;
         RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();       
         string mLocateValue;
+        public bool OnlyPOMSelection { get; set; }
 
         Object mObjectElementType;
         string mElementTypeFieldName;
         Object mObjectLocateValue;
         string mLocateValueFieldName;
         bool mOnlyPOMRequest;
-        public delegate void ElementChangedEventHandler();
 
+        public delegate void ElementChangedEventHandler();
         public event ElementChangedEventHandler ElementChangedPageEvent;
+
+        public delegate void POMChangedEventHandler();
+        public event POMChangedEventHandler POMChangedPageEvent;
+
         Context mContext;
 
         string mTargetApplication;
@@ -65,6 +70,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (ElementChangedPageEvent != null)
             {
                 ElementChangedPageEvent();
+            }
+        }
+
+        public void POMChangedEvent()
+        {
+            if (POMChangedPageEvent != null)
+            {
+                POMChangedPageEvent();
             }
         }
 
@@ -108,8 +121,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 {
                     string[] pOMandElementGUIDs = mLocateValue.Split('_');
                     Guid selectedPOMGUID = new Guid(pOMandElementGUIDs[0]);
-                    mSelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
-                    if (mSelectedPOM == null)
+                    SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(selectedPOMGUID);
+                    if (SelectedPOM == null)
                     {
                         Reporter.ToUser(eUserMsgKey.POMSearchByGUIDFailed);
                         mLocateValue = string.Empty;
@@ -123,7 +136,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
                             Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                            ElementInfo selectedPOMElement = (ElementInfo)mSelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                            ElementInfo selectedPOMElement = (ElementInfo)SelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
                             if (selectedPOMElement == null)
                             {
                                 Reporter.ToUser(eUserMsgKey.POMElementSearchByGUIDFailed);
@@ -144,7 +157,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     mLocateValue = string.Empty;
                     SelectPOM_Click(null, null);
                 }
-            }         
+            }
         }
 
         private void SetElementViewText(string elementName, string elementType)
@@ -155,14 +168,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
         private ObservableList<ElementInfo> GenerateElementsDataSourseList()
         {
             ObservableList<ElementInfo> tempList = new ObservableList<ElementInfo>();
-            foreach (ElementInfo EI in mSelectedPOM.MappedUIElements)
+            foreach (ElementInfo EI in SelectedPOM.MappedUIElements)
             {
                 tempList.Add(EI);
             }
             return tempList;
         }
 
-        private void SelectPOM_Click(object sender, RoutedEventArgs e)
+        public void SelectPOM_Click(object sender, RoutedEventArgs e)
         {
             if (mApplicationPOMSelectionPage == null)
             {
@@ -177,7 +190,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
             if (selectedPOMs != null && selectedPOMs.Count > 0)
             {
-                mSelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
+                SelectedPOM = (ApplicationPOMModel)selectedPOMs[0];
+                POMChangedEvent();
                 UpdatePomSelection();
             }
         }
@@ -187,7 +201,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             SetPOMPathToShow();
             if (mOnlyPOMRequest)
             {
-                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, mSelectedPOM.Guid.ToString());
+                mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, SelectedPOM.Guid.ToString());
             }
             else
             {
@@ -246,7 +260,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             //string pathToShow;
             //pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            xPomPathTextBox.Text = mSelectedPOM.NameWithRelativePath; 
+            xPomPathTextBox.Text = SelectedPOM.NameWithRelativePath; 
             xViewPOMBtn.Visibility = Visibility.Visible;
         }
 
@@ -269,7 +283,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (xPOMElementsGrid.Grid.SelectedItem != null)
             {
                 ElementInfo selectedElement = (ElementInfo)xPOMElementsGrid.Grid.SelectedItem;
-                string pomAndElementGuids = mSelectedPOM.Guid.ToString() + "_" + selectedElement.Guid.ToString();
+                string pomAndElementGuids = SelectedPOM.Guid.ToString() + "_" + selectedElement.Guid.ToString();
                 mObjectLocateValue.GetType().GetProperty(mLocateValueFieldName).SetValue(mObjectLocateValue, pomAndElementGuids);
                 SetElementTypeProperty(selectedElement.ElementTypeEnum);
                 SetElementViewText(selectedElement.ElementName, selectedElement.ElementTypeEnum.ToString());
@@ -341,11 +355,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void XViewPOMBtn_Click(object sender, RoutedEventArgs e)
         {
-            POMEditPage mPOMEditPage = new POMEditPage(mSelectedPOM, General.eRIPageViewMode.Standalone);
+            POMEditPage mPOMEditPage = new POMEditPage(SelectedPOM, General.eRIPageViewMode.Standalone);
             mPOMEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
             //refresh Elements list
-            if(mSelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
+            if(SelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
             {
                 UpdatePomSelection();
             }

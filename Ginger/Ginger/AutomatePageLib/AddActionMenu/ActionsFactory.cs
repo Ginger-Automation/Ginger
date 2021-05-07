@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,12 +29,15 @@ using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
 using GingerCore.Drivers.Common;
+using GingerCore.Environments;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -225,7 +228,7 @@ namespace Ginger.BusinessFlowPages
         /// <param name="elementInfo"></param>
         /// <param name="mContext"></param>
         /// <returns></returns>
-        static Act GeneratePOMElementRelatedAction(ElementInfo elementInfo, Context mContext)
+        public static Act GeneratePOMElementRelatedAction(ElementInfo elementInfo, Context mContext)
         {
             Act instance;
             IPlatformInfo mPlatform = PlatformInfoBase.GetPlatformImpl(mContext.Platform);
@@ -297,5 +300,37 @@ namespace Ginger.BusinessFlowPages
             businessFlow.AttachActivitiesGroupsAndActivities();
         }
 
+        public static Page GetActionEditPage(Act act, Context mContext = null)
+        {
+            if (act.ActionEditPage != null)
+            {
+                string classname = "Ginger.Actions." + act.ActionEditPage;
+
+                Type actType = Assembly.GetExecutingAssembly().GetType(classname);
+                if (actType == null)
+                {
+                    throw new Exception("Action edit page not found - " + classname);
+                }
+
+                Page actEditPage = (Page)Activator.CreateInstance(actType, act);
+                if (actEditPage != null)
+                {
+                    // For no driver actions we give the BF and env - used for example in set var value.
+                    if (typeof(ActWithoutDriver).IsAssignableFrom(act.GetType()))
+                    {
+                        if (mContext != null && mContext.Runner != null)
+                        {
+                            ((ActWithoutDriver)act).RunOnBusinessFlow = (BusinessFlow)mContext.Runner.CurrentBusinessFlow;
+                            ((ActWithoutDriver)act).RunOnEnvironment = (ProjEnvironment)mContext.Runner.ProjEnvironment;
+                            ((ActWithoutDriver)act).DSList = mContext.Runner.DSList;
+                        }
+                    }
+
+                    return actEditPage;
+                }
+            }
+
+            return null;
+        }
     }
 }

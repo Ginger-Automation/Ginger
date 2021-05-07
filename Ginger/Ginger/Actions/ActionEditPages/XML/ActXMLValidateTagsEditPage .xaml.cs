@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -107,19 +107,9 @@ namespace Ginger.Actions.XML
                 dlg.DefaultExt = "*.json";
                 dlg.Filter = "JSON Template File (*.json)|*.json|All Files (*.*)|*.*";
             }
-
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(dlg) is string fileName)
             {
-                // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-
-                XMLFileTextBox.ValueTextBox.Text = FileName;
+                XMLFileTextBox.ValueTextBox.Text = fileName;
             }
         }
 

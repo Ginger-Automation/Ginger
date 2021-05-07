@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -233,19 +233,9 @@ namespace Ginger.Actions.WebServices
 
         private void BrowseTemplateFileButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-
-            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
             {
-                // replace Absolute file name with relative to solution
-                string FileName = dlg.FileName.ToUpper();
-                if (FileName.Contains(SolutionFolder))
-                {
-                    FileName = FileName.Replace(SolutionFolder, @"~\");
-                }
-
-                TemplateFileNameFileBrowser.ValueTextBox.Text = FileName;
+                TemplateFileNameFileBrowser.ValueTextBox.Text = fileName;
             }                   
         }
 

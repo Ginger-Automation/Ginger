@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,25 +16,27 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.CoreNET.GeneralLib;
+
 namespace GingerCore.Helpers
 {
     public class HTMLHelper
     {
         public static string GetJquery()
         {
-            string script = Properties.Resources.jquery_min;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.jquery_min);
             return script;
         }
 
         public static string GetGingerHTMLHelper()
         {
-            string script = Properties.Resources.GingerHTMLHelper;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.GingerHTMLHelper);
             return script;
         }
 
         public static string wgxpath_install()
         {
-            string script = Properties.Resources.wgxpath_install;
+            string script = JavaScriptHandler.GetJavaScriptFileContent(JavaScriptHandler.eJavaScriptFile.wgxpath_install);
             return script;
         }
     }

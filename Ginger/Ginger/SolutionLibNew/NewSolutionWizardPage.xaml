@@ -9,6 +9,6 @@
       Title="NewSolutionWizardPage">
 
     <Grid>
-        <Label>Create new Gigner solution</Label>
+        <Label>Create new Ginger solution</Label>
     </Grid>
 </Page>

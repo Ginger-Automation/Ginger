@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.Repository;
 using GingerCore;
 using GingerCore.Environments;
@@ -38,7 +39,7 @@ namespace UnitTests.NonUITests
         [ClassInitialize]        
         public static void ClassInitialize(TestContext TC)
         {
-            RepositoryItemHelper.RepositoryItemFactory = new RepositoryItemFactory();
+            TargetFrameworkHelper.Helper = new DotNetFrameworkHelper();
             WorkSpace.Init(new WorkSpaceEventHandler());                   
         }
 

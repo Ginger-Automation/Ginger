@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -163,6 +163,7 @@ namespace Ginger.Run.RunSetActions
         {
             try
             {
+                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email Staring execute");
                 mValueExpression = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false);
                 string extraInformationCalculated = string.Empty;
@@ -176,13 +177,15 @@ namespace Ginger.Run.RunSetActions
                 if (loggerMode == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
                     //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: Using LiteDB and using new WebReportGenerator");
+                    reportsResultFolder = Path.Combine(ExtensionMethods.GetReportDirectory(currentConf.HTMLReportsFolder), "Reports");
+                    reportsResultFolder = Path.Combine(reportsResultFolder, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmssfff")}");
                     WebReportGenerator webReporterRunner = new WebReportGenerator();
-                    liteDbRunSet = webReporterRunner.RunNewHtmlReport(null, null, false);
+                    liteDbRunSet = webReporterRunner.RunNewHtmlReport(reportsResultFolder, null, null, false);
                 }
 
                 tempFolder = WorkSpace.Instance.ReportsInfo.EmailReportTempFolder;
 
-                TemplatesFolder = Path.Combine(ExtensionMethods.getGingerEXEFileName(), "Reports", "GingerExecutionReport").Replace("Ginger.exe", "");
+                TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport");
 
                 //Reporter.ToLog(eLogLevel.DEBUG, "Run set operation send Email: TemplatesFolder=" + TemplatesFolder);
 
@@ -293,14 +296,13 @@ namespace Ginger.Run.RunSetActions
                             EmailHtmlReportAttachment rReport = ((EmailHtmlReportAttachment)r);
                             if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                             {
-                                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
                                 mValueExpression.Value = rReport.ExtraInformation;
                                 extraInformationCalculated = mValueExpression.ValueCalculated;
                                 if (!string.IsNullOrEmpty(rReport.SelectedHTMLReportTemplateID.ToString()))
                                 {
                                     if ((rReport.IsAlternameFolderUsed) && (extraInformationCalculated != null) && (extraInformationCalculated != string.Empty))
                                     {
-                                        RepositoryItemHelper.RepositoryItemFactory.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
+                                        TargetFrameworkHelper.Helper.HTMLReportAttachment(extraInformationCalculated, ref emailReadyHtml, ref reportsResultFolder, runSetFolder, rReport, currentConf);
                                     }
                                     else
                                     {
@@ -313,13 +315,12 @@ namespace Ginger.Run.RunSetActions
                             }
                             else if (WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                             {
-                                reportsResultFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports", "Ginger-Web-Client");
                                 if (rReport.IsAlternameFolderUsed)
                                 {
                                     mValueExpression.Value = rReport.ExtraInformation;
                                     extraInformationCalculated = mValueExpression.ValueCalculated;
 
-                                    var path = Path.Combine(extraInformationCalculated, "Ginger-Web-Client_" + $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
+                                    var path = Path.Combine(extraInformationCalculated, $"{General.RemoveInvalidFileNameChars(WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name)}_{DateTime.UtcNow.ToString("yyyymmddhhmmss")}");
                                     if (Directory.Exists(path))
                                         Directory.Delete(path, true);
                                     IoHandler.Instance.CopyFolderRec(reportsResultFolder, path, true);
@@ -521,7 +522,7 @@ namespace Ginger.Run.RunSetActions
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
-            RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
+            TargetFrameworkHelper.Helper.CreateCustomerLogo(currentTemplate, tempFolder);
             if (currentTemplate == null)
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
@@ -532,6 +533,7 @@ namespace Ginger.Run.RunSetActions
             }
 
             string ReportHTML;
+         
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 ReportHTML = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetHTMLTemplate("EmailExecutionReport.html", TemplatesFolder);
@@ -1143,7 +1145,7 @@ namespace Ginger.Run.RunSetActions
             {
                 currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
             }
-            RepositoryItemHelper.RepositoryItemFactory.CreateCustomerLogo(currentTemplate, tempFolder);
+            TargetFrameworkHelper.Helper.CreateCustomerLogo(currentTemplate, tempFolder);
             //System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             //CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
             if (currentTemplate == null)
@@ -1810,7 +1812,7 @@ namespace Ginger.Run.RunSetActions
 
         private void CreateChart(List<KeyValuePair<int, int>> y, string chartName, string Title)
         {
-            RepositoryItemHelper.RepositoryItemFactory.CreateChart(y, chartName, Title, tempFolder);
+            TargetFrameworkHelper.Helper.CreateChart(y, chartName, Title, tempFolder);
         }
         public LinkedResource GetLinkedResource(byte[] imageBytes, string id)
         {

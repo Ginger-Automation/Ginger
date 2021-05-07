@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
-using GingerCore.Variables;
-using GingerCoreNET.ALMLib;
+
 using GingerCoreNET.RunLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
@@ -46,6 +45,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common.OS;
 
 namespace amdocs.ginger.GingerCoreNET
 {
@@ -56,6 +56,7 @@ namespace amdocs.ginger.GingerCoreNET
     public class WorkSpace 
     {        
         private static WorkSpace mWorkSpace;
+        private static Mutex mutex = new Mutex(false, "CheckWebReportFolderMutex");
         public static WorkSpace Instance
         {
             get
@@ -64,8 +65,15 @@ namespace amdocs.ginger.GingerCoreNET
             }
         }
 
+        public  OperatingSystemBase OSHelper;
         static bool lockit;
-
+        public ITargetFrameworkHelper TargetFrameworkHelper
+        {
+            get
+            {
+                return Amdocs.Ginger.Common.TargetFrameworkHelper.Helper;
+            }
+        }      
         public static void LockWS()
         {
             Reporter.ToLog(eLogLevel.DEBUG, "Lock Workspace");
@@ -92,17 +100,18 @@ namespace amdocs.ginger.GingerCoreNET
 
         public static void Init(IWorkSpaceEventHandler WSEH, bool startLocalGrid = true)
         {
-            mWorkSpace = new WorkSpace();         
+         
+            mWorkSpace = new WorkSpace();
             mWorkSpace.EventHandler = WSEH;
             mWorkSpace.InitClassTypesDictionary();
-
+            mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
             if (startLocalGrid)
             {
                 mWorkSpace.InitLocalGrid();
-            }           
+            }
             Telemetry.Init();
             mWorkSpace.Telemetry.SessionStarted();
-        }     
+        }   
 
         public void StartLocalGrid()
         {
@@ -171,7 +180,7 @@ namespace amdocs.ginger.GingerCoreNET
         }
 
         private void InitLocalGrid()
-        {            
+        {
             mLocalGingerGrid = new GingerGrid();
             mLocalGingerGrid.Start();
         }
@@ -216,15 +225,15 @@ namespace amdocs.ginger.GingerCoreNET
             bDone = true;
 
             // Add all RI classes from GingerCoreCommon
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RepositoryItemBase).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
 
             // Add gingerCoreNET classes                        
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(RunSetConfig).Assembly);
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreNET);
+            //NewRepositorySerializer.AddClassesFromAssembly(typeof(ALMConfig).Assembly);
         }
 
 
-        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, IRepositoryItemFactory repositoryItemFactory)
+        public void InitWorkspace(WorkSpaceReporterBase workSpaceReporterBase, ITargetFrameworkHelper FrameworkHelper)
         {
             // Add event handler for handling non-UI thread exceptions.
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -234,7 +243,8 @@ namespace amdocs.ginger.GingerCoreNET
 
             string phase = string.Empty;
 
-            RepositoryItemHelper.RepositoryItemFactory = repositoryItemFactory;
+            Amdocs.Ginger.Common.TargetFrameworkHelper.Helper = FrameworkHelper;
+            mWorkSpace.OSHelper = OperatingSystemBase.CurrentOperatingSystem;
 
             BetaFeatures = BetaFeatures.LoadUserPref();
             BetaFeatures.PropertyChanged += BetaFeatureChanged;
@@ -263,45 +273,9 @@ namespace amdocs.ginger.GingerCoreNET
             Reporter.ToLog(eLogLevel.INFO, "Configuring User Type");
             UserProfile.LoadUserTypeHelper();            
                         
-            CheckWebReportFolder();
-
             if (WorkSpace.Instance.LocalGingerGrid != null)
             {
                 Reporter.ToLog(eLogLevel.INFO,"Ginger Grid Started at Port:" + WorkSpace.Instance.LocalGingerGrid.Port);                
-            }
-        }
-
-        private void CheckWebReportFolder()
-        {
-            try
-            {
-                string clientAppFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying from web report from: "+ clientAppFolderPath);
-                string userAppFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports","Ginger-Web-Client");
-                Reporter.ToLog(eLogLevel.INFO, "Copying to web report from: " + userAppFolder);
-                if (Directory.Exists(clientAppFolderPath))
-                {
-                    string rootUserFolder = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Reports");
-                    if (Directory.Exists(rootUserFolder))
-                        TryFolderDelete(rootUserFolder);
-                    IoHandler.Instance.CopyFolderRec(clientAppFolderPath, userAppFolder, true);
-                }
-            }
-            catch(Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Check WebReportFolder Error: " + ex.Message, ex);
-            }
-        }
-
-        private void TryFolderDelete(string rootUserFolder)
-        {
-            try
-            {
-                Directory.Delete(rootUserFolder,true);
-            }
-            catch (Exception ex)
-            {
-               Reporter.ToLog(eLogLevel.DEBUG, "TryFolderDelete error - " + ex.Message, ex);
             }
         }
 

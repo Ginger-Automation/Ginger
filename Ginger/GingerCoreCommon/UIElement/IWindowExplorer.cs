@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,16 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.UIElement
 {
+    public enum eTabView
+    {
+        Screenshot, TreeView, GridView, PageSource, none
+    }
+
     public interface IWindowExplorer
     {
         List<AppWindow> GetAppWindows();        
@@ -30,7 +36,7 @@ namespace Amdocs.Ginger.Common.UIElement
         string GetFocusedControl();
         ElementInfo GetControlFromMousePosition();       
         AppWindow GetActiveWindow();
-        List<ElementInfo> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false,string specificFramePath=null);
+        Task<List<ElementInfo>> GetVisibleControls(List<eElementType> filteredElementType, ObservableList<ElementInfo> foundElementsList = null, bool isPOMLearn = false,string specificFramePath=null);
         List<ElementInfo> GetElementChildren(ElementInfo ElementInfo);
         // Get All element properties to be displayed in properties 
         ObservableList<ControlProperty> GetElementProperties(ElementInfo ElementInfo);
@@ -43,8 +49,18 @@ namespace Amdocs.Ginger.Common.UIElement
         // For Combo box: will return all valid values - options available - List<ComboBoxElementItem>
         // For Table: will return list of rows data: List<TableElementItem>        
         object GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue);
-        
 
+        bool IsRecordingSupported();
+
+        bool IsPOMSupported();
+
+        bool IsLiveSpySupported();
+
+        List<eTabView> SupportedViews();
+
+        eTabView DefaultView();
+
+        string SelectionWindowText();
 
         ObservableList<ElementInfo> GetElements(ElementLocator EL);
 

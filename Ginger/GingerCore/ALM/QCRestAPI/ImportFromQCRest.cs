@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using GingerCore.Variables;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -669,6 +670,11 @@ namespace GingerCore.ALM.QCRestAPI
                         break;
                     }
                     defectsOpeningResults.Add(defectForOpening.Key, newDefectID);
+                    // Add screen shot as a attachment to defect
+                    if (defectForOpening.Value.ContainsKey("screenshots") && !string.IsNullOrEmpty(defectForOpening.Value["screenshots"]))
+                    {
+                        AddAttachmentToDefect(qcClientREST, newDefectID, defectForOpening.Value["screenshots"]);
+                    }
                 }
             }
             else
@@ -679,7 +685,25 @@ namespace GingerCore.ALM.QCRestAPI
             return defectsOpeningResults;
         }
 
+        private static bool AddAttachmentToDefect(QCRestClient.QCClient qcClientREST,string defectId, string filePath)
+        {
+            try
+            {
+                FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                BinaryReader br = new BinaryReader(fs);
+                byte[] fileData = br.ReadBytes((Int32)fs.Length);
 
+                qcClientREST.CreateAttachmentForEntitiyId(ALM_Common.DataContracts.ResourceType.DEFECT, defectId, Path.GetFileName(filePath), fileData);
+
+                fs.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to add attachment to defect", ex);
+                return false;
+            }
+        }
 
 
         #endregion Public Functions

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ using GingerCore.Actions.UIAutomation;
 using GingerCore.Drivers.PBDriver;
 using GingerCore.Actions.Common;
 using Amdocs.Ginger.Common.UIElement;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.Common
 {
@@ -146,7 +147,9 @@ namespace GingerCore.Drivers.Common
 
         public abstract object GetElementFromCursor();
 
-        public abstract List<ElementInfo> GetVisibleControls();
+        public abstract object GetElementAtPoint(System.Windows.Point point);
+
+        public abstract Task<List<ElementInfo>> GetVisibleControls();
                 
         public  ObservableList<ElementLocator> GetElementLocators(ElementInfo ei)
         {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -200,13 +200,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ImportSeleniumScript(object sender, System.Windows.RoutedEventArgs e)
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.DefaultExt = ".html";
-            dlg.Filter = "Recorded Selenium Scripts (*.html)|*.html";
-            
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
             {
-                BusinessFlow BF = SeleniumToGinger.ConvertSeleniumScript(dlg.FileName);
+                DefaultExt = ".html",
+                Filter = "Recorded Selenium Scripts (*.html)|*.html"
+            },false) is string fileName)
+            {
+                BusinessFlow BF = SeleniumToGinger.ConvertSeleniumScript(fileName);
                 mBusFlowsFolder.AddRepositoryItem(BF);
             }
         }
@@ -236,18 +236,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void ImportExternalBuinessFlow(object sender, System.Windows.RoutedEventArgs e)
         {
             BusinessFlow importedBF = null;
-
             //open dialog for selecting the BF file
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-            dlg.DefaultExt = ".Ginger.BusinessFlow.xml";
-            dlg.Filter = "Ginger Business Flow File|*.Ginger.BusinessFlow.xml";           
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            {
+                DefaultExt = ".Ginger.BusinessFlow.xml",
+                Filter = "Ginger Business Flow File|*.Ginger.BusinessFlow.xml"
+            },false) is string fileName)
             {
                 try
                 {
                     //copy to Solution Business Flow folder 
-                    string importedBFpath = System.IO.Path.Combine(mBusFlowsFolder.FolderFullPath, System.IO.Path.GetFileName(dlg.FileName));
-                    File.Copy(dlg.FileName, importedBFpath, false);
+                    string importedBFpath = System.IO.Path.Combine(mBusFlowsFolder.FolderFullPath, System.IO.Path.GetFileName(fileName));
+                    File.Copy(fileName, importedBFpath, false);
 
                     //load it to object
                     importedBF = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), importedBFpath);

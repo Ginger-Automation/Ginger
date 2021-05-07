@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.ApplicationsModels.ModelsUsages;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
@@ -92,16 +93,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void BrowseAndParseResponseFile()
         {
-            System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-
-            dlg.Filter = "All Files (*.*)|*.*" + "|XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|JSON Files (*.json)|*.json";
-            System.Windows.Forms.DialogResult result = dlg.ShowDialog();
-
-            if (result == System.Windows.Forms.DialogResult.OK)
+            if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()
+            {
+                Filter = "All Files (*.*)|*.*" + "|XML Files (*.xml)|*.xml" + "|WSDL Files (*.wsdl)|*.wsdl" + "|JSON Files (*.json)|*.json"
+            }, false) is string fileName)
             {
                 mApplicationAPIModel.ReturnValues.Clear();
                 //FOREACH
-                ObservableList<ActReturnValue> ReturnValues = APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(dlg.FileName);
+                ObservableList<ActReturnValue> ReturnValues = APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(fileName);
                 foreach (ActReturnValue ReturnValue in ReturnValues)
                 {
                     mApplicationAPIModel.ReturnValues.Add(ReturnValue);

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -339,7 +339,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void xRunActionBtn_Click(object sender, RoutedEventArgs e)
         {
-            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act>(mActivity, mActionBeenEdit));
+            App.OnAutomateBusinessFlowEvent(AutomateEventArgs.eEventType.RunCurrentAction, new Tuple<Activity, Act, bool>(mActivity, mActionBeenEdit, false));
         }
 
         public void SetUIElementsBehaverBasedOnRunnerStatus(bool IsRunning)

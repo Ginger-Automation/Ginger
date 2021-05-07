@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -447,6 +447,39 @@ namespace Ginger.ApplicationModelsLib.POMModels
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in POM Delta View Page tabs style", ex);
+            }
+        }
+       
+        GenericWindow mGenericWindow = null;
+
+        internal DeltaElementInfo ShowAsWindow(string winTitle)
+        {
+            ObservableList<Button> windowButtons = new ObservableList<Button>();
+
+            Button selectBtn = new Button();
+            selectBtn.Content = "Select";
+            selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
+            windowButtons.Add(selectBtn);
+            this.Height = 600;
+            this.Width = 800;
+            GenericWindow.LoadGenericWindow(ref mGenericWindow, null, eWindowShowStyle.Dialog, winTitle, this, windowButtons, true, "Cancel", CancelBtn_Click);
+            return mSelectedElement;
+        }
+
+        private void CancelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mGenericWindow != null)
+            {
+                xMainElementsGrid.Grid.SelectedItem = null;
+                mGenericWindow.Close();
+            }
+        }
+
+        private void selectBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mGenericWindow != null)
+            {
+                mGenericWindow.Close();
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ limitations under the License.
 */
 #endregion
 
+using System.ComponentModel;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
@@ -23,32 +25,40 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
 
     public enum ePlatformType
     {
-        //TODO: add Any
-        //Null = 0,
+        [EnumValueDescription("NA")]
         NA,
+        [EnumValueDescription("Web")]
         Web,
-        Mobile,  // TODO: remove and use Android or IOS
+        [EnumValueDescription("Mobile")]
+        Mobile,  
+        [EnumValueDescription("Unix")]
         Unix,
+        [EnumValueDescription("ASCF")]
         ASCF,
-        //Tuxedo = 6,
-        //DOTNET,
+        [EnumValueDescription("DOS")]
         DOS,
+        [EnumValueDescription("Windows")]
         Windows,
+        [EnumValueDescription("VB Script")]
         VBScript,
+        [EnumValueDescription("Web Services")]
         WebServices,
+        [EnumValueDescription("Power Builder")]
         PowerBuilder,
+        [EnumValueDescription("Java")]
         Java,
+        [EnumValueDescription("Mainframe")]
         MainFrame,
-        //Android,
-        AndroidDevice,  // rename to Android, join with Android
+        [EnumValueDescription("Ginger Service")]       
         Service
+        //AndroidDevice,  // rename to Android, join with Android
     }
 
     //public class Platform // : RepositoryItem
     //{
     //    // Move to Plugin
     //    // TODO: cleanup
-        
+
 
     //    //[IsSerializedForLocalRepository]
     //    //public bool Active { get; set; }

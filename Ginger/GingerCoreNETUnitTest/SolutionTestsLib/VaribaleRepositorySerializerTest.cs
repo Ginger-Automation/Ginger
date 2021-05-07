@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2020 European Support Limited
+Copyright © 2014-2021 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            NewRepositorySerializer.AddClassesFromAssembly(typeof(BusinessFlow).Assembly);
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCoreCommon);
             string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "Variables" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "Business Flow 1.Ginger.BusinessFlow.xml");
 
             BusinessFlow = (BusinessFlow)RS.DeserializeFromFile(FileName);
