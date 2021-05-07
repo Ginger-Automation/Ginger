@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using QCRestClient;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ namespace GingerCore.ALM.QCRestAPI
     {
         public static ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public static ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public static ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
 
         #region Public Functions
         public static QCTestInstanceColl ImportTestSetInstanceData(QCTestSet TS)
@@ -226,7 +228,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                         tcActivsGroup.ExternalID2 = tc.TestID;
                         busFlow.AddActivitiesGroup(tcActivsGroup);
-                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                        busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
                     }
                     else //TC not exist in Ginger repository so create new one
@@ -770,7 +772,7 @@ namespace GingerCore.ALM.QCRestAPI
 
                 tcActivsGroup.ExternalID2 = testInstance.Id;
                 busFlow.AddActivitiesGroup(tcActivsGroup);
-                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                 busFlow.AttachActivitiesGroupsAndActivities();
             }
             else //TC not exist in Ginger repository so create new one

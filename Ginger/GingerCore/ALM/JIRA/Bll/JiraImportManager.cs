@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using System.Web;
 using JiraRepository;
 using JiraRepository.Data_Contracts;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM.JIRA
 {
@@ -55,6 +56,8 @@ namespace GingerCore.ALM.JIRA
 
         public ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
+
         internal ObservableList<ExternalItemFieldBase> GetALMItemFields(ResourceType resourceType, BackgroundWorker bw, bool online)
         {
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
@@ -611,7 +614,8 @@ namespace GingerCore.ALM.JIRA
 
                 tcActivsGroup.ExternalID2 = tc.Labels;
                 busFlow.AddActivitiesGroup(tcActivsGroup);
-                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, true, true);
+                busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
+              
                 busFlow.AttachActivitiesGroupsAndActivities();
             }
             else //TC not exist in Ginger repository so create new one

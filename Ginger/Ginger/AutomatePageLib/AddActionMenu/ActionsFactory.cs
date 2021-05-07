@@ -24,6 +24,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApiModelsFolder;
+using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -270,17 +271,15 @@ namespace Ginger.BusinessFlowPages
 
             if (parentGroup != null)
             {
-
+                eUserMsgSelection userSelection = eUserMsgSelection.None;
                 foreach (Activity sharedActivity in sharedActivitiesToAdd)
                 {
-                    eUserMsgSelection userSelection = eUserMsgSelection.None;
                     Activity activityIns = (Activity)sharedActivity.CreateInstance(true);
                     activityIns.Active = true;
                     //map activities target application to BF if missing in BF
-                    userSelection = MapTAToBF(businessFlow, userSelection, activityIns);
+                    userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
-                    //mBusinessFlow.CurrentActivity = droppedActivityIns;
                 }
             }
         }
@@ -295,46 +294,12 @@ namespace Ginger.BusinessFlowPages
         {
             foreach (ActivitiesGroup sharedGroup in sharedActivitiesGroupsToAdd)
             {
-                eUserMsgSelection userSelection = eUserMsgSelection.None;
                 ActivitiesGroup droppedGroupIns = (ActivitiesGroup)sharedGroup.CreateInstance(true);
                 businessFlow.AddActivitiesGroup(droppedGroupIns);
                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                foreach (Activity activityIns in activities)
-                {
-                    userSelection = MapTAToBF(businessFlow, userSelection, activityIns);
-                }
-                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, true);
+                businessFlow.ImportActivitiesGroupActivitiesFromRepository(droppedGroupIns, activities, WorkSpace.Instance.Solution.ApplicationPlatforms, false);
             }
             businessFlow.AttachActivitiesGroupsAndActivities();
-        }
-
-        /// <summary>
-        /// Check if mapping Activity Target Application is missing in BF, if missing, map it to BF
-        /// </summary>
-        /// <param name="businessFlow">BF to check it in</param>
-        /// <param name="userSelection">userselection to check if user need to be prompted or not</param>
-        /// <param name="activityIns">Activity from which TA to check</param>
-        /// <returns></returns>
-        private static eUserMsgSelection MapTAToBF(BusinessFlow businessFlow, eUserMsgSelection userSelection, Activity activityIns)
-        {
-            if (!businessFlow.TargetApplications.Where(x => x.Name == activityIns.TargetApplication).Any())
-            {
-                if (userSelection == eUserMsgSelection.None)
-                {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activies Target application to BF.");
-                }
-
-                if (userSelection == eUserMsgSelection.OK)
-                {
-                    ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activityIns.TargetApplication).FirstOrDefault();
-                    if (appAgent != null)
-                    {
-                        businessFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
-                    }
-                }
-            }
-
-            return userSelection;
         }
 
     }

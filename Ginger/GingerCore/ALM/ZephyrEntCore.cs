@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,11 @@ namespace GingerCore.ALM
         private ZephyrEntImportManager zephyrEntImportManager;
         public override ObservableList<ActivitiesGroup> GingerActivitiesGroupsRepo { get; set; }
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ZephyrEntImportManager.ApplicationPlatforms; }
+            set { ZephyrEntImportManager.ApplicationPlatforms = value; }
+        }
         public ZephyrEntCore()
         {
             zephyrEntRepository = new Zepyhr_Ent_Repository.ZephyrEntRepository(new LoginDTO()

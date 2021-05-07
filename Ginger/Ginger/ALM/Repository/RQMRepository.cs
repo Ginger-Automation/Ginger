@@ -100,9 +100,8 @@ namespace Ginger.ALM.Repository
                 foreach (RQMTestPlan testPlan in testPlanList)
                 {
                     //Refresh Ginger repository and allow GingerRQM to use it
+                    ALMIntegration.Instance.AlmCore.InitCoreObjs();
 
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesGroupsRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                    ALMIntegration.Instance.AlmCore.GingerActivitiesRepo = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
 
                     try
                     {

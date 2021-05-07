@@ -34,6 +34,7 @@ using GingerCore.External;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common.InterfacesLib;
 using System.Linq;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.ALM
 {
@@ -114,6 +115,12 @@ namespace GingerCore.ALM
         {
             get { return ImportFromRQM.GingerActivitiesRepo; }
             set { ImportFromRQM.GingerActivitiesRepo = value; }
+        }
+
+        public override ObservableList<ApplicationPlatform> ApplicationPlatforms
+        {
+            get { return ImportFromRQM.ApplicationPlatforms; }
+            set { ImportFromRQM.ApplicationPlatforms = value; }
         }
 
         public override void SetALMConfigurations(  string ALMServerUrl, bool UseRest, string ALMUserName, string ALMPassword,
